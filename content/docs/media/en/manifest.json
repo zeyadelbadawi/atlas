@@ -1,7 +1,7 @@
 {
   "academy/delete-button": {
-    "capturedAt": "2026-10-20T14:04:54.835Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:12:29.719Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/delete-button-960.webp",
@@ -17,8 +17,8 @@
     "width": 1440
   },
   "academy/delete-card": {
-    "capturedAt": "2026-10-20T14:04:45.387Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:12:20.260Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/delete-card-960.webp",
@@ -34,8 +34,8 @@
     "width": 1440
   },
   "academy/delete-confirm": {
-    "capturedAt": "2026-10-20T14:05:21.710Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:12:56.927Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/delete-confirm-960.webp",
@@ -51,8 +51,8 @@
     "width": 560
   },
   "academy/delete-reason": {
-    "capturedAt": "2026-10-20T14:05:03.372Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:12:39.024Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/delete-reason-960.webp",
@@ -68,8 +68,8 @@
     "width": 560
   },
   "academy/delete-type-name": {
-    "capturedAt": "2026-10-20T14:05:11.810Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:12:47.692Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/delete-type-name-960.webp",
@@ -85,8 +85,8 @@
     "width": 560
   },
   "academy/domain-address": {
-    "capturedAt": "2026-10-20T14:02:02.179Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:09:39.873Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/domain-address-960.webp",
@@ -102,8 +102,8 @@
     "width": 1440
   },
   "academy/domain-check-now": {
-    "capturedAt": "2026-10-20T14:02:56.284Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:10:45.466Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/domain-check-now-960.webp",
@@ -119,8 +119,8 @@
     "width": 1440
   },
   "academy/domain-hostname-form": {
-    "capturedAt": "2026-10-20T14:02:38.219Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:10:27.894Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/domain-hostname-form-960.webp",
@@ -136,8 +136,8 @@
     "width": 1440
   },
   "academy/domain-progress": {
-    "capturedAt": "2026-10-20T14:02:46.954Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:10:36.691Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/domain-progress-960.webp",
@@ -153,8 +153,8 @@
     "width": 1440
   },
   "academy/domain-tab": {
-    "capturedAt": "2026-10-20T14:02:27.057Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:10:17.792Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/domain-tab-960.webp",
@@ -170,8 +170,8 @@
     "width": 1440
   },
   "academy/new-academy-brand": {
-    "capturedAt": "2026-10-20T14:03:38.324Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:11:27.847Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/new-academy-brand-960.webp",
@@ -187,8 +187,8 @@
     "width": 1440
   },
   "academy/new-academy-name": {
-    "capturedAt": "2026-10-20T14:03:21.360Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:11:10.051Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/new-academy-name-960.webp",
@@ -204,8 +204,8 @@
     "width": 1440
   },
   "academy/new-academy-payments": {
-    "capturedAt": "2026-10-20T14:03:47.446Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:11:36.511Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/new-academy-payments-960.webp",
@@ -221,8 +221,8 @@
     "width": 1440
   },
   "academy/new-academy-reserved": {
-    "capturedAt": "2026-10-20T14:02:15.603Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:09:51.286Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/new-academy-reserved-960.webp",
@@ -238,8 +238,8 @@
     "width": 1440
   },
   "academy/new-academy-setup-mode": {
-    "capturedAt": "2026-10-20T14:03:29.686Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:11:18.627Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/new-academy-setup-mode-960.webp",
@@ -255,8 +255,8 @@
     "width": 1440
   },
   "academy/new-academy-submit": {
-    "capturedAt": "2026-10-20T14:03:56.744Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:11:44.998Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/new-academy-submit-960.webp",
@@ -272,8 +272,8 @@
     "width": 1440
   },
   "academy/overview-view-profile": {
-    "capturedAt": "2026-10-20T13:59:18.379Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:07:21.977Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/overview-view-profile-960.webp",
@@ -289,8 +289,8 @@
     "width": 1440
   },
   "academy/profile-address": {
-    "capturedAt": "2026-10-20T13:59:51.173Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:07:43.637Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/profile-address-960.webp",
@@ -306,8 +306,8 @@
     "width": 1440
   },
   "academy/profile-basic-info": {
-    "capturedAt": "2026-10-20T13:59:27.495Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:07:29.183Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/profile-basic-info-960.webp",
@@ -323,8 +323,8 @@
     "width": 1440
   },
   "academy/profile-contact": {
-    "capturedAt": "2026-10-20T13:59:37.674Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:07:36.371Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/profile-contact-960.webp",
@@ -340,8 +340,8 @@
     "width": 1440
   },
   "academy/profile-save": {
-    "capturedAt": "2026-10-20T13:59:58.503Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:07:51.439Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/profile-save-960.webp",
@@ -357,8 +357,8 @@
     "width": 1440
   },
   "academy/provisioning-history": {
-    "capturedAt": "2026-10-20T14:05:29.085Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:13:03.477Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/provisioning-history-960.webp",
@@ -374,8 +374,8 @@
     "width": 1440
   },
   "academy/provisioning-list": {
-    "capturedAt": "2026-10-20T14:03:04.047Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:10:53.110Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/provisioning-list-960.webp",
@@ -391,8 +391,8 @@
     "width": 1440
   },
   "academy/provisioning-new-button": {
-    "capturedAt": "2026-10-20T14:03:11.958Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:11:01.431Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/provisioning-new-button-960.webp",
@@ -408,8 +408,8 @@
     "width": 1440
   },
   "academy/provisioning-status": {
-    "capturedAt": "2026-10-20T14:05:38.786Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:13:13.071Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/provisioning-status-960.webp",
@@ -425,8 +425,8 @@
     "width": 1440
   },
   "academy/settings-currency": {
-    "capturedAt": "2026-10-20T14:00:36.546Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:08:25.150Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/settings-currency-960.webp",
@@ -442,8 +442,8 @@
     "width": 1440
   },
   "academy/settings-language": {
-    "capturedAt": "2026-10-20T14:00:16.392Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:08:08.111Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/settings-language-960.webp",
@@ -459,8 +459,8 @@
     "width": 1440
   },
   "academy/settings-localization": {
-    "capturedAt": "2026-10-20T14:00:07.541Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:08:00.089Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/settings-localization-960.webp",
@@ -476,8 +476,8 @@
     "width": 1440
   },
   "academy/settings-save": {
-    "capturedAt": "2026-10-20T14:00:44.878Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:08:33.712Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/settings-save-960.webp",
@@ -492,9 +492,43 @@
     "spec": "3099fbf40ac453ae85b0708ce1e20575a7fbf5b6",
     "width": 1440
   },
+  "academy/settings-slug": {
+    "capturedAt": "2026-10-20T17:10:00.243Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
+    "files": [
+      {
+        "src": "media/en/academy/settings-slug-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/academy/settings-slug-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "9c45fc4998d747cdc7faaf77ee8875b2fc84907c",
+    "width": 1440
+  },
+  "academy/settings-slug-save": {
+    "capturedAt": "2026-10-20T17:10:09.243Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
+    "files": [
+      {
+        "src": "media/en/academy/settings-slug-save-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/academy/settings-slug-save-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "9bd2867b2e05a9473b4db595c1f70cddd29f1836",
+    "width": 1440
+  },
   "academy/settings-timezone": {
-    "capturedAt": "2026-10-20T14:00:27.894Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:08:16.565Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/settings-timezone-960.webp",
@@ -510,8 +544,8 @@
     "width": 1440
   },
   "academy/switcher": {
-    "capturedAt": "2026-10-20T14:04:04.801Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:11:52.916Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/switcher-960.webp",
@@ -527,8 +561,8 @@
     "width": 1440
   },
   "academy/switcher-open": {
-    "capturedAt": "2026-10-20T14:04:13.231Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:12:01.620Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/switcher-open-960.webp",
@@ -543,9 +577,26 @@
     "spec": "c0993559c676849b766d7c52a11d1aa8444517ae",
     "width": 1440
   },
+  "academy/switcher-search": {
+    "capturedAt": "2026-10-20T17:12:11.207Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
+    "files": [
+      {
+        "src": "media/en/academy/switcher-search-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/academy/switcher-search-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3f306800472a49d8f03d1970536483cef3d28c49",
+    "width": 1440
+  },
   "academy/visual-identity": {
-    "capturedAt": "2026-10-20T14:00:56.479Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:08:42.928Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/visual-identity-960.webp",
@@ -561,8 +612,8 @@
     "width": 1440
   },
   "academy/visual-identity-advanced": {
-    "capturedAt": "2026-10-20T14:01:28.284Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:09:12.123Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/visual-identity-advanced-960.webp",
@@ -578,8 +629,8 @@
     "width": 1440
   },
   "academy/visual-identity-favicon": {
-    "capturedAt": "2026-10-20T14:01:38.766Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:09:22.005Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/visual-identity-favicon-960.webp",
@@ -595,8 +646,8 @@
     "width": 1440
   },
   "academy/visual-identity-logo": {
-    "capturedAt": "2026-10-20T14:01:08.624Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:08:52.835Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/visual-identity-logo-960.webp",
@@ -612,8 +663,8 @@
     "width": 1440
   },
   "academy/visual-identity-palette": {
-    "capturedAt": "2026-10-20T14:01:18.395Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:09:02.337Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/visual-identity-palette-960.webp",
@@ -629,8 +680,8 @@
     "width": 1440
   },
   "academy/visual-identity-save": {
-    "capturedAt": "2026-10-20T14:01:52.694Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:09:31.504Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/academy/visual-identity-save-960.webp",
@@ -4301,8 +4352,8 @@
     "width": 1440
   },
   "notifications/academy-updates": {
-    "capturedAt": "2026-10-20T14:40:28.174Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:14:08.936Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/academy-updates-960.webp",
@@ -4318,8 +4369,8 @@
     "width": 1440
   },
   "notifications/announcements-form": {
-    "capturedAt": "2026-10-20T14:42:57.667Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:16:10.223Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/announcements-form-960.webp",
@@ -4330,13 +4381,13 @@
         "width": 1120
       }
     ],
-    "height": 520,
+    "height": 588,
     "spec": "f7982e19ee94aa4bbc67caa55004af5c56473b78",
     "width": 560
   },
   "notifications/announcements-new": {
-    "capturedAt": "2026-10-20T14:42:48.700Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:16:01.376Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/announcements-new-960.webp",
@@ -4352,8 +4403,8 @@
     "width": 1440
   },
   "notifications/announcements-page": {
-    "capturedAt": "2026-10-20T14:42:41.211Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:15:53.498Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/announcements-page-960.webp",
@@ -4369,8 +4420,8 @@
     "width": 1440
   },
   "notifications/announcements-publish": {
-    "capturedAt": "2026-10-20T14:43:04.821Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:16:17.810Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/announcements-publish-960.webp",
@@ -4386,8 +4437,8 @@
     "width": 1440
   },
   "notifications/announcements-publish-confirm": {
-    "capturedAt": "2026-10-20T14:43:11.552Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:16:25.451Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/announcements-publish-confirm-960.webp",
@@ -4403,8 +4454,8 @@
     "width": 560
   },
   "notifications/course-announcements": {
-    "capturedAt": "2026-10-20T14:43:19.815Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:16:33.465Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/course-announcements-960.webp",
@@ -4420,8 +4471,8 @@
     "width": 1440
   },
   "notifications/dashboard-bell": {
-    "capturedAt": "2026-10-20T14:39:11.837Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:13:21.769Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/dashboard-bell-960.webp",
@@ -4437,8 +4488,8 @@
     "width": 1440
   },
   "notifications/dashboard-page": {
-    "capturedAt": "2026-10-20T14:39:19.895Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:13:29.485Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/dashboard-page-960.webp",
@@ -4454,8 +4505,8 @@
     "width": 1440
   },
   "notifications/email-language": {
-    "capturedAt": "2026-10-20T14:40:10.557Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:13:59.229Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/email-language-960.webp",
@@ -4471,8 +4522,8 @@
     "width": 1440
   },
   "notifications/learner-announcements": {
-    "capturedAt": "2026-10-20T14:43:27.527Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:16:40.762Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/learner-announcements-960.webp",
@@ -4488,8 +4539,8 @@
     "width": 1440
   },
   "notifications/learner-page": {
-    "capturedAt": "2026-10-20T14:39:30.728Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:13:41.087Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/learner-page-960.webp",
@@ -4505,8 +4556,8 @@
     "width": 1440
   },
   "notifications/learner-preferences": {
-    "capturedAt": "2026-10-20T14:41:16.975Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:14:36.627Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/learner-preferences-960.webp",
@@ -4522,8 +4573,8 @@
     "width": 1440
   },
   "notifications/messages-channels": {
-    "capturedAt": "2026-10-20T14:41:53.969Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:14:59.574Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/messages-channels-960.webp",
@@ -4539,8 +4590,8 @@
     "width": 1440
   },
   "notifications/messages-confirm": {
-    "capturedAt": "2026-10-20T14:42:24.365Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:15:30.433Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/messages-confirm-960.webp",
@@ -4556,8 +4607,8 @@
     "width": 560
   },
   "notifications/messages-page": {
-    "capturedAt": "2026-10-20T14:41:29.731Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:14:44.179Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/messages-page-960.webp",
@@ -4573,8 +4624,8 @@
     "width": 1440
   },
   "notifications/messages-preview": {
-    "capturedAt": "2026-10-20T14:42:12.900Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:15:19.198Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/messages-preview-960.webp",
@@ -4590,8 +4641,8 @@
     "width": 1440
   },
   "notifications/messages-quota": {
-    "capturedAt": "2026-10-20T14:42:33.270Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:15:38.535Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/messages-quota-960.webp",
@@ -4607,8 +4658,8 @@
     "width": 1440
   },
   "notifications/messages-recipients": {
-    "capturedAt": "2026-10-20T14:41:42.088Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:14:51.581Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/messages-recipients-960.webp",
@@ -4624,8 +4675,8 @@
     "width": 1440
   },
   "notifications/messages-write": {
-    "capturedAt": "2026-10-20T14:42:01.950Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:15:08.195Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/messages-write-960.webp",
@@ -4641,8 +4692,8 @@
     "width": 1440
   },
   "notifications/operations": {
-    "capturedAt": "2026-10-20T14:40:44.026Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:14:18.406Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/operations-960.webp",
@@ -4658,8 +4709,8 @@
     "width": 1440
   },
   "notifications/profile-preferences-tab": {
-    "capturedAt": "2026-10-20T14:39:55.872Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:13:49.694Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/profile-preferences-tab-960.webp",
@@ -4675,8 +4726,8 @@
     "width": 1440
   },
   "notifications/reminders": {
-    "capturedAt": "2026-10-20T14:41:03.141Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:14:27.906Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/notifications/reminders-960.webp",
@@ -5644,8 +5695,8 @@
     "width": 1440
   },
   "support/learner-contact-academy": {
-    "capturedAt": "2026-10-20T14:49:37.285Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:18:15.290Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/support/learner-contact-academy-960.webp",
@@ -5661,8 +5712,8 @@
     "width": 1440
   },
   "support/new-ticket-attach": {
-    "capturedAt": "2026-10-20T14:48:23.234Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:17:12.327Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/support/new-ticket-attach-960.webp",
@@ -5678,8 +5729,8 @@
     "width": 560
   },
   "support/new-ticket-button": {
-    "capturedAt": "2026-10-20T14:48:00.093Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:16:55.382Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/support/new-ticket-button-960.webp",
@@ -5695,8 +5746,8 @@
     "width": 1440
   },
   "support/new-ticket-form": {
-    "capturedAt": "2026-10-20T14:48:09.319Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:17:04.043Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/support/new-ticket-form-960.webp",
@@ -5712,8 +5763,8 @@
     "width": 560
   },
   "support/new-ticket-submit": {
-    "capturedAt": "2026-10-20T14:48:35.686Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:17:19.717Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/support/new-ticket-submit-960.webp",
@@ -5729,8 +5780,8 @@
     "width": 560
   },
   "support/requests-brief": {
-    "capturedAt": "2026-10-20T14:49:18.000Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:17:59.457Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/support/requests-brief-960.webp",
@@ -5746,8 +5797,8 @@
     "width": 624
   },
   "support/requests-new-button": {
-    "capturedAt": "2026-10-20T14:48:58.783Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:17:41.644Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/support/requests-new-button-960.webp",
@@ -5763,8 +5814,8 @@
     "width": 1440
   },
   "support/requests-page": {
-    "capturedAt": "2026-10-20T14:48:50.951Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:17:34.198Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/support/requests-page-960.webp",
@@ -5780,8 +5831,8 @@
     "width": 1440
   },
   "support/requests-submit": {
-    "capturedAt": "2026-10-20T14:49:28.579Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:18:08.679Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/support/requests-submit-960.webp",
@@ -5797,8 +5848,8 @@
     "width": 624
   },
   "support/requests-type": {
-    "capturedAt": "2026-10-20T14:49:07.073Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:17:49.813Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/support/requests-type-960.webp",
@@ -5814,8 +5865,8 @@
     "width": 624
   },
   "support/support-page": {
-    "capturedAt": "2026-10-20T14:47:52.319Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:16:47.834Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/support/support-page-960.webp",
@@ -5831,8 +5882,8 @@
     "width": 1440
   },
   "support/ticket-reply": {
-    "capturedAt": "2026-10-20T14:48:42.859Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:17:26.834Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/support/ticket-reply-960.webp",
@@ -5848,8 +5899,8 @@
     "width": 1440
   },
   "support/website-messages": {
-    "capturedAt": "2026-10-20T14:49:46.780Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:18:22.307Z",
+    "commit": "5365b70cf911d8179e571d17d9d4f97b42f8733b",
     "files": [
       {
         "src": "media/en/support/website-messages-960.webp",
