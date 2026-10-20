@@ -18,7 +18,15 @@
  * MARKETING_PLANS_URL, MARKETING_PLANS_TIMEOUT_MS,
  * MARKETING_PLANS_ALLOW_SNAPSHOT, MARKETING_BUILD_DATE (YYYY-MM-DD).
  */
-import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -44,7 +52,8 @@ function fail(message) {
 }
 
 function readClientAssets() {
-  if (!existsSync(MANIFEST)) fail(`${MANIFEST} is missing — run the marketing client build first`);
+  if (!existsSync(MANIFEST))
+    fail(`${MANIFEST} is missing — run the marketing client build first`);
   const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
   const entry = manifest[CLIENT_ENTRY];
   if (!entry?.isEntry) fail(`${CLIENT_ENTRY} is not an entry of ${MANIFEST}`);
@@ -67,15 +76,25 @@ function readClientAssets() {
   if (stylesheets.size === 0) warn(`${CLIENT_ENTRY} imports no stylesheet`);
 
   // Fonts: the hashed URLs the stylesheet itself references.
-  const cssText = [...stylesheets].map((file) => readFileSync(join(DIST, file), 'utf8')).join('\n');
-  const fontUrls = [...cssText.matchAll(/url\((?:["']?)(\/assets\/[^)"']+\.woff2)(?:["']?)\)/g)].map((m) => m[1]);
+  const cssText = [...stylesheets]
+    .map((file) => readFileSync(join(DIST, file), 'utf8'))
+    .join('\n');
+  const fontUrls = [
+    ...cssText.matchAll(/url\((?:["']?)(\/assets\/[^)"']+\.woff2)(?:["']?)\)/g),
+  ].map((m) => m[1]);
   const fontPreloads = {};
   for (const [lang, names] of Object.entries(FONT_PRELOADS)) {
     fontPreloads[lang] = names
-      .map((name) => fontUrls.find((url) => new RegExp(`/${name}-[\\w-]{8}\\.woff2$`).test(url)))
+      .map((name) =>
+        fontUrls.find((url) =>
+          new RegExp(`/${name}-[\\w-]{8}\\.woff2$`).test(url)
+        )
+      )
       .filter(Boolean);
     if (fontPreloads[lang].length !== names.length) {
-      warn(`${lang}: not every above-the-fold font is in the stylesheet (${names.join(', ')})`);
+      warn(
+        `${lang}: not every above-the-fold font is in the stylesheet (${names.join(', ')})`
+      );
     }
   }
   return {
@@ -89,7 +108,8 @@ function readClientAssets() {
 function today() {
   const fixed = process.env.MARKETING_BUILD_DATE;
   if (fixed) {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(fixed)) fail(`MARKETING_BUILD_DATE must be YYYY-MM-DD, got ${fixed}`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fixed))
+      fail(`MARKETING_BUILD_DATE must be YYYY-MM-DD, got ${fixed}`);
     return fixed;
   }
   return new Date().toISOString().slice(0, 10);
@@ -97,19 +117,26 @@ function today() {
 
 async function main() {
   const entryFile = join(SSR_DIR, 'entry.js');
-  if (!existsSync(entryFile)) fail(`${entryFile} is missing — run the prerender bundle build first`);
+  if (!existsSync(entryFile))
+    fail(`${entryFile} is missing — run the prerender bundle build first`);
   const site = await import(pathToFileURL(entryFile).href);
 
-  const siteUrl = (process.env.VITE_SITE_URL || 'https://atlass.dpdns.org').replace(/\/+$/, '');
+  const siteUrl = (
+    process.env.VITE_SITE_URL || 'https://atlass.dpdns.org'
+  ).replace(/\/+$/, '');
   const buildDate = today();
 
   // 1. Catalog.
-  const allowSnapshot = site.snapshotAllowed(process.env.MARKETING_PLANS_ALLOW_SNAPSHOT);
+  const allowSnapshot = site.snapshotAllowed(
+    process.env.MARKETING_PLANS_ALLOW_SNAPSHOT
+  );
   let loaded;
   try {
     loaded = await site.loadPlans({
       url: process.env.MARKETING_PLANS_URL || site.DEFAULT_PLANS_URL,
-      timeoutMs: Number(process.env.MARKETING_PLANS_TIMEOUT_MS) || site.DEFAULT_PLANS_TIMEOUT_MS,
+      timeoutMs:
+        Number(process.env.MARKETING_PLANS_TIMEOUT_MS) ||
+        site.DEFAULT_PLANS_TIMEOUT_MS,
       allowSnapshot,
       readSnapshot: () => JSON.parse(readFileSync(SNAPSHOT, 'utf8')),
       fetch: globalThis.fetch,
@@ -118,7 +145,9 @@ async function main() {
     fail(error instanceof Error ? error.message : String(error));
   }
   if (loaded.source === 'live') {
-    log(`plans: LIVE catalog from ${loaded.url} (${loaded.plans.length} plans)`);
+    log(
+      `plans: LIVE catalog from ${loaded.url} (${loaded.plans.length} plans)`
+    );
   } else {
     const bar = '!'.repeat(72);
     console.warn(
@@ -137,13 +166,15 @@ async function main() {
   if (existsSync(ssrAssets)) {
     // Files a page imports (images) — same hashed names as a client build would give them.
     for (const file of readdirSync(ssrAssets)) {
-      if (!file.endsWith('.css')) cpSync(join(ssrAssets, file), join(DIST, 'assets', file));
+      if (!file.endsWith('.css'))
+        cpSync(join(ssrAssets, file), join(DIST, 'assets', file));
     }
   }
   const assets = { ...client, themeScript: `/${themeFile}` };
 
   // 4. Pages and root files.
-  if (site.MARKETING_PAGES.length === 0) warn('MARKETING_PAGES is empty — no marketing page will be written');
+  if (site.MARKETING_PAGES.length === 0)
+    warn('MARKETING_PAGES is empty — no marketing page will be written');
   const built = site.buildMarketingSite({
     pages: site.MARKETING_PAGES,
     ctx: { plans: loaded.plans, siteUrl, buildDate },
@@ -158,8 +189,12 @@ async function main() {
     mkdirSync(dirname(target), { recursive: true });
     writeFileSync(target, file.contents);
   }
-  const pages = built.files.filter((file) => file.path.endsWith('.html')).length;
-  log(`wrote ${pages} pages and ${built.files.length - pages} root files to dist/marketing/ (site ${siteUrl}, ${buildDate})`);
+  const pages = built.files.filter((file) =>
+    file.path.endsWith('.html')
+  ).length;
+  log(
+    `wrote ${pages} pages and ${built.files.length - pages} root files to dist/marketing/ (site ${siteUrl}, ${buildDate})`
+  );
 }
 
 main().catch((error) => fail(error?.stack ?? String(error)));

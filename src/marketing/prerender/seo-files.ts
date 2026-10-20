@@ -37,7 +37,9 @@ function escapeXml(value: string): string {
 
 /** Pages that belong in a sitemap: listed, and indexable. */
 export function sitemapPages(pages: readonly ResolvedPage[]): ResolvedPage[] {
-  return pages.filter((entry) => entry.page.inSitemap && !isNoindex(entry.robots));
+  return pages.filter(
+    (entry) => entry.page.inSitemap && !isNoindex(entry.robots)
+  );
 }
 
 /**
@@ -92,7 +94,9 @@ export function buildLocaleSitemap(
 }
 
 /** Languages that have at least one sitemap URL, in a stable order. */
-export function sitemapLanguages(pages: readonly ResolvedPage[]): MarketingLang[] {
+export function sitemapLanguages(
+  pages: readonly ResolvedPage[]
+): MarketingLang[] {
   const present = new Set(sitemapPages(pages).map((entry) => entry.page.lang));
   return (['en', 'ar'] as const).filter((lang) => present.has(lang));
 }
@@ -201,7 +205,8 @@ const FALLBACK_LLMS: LlmsCopy = {
   details: '',
   pagesTitle: 'Pages',
   pageNotes: {},
-  pricingFileNote: 'Plans, prices, trial terms and limits, generated from the live catalog.',
+  pricingFileNote:
+    'Plans, prices, trial terms and limits, generated from the live catalog.',
   crawlerPolicy: LLMS_CRAWLER_POLICY,
 };
 
@@ -225,11 +230,15 @@ export function buildLlmsTxt(input: {
   const ar = input.copy?.ar;
   const url = (path: string) => absoluteUrl(ctx.siteUrl, path);
 
-  const section = (lang: MarketingLang, copy: LlmsCopy | undefined): string[] => {
+  const section = (
+    lang: MarketingLang,
+    copy: LlmsCopy | undefined
+  ): string[] => {
     const entries = pages.filter((entry) => entry.page.lang === lang);
     if (entries.length === 0) return [];
     const title =
-      copy?.pagesTitle ?? (lang === 'ar' ? 'الصفحات' : FALLBACK_LLMS.pagesTitle);
+      copy?.pagesTitle ??
+      (lang === 'ar' ? 'الصفحات' : FALLBACK_LLMS.pagesTitle);
     return [
       `## ${title}`,
       '',

@@ -64,7 +64,9 @@ export default defineConfig(({ isSsrBuild }) => {
           // Below 4 KB Vite would inline fonts as data: URLs; keep files.
           assetsInlineLimit: 0,
           rollupOptions: {
-            input: { marketing: path.resolve(__dirname, MARKETING_CLIENT_ENTRY) },
+            input: {
+              marketing: path.resolve(__dirname, MARKETING_CLIENT_ENTRY),
+            },
             output: {
               entryFileNames: 'assets/marketing-[hash].js',
               chunkFileNames: 'assets/marketing-[name]-[hash].js',

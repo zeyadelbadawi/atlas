@@ -11,11 +11,16 @@ import { marketingLlmsCopy } from './entry';
 import { buildMarketingSite, validatePages } from './site';
 import { FIXTURE_ASSETS, FIXTURE_CTX, FIXTURE_PAGES } from './test-fixtures';
 
-const paths = (files: readonly { path: string }[]) => files.map((file) => file.path).sort();
+const paths = (files: readonly { path: string }[]) =>
+  files.map((file) => file.path).sort();
 
 describe('buildMarketingSite', () => {
   it('writes every page and the root files', () => {
-    const site = buildMarketingSite({ pages: FIXTURE_PAGES, ctx: FIXTURE_CTX, assets: FIXTURE_ASSETS });
+    const site = buildMarketingSite({
+      pages: FIXTURE_PAGES,
+      ctx: FIXTURE_CTX,
+      assets: FIXTURE_ASSETS,
+    });
     expect(paths(site.files)).toEqual(
       [
         '404.html',
@@ -33,27 +38,51 @@ describe('buildMarketingSite', () => {
         'sitemaps/marketing-en.xml',
       ].sort()
     );
-    const pricing = site.files.find((file) => file.path === 'pricing/index.html')!.contents;
-    expect(pricing).toContain('<link rel="alternate" type="text/markdown" href="/pricing.md">');
+    const pricing = site.files.find(
+      (file) => file.path === 'pricing/index.html'
+    )!.contents;
+    expect(pricing).toContain(
+      '<link rel="alternate" type="text/markdown" href="/pricing.md">'
+    );
     expect(site.warnings).toEqual([]);
   });
 
   it('does not fail on an empty registry (warns, still writes the root files)', () => {
-    const site = buildMarketingSite({ pages: [], ctx: FIXTURE_CTX, assets: FIXTURE_ASSETS });
+    const site = buildMarketingSite({
+      pages: [],
+      ctx: FIXTURE_CTX,
+      assets: FIXTURE_ASSETS,
+    });
     expect(site.warnings.join('\n')).toMatch(/MARKETING_PAGES is empty/);
     expect(paths(site.files)).toEqual(
-      ['llms-full.txt', 'llms.txt', 'pricing.md', 'robots.txt', 'sitemap.xml'].sort()
+      [
+        'llms-full.txt',
+        'llms.txt',
+        'pricing.md',
+        'robots.txt',
+        'sitemap.xml',
+      ].sort()
     );
   });
 
   it('warns about unfilled copy tokens', () => {
     const [home] = FIXTURE_PAGES;
     const site = buildMarketingSite({
-      pages: [{ ...home, head: (ctx) => ({ ...home.head(ctx), description: 'Try {brand} now' }) }],
+      pages: [
+        {
+          ...home,
+          head: (ctx) => ({
+            ...home.head(ctx),
+            description: 'Try {brand} now',
+          }),
+        },
+      ],
       ctx: FIXTURE_CTX,
       assets: FIXTURE_ASSETS,
     });
-    expect(site.warnings.join('\n')).toMatch(/index\.html: unfilled copy token\(s\) \{brand\}/);
+    expect(site.warnings.join('\n')).toMatch(
+      /index\.html: unfilled copy token\(s\) \{brand\}/
+    );
   });
 
   it('rejects a registry the edge could not serve', () => {
@@ -61,11 +90,19 @@ describe('buildMarketingSite', () => {
     expect(validatePages([{ ...pricing, file: 'pricing.html' }])).toEqual([
       'pricing/en: file pricing.html must be pricing/index.html for path /pricing',
     ]);
-    expect(validatePages([{ ...pricing, path: '/pricing/' }]).join()).toMatch(/trailing slash/);
-    expect(validatePages([{ ...pricing, lang: 'ar' }]).join()).toMatch(/does not match lang/);
+    expect(validatePages([{ ...pricing, path: '/pricing/' }]).join()).toMatch(
+      /trailing slash/
+    );
+    expect(validatePages([{ ...pricing, lang: 'ar' }]).join()).toMatch(
+      /does not match lang/
+    );
     expect(validatePages([home, home]).join()).toMatch(/duplicate/);
     expect(() =>
-      buildMarketingSite({ pages: [{ ...pricing, file: 'x.html' }], ctx: FIXTURE_CTX, assets: FIXTURE_ASSETS })
+      buildMarketingSite({
+        pages: [{ ...pricing, file: 'x.html' }],
+        ctx: FIXTURE_CTX,
+        assets: FIXTURE_ASSETS,
+      })
     ).toThrow(/registry is invalid/);
   });
 });
@@ -88,8 +125,11 @@ describe('the real registry', () => {
     for (const file of site.files.filter((f) => f.path.endsWith('.html'))) {
       const doc = new DOMParser().parseFromString(file.contents, 'text/html');
       expect(doc.querySelectorAll('h1').length, file.path).toBe(1);
-      const noindex = doc.querySelector('meta[name="robots"]')?.getAttribute('content') ?? '';
-      expect(/noindex/.test(noindex), file.path).toBe(file.path.endsWith('404.html'));
+      const noindex =
+        doc.querySelector('meta[name="robots"]')?.getAttribute('content') ?? '';
+      expect(/noindex/.test(noindex), file.path).toBe(
+        file.path.endsWith('404.html')
+      );
     }
   });
 });

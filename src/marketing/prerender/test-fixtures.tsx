@@ -13,8 +13,14 @@ export const FIXTURE_ASSETS: MarketingAssets = {
   modulePreloads: [],
   themeScript: '/assets/marketing-theme-0011aabb.js',
   fontPreloads: {
-    en: ['/assets/readex-pro-latin-AAAAAAAA.woff2', '/assets/rubik-latin-BBBBBBBB.woff2'],
-    ar: ['/assets/readex-pro-arabic-CCCCCCCC.woff2', '/assets/rubik-arabic-DDDDDDDD.woff2'],
+    en: [
+      '/assets/readex-pro-latin-AAAAAAAA.woff2',
+      '/assets/rubik-latin-BBBBBBBB.woff2',
+    ],
+    ar: [
+      '/assets/readex-pro-arabic-CCCCCCCC.woff2',
+      '/assets/rubik-arabic-DDDDDDDD.woff2',
+    ],
   },
 };
 
@@ -39,7 +45,12 @@ export const FIXTURE_PLANS: Plan[] = [
       recordedSessions: 10,
     },
     features: { liveSessions: false },
-    pricing: { amount: 2790, currency: 'EGP', billingCycle: 'monthly', yearlyAmount: 27900 },
+    pricing: {
+      amount: 2790,
+      currency: 'EGP',
+      billingCycle: 'monthly',
+      yearlyAmount: 27900,
+    },
     trialEligible: true,
     trialDurationDays: 14,
     version: 1,
@@ -97,7 +108,12 @@ function page(
   id: string,
   lang: 'en' | 'ar',
   path: string,
-  options: { file?: string; inSitemap?: boolean; noindex?: boolean; h1?: string } = {}
+  options: {
+    file?: string;
+    inSitemap?: boolean;
+    noindex?: boolean;
+    h1?: string;
+  } = {}
 ): MarketingPageDef {
   const en = path.replace(/^\/ar(?=\/|$)/, '') || '/';
   const ar = en === '/' ? '/ar' : `/ar${en}`;
@@ -106,7 +122,9 @@ function page(
     id,
     lang,
     path,
-    file: options.file ?? (path === '/' ? 'index.html' : `${path.slice(1)}/index.html`),
+    file:
+      options.file ??
+      (path === '/' ? 'index.html' : `${path.slice(1)}/index.html`),
     inSitemap: options.inSitemap ?? true,
     head: () => ({
       title: `${id} title ${lang} | ${lang === 'ar' ? 'أطلس' : 'Atlas'}`,
@@ -115,7 +133,13 @@ function page(
       alternates: options.noindex ? undefined : { en, ar },
       ogImage: `/marketing-assets/og/og-${lang}.jpg`,
       robots: options.noindex ? 'noindex, follow' : undefined,
-      jsonLd: [{ '@context': 'https://schema.org', '@type': 'WebPage', name: `${id} </script> ${lang}` }],
+      jsonLd: [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: `${id} </script> ${lang}`,
+        },
+      ],
     }),
     render: () => (
       <div>
@@ -151,6 +175,14 @@ export const FIXTURE_PAGES: MarketingPageDef[] = [
   page('home', 'ar', '/ar'),
   page('pricing', 'en', '/pricing'),
   page('pricing', 'ar', '/ar/pricing'),
-  page('notFound', 'en', '/404', { file: '404.html', inSitemap: false, noindex: true }),
-  page('notFound', 'ar', '/ar/404', { file: 'ar/404.html', inSitemap: false, noindex: true }),
+  page('notFound', 'en', '/404', {
+    file: '404.html',
+    inSitemap: false,
+    noindex: true,
+  }),
+  page('notFound', 'ar', '/ar/404', {
+    file: 'ar/404.html',
+    inSitemap: false,
+    noindex: true,
+  }),
 ];

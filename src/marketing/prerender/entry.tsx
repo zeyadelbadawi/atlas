@@ -41,7 +41,10 @@ export function marketingLlmsCopy(
       details: fill(llms.details, tokens),
       pagesTitle: fill(llms.pagesTitle, tokens),
       pageNotes: Object.fromEntries(
-        Object.entries(llms.pageNotes).map(([id, note]) => [id, fill(note, tokens)])
+        Object.entries(llms.pageNotes).map(([id, note]) => [
+          id,
+          fill(note, tokens),
+        ])
       ),
       pricingFileNote: fill(llms.pricingFileNote, tokens),
       crawlerPolicy: fill(llms.crawlerPolicy, tokens),

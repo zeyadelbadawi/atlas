@@ -38,17 +38,23 @@ describe('marketing document head', () => {
     expect(documentFor(0).documentElement.getAttribute('dir')).toBe('ltr');
     expect(documentFor(1).documentElement.getAttribute('lang')).toBe('ar');
     expect(documentFor(1).documentElement.getAttribute('dir')).toBe('rtl');
-    expect(attr(documentFor(1), 'meta[http-equiv="content-language"]')).toBe('ar');
+    expect(attr(documentFor(1), 'meta[http-equiv="content-language"]')).toBe(
+      'ar'
+    );
   });
 
   it('has title, description, an absolute self canonical and the hreflang trio', () => {
     const doc = documentFor(2);
     expect(doc.title).toBe('pricing title en | Atlas');
-    expect(attr(doc, 'meta[name="description"]')).toBe('pricing description en');
-    expect(attr(doc, 'link[rel="canonical"]', 'href')).toBe('https://atlass.dpdns.org/pricing');
-    const alternates = Array.from(doc.querySelectorAll('link[rel="alternate"][hreflang]')).map(
-      (link) => [link.getAttribute('hreflang'), link.getAttribute('href')]
+    expect(attr(doc, 'meta[name="description"]')).toBe(
+      'pricing description en'
     );
+    expect(attr(doc, 'link[rel="canonical"]', 'href')).toBe(
+      'https://atlass.dpdns.org/pricing'
+    );
+    const alternates = Array.from(
+      doc.querySelectorAll('link[rel="alternate"][hreflang]')
+    ).map((link) => [link.getAttribute('hreflang'), link.getAttribute('href')]);
     expect(alternates).toEqual([
       ['en', 'https://atlass.dpdns.org/pricing'],
       ['ar', 'https://atlass.dpdns.org/ar/pricing'],
@@ -71,7 +77,9 @@ describe('marketing document head', () => {
     expect(attr(doc, 'meta[property="og:site_name"]')).toBe('أطلس');
     expect(attr(doc, 'meta[property="og:locale"]')).toBe('ar_EG');
     expect(attr(doc, 'meta[property="og:locale:alternate"]')).toBe('en_US');
-    expect(attr(doc, 'meta[property="og:url"]')).toBe('https://atlass.dpdns.org/ar');
+    expect(attr(doc, 'meta[property="og:url"]')).toBe(
+      'https://atlass.dpdns.org/ar'
+    );
     expect(attr(doc, 'meta[property="og:image"]')).toBe(
       'https://atlass.dpdns.org/marketing-assets/og/og-ar.jpg'
     );
@@ -94,14 +102,24 @@ describe('marketing document head', () => {
       ['(prefers-color-scheme: light)', '#1B3A8C'],
       ['(prefers-color-scheme: dark)', '#0A1222'],
     ]);
-    expect(attr(doc, 'link[rel="icon"][type="image/svg+xml"]', 'href')).toBe('/favicon.svg');
+    expect(attr(doc, 'link[rel="icon"][type="image/svg+xml"]', 'href')).toBe(
+      '/favicon.svg'
+    );
     expect(attr(doc, 'link[rel="icon"][sizes]', 'href')).toBe('/favicon.ico');
-    expect(attr(doc, 'link[rel="apple-touch-icon"]', 'href')).toBe('/apple-touch-icon.png');
+    expect(attr(doc, 'link[rel="apple-touch-icon"]', 'href')).toBe(
+      '/apple-touch-icon.png'
+    );
     expect(attr(doc, 'link[rel="manifest"]', 'href')).toBe('/site.webmanifest');
-    const fonts = Array.from(doc.querySelectorAll('link[rel="preload"][as="font"]'));
-    expect(fonts.map((f) => f.getAttribute('href'))).toEqual(FIXTURE_ASSETS.fontPreloads.en);
+    const fonts = Array.from(
+      doc.querySelectorAll('link[rel="preload"][as="font"]')
+    );
+    expect(fonts.map((f) => f.getAttribute('href'))).toEqual(
+      FIXTURE_ASSETS.fontPreloads.en
+    );
     expect(fonts.every((f) => f.hasAttribute('crossorigin'))).toBe(true);
-    expect(attr(doc, 'link[rel="stylesheet"]', 'href')).toBe('/assets/marketing-abc123.css');
+    expect(attr(doc, 'link[rel="stylesheet"]', 'href')).toBe(
+      '/assets/marketing-abc123.css'
+    );
     expect(attr(documentFor(1), 'link[rel="preload"][as="font"]', 'href')).toBe(
       FIXTURE_ASSETS.fontPreloads.ar[0]
     );
@@ -120,29 +138,50 @@ describe('marketing document head', () => {
       }
     }
     // The theme script is classic and render-blocking; the app script a module.
-    const theme = doc.querySelector('script[src="/assets/marketing-theme-0011aabb.js"]');
+    const theme = doc.querySelector(
+      'script[src="/assets/marketing-theme-0011aabb.js"]'
+    );
     expect(theme?.hasAttribute('type')).toBe(false);
-    expect(theme?.hasAttribute('async') || theme?.hasAttribute('defer')).toBe(false);
+    expect(theme?.hasAttribute('async') || theme?.hasAttribute('defer')).toBe(
+      false
+    );
     const stylesheet = doc.querySelector('link[rel="stylesheet"]');
-    expect(theme!.compareDocumentPosition(stylesheet!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(attr(doc, 'script[type="module"]', 'src')).toBe('/assets/marketing-def456.js');
+    expect(
+      theme!.compareDocumentPosition(stylesheet!) &
+        Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+    expect(attr(doc, 'script[type="module"]', 'src')).toBe(
+      '/assets/marketing-def456.js'
+    );
     // No inline event handlers anywhere.
     expect(doc.documentElement.outerHTML).not.toMatch(/\son[a-z]+=/i);
   });
 
   it('cannot be broken out of by JSON-LD data', () => {
-    const serialized = serializeJsonLd({ name: '</script><script>alert(1)</script>' });
+    const serialized = serializeJsonLd({
+      name: '</script><script>alert(1)</script>',
+    });
     expect(serialized).not.toContain('<');
-    expect(JSON.parse(serialized)).toEqual({ name: '</script><script>alert(1)</script>' });
+    expect(JSON.parse(serialized)).toEqual({
+      name: '</script><script>alert(1)</script>',
+    });
     const doc = documentFor(0);
-    expect(doc.querySelectorAll('script[type="application/ld+json"]')).toHaveLength(1);
+    expect(
+      doc.querySelectorAll('script[type="application/ld+json"]')
+    ).toHaveLength(1);
   });
 
   it('adds the Markdown alternate when asked (the pricing page)', () => {
     expect(
-      attr(documentFor(2, '/pricing.md'), 'link[rel="alternate"][type="text/markdown"]', 'href')
+      attr(
+        documentFor(2, '/pricing.md'),
+        'link[rel="alternate"][type="text/markdown"]',
+        'href'
+      )
     ).toBe('/pricing.md');
-    expect(documentFor(0).querySelector('link[type="text/markdown"]')).toBeNull();
+    expect(
+      documentFor(0).querySelector('link[type="text/markdown"]')
+    ).toBeNull();
   });
 
   it('renders the page body inside <body class="mk">', () => {
@@ -154,7 +193,9 @@ describe('marketing document head', () => {
 
 describe('document helpers', () => {
   it('joins the origin and path', () => {
-    expect(absoluteUrl('https://atlass.dpdns.org/', '/')).toBe('https://atlass.dpdns.org/');
+    expect(absoluteUrl('https://atlass.dpdns.org/', '/')).toBe(
+      'https://atlass.dpdns.org/'
+    );
     expect(absoluteUrl('https://atlass.dpdns.org', 'pricing')).toBe(
       'https://atlass.dpdns.org/pricing'
     );

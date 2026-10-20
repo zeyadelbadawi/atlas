@@ -44,11 +44,24 @@ describe('robots.txt purpose groups', () => {
   it('allows search and answer engines, then user fetchers; disallows training crawlers', () => {
     expect(groups(robots)).toEqual([
       {
-        agents: ['Googlebot', 'Bingbot', 'OAI-SearchBot', 'PerplexityBot', 'Claude-SearchBot', 'Applebot'],
+        agents: [
+          'Googlebot',
+          'Bingbot',
+          'OAI-SearchBot',
+          'PerplexityBot',
+          'Claude-SearchBot',
+          'Applebot',
+        ],
         rules: ['Allow: /'],
       },
-      { agents: ['ChatGPT-User', 'Claude-User', 'Perplexity-User'], rules: ['Allow: /'] },
-      { agents: ['GPTBot', 'ClaudeBot', 'CCBot', 'Applebot-Extended'], rules: ['Disallow: /'] },
+      {
+        agents: ['ChatGPT-User', 'Claude-User', 'Perplexity-User'],
+        rules: ['Allow: /'],
+      },
+      {
+        agents: ['GPTBot', 'ClaudeBot', 'CCBot', 'Applebot-Extended'],
+        rules: ['Disallow: /'],
+      },
       { agents: ['Google-Extended'], rules: ['Disallow: /'] },
       { agents: ['*'], rules: ['Allow: /'] },
     ]);
@@ -57,7 +70,9 @@ describe('robots.txt purpose groups', () => {
   it('summarises the policy at the top and ends with the Sitemap line', () => {
     expect(robots.startsWith('# ')).toBe(true);
     expect(robots.split('\n').slice(0, 4).join(' ')).toMatch(/allowed.*train/i);
-    expect(robots.trim().split('\n').pop()).toBe('Sitemap: https://atlass.dpdns.org/sitemap.xml');
+    expect(robots.trim().split('\n').pop()).toBe(
+      'Sitemap: https://atlass.dpdns.org/sitemap.xml'
+    );
   });
 });
 
@@ -68,7 +83,8 @@ const COPY: LlmsCopy = {
   pagesTitle: 'Pages',
   pageNotes: { home: 'The home page.', pricing: 'Plans and limits.' },
   pricingFileNote: 'Prices from the catalog.',
-  crawlerPolicy: 'Search and answer crawlers may read this site; training crawlers may not.',
+  crawlerPolicy:
+    'Search and answer crawlers may read this site; training crawlers may not.',
 };
 
 describe('llms.txt and llms-full.txt', () => {
@@ -76,18 +92,26 @@ describe('llms.txt and llms-full.txt', () => {
     pages: FIXTURE_PAGES,
     ctx: FIXTURE_CTX,
     assets: FIXTURE_ASSETS,
-    llms: { en: COPY, ar: { ...COPY, summary: 'أطلس منصة.', pagesTitle: 'الصفحات' } },
+    llms: {
+      en: COPY,
+      ar: { ...COPY, summary: 'أطلس منصة.', pagesTitle: 'الصفحات' },
+    },
   });
-  const file = (path: string) => site.files.find((f) => f.path === path)?.contents ?? '';
+  const file = (path: string) =>
+    site.files.find((f) => f.path === path)?.contents ?? '';
 
   it('has the brand H1, both summaries, page links with notes, the files and the crawler policy', () => {
     const llms = file('llms.txt');
     expect(llms.split('\n')[0]).toBe('# Atlas');
     expect(llms).toContain('> Atlas is a branded academy platform.');
     expect(llms).toContain('> أطلس منصة.');
-    expect(llms).toContain('- [home title en | Atlas](https://atlass.dpdns.org/): The home page.');
+    expect(llms).toContain(
+      '- [home title en | Atlas](https://atlass.dpdns.org/): The home page.'
+    );
     expect(llms).toContain('## الصفحات');
-    expect(llms).toContain('(https://atlass.dpdns.org/ar/pricing): Plans and limits.');
+    expect(llms).toContain(
+      '(https://atlass.dpdns.org/ar/pricing): Plans and limits.'
+    );
     expect(llms).toContain('https://atlass.dpdns.org/pricing.md');
     expect(llms).toContain('https://atlass.dpdns.org/llms-full.txt');
     expect(llms).toContain(COPY.crawlerPolicy);
@@ -95,7 +119,9 @@ describe('llms.txt and llms-full.txt', () => {
 
   it('links only listed, indexable pages: no 404, no planned URL', () => {
     const llms = file('llms.txt');
-    const links = [...llms.matchAll(/\]\((https:\/\/[^)]+)\)/g)].map((m) => m[1]);
+    const links = [...llms.matchAll(/\]\((https:\/\/[^)]+)\)/g)].map(
+      (m) => m[1]
+    );
     expect(links.filter((l) => !/\.(md|txt)$/.test(l))).toEqual([
       'https://atlass.dpdns.org/',
       'https://atlass.dpdns.org/pricing',
@@ -103,7 +129,8 @@ describe('llms.txt and llms-full.txt', () => {
       'https://atlass.dpdns.org/ar/pricing',
     ]);
     expect(llms).not.toMatch(/404|notFound/);
-    for (const planned of MARKETING_PLANNED_PATHS) expect(llms).not.toContain(planned);
+    for (const planned of MARKETING_PLANNED_PATHS)
+      expect(llms).not.toContain(planned);
   });
 
   it('falls back to a factual file without copy', () => {
@@ -116,7 +143,12 @@ describe('llms.txt and llms-full.txt', () => {
 
   it('llms-full.txt has every listed page H1, EN before AR, main content only, then pricing', () => {
     const full = file('llms-full.txt');
-    const order = ['# home heading en', '# pricing heading en', '# home heading ar', '# pricing heading ar'];
+    const order = [
+      '# home heading en',
+      '# pricing heading en',
+      '# home heading ar',
+      '# pricing heading ar',
+    ];
     const positions = order.map((h1) => full.indexOf(`\n${h1}\n`));
     expect(positions.every((p) => p > 0)).toBe(true);
     expect([...positions].sort((a, b) => a - b)).toEqual(positions);
@@ -143,8 +175,10 @@ describe('htmlToText', () => {
   });
 
   it('takes the first <main>', () => {
-    expect(mainHtml('<header>x</header><main class="a"><p>y</p></main><footer>z</footer>')).toBe(
-      '<p>y</p>'
-    );
+    expect(
+      mainHtml(
+        '<header>x</header><main class="a"><p>y</p></main><footer>z</footer>'
+      )
+    ).toBe('<p>y</p>');
   });
 });

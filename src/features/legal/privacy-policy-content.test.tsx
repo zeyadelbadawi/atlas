@@ -82,9 +82,28 @@ describe('Privacy Policy content', () => {
     }
   });
 
-  it('carries the 12 October 2026 revision date', () => {
-    expect(PRIVACY_POLICY_EN.lastUpdated).toBe('12 October 2026');
-    expect(PRIVACY_POLICY_AR.lastUpdated).toBe('١٢ أكتوبر ٢٠٢٦');
+  it('carries the 20 October 2026 revision date', () => {
+    expect(PRIVACY_POLICY_EN.lastUpdated).toBe('20 October 2026');
+    expect(PRIVACY_POLICY_AR.lastUpdated).toBe('٢٠ أكتوبر ٢٠٢٦');
+  });
+
+  it('discloses the cookieless marketing-site counts (EN + AR)', () => {
+    const en = sectionText(PRIVACY_POLICY_EN, 'cookies');
+    for (const fact of [
+      'marketing website',
+      'page visits and button clicks in aggregate',
+      'without cookies, identifiers or stored IP addresses',
+      'does not measure browsers that send Global Privacy Control or Do Not Track',
+    ])
+      expect(en).toContain(fact);
+    const ar = sectionText(PRIVACY_POLICY_AR, 'cookies');
+    for (const fact of [
+      'موقع أطلس التسويقي',
+      'أعداد مجمّعة',
+      'دون ملفات تعريف ارتباط أو معرّفات أو تخزين لعناوين IP',
+      'ولا يقيس المتصفحات',
+    ])
+      expect(ar).toContain(fact);
   });
 
   it('discloses the forensic video watermark records (EN + AR)', () => {

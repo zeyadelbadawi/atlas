@@ -13,33 +13,92 @@ import type { MarketingLang } from '../types';
 import { absoluteUrl } from './document';
 
 const VOID = new Set([
-  'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link',
-  'meta', 'source', 'track', 'wbr',
+  'area',
+  'base',
+  'br',
+  'col',
+  'embed',
+  'hr',
+  'img',
+  'input',
+  'link',
+  'meta',
+  'source',
+  'track',
+  'wbr',
 ]);
-const SKIP = new Set(['script', 'style', 'svg', 'noscript', 'template', 'head']);
+const SKIP = new Set([
+  'script',
+  'style',
+  'svg',
+  'noscript',
+  'template',
+  'head',
+]);
 const BLOCK = new Set([
-  'address', 'article', 'aside', 'blockquote', 'dd', 'details', 'div', 'dl',
-  'dt', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'header', 'hr',
-  'legend', 'li', 'main', 'nav', 'ol', 'p', 'section', 'summary', 'table',
-  'tbody', 'thead', 'tfoot', 'tr', 'ul', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-  'label', 'caption',
+  'address',
+  'article',
+  'aside',
+  'blockquote',
+  'dd',
+  'details',
+  'div',
+  'dl',
+  'dt',
+  'fieldset',
+  'figcaption',
+  'figure',
+  'footer',
+  'form',
+  'header',
+  'hr',
+  'legend',
+  'li',
+  'main',
+  'nav',
+  'ol',
+  'p',
+  'section',
+  'summary',
+  'table',
+  'tbody',
+  'thead',
+  'tfoot',
+  'tr',
+  'ul',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'label',
+  'caption',
 ]);
 
 const NAMED_ENTITIES: Record<string, string> = {
-  amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ',
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  apos: "'",
+  nbsp: ' ',
 };
 
 export function decodeEntities(text: string): string {
-  return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, body: string) => {
-    if (body[0] === '#') {
-      const code =
-        body[1] === 'x' || body[1] === 'X'
-          ? parseInt(body.slice(2), 16)
-          : parseInt(body.slice(1), 10);
-      return Number.isFinite(code) ? String.fromCodePoint(code) : match;
+  return text.replace(
+    /&(#x[0-9a-f]+|#\d+|[a-z]+);/gi,
+    (match, body: string) => {
+      if (body[0] === '#') {
+        const code =
+          body[1] === 'x' || body[1] === 'X'
+            ? parseInt(body.slice(2), 16)
+            : parseInt(body.slice(1), 10);
+        return Number.isFinite(code) ? String.fromCodePoint(code) : match;
+      }
+      return NAMED_ENTITIES[body.toLowerCase()] ?? match;
     }
-    return NAMED_ENTITIES[body.toLowerCase()] ?? match;
-  });
+  );
 }
 
 /** The inner HTML of the first `<main>`, or the whole input when there is none. */
@@ -75,7 +134,8 @@ export function htmlToText(html: string): string {
     prefix = '';
   };
 
-  const tokens = html.match(/<!--[\s\S]*?-->|<\/?[a-zA-Z][^>]*>|[^<]+|</g) ?? [];
+  const tokens =
+    html.match(/<!--[\s\S]*?-->|<\/?[a-zA-Z][^>]*>|[^<]+|</g) ?? [];
   for (const token of tokens) {
     if (token.startsWith('<!--')) continue;
     const tag = /^<(\/?)([a-zA-Z][a-zA-Z0-9-]*)([^>]*)>$/.exec(token);
@@ -98,7 +158,8 @@ export function htmlToText(html: string): string {
         if (cells) cells.push(current.replace(/\s+/g, ' ').trim());
         current = '';
       } else if (name === 'tr') {
-        if (cells && cells.some(Boolean)) blocks.push(`| ${cells.join(' | ')} |`);
+        if (cells && cells.some(Boolean))
+          blocks.push(`| ${cells.join(' | ')} |`);
         cells = null;
       } else if (BLOCK.has(name)) {
         flush();
@@ -181,7 +242,9 @@ export function buildLlmsFullTxt(input: {
   const parts: string[] = [
     `# ${input.heading ?? 'Atlas'} — full text`,
     '',
-    ...(input.summary ? [`> ${input.summary.replace(/\s+/g, ' ').trim()}`, ''] : []),
+    ...(input.summary
+      ? [`> ${input.summary.replace(/\s+/g, ' ').trim()}`, '']
+      : []),
     `The visible text of the published pages of ${input.siteUrl.replace(/\/+$/, '')}, English then Arabic, as of ${input.buildDate}, followed by the pricing file.`,
     '',
   ];

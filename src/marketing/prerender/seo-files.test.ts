@@ -29,7 +29,8 @@ function resolve(pages: readonly MarketingPageDef[]): ResolvedPage[] {
   });
 }
 
-const parse = (xml: string) => new DOMParser().parseFromString(xml, 'application/xml');
+const parse = (xml: string) =>
+  new DOMParser().parseFromString(xml, 'application/xml');
 
 describe('sitemaps', () => {
   const resolved = resolve(FIXTURE_PAGES);
@@ -38,7 +39,9 @@ describe('sitemaps', () => {
     expect(sitemapLanguages(resolved)).toEqual(['en', 'ar']);
     const index = parse(buildSitemapIndex(['en', 'ar'], FIXTURE_CTX));
     expect(index.documentElement.nodeName).toBe('sitemapindex');
-    expect(Array.from(index.getElementsByTagName('loc')).map((n) => n.textContent)).toEqual([
+    expect(
+      Array.from(index.getElementsByTagName('loc')).map((n) => n.textContent)
+    ).toEqual([
       'https://atlass.dpdns.org/sitemaps/marketing-en.xml',
       'https://atlass.dpdns.org/sitemaps/marketing-ar.xml',
     ]);
@@ -49,19 +52,30 @@ describe('sitemaps', () => {
     expect(xml).not.toMatch(/changefreq|priority|404/);
     expect(xml).not.toMatch(/<loc>\s/);
     const doc = parse(xml);
-    expect(Array.from(doc.getElementsByTagName('loc')).map((n) => n.textContent)).toEqual([
+    expect(
+      Array.from(doc.getElementsByTagName('loc')).map((n) => n.textContent)
+    ).toEqual([
       'https://atlass.dpdns.org/',
       'https://atlass.dpdns.org/pricing',
     ]);
-    expect(doc.getElementsByTagName('lastmod')[0].textContent).toBe('2026-10-20');
-    const links = Array.from(doc.getElementsByTagName('xhtml:link')).slice(0, 3);
-    expect(links.map((l) => [l.getAttribute('hreflang'), l.getAttribute('href')])).toEqual([
+    expect(doc.getElementsByTagName('lastmod')[0].textContent).toBe(
+      '2026-10-20'
+    );
+    const links = Array.from(doc.getElementsByTagName('xhtml:link')).slice(
+      0,
+      3
+    );
+    expect(
+      links.map((l) => [l.getAttribute('hreflang'), l.getAttribute('href')])
+    ).toEqual([
       ['en', 'https://atlass.dpdns.org/'],
       ['ar', 'https://atlass.dpdns.org/ar'],
       ['x-default', 'https://atlass.dpdns.org/'],
     ]);
     const ar = parse(buildLocaleSitemap('ar', resolved, FIXTURE_CTX));
-    expect(Array.from(ar.getElementsByTagName('loc')).map((n) => n.textContent)).toEqual([
+    expect(
+      Array.from(ar.getElementsByTagName('loc')).map((n) => n.textContent)
+    ).toEqual([
       'https://atlass.dpdns.org/ar',
       'https://atlass.dpdns.org/ar/pricing',
     ]);
@@ -71,7 +85,9 @@ describe('sitemaps', () => {
     const onlyEnglishPricing = resolve(
       FIXTURE_PAGES.filter((page) => page.path !== '/ar/pricing')
     );
-    const doc = parse(buildLocaleSitemap('en', onlyEnglishPricing, FIXTURE_CTX));
+    const doc = parse(
+      buildLocaleSitemap('en', onlyEnglishPricing, FIXTURE_CTX)
+    );
     const urls = Array.from(doc.getElementsByTagName('url'));
     const pricing = urls.find((url) => url.textContent?.includes('/pricing'));
     expect(pricing?.getElementsByTagName('xhtml:link')).toHaveLength(0);
@@ -81,9 +97,9 @@ describe('sitemaps', () => {
 
   it('works with an empty registry', () => {
     expect(sitemapLanguages([])).toEqual([]);
-    expect(parse(buildSitemapIndex([], FIXTURE_CTX)).documentElement.nodeName).toBe(
-      'sitemapindex'
-    );
+    expect(
+      parse(buildSitemapIndex([], FIXTURE_CTX)).documentElement.nodeName
+    ).toBe('sitemapindex');
   });
 });
 

@@ -32,7 +32,10 @@ describe('loadPlans', () => {
     });
     expect(loaded.source).toBe('live');
     expect(loaded.plans).toHaveLength(3);
-    expect(fetch).toHaveBeenCalledWith('https://api.test/plans', expect.anything());
+    expect(fetch).toHaveBeenCalledWith(
+      'https://api.test/plans',
+      expect.anything()
+    );
   });
 
   it('fails the build when the fetch fails and the snapshot is not allowed', async () => {
@@ -44,14 +47,22 @@ describe('loadPlans', () => {
   });
 
   it('fails on an HTTP error too', async () => {
-    const fetch = vi.fn(async () => ({ ok: false, status: 503, json: async () => null }));
-    await expect(loadPlans({ allowSnapshot: false, readSnapshot: () => snapshot, fetch })).rejects.toThrow(
-      /HTTP 503/
-    );
+    const fetch = vi.fn(async () => ({
+      ok: false,
+      status: 503,
+      json: async () => null,
+    }));
+    await expect(
+      loadPlans({ allowSnapshot: false, readSnapshot: () => snapshot, fetch })
+    ).rejects.toThrow(/HTTP 503/);
   });
 
   it('uses the snapshot only when allowed, and says why', async () => {
-    const loaded = await loadPlans({ allowSnapshot: true, readSnapshot: () => snapshot, fetch: failing() });
+    const loaded = await loadPlans({
+      allowSnapshot: true,
+      readSnapshot: () => snapshot,
+      fetch: failing(),
+    });
     expect(loaded.source).toBe('snapshot');
     expect(loaded.fetchError).toContain('ENOTFOUND');
     expect(loaded.plans.length).toBeGreaterThan(0);
@@ -67,14 +78,25 @@ describe('loadPlans', () => {
         })
     );
     await expect(
-      loadPlans({ allowSnapshot: false, timeoutMs: 10, readSnapshot: () => snapshot, fetch })
+      loadPlans({
+        allowSnapshot: false,
+        timeoutMs: 10,
+        readSnapshot: () => snapshot,
+        fetch,
+      })
     ).rejects.toThrow(/timed out after 10 ms/);
   });
 
   it('never papers over an unpublishable live catalog with the snapshot', async () => {
-    const usd = [{ ...FIXTURE_PLANS[0], pricing: { amount: 10, currency: 'USD' } }];
+    const usd = [
+      { ...FIXTURE_PLANS[0], pricing: { amount: 10, currency: 'USD' } },
+    ];
     await expect(
-      loadPlans({ allowSnapshot: true, readSnapshot: () => snapshot, fetch: ok(usd) })
+      loadPlans({
+        allowSnapshot: true,
+        readSnapshot: () => snapshot,
+        fetch: ok(usd),
+      })
     ).rejects.toBeInstanceOf(MarketingPlansError);
   });
 });
@@ -89,7 +111,10 @@ describe('assertPublishablePlans', () => {
     ['empty', []],
     ['missing key', [{ ...FIXTURE_PLANS[0], key: '' }]],
     ['missing limits', [{ ...FIXTURE_PLANS[0], limits: undefined }]],
-    ['non-EGP', [{ ...FIXTURE_PLANS[0], pricing: { amount: 1, currency: 'USD' } }]],
+    [
+      'non-EGP',
+      [{ ...FIXTURE_PLANS[0], pricing: { amount: 1, currency: 'USD' } }],
+    ],
     ['premium family', [{ ...FIXTURE_PLANS[0], family: 'premium' }]],
   ])('rejects %s', (_name, value) => {
     expect(() => assertPublishablePlans(value)).toThrow(MarketingPlansError);

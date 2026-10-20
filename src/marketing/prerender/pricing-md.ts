@@ -28,7 +28,10 @@ function groupDigits(value: number): string {
   return fraction ? `${grouped}.${fraction}` : grouped;
 }
 
-function money(amount: number | undefined, currency: string | undefined): string {
+function money(
+  amount: number | undefined,
+  currency: string | undefined
+): string {
   if (amount === undefined || !currency) return '—';
   return `${currency} ${groupDigits(amount)}`;
 }
@@ -96,7 +99,10 @@ export function buildPricingMarkdown(input: {
     return lines.join('\n');
   }
 
-  lines.push('| Plan | Monthly | Yearly | Trial |', '| --- | --- | --- | --- |');
+  lines.push(
+    '| Plan | Monthly | Yearly | Trial |',
+    '| --- | --- | --- | --- |'
+  );
   for (const plan of plans) {
     const { monthly, yearly } = monthlyAndYearly(plan);
     const currency = plan.pricing?.currency;

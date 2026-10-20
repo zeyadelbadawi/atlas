@@ -83,7 +83,9 @@ describe('static marketing site (Caddyfile)', () => {
     expect(page).not.toContain('www.');
     expect(page).toContain('method GET HEAD');
     expect(page).toContain(`expression \`${ON}\``);
-    expect(page).toMatch(/file \{\s*root \/srv-marketing\s*try_files \{path\}\/index\.html\s*\}/);
+    expect(page).toMatch(
+      /file \{\s*root \/srv-marketing\s*try_files \{path\}\/index\.html\s*\}/
+    );
     expect(platform).toMatch(
       /handle @marketing_page \{\s*root \* \/srv-marketing\s*rewrite \* \{file_match\.relative\}\s*file_server\s*\}/
     );
@@ -105,12 +107,20 @@ describe('static marketing site (Caddyfile)', () => {
     expect(files).toContain(
       'path /robots.txt /sitemap.xml /sitemaps/* /llms.txt /llms-full.txt /pricing.md /marketing-assets/*'
     );
-    const handler = platform.slice(platform.indexOf('handle @marketing_root_file {'));
+    const handler = platform.slice(
+      platform.indexOf('handle @marketing_root_file {')
+    );
     const body = handler.slice(0, handler.indexOf('\n\t\t}\n'));
     expect(body).toContain('root * /srv-marketing');
-    expect(body).toContain('header /pricing.md Content-Type "text/markdown; charset=utf-8"');
-    expect(body).toContain('header /llms.txt Content-Type "text/plain; charset=utf-8"');
-    expect(body).toContain('header /llms-full.txt Content-Type "text/plain; charset=utf-8"');
+    expect(body).toContain(
+      'header /pricing.md Content-Type "text/markdown; charset=utf-8"'
+    );
+    expect(body).toContain(
+      'header /llms.txt Content-Type "text/plain; charset=utf-8"'
+    );
+    expect(body).toContain(
+      'header /llms-full.txt Content-Type "text/plain; charset=utf-8"'
+    );
     expect(body).toContain('file_server');
     expect(body).not.toContain('try_files');
     expect(body).not.toContain('index.html');
@@ -146,14 +156,21 @@ describe('static marketing site (Caddyfile)', () => {
     ].map((marker) => platform.indexOf(marker));
     expect(order.every((index) => index > -1)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
-    const documentHandler = platform.slice(platform.lastIndexOf('import security_headers'));
+    const documentHandler = platform.slice(
+      platform.lastIndexOf('import security_headers')
+    );
     expect(documentHandler).toContain('import csp');
     expect(documentHandler).toContain('import hsts_platform');
     expect(documentHandler).toContain('import static_cache');
   });
 
   it('can be switched off by ATLAS_MARKETING_STATIC=off (unset or empty = on)', () => {
-    for (const name of ['marketing_slash', 'marketing_page', 'marketing_gone_ar', 'marketing_gone']) {
+    for (const name of [
+      'marketing_slash',
+      'marketing_page',
+      'marketing_gone_ar',
+      'marketing_gone',
+    ]) {
       expect(matcher(platform, name)).toContain(`expression \`${ON}\``);
     }
     const off = matcher(platform, 'marketing_static_off');
@@ -178,8 +195,16 @@ describe('static marketing site (Caddyfile)', () => {
   });
 
   it('leaves academy subdomains and connected domains untouched', () => {
-    expect(customDomains).not.toMatch(/marketing|srv-marketing|status 404|\/blog/);
-    for (const name of ['marketing_page', 'marketing_slash', 'marketing_root_file', 'marketing_gone', 'marketing_gone_ar']) {
+    expect(customDomains).not.toMatch(
+      /marketing|srv-marketing|status 404|\/blog/
+    );
+    for (const name of [
+      'marketing_page',
+      'marketing_slash',
+      'marketing_root_file',
+      'marketing_gone',
+      'marketing_gone_ar',
+    ]) {
       expect(matcher(platform, name)).toMatch(/host atlass\.dpdns\.org\n/);
     }
   });
@@ -188,8 +213,12 @@ describe('static marketing site (Caddyfile)', () => {
 describe('the image keeps marketing files out of /srv (Dockerfile)', () => {
   it('moves dist/marketing and the marketing images to /srv-marketing', () => {
     expect(dockerfile).toContain('rm -rf dist/marketing');
-    expect(dockerfile).toContain('mv dist/marketing-assets dist-marketing/marketing-assets');
-    expect(dockerfile).toContain('COPY --from=build /app/dist-marketing /srv-marketing');
+    expect(dockerfile).toContain(
+      'mv dist/marketing-assets dist-marketing/marketing-assets'
+    );
+    expect(dockerfile).toContain(
+      'COPY --from=build /app/dist-marketing /srv-marketing'
+    );
     expect(dockerfile).not.toMatch(/MARKETING_PLANS_ALLOW_SNAPSHOT=1/);
   });
 });

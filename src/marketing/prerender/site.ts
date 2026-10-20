@@ -63,13 +63,16 @@ export function validatePages(pages: readonly MarketingPageDef[]): string[] {
   const allowed404 = new Set<string>(Object.values(MARKETING_404_FILE));
   for (const page of pages) {
     const label = `${page.id}/${page.lang}`;
-    if (files.has(page.file)) errors.push(`${label}: duplicate file ${page.file}`);
+    if (files.has(page.file))
+      errors.push(`${label}: duplicate file ${page.file}`);
     files.add(page.file);
     if (allowed404.has(page.file)) {
-      if (page.inSitemap) errors.push(`${label}: a 404 page cannot be in the sitemap`);
+      if (page.inSitemap)
+        errors.push(`${label}: a 404 page cannot be in the sitemap`);
       continue;
     }
-    if (paths.has(page.path)) errors.push(`${label}: duplicate path ${page.path}`);
+    if (paths.has(page.path))
+      errors.push(`${label}: duplicate path ${page.path}`);
     paths.add(page.path);
     if (page.path !== '/' && page.path.endsWith('/')) {
       errors.push(`${label}: path ${page.path} has a trailing slash`);
@@ -81,13 +84,17 @@ export function validatePages(pages: readonly MarketingPageDef[]): string[] {
     }
     const arPath = page.path === '/ar' || page.path.startsWith('/ar/');
     if (arPath !== (page.lang === 'ar')) {
-      errors.push(`${label}: path ${page.path} does not match lang ${page.lang}`);
+      errors.push(
+        `${label}: path ${page.path} does not match lang ${page.lang}`
+      );
     }
   }
   return errors;
 }
 
-export function buildMarketingSite(input: BuildMarketingSiteInput): BuiltMarketingSite {
+export function buildMarketingSite(
+  input: BuildMarketingSiteInput
+): BuiltMarketingSite {
   const { pages, ctx, assets } = input;
   const warnings: string[] = [];
   const errors = validatePages(pages);
@@ -95,11 +102,15 @@ export function buildMarketingSite(input: BuildMarketingSiteInput): BuiltMarketi
     throw new Error(`marketing registry is invalid:\n  ${errors.join('\n  ')}`);
   }
   if (pages.length === 0) {
-    warnings.push('MARKETING_PAGES is empty: no pages rendered (root files are still written)');
+    warnings.push(
+      'MARKETING_PAGES is empty: no pages rendered (root files are still written)'
+    );
   }
   for (const [lang, file] of Object.entries(MARKETING_404_FILE)) {
     if (pages.length > 0 && !pages.some((page) => page.file === file)) {
-      warnings.push(`no ${lang} 404 page (${file}): the edge falls back to the app for gone URLs`);
+      warnings.push(
+        `no ${lang} 404 page (${file}): the edge falls back to the app for gone URLs`
+      );
     }
   }
 
@@ -118,7 +129,8 @@ export function buildMarketingSite(input: BuildMarketingSiteInput): BuiltMarketi
       ctx,
       assets,
       bodyHtml,
-      markdownAlternate: page.id === PRICING_PAGE_ID ? `/${PRICING_MD_FILE}` : undefined,
+      markdownAlternate:
+        page.id === PRICING_PAGE_ID ? `/${PRICING_MD_FILE}` : undefined,
     });
     files.push({ path: page.file, contents: html });
     const entry: ResolvedPage = {
@@ -135,24 +147,39 @@ export function buildMarketingSite(input: BuildMarketingSiteInput): BuiltMarketi
     if (!isNoindex(head.robots)) {
       const label = `${page.id}/${page.lang}`;
       const sameTitle = titles.get(head.title);
-      if (sameTitle) warnings.push(`${label}: title is the same as ${sameTitle}'s`);
+      if (sameTitle)
+        warnings.push(`${label}: title is the same as ${sameTitle}'s`);
       titles.set(head.title, label);
       const sameDescription = descriptions.get(head.description);
-      if (sameDescription) warnings.push(`${label}: description is the same as ${sameDescription}'s`);
+      if (sameDescription)
+        warnings.push(
+          `${label}: description is the same as ${sameDescription}'s`
+        );
       descriptions.set(head.description, label);
       if (head.canonicalPath !== page.path) {
-        warnings.push(`${label}: canonical ${head.canonicalPath} is not the page path ${page.path}`);
+        warnings.push(
+          `${label}: canonical ${head.canonicalPath} is not the page path ${page.path}`
+        );
       }
     }
   }
 
   const langs = sitemapLanguages(resolved);
   for (const lang of langs) {
-    files.push({ path: localeSitemapFile(lang), contents: buildLocaleSitemap(lang, resolved, ctx) });
+    files.push({
+      path: localeSitemapFile(lang),
+      contents: buildLocaleSitemap(lang, resolved, ctx),
+    });
   }
-  files.push({ path: SITEMAP_INDEX_FILE, contents: buildSitemapIndex(langs, ctx) });
+  files.push({
+    path: SITEMAP_INDEX_FILE,
+    contents: buildSitemapIndex(langs, ctx),
+  });
   files.push({ path: 'robots.txt', contents: buildRobotsTxt(ctx) });
-  files.push({ path: 'llms.txt', contents: buildLlmsTxt({ ctx, pages: resolved, copy: input.llms }) });
+  files.push({
+    path: 'llms.txt',
+    contents: buildLlmsTxt({ ctx, pages: resolved, copy: input.llms }),
+  });
 
   const pricingMarkdown = buildPricingMarkdown({
     plans: ctx.plans,
@@ -184,7 +211,9 @@ export function buildMarketingSite(input: BuildMarketingSiteInput): BuiltMarketi
   for (const file of files) {
     const leftover = file.contents.match(UNFILLED_TOKEN);
     if (leftover) {
-      warnings.push(`${file.path}: unfilled copy token(s) ${[...new Set(leftover)].join(', ')}`);
+      warnings.push(
+        `${file.path}: unfilled copy token(s) ${[...new Set(leftover)].join(', ')}`
+      );
     }
   }
   return { files, warnings };

@@ -24,7 +24,9 @@ export class MarketingPlansError extends Error {
  * C-12: render what the API returns, but fail loudly rather than publish
  * something the owner has ruled out).
  */
-export function assertPublishablePlans(value: unknown): asserts value is Plan[] {
+export function assertPublishablePlans(
+  value: unknown
+): asserts value is Plan[] {
   if (!Array.isArray(value)) {
     throw new MarketingPlansError('plans response is not an array');
   }
@@ -62,6 +64,19 @@ export function assertPublishablePlans(value: unknown): asserts value is Plan[] 
   });
 }
 
+/** `fetch failed` plus the network cause (`ENOTFOUND`, `ECONNREFUSED`…) when Node gives one. */
+function describeCause(error: Error): string {
+  const cause = (error as { cause?: { code?: unknown; message?: unknown } })
+    .cause;
+  const detail =
+    typeof cause?.code === 'string'
+      ? cause.code
+      : typeof cause?.message === 'string'
+        ? cause.message
+        : '';
+  return detail ? `${error.message}: ${detail}` : error.message;
+}
+
 type FetchLike = (
   url: string,
   init: { signal: AbortSignal; headers: Record<string, string> }
@@ -89,7 +104,9 @@ export function snapshotAllowed(value: string | undefined): boolean {
   return /^(1|true|yes|on)$/i.test((value ?? '').trim());
 }
 
-export async function loadPlans(options: LoadPlansOptions): Promise<LoadedPlans> {
+export async function loadPlans(
+  options: LoadPlansOptions
+): Promise<LoadedPlans> {
   const url = options.url || DEFAULT_PLANS_URL;
   const timeoutMs = options.timeoutMs ?? DEFAULT_PLANS_TIMEOUT_MS;
   let fetchError: string;
@@ -115,7 +132,7 @@ export async function loadPlans(options: LoadPlansOptions): Promise<LoadedPlans>
       error instanceof Error
         ? error.name === 'AbortError'
           ? `timed out after ${timeoutMs} ms`
-          : error.message
+          : describeCause(error)
         : String(error);
   }
 

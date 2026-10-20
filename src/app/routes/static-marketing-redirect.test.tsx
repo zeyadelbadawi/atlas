@@ -48,8 +48,12 @@ describe('claimStaticMarketingReload (loop guard)', () => {
     const storage = memoryStorage();
     expect(claimStaticMarketingReload(storage, '/pricing', 1_000)).toBe(true);
     resetStaticMarketingReloadForTests(); // the document reloaded
-    expect(claimStaticMarketingReload(storage, '/pricing', 1_000 + 3_000)).toBe(false);
-    expect(claimStaticMarketingReload(storage, '/pricing/', 1_000 + 3_000)).toBe(false);
+    expect(claimStaticMarketingReload(storage, '/pricing', 1_000 + 3_000)).toBe(
+      false
+    );
+    expect(
+      claimStaticMarketingReload(storage, '/pricing/', 1_000 + 3_000)
+    ).toBe(false);
   });
 
   it('allows it again after the window, or for another path', () => {
@@ -57,12 +61,20 @@ describe('claimStaticMarketingReload (loop guard)', () => {
     claimStaticMarketingReload(storage, '/pricing', 1_000);
     resetStaticMarketingReloadForTests();
     expect(
-      claimStaticMarketingReload(storage, '/pricing', 1_000 + STATIC_MARKETING_RELOAD_WINDOW_MS)
+      claimStaticMarketingReload(
+        storage,
+        '/pricing',
+        1_000 + STATIC_MARKETING_RELOAD_WINDOW_MS
+      )
     ).toBe(true);
     resetStaticMarketingReloadForTests();
-    expect(claimStaticMarketingReload(storage, '/ar', 1_000 + STATIC_MARKETING_RELOAD_WINDOW_MS)).toBe(
-      true
-    );
+    expect(
+      claimStaticMarketingReload(
+        storage,
+        '/ar',
+        1_000 + STATIC_MARKETING_RELOAD_WINDOW_MS
+      )
+    ).toBe(true);
   });
 
   it('answers the same within one document (React may mount twice)', () => {
@@ -87,7 +99,10 @@ describe('claimStaticMarketingReload (loop guard)', () => {
     storage.setItem(STATIC_MARKETING_RELOAD_KEY, '{not json');
     expect(claimStaticMarketingReload(storage, '/', 1_000)).toBe(true);
     resetStaticMarketingReloadForTests();
-    storage.setItem(STATIC_MARKETING_RELOAD_KEY, JSON.stringify({ path: '/', at: 99_999 }));
+    storage.setItem(
+      STATIC_MARKETING_RELOAD_KEY,
+      JSON.stringify({ path: '/', at: 99_999 })
+    );
     expect(claimStaticMarketingReload(storage, '/', 1_000)).toBe(true);
   });
 });
@@ -102,8 +117,14 @@ function renderAt(path: string, reload: () => void) {
     <MemoryRouter initialEntries={[path]}>
       <Routes>
         <Route path="/" element={<StaticMarketingRedirect reload={reload} />} />
-        <Route path="/pricing" element={<StaticMarketingRedirect reload={reload} />} />
-        <Route path="/ar/pricing" element={<StaticMarketingRedirect reload={reload} />} />
+        <Route
+          path="/pricing"
+          element={<StaticMarketingRedirect reload={reload} />}
+        />
+        <Route
+          path="/ar/pricing"
+          element={<StaticMarketingRedirect reload={reload} />}
+        />
         <Route path="/contact" element={<p>contact page</p>} />
       </Routes>
       <Where />
@@ -117,7 +138,9 @@ describe('StaticMarketingRedirect', () => {
     renderAt('/pricing', reload);
     expect(reload).toHaveBeenCalledTimes(1);
     expect(screen.queryByTestId('static-marketing-fallback')).toBeNull();
-    expect(window.sessionStorage.getItem(STATIC_MARKETING_RELOAD_KEY)).toContain('/pricing');
+    expect(
+      window.sessionStorage.getItem(STATIC_MARKETING_RELOAD_KEY)
+    ).toContain('/pricing');
   });
 
   it('shows the fallback instead of reloading again when the reload came back to the app', () => {

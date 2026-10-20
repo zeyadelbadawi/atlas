@@ -23,7 +23,10 @@ export interface ReloadGuardStorage {
 }
 
 /** The attempt this document already made (React may mount the route twice). */
-let claimedInThisDocument: { readonly path: string; readonly at: number } | null = null;
+let claimedInThisDocument: {
+  readonly path: string;
+  readonly at: number;
+} | null = null;
 
 /** Normalises the path the guard keys on (`/ar/` and `/ar` are one page). */
 export function reloadGuardPath(pathname: string): string {
@@ -50,7 +53,8 @@ export function claimStaticMarketingReload(
   try {
     const previous = parseRecord(storage.getItem(STATIC_MARKETING_RELOAD_KEY));
     if (previous) {
-      const age = typeof previous.at === 'number' ? now - previous.at : Infinity;
+      const age =
+        typeof previous.at === 'number' ? now - previous.at : Infinity;
       if (
         previous.path === path &&
         age >= 0 &&
@@ -71,7 +75,9 @@ export function claimStaticMarketingReload(
 }
 
 /** A stored attempt; a corrupt value counts as none (it is overwritten). */
-function parseRecord(raw: string | null): { path?: unknown; at?: unknown } | null {
+function parseRecord(
+  raw: string | null
+): { path?: unknown; at?: unknown } | null {
   if (!raw) return null;
   try {
     const value: unknown = JSON.parse(raw);

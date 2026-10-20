@@ -168,7 +168,11 @@ export function renderHead(
   if (options.markdownAlternate) {
     // GEO: the same content as Markdown (`/pricing.md`).
     lines.push(
-      link({ rel: 'alternate', type: 'text/markdown', href: options.markdownAlternate })
+      link({
+        rel: 'alternate',
+        type: 'text/markdown',
+        href: options.markdownAlternate,
+      })
     );
   }
 

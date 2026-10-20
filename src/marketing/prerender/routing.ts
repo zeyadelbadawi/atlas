@@ -29,7 +29,8 @@ export const MARKETING_PLANNED_PATHS = [
 /** Paths under the platform host that answer with the branded 404 page. */
 export function isMarketingGonePath(pathname: string): boolean {
   const path = pathname.replace(/\/+$/, '') || '/';
-  const unprefixed = path === '/ar' ? '/' : path.startsWith('/ar/') ? path.slice(3) : path;
+  const unprefixed =
+    path === '/ar' ? '/' : path.startsWith('/ar/') ? path.slice(3) : path;
   if (unprefixed === '/blog' || unprefixed.startsWith('/blog/')) return true;
   return (MARKETING_PLANNED_PATHS as readonly string[]).includes(unprefixed);
 }
@@ -47,11 +48,15 @@ export const MARKETING_SITEMAPS_PREFIX = '/sitemaps/';
 export function isMarketingRootFile(pathname: string): boolean {
   return (
     (MARKETING_ROOT_FILES as readonly string[]).includes(pathname) ||
-    (pathname.startsWith(MARKETING_SITEMAPS_PREFIX) && pathname.endsWith('.xml'))
+    (pathname.startsWith(MARKETING_SITEMAPS_PREFIX) &&
+      pathname.endsWith('.xml'))
   );
 }
 
-export const MARKETING_404_FILE = { en: '404.html', ar: 'ar/404.html' } as const;
+export const MARKETING_404_FILE = {
+  en: '404.html',
+  ar: 'ar/404.html',
+} as const;
 
 /** The output file a page path is served from (`/` → `index.html`, `/ar/pricing` → `ar/pricing/index.html`). */
 export function marketingFileForPath(path: string): string {
@@ -68,8 +73,16 @@ export function contentTypeFor(file: string): string {
 
 export type MarketingRoute =
   | { readonly kind: 'file'; readonly file: string; readonly status: 200 }
-  | { readonly kind: 'redirect'; readonly location: string; readonly status: 301 }
-  | { readonly kind: 'notFound'; readonly file: string | null; readonly status: 404 };
+  | {
+      readonly kind: 'redirect';
+      readonly location: string;
+      readonly status: 301;
+    }
+  | {
+      readonly kind: 'notFound';
+      readonly file: string | null;
+      readonly status: 404;
+    };
 
 /**
  * @param pathname the decoded request path
@@ -81,7 +94,8 @@ export function resolveMarketingRequest(
   search: string,
   exists: (file: string) => boolean
 ): MarketingRoute | null {
-  if (!pathname.startsWith('/') || pathname.split('/').includes('..')) return null;
+  if (!pathname.startsWith('/') || pathname.split('/').includes('..'))
+    return null;
 
   if (isMarketingRootFile(pathname)) {
     const file = pathname.slice(1);
@@ -93,7 +107,11 @@ export function resolveMarketingRequest(
   if (pathname !== '/' && pathname.endsWith('/')) {
     const stripped = pathname.replace(/\/+$/, '') || '/';
     if (exists(marketingFileForPath(stripped))) {
-      return { kind: 'redirect', location: `${stripped}${search}`, status: 301 };
+      return {
+        kind: 'redirect',
+        location: `${stripped}${search}`,
+        status: 301,
+      };
     }
   }
 
@@ -104,7 +122,10 @@ export function resolveMarketingRequest(
 
   if (isMarketingGonePath(pathname) && exists(MARKETING_404_FILE.en)) {
     const ar = pathname === '/ar' || pathname.startsWith('/ar/');
-    const file = ar && exists(MARKETING_404_FILE.ar) ? MARKETING_404_FILE.ar : MARKETING_404_FILE.en;
+    const file =
+      ar && exists(MARKETING_404_FILE.ar)
+        ? MARKETING_404_FILE.ar
+        : MARKETING_404_FILE.en;
     return { kind: 'notFound', file, status: 404 };
   }
   if (pathname.startsWith('/ar/') && exists(MARKETING_404_FILE.ar)) {

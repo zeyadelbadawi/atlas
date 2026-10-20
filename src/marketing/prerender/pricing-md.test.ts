@@ -17,7 +17,10 @@ describe('pricing.md', () => {
   });
 
   it('lists active plans in catalog order with prices and trial terms', () => {
-    expect(publishedPlans(FIXTURE_PLANS).map((plan) => plan.key)).toEqual(['starter', 'growth']);
+    expect(publishedPlans(FIXTURE_PLANS).map((plan) => plan.key)).toEqual([
+      'starter',
+      'growth',
+    ]);
     expect(md).toContain('| Plan | Monthly | Yearly | Trial |');
     expect(md).toContain('| Teacher | EGP 1,190 | — | No trial |');
     expect(md).toContain('| Academy | EGP 2,790 | EGP 27,900 | 14 days |');
@@ -42,7 +45,11 @@ describe('pricing.md', () => {
   it('never says "free" and handles an empty catalog', () => {
     expect(md).not.toMatch(/\bfree\b/i);
     expect(
-      buildPricingMarkdown({ plans: [], siteUrl: 'https://x', buildDate: '2026-01-01' })
+      buildPricingMarkdown({
+        plans: [],
+        siteUrl: 'https://x',
+        buildDate: '2026-01-01',
+      })
     ).toContain('No plans are published');
   });
 
@@ -53,7 +60,9 @@ describe('pricing.md', () => {
       buildDate: FIXTURE_CTX.buildDate,
     });
     for (const plan of snapshot as unknown as Plan[]) {
-      expect(fromSnapshot).toContain(`| ${plan.nameLocalized?.en ?? plan.name} |`);
+      expect(fromSnapshot).toContain(
+        `| ${plan.nameLocalized?.en ?? plan.name} |`
+      );
     }
   });
 });
