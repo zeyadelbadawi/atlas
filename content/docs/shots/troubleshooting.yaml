@@ -64,7 +64,7 @@
   as: owner
   surface: dashboard
   path: /dashboard/academy/{academyId}/courses/{courseId}/builder
-  waitFor: { text: course:builder.addLesson }
+  waitFor: { text: course:builder.subtitle }
   actions:
     - click: { role: button, name: course:builder.itemMenu.actions, nth: 0 }
   highlight: { role: menuitem, name: course:builder.lessonMenu.edit }
@@ -73,12 +73,12 @@
   as: owner
   surface: dashboard
   path: /dashboard/academy/{academyId}/courses/{courseId}/builder
-  waitFor: { text: course:builder.addLesson }
+  waitFor: { text: course:builder.subtitle }
   actions:
     - click: { role: button, name: course:builder.itemMenu.actions, nth: 0 }
     - click: { role: menuitem, name: course:builder.lessonMenu.edit }
     - wait: 500
-  highlight: { text: course:builder.lessonDialog.contentTypeLabel }
+  highlight: { text: course:builder.lessonDialog.contentTypeLabel, exact: true }
   clip: dialog
 
 - key: troubleshooting/course-settings-publish
@@ -215,12 +215,12 @@
   as: owner
   surface: dashboard
   path: /dashboard/academy/{academyId}/courses/{courseId}/builder
-  waitFor: { text: course:builder.addLesson }
+  waitFor: { text: course:builder.subtitle }
   actions:
     - click: { role: button, name: course:builder.itemMenu.actions, nth: 0 }
     - click: { role: menuitem, name: course:builder.lessonMenu.edit }
     - wait: 500
-  highlight: { text: course:builder.lessonDialog.statusLabel }
+  highlight: { text: course:builder.lessonDialog.statusLabel, exact: true }
   clip: dialog
 
 - key: troubleshooting/quiz-editor

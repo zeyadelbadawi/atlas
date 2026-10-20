@@ -147,9 +147,11 @@
   surface: dashboard
   path: /dashboard/provisioning/new
   waitFor: { text: provisioning:start.formTitle }
+  # The page opens this section already (ProvisioningStartPage passes
+  # brandStudioOpen): clicking its summary would close it again.
   actions:
-    - click: { text: website:brandStudio.setupTitle, exact: true }
-  highlight: { selector: "details[open]" }
+    - scroll: { selector: "details[open] > summary" }
+  highlight: { selector: "details[open] > summary" }
 
 - key: getting-started/academy-start-mode
   as: owner

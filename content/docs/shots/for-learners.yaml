@@ -110,18 +110,26 @@
   waitFor: { text: learning:learnerDashboard.assessments.subtitle }
   highlight: { role: tab, name: learning:learnerDashboard.assessments.tabs.quizzes }
 
+# Salma has already submitted one attempt (essay awaiting grading), so the
+# activity opens on its results. "Try Again" (1 of 3 attempts used) only
+# switches back to the intro: it does not start an attempt.
 - key: for-learners/quiz-intro
   as: learner
   surface: academy
   path: /my/courses/{courseId}/activities/{quizId}
-  waitFor: { text: learning:quiz.intro.gradingPolicy }
+  waitFor: { selector: '[data-testid="quiz-retake"]' }
+  actions:
+    - click: { testId: quiz-retake }
+    # Waits for the intro's fact list (no scroll; the mouse is moved away before the capture).
+    - hover: { text: learning:quiz.intro.gradingPolicy }
 
 - key: for-learners/quiz-start
   as: learner
   surface: academy
   path: /my/courses/{courseId}/activities/{quizId}
-  waitFor: { text: learning:quiz.intro.gradingPolicy }
+  waitFor: { selector: '[data-testid="quiz-retake"]' }
   actions:
+    - click: { testId: quiz-retake }
     - scroll: { testId: quiz-start }
   highlight: { testId: quiz-start }
 
