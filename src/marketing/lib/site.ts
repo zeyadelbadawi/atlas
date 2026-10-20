@@ -16,7 +16,7 @@ export const LOCALE: Record<MarketingLang, string> = { en: 'en-US', ar: 'ar-EG' 
 /** Path of a page in a language: `/pricing` ↔ `/ar/pricing`, `/` ↔ `/ar`. */
 export function localePath(lang: MarketingLang, path: string): string {
   const clean = path === '/' ? '' : path;
-  return lang === 'ar' ? `/ar${clean}` || '/ar' : clean || '/';
+  return lang === 'ar' ? `/ar${clean}` : clean || '/';
 }
 
 /** Registration link carrying the plan in context and the page language. */
