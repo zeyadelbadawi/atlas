@@ -6,9 +6,11 @@
  *   - the header hairline after scrolling;
  *   - a live refresh of catalog prices (a failed refresh keeps the
  *     build-time values: SPEC §C);
- *   - the contact form (`POST /api/v1/public/contact`).
+ *   - the contact form (`POST /api/v1/public/contact`);
+ *   - the cookieless marketing beacon (`client/beacon.ts`, DL-51).
  */
 import '../styles/marketing.css';
+import { startBeacon } from './beacon';
 import { CONTACT_LIMITS, validateContact, type ContactField } from './contact-validation';
 
 const THEME_KEY = 'atlas:marketing-theme';
@@ -250,3 +252,4 @@ initMenus();
 initHeader();
 initPricing();
 initContactForm();
+startBeacon();

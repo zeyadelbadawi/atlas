@@ -244,8 +244,15 @@ export function renderHead(
 }
 
 /** A complete HTML document for one page. */
+/** Page template for the cookieless beacon (closed vocabulary, SPEC F.5). */
+export function analyticsPage(id: string): string {
+  if (id === 'privacy-policy' || id === 'terms') return 'mkt:legal';
+  if (id === '404') return 'mkt:404';
+  return ['home', 'features', 'pricing', 'contact', 'security', 'about'].includes(id) ? `mkt:${id}` : 'other';
+}
+
 export function renderDocument(input: {
-  readonly page: Pick<MarketingPageDef, 'lang'>;
+  readonly page: Pick<MarketingPageDef, 'lang'> & Partial<Pick<MarketingPageDef, 'id'>>;
   readonly head: MarketingHead;
   readonly ctx: Pick<MarketingRenderContext, 'siteUrl'>;
   readonly assets: MarketingAssets;
@@ -263,7 +270,7 @@ export function renderDocument(input: {
       markdownAlternate: input.markdownAlternate,
     }),
     '</head>',
-    `<body class="mk">${bodyHtml}</body>`,
+    `<body class="mk" data-mkt-page="${analyticsPage(page.id ?? '')}">${bodyHtml}</body>`,
     '</html>',
     '',
   ].join('\n');
