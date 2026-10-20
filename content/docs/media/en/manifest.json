@@ -832,6 +832,23 @@
     "spec": "308a9766e20ab8410575ed06fda5fc75f35e6796",
     "width": 1440
   },
+  "account/sessions-card": {
+    "capturedAt": "2026-10-20T14:10:24.229Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/sessions-card-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/sessions-card-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "fad140c0e0cd9b0183e96e7c178d2028f73a35d5",
+    "width": 1440
+  },
   "account/sign-in-academy": {
     "capturedAt": "2026-10-20T14:05:51.496Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -899,6 +916,40 @@
     "height": 900,
     "spec": "af41bac0a948cd68bee1585465c1159e145d94e0",
     "width": 1440
+  },
+  "account/two-factor-confirm": {
+    "capturedAt": "2026-10-20T14:10:15.207Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/two-factor-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/two-factor-confirm-992.webp",
+        "width": 992
+      }
+    ],
+    "height": 720,
+    "spec": "2a9d5ed9dc6ddcb3d3f32b8cbe42fb7083664e64",
+    "width": 496
+  },
+  "account/two-factor-setup": {
+    "capturedAt": "2026-10-20T14:10:05.783Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/two-factor-setup-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/two-factor-setup-992.webp",
+        "width": 992
+      }
+    ],
+    "height": 720,
+    "spec": "3fb6e55945562d6765a88fde4c07461a978a1fd0",
+    "width": 496
   },
   "account/verify-email-request": {
     "capturedAt": "2026-10-20T14:09:05.690Z",
