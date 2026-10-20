@@ -134,6 +134,7 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     'media.video.deleted': 'media',
     'domain.custom_domain_added': 'domains',
     'domain.custom_domain_removed': 'domains',
+    'domain.subdomain_changed': 'domains',
     'domain.verification_checked': 'domains',
     'domain.platform_check': 'domains',
     'domain.platform_release': 'domains',
