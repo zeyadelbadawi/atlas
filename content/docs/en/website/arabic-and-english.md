@@ -76,6 +76,5 @@ If a box looks like it holds the wrong language (for example English text in the
 ## Related
 
 - [Edit a page with sections](doc:DOC-WEB-004)
-- [Arabic text appears in English on my site](doc:DOC-TRB-016)
 - [Academy site URLs](doc:DOC-REF-004)
 - [Language, currency and time zone](doc:DOC-ACD-003)

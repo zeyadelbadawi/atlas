@@ -65,7 +65,7 @@ The academy owner and managers can change the menu, header and footer. On the **
 
 ## If someone else changed these settings
 
-If a colleague changed the navigation while you had the tab open, Atlas shows **Someone else changed these settings in the meantime. Their version is now shown — make your change again.** Make your change again on top of their version. See [Website save conflict](doc:DOC-TRB-013).
+If a colleague changed the navigation while you had the tab open, Atlas shows **Someone else changed these settings in the meantime. Their version is now shown — make your change again.** Make your change again on top of their version.
 
 ## Related
 

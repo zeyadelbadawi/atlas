@@ -389,5 +389,56 @@
     "height": 900,
     "spec": "300e53f2056eebc6f0c45dbe5cadf9ba54c5d543",
     "width": 1440
+  },
+  "selling/how-it-works": {
+    "capturedAt": "2026-10-20T09:11:48.825Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/how-it-works-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/how-it-works-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "485cd1f90b8afb95f4d092bc46627c920c26ade2",
+    "width": 1440
+  },
+  "selling/payment-method-edit": {
+    "capturedAt": "2026-10-20T09:12:07.828Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/payment-method-edit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/payment-method-edit-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "b316f3f97bd4dee0bcdcc83da111f9896a51490c",
+    "width": 1440
+  },
+  "selling/payment-methods-nav": {
+    "capturedAt": "2026-10-20T09:11:57.601Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/payment-methods-nav-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/payment-methods-nav-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ee80b3628319cb045eb06736acb30f7642c95d0b",
+    "width": 1440
   }
 }

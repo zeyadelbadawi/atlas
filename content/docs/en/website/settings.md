@@ -51,7 +51,7 @@ The academy owner and managers can change the website settings.
 
    ![The publish bar on the Settings page with Publish changes highlighted](shot:website/settings-publish)
 
-Visual Identity is covered in [Brand Studio: logo, colours and favicon](doc:DOC-ACD-004). If a colleague saved the same settings first, see [Website save conflict](doc:DOC-TRB-013).
+Visual Identity is covered in [Brand Studio: logo, colours and favicon](doc:DOC-ACD-004). If a colleague saved the same settings first, Atlas shows their version and asks you to make your change again.
 
 ## The cookie banner on your academy site
 
