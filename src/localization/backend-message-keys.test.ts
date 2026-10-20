@@ -8,10 +8,9 @@
  * adding an existing learner showed the raw key
  * `academy:members.createStudent.errors.alreadyMember`.
  *
- * The backend keys below are the ones its course-order and payment
- * services throw (atlas-backend `src/course-commerce`, `src/billing`),
- * written as `errors.x.y` exactly as they arrive in `ApiError.messageKey`.
- * A new backend key in these groups belongs in this list and in both
+ * The backend keys are listed in `backend-message-keys.json`, written as
+ * `errors.x.y` exactly as they arrive in `ApiError.messageKey` (or as a
+ * field violation's key). A new backend key belongs there and in both
  * `errors.json` files.
  */
 import { readFileSync } from 'node:fs';
@@ -28,7 +27,12 @@ function bundle(language: 'en' | 'ar', namespace: string): Record<string, unknow
   ) as Record<string, unknown>;
 }
 
-/** `namespace:a.b.c` resolves to a non-empty string in that language. */
+/**
+ * `namespace:a.b.c` resolves to a non-empty string in that language — or,
+ * for a key that names a group (`errors.notFound` is `{ title,
+ * description }`), to a group with a `description`, which is the sentence
+ * `apiErrorMessage` shows for it.
+ */
 function hasString(language: 'en' | 'ar', key: string): boolean {
   const [namespace, path] = key.split(':');
   let node: unknown = bundle(language, namespace);
@@ -36,37 +40,36 @@ function hasString(language: 'en' | 'ar', key: string): boolean {
     if (!node || typeof node !== 'object') return false;
     node = (node as Record<string, unknown>)[part];
   }
+  if (node && typeof node === 'object') {
+    node = (node as Record<string, unknown>).description;
+  }
   return typeof node === 'string' && node.trim().length > 0;
 }
 
 /** `errors.courseOrder.expired` → `errors:courseOrder.expired`. */
 const toKey = (messageKey: string) => messageKey.replace(/^errors\./, 'errors:');
 
-const BACKEND_KEYS = [
-  'errors.courseOrder.alreadyEnrolled',
-  'errors.courseOrder.commissionNotConfigured',
-  'errors.courseOrder.courseNotPaid',
-  'errors.courseOrder.expired',
-  'errors.courseOrder.gatewayNotConfigured',
-  'errors.courseOrder.notAcceptingEnrollments',
-  'errors.courseOrder.notPayable',
-  'errors.courseOrder.paymentSetupIncomplete',
-  'errors.courseOrder.paymentUnderReview',
-  'errors.courseOrder.pricingUnavailable',
-  'errors.courseOrder.refundContactAcademy',
-  'errors.courseOrder.refundNotEligible',
-  'errors.courseOrder.refundWindowElapsed',
-  'errors.payment.alreadyUnderReview',
-  'errors.payment.methodNotFound',
-  'errors.payment.notEditable',
-  'errors.payment.notPendingReview',
-  'errors.payment.proofNotSupported',
-  'errors.payment.rejectedByAcademy',
-  'errors.payment.rejectedByReviewer',
-  'errors.payment.unsupportedProofFileType',
-] as const;
+/**
+ * Every literal `errors.*` key the backend throws, from
+ * `backend-message-keys.json` (regenerate it from atlas-backend when a key
+ * is added). `notDisplayable` lists the few keys no screen can receive,
+ * each with the reason.
+ */
+const FIXTURE = JSON.parse(
+  readFileSync(resolve(__dirname, 'backend-message-keys.json'), 'utf8')
+) as { displayable: string[]; notDisplayable: Record<string, string> };
+const BACKEND_KEYS = FIXTURE.displayable;
 
 describe('backend message keys', () => {
+  it('lists the whole backend vocabulary, and says why any key is left out', () => {
+    expect(BACKEND_KEYS.length).toBeGreaterThan(300);
+    expect(BACKEND_KEYS).toContain('errors.courseOrder.expired');
+    for (const [key, reason] of Object.entries(FIXTURE.notDisplayable)) {
+      expect(BACKEND_KEYS).not.toContain(key);
+      expect(reason.length).toBeGreaterThan(20);
+    }
+  });
+
   it.each(BACKEND_KEYS)('%s has copy in English and Arabic', (messageKey) => {
     expect(hasString('en', toKey(messageKey))).toBe(true);
     expect(hasString('ar', toKey(messageKey))).toBe(true);
