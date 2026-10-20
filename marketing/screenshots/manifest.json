@@ -1,0 +1,578 @@
+[
+  {
+    "file": "academy-site-course-ar-light.png",
+    "key": "academy-site-course",
+    "lang": "ar",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/ar/courses/5cf6f17d-115c-48e4-9ff9-abb1a17ee94a?__atlas_academy_preview=al-nour",
+    "description_en": "Public course page: price in EGP, what you’ll learn, and the full course outline.",
+    "description_ar": "صفحة الكورس العامة: السعر بالجنيه، وما ستتعلمه، ومحتوى الكورس كاملًا.",
+    "captured_at": "2026-10-20T03:00:09.285Z",
+    "webp": "academy-site-course-ar-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "academy-site-course-en-light.png",
+    "key": "academy-site-course",
+    "lang": "en",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/courses/5cf6f17d-115c-48e4-9ff9-abb1a17ee94a?__atlas_academy_preview=al-nour",
+    "description_en": "Public course page: price in EGP, what you’ll learn, and the full course outline.",
+    "description_ar": "صفحة الكورس العامة: السعر بالجنيه، وما ستتعلمه، ومحتوى الكورس كاملًا.",
+    "captured_at": "2026-10-20T02:57:36.071Z",
+    "webp": "academy-site-course-en-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "academy-site-home-ar-light.png",
+    "key": "academy-site-home",
+    "lang": "ar",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/ar?__atlas_academy_preview=al-nour",
+    "description_en": "The academy’s own public website (default theme) as a visitor sees it.",
+    "description_ar": "موقع الأكاديمية العام (الثيم الافتراضي) كما يراه الزائر.",
+    "captured_at": "2026-10-20T02:59:59.194Z",
+    "webp": "academy-site-home-ar-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "academy-site-home-en-light.png",
+    "key": "academy-site-home",
+    "lang": "en",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/?__atlas_academy_preview=al-nour",
+    "description_en": "The academy’s own public website (default theme) as a visitor sees it.",
+    "description_ar": "موقع الأكاديمية العام (الثيم الافتراضي) كما يراه الزائر.",
+    "captured_at": "2026-10-20T02:57:25.413Z",
+    "webp": "academy-site-home-en-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "academy-site-home-mobile-ar-light.png",
+    "key": "academy-site-home-mobile",
+    "lang": "ar",
+    "mode": "light",
+    "viewport": "390x844",
+    "route": "/ar?__atlas_academy_preview=al-nour",
+    "description_en": "The academy’s public website on a phone.",
+    "description_ar": "موقع الأكاديمية العام على الموبايل.",
+    "captured_at": "2026-10-20T03:00:04.258Z",
+    "webp": "academy-site-home-mobile-ar-light.webp",
+    "png_size": [
+      1170,
+      2532
+    ]
+  },
+  {
+    "file": "academy-site-home-mobile-en-light.png",
+    "key": "academy-site-home-mobile",
+    "lang": "en",
+    "mode": "light",
+    "viewport": "390x844",
+    "route": "/?__atlas_academy_preview=al-nour",
+    "description_en": "The academy’s public website on a phone.",
+    "description_ar": "موقع الأكاديمية العام على الموبايل.",
+    "captured_at": "2026-10-20T02:57:31.034Z",
+    "webp": "academy-site-home-mobile-en-light.webp",
+    "png_size": [
+      1170,
+      2532
+    ]
+  },
+  {
+    "file": "course-builder-ar-light.png",
+    "key": "course-builder",
+    "lang": "ar",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/courses/5cf6f17d-115c-48e4-9ff9-abb1a17ee94a/builder",
+    "description_en": "Course builder: sections and lessons of a Thanaweya Amma calculus course, reordered with drag handles.",
+    "description_ar": "منشئ الكورس: وحدات ودروس كورس التفاضل والتكامل للثانوية العامة مع إعادة الترتيب بالسحب.",
+    "captured_at": "2026-10-20T02:58:50.216Z",
+    "webp": "course-builder-ar-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "course-builder-en-light.png",
+    "key": "course-builder",
+    "lang": "en",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/courses/5cf6f17d-115c-48e4-9ff9-abb1a17ee94a/builder",
+    "description_en": "Course builder: sections and lessons of a Thanaweya Amma calculus course, reordered with drag handles.",
+    "description_ar": "منشئ الكورس: وحدات ودروس كورس التفاضل والتكامل للثانوية العامة مع إعادة الترتيب بالسحب.",
+    "captured_at": "2026-10-20T02:56:11.813Z",
+    "webp": "course-builder-en-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "dashboard-overview-ar-dark.png",
+    "key": "dashboard-overview",
+    "lang": "ar",
+    "mode": "dark",
+    "viewport": "1440x900",
+    "route": "/dashboard",
+    "description_en": "Owner dashboard: academies, courses, students, instructors, manual-payment revenue and plan usage at a glance.",
+    "description_ar": "لوحة تحكم المالك: الأكاديميات والكورسات والطلاب والمدرّسين وإيرادات الدفع اليدوي واستخدام الباقة في نظرة واحدة.",
+    "captured_at": "2026-10-20T02:59:41.545Z",
+    "webp": "dashboard-overview-ar-dark.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "dashboard-overview-ar-light.png",
+    "key": "dashboard-overview",
+    "lang": "ar",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard",
+    "description_en": "Owner dashboard: academies, courses, students, instructors, manual-payment revenue and plan usage at a glance.",
+    "description_ar": "لوحة تحكم المالك: الأكاديميات والكورسات والطلاب والمدرّسين وإيرادات الدفع اليدوي واستخدام الباقة في نظرة واحدة.",
+    "captured_at": "2026-10-20T02:58:44.644Z",
+    "webp": "dashboard-overview-ar-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "dashboard-overview-en-dark.png",
+    "key": "dashboard-overview",
+    "lang": "en",
+    "mode": "dark",
+    "viewport": "1440x900",
+    "route": "/dashboard",
+    "description_en": "Owner dashboard: academies, courses, students, instructors, manual-payment revenue and plan usage at a glance.",
+    "description_ar": "لوحة تحكم المالك: الأكاديميات والكورسات والطلاب والمدرّسين وإيرادات الدفع اليدوي واستخدام الباقة في نظرة واحدة.",
+    "captured_at": "2026-10-20T02:57:06.768Z",
+    "webp": "dashboard-overview-en-dark.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "dashboard-overview-en-light.png",
+    "key": "dashboard-overview",
+    "lang": "en",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard",
+    "description_en": "Owner dashboard: academies, courses, students, instructors, manual-payment revenue and plan usage at a glance.",
+    "description_ar": "لوحة تحكم المالك: الأكاديميات والكورسات والطلاب والمدرّسين وإيرادات الدفع اليدوي واستخدام الباقة في نظرة واحدة.",
+    "captured_at": "2026-10-20T02:56:06.690Z",
+    "webp": "dashboard-overview-en-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "learner-course-player-ar-light.png",
+    "key": "learner-course-player",
+    "lang": "ar",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/ar/my/courses/5cf6f17d-115c-48e4-9ff9-abb1a17ee94a/learn/36b64bf2-34c2-4755-aa96-3054f0d0facf?__atlas_academy_preview=al-nour",
+    "description_en": "The learner’s lesson view in My Learn: lesson content, progress and the course outline.",
+    "description_ar": "صفحة الدرس للطالب في «تعلّمي»: محتوى الدرس والتقدّم ومحتوى الكورس.",
+    "captured_at": "2026-10-20T03:00:18.050Z",
+    "webp": "learner-course-player-ar-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "learner-course-player-en-light.png",
+    "key": "learner-course-player",
+    "lang": "en",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/my/courses/5cf6f17d-115c-48e4-9ff9-abb1a17ee94a/learn/36b64bf2-34c2-4755-aa96-3054f0d0facf?__atlas_academy_preview=al-nour",
+    "description_en": "The learner’s lesson view in My Learn: lesson content, progress and the course outline.",
+    "description_ar": "صفحة الدرس للطالب في «تعلّمي»: محتوى الدرس والتقدّم ومحتوى الكورس.",
+    "captured_at": "2026-10-20T02:57:44.945Z",
+    "webp": "learner-course-player-en-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "learner-course-player-mobile-ar-light.png",
+    "key": "learner-course-player-mobile",
+    "lang": "ar",
+    "mode": "light",
+    "viewport": "390x844",
+    "route": "/ar/my/courses/5cf6f17d-115c-48e4-9ff9-abb1a17ee94a/learn/36b64bf2-34c2-4755-aa96-3054f0d0facf?__atlas_academy_preview=al-nour",
+    "description_en": "The learner’s lesson view on a phone.",
+    "description_ar": "صفحة الدرس للطالب على الموبايل.",
+    "captured_at": "2026-10-20T03:00:28.940Z",
+    "webp": "learner-course-player-mobile-ar-light.webp",
+    "png_size": [
+      1170,
+      2532
+    ]
+  },
+  {
+    "file": "learner-course-player-mobile-en-light.png",
+    "key": "learner-course-player-mobile",
+    "lang": "en",
+    "mode": "light",
+    "viewport": "390x844",
+    "route": "/my/courses/5cf6f17d-115c-48e4-9ff9-abb1a17ee94a/learn/36b64bf2-34c2-4755-aa96-3054f0d0facf?__atlas_academy_preview=al-nour",
+    "description_en": "The learner’s lesson view on a phone.",
+    "description_ar": "صفحة الدرس للطالب على الموبايل.",
+    "captured_at": "2026-10-20T02:57:55.568Z",
+    "webp": "learner-course-player-mobile-en-light.webp",
+    "png_size": [
+      1170,
+      2532
+    ]
+  },
+  {
+    "file": "payment-methods-ar-light.png",
+    "key": "payment-methods",
+    "lang": "ar",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/payment-methods",
+    "description_en": "Payment methods: the academy’s own bank account, InstaPay address and e-wallet number.",
+    "description_ar": "طرق الدفع: الحساب البنكي للأكاديمية وعنوان إنستاباي ورقم المحفظة.",
+    "captured_at": "2026-10-20T02:59:21.877Z",
+    "webp": "payment-methods-ar-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "payment-methods-en-light.png",
+    "key": "payment-methods",
+    "lang": "en",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/payment-methods",
+    "description_en": "Payment methods: the academy’s own bank account, InstaPay address and e-wallet number.",
+    "description_ar": "طرق الدفع: الحساب البنكي للأكاديمية وعنوان إنستاباي ورقم المحفظة.",
+    "captured_at": "2026-10-20T02:56:46.145Z",
+    "webp": "payment-methods-en-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "payments-review-ar-dark.png",
+    "key": "payments-review",
+    "lang": "ar",
+    "mode": "dark",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/payments",
+    "description_en": "Payments review: learners’ bank transfer, Vodafone Cash and InstaPay proofs waiting for approval, next to approved payments.",
+    "description_ar": "مراجعة المدفوعات: إثباتات التحويل البنكي وفودافون كاش وإنستاباي في انتظار الموافقة بجانب المدفوعات المقبولة.",
+    "captured_at": "2026-10-20T03:01:51.717Z",
+    "webp": "payments-review-ar-dark.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "payments-review-ar-light.png",
+    "key": "payments-review",
+    "lang": "ar",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/payments",
+    "description_en": "Payments review: learners’ bank transfer, Vodafone Cash and InstaPay proofs waiting for approval, next to approved payments.",
+    "description_ar": "مراجعة المدفوعات: إثباتات التحويل البنكي وفودافون كاش وإنستاباي في انتظار الموافقة بجانب المدفوعات المقبولة.",
+    "captured_at": "2026-10-20T03:01:25.368Z",
+    "webp": "payments-review-ar-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "payments-review-en-dark.png",
+    "key": "payments-review",
+    "lang": "en",
+    "mode": "dark",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/payments",
+    "description_en": "Payments review: learners’ bank transfer, Vodafone Cash and InstaPay proofs waiting for approval, next to approved payments.",
+    "description_ar": "مراجعة المدفوعات: إثباتات التحويل البنكي وفودافون كاش وإنستاباي في انتظار الموافقة بجانب المدفوعات المقبولة.",
+    "captured_at": "2026-10-20T02:57:19.341Z",
+    "webp": "payments-review-en-dark.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "payments-review-en-light.png",
+    "key": "payments-review",
+    "lang": "en",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/payments",
+    "description_en": "Payments review: learners’ bank transfer, Vodafone Cash and InstaPay proofs waiting for approval, next to approved payments.",
+    "description_ar": "مراجعة المدفوعات: إثباتات التحويل البنكي وفودافون كاش وإنستاباي في انتظار الموافقة بجانب المدفوعات المقبولة.",
+    "captured_at": "2026-10-20T02:56:31.406Z",
+    "webp": "payments-review-en-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "payments-review-proof-ar-light.png",
+    "key": "payments-review-proof",
+    "lang": "ar",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/payments",
+    "description_en": "Reviewing one payment: the learner’s uploaded InstaPay receipt, reference and amount, ready to approve or reject.",
+    "description_ar": "مراجعة دفعة واحدة: إيصال إنستاباي الذي رفعه الطالب والرقم المرجعي والمبلغ، جاهزة للقبول أو الرفض.",
+    "captured_at": "2026-10-20T03:01:33.518Z",
+    "webp": "payments-review-proof-ar-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "payments-review-proof-en-light.png",
+    "key": "payments-review-proof",
+    "lang": "en",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/payments",
+    "description_en": "Reviewing one payment: the learner’s uploaded InstaPay receipt, reference and amount, ready to approve or reject.",
+    "description_ar": "مراجعة دفعة واحدة: إيصال إنستاباي الذي رفعه الطالب والرقم المرجعي والمبلغ، جاهزة للقبول أو الرفض.",
+    "captured_at": "2026-10-20T02:56:40.334Z",
+    "webp": "payments-review-proof-en-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "quiz-builder-ar-light.png",
+    "key": "quiz-builder",
+    "lang": "ar",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/courses/5cf6f17d-115c-48e4-9ff9-abb1a17ee94a/quizzes/d1821879-3e1d-47e9-ae80-ffd1efdd60d4",
+    "description_en": "Quiz builder: questions, options and the correct answer for a short differentiation quiz.",
+    "description_ar": "منشئ الاختبارات: الأسئلة والاختيارات والإجابة الصحيحة لاختبار قصير في التفاضل.",
+    "captured_at": "2026-10-20T02:58:56.304Z",
+    "webp": "quiz-builder-ar-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "quiz-builder-en-light.png",
+    "key": "quiz-builder",
+    "lang": "en",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/courses/5cf6f17d-115c-48e4-9ff9-abb1a17ee94a/quizzes/d1821879-3e1d-47e9-ae80-ffd1efdd60d4",
+    "description_en": "Quiz builder: questions, options and the correct answer for a short differentiation quiz.",
+    "description_ar": "منشئ الاختبارات: الأسئلة والاختيارات والإجابة الصحيحة لاختبار قصير في التفاضل.",
+    "captured_at": "2026-10-20T02:56:18.714Z",
+    "webp": "quiz-builder-en-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "reports-ar-light.png",
+    "key": "reports",
+    "lang": "ar",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard/student-analytics",
+    "description_en": "Student analytics: enrollment funnel, monthly cohorts and students who may need help.",
+    "description_ar": "تحليلات الطلاب: مسار التسجيل والإكمال، والتسجيلات الشهرية، والطلاب الذين قد يحتاجون مساعدة.",
+    "captured_at": "2026-10-20T02:59:32.768Z",
+    "webp": "reports-ar-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "reports-en-light.png",
+    "key": "reports",
+    "lang": "en",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard/student-analytics",
+    "description_en": "Student analytics: enrollment funnel, monthly cohorts and students who may need help.",
+    "description_ar": "تحليلات الطلاب: مسار التسجيل والإكمال، والتسجيلات الشهرية، والطلاب الذين قد يحتاجون مساعدة.",
+    "captured_at": "2026-10-20T02:56:57.722Z",
+    "webp": "reports-en-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "signup-ar-light.png",
+    "key": "signup",
+    "lang": "ar",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/ar/auth/register?plan=growth",
+    "description_en": "Organization sign-up: create an account and an academy organization in one step.",
+    "description_ar": "إنشاء حساب مؤسسة: أنشئ حسابك ومؤسستك التعليمية في خطوة واحدة.",
+    "captured_at": "2026-10-20T03:00:34.692Z",
+    "webp": "signup-ar-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "signup-en-light.png",
+    "key": "signup",
+    "lang": "en",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/auth/register?plan=growth",
+    "description_en": "Organization sign-up: create an account and an academy organization in one step.",
+    "description_ar": "إنشاء حساب مؤسسة: أنشئ حسابك ومؤسستك التعليمية في خطوة واحدة.",
+    "captured_at": "2026-10-20T02:58:01.438Z",
+    "webp": "signup-en-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "students-list-ar-light.png",
+    "key": "students-list",
+    "lang": "ar",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/members?tab=students",
+    "description_en": "Students: everyone who joined the academy, how they joined, their enrollments and last activity.",
+    "description_ar": "الطلاب: كل من انضم للأكاديمية وطريقة الانضمام والكورسات المسجّل فيها وآخر نشاط.",
+    "captured_at": "2026-10-20T02:59:27.332Z",
+    "webp": "students-list-ar-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "students-list-en-light.png",
+    "key": "students-list",
+    "lang": "en",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/members?tab=students",
+    "description_en": "Students: everyone who joined the academy, how they joined, their enrollments and last activity.",
+    "description_ar": "الطلاب: كل من انضم للأكاديمية وطريقة الانضمام والكورسات المسجّل فيها وآخر نشاط.",
+    "captured_at": "2026-10-20T02:56:52.196Z",
+    "webp": "students-list-en-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "website-editor-ar-dark.png",
+    "key": "website-editor",
+    "lang": "ar",
+    "mode": "dark",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/website/pages/06f1bd37-447f-43b2-949f-af87fdf31b53",
+    "description_en": "Website editor: compose the homepage from sections with a live desktop/tablet/mobile preview.",
+    "description_ar": "محرر الموقع: كوّن الصفحة الرئيسية من أقسام مع معاينة مباشرة للكمبيوتر والتابلت والموبايل.",
+    "captured_at": "2026-10-20T03:01:45.404Z",
+    "webp": "website-editor-ar-dark.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "website-editor-ar-light.png",
+    "key": "website-editor",
+    "lang": "ar",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/website/pages/06f1bd37-447f-43b2-949f-af87fdf31b53",
+    "description_en": "Website editor: compose the homepage from sections with a live desktop/tablet/mobile preview.",
+    "description_ar": "محرر الموقع: كوّن الصفحة الرئيسية من أقسام مع معاينة مباشرة للكمبيوتر والتابلت والموبايل.",
+    "captured_at": "2026-10-20T03:01:19.126Z",
+    "webp": "website-editor-ar-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "website-editor-en-dark.png",
+    "key": "website-editor",
+    "lang": "en",
+    "mode": "dark",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/website/pages/06f1bd37-447f-43b2-949f-af87fdf31b53",
+    "description_en": "Website editor: compose the homepage from sections with a live desktop/tablet/mobile preview.",
+    "description_ar": "محرر الموقع: كوّن الصفحة الرئيسية من أقسام مع معاينة مباشرة للكمبيوتر والتابلت والموبايل.",
+    "captured_at": "2026-10-20T02:57:12.876Z",
+    "webp": "website-editor-en-dark.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  },
+  {
+    "file": "website-editor-en-light.png",
+    "key": "website-editor",
+    "lang": "en",
+    "mode": "light",
+    "viewport": "1440x900",
+    "route": "/dashboard/academy/c6cab6c2-8165-4f20-b177-33965e963717/website/pages/06f1bd37-447f-43b2-949f-af87fdf31b53",
+    "description_en": "Website editor: compose the homepage from sections with a live desktop/tablet/mobile preview.",
+    "description_ar": "محرر الموقع: كوّن الصفحة الرئيسية من أقسام مع معاينة مباشرة للكمبيوتر والتابلت والموبايل.",
+    "captured_at": "2026-10-20T02:56:24.962Z",
+    "webp": "website-editor-en-light.webp",
+    "png_size": [
+      2880,
+      1800
+    ]
+  }
+]
