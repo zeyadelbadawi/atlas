@@ -4283,6 +4283,108 @@
     "spec": "f6ce6bc3a44064662ab01301facd49f145b32ef7",
     "width": 1440
   },
+  "notifications/announcements-form": {
+    "capturedAt": "2026-10-20T14:42:57.667Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/announcements-form-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/announcements-form-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 520,
+    "spec": "f7982e19ee94aa4bbc67caa55004af5c56473b78",
+    "width": 560
+  },
+  "notifications/announcements-new": {
+    "capturedAt": "2026-10-20T14:42:48.700Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/announcements-new-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/announcements-new-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "73aff227e589cfa11c7f7e990b5675fdce6d42e9",
+    "width": 1440
+  },
+  "notifications/announcements-page": {
+    "capturedAt": "2026-10-20T14:42:41.211Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/announcements-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/announcements-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "a470eebd9ed3ccfb7cac3a6b7eaaa66e6327ba2b",
+    "width": 1440
+  },
+  "notifications/announcements-publish": {
+    "capturedAt": "2026-10-20T14:43:04.821Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/announcements-publish-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/announcements-publish-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "96d70876d72dc3b78141f522dfc351874b7c3f10",
+    "width": 1440
+  },
+  "notifications/announcements-publish-confirm": {
+    "capturedAt": "2026-10-20T14:43:11.552Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/announcements-publish-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/announcements-publish-confirm-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 210,
+    "spec": "6271d46e89d1403c4c0f642011de91ae0e467edc",
+    "width": 560
+  },
+  "notifications/course-announcements": {
+    "capturedAt": "2026-10-20T14:43:19.815Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/course-announcements-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/course-announcements-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "401697d3ee9330ccf2b7263543d8d0bf0b894b12",
+    "width": 1440
+  },
   "notifications/dashboard-bell": {
     "capturedAt": "2026-10-20T14:39:11.837Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -4334,6 +4436,23 @@
     "spec": "b1f8b1dc06047bfc3d80e0b9327c93565d8548a4",
     "width": 1440
   },
+  "notifications/learner-announcements": {
+    "capturedAt": "2026-10-20T14:43:27.527Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/learner-announcements-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/learner-announcements-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "dfefff797a4d6c83ee613c82c91826c8224110b4",
+    "width": 1440
+  },
   "notifications/learner-page": {
     "capturedAt": "2026-10-20T14:39:30.728Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -4349,6 +4468,142 @@
     ],
     "height": 900,
     "spec": "e8254efcc58f8dc224123d591ddec032c13b4ffc",
+    "width": 1440
+  },
+  "notifications/learner-preferences": {
+    "capturedAt": "2026-10-20T14:41:16.975Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/learner-preferences-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/learner-preferences-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e3cd7b5e2fadd1d845fca109541173dd10f1d8f5",
+    "width": 1440
+  },
+  "notifications/messages-channels": {
+    "capturedAt": "2026-10-20T14:41:53.969Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/messages-channels-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/messages-channels-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "9a87d129824c225008218b629ec6ba52cc55b812",
+    "width": 1440
+  },
+  "notifications/messages-confirm": {
+    "capturedAt": "2026-10-20T14:42:24.365Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/messages-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/messages-confirm-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 342,
+    "spec": "be276aa289db72eaf893364053b36a4d28243366",
+    "width": 560
+  },
+  "notifications/messages-page": {
+    "capturedAt": "2026-10-20T14:41:29.731Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/messages-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/messages-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "0ca7a174e74150288116f29c3b522c2344c224d9",
+    "width": 1440
+  },
+  "notifications/messages-preview": {
+    "capturedAt": "2026-10-20T14:42:12.900Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/messages-preview-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/messages-preview-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "a69756ca226e6d21e549bac42db72073dbe7ffcf",
+    "width": 1440
+  },
+  "notifications/messages-quota": {
+    "capturedAt": "2026-10-20T14:42:33.270Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/messages-quota-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/messages-quota-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "2e58c91c8ecf3fe25fd593ea626583e5a313e34a",
+    "width": 1440
+  },
+  "notifications/messages-recipients": {
+    "capturedAt": "2026-10-20T14:41:42.088Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/messages-recipients-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/messages-recipients-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ed4e6b41444af79944c2319541a8a1260e6ab155",
+    "width": 1440
+  },
+  "notifications/messages-write": {
+    "capturedAt": "2026-10-20T14:42:01.950Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/messages-write-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/messages-write-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3eb562f988115f0eea70da8ae16ddc0b63259f68",
     "width": 1440
   },
   "notifications/operations": {
@@ -4383,6 +4638,23 @@
     ],
     "height": 900,
     "spec": "163709a262fa9a6edd044a5a9ff225bb613bb886",
+    "width": 1440
+  },
+  "notifications/reminders": {
+    "capturedAt": "2026-10-20T14:41:03.141Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/reminders-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/reminders-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "39b92230ab2a2777a023bd5ada7bf6352a889d3b",
     "width": 1440
   },
   "pipeline-sample/academy-home-mobile": {
@@ -4519,6 +4791,312 @@
     ],
     "height": 900,
     "spec": "300e53f2056eebc6f0c45dbe5cadf9ba54c5d543",
+    "width": 1440
+  },
+  "protection/media-delete-confirm": {
+    "capturedAt": "2026-10-20T14:45:52.127Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/media-delete-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/media-delete-confirm-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 250,
+    "spec": "bba28ce8b48d881f12ae3e5c109ccdb49f6edb7f",
+    "width": 560
+  },
+  "protection/media-details": {
+    "capturedAt": "2026-10-20T14:45:34.912Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/media-details-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/media-details-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 540,
+    "spec": "84c36079efffef6208524ca5d83e0c3984afb534",
+    "width": 560
+  },
+  "protection/media-nav": {
+    "capturedAt": "2026-10-20T14:45:18.662Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/media-nav-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/media-nav-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "5c8e7a60a86fcf1b5df31f4200cd973a4c47b505",
+    "width": 1440
+  },
+  "protection/media-search": {
+    "capturedAt": "2026-10-20T14:45:42.711Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/media-search-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/media-search-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f3363e0ff78c1fb7476e1779ad0e7c4e28c3318d",
+    "width": 1440
+  },
+  "protection/media-upload": {
+    "capturedAt": "2026-10-20T14:45:27.087Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/media-upload-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/media-upload-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "6524905eacfda52aebeaf669742b909503b14f97",
+    "width": 1440
+  },
+  "protection/reports-nav": {
+    "capturedAt": "2026-10-20T14:44:51.034Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/reports-nav-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/reports-nav-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e3051adca6ba42a535e370dcd363b13e0944c92a",
+    "width": 1440
+  },
+  "protection/reports-sharing": {
+    "capturedAt": "2026-10-20T14:45:07.919Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/reports-sharing-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/reports-sharing-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "628ff200b3972ea6c436811c8db6f777bd2bf6f1",
+    "width": 1440
+  },
+  "protection/reports-window": {
+    "capturedAt": "2026-10-20T14:44:59.011Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/reports-window-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/reports-window-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "06e3d6ca5293013e69dd7869921f5633a7a3e311",
+    "width": 1440
+  },
+  "protection/settings-devices": {
+    "capturedAt": "2026-10-20T14:44:04.240Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/settings-devices-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/settings-devices-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "7e4aa4d90265d4ff674e83008823f19ca47adeed",
+    "width": 1440
+  },
+  "protection/settings-devices-save": {
+    "capturedAt": "2026-10-20T14:44:13.031Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/settings-devices-save-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/settings-devices-save-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "760a939a80fd456efe232c1647cd2fe7173a41c8",
+    "width": 1440
+  },
+  "protection/settings-nav": {
+    "capturedAt": "2026-10-20T14:43:45.995Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/settings-nav-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/settings-nav-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "a50da03c63e37f2c1c3ba4786b0495ece5b7d962",
+    "width": 1440
+  },
+  "protection/settings-video-protection": {
+    "capturedAt": "2026-10-20T14:43:54.719Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/settings-video-protection-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/settings-video-protection-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "c9e70a88afa52c31b3c0dcd02ee3a25508b26b51",
+    "width": 1440
+  },
+  "protection/support-center": {
+    "capturedAt": "2026-10-20T14:44:20.251Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/support-center-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/support-center-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "80449bcb9a719abf380571c31a47b38e4c57d556",
+    "width": 1440
+  },
+  "protection/support-new-ticket": {
+    "capturedAt": "2026-10-20T14:44:28.198Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/support-new-ticket-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/support-new-ticket-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 606,
+    "spec": "ddd450e24457a1d0a706b286758002c61e8ef6ff",
+    "width": 560
+  },
+  "protection/support-ticket-attach": {
+    "capturedAt": "2026-10-20T14:44:35.383Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/support-ticket-attach-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/support-ticket-attach-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 606,
+    "spec": "e327bb24ed51322717506a1c11ac34e145c8fb32",
+    "width": 560
+  },
+  "protection/support-ticket-submit": {
+    "capturedAt": "2026-10-20T14:44:42.898Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/support-ticket-submit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/support-ticket-submit-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 606,
+    "spec": "f9c4710447c517ed0d97e77d184d5f490a12a304",
+    "width": 560
+  },
+  "protection/watermark-about": {
+    "capturedAt": "2026-10-20T14:43:37.995Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/protection/watermark-about-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/protection/watermark-about-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "4c17b5e90af0a6af1515fb10f89e416025db5e3e",
+    "width": 1440
+  },
+  "reference/usage-page": {
+    "capturedAt": "2026-10-20T14:46:01.339Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/reference/usage-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/reference/usage-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "482e3c268d429f78522f0036d87258e593b4df23",
     "width": 1440
   },
   "selling/dashboard-revenue": {
