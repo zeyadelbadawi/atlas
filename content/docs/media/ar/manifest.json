@@ -1733,6 +1733,550 @@
     "spec": "bec1acd41524977fb045f518abdcaf7384599760",
     "width": 1440
   },
+  "getting-started/academy-address": {
+    "capturedAt": "2026-10-20T16:59:56.583Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/academy-address-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/academy-address-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3103e6de304355d4e91290dafb9ed1a0c36aef40",
+    "width": 1440
+  },
+  "getting-started/academy-brand": {
+    "capturedAt": "2026-10-20T17:00:14.525Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/academy-brand-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/academy-brand-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "d362e27445be927e4642d625132d7f3f446b6b20",
+    "width": 1440
+  },
+  "getting-started/academy-form": {
+    "capturedAt": "2026-10-20T16:59:26.810Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/academy-form-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/academy-form-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "2a431a8f2139345080221787dcc0cd8b79a11c3f",
+    "width": 1440
+  },
+  "getting-started/academy-name": {
+    "capturedAt": "2026-10-20T16:59:44.856Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/academy-name-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/academy-name-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "30d600c7d1f940066189628926539b2dc7b1185a",
+    "width": 1440
+  },
+  "getting-started/academy-payment-methods": {
+    "capturedAt": "2026-10-20T17:00:37.321Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/academy-payment-methods-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/academy-payment-methods-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "c38514590ca831415c12c82984a3c2b73841785b",
+    "width": 1440
+  },
+  "getting-started/academy-start-mode": {
+    "capturedAt": "2026-10-20T17:00:23.753Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/academy-start-mode-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/academy-start-mode-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "00b63c141ad1d17bc7cd328b0cb5ec46eaae587f",
+    "width": 1440
+  },
+  "getting-started/academy-submit": {
+    "capturedAt": "2026-10-20T17:00:49.727Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/academy-submit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/academy-submit-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "fb0998f4de7f2095aea6c06311b34638e84f7680",
+    "width": 1440
+  },
+  "getting-started/academy-theme": {
+    "capturedAt": "2026-10-20T17:00:05.205Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/academy-theme-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/academy-theme-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "cade736971cc2795bb524bf464a4300283f3084a",
+    "width": 1440
+  },
+  "getting-started/instructor-course-overview": {
+    "capturedAt": "2026-10-20T17:02:02.069Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/instructor-course-overview-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/instructor-course-overview-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e2321b432e8215657433cc3073c92e21d9b336ec",
+    "width": 1440
+  },
+  "getting-started/instructor-teaching-dashboard": {
+    "capturedAt": "2026-10-20T17:01:55.215Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/instructor-teaching-dashboard-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/instructor-teaching-dashboard-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "bd3089c4d062b65da26985406021538bfe8933ba",
+    "width": 1440
+  },
+  "getting-started/launch-course-publish": {
+    "capturedAt": "2026-10-20T17:01:12.051Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/launch-course-publish-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/launch-course-publish-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "fb311ee8022a8685d1cbedb356f4a47d942b5826",
+    "width": 1440
+  },
+  "getting-started/launch-courses": {
+    "capturedAt": "2026-10-20T17:01:05.308Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/launch-courses-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/launch-courses-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "8c7fead22349e074c835cfd8e4a19518b8ad0b74",
+    "width": 1440
+  },
+  "getting-started/launch-payment-methods": {
+    "capturedAt": "2026-10-20T17:01:19.505Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/launch-payment-methods-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/launch-payment-methods-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "33dc6c3b49b3adda788a5c1dfb1ad76fa23548ae",
+    "width": 1440
+  },
+  "getting-started/launch-registration": {
+    "capturedAt": "2026-10-20T17:01:27.818Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/launch-registration-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/launch-registration-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "4320a488d005f119bb28f07e33b622292d259620",
+    "width": 1440
+  },
+  "getting-started/launch-test-sign-up": {
+    "capturedAt": "2026-10-20T17:01:33.735Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/launch-test-sign-up-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/launch-test-sign-up-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e3a54ad7192f4df41fed4bac249846344366a45e",
+    "width": 1440
+  },
+  "getting-started/launch-website": {
+    "capturedAt": "2026-10-20T17:00:57.980Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/launch-website-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/launch-website-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "faba99f64251b9fd49f412dc824230559a0eb778",
+    "width": 1440
+  },
+  "getting-started/learner-my-courses": {
+    "capturedAt": "2026-10-20T17:02:16.491Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/learner-my-courses-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/learner-my-courses-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "119a0ac4465b87a1971f1e1e3ef623c78b95274b",
+    "width": 1440
+  },
+  "getting-started/new-academy-page": {
+    "capturedAt": "2026-10-20T16:59:35.727Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/new-academy-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/new-academy-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ef88933db3c68c7a91eebff09e0e48b446fdca66",
+    "width": 1440
+  },
+  "getting-started/onboarding-academy": {
+    "capturedAt": "2026-10-20T16:58:57.981Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/onboarding-academy-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/onboarding-academy-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "9b60a13fe979a64cc2f0a47f0c1d6d9e8699f4eb",
+    "width": 1440
+  },
+  "getting-started/onboarding-course": {
+    "capturedAt": "2026-10-20T16:59:11.506Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/onboarding-course-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/onboarding-course-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "28f512830d331eecddac868582e70dd46182986e",
+    "width": 1440
+  },
+  "getting-started/onboarding-summary": {
+    "capturedAt": "2026-10-20T16:59:17.955Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/onboarding-summary-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/onboarding-summary-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "eea6b130dbdaf01e5a08752bf0ab664ba632feb7",
+    "width": 1440
+  },
+  "getting-started/onboarding-website": {
+    "capturedAt": "2026-10-20T16:59:04.732Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/onboarding-website-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/onboarding-website-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "8313986b7d57ab421621b0d49d4b002c4b9d7098",
+    "width": 1440
+  },
+  "getting-started/owner-dashboard": {
+    "capturedAt": "2026-10-20T16:57:56.135Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/owner-dashboard-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/owner-dashboard-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "85c8a3f79bd5a9ba8a99d719534a2eb80b03144d",
+    "width": 1440
+  },
+  "getting-started/sign-in": {
+    "capturedAt": "2026-10-20T16:58:51.736Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/sign-in-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/sign-in-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "409aa399c8043ad4a167515b8105ab40338c782b",
+    "width": 1440
+  },
+  "getting-started/sign-up-name-email": {
+    "capturedAt": "2026-10-20T16:58:11.369Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/sign-up-name-email-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/sign-up-name-email-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "4e1d1333011c47daba8ce20380638428acdce3b4",
+    "width": 1440
+  },
+  "getting-started/sign-up-organization": {
+    "capturedAt": "2026-10-20T16:58:31.746Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/sign-up-organization-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/sign-up-organization-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "7b46631b5ee9e18664c806ba6522367cb1535e60",
+    "width": 1440
+  },
+  "getting-started/sign-up-page": {
+    "capturedAt": "2026-10-20T16:58:03.653Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/sign-up-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/sign-up-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "559f7acdd344bef6f950f2c052bcf3e643bb1323",
+    "width": 1440
+  },
+  "getting-started/sign-up-password": {
+    "capturedAt": "2026-10-20T16:58:24.900Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/sign-up-password-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/sign-up-password-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "0944326c72d3d82cd99291534e995b783f1a7575",
+    "width": 1440
+  },
+  "getting-started/sign-up-phone": {
+    "capturedAt": "2026-10-20T16:58:18.192Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/sign-up-phone-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/sign-up-phone-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "d94ee13f5ece83c9cf27f596ec52ed3ca9d31639",
+    "width": 1440
+  },
+  "getting-started/sign-up-plan": {
+    "capturedAt": "2026-10-20T16:58:38.606Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/sign-up-plan-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/sign-up-plan-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e7c87a7153669a1f83e0f7098e29037755bf0359",
+    "width": 1440
+  },
+  "getting-started/sign-up-submit": {
+    "capturedAt": "2026-10-20T16:58:45.072Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/sign-up-submit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/sign-up-submit-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "8d14a8a060aebdde81a530db473b9b30d5f7bc31",
+    "width": 1440
+  },
+  "getting-started/usage-page": {
+    "capturedAt": "2026-10-20T17:01:41.241Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/getting-started/usage-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/getting-started/usage-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "bda7c0502d10955fddcebfd0db7af9782bdf23ac",
+    "width": 1440
+  },
   "pipeline-sample/academy-home-mobile": {
     "capturedAt": "2026-10-20T08:52:03.705Z",
     "commit": "02a79da7e1c69ea489c2357c6ccf94cd0ad009fc",
@@ -1867,6 +2411,108 @@
     ],
     "height": 900,
     "spec": "300e53f2056eebc6f0c45dbe5cadf9ba54c5d543",
+    "width": 1440
+  },
+  "roles/instructor-assessments": {
+    "capturedAt": "2026-10-20T17:03:00.076Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/roles/instructor-assessments-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/roles/instructor-assessments-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "1a266214c156e175eae0e9739404c305fa9b96e5",
+    "width": 1440
+  },
+  "roles/instructor-courses": {
+    "capturedAt": "2026-10-20T17:02:53.123Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/roles/instructor-courses-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/roles/instructor-courses-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "081a013686e63aa93913318e5d1bb66060fb17dd",
+    "width": 1440
+  },
+  "roles/learner-overview": {
+    "capturedAt": "2026-10-20T17:03:07.235Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/roles/learner-overview-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/roles/learner-overview-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "09a13f36ea53a730c9859023ea178a89b9200630",
+    "width": 1440
+  },
+  "roles/manager-members": {
+    "capturedAt": "2026-10-20T17:02:38.583Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/roles/manager-members-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/roles/manager-members-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "6de4034a38898c4d68b2e4c1edc7ad8351a835b9",
+    "width": 1440
+  },
+  "roles/manager-orders": {
+    "capturedAt": "2026-10-20T17:02:45.618Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/roles/manager-orders-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/roles/manager-orders-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "562881fe453107bbd528d2c4c3de5a7cd4db4250",
+    "width": 1440
+  },
+  "roles/owner-members": {
+    "capturedAt": "2026-10-20T17:02:24.176Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/roles/owner-members-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/roles/owner-members-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "d24a7f8317ebe4c790bd1d1083159a7470f8d89f",
     "width": 1440
   },
   "selling/dashboard-revenue": {
@@ -2190,6 +2836,482 @@
     ],
     "height": 900,
     "spec": "e6d566047fe6cbe222ab3d4f3b56bce36a3350f5",
+    "width": 1440
+  },
+  "tasks/exams-integrity": {
+    "capturedAt": "2026-10-20T17:05:03.475Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/exams-integrity-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/exams-integrity-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f3a81d548554e9c56384543d499289a4e7f2c696",
+    "width": 1440
+  },
+  "tasks/exams-integrity-report": {
+    "capturedAt": "2026-10-20T17:05:34.324Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/exams-integrity-report-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/exams-integrity-report-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "6446c3f469950cb247c479e1a9c58a1926383a6a",
+    "width": 1440
+  },
+  "tasks/exams-learner-assessments": {
+    "capturedAt": "2026-10-20T17:05:10.125Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/exams-learner-assessments-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/exams-learner-assessments-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "76c2facdde48bc06afb2711be2363e38d013a436",
+    "width": 1440
+  },
+  "tasks/exams-overrides": {
+    "capturedAt": "2026-10-20T17:05:26.708Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/exams-overrides-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/exams-overrides-1072.webp",
+        "width": 1072
+      }
+    ],
+    "height": 900,
+    "spec": "21a54d72e4328c05373c000292e95667d0581256",
+    "width": 536
+  },
+  "tasks/exams-quiz-settings": {
+    "capturedAt": "2026-10-20T17:04:54.824Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/exams-quiz-settings-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/exams-quiz-settings-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "23ee797b3720e93f4a6344c339a36ea7a34bc57f",
+    "width": 1440
+  },
+  "tasks/exams-quizzes": {
+    "capturedAt": "2026-10-20T17:04:45.485Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/exams-quizzes-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/exams-quizzes-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "a3d020856f6ca978eba999e0ed8553273d0d6be9",
+    "width": 1440
+  },
+  "tasks/exams-results": {
+    "capturedAt": "2026-10-20T17:05:17.729Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/exams-results-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/exams-results-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e99606aabec1a4a03d64d8ef779367ee397cbcaa",
+    "width": 1440
+  },
+  "tasks/learners-add-student": {
+    "capturedAt": "2026-10-20T17:06:37.108Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/learners-add-student-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/learners-add-student-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "060825240c5f54cbe2126ce85c9edee77f74c4a9",
+    "width": 1440
+  },
+  "tasks/learners-invite-links": {
+    "capturedAt": "2026-10-20T17:06:29.842Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/learners-invite-links-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/learners-invite-links-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ba0e9d60ffd9229c5e6fd197c1ff920bc92d644d",
+    "width": 1440
+  },
+  "tasks/learners-policy": {
+    "capturedAt": "2026-10-20T17:06:21.449Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/learners-policy-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/learners-policy-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "87f0be1249e67ae2358151d785ae1473c992c07a",
+    "width": 1440
+  },
+  "tasks/learners-student-details": {
+    "capturedAt": "2026-10-20T17:06:54.737Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/learners-student-details-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/learners-student-details-1200.webp",
+        "width": 1200
+      }
+    ],
+    "height": 900,
+    "spec": "f63d78fea7d09ef36e6fce1addac193d0fef7d5d",
+    "width": 600
+  },
+  "tasks/learners-students-tab": {
+    "capturedAt": "2026-10-20T17:06:44.693Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/learners-students-tab-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/learners-students-tab-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "6a80ba89c44d942474b99160573659c039907ff7",
+    "width": 1440
+  },
+  "tasks/protect-devices": {
+    "capturedAt": "2026-10-20T17:05:52.210Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/protect-devices-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/protect-devices-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3a18c5d5571d2bde2c3c3ba88eeec80d21fa756a",
+    "width": 1440
+  },
+  "tasks/protect-learner-devices": {
+    "capturedAt": "2026-10-20T17:05:58.910Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/protect-learner-devices-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/protect-learner-devices-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "4c7540faeb1d7e98210be1d9f06764864f058f82",
+    "width": 1440
+  },
+  "tasks/protect-settings": {
+    "capturedAt": "2026-10-20T17:05:43.140Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/protect-settings-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/protect-settings-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "27389e9343f9e19f9ca2ce198ae909aaa2413cc8",
+    "width": 1440
+  },
+  "tasks/protect-sharing-signals": {
+    "capturedAt": "2026-10-20T17:06:06.062Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/protect-sharing-signals-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/protect-sharing-signals-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "5e2ba8f2f249cb12d8ed2d1d4089a46349a6209e",
+    "width": 1440
+  },
+  "tasks/protect-support": {
+    "capturedAt": "2026-10-20T17:06:13.072Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/protect-support-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/protect-support-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3254e153d65dc8acbd2e18fb1956e9ed58c53f85",
+    "width": 1440
+  },
+  "tasks/sell-learner-purchases": {
+    "capturedAt": "2026-10-20T17:04:22.306Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/sell-learner-purchases-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/sell-learner-purchases-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "648a238de8e60900cddb35ecebba40741353cd19",
+    "width": 1440
+  },
+  "tasks/sell-orders": {
+    "capturedAt": "2026-10-20T17:04:37.782Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/sell-orders-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/sell-orders-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "6f75f39c777d89034961c8cd92c1395e850f1aa8",
+    "width": 1440
+  },
+  "tasks/sell-payment-methods": {
+    "capturedAt": "2026-10-20T17:04:15.433Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/sell-payment-methods-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/sell-payment-methods-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "08b0609c1e561f457180dbd542c17d4e1f54c8d4",
+    "width": 1440
+  },
+  "tasks/sell-pricing": {
+    "capturedAt": "2026-10-20T17:04:07.807Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/sell-pricing-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/sell-pricing-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "586b03785c249da5f003192ea826023a718a15ea",
+    "width": 1440
+  },
+  "tasks/sell-review-payment": {
+    "capturedAt": "2026-10-20T17:04:30.091Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/sell-review-payment-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/sell-review-payment-1200.webp",
+        "width": 1200
+      }
+    ],
+    "height": 900,
+    "spec": "76b5eaad98df76d6378e31d84900ef21416b5842",
+    "width": 600
+  },
+  "tasks/website-domain": {
+    "capturedAt": "2026-10-20T17:03:59.626Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/website-domain-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/website-domain-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e817e367041669cfb8b44af79c792f48e6fefd24",
+    "width": 1440
+  },
+  "tasks/website-language": {
+    "capturedAt": "2026-10-20T17:03:43.078Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/website-language-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/website-language-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "097e60bccf837ef61d86bdc53563cb32dff7996d",
+    "width": 1440
+  },
+  "tasks/website-pages": {
+    "capturedAt": "2026-10-20T17:03:35.131Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/website-pages-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/website-pages-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f89244ce55bf22e3f08881b5b7d44c8553ce46dd",
+    "width": 1440
+  },
+  "tasks/website-publish": {
+    "capturedAt": "2026-10-20T17:03:51.291Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/website-publish-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/website-publish-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "d1da1a7513b14f7246c1876b595ec38c5b0feb21",
+    "width": 1440
+  },
+  "tasks/website-theme": {
+    "capturedAt": "2026-10-20T17:03:17.200Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/website-theme-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/website-theme-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "66c0136ef2e019e5fdce7b81a21fb019a30a963a",
+    "width": 1440
+  },
+  "tasks/website-visual-identity": {
+    "capturedAt": "2026-10-20T17:03:27.457Z",
+    "commit": "733b76fa1399e88b253790b272774ef3e1167250",
+    "files": [
+      {
+        "src": "media/ar/tasks/website-visual-identity-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/tasks/website-visual-identity-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "76c09556962ca7b0833416b373327a2824fae972",
     "width": 1440
   }
 }
