@@ -3875,6 +3875,23 @@
     "spec": "cade736971cc2795bb524bf464a4300283f3084a",
     "width": 1440
   },
+  "getting-started/instructor-teaching-dashboard": {
+    "capturedAt": "2026-10-20T14:38:22.809Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/instructor-teaching-dashboard-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/instructor-teaching-dashboard-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "bd3089c4d062b65da26985406021538bfe8933ba",
+    "width": 1440
+  },
   "getting-started/launch-course-publish": {
     "capturedAt": "2026-10-20T14:37:43.946Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -3943,6 +3960,23 @@
     "spec": "4320a488d005f119bb28f07e33b622292d259620",
     "width": 1440
   },
+  "getting-started/launch-test-sign-up": {
+    "capturedAt": "2026-10-20T14:38:06.196Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/launch-test-sign-up-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/launch-test-sign-up-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e3a54ad7192f4df41fed4bac249846344366a45e",
+    "width": 1440
+  },
   "getting-started/launch-website": {
     "capturedAt": "2026-10-20T14:37:29.107Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -3958,6 +3992,23 @@
     ],
     "height": 900,
     "spec": "faba99f64251b9fd49f412dc824230559a0eb778",
+    "width": 1440
+  },
+  "getting-started/learner-my-courses": {
+    "capturedAt": "2026-10-20T14:39:02.368Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/learner-my-courses-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/learner-my-courses-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "119a0ac4465b87a1971f1e1e3ef623c78b95274b",
     "width": 1440
   },
   "getting-started/new-academy-page": {
@@ -4196,6 +4247,142 @@
     ],
     "height": 900,
     "spec": "8d14a8a060aebdde81a530db473b9b30d5f7bc31",
+    "width": 1440
+  },
+  "getting-started/usage-page": {
+    "capturedAt": "2026-10-20T14:38:15.034Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/usage-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/usage-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "bda7c0502d10955fddcebfd0db7af9782bdf23ac",
+    "width": 1440
+  },
+  "notifications/academy-updates": {
+    "capturedAt": "2026-10-20T14:40:28.174Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/academy-updates-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/academy-updates-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f6ce6bc3a44064662ab01301facd49f145b32ef7",
+    "width": 1440
+  },
+  "notifications/dashboard-bell": {
+    "capturedAt": "2026-10-20T14:39:11.837Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/dashboard-bell-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/dashboard-bell-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "9dd16826c0721e28bc39e5258076c22ea783e682",
+    "width": 1440
+  },
+  "notifications/dashboard-page": {
+    "capturedAt": "2026-10-20T14:39:19.895Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/dashboard-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/dashboard-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "b7d6a0c39ab7be78de9e1a68ccb7fe48661e6bed",
+    "width": 1440
+  },
+  "notifications/email-language": {
+    "capturedAt": "2026-10-20T14:40:10.557Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/email-language-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/email-language-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "b1f8b1dc06047bfc3d80e0b9327c93565d8548a4",
+    "width": 1440
+  },
+  "notifications/learner-page": {
+    "capturedAt": "2026-10-20T14:39:30.728Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/learner-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/learner-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e8254efcc58f8dc224123d591ddec032c13b4ffc",
+    "width": 1440
+  },
+  "notifications/operations": {
+    "capturedAt": "2026-10-20T14:40:44.026Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/operations-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/operations-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "0fefa50217d918943a4ab1ef7eeb51390f933747",
+    "width": 1440
+  },
+  "notifications/profile-preferences-tab": {
+    "capturedAt": "2026-10-20T14:39:55.872Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/notifications/profile-preferences-tab-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/notifications/profile-preferences-tab-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "163709a262fa9a6edd044a5a9ff225bb613bb886",
     "width": 1440
   },
   "pipeline-sample/academy-home-mobile": {
