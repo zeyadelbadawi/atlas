@@ -63,8 +63,8 @@ If you started a trial when you signed up, this step is skipped. Otherwise the
 
    ![The Website step after the website is published](shot:getting-started/onboarding-website)
 
-4. In the **First course** step, type a course title and create a draft course, or
-   choose **Skip for now**. After you create it, **Open course builder** takes you to
+4. In the **First course** step, type a **Course Title** and choose **Create Course**
+   to save a draft, or choose **Skip for now**. After you create it, **Open course builder** takes you to
    its lessons.
 
    ![The First course step](shot:getting-started/onboarding-course)

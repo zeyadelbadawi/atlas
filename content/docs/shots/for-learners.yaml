@@ -1,0 +1,328 @@
+# Screenshots for the "For learners" category (content/docs/<lang>/for-learners/*.md).
+# Learner shots run as the demo learner on the demo academy's site (surface: academy);
+# signed-out pages run as a visitor. Real routes from LEARNER_ROUTES and the
+# PublicWebsiteRouter; i18n keys from src/localization/resources/<lang>/*.json.
+
+# --- DOC-LRN-030 Sign up and join an academy ---------------------------------
+- key: for-learners/academy-home-sign-up
+  as: visitor
+  surface: academy
+  path: /
+  waitFor: { text: publicWebsite:header.signUp }
+  highlight: { text: publicWebsite:header.signUp, exact: true }
+
+- key: for-learners/sign-up-form
+  as: visitor
+  surface: academy
+  path: /sign-up
+  waitFor: { text: auth:register.phone }
+  highlight: { label: auth:register.name }
+
+- key: for-learners/sign-up-submit
+  as: visitor
+  surface: academy
+  path: /sign-up
+  waitFor: { text: auth:register.phone }
+  actions:
+    - scroll: { role: button, name: auth:register.submit }
+  highlight: { role: button, name: auth:register.submit }
+
+- key: for-learners/sign-up-join-existing
+  as: visitor
+  surface: academy
+  path: /sign-up
+  waitFor: { text: publicWebsite:auth.signUp.hasAtlasAccount }
+  actions:
+    - click: { role: button, name: publicWebsite:auth.signUp.joinWithAtlasAccount }
+  highlight: { role: button, name: auth:academyJoin.submit }
+
+- key: for-learners/sign-in
+  as: visitor
+  surface: academy
+  path: /sign-in
+  waitFor: { text: publicWebsite:auth.signIn.noAccount }
+  highlight: { role: button, name: auth:signIn.submit }
+
+# --- DOC-LRN-031 Find your way around My Learn --------------------------------
+- key: for-learners/academy-home-my-learn
+  as: learner
+  surface: academy
+  path: /
+  waitFor: { text: publicWebsite:header.myLearn }
+  highlight: { text: publicWebsite:header.myLearn, exact: true }
+
+- key: for-learners/my-learn-overview
+  as: learner
+  surface: academy
+  path: /my
+  waitFor: { text: learning:learnerDashboard.overview.subtitle }
+
+- key: for-learners/my-courses
+  as: learner
+  surface: academy
+  path: /my/courses
+  waitFor: { text: learning:learnerDashboard.courses.subtitle }
+  highlight: { role: tablist }
+
+- key: for-learners/course-progress
+  as: learner
+  surface: academy
+  path: /my/courses/{courseId}
+  waitFor: { text: learning:learnerDashboard.courseProgress.subtitle }
+
+- key: for-learners/lesson-player
+  as: learner
+  surface: academy
+  path: /my/courses/{courseId}/learn/{lessonId}
+  waitFor: { text: learning:player.previous }
+  highlight: { role: button, name: learning:player.next }
+
+- key: for-learners/profile-your-data
+  as: learner
+  surface: academy
+  path: /my/profile
+  waitFor: { text: profile:tabs.account }
+  actions:
+    - click: { role: tab, name: profile:tabs.account }
+    - scroll: { text: profile:privacyRequests.title, exact: true }
+  highlight: { text: profile:privacyRequests.title, exact: true }
+
+# --- DOC-LRN-032 Enroll in a free course ---------------------------------------
+- key: for-learners/free-course-signed-out
+  as: visitor
+  surface: academy
+  path: /courses/{freeCourseId}
+  waitFor: { text: website:renderer.courseDetails.signInToEnrollAction }
+  highlight: { text: website:renderer.courseDetails.signInToEnrollAction, exact: true }
+
+- key: for-learners/free-course-enroll
+  as: learner
+  surface: academy
+  path: /courses/{freeCourseId}
+  waitFor: { text: website:renderer.courseDetails.enrollAction }
+  highlight: { text: website:renderer.courseDetails.enrollAction, exact: true }
+
+# --- DOC-LRN-033 Take a quiz or exam -------------------------------------------
+- key: for-learners/assessments-quizzes
+  as: learner
+  surface: academy
+  path: /my/assessments
+  waitFor: { text: learning:learnerDashboard.assessments.subtitle }
+  highlight: { role: tab, name: learning:learnerDashboard.assessments.tabs.quizzes }
+
+- key: for-learners/quiz-intro
+  as: learner
+  surface: academy
+  path: /my/courses/{courseId}/activities/{quizId}
+  waitFor: { text: learning:quiz.intro.passingScore }
+
+- key: for-learners/quiz-start
+  as: learner
+  surface: academy
+  path: /my/courses/{courseId}/activities/{quizId}
+  waitFor: { text: learning:quiz.intro.passingScore }
+  actions:
+    - scroll: { testId: quiz-start }
+  highlight: { testId: quiz-start }
+
+# --- DOC-LRN-034 Submit an assignment ------------------------------------------
+- key: for-learners/assessments-assignments
+  as: learner
+  surface: academy
+  path: /my/assessments
+  waitFor: { text: learning:learnerDashboard.assessments.subtitle }
+  actions:
+    - click: { role: tab, name: learning:learnerDashboard.assessments.tabs.assignments }
+  highlight: { role: tab, name: learning:learnerDashboard.assessments.tabs.assignments }
+
+- key: for-learners/assignment-page
+  as: learner
+  surface: academy
+  path: /my/courses/{courseId}/activities/{assignmentId}
+  waitFor: { text: learning:assignment.instructionsTitle }
+
+# The demo learner has already submitted (resubmission allowed until graded):
+# "Resubmit" reopens the form without sending anything.
+- key: for-learners/assignment-response
+  as: learner
+  surface: academy
+  path: /my/courses/{courseId}/activities/{assignmentId}
+  waitFor: { text: learning:assignment.submitted.title }
+  actions:
+    - click: { role: button, name: learning:assignment.resubmitAction }
+    - scroll: { selector: '#assignment-response' }
+  highlight: { selector: '#assignment-response' }
+
+- key: for-learners/assignment-attach
+  as: learner
+  surface: academy
+  path: /my/courses/{courseId}/activities/{assignmentId}
+  waitFor: { text: learning:assignment.submitted.title }
+  actions:
+    - click: { role: button, name: learning:assignment.resubmitAction }
+    - scroll: { text: learning:assignment.attachmentHelp }
+  highlight: { text: learning:assignment.attachmentHelp }
+
+- key: for-learners/assignment-submit
+  as: learner
+  surface: academy
+  path: /my/courses/{courseId}/activities/{assignmentId}
+  waitFor: { text: learning:assignment.submitted.title }
+  actions:
+    - click: { role: button, name: learning:assignment.resubmitAction }
+    - scroll: { testId: assignment-submit }
+  highlight: { testId: assignment-submit }
+
+- key: for-learners/assignment-submitted
+  as: learner
+  surface: academy
+  path: /my/courses/{courseId}/activities/{assignmentId}
+  waitFor: { text: learning:assignment.submitted.title }
+  highlight: { testId: assignment-submitted }
+
+# --- DOC-LRN-035 Download and share your certificate ---------------------------
+- key: for-learners/certificates-page
+  as: learner
+  surface: academy
+  path: /my/certificates
+  waitFor: { text: learning:learnerDashboard.certificates.subtitle }
+
+- key: for-learners/certificate-verify
+  as: visitor
+  surface: academy
+  path: /verify/{certificateCode}
+  waitFor: { text: certificates:verify.facts.title }
+
+# --- DOC-LRN-036 Rate and review a course --------------------------------------
+# Clipped to the learner's own review form: no published reviews on screen.
+- key: for-learners/review-form
+  as: learner
+  surface: academy
+  path: /courses/{courseId}
+  waitFor: { text: website:renderer.courseDetails.writeReviewTitle }
+  actions:
+    - scroll: { selector: '[aria-labelledby="my-review-heading"]' }
+  clip: '[aria-labelledby="my-review-heading"]'
+
+- key: for-learners/review-rating
+  as: learner
+  surface: academy
+  path: /courses/{courseId}
+  waitFor: { text: website:renderer.courseDetails.writeReviewTitle }
+  actions:
+    - scroll: { selector: '[aria-labelledby="my-review-heading"]' }
+  highlight: { text: website:renderer.courseDetails.yourRatingLabel, exact: true }
+  clip: '[aria-labelledby="my-review-heading"]'
+
+- key: for-learners/review-submit
+  as: learner
+  surface: academy
+  path: /courses/{courseId}
+  waitFor: { text: website:renderer.courseDetails.writeReviewTitle }
+  actions:
+    - scroll: { selector: '[aria-labelledby="my-review-heading"]' }
+  highlight: { role: button, name: website:renderer.courseDetails.submitReview }
+  clip: '[aria-labelledby="my-review-heading"]'
+
+# --- DOC-MED-010 Manage your devices -------------------------------------------
+- key: for-learners/devices-nav
+  as: learner
+  surface: academy
+  path: /my
+  waitFor: { text: learning:learnerDashboard.overview.subtitle }
+  highlight: { role: link, name: learning:learnerDashboard.nav.devices }
+
+- key: for-learners/devices-page
+  as: learner
+  surface: academy
+  path: /my/devices
+  waitFor: { text: learning:learnerDashboard.devices.registeredTitle }
+  highlight: { text: learning:learnerDashboard.devices.thisDevice, exact: true }
+
+# Opens the confirmation only; nothing is removed.
+- key: for-learners/devices-remove-confirm
+  as: learner
+  surface: academy
+  path: /my/devices
+  waitFor: { text: learning:learnerDashboard.devices.registeredTitle }
+  actions:
+    - click: { role: button, name: learning:learnerDashboard.devices.remove, nth: 0 }
+  clip: dialog
+
+# --- DOC-COM-010 Buy a course ---------------------------------------------------
+# English Grammar Basics: paid, and the demo learner has no order for it.
+# "Continue" opens (or reuses) a payment awaiting proof; no proof is submitted.
+- key: for-learners/paid-course-buy
+  as: learner
+  surface: academy
+  path: /courses/{englishCourseId}
+  waitFor: { text: website:renderer.courseDetails.buyAction }
+  highlight: { text: website:renderer.courseDetails.buyAction, exact: true }
+
+- key: for-learners/checkout-method
+  as: learner
+  surface: academy
+  path: /my/courses/{englishCourseId}/checkout
+  waitFor: { text: course:checkout.methodTitle }
+  actions:
+    - click: { testId: checkout-method-manual_instapay }
+  highlight: { role: button, name: course:checkout.continue }
+
+- key: for-learners/checkout-instructions
+  as: learner
+  surface: academy
+  path: /my/courses/{englishCourseId}/checkout
+  waitFor: { text: course:checkout.methodTitle }
+  actions:
+    - click: { testId: checkout-method-manual_instapay }
+    - click: { role: button, name: course:checkout.continue }
+    - wait: 1500
+    - scroll: { testId: checkout-instructions }
+  highlight: { testId: checkout-instructions }
+
+- key: for-learners/checkout-proof
+  as: learner
+  surface: academy
+  path: /my/courses/{englishCourseId}/checkout
+  waitFor: { text: course:checkout.methodTitle }
+  actions:
+    - click: { testId: checkout-method-manual_instapay }
+    - click: { role: button, name: course:checkout.continue }
+    - wait: 1500
+    - scroll: { testId: checkout-proof-file }
+  highlight: { testId: checkout-proof-file }
+
+- key: for-learners/checkout-submit
+  as: learner
+  surface: academy
+  path: /my/courses/{englishCourseId}/checkout
+  waitFor: { text: course:checkout.methodTitle }
+  actions:
+    - click: { testId: checkout-method-manual_instapay }
+    - click: { role: button, name: course:checkout.continue }
+    - wait: 1500
+    - scroll: { testId: checkout-submit-proof }
+  highlight: { testId: checkout-submit-proof }
+
+# --- DOC-COM-011 Your purchases and payments -----------------------------------
+- key: for-learners/purchases-page
+  as: learner
+  surface: academy
+  path: /my/purchases
+  waitFor: { text: learning:learnerDashboard.purchases.subtitle }
+
+- key: for-learners/payments-page
+  as: learner
+  surface: academy
+  path: /my/payments
+  waitFor: { text: learning:learnerDashboard.payments.subtitle }
+
+- key: for-learners/payment-proof
+  as: learner
+  surface: academy
+  path: /my/payments
+  waitFor: { text: learning:learnerDashboard.payments.subtitle }
+  actions:
+    - click: { text: learning:learnerDashboard.payments.viewProof, exact: true, nth: 0 }
+    - wait: 1000
+  clip: dialog

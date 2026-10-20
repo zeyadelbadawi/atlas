@@ -57,7 +57,7 @@ such as how many academies, courses, instructors and learners you can have. See
 
 > [!LIMITATION]
 > Video lessons use YouTube links or links to other sites; videos are not stored on
-> Atlas yet. Lessons that are only text, live classes, an academy blog and a forum
+> Atlas yet. Lessons that are only text, live sessions, an academy blog and a forum
 > are not available. Learners pay you by bank transfer, mobile wallet or InstaPay and
 > upload a proof; there is no card payment.
 

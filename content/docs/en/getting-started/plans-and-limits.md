@@ -29,7 +29,7 @@ is the size of your limits. The current plans, prices and limit values are on th
 | **Courses** | Courses in those academies that aren't archived, drafts included. |
 | **Instructors** | Different people who are active instructors in at least one of your academies. Someone who teaches in two academies counts once. |
 | **Students** | Different learners who have course access (an enrolment that hasn't been revoked or refunded) in one of your academies. A learner in several courses counts once. |
-| **Storage** | The files you store on Atlas, such as images and PDFs. |
+| **General storage** | The files you store on Atlas, such as images and PDFs. |
 
 You, the owner, and your managers don't count toward any limit.
 

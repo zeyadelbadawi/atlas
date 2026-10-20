@@ -1,0 +1,705 @@
+# Screenshots for the "courses" help-center category (content/docs/<lang>/courses).
+# Routes: src/app/routes/route-paths.ts. Labels: src/localization/resources/<lang>/*.json.
+# The lesson dialog opens on another content type, so every lesson-dialog shot
+# switches Content Type to Video or File first.
+
+# ---------- course list ----------
+- key: courses/course-list
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses
+  waitFor: { text: course:list.subtitle }
+
+- key: courses/create-button
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses
+  waitFor: { text: course:list.subtitle }
+  highlight: { role: button, name: course:list.createButton }
+
+- key: courses/list-actions-edit
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses
+  waitFor: { text: course:list.subtitle }
+  actions:
+    - click: { role: button, name: course:list.table.actions, nth: 0 }
+  highlight: { role: menuitem, name: course:list.actions.edit }
+
+- key: courses/list-actions-curriculum
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses
+  waitFor: { text: course:list.subtitle }
+  actions:
+    - click: { role: button, name: course:list.table.actions, nth: 0 }
+  highlight: { role: menuitem, name: course:list.actions.builder }
+
+# ---------- guided wizard ----------
+- key: courses/wizard-basics
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/create
+  waitFor: { text: course:wizard.steps.basics.description }
+  actions:
+    - fill: { label: course:create.titleLabel, value: { en: Algebra Basics, ar: أساسيات الجبر } }
+  highlight: { role: button, name: course:create.createButton }
+
+- key: courses/wizard-details
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{draftCourseId}/setup?step=details
+  waitFor: { text: course:wizard.steps.details.description }
+  highlight: { role: button, name: course:wizard.next }
+
+- key: courses/wizard-media
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{draftCourseId}/setup?step=media
+  waitFor: { text: course:wizard.steps.media.description }
+  highlight: { text: course:wizard.media.help }
+
+- key: courses/wizard-curriculum
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{draftCourseId}/setup?step=curriculum
+  waitFor: { text: course:wizard.steps.curriculum.description }
+  highlight: { role: button, name: course:builder.addSection }
+
+- key: courses/wizard-assessments
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{draftCourseId}/setup?step=assessments
+  waitFor: { text: course:wizard.steps.assessments.description }
+  highlight: { role: button, name: course:wizard.assessments.createQuiz }
+
+- key: courses/wizard-pricing
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{draftCourseId}/setup?step=pricing
+  waitFor: { text: course:wizard.steps.pricing.description }
+  highlight: { role: combobox, nth: 1 }
+
+- key: courses/wizard-review
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{draftCourseId}/setup?step=review
+  waitFor: { text: course:wizard.steps.review.description }
+
+- key: courses/wizard-publish
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{draftCourseId}/setup?step=publish
+  waitFor: { text: course:wizard.steps.publish.description }
+  highlight: { role: button, name: course:wizard.publish.button }
+
+# ---------- course edit page (Details tab) ----------
+- key: courses/edit-basic-info
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}
+  waitFor: { text: course:edit.basicInformationDescription }
+  highlight: { label: course:create.titleLabel }
+
+- key: courses/edit-visibility
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}
+  waitFor: { text: course:edit.basicInformationDescription }
+  highlight: { label: course:create.visibilityLabel }
+
+- key: courses/edit-pricing
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}
+  waitFor: { text: course:edit.basicInformationDescription }
+  highlight: { label: course:create.pricingTypeLabel }
+
+- key: courses/edit-price
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}
+  waitFor: { text: course:edit.basicInformationDescription }
+  highlight:
+    - { label: course:create.priceLabel }
+    - { label: course:create.currencyLabel }
+
+- key: courses/edit-catalog
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}
+  waitFor: { text: course:edit.basicInformationDescription }
+  highlight: { label: course:edit.levelLabel }
+
+- key: courses/edit-thumbnail
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}
+  waitFor: { text: course:edit.basicInformationDescription }
+  highlight: { role: button, name: course:create.changeThumbnail }
+
+- key: courses/edit-save
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}
+  waitFor: { text: course:edit.basicInformationDescription }
+  highlight: { role: button, name: course:edit.saveButton }
+
+- key: courses/instructors-card
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}
+  waitFor: { text: course:instructors.description }
+  highlight: { selector: '[id^="course-instructor-"]' }
+
+- key: courses/reviews-tab
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}
+  waitFor: { text: course:edit.basicInformationDescription }
+  highlight: { role: link, name: course:edit.goToReviews }
+
+# ---------- course builder ----------
+- key: courses/section-dialog
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/builder
+  waitFor: { text: course:builder.subtitle }
+  actions:
+    - click: { role: button, name: course:builder.addSection, nth: 0 }
+    - fill: { label: course:builder.sectionDialog.titleLabel, value: { en: Applications of derivatives, ar: تطبيقات التفاضل } }
+  highlight: { role: button, name: course:builder.sectionDialog.saveButton }
+  clip: dialog
+
+- key: courses/add-content-menu
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/builder
+  waitFor: { text: course:builder.subtitle }
+  actions:
+    - click: { role: button, name: course:builder.addContent, nth: 0 }
+  highlight: { role: menuitem, name: course:builder.addLesson }
+
+- key: courses/lesson-dialog
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/builder
+  waitFor: { text: course:builder.subtitle }
+  actions:
+    - click: { role: button, name: course:builder.addContent, nth: 0 }
+    - click: { role: menuitem, name: course:builder.addLesson }
+    - fill: { label: course:builder.lessonDialog.titleLabel, value: { en: Limits at infinity, ar: النهايات عند اللانهاية } }
+    - click: { label: course:builder.lessonDialog.contentTypeLabel }
+    - click: { role: option, name: course:contentType.video }
+    - fill: { label: course:builder.lessonDialog.contentUrlLabel, value: https://www.youtube.com/watch?v=atlasDemo05 }
+  highlight: { label: course:builder.lessonDialog.contentTypeLabel }
+  clip: dialog
+
+- key: courses/lesson-type-video
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/builder
+  waitFor: { text: course:builder.subtitle }
+  actions:
+    - click: { role: button, name: course:builder.addContent, nth: 0 }
+    - click: { role: menuitem, name: course:builder.addLesson }
+    - fill: { label: course:builder.lessonDialog.titleLabel, value: { en: Limits at infinity, ar: النهايات عند اللانهاية } }
+    - click: { label: course:builder.lessonDialog.contentTypeLabel }
+  highlight: { role: option, name: course:contentType.video }
+
+- key: courses/lesson-youtube-detected
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/builder
+  waitFor: { text: course:builder.subtitle }
+  actions:
+    - click: { role: button, name: course:builder.addContent, nth: 0 }
+    - click: { role: menuitem, name: course:builder.addLesson }
+    - fill: { label: course:builder.lessonDialog.titleLabel, value: { en: Limits at infinity, ar: النهايات عند اللانهاية } }
+    - click: { label: course:builder.lessonDialog.contentTypeLabel }
+    - click: { role: option, name: course:contentType.video }
+    - fill: { label: course:builder.lessonDialog.contentUrlLabel, value: https://www.youtube.com/watch?v=atlasDemo05 }
+  highlight: { text: course:builder.lessonDialog.youtubeDetected }
+  clip: dialog
+
+- key: courses/lesson-availability
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/builder
+  waitFor: { text: course:builder.subtitle }
+  actions:
+    - click: { role: button, name: course:builder.addContent, nth: 0 }
+    - click: { role: menuitem, name: course:builder.addLesson }
+    - fill: { label: course:builder.lessonDialog.titleLabel, value: { en: Limits at infinity, ar: النهايات عند اللانهاية } }
+    - click: { label: course:builder.lessonDialog.contentTypeLabel }
+    - click: { role: option, name: course:contentType.video }
+    - fill: { label: course:builder.lessonDialog.contentUrlLabel, value: https://www.youtube.com/watch?v=atlasDemo05 }
+    - click: { label: course:builder.lessonDialog.statusLabel }
+  highlight: { role: option, name: course:lessonStatus.published }
+
+- key: courses/lesson-type-file
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/builder
+  waitFor: { text: course:builder.subtitle }
+  actions:
+    - click: { role: button, name: course:builder.addContent, nth: 0 }
+    - click: { role: menuitem, name: course:builder.addLesson }
+    - fill: { label: course:builder.lessonDialog.titleLabel, value: { en: Revision sheet, ar: ورقة المراجعة } }
+    - click: { label: course:builder.lessonDialog.contentTypeLabel }
+  highlight: { role: option, name: course:contentType.file }
+
+- key: courses/lesson-file-link
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/builder
+  waitFor: { text: course:builder.subtitle }
+  actions:
+    - click: { role: button, name: course:builder.addContent, nth: 0 }
+    - click: { role: menuitem, name: course:builder.addLesson }
+    - fill: { label: course:builder.lessonDialog.titleLabel, value: { en: Revision sheet, ar: ورقة المراجعة } }
+    - click: { label: course:builder.lessonDialog.contentTypeLabel }
+    - click: { role: option, name: course:contentType.file }
+    - fill: { label: course:builder.lessonDialog.contentUrlLabel, value: https://example.com/revision-sheet.pdf }
+  highlight: { label: course:builder.lessonDialog.contentUrlLabel }
+  clip: dialog
+
+- key: courses/attach-quiz
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/builder
+  waitFor: { text: course:builder.subtitle }
+  actions:
+    - click: { role: button, name: course:builder.addContent, nth: 0 }
+    - click: { role: menuitem, name: course:builder.addExistingQuiz }
+  clip: dialog
+
+- key: courses/attach-assignment
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/builder
+  waitFor: { text: course:builder.subtitle }
+  actions:
+    - click: { role: button, name: course:builder.addContent, nth: 0 }
+    - click: { role: menuitem, name: course:builder.addExistingAssignment }
+  clip: dialog
+
+- key: courses/reorder
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/builder
+  waitFor: { text: course:builder.subtitle }
+  highlight:
+    - { role: button, name: course:builder.lessonMenu.moveUp, nth: 1 }
+    - { role: button, name: course:builder.lessonMenu.moveDown, nth: 1 }
+
+- key: courses/item-actions
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/builder
+  waitFor: { text: course:builder.subtitle }
+  actions:
+    - click: { role: button, name: course:builder.itemMenu.actions, nth: 0 }
+  highlight: { role: menuitem, name: course:builder.lessonMenu.edit }
+
+# ---------- course settings ----------
+- key: courses/settings-publish
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{draftCourseId}/settings
+  waitFor: { text: course:settings.publishingDescription }
+  highlight: { role: button, name: course:settings.publishAction }
+
+- key: courses/settings-unpublish-dialog
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/settings
+  waitFor: { text: course:settings.publishingDescription }
+  actions:
+    - click: { role: button, name: course:settings.unpublishAction }
+  highlight: { role: button, name: course:settings.unpublishDialog.confirmLabel }
+  clip: dialog
+
+- key: courses/completion-card
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/settings
+  waitFor: { text: course:settings.completion.description }
+  highlight: { text: course:settings.completion.title, exact: true }
+
+- key: courses/settings-certificate-switch
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/settings
+  waitFor: { text: course:settings.completion.description }
+  highlight: { role: switch, name: course:settings.completion.certificates.label }
+
+# ---------- quizzes ----------
+- key: courses/quizzes-list
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes
+  waitFor: { text: course:quizAuthoring.subtitle }
+  highlight: { role: button, name: course:quizAuthoring.addQuiz }
+
+- key: courses/quiz-edit-menu
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes
+  waitFor: { text: course:quizAuthoring.subtitle }
+  actions:
+    - click: { role: button, name: course:quizAuthoring.menu.edit, nth: 0 }
+  highlight: { role: menuitem, name: course:quizAuthoring.menu.edit }
+
+- key: courses/quiz-details
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/create
+  waitFor: { text: course:quizAuthoring.editor.detailsTitle }
+  actions:
+    - fill: { label: course:quizAuthoring.editor.titleLabel, value: { en: Derivatives check-up, ar: اختبار التفاضل } }
+  highlight: { label: course:quizAuthoring.editor.titleLabel }
+
+- key: courses/quiz-presets
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/create
+  waitFor: { text: course:quizAuthoring.settings.presetsHelp }
+  highlight:
+    - { role: button, name: course:quizAuthoring.settings.presets.practice.label }
+    - { role: button, name: course:quizAuthoring.settings.presets.exam.label }
+
+- key: courses/quiz-essentials
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/create
+  waitFor: { text: course:quizAuthoring.settings.essentials.description }
+  highlight: { label: course:quizAuthoring.editor.passingScoreLabel }
+
+- key: courses/quiz-questions
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/{quizId}
+  waitFor: { text: course:quizAuthoring.editor.detailsTitle }
+  highlight: { role: button, name: course:quizAuthoring.editor.addQuestion }
+
+- key: courses/quiz-save
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/{quizId}
+  waitFor: { text: course:quizAuthoring.editor.detailsTitle }
+  highlight: { role: button, name: course:quizAuthoring.editor.saveButton }
+
+- key: courses/quiz-advanced-toggle
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/create
+  waitFor: { text: course:quizAuthoring.settings.essentials.description }
+  highlight: { text: course:quizAuthoring.settings.advanced.toggle, exact: true }
+
+- key: courses/quiz-timing
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/create
+  waitFor: { text: course:quizAuthoring.settings.essentials.description }
+  actions:
+    - click: { role: button, name: course:quizAuthoring.settings.presets.exam.label }
+  highlight: { text: course:quizAuthoring.settings.timing.title, exact: true }
+
+- key: courses/quiz-attempts
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/create
+  waitFor: { text: course:quizAuthoring.settings.essentials.description }
+  actions:
+    - click: { role: button, name: course:quizAuthoring.settings.presets.exam.label }
+  highlight: { label: course:quizAuthoring.settings.fields.gradingPolicy.label }
+
+- key: courses/quiz-results-settings
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/create
+  waitFor: { text: course:quizAuthoring.settings.essentials.description }
+  actions:
+    - click: { role: button, name: course:quizAuthoring.settings.presets.exam.label }
+  highlight: { label: course:quizAuthoring.settings.fields.showScore.label }
+
+- key: courses/quiz-integrity-settings
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/create
+  waitFor: { text: course:quizAuthoring.settings.essentials.description }
+  actions:
+    - click: { role: button, name: course:quizAuthoring.settings.presets.exam.label }
+  highlight: { label: course:quizAuthoring.settings.fields.integrityMode.label }
+
+- key: courses/quiz-progression
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/create
+  waitFor: { text: course:quizAuthoring.settings.essentials.description }
+  actions:
+    - click: { role: button, name: course:quizAuthoring.settings.presets.exam.label }
+  highlight: { label: course:quizAuthoring.settings.fields.requiredToProgress.label }
+
+# ---------- assignments ----------
+- key: courses/assignments-list
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/assignments
+  waitFor: { text: course:assignmentAuthoring.subtitle }
+  highlight: { role: button, name: course:assignmentAuthoring.addAssignment }
+
+- key: courses/assignment-dialog
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/assignments
+  waitFor: { text: course:assignmentAuthoring.subtitle }
+  actions:
+    - click: { role: button, name: course:assignmentAuthoring.addAssignment }
+    - fill: { label: course:assignmentAuthoring.dialog.titleLabel, value: { en: Chain rule practice, ar: تدريب قاعدة السلسلة } }
+  highlight: { text: course:assignmentAuthoring.dialog.latePolicyLabel, exact: true }
+  clip: dialog
+
+# ---------- reviewing and grading (Teaching Dashboard) ----------
+- key: courses/instructor-assessments
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/assessments
+  waitFor: { text: instructor:assessments.subtitle }
+  highlight: { text: { en: Limits check-up, ar: اختبار النهايات } }
+
+- key: courses/quiz-results
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/quizzes/{quizId}/results
+  waitFor: { text: instructor:quizResults.actions.overrides }
+  highlight: { text: { en: Salma Ibrahim, ar: سلمى إبراهيم } }
+
+- key: courses/quiz-results-overrides
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/quizzes/{quizId}/results
+  waitFor: { text: instructor:quizResults.actions.overrides }
+  highlight: { role: button, name: instructor:quizResults.actions.overrides }
+
+- key: courses/quiz-results-export
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/quizzes/{quizId}/results
+  waitFor: { text: instructor:quizResults.actions.overrides }
+  highlight: { role: button, name: instructor:quizResults.actions.exportCsv }
+
+- key: courses/overrides-sheet
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/quizzes/{quizId}/results
+  waitFor: { text: instructor:quizResults.actions.overrides }
+  actions:
+    - click: { role: button, name: instructor:quizResults.actions.overrides }
+  highlight: { text: instructor:quizResults.overrides.formTitle }
+  clip: dialog
+
+- key: courses/overrides-save
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/quizzes/{quizId}/results
+  waitFor: { text: instructor:quizResults.actions.overrides }
+  actions:
+    - click: { role: button, name: instructor:quizResults.actions.overrides }
+  highlight: { role: button, name: instructor:quizResults.overrides.save }
+  clip: dialog
+
+- key: courses/attempt-grading
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/quizzes/{quizId}/attempts/{quizAttemptId}
+  waitFor: { text: instructor:attemptReview.grading.description }
+  highlight: { role: button, name: instructor:attemptReview.grading.save }
+
+- key: courses/attempt-void
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/quizzes/{quizId}/attempts/{quizAttemptId}
+  waitFor: { text: instructor:attemptReview.grading.description }
+  highlight: { role: button, name: instructor:attemptReview.void.action }
+
+- key: courses/submissions-list
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/assignments/{assignmentId}/submissions
+  waitFor: { text: instructor:submissions.subtitle }
+  highlight: { text: { en: Salma Ibrahim, ar: سلمى إبراهيم } }
+
+- key: courses/submission-grade
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/assignments/{assignmentId}/submissions/{submissionId}
+  waitFor: { text: instructor:grading.submissionTitle }
+  highlight: { role: button, name: instructor:grading.submitButton }
+
+- key: courses/teaching-dashboard
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor
+  waitFor: { text: instructor:dashboard.subtitle }
+
+- key: courses/teaching-courses
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses
+  waitFor: { text: instructor:courses.subtitle }
+  highlight: { text: { en: Calculus Essentials, ar: أساسيات التفاضل والتكامل } }
+
+- key: courses/teaching-course-overview
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}
+  waitFor: { text: instructor:overview.enrolledStudents }
+  highlight: { role: button, name: instructor:overview.editCurriculum }
+
+- key: courses/teaching-students
+  as: instructor
+  surface: dashboard
+  path: /dashboard/instructor/courses/{courseId}/students
+  waitFor: { text: instructor:students.subtitle }
+
+# ---------- reviews ----------
+- key: courses/reviews-filter
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/reviews
+  waitFor: { text: course:reviews.subtitle }
+  actions:
+    - click: { label: course:reviews.filterLabel }
+  highlight: { role: listbox }
+
+# ---------- certificates ----------
+- key: courses/certificate-template
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/certificates/template
+  waitFor: { text: certificates:template.subtitle }
+  highlight: { label: certificates:template.fields.name }
+
+- key: courses/certificate-template-images
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/certificates/template
+  waitFor: { text: certificates:template.subtitle }
+  highlight:
+    - { text: certificates:template.fields.logo, exact: true }
+    - { text: certificates:template.fields.signature, exact: true }
+
+- key: courses/certificate-wording
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/certificates/template
+  waitFor: { text: certificates:template.subtitle }
+  highlight: { text: certificates:template.fields.wordingAr, exact: true }
+
+- key: courses/certificate-colors
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/certificates/template
+  waitFor: { text: certificates:template.subtitle }
+  highlight: { text: certificates:template.colors.title, exact: true }
+
+- key: courses/certificate-save
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/certificates/template
+  waitFor: { text: certificates:template.preview.rendererNote }
+  highlight: { role: button, name: certificates:template.actions.save }
+
+- key: courses/certificates-list
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/certificates
+  waitFor: { text: certificates:staff.subtitle }
+  highlight: { role: button, name: certificates:staff.actions.openActions, nth: 0 }
+
+- key: courses/certificate-revoke
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/certificates
+  waitFor: { text: certificates:staff.subtitle }
+  actions:
+    - click: { role: button, name: certificates:staff.actions.openActions, nth: 0 }
+    - click: { role: menuitem, name: certificates:staff.actions.revoke }
+  highlight: { label: certificates:staff.revoke.reasonLabel }
+  clip: dialog
+
+- key: courses/certificate-regenerate
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/certificates
+  waitFor: { text: certificates:staff.subtitle }
+  actions:
+    - click: { role: button, name: certificates:staff.actions.openActions, nth: 0 }
+    - click: { role: menuitem, name: certificates:staff.actions.regenerate }
+  clip: dialog
+
+- key: courses/student-issue-certificate
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: { en: Salma Ibrahim, ar: سلمى إبراهيم } }
+  actions:
+    - click: { text: { en: Salma Ibrahim, ar: سلمى إبراهيم } }
+  highlight: { role: button, name: certificates:issue.action, nth: 0 }
+
+- key: courses/issue-certificate-dialog
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/members?tab=students
+  waitFor: { text: { en: Salma Ibrahim, ar: سلمى إبراهيم } }
+  actions:
+    - click: { text: { en: Salma Ibrahim, ar: سلمى إبراهيم } }
+    - click: { role: button, name: certificates:issue.action, nth: 0 }
+  highlight: { text: certificates:issue.force }
+  clip: dialog
+
+- key: courses/verify-valid
+  as: visitor
+  surface: platform
+  path: /verify/{certificateCode}
+  waitFor: { text: certificates:verify.valid.title }
+
+- key: courses/verify-invalid
+  as: visitor
+  surface: platform
+  path: /verify/ZZZZ2222ZZZZ
+  waitFor: { text: certificates:verify.invalid.title }
+
+# ---------- reports ----------
+- key: courses/reports-integrity
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/reports
+  waitFor: { text: dashboard:reports.integrity.description }
+  highlight: { text: dashboard:reports.integrity.title, exact: true }
+
+- key: courses/reports-window
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/reports
+  waitFor: { text: dashboard:reports.integrity.description }
+  actions:
+    - click: { label: dashboard:reports.window.label }
+  highlight: { role: listbox }
+
+# ---------- what learners see ----------
+- key: courses/learner-youtube-lesson
+  as: learner
+  surface: academy
+  path: /my/courses/{courseId}/learn/{lessonId}
+  waitFor: { text: learning:player.external.youtubeNotice }
+  highlight: { text: learning:player.external.youtubeNotice }
+
+- key: courses/learner-link-lesson
+  as: learner
+  surface: academy
+  path: /my/courses/{courseId}/learn/{linkLessonId}
+  waitFor: { text: learning:player.external.notProtectedTitle }
+  highlight: { text: learning:player.external.open }

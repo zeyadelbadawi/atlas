@@ -54,9 +54,8 @@ including this one ([Reset or change your password](doc:DOC-IAM-003)).
 
 ## If you don't recognise a session
 
-1. Sign it out as shown above.
-2. Change your password.
-3. Turn on an [authenticator app](doc:DOC-IAM-006).
+Sign it out as shown above, then change your password, then turn on an
+[authenticator app](doc:DOC-IAM-006).
 
 ## Three different lists
 
