@@ -66,7 +66,7 @@ Yes. Your academy starts on its own Atlas subdomain, and you can connect a domai
 
 ## Can I change my academy's Atlas address?
 
-Yes, if you are the organization owner: save a new **Academy Slug** in **Academy Settings**. Your website moves to the new address, and the old address keeps working and sends visitors to the same page on the new one. The old address stays reserved for your academy, so you can change back to it. See [Your academy web address](doc:DOC-ACD-005).
+Yes, if you are the organization owner, once every 60 days: save a new **Academy Slug** in **Academy Settings**. Your website moves to the new address, and the old address keeps working and sends visitors to the same page on the new one. The old address stays reserved for your academy, so you can change back to it. See [Your academy web address](doc:DOC-ACD-005).
 
 ## Does Atlas have an API?
 

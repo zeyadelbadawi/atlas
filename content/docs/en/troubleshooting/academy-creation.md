@@ -63,7 +63,7 @@ If you don't want this academy any more, choose **Cancel provisioning**. "This r
 2. If it says "Already taken" or "This address is reserved", change the address until it says "Available".
 3. If it says the address is already being set up, choose **Follow that setup** instead of starting again.
 
-The Atlas address doesn't need to be perfect: the organization owner can change it later (the old address then sends visitors to the new one), and you can connect your own domain. See [Your academy web address](doc:DOC-ACD-005).
+The Atlas address doesn't need to be perfect: the organization owner can change it later, once every 60 days (the old address then sends visitors to the new one), and you can connect your own domain. See [Your academy web address](doc:DOC-ACD-005).
 
 ### Academy limit or subscription
 

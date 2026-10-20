@@ -23,7 +23,7 @@ Every path below goes after your academy's address. For example, if your address
 
 - **Atlas subdomain.** Atlas gives every academy a subdomain and manages its HTTPS certificate. You'll find it on the **Domain** tab of your website settings, under **Atlas subdomain**. It keeps working even if you later disconnect your own domain.
 - **Your own domain.** Once your domain is live, it becomes the primary address. Visitors who open the Atlas subdomain are sent to your domain, and both addresses keep working. See [Connect your own domain](doc:DOC-ACD-006).
-- **After an address change.** If the organization owner changes the **Academy Slug**, your site moves to the new Atlas subdomain. Every path on the old one still works: it sends visitors to the same path on your current address. See [Your academy web address](doc:DOC-ACD-005).
+- **After an address change.** If the organization owner changes the **Academy Slug** (possible once every 60 days), your site moves to the new Atlas subdomain. Every path on the old one still works: it sends visitors to the same path on your current address. See [Your academy web address](doc:DOC-ACD-005).
 
 ## English and Arabic pages
 

@@ -81,7 +81,7 @@ The website starts unpublished: visitors see a Coming Soon page until you publis
 ## What you can change later
 
 - Name, logo, colours, theme and website content: any time, by you or a manager.
-- The Atlas address: only the owner. Your website moves to the new address and the old one redirects to it. See [Your academy web address](doc:DOC-ACD-005).
+- The Atlas address: only the owner, once every 60 days. Your website moves to the new address and the old one redirects to it. See [Your academy web address](doc:DOC-ACD-005).
 - Payment methods: from **Payment methods** in the academy sidebar. See
   [Set up payment methods](doc:DOC-COM-002).
 - Your own domain: after the academy is ready, from the website settings.
