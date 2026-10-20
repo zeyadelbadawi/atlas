@@ -1,4 +1,72 @@
 {
+  "billing/billing-overview": {
+    "capturedAt": "2026-10-20T09:11:38.015Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/billing/billing-overview-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/billing/billing-overview-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "408a2708ce3493a65cfb95974822aa5143412396",
+    "width": 1440
+  },
+  "billing/cancel-button": {
+    "capturedAt": "2026-10-20T09:10:52.214Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/billing/cancel-button-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/billing/cancel-button-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "164ea13ebc78f2b461b6d7b712c29c73ef9af5c5",
+    "width": 1440
+  },
+  "billing/cancel-confirm": {
+    "capturedAt": "2026-10-20T09:11:20.050Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/billing/cancel-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/billing/cancel-confirm-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 500,
+    "spec": "3a1f24ed3e929717f2ed04b8c4f202a3799586fe",
+    "width": 560
+  },
+  "billing/cancel-reason": {
+    "capturedAt": "2026-10-20T09:11:01.389Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/billing/cancel-reason-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/billing/cancel-reason-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 500,
+    "spec": "11796b2d7cd23a2b6229cbb0160d8d67e0db0359",
+    "width": 560
+  },
   "billing/checkout-cycle": {
     "capturedAt": "2026-10-20T09:09:57.735Z",
     "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
@@ -150,6 +218,40 @@
     ],
     "height": 900,
     "spec": "439963b725c3db075cdf480c717f6c53561c701a",
+    "width": 1440
+  },
+  "billing/usage-nav": {
+    "capturedAt": "2026-10-20T09:10:33.815Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/billing/usage-nav-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/billing/usage-nav-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ffe40d3b1ab866536e02df516927ab00ae440076",
+    "width": 1440
+  },
+  "billing/usage-rows": {
+    "capturedAt": "2026-10-20T09:10:43.042Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/billing/usage-rows-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/billing/usage-rows-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f6c0ed0a525053cce46d45c3bf53747b7012e0f2",
     "width": 1440
   },
   "pipeline-sample/academy-home-mobile": {

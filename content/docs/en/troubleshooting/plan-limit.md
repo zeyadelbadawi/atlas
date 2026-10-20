@@ -50,7 +50,7 @@ The limits for each plan are on the [pricing page](site:/pricing).
    ![The Usage page showing current usage against plan limits](shot:troubleshooting/usage-page)
 
 2. Decide whether to free up space or upgrade.
-   - **Free up space:** remove an instructor who no longer teaches with you, remove files you no longer need from your academy's media, or end the access of learners who should no longer be enrolled.
+   - **Free up space:** remove an instructor who no longer teaches with you, remove files you no longer need from **Academy Media**, or **Revoke** the access of learners who should no longer be enrolled.
    - **Upgrade:** open **Subscription** and choose **Compare plans** to see what each plan allows.
 
    ![The Subscription page with the Compare plans button highlighted](shot:troubleshooting/compare-plans)
@@ -58,7 +58,7 @@ The limits for each plan are on the [pricing page](site:/pricing).
 3. Try the action again.
 
 > [!WARNING]
-> Don't delete an academy to make room for a new one. Deleting an academy is permanent. Upgrade instead, or contact support to talk it through.
+> Deleting an academy frees its slot, but "This cannot be undone": its website goes offline and its managers, instructors and students lose access. Don't delete an academy just to make room; upgrade instead.
 
 ## Still stuck?
 
