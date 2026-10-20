@@ -1767,6 +1767,74 @@
     "spec": "bec1acd41524977fb045f518abdcaf7384599760",
     "width": 1440
   },
+  "courses/create-button": {
+    "capturedAt": "2026-10-20T14:15:10.163Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/create-button-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/create-button-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ccb0a4b766fe73a09818edbf6a38e92b61555583",
+    "width": 1440
+  },
+  "courses/list-actions-curriculum": {
+    "capturedAt": "2026-10-20T14:15:27.746Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/list-actions-curriculum-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/list-actions-curriculum-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "fca717c08163ad8f2c0596bf8496f85069c23a93",
+    "width": 1440
+  },
+  "courses/list-actions-edit": {
+    "capturedAt": "2026-10-20T14:15:18.188Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/list-actions-edit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/list-actions-edit-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "95fce7deb3ef6da76b08f57dbfe3ea96e919931f",
+    "width": 1440
+  },
+  "courses/wizard-basics": {
+    "capturedAt": "2026-10-20T14:15:35.974Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/wizard-basics-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/wizard-basics-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3efaf928edfcdbabfba9d52dd809a226752d9811",
+    "width": 1440
+  },
   "pipeline-sample/academy-home-mobile": {
     "capturedAt": "2026-10-20T08:50:36.328Z",
     "commit": "02a79da7e1c69ea489c2357c6ccf94cd0ad009fc",
