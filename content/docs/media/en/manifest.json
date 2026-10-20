@@ -7479,6 +7479,40 @@
     "spec": "93b55804a021ae04c56abf3bbddfb5819a5d23e2",
     "width": 1440
   },
+  "website/editor-publish-page": {
+    "capturedAt": "2026-10-20T15:30:32.390Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/editor-publish-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/editor-publish-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "d30f4724a057a68e841571ffed5a9a8cbe5c051d",
+    "width": 1440
+  },
+  "website/editor-save": {
+    "capturedAt": "2026-10-20T15:30:08.099Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/editor-save-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/editor-save-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ef7cf89d29701d40f309d7111b14359341d4b3df",
+    "width": 1440
+  },
   "website/editor-section-apply": {
     "capturedAt": "2026-10-20T15:29:12.632Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -7665,6 +7699,23 @@
     "height": 900,
     "spec": "29b3cb974d776617f85c271a6502ba835f9cd3c3",
     "width": 1440
+  },
+  "website/page-seo-dialog": {
+    "capturedAt": "2026-10-20T15:30:55.338Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/page-seo-dialog-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/page-seo-dialog-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 813,
+    "spec": "56d8f52dcdd01c32eccf53a6e8b84079ad8b3f7a",
+    "width": 560
   },
   "website/pages-auth-dialog": {
     "capturedAt": "2026-10-20T15:27:00.306Z",
