@@ -43,6 +43,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -64,6 +65,19 @@ import type {
   CreateAnnouncementPayload,
   UpdateAnnouncementPayload,
 } from '@types';
+
+/**
+ * A stored UTC instant as the local wall-clock value a `datetime-local`
+ * input shows (`YYYY-MM-DDTHH:mm`). `iso.slice(0, 16)` would show the UTC
+ * digits as local time, so every save of an edited announcement would move
+ * its schedule by the viewer's UTC offset. Same conversion as
+ * `AssignmentFormDialog`'s `toDateTimeLocalValue`.
+ */
+function toDateTimeLocalValue(isoString: string): string {
+  const date = new Date(isoString);
+  const localOffsetMs = date.getTimezoneOffset() * 60000;
+  return new Date(date.getTime() - localOffsetMs).toISOString().slice(0, 16);
+}
 
 function getStatusTone(status: AnnouncementStatus) {
   switch (status) {
@@ -164,7 +178,7 @@ export function AnnouncementManagerPanel({
               title: editing.title,
               body: editing.body,
               scheduledAt: editing.scheduledAt
-                ? editing.scheduledAt.slice(0, 16)
+                ? toDateTimeLocalValue(editing.scheduledAt)
                 : '',
             }
           : { title: '', body: '', scheduledAt: '' }
@@ -184,10 +198,13 @@ export function AnnouncementManagerPanel({
 
     try {
       if (editing) {
+        // An emptied date is sent as `null`: the server then clears the
+        // schedule and a scheduled announcement goes back to draft. A date
+        // on a draft schedules it. (Omitting it would leave it unchanged.)
         await onUpdate(editing.id, {
           title: data.title,
           body: data.body,
-          scheduledAt,
+          scheduledAt: scheduledAt ?? null,
         });
       } else {
         await onCreate({ title: data.title, body: data.body, scheduledAt });
@@ -376,6 +393,9 @@ export function AnnouncementManagerPanel({
                     <FormControl>
                       <Input type="datetime-local" {...field} />
                     </FormControl>
+                    <FormDescription>
+                      {t('announcements:manage.scheduledAtHelp')}
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

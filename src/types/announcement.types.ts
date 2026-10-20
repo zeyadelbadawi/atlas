@@ -43,5 +43,10 @@ export interface CreateAnnouncementPayload {
 export interface UpdateAnnouncementPayload {
   readonly title?: string;
   readonly body?: string;
-  readonly scheduledAt?: string;
+  /**
+   * A date schedules a draft (status becomes `scheduled`); `null` clears
+   * the schedule and a scheduled announcement returns to `draft`; absent
+   * leaves the schedule unchanged.
+   */
+  readonly scheduledAt?: string | null;
 }

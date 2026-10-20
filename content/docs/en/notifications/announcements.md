@@ -32,7 +32,7 @@ The academy owner and managers can write and publish announcements. Instructors 
 
    ![The new announcement form with the Save button highlighted](shot:notifications/announcements-form)
 
-4. On the saved announcement, choose **Publish**. (If you set **Schedule for**, you can skip this: Atlas publishes it at that time.)
+4. On the saved announcement, choose **Publish**. (If you set **Schedule for**, you can skip this: Atlas publishes it within about 15 minutes after that time.)
 
    ![The Publish button on a draft announcement](shot:notifications/announcements-publish)
 
@@ -45,11 +45,18 @@ The academy owner and managers can write and publish announcements. Instructors 
 | Status | Meaning |
 |---|---|
 | **Draft** | Saved, not visible to learners. You can edit or publish it |
-| **Scheduled** | Saved with a date in **Schedule for**. Atlas publishes it at that time |
+| **Scheduled** | Saved with a date in **Schedule for**. Atlas publishes it within about 15 minutes after that time |
 | **Published** | Visible to learners |
 | **Archived** | Removed from learners' feeds |
 
 To take a published announcement down, choose **Archive** and confirm. It no longer appears in learners' feeds.
+
+## Schedule or unschedule a saved announcement
+
+You can add, change or remove the date of a **Draft** or **Scheduled** announcement:
+
+- Choose **Edit**, set **Schedule for**, then **Save**. A draft becomes **Scheduled** and is published automatically.
+- To cancel the schedule, choose **Edit**, clear **Schedule for**, then **Save**. The announcement goes back to **Draft** and is published only when you choose **Publish**.
 
 ## Announcements for one course
 

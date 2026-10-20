@@ -16,19 +16,22 @@ import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { createI18nInstance } from '@/localization/i18n';
+import enWebsite from '@/localization/resources/en/website.json';
+import arWebsite from '@/localization/resources/ar/website.json';
 import { WebsitePublishBar } from './WebsitePublishBar';
 
 const publishMutate = vi.fn();
 const unpublishMutate = vi.fn();
 const confirm = vi.fn();
 let canPublish = true;
+let publishError: Error | null = null;
 
 vi.mock('../hooks', () => ({
   useWebsitePages: () => ({ data: { items: [] } }),
   usePublishWebsite: () => ({
     mutate: publishMutate,
     isPending: false,
-    error: null,
+    error: publishError,
   }),
   useUnpublishWebsite: () => ({
     mutate: unpublishMutate,
@@ -54,6 +57,7 @@ const wrap = (language: 'en' | 'ar', children: ReactNode) =>
 
 beforeEach(() => {
   canPublish = true;
+  publishError = null;
   publishMutate.mockReset();
   unpublishMutate.mockReset();
   confirm.mockReset();
@@ -151,5 +155,30 @@ describe('publish bar while the site is live', () => {
     );
     expect(screen.queryByTestId('website-publish-changes')).toBeNull();
     expect(screen.queryByTestId('website-publish-toggle')).toBeNull();
+  });
+});
+
+// Publishing is synchronous on the server: a configuration is only ever
+// `draft` or `published`, so there is no "Publishing…" or "Publish failed"
+// status to show. A failed request is an error with a retry instead.
+describe('publish status', () => {
+  it('has a label for draft and published only, in both languages', () => {
+    expect(Object.keys(enWebsite.publish.status).sort()).toEqual([
+      'draft',
+      'published',
+    ]);
+    expect(Object.keys(arWebsite.publish.status).sort()).toEqual([
+      'draft',
+      'published',
+    ]);
+  });
+
+  it('a failed publish keeps the real Draft badge and offers Try again, which publishes again', async () => {
+    publishError = new Error('network');
+    confirm.mockResolvedValue(true);
+    wrap('en', <WebsitePublishBar academyId="a1" status="draft" />);
+    expect(screen.getByText('Draft')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    await waitFor(() => expect(publishMutate).toHaveBeenCalledWith('a1'));
   });
 });

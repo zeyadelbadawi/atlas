@@ -58,8 +58,13 @@ export const MAX_ACADEMY_DESCRIPTION_LENGTH = 500;
 /** Maximum academy slug length. */
 export const MAX_ACADEMY_SLUG_LENGTH = 50;
 
-/** Academy logo maximum file size (5MB). */
-export const MAX_LOGO_FILE_SIZE = 5 * 1024 * 1024;
+/**
+ * Academy logo maximum file size (2 MB) — the same limit as the Brand
+ * Studio (`MAX_LOGO_BYTES`) and the largest logo the server embeds in a
+ * certificate (`MAX_CERTIFICATE_IMAGE_BYTES` in the backend); a bigger
+ * logo would upload but be left off certificates.
+ */
+export const MAX_LOGO_FILE_SIZE = 2 * 1024 * 1024;
 
 /** Academy favicon maximum file size (1MB). */
 export const MAX_FAVICON_FILE_SIZE = 1024 * 1024;

@@ -381,7 +381,7 @@ describe('Academy Media — bulk delete', () => {
       "“d.pdf” wasn't found. It may already have been deleted.",
     ]);
     expect(outcome.textContent).toContain(
-      'Files are deleted from storage later.'
+      "The files aren't erased from storage right away."
     );
     await waitFor(() => expect(screen.queryByText('a.pdf')).toBeNull());
     expect(screen.getByText('c.pdf')).toBeTruthy();
