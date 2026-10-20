@@ -3314,6 +3314,108 @@
     "spec": "b297b2c83af30b373d76fbd8b2134832ab97eb65",
     "width": 1440
   },
+  "for-learners/certificate-verify": {
+    "capturedAt": "2026-10-20T14:31:00.825Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/for-learners/certificate-verify-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/certificate-verify-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "c42a35a535a4fa9c16abb9ba06e248a0d3f47978",
+    "width": 1440
+  },
+  "for-learners/certificates-page": {
+    "capturedAt": "2026-10-20T14:30:54.683Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/for-learners/certificates-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/certificates-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "7413a1f0a29cbab112cada90da6829cfc6bc9312",
+    "width": 1440
+  },
+  "for-learners/checkout-instructions": {
+    "capturedAt": "2026-10-20T14:32:12.437Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/for-learners/checkout-instructions-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/checkout-instructions-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "0f86ef64d8ba834b0e5185fbafc01599bff3b356",
+    "width": 1440
+  },
+  "for-learners/checkout-method": {
+    "capturedAt": "2026-10-20T14:32:00.787Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/for-learners/checkout-method-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/checkout-method-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "4f44080e6299fd4e9177dbc4d494da7dc5c4bc1f",
+    "width": 1440
+  },
+  "for-learners/checkout-proof": {
+    "capturedAt": "2026-10-20T14:32:23.852Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/for-learners/checkout-proof-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/checkout-proof-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e82ee68f052b8845ea8fec1a3fba723b60b02443",
+    "width": 1440
+  },
+  "for-learners/checkout-submit": {
+    "capturedAt": "2026-10-20T14:32:34.174Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/for-learners/checkout-submit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/checkout-submit-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "aee895d255b11586b02153889e5531446521f551",
+    "width": 1440
+  },
   "for-learners/course-progress": {
     "capturedAt": "2026-10-20T14:28:02.178Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -3330,6 +3432,57 @@
     "height": 900,
     "spec": "d425b2806e820d11884c3b68969c800632a456f1",
     "width": 1440
+  },
+  "for-learners/devices-nav": {
+    "capturedAt": "2026-10-20T14:31:32.182Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/for-learners/devices-nav-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/devices-nav-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "8f8210e17bf95673b74c3409f367fddee69eea44",
+    "width": 1440
+  },
+  "for-learners/devices-page": {
+    "capturedAt": "2026-10-20T14:31:38.952Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/for-learners/devices-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/devices-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "5bfc7f1fc13bff1d151331007bb2f7970253a38c",
+    "width": 1440
+  },
+  "for-learners/devices-remove-confirm": {
+    "capturedAt": "2026-10-20T14:31:45.580Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/for-learners/devices-remove-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/devices-remove-confirm-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 250,
+    "spec": "9d6ab046dcdab7f63880266858ce7109d0f1b811",
+    "width": 560
   },
   "for-learners/free-course-enroll": {
     "capturedAt": "2026-10-20T14:28:47.018Z",
@@ -3399,6 +3552,57 @@
     "spec": "66a9ce4a16240f1a770d176705dfac7429e2f4fb",
     "width": 1440
   },
+  "for-learners/paid-course-buy": {
+    "capturedAt": "2026-10-20T14:31:53.171Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/for-learners/paid-course-buy-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/paid-course-buy-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "1dfe566c79e38863547524286c4392ae748644ec",
+    "width": 1440
+  },
+  "for-learners/payment-proof": {
+    "capturedAt": "2026-10-20T14:32:56.769Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/for-learners/payment-proof-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/payment-proof-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 795,
+    "spec": "4200ccebc78018388db6e98df6489c16b25ae9b6",
+    "width": 720
+  },
+  "for-learners/payments-page": {
+    "capturedAt": "2026-10-20T14:32:47.498Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/for-learners/payments-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/payments-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "82b3f3bdafd2ae4ec5795162886d0861cb1a0de4",
+    "width": 1440
+  },
   "for-learners/profile-your-data": {
     "capturedAt": "2026-10-20T14:28:32.729Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -3415,6 +3619,74 @@
     "height": 900,
     "spec": "f4bdc7fe6e0e06af933c2c5163529dde106e0302",
     "width": 1440
+  },
+  "for-learners/purchases-page": {
+    "capturedAt": "2026-10-20T14:32:40.807Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/for-learners/purchases-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/purchases-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ea13ce131aba406fdd06ce3597c8621c040cbbfa",
+    "width": 1440
+  },
+  "for-learners/review-form": {
+    "capturedAt": "2026-10-20T14:31:09.105Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/for-learners/review-form-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/review-form-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 396,
+    "spec": "32f7456073cf5a896d40da6afe2330cb7c50ad34",
+    "width": 728
+  },
+  "for-learners/review-rating": {
+    "capturedAt": "2026-10-20T14:31:16.661Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/for-learners/review-rating-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/review-rating-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 396,
+    "spec": "157f2a5734ce33588b9d85aaa2556254db215bb7",
+    "width": 728
+  },
+  "for-learners/review-submit": {
+    "capturedAt": "2026-10-20T14:31:24.775Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/for-learners/review-submit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/review-submit-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 396,
+    "spec": "506b0e60822b72e7fb7797961d5dcf1a9f9cf6d0",
+    "width": 728
   },
   "for-learners/sign-in": {
     "capturedAt": "2026-10-20T14:27:34.554Z",
@@ -3482,6 +3754,244 @@
     ],
     "height": 900,
     "spec": "4f8711306891138adc8607f4b3ee094700118357",
+    "width": 1440
+  },
+  "getting-started/academy-form": {
+    "capturedAt": "2026-10-20T14:35:51.926Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/academy-form-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/academy-form-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "2a431a8f2139345080221787dcc0cd8b79a11c3f",
+    "width": 1440
+  },
+  "getting-started/onboarding-academy": {
+    "capturedAt": "2026-10-20T14:35:11.616Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/onboarding-academy-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/onboarding-academy-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "9b60a13fe979a64cc2f0a47f0c1d6d9e8699f4eb",
+    "width": 1440
+  },
+  "getting-started/onboarding-course": {
+    "capturedAt": "2026-10-20T14:35:29.008Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/onboarding-course-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/onboarding-course-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "28f512830d331eecddac868582e70dd46182986e",
+    "width": 1440
+  },
+  "getting-started/onboarding-summary": {
+    "capturedAt": "2026-10-20T14:35:38.332Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/onboarding-summary-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/onboarding-summary-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "eea6b130dbdaf01e5a08752bf0ab664ba632feb7",
+    "width": 1440
+  },
+  "getting-started/onboarding-website": {
+    "capturedAt": "2026-10-20T14:35:18.222Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/onboarding-website-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/onboarding-website-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "8313986b7d57ab421621b0d49d4b002c4b9d7098",
+    "width": 1440
+  },
+  "getting-started/owner-dashboard": {
+    "capturedAt": "2026-10-20T14:33:07.425Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/owner-dashboard-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/owner-dashboard-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "85c8a3f79bd5a9ba8a99d719534a2eb80b03144d",
+    "width": 1440
+  },
+  "getting-started/sign-in": {
+    "capturedAt": "2026-10-20T14:35:04.651Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/sign-in-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/sign-in-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "409aa399c8043ad4a167515b8105ab40338c782b",
+    "width": 1440
+  },
+  "getting-started/sign-up-name-email": {
+    "capturedAt": "2026-10-20T14:33:46.132Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/sign-up-name-email-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/sign-up-name-email-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "4e1d1333011c47daba8ce20380638428acdce3b4",
+    "width": 1440
+  },
+  "getting-started/sign-up-organization": {
+    "capturedAt": "2026-10-20T14:34:33.086Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/sign-up-organization-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/sign-up-organization-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "7b46631b5ee9e18664c806ba6522367cb1535e60",
+    "width": 1440
+  },
+  "getting-started/sign-up-page": {
+    "capturedAt": "2026-10-20T14:33:26.410Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/sign-up-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/sign-up-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "559f7acdd344bef6f950f2c052bcf3e643bb1323",
+    "width": 1440
+  },
+  "getting-started/sign-up-password": {
+    "capturedAt": "2026-10-20T14:34:24.604Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/sign-up-password-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/sign-up-password-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "0944326c72d3d82cd99291534e995b783f1a7575",
+    "width": 1440
+  },
+  "getting-started/sign-up-phone": {
+    "capturedAt": "2026-10-20T14:34:06.911Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/sign-up-phone-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/sign-up-phone-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "d94ee13f5ece83c9cf27f596ec52ed3ca9d31639",
+    "width": 1440
+  },
+  "getting-started/sign-up-plan": {
+    "capturedAt": "2026-10-20T14:34:42.105Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/sign-up-plan-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/sign-up-plan-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e7c87a7153669a1f83e0f7098e29037755bf0359",
+    "width": 1440
+  },
+  "getting-started/sign-up-submit": {
+    "capturedAt": "2026-10-20T14:34:57.777Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/sign-up-submit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/sign-up-submit-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "8d14a8a060aebdde81a530db473b9b30d5f7bc31",
     "width": 1440
   },
   "pipeline-sample/academy-home-mobile": {
