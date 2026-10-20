@@ -6612,6 +6612,23 @@
     "spec": "f9d011add648aa80e11eac6944de3d745a39fb89",
     "width": 560
   },
+  "team/manual-enroll-revoke": {
+    "capturedAt": "2026-10-20T15:06:41.459Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/manual-enroll-revoke-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/manual-enroll-revoke-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 308,
+    "spec": "02b57a618b70ec82cea3d96c761025ae88c01ca8",
+    "width": 560
+  },
   "team/members-manager-view": {
     "capturedAt": "2026-10-20T14:55:47.312Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -6644,6 +6661,40 @@
     ],
     "height": 900,
     "spec": "d58ecc39f614a7bcb7873d02a821f82649e7685a",
+    "width": 1440
+  },
+  "team/organization-create": {
+    "capturedAt": "2026-10-20T15:07:14.852Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/organization-create-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/organization-create-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "22505b011b0469a093ec6a5b3c22be96e1004f86",
+    "width": 1440
+  },
+  "team/organization-overview": {
+    "capturedAt": "2026-10-20T15:07:04.848Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/organization-overview-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/organization-overview-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "a47fccf2a6ca07b5742291554105f16845250b00",
     "width": 1440
   },
   "team/registration-manager": {
@@ -6782,6 +6833,23 @@
     "spec": "afc5f6a496a23c6d07fbb561bfd6d84f5e813cd6",
     "width": 1440
   },
+  "team/students-instructor": {
+    "capturedAt": "2026-10-20T15:06:53.859Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/students-instructor-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/students-instructor-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "c0d906fecd484a275886d74c5169bd47d79c20ba",
+    "width": 1440
+  },
   "team/students-tab": {
     "capturedAt": "2026-10-20T15:02:51.112Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -6815,5 +6883,260 @@
     "height": 900,
     "spec": "14152ed59663e0ce517d70fe7d5f228bfd027dcb",
     "width": 600
+  },
+  "troubleshooting/academy-sign-in-forgot-password": {
+    "capturedAt": "2026-10-20T15:07:58.833Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/academy-sign-in-forgot-password-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/academy-sign-in-forgot-password-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "62b28b45b46cf98d3086e6bfc05c136e2f2abf34",
+    "width": 1440
+  },
+  "troubleshooting/course-settings-publish": {
+    "capturedAt": "2026-10-20T15:10:18.796Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/course-settings-publish-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/course-settings-publish-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f374ca9e5889da1ea9d10353a708d6a20ab48975",
+    "width": 1440
+  },
+  "troubleshooting/domain-address": {
+    "capturedAt": "2026-10-20T15:11:05.976Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/domain-address-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/domain-address-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "46a68a854a3fd9526137dbb461391c6e208a8ab8",
+    "width": 1440
+  },
+  "troubleshooting/domain-stepper": {
+    "capturedAt": "2026-10-20T15:10:53.877Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/domain-stepper-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/domain-stepper-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "cc90577c22bd45f3d5ed692054615afddf239fef",
+    "width": 1440
+  },
+  "troubleshooting/learner-course-outline": {
+    "capturedAt": "2026-10-20T15:08:59.708Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/learner-course-outline-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/learner-course-outline-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "a4ec85362b8fd2cd55b4efb29697c70c9491ba26",
+    "width": 1440
+  },
+  "troubleshooting/learner-devices-list": {
+    "capturedAt": "2026-10-20T15:08:25.034Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/learner-devices-list-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/learner-devices-list-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "10b01a4c776ef3ed39eb2a99bf28a5b9086c1e69",
+    "width": 1440
+  },
+  "troubleshooting/learner-devices-nav": {
+    "capturedAt": "2026-10-20T15:08:13.611Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/learner-devices-nav-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/learner-devices-nav-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "5d22b80e7c59de2a75897d2dd58f7023e29a8b49",
+    "width": 1440
+  },
+  "troubleshooting/owner-device-policy": {
+    "capturedAt": "2026-10-20T15:08:44.812Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/owner-device-policy-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/owner-device-policy-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "dc2b699b8a0d1de3b058567f59165501388a8f82",
+    "width": 1440
+  },
+  "troubleshooting/page-editor-publish-page": {
+    "capturedAt": "2026-10-20T15:10:41.766Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/page-editor-publish-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/page-editor-publish-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "dd3946ecec2195a1c900ca338d8cff35509d5b3b",
+    "width": 1440
+  },
+  "troubleshooting/platform-forgot-password-form": {
+    "capturedAt": "2026-10-20T15:07:45.171Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/platform-forgot-password-form-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/platform-forgot-password-form-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "4867161b190bb591645f8f213e64d3d6fc7e2e6e",
+    "width": 1440
+  },
+  "troubleshooting/platform-forgot-password-link": {
+    "capturedAt": "2026-10-20T15:07:34.176Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/platform-forgot-password-link-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/platform-forgot-password-link-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "bd16480daac751d39871ba1bdabe26fa85318c5d",
+    "width": 1440
+  },
+  "troubleshooting/platform-sign-in-student-hint": {
+    "capturedAt": "2026-10-20T15:07:23.704Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/platform-sign-in-student-hint-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/platform-sign-in-student-hint-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "2d201417dd06c58b7c9865e19c71ba90091ea623",
+    "width": 1440
+  },
+  "troubleshooting/provisioning-history": {
+    "capturedAt": "2026-10-20T15:11:16.875Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/provisioning-history-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/provisioning-history-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "79dccbcf49501d787e7d6f69df4c3a01eb310d1a",
+    "width": 1440
+  },
+  "troubleshooting/provisioning-new-address": {
+    "capturedAt": "2026-10-20T15:11:28.205Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/provisioning-new-address-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/provisioning-new-address-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "0607b2898cd1a20f5a21a0386edbb6daedd0142a",
+    "width": 1440
+  },
+  "troubleshooting/website-publish-bar": {
+    "capturedAt": "2026-10-20T15:10:29.075Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/website-publish-bar-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/website-publish-bar-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3b2a830fcf648861f513c4402b8d448e79288c9f",
+    "width": 1440
   }
 }
