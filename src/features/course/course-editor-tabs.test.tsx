@@ -13,6 +13,7 @@ import type { IdentityContextValue } from '@app/providers/identity/identity.cont
 import { SYSTEM_ROUTES } from '@app/routes/route-paths';
 import type { CurrentUser } from '@types';
 import {
+  courseEditorLeadCrumbs,
   filterCourseEditorTabs,
   getCourseEditorTabs,
 } from './utils/course-navigation.utils';
@@ -117,5 +118,26 @@ describe('course editor tabs', () => {
       expect(screen.queryByText('editor page')).toBeNull();
       cleanup();
     }
+  });
+
+  it('the breadcrumb course link opens the first tab the user may open', () => {
+    const crumbsFor = (granted: readonly string[]) =>
+      courseEditorLeadCrumbs({
+        academyId: 'a1',
+        courseTitle: 'Calculus',
+        courseLabelKey: 'course:builder.title',
+        tabs: filterCourseEditorTabs(getCourseEditorTabs('a1', 'c1'), (p) =>
+          granted.includes(p)
+        ),
+        canListCourses: granted.includes('course.view'),
+      }).map((crumb) => crumb.path);
+    expect(crumbsFor(MANAGER)).toEqual([
+      '/dashboard/academy/a1/courses',
+      '/dashboard/academy/a1/courses/c1',
+    ]);
+    expect(crumbsFor(INSTRUCTOR)).toEqual([
+      '/dashboard/instructor/courses',
+      '/dashboard/academy/a1/courses/c1/builder',
+    ]);
   });
 });

@@ -17,7 +17,10 @@ import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { BreadcrumbItem } from '@types';
 import { useCourse } from '../hooks';
 import { CourseCurriculumEditor } from '../components/CourseCurriculumEditor';
-import { useCourseEditorTabs } from '../hooks/useCourseEditorTabs';
+import {
+  useCourseEditorLeadCrumbs,
+  useCourseEditorTabs,
+} from '../hooks/useCourseEditorTabs';
 
 export default function CourseBuilderPage(): JSX.Element {
   const { academyId, courseId } = useParams<{
@@ -31,25 +34,14 @@ export default function CourseBuilderPage(): JSX.Element {
   // The middle crumb (the course's own name) only joins the trail once the
   // course has loaded — before that, "Courses -> Course Builder" is still
   // a complete, honest trail rather than a placeholder label.
+  const leadCrumbs = useCourseEditorLeadCrumbs(
+    academyId ?? '',
+    courseId ?? '',
+    course?.title,
+    'course:builder.title'
+  );
   const breadcrumbs: readonly BreadcrumbItem[] = [
-    {
-      labelKey: 'course:list.title',
-      path: buildPath(DASHBOARD_ROUTES.academyCourses, {
-        academyId: academyId ?? '',
-      }),
-    },
-    ...(course
-      ? [
-          {
-            labelKey: 'course:builder.title',
-            label: course.title,
-            path: buildPath(DASHBOARD_ROUTES.academyCourseDetail, {
-              academyId: academyId ?? '',
-              courseId: courseId ?? '',
-            }),
-          } satisfies BreadcrumbItem,
-        ]
-      : []),
+    ...leadCrumbs,
     { labelKey: 'course:builder.title' },
   ];
 

@@ -26,7 +26,7 @@ import {
   Star,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import type { NavigationItem } from '@types';
+import type { BreadcrumbItem, NavigationItem } from '@types';
 
 export function getCourseEditorTabs(
   academyId: string,
@@ -108,4 +108,42 @@ export function filterCourseEditorTabs(
       hasPermission(permission)
     )
   );
+}
+
+/**
+ * The leading crumbs of a course editor page — the course list, then the
+ * course itself — pointing only where this user may go. The course list
+ * (`course.view`) is owner/manager; a course instructor goes back to their
+ * Teaching Dashboard course list instead. The course crumb opens the first
+ * editor tab the user may open (Details for an owner or manager, the
+ * Builder for an instructor), never a page that ends on "forbidden".
+ */
+export function courseEditorLeadCrumbs(input: {
+  readonly academyId: string;
+  readonly courseTitle?: string;
+  /** The page's own label key, kept as the course crumb's key (its `label` is the title). */
+  readonly courseLabelKey: string;
+  readonly tabs: readonly NavigationItem[];
+  readonly canListCourses: boolean;
+}): BreadcrumbItem[] {
+  const list: BreadcrumbItem = input.canListCourses
+    ? {
+        labelKey: 'course:list.title',
+        path: buildPath(DASHBOARD_ROUTES.academyCourses, {
+          academyId: input.academyId,
+        }),
+      }
+    : {
+        labelKey: 'instructor:courses.title',
+        path: DASHBOARD_ROUTES.instructorCourses,
+      };
+  if (input.courseTitle === undefined) return [list];
+  return [
+    list,
+    {
+      labelKey: input.courseLabelKey,
+      label: input.courseTitle,
+      path: input.tabs[0]?.path,
+    },
+  ];
 }

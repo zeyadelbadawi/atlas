@@ -54,6 +54,7 @@ vi.mock('@features/live-sessions', () => ({
 // The signed-in user's permissions (the tab strip and the upload controls
 // read them). Owner/manager by default; a test narrows it to an instructor.
 const OWNER_PERMISSIONS = [
+  'course.view',
   'course.update',
   'course.configure',
   'instructor.course.view',
@@ -131,6 +132,32 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
+});
+
+describe('CourseBuilderPage — breadcrumbs', () => {
+  const crumbHref = async (name: string) =>
+    (await screen.findByRole('link', { name })).getAttribute('href');
+
+  it("an owner's trail goes to the academy course list and the course's Details", async () => {
+    service.getCourseSections.mockResolvedValue(SECTIONS);
+    renderPage();
+    expect(await crumbHref('Courses')).toBe('/dashboard/academy/acad/courses');
+    expect(await crumbHref('Course One')).toBe(
+      '/dashboard/academy/acad/courses/c1'
+    );
+  });
+
+  it("an instructor's trail never lands on a forbidden page", async () => {
+    permissions.granted = new Set(INSTRUCTOR_PERMISSIONS);
+    service.getCourseSections.mockResolvedValue(SECTIONS);
+    renderPage();
+    // Their own course list (Teaching Dashboard), and the first editor
+    // page they may open — the Builder — instead of Details.
+    expect(await crumbHref('My Courses')).toBe('/dashboard/instructor/courses');
+    expect(await crumbHref('Course One')).toBe(
+      '/dashboard/academy/acad/courses/c1/builder'
+    );
+  });
 });
 
 describe('CourseBuilderPage — editor tabs', () => {

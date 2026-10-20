@@ -37,7 +37,10 @@ import {
   useModerateReview,
   useRemoveReview,
 } from '../hooks/useCourseReviewModeration';
-import { useCourseEditorTabs } from '../hooks/useCourseEditorTabs';
+import {
+  useCourseEditorLeadCrumbs,
+  useCourseEditorTabs,
+} from '../hooks/useCourseEditorTabs';
 import type { BreadcrumbItem, CourseReviewStatus } from '@types';
 
 type StatusFilter = 'all' | CourseReviewStatus;
@@ -60,6 +63,13 @@ export default function CourseReviewsModerationPage(): JSX.Element {
     courseId: string;
   }>();
   const editorTabs = useCourseEditorTabs(academyId ?? '', courseId ?? '');
+  // The course list crumb only: this page names the course itself.
+  const listCrumb = useCourseEditorLeadCrumbs(
+    academyId ?? '',
+    courseId ?? '',
+    undefined,
+    'course:reviews.title'
+  );
   const { confirm } = useConfirmDialog();
 
   const [status, setStatus] = useState<StatusFilter>('all');
@@ -139,12 +149,7 @@ export default function CourseReviewsModerationPage(): JSX.Element {
   }
 
   const breadcrumbs: readonly BreadcrumbItem[] = [
-    {
-      labelKey: 'course:list.title',
-      path: buildPath(DASHBOARD_ROUTES.academyCourses, {
-        academyId: academyId ?? '',
-      }),
-    },
+    ...listCrumb,
     { labelKey: 'course:reviews.title', label: course.title },
   ];
 

@@ -42,7 +42,10 @@ import {
   getLessonStatusLabelKey,
   getLessonStatusTone,
 } from '../utils/course-status.utils';
-import { useCourseEditorTabs } from '../hooks/useCourseEditorTabs';
+import {
+  useCourseEditorLeadCrumbs,
+  useCourseEditorTabs,
+} from '../hooks/useCourseEditorTabs';
 import type { Assignment } from '@types';
 
 type DialogState =
@@ -65,25 +68,14 @@ export default function CourseAssignmentsPage(): JSX.Element {
 
   const { data: course } = useCourse(academyId ?? '', courseId ?? '');
 
+  const leadCrumbs = useCourseEditorLeadCrumbs(
+    academyId ?? '',
+    courseId ?? '',
+    course?.title,
+    'course:assignmentAuthoring.title'
+  );
   const breadcrumbs: readonly BreadcrumbItem[] = [
-    {
-      labelKey: 'course:list.title',
-      path: buildPath(DASHBOARD_ROUTES.academyCourses, {
-        academyId: academyId ?? '',
-      }),
-    },
-    ...(course
-      ? [
-          {
-            labelKey: 'course:assignmentAuthoring.title',
-            label: course.title,
-            path: buildPath(DASHBOARD_ROUTES.academyCourseDetail, {
-              academyId: academyId ?? '',
-              courseId: courseId ?? '',
-            }),
-          } satisfies BreadcrumbItem,
-        ]
-      : []),
+    ...leadCrumbs,
     { labelKey: 'course:assignmentAuthoring.title' },
   ];
 

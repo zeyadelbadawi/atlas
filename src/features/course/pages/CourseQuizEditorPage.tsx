@@ -24,6 +24,7 @@ import { useQuizForAuthoring, useDeleteQuiz } from '@features/learning';
 import { useCourse, useCourseSections } from '../hooks';
 import type { RelatedLessonOption } from '../components/QuizQuestionsEditor';
 import { QuizAuthoringForm } from '../components/QuizAuthoringForm';
+import { useCourseEditorLeadCrumbs } from '../hooks/useCourseEditorTabs';
 
 export default function CourseQuizEditorPage(): JSX.Element {
   const { t } = useTranslation();
@@ -91,25 +92,14 @@ export default function CourseQuizEditorPage(): JSX.Element {
     }
   };
 
+  const leadCrumbs = useCourseEditorLeadCrumbs(
+    academyId ?? '',
+    courseId ?? '',
+    course?.title,
+    'course:quizAuthoring.title'
+  );
   const breadcrumbs: readonly BreadcrumbItem[] = [
-    {
-      labelKey: 'course:list.title',
-      path: buildPath(DASHBOARD_ROUTES.academyCourses, {
-        academyId: academyId ?? '',
-      }),
-    },
-    ...(course
-      ? [
-          {
-            labelKey: 'course:quizAuthoring.title',
-            label: course.title,
-            path: buildPath(DASHBOARD_ROUTES.academyCourseDetail, {
-              academyId: academyId ?? '',
-              courseId: courseId ?? '',
-            }),
-          } satisfies BreadcrumbItem,
-        ]
-      : []),
+    ...leadCrumbs,
     {
       labelKey: 'course:quizAuthoring.title',
       path: buildPath(DASHBOARD_ROUTES.academyCourseQuizzes, {
