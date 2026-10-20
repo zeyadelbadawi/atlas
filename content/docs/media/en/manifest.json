@@ -509,6 +509,23 @@
     "spec": "ee80b3628319cb045eb06736acb30f7642c95d0b",
     "width": 1440
   },
+  "selling/payment-sheet": {
+    "capturedAt": "2026-10-20T09:13:17.840Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/payment-sheet-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/payment-sheet-1200.webp",
+        "width": 1200
+      }
+    ],
+    "height": 900,
+    "spec": "29e449cba5ed538bb221ab489ce228fb5de9e6dc",
+    "width": 600
+  },
   "selling/payments-nav": {
     "capturedAt": "2026-10-20T09:12:58.747Z",
     "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
@@ -524,6 +541,23 @@
     ],
     "height": 900,
     "spec": "549a0e6339af164599da8f7f40db0fccd35198a5",
+    "width": 1440
+  },
+  "selling/payments-pending": {
+    "capturedAt": "2026-10-20T09:13:07.746Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/selling/payments-pending-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/selling/payments-pending-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e6d566047fe6cbe222ab3d4f3b56bce36a3350f5",
     "width": 1440
   }
 }
