@@ -227,7 +227,8 @@
     "nameTaken": "Another academy already uses this name. Please choose a different one.",
     "learnerNameTaken": "A learner in this academy already has this name. Add a middle or family name so it is unique here.",
     "learnerNameTakenExistingAccount": "This person's account name matches a learner already in this academy. Ask them to add a middle or family name in their profile, then add them again.",
-    "cannotRemoveOrganizationOwner": "The organization owner can't be removed from an academy."
+    "cannotRemoveOrganizationOwner": "The organization owner can't be removed from an academy.",
+    "registrationRejected": "This academy didn't approve your registration, so you can't buy or join its courses. You can apply again from the academy's sign-up page."
   },
   "course": {
     "slugTaken": "That web address is already used by another course in this academy. Please choose a different one.",

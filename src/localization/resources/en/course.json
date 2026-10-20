@@ -1001,6 +1001,7 @@
     "afterTransferDescription": "Upload a screenshot or receipt of the transfer. The academy checks it and gives you access once it’s approved.",
     "referenceLabel": "Transfer reference (optional)",
     "referenceHelp": "The transaction or reference number from your bank or wallet. It helps the academy find your payment.",
-    "proofFileHelp": "PNG, JPG or PDF, up to 10 MB."
+    "proofFileHelp": "PNG, JPG or PDF, up to 10 MB.",
+    "notAdmittedTitle": "You can't buy courses here yet"
   }
 }

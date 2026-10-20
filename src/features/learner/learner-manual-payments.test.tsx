@@ -411,6 +411,51 @@ describe('CourseCheckoutPage with an academy’s own methods', () => {
   });
 });
 
+describe('CourseCheckoutPage for a learner the academy did not admit', () => {
+  const rejected = () =>
+    createApiError('forbidden', {
+      status: 403,
+      messageKey: 'errors.academy.registrationRejected',
+    });
+
+  it('says why when the order cannot be opened, instead of "not available"', async () => {
+    createOrder.mockRejectedValue(rejected());
+    useCourseOrderPaymentMethods.mockReturnValue({
+      data: [],
+      isLoading: false,
+    });
+    renderWith(<CourseCheckoutPage />);
+    const card = await screen.findByTestId('checkout-not-admitted');
+    expect(card.textContent).toContain("You can't buy courses here yet");
+    expect(card.textContent).toContain("didn't approve your registration");
+  });
+
+  it('says why when an order opened earlier can no longer be paid', async () => {
+    createOrder.mockResolvedValue(ORDER);
+    useCourseOrderPaymentMethods.mockReturnValue({
+      data: [INSTAPAY_METHOD],
+      isLoading: false,
+    });
+    createPayment.mockRejectedValue(rejected());
+    renderWith(<CourseCheckoutPage />);
+    await screen.findByTestId('checkout-method-manual_instapay');
+    fireEvent.click(screen.getByRole('radio'));
+    fireEvent.click(screen.getByText('Continue'));
+    expect(await screen.findByTestId('checkout-not-admitted')).toBeTruthy();
+  });
+
+  it('has the same copy in Arabic', async () => {
+    createOrder.mockRejectedValue(rejected());
+    useCourseOrderPaymentMethods.mockReturnValue({
+      data: [],
+      isLoading: false,
+    });
+    renderWith(<CourseCheckoutPage />, 'ar');
+    const card = await screen.findByTestId('checkout-not-admitted');
+    expect(card.textContent).toContain('لم توافق هذه الأكاديمية على تسجيلك');
+  });
+});
+
 describe('refund for a direct-to-academy order', () => {
   it('is never offered: refunds are arranged with the academy', () => {
     const paid = {
