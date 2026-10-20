@@ -73,8 +73,10 @@
 - key: for-learners/lesson-player
   as: learner
   surface: academy
-  path: /my/courses/{courseId}/learn/{lessonId}
-  waitFor: { text: learning:player.previous }
+  # The free study course: Salma has finished calculus, where every activity
+  # is her last one (Finish course instead of Next).
+  path: /my/courses/{freeCourseId}/learn/{freeLessonId}
+  waitFor: { text: learning:player.next }
   highlight: { role: button, name: learning:player.next }
 
 - key: for-learners/profile-your-data

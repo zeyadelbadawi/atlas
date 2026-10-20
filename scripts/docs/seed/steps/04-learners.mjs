@@ -130,8 +130,7 @@ export default async function run() {
       'Substituting x = 2 gives 0/0, which is undefined. Factorise the top: (x − 2)(x + 2). Cancel (x − 2), then substitute x = 2 into x + 2 to get 4.',
   });
   // The quiz is waiting for its essay to be graded; the next unit is open meanwhile.
-  // Five of six lessons: one stays open so the player still offers Next.
-  await complete('salma', 'calculus', 5);
+  await complete('salma', 'calculus', 6);
   if (!L('salma').submissionId) {
     const s = await session('salma');
     const c = state.courses.calculus;
@@ -146,6 +145,17 @@ export default async function run() {
     L('salma').submissionId = r.json?.id ?? r.json?.submission?.id;
     save();
   }
+
+  // Salma also takes the free study course, one lesson of three done: the
+  // lesson-player shot needs a course she has not finished (calculus is all
+  // done, so every activity there is her last one and shows Finish course).
+  if (!L('salma').freeEnrolled) {
+    const s = await session('salma');
+    await attempt('free enrollment salma', 'POST', '/enrollments', { token: s.token, body: { courseId: state.courses.study.id } });
+    L('salma').freeEnrolled = true;
+    save();
+  }
+  await complete('salma', 'study', 1);
 
   // Omar: calculus via bank transfer, every lesson done → completed (certificate below).
   await order('omar', 'calculus', { methodKey: 'bank', proof: 'receipt-bank.png', reference: 'DEMO-TRX-0002', review: 'approve' });
@@ -268,6 +278,7 @@ export default async function run() {
     submissionId: L('salma').submissionId,
     expiringEnrollmentId: L('ziad').enrollmentId,
     completedLearnerId: L('omar').userId,
+    freeLessonId: state.courses.study.sections[0].lessons[0],
   });
   save();
 }
