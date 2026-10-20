@@ -7122,6 +7122,23 @@
     "spec": "d0e8699b7dab7907a656545556e4d5ae2b645e12",
     "width": 1440
   },
+  "troubleshooting/page-editor-edit-section": {
+    "capturedAt": "2026-10-20T15:16:42.995Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/page-editor-edit-section-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/page-editor-edit-section-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "5d26875b1a38894a17b5f04649b4e4ba2292ad72",
+    "width": 1440
+  },
   "troubleshooting/page-editor-publish-page": {
     "capturedAt": "2026-10-20T15:10:41.766Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -7309,6 +7326,23 @@
     "spec": "fe70ab5273183cccdcea7576cd495cd0d06e8c36",
     "width": 1440
   },
+  "troubleshooting/section-arabic-field": {
+    "capturedAt": "2026-10-20T15:17:01.905Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/troubleshooting/section-arabic-field-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/troubleshooting/section-arabic-field-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 813,
+    "spec": "a1fc324ecab27b584f977449f487d0bbc59a4583",
+    "width": 944
+  },
   "troubleshooting/student-drawer-approve": {
     "capturedAt": "2026-10-20T15:15:34.502Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -7410,5 +7444,260 @@
     "height": 900,
     "spec": "3b2a830fcf648861f513c4402b8d448e79288c9f",
     "width": 1440
+  },
+  "website/launch-checklist": {
+    "capturedAt": "2026-10-20T15:17:34.249Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/launch-checklist-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/launch-checklist-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "91e5e9a3959380242e3b471de4493427ff723377",
+    "width": 1440
+  },
+  "website/overview": {
+    "capturedAt": "2026-10-20T15:17:17.428Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/overview-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/overview-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "0d879aba27cad9182c88b3b141d618401b146ecb",
+    "width": 1440
+  },
+  "website/overview-publish": {
+    "capturedAt": "2026-10-20T15:18:04.660Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/overview-publish-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/overview-publish-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "29b3cb974d776617f85c271a6502ba835f9cd3c3",
+    "width": 1440
+  },
+  "website/publish-bar": {
+    "capturedAt": "2026-10-20T15:17:49.627Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/publish-bar-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/publish-bar-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "5aa0eb22e777cdd58d0924df62ffcaa4c8aa1295",
+    "width": 1440
+  },
+  "website/seo-share-image": {
+    "capturedAt": "2026-10-20T15:21:37.939Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/seo-share-image-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/seo-share-image-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "80457ce24d9ea6ff70590df49a6e524a6fc7b091",
+    "width": 1440
+  },
+  "website/seo-tab": {
+    "capturedAt": "2026-10-20T15:20:58.285Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/seo-tab-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/seo-tab-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f0e73908e94c1f54557224cea31fa5e9e61688bf",
+    "width": 1440
+  },
+  "website/settings-language": {
+    "capturedAt": "2026-10-20T15:20:21.058Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/settings-language-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/settings-language-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "a3b02b88afa678b36f6ad96431ed232bc6b83a3a",
+    "width": 1440
+  },
+  "website/settings-language-save": {
+    "capturedAt": "2026-10-20T15:20:37.927Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/settings-language-save-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/settings-language-save-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e58bf8ca42e51621e6e6c5ba36fd1143e139823d",
+    "width": 1440
+  },
+  "website/settings-publish": {
+    "capturedAt": "2026-10-20T15:19:30.032Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/settings-publish-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/settings-publish-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "6211003967503748fff9536817c1eef73fffd138",
+    "width": 1440
+  },
+  "website/settings-seo": {
+    "capturedAt": "2026-10-20T15:21:18.631Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/settings-seo-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/settings-seo-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e625a5d0f549280f2817cf338276f6bee851d2fa",
+    "width": 1440
+  },
+  "website/settings-tabs": {
+    "capturedAt": "2026-10-20T15:20:02.097Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/settings-tabs-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/settings-tabs-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "7e00051bc350b2db94249437c96c764803f8b4cc",
+    "width": 1440
+  },
+  "website/theme-current": {
+    "capturedAt": "2026-10-20T15:18:51.069Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/theme-current-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/theme-current-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "0e6324f76c8c4277bdd66bf6c6996537b48f6c11",
+    "width": 1440
+  },
+  "website/theme-select": {
+    "capturedAt": "2026-10-20T15:19:08.439Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/theme-select-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/theme-select-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "4957809668b0e5567bcdcb05c4265dcbde876e89",
+    "width": 1440
+  },
+  "website/theme-tab": {
+    "capturedAt": "2026-10-20T15:18:35.022Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/theme-tab-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/theme-tab-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "40df1e86d208c65364ad0e5812e07c8e623bb6e6",
+    "width": 1440
+  },
+  "website/unpublish-dialog": {
+    "capturedAt": "2026-10-20T15:18:17.452Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/unpublish-dialog-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/unpublish-dialog-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 230,
+    "spec": "782174adf11ee2cda7a2f3e1ea2fa86620a2f54e",
+    "width": 560
   }
 }
