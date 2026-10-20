@@ -112,7 +112,7 @@
     "favicon": "Favicon",
     "displayName": "Display Name",
     "displayNameDescription": "The name shown to students across your academy's dashboard and public website.",
-    "logoHelp": "Upload your academy logo (PNG, JPG, max 5MB). Recommended: 400×96 px or larger, transparent background. SVG scales best.",
+    "logoHelp": "Upload your academy logo (PNG, JPG, up to 2 MB). Recommended: 400×96 px or larger, transparent background.",
     "faviconHelp": "Upload your favicon (ICO, PNG, max 1MB). Recommended: 512×512 px square, transparent background.",
     "uploadLogo": "Upload Logo",
     "uploadFavicon": "Upload Favicon",
@@ -129,7 +129,7 @@
     "uploadError": "Failed to upload file",
     "unsavedChanges": "You have unsaved branding changes. Are you sure you want to leave?",
     "errors": {
-      "logoTooLarge": "Logo must be smaller than 5MB.",
+      "logoTooLarge": "Logo must be 2 MB or smaller.",
       "logoInvalidType": "Logo must be a PNG or JPG image.",
       "faviconTooLarge": "Favicon must be smaller than 1MB.",
       "faviconInvalidType": "Favicon must be an ICO or PNG image.",
