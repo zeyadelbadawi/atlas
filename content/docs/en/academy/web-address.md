@@ -1,22 +1,23 @@
 ---
 id: DOC-ACD-005
 title: Your academy web address (subdomain)
-description: Every academy gets an Atlas address with HTTPS. Find and share it, see the naming rules, and how it works with your own domain.
+description: Every academy gets an Atlas address with HTTPS. Find and share it, see the naming rules, change it, and how it works with your own domain.
 summary: >
-  Every academy gets its own Atlas address, made from the Atlas address you
-  chose when you created the academy, with HTTPS managed by Atlas. You find it
-  on the Domain tab of your website settings. It keeps working even after you
-  connect your own domain, and some names are reserved and can't be used.
+  Every academy gets its own Atlas address with HTTPS managed by Atlas. You
+  find it on the Domain tab of your website settings. The organization owner
+  can change it by saving a new Academy Slug: the website moves to the new
+  address, and the old address keeps working, sends visitors to the new one
+  and stays reserved for your academy.
 type: feature-explanation
 audience: [owner]
 order: 4
 priority: P0
 related: [DOC-ACD-006, DOC-REF-004, DOC-START-004, DOC-ACD-010]
-keywords: [academy link, url, subdomain, web address, academy address, لينك الاكاديمية, عنوان الموقع, رابط الموقع, سب دومين]
+keywords: [academy link, url, subdomain, web address, academy address, academy slug, change address, rename link, لينك الاكاديمية, عنوان الموقع, رابط الموقع, سب دومين, تغيير اللينك]
 updated: 2026-10-20
 ---
 
-Your academy's website lives at an Atlas address: a name of your choice in front of the Atlas domain. Atlas creates it when the academy is set up, manages its HTTPS certificate, and keeps it working for as long as the academy exists.
+Your academy's website lives at an Atlas address: a name of your choice in front of the Atlas domain. Atlas creates it when the academy is set up, manages its HTTPS certificate, and keeps it working for as long as the academy exists. The organization owner can change it later.
 
 ## Find the address to share
 
@@ -41,20 +42,33 @@ You choose the address in the **Atlas address** field when you create an academy
 
 You can connect a domain you own, such as `learn.your-academy.com`. When it is verified and working over HTTPS, it becomes your main address. Visitors who open your Atlas address are sent to your own domain, and both addresses keep working. If you disconnect your domain, your site goes back to the Atlas address. See [Connect your own domain](doc:DOC-ACD-006).
 
-## Can I change it?
+## Change the address
 
-No. Treat the address you chose at setup as permanent, so plan it carefully.
+Only the organization owner can change the address. Everyone else sees the **Academy Slug** field read-only, with "Only the organization owner can change the web address."
 
-The organization owner can edit the **Academy Slug** field in **Academy Settings** or on the **Academy Profile** page, but saving a new value there does **not** move your website. Today:
+1. In the sidebar, open **Academy Settings**. Under **General**, type the new address in **Academy Slug**. The same naming rules apply as when you created the academy. Under the field, Atlas tells you what will happen when you save.
 
-- Your website keeps working on the address you chose at setup, the one shown on the **Domain** tab.
-- The new name does not become a web address: nothing opens at it.
-- Links in emails and invitations keep using the address on the **Domain** tab.
+   ![The Academy Slug field with a new address typed in and the note about what happens when you save](shot:academy/settings-slug)
 
-If you want a different address for your learners, [connect your own domain](doc:DOC-ACD-006).
+2. Select **Save Settings**. You see "Settings updated successfully". If the address is used by another academy or reserved, the field tells you, and nothing changes.
+
+   ![The Save Settings button after typing a new Academy Slug](shot:academy/settings-slug-save)
+
+You can also change the **Academy Slug** on the **Academy Profile** page and select **Save Changes**. It works the same way.
+
+## What happens when you change it
+
+- **Your website moves to the new address straight away.** The **Domain** tab shows the new address.
+- **The old address keeps working.** Anyone who opens it, or an old link or bookmark, is sent to the same page on your new address. Links in emails you sent earlier keep working too.
+- **New emails and invite links use the new address.** Invite links you copied earlier keep working, through the old address.
+- **The old address stays reserved for your academy.** No other academy can take it. You can change back to it whenever you want, and it becomes your address again.
+- **Your own domain stays your main address.** If you connected one, it stays the address your website uses, and the old Atlas address sends visitors to it.
+
+> [!NOTE]
+> Visitors who are signed in on the old address are signed out when they arrive at the new one, because each address has its own sign-in. They sign in again on the new address.
 
 > [!LIMITATION]
-> Deleting an academy does not free its address. The address stays reserved and can't be used again, even by you.
+> Deleting an academy does not free its address, or the old addresses it kept. They stay reserved and can't be used again, even by you.
 
 ## Related
 

@@ -33,7 +33,7 @@ The academy overview shows one status: whether your **Website** is **Draft** or 
 
 ## Only the organization owner can
 
-- Change the **Academy Slug** in Academy Settings. Others see "Only the organization owner can change the web address." Changing it does not move your website: see [Your academy web address](doc:DOC-ACD-005).
+- Change the **Academy Slug** in Academy Settings. Others see "Only the organization owner can change the web address." Changing it moves your website to the new address, and the old address keeps working and sends visitors there: see [Your academy web address](doc:DOC-ACD-005).
 - Change the registration policy and the content protection settings.
 - Create another academy, and delete one.
 - Send academy **Messages** and use **Atlas service requests**.

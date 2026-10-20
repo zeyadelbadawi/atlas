@@ -64,6 +64,10 @@ Your site has English and Arabic versions of every page. You choose which langua
 
 Yes. Your academy starts on its own Atlas subdomain, and you can connect a domain you own by adding DNS records at your domain provider. See [Connect your own domain](doc:DOC-ACD-006).
 
+## Can I change my academy's Atlas address?
+
+Yes, if you are the organization owner: save a new **Academy Slug** in **Academy Settings**. Your website moves to the new address, and the old address keeps working and sends visitors to the same page on the new one. The old address stays reserved for your academy, so you can change back to it. See [Your academy web address](doc:DOC-ACD-005).
+
 ## Does Atlas have an API?
 
 No. Atlas has no public API, API keys or webhooks. See [Integrations](doc:DOC-INT-001).
