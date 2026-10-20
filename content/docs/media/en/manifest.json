@@ -645,6 +645,23 @@
     "spec": "3e9cbac870737178ebc121f39ceac5da8bdbda45",
     "width": 1440
   },
+  "account/academy-sign-in-forgot-link": {
+    "capturedAt": "2026-10-20T14:06:11.943Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/academy-sign-in-forgot-link-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/academy-sign-in-forgot-link-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3c3e73fc3f616d9d3f95e2f787314ebc60082188",
+    "width": 1440
+  },
   "account/account-menu-sign-out": {
     "capturedAt": "2026-10-20T14:05:59.603Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -660,6 +677,40 @@
     ],
     "height": 900,
     "spec": "fe614dfbad3c9d0719cfbb9dc79d1f60e8ecd7da",
+    "width": 1440
+  },
+  "account/forgot-password-form": {
+    "capturedAt": "2026-10-20T14:06:19.576Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/forgot-password-form-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/forgot-password-form-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "fd94323a9cc1f8da413659de1cdb96267f69a43f",
+    "width": 1440
+  },
+  "account/forgot-password-sent": {
+    "capturedAt": "2026-10-20T14:06:43.791Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/forgot-password-sent-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/forgot-password-sent-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "5b7ec4d004e3356c55f6bd78f3af71c36d13e4ee",
     "width": 1440
   },
   "account/sign-in-academy": {

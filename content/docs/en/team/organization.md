@@ -38,7 +38,7 @@ A second organization is useful for a separate business with its own plan and bi
 
 ![The Create your organization page](shot:team/organization-create)
 
-A new organization starts with no plan. The trial can be used only once per person, so choose and pay for a plan before you create academies in it. See [How the trial works](doc:DOC-BIL-002).
+A new organization starts with no plan. The trial can be used only once per email address, so choose and pay for a plan before you create academies in it. See [How the trial works](doc:DOC-BIL-002).
 
 ## Switch organizations
 

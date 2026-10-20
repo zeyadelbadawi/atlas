@@ -5,8 +5,8 @@ description: When registration needs approval, new learners wait as Pending appr
 summary: >
   When your registration policy is Approval required, every new sign-up waits
   as Pending approval on the Members page, Students tab. Open the learner and
-  select Approve to let them in, or Reject to refuse. The owner and managers
-  can do this, and the learner is told the result.
+  select Approve to let them in, or Reject to refuse (a rejection can't be
+  undone). The owner and managers can do this, and the learner is told.
 type: step-by-step
 audience: [owner, manager]
 order: 7
@@ -32,7 +32,7 @@ If your [registration policy](doc:DOC-ORG-005) is **Approval required**, nobody 
 
    ![The learner's details with the Approve button](shot:team/approve-drawer)
 
-The message **Student approved** confirms it. The learner's status becomes **Active** and they can sign in.
+The message **Student approved** confirms it. The learner's status becomes **Active** and they can open their courses. Until then, a pending learner who signs in only sees that their membership is awaiting approval.
 
 ## Reject a registration
 
@@ -40,7 +40,10 @@ The message **Student approved** confirms it. The learner's status becomes **Act
 
    ![The Reject this registration confirmation](shot:team/reject-confirm)
 
-The message **Registration rejected** confirms it. The learner isn't admitted, and their status becomes **Inactive**. They can register again later.
+The message **Registration rejected** confirms it. The learner isn't admitted, and their status becomes **Inactive**.
+
+> [!WARNING]
+> Rejecting can't be undone. The confirmation says the learner can register again later, but Atlas keeps them on your list as **Inactive**: signing up again at your academy with the same account doesn't readmit them, and there is no button to approve them afterwards. If you aren't sure, leave the request pending.
 
 ## What the learner is told
 

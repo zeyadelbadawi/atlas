@@ -59,6 +59,8 @@ A learner counts once toward your plan's student limit, as soon as they hold a c
 
 > [!NOTE]
 > You can't enroll a blocked learner. Unblock them first. The course list shows only courses the learner isn't already enrolled in.
+>
+> A learner who is **Pending approval** (or **Inactive** after a rejection) can be enrolled, but they can't open the course until their membership is **Active**.
 
 ## Related articles
 

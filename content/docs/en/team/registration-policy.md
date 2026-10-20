@@ -24,7 +24,7 @@ The registration policy decides who can create an account on your academy websit
 | Option | What a new learner gets | What you do |
 |---|---|---|
 | **Open** | They sign up and can start learning straight away. | Nothing. |
-| **Approval required** | Their sign-up waits as **Pending approval**. They can sign in once you approve it. | [Approve or reject](doc:DOC-ORG-007) each one on the Students tab. |
+| **Approval required** | Their sign-up waits as **Pending approval**. They can open courses only after you approve it. | [Approve or reject](doc:DOC-ORG-007) each one on the Students tab. |
 | **Invite only** | They can register only with a valid invite link. | [Create invite links](doc:DOC-ORG-006) and send them. |
 
 ## Change the policy
