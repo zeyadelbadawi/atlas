@@ -3247,8 +3247,8 @@
     "width": 1440
   },
   "for-learners/academy-home-my-learn": {
-    "capturedAt": "2026-10-20T17:57:54.099Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:50:56.934Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/ar/for-learners/academy-home-my-learn-960.webp",
@@ -3264,8 +3264,8 @@
     "width": 1440
   },
   "for-learners/academy-home-sign-up": {
-    "capturedAt": "2026-10-20T17:57:16.445Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:50:20.079Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/ar/for-learners/academy-home-sign-up-960.webp",
@@ -3298,8 +3298,8 @@
     "width": 1440
   },
   "for-learners/assessments-quizzes": {
-    "capturedAt": "2026-10-20T17:59:05.377Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:52:00.051Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/ar/for-learners/assessments-quizzes-960.webp",
@@ -3502,8 +3502,8 @@
     "width": 1440
   },
   "for-learners/course-progress": {
-    "capturedAt": "2026-10-20T17:58:13.916Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:51:23.969Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/ar/for-learners/course-progress-960.webp",
@@ -3569,9 +3569,26 @@
     "spec": "9d6ab046dcdab7f63880266858ce7109d0f1b811",
     "width": 560
   },
+  "for-learners/free-course-enroll": {
+    "capturedAt": "2026-10-20T19:51:53.482Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
+    "files": [
+      {
+        "src": "media/ar/for-learners/free-course-enroll-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/for-learners/free-course-enroll-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "dc6b43208343ac3c41fa613700097e6ef05c4777",
+    "width": 1440
+  },
   "for-learners/free-course-signed-out": {
-    "capturedAt": "2026-10-20T17:58:37.246Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:51:46.285Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/ar/for-learners/free-course-signed-out-960.webp",
@@ -3587,8 +3604,8 @@
     "width": 1440
   },
   "for-learners/lesson-player": {
-    "capturedAt": "2026-10-20T17:58:22.266Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:51:32.475Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/ar/for-learners/lesson-player-960.webp",
@@ -3600,12 +3617,12 @@
       }
     ],
     "height": 900,
-    "spec": "6e614a89bb405989d804a45018b22207afeb8ab0",
+    "spec": "a133b757d269ef4e66379b3fc67c0d0d4c31f888",
     "width": 1440
   },
   "for-learners/my-courses": {
-    "capturedAt": "2026-10-20T17:58:07.061Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:51:17.037Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/ar/for-learners/my-courses-960.webp",
@@ -3621,8 +3638,8 @@
     "width": 1440
   },
   "for-learners/my-learn-overview": {
-    "capturedAt": "2026-10-20T17:58:00.407Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:51:10.003Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/ar/for-learners/my-learn-overview-960.webp",
@@ -3689,8 +3706,8 @@
     "width": 1440
   },
   "for-learners/profile-your-data": {
-    "capturedAt": "2026-10-20T17:58:30.020Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:51:39.859Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/ar/for-learners/profile-your-data-960.webp",
@@ -3723,8 +3740,8 @@
     "width": 1440
   },
   "for-learners/quiz-intro": {
-    "capturedAt": "2026-10-20T17:59:13.524Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:52:09.273Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/ar/for-learners/quiz-intro-960.webp",
@@ -3740,8 +3757,8 @@
     "width": 1440
   },
   "for-learners/quiz-start": {
-    "capturedAt": "2026-10-20T17:59:22.362Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:52:17.413Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/ar/for-learners/quiz-start-960.webp",
@@ -3808,8 +3825,8 @@
     "width": 728
   },
   "for-learners/sign-in": {
-    "capturedAt": "2026-10-20T17:57:41.406Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:50:43.854Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/ar/for-learners/sign-in-960.webp",
@@ -3825,8 +3842,8 @@
     "width": 1440
   },
   "for-learners/sign-up-form": {
-    "capturedAt": "2026-10-20T17:57:22.476Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:50:25.771Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/ar/for-learners/sign-up-form-960.webp",
@@ -3842,8 +3859,8 @@
     "width": 1440
   },
   "for-learners/sign-up-join-existing": {
-    "capturedAt": "2026-10-20T17:57:35.722Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:50:37.797Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/ar/for-learners/sign-up-join-existing-960.webp",
@@ -3859,8 +3876,8 @@
     "width": 1440
   },
   "for-learners/sign-up-submit": {
-    "capturedAt": "2026-10-20T17:57:29.031Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:50:31.701Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/ar/for-learners/sign-up-submit-960.webp",
