@@ -81,7 +81,7 @@ An instructor sees only the courses they are assigned to, in the **Teaching Dash
 
 ## Free and paid courses
 
-Each course is **Free** or **Paid**, priced in Egyptian pounds (EGP). Learners enroll in a free course directly from its page. For a paid course they pay with the academy's payment methods and upload a proof, and the academy owner approves it. Staff can also give a learner access to any course without a purchase. See [Set a course price](doc:DOC-LRN-003), [Selling and payments](category:selling) and [Team and learners](category:team).
+Each course is **Free** or **Paid**, priced in Egyptian pounds (EGP). Learners enroll in a free course directly from its page. For a paid course they pay with the academy's payment methods and upload a proof, and the academy owner approves it. Owners and managers can also give a learner access to any course without a purchase. See [Set a course price](doc:DOC-LRN-003), [Selling and payments](category:selling) and [Team and learners](category:team).
 
 ## Where to go next
 

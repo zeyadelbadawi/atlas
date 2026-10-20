@@ -36,12 +36,12 @@ updated: 2026-10-20
 
 | Status | What it means |
 |---|---|
-| **Awaiting payment** | The student started the purchase but no payment has been approved yet. |
+| **Draft** | The student started the purchase but hasn't chosen a payment method yet. |
+| **Awaiting payment** | The student chose a payment method, but no payment has been approved yet. |
 | **Paid** | You approved a payment. The student has access to the course. |
 | **Expired** | The time to pay ran out before a payment was sent. The student can start again from the course page. |
-| **Cancelled** | The order was cancelled. |
-| **Refunded** | A refund was recorded for the order in Atlas. |
-| **Draft** | The order was created but not completed. |
+| **Cancelled** | The order was cancelled and can't be paid. |
+| **Refunded** | A refund was recorded in Atlas. Money you give back yourself, outside Atlas, doesn't change the order: it stays **Paid**. |
 
 The **Payment** column shows each payment's method and review status (for example **Awaiting review**, **Approved** or **Rejected**).
 
