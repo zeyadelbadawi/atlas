@@ -1223,6 +1223,40 @@
     "spec": "0c4e772ab06d0bf181d71a7ccb6b33f4d664efd3",
     "width": 1440
   },
+  "analytics/academy-overview": {
+    "capturedAt": "2026-10-20T15:54:25.465Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/analytics/academy-overview-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/analytics/academy-overview-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "90f4ce3e2fd8084d7236d3039ad35ae8d5d75931",
+    "width": 1440
+  },
+  "analytics/dashboard-manager": {
+    "capturedAt": "2026-10-20T15:54:14.438Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/analytics/dashboard-manager-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/analytics/dashboard-manager-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "5c23c9ec5f568cf199817c7ee679877855a4c3ef",
+    "width": 1440
+  },
   "analytics/dashboard-owner": {
     "capturedAt": "2026-10-20T15:53:49.341Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -1238,6 +1272,125 @@
     ],
     "height": 900,
     "spec": "25771992cde1171a27e3fe82a7b8aefb7ff81a6e",
+    "width": 1440
+  },
+  "analytics/dashboard-revenue-owner": {
+    "capturedAt": "2026-10-20T15:54:01.596Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/analytics/dashboard-revenue-owner-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/analytics/dashboard-revenue-owner-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "1916ac077676e092778eed80d25e869bc7905db6",
+    "width": 1440
+  },
+  "analytics/reports-integrity": {
+    "capturedAt": "2026-10-20T15:57:04.374Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/analytics/reports-integrity-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/analytics/reports-integrity-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f489166191b888406be20177a6e9be44d84ec207",
+    "width": 1440
+  },
+  "analytics/reports-open": {
+    "capturedAt": "2026-10-20T15:55:37.724Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/analytics/reports-open-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/analytics/reports-open-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "db6c2763182e32cc561d2483c66d67b9947cd8d4",
+    "width": 1440
+  },
+  "analytics/student-analytics-at-risk": {
+    "capturedAt": "2026-10-20T15:55:18.841Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/analytics/student-analytics-at-risk-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/analytics/student-analytics-at-risk-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "987362e2902b41b43ae6f28c63f7b707fed43436",
+    "width": 1440
+  },
+  "analytics/student-analytics-funnel": {
+    "capturedAt": "2026-10-20T15:54:49.776Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/analytics/student-analytics-funnel-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/analytics/student-analytics-funnel-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "861429f4bbe99bbe3143095b06f4db4b2abc1cb7",
+    "width": 1440
+  },
+  "analytics/student-analytics-open": {
+    "capturedAt": "2026-10-20T15:54:37.634Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/analytics/student-analytics-open-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/analytics/student-analytics-open-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "83bef459df5c5b6cb1b4905114d372a5c23f229b",
+    "width": 1440
+  },
+  "analytics/student-analytics-trends": {
+    "capturedAt": "2026-10-20T15:55:04.096Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/analytics/student-analytics-trends-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/analytics/student-analytics-trends-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ed7d9e13634d459a2d829d383db6dbd564229855",
     "width": 1440
   },
   "billing/billing-overview": {
