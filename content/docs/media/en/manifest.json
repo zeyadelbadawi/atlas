@@ -3264,8 +3264,8 @@
     "width": 1440
   },
   "for-learners/academy-home-sign-up": {
-    "capturedAt": "2026-10-20T17:41:22.932Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:41:14.199Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/en/for-learners/academy-home-sign-up-960.webp",
@@ -3842,8 +3842,8 @@
     "width": 1440
   },
   "for-learners/sign-up-form": {
-    "capturedAt": "2026-10-20T17:41:29.204Z",
-    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "capturedAt": "2026-10-20T19:41:20.766Z",
+    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
     "files": [
       {
         "src": "media/en/for-learners/sign-up-form-960.webp",
