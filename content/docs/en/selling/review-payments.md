@@ -69,7 +69,7 @@ Atlas emails you and adds a notification each time a learner submits a proof. Th
 > Atlas does not check your bank statement or wallet. Approving is your confirmation that the money arrived. Approve only after you see it in your own account.
 
 > [!NOTE]
-> If you need to give money back after approving, do it outside Atlas and then end the learner's access. See [Refunds for course purchases](doc:DOC-COM-005).
+> If you need to give money back after approving, send it yourself, then open the payment and choose **Record refund…**. That ends the learner's access and takes the payment out of your sales. See [Refunds for course purchases](doc:DOC-COM-005).
 
 ## Related
 

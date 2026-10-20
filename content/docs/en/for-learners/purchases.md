@@ -44,7 +44,7 @@ website to see the ones you made there.
 | **Paid** | The payment was approved and you have the course. |
 | **Expired** | The order wasn't paid in time. Start again from the course page. |
 | **Cancelled** | The order was closed. |
-| **Refunded** | The order was refunded. |
+| **Refunded** | The academy recorded a refund. Your access to the course has ended. |
 
 **My payments**
 
@@ -67,7 +67,9 @@ open for another 72 hours.
 ## Refunds and receipts
 
 You paid the academy directly, so refunds are handled by the academy:
-contact it ([Refunds for course purchases](doc:DOC-COM-005)). Atlas doesn't
+contact it ([Refunds for course purchases](doc:DOC-COM-005)). When the
+academy records the refund, the order shows **Refunded** with the amount and
+date, and you get an email. Atlas doesn't
 offer a downloadable receipt; the emails you receive are your record
 ([Receipts and purchase emails](doc:DOC-COM-006)).
 

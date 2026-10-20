@@ -51,7 +51,7 @@ Access ends at the end of the chosen day. The date must be in the future.
 The learner loses access to that course immediately. Their progress is kept: if you enroll them in the same course again, they continue where they stopped.
 
 > [!NOTE]
-> Revoking doesn't refund anything, and the dialog says so. If the learner paid for the course, return the money to them yourself; the order stays **Paid**. See [Refunds for course purchases](doc:DOC-COM-005).
+> Revoking doesn't refund anything, and the dialog says so: the order stays **Paid**. If you gave a learner their money back, use **Record refund…** on their payment in **Payments** instead: it records the refund and ends access too. See [Refunds for course purchases](doc:DOC-COM-005).
 
 ## How this counts toward your plan
 

@@ -64,7 +64,7 @@ See [How selling courses works](doc:DOC-COM-001).
 > [!LIMITATION]
 > Atlas doesn't check your bank or wallet: you confirm each payment yourself. There is no
 > card payment and no automatic confirmation. If you refund a learner, you send the
-> money back yourself, outside Atlas. See [Refunds for course purchases](doc:DOC-COM-005).
+> money back yourself, then record it with **Record refund…** on the payment. See [Refunds for course purchases](doc:DOC-COM-005).
 
 > [!TIP]
 > Check new payments often: learners wait for your approval before they can start.
