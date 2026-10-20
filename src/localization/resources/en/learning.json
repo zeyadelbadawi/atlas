@@ -538,7 +538,7 @@
       "breadcrumb": "This course",
       "empty": {
         "title": "The course outline will appear here",
-        "description": "Each lesson, quiz, assignment and live session shows its own state — and, when something is locked, why."
+        "description": "Each lesson, quiz and assignment shows its own state — and, when something is locked, why."
       },
       "loading": "Loading the course outline",
       "notEnrolled": {
@@ -642,7 +642,7 @@
     },
     "notifications": {
       "title": "Notifications",
-      "subtitle": "Grades, certificates, live sessions and purchases. Everything that happened in your courses, in one place."
+      "subtitle": "Grades, certificates and purchases. Everything that happened in your courses, in one place."
     },
     "devices": {
       "title": "Devices",
