@@ -6255,6 +6255,74 @@
     "spec": "76c09556962ca7b0833416b373327a2824fae972",
     "width": 1440
   },
+  "team/add-instructor-email": {
+    "capturedAt": "2026-10-20T14:56:27.589Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/add-instructor-email-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/add-instructor-email-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 514,
+    "spec": "28b945928006e8fd8112c704484c4d924bd89189",
+    "width": 560
+  },
+  "team/add-instructor-name": {
+    "capturedAt": "2026-10-20T14:56:42.841Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/add-instructor-name-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/add-instructor-name-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 514,
+    "spec": "e46daf5224ae66678e36db15e0ef3636929964db",
+    "width": 560
+  },
+  "team/add-instructor-submit": {
+    "capturedAt": "2026-10-20T14:57:01.357Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/add-instructor-submit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/add-instructor-submit-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 514,
+    "spec": "2290e3c74edc0d2511134e70aee5d954eb699492",
+    "width": 560
+  },
+  "team/add-staff-already-member": {
+    "capturedAt": "2026-10-20T14:57:22.712Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/add-staff-already-member-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/add-staff-already-member-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 388,
+    "spec": "76214ad57d7770cca2f90b7220244c8f47eee117",
+    "width": 560
+  },
   "team/add-staff-buttons": {
     "capturedAt": "2026-10-20T14:56:04.253Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -6270,6 +6338,108 @@
     ],
     "height": 900,
     "spec": "f9e38726be791a61fc597d3660243f745dc0b1e7",
+    "width": 1440
+  },
+  "team/add-student-button": {
+    "capturedAt": "2026-10-20T14:58:06.911Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/add-student-button-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/add-student-button-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "c47f5c84cdf9035b68c06e93c8af15a917c7b33d",
+    "width": 1440
+  },
+  "team/add-student-email": {
+    "capturedAt": "2026-10-20T14:58:28.489Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/add-student-email-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/add-student-email-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 494,
+    "spec": "e1111bdb4773315de723c50273e7fd140553276d",
+    "width": 560
+  },
+  "team/add-student-name": {
+    "capturedAt": "2026-10-20T14:58:46.751Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/add-student-name-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/add-student-name-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 494,
+    "spec": "db2c0d2ca26f113fcb0c71eb8a4bb21d9a112517",
+    "width": 560
+  },
+  "team/add-student-submit": {
+    "capturedAt": "2026-10-20T14:59:05.421Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/add-student-submit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/add-student-submit-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 494,
+    "spec": "b51dca397f3abf87637361766334bfb00e37990d",
+    "width": 560
+  },
+  "team/invites-card": {
+    "capturedAt": "2026-10-20T15:00:54.733Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/invites-card-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/invites-card-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "cc4f1321cc49fc93b767d7428872ae0337523354",
+    "width": 1440
+  },
+  "team/invites-create-button": {
+    "capturedAt": "2026-10-20T15:01:13.006Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/invites-create-button-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/invites-create-button-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "1c07012b8da050fbb3d5d63dfacddac0acccc629",
     "width": 1440
   },
   "team/members-manager-view": {
@@ -6305,5 +6475,73 @@
     "height": 900,
     "spec": "d58ecc39f614a7bcb7873d02a821f82649e7685a",
     "width": 1440
+  },
+  "team/registration-manager": {
+    "capturedAt": "2026-10-20T15:00:38.921Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/registration-manager-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/registration-manager-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "9d25894838af2727b1d58828500c61c931b2de8b",
+    "width": 1440
+  },
+  "team/registration-section": {
+    "capturedAt": "2026-10-20T14:59:21.570Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/registration-section-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/registration-section-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f8a16b5f890530cb58d24ac2288614566a4a2b7d",
+    "width": 1440
+  },
+  "team/remove-staff-button": {
+    "capturedAt": "2026-10-20T14:57:38.897Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/remove-staff-button-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/remove-staff-button-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "2e7c9c5bb602572712247abae1f46f3c8ccde687",
+    "width": 1440
+  },
+  "team/remove-staff-confirm": {
+    "capturedAt": "2026-10-20T14:57:53.146Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/remove-staff-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/remove-staff-confirm-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 250,
+    "spec": "107ba94c173bb2a6992fdfae79aeb4b7474c2cd3",
+    "width": 560
   }
 }
