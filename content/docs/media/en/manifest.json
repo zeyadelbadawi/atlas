@@ -3756,6 +3756,23 @@
     "spec": "4f8711306891138adc8607f4b3ee094700118357",
     "width": 1440
   },
+  "getting-started/academy-address": {
+    "capturedAt": "2026-10-20T14:36:22.495Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/academy-address-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/academy-address-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3103e6de304355d4e91290dafb9ed1a0c36aef40",
+    "width": 1440
+  },
   "getting-started/academy-form": {
     "capturedAt": "2026-10-20T14:35:51.926Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -3771,6 +3788,193 @@
     ],
     "height": 900,
     "spec": "2a431a8f2139345080221787dcc0cd8b79a11c3f",
+    "width": 1440
+  },
+  "getting-started/academy-name": {
+    "capturedAt": "2026-10-20T14:36:11.347Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/academy-name-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/academy-name-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "30d600c7d1f940066189628926539b2dc7b1185a",
+    "width": 1440
+  },
+  "getting-started/academy-payment-methods": {
+    "capturedAt": "2026-10-20T14:37:11.838Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/academy-payment-methods-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/academy-payment-methods-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "c38514590ca831415c12c82984a3c2b73841785b",
+    "width": 1440
+  },
+  "getting-started/academy-start-mode": {
+    "capturedAt": "2026-10-20T14:37:03.550Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/academy-start-mode-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/academy-start-mode-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "00b63c141ad1d17bc7cd328b0cb5ec46eaae587f",
+    "width": 1440
+  },
+  "getting-started/academy-submit": {
+    "capturedAt": "2026-10-20T14:37:21.280Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/academy-submit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/academy-submit-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "fb0998f4de7f2095aea6c06311b34638e84f7680",
+    "width": 1440
+  },
+  "getting-started/academy-theme": {
+    "capturedAt": "2026-10-20T14:36:32.439Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/academy-theme-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/academy-theme-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "cade736971cc2795bb524bf464a4300283f3084a",
+    "width": 1440
+  },
+  "getting-started/launch-course-publish": {
+    "capturedAt": "2026-10-20T14:37:43.946Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/launch-course-publish-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/launch-course-publish-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "fb311ee8022a8685d1cbedb356f4a47d942b5826",
+    "width": 1440
+  },
+  "getting-started/launch-courses": {
+    "capturedAt": "2026-10-20T14:37:36.644Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/launch-courses-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/launch-courses-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "8c7fead22349e074c835cfd8e4a19518b8ad0b74",
+    "width": 1440
+  },
+  "getting-started/launch-payment-methods": {
+    "capturedAt": "2026-10-20T14:37:51.329Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/launch-payment-methods-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/launch-payment-methods-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "33dc6c3b49b3adda788a5c1dfb1ad76fa23548ae",
+    "width": 1440
+  },
+  "getting-started/launch-registration": {
+    "capturedAt": "2026-10-20T14:37:59.623Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/launch-registration-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/launch-registration-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "4320a488d005f119bb28f07e33b622292d259620",
+    "width": 1440
+  },
+  "getting-started/launch-website": {
+    "capturedAt": "2026-10-20T14:37:29.107Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/launch-website-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/launch-website-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "faba99f64251b9fd49f412dc824230559a0eb778",
+    "width": 1440
+  },
+  "getting-started/new-academy-page": {
+    "capturedAt": "2026-10-20T14:36:01.806Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/getting-started/new-academy-page-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/getting-started/new-academy-page-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ef88933db3c68c7a91eebff09e0e48b446fdca66",
     "width": 1440
   },
   "getting-started/onboarding-academy": {
