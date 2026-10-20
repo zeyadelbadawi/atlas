@@ -205,7 +205,9 @@
       "doneButton": "Done",
       "errors": {
         "insufficientRole": "Only the academy owner can create a student account.",
-        "generic": "Could not create this student account. Please try again."
+        "generic": "Could not create this student account. Please try again.",
+        "alreadyMember": "This person is already a student in this academy.",
+        "userNotFound": "Could not create this student account. Reload the page and try again."
       },
       "addButton": "Add student",
       "outcome": {

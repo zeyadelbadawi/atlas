@@ -319,7 +319,15 @@
     "refundNotEligible": "This order can't be refunded. Only paid orders that haven't already been refunded are eligible.",
     "refundWindowElapsed": "The refund period for this order has ended. Refunds are available within 30 days of purchase.",
     "paymentUnderReview": "A payment for this order is already being reviewed by the academy. You’ll get an email when it’s reviewed.",
-    "refundContactAcademy": "This order was paid to the academy directly. Contact the academy about a refund."
+    "refundContactAcademy": "This order was paid to the academy directly. Contact the academy about a refund.",
+    "alreadyEnrolled": "You're already enrolled in this course.",
+    "courseNotPaid": "This course is free, so there is nothing to pay. Open the course page to enroll.",
+    "pricingUnavailable": "This course has no price set yet, so it can't be bought right now. Please contact the academy.",
+    "paymentSetupIncomplete": "This academy isn't taking payments yet. Please contact the academy.",
+    "expired": "This order has expired. Start a new order to buy the course.",
+    "notPayable": "This order can't be paid anymore: it's already paid, cancelled or refunded. Reload to see its current status.",
+    "commissionNotConfigured": "This payment option isn't available for this academy yet. Choose another payment method or contact the academy.",
+    "gatewayNotConfigured": "This payment option isn't available for this academy yet. Choose another payment method or contact the academy."
   },
   "payment": {
     "notPendingReview": "This payment is no longer waiting for review. Reload to see its current status.",
@@ -327,7 +335,11 @@
     "rejectedByReviewer": "Atlas reviewed this payment and couldn't accept it.",
     "rejectedByAcademy": "The academy reviewed this payment and couldn't accept it.",
     "alreadyUnderReview": "A payment for this order is already awaiting review. Open it to follow its status — you don't need to pay again.",
-    "collectionModeNotAvailable": "Atlas Payments and connected payment gateways aren't available yet. Learners pay you directly through your academy's own payment methods."
+    "collectionModeNotAvailable": "Atlas Payments and connected payment gateways aren't available yet. Learners pay you directly through your academy's own payment methods.",
+    "unsupportedProofFileType": "Upload the payment proof as a PNG, JPEG or PDF file.",
+    "methodNotFound": "This payment method isn't available. Choose another one.",
+    "notEditable": "This payment is already closed, so it can't be changed. Reload to see its current status.",
+    "proofNotSupported": "This payment method doesn't take a payment proof."
   },
   "paymentMethod": {
     "incompleteInstructions": "Enter the bank name, account holder name, account number, transfer instructions and reference instructions before saving or enabling this account.",

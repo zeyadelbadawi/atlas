@@ -67,6 +67,8 @@ Search this page for a few words of the message you see. Messages are shown here
 | A payment for this order is already being reviewed by the academy. … | The learner already sent a proof. | Wait for the email with the decision. See [Payment proof pending or rejected](doc:DOC-TRB-008). |
 | This order was paid to the academy directly. Contact the academy about a refund. | The money went to the academy, so Atlas can't refund it. | Ask the academy. See [Refunds for course purchases](doc:DOC-COM-005). |
 | This payment is no longer waiting for review. Reload to see its current status. | Someone already approved or rejected it. | Reload the page. |
+| This order has expired. Start a new order to buy the course. | The order's payment window passed before a payment was sent. | Open the course again and buy it again. |
+| Upload the payment proof as a PNG, JPEG or PDF file. | The proof file is another type. | Take a screenshot or save the receipt as PDF, then upload it. See [Payment proof pending or rejected](doc:DOC-TRB-008). |
 
 ## Academy setup
 
