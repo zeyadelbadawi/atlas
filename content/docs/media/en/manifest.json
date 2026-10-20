@@ -5830,6 +5830,278 @@
     "spec": "4cc1dd4368dfccd382ddedaecd7596727cbef3a1",
     "width": 1440
   },
+  "tasks/exams-integrity-report": {
+    "capturedAt": "2026-10-20T14:53:14.182Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/exams-integrity-report-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/exams-integrity-report-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "6446c3f469950cb247c479e1a9c58a1926383a6a",
+    "width": 1440
+  },
+  "tasks/exams-learner-assessments": {
+    "capturedAt": "2026-10-20T14:52:43.557Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/exams-learner-assessments-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/exams-learner-assessments-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "76c2facdde48bc06afb2711be2363e38d013a436",
+    "width": 1440
+  },
+  "tasks/exams-overrides": {
+    "capturedAt": "2026-10-20T14:53:03.739Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/exams-overrides-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/exams-overrides-1072.webp",
+        "width": 1072
+      }
+    ],
+    "height": 900,
+    "spec": "21a54d72e4328c05373c000292e95667d0581256",
+    "width": 536
+  },
+  "tasks/exams-quizzes": {
+    "capturedAt": "2026-10-20T14:51:41.075Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/exams-quizzes-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/exams-quizzes-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "a3d020856f6ca978eba999e0ed8553273d0d6be9",
+    "width": 1440
+  },
+  "tasks/exams-results": {
+    "capturedAt": "2026-10-20T14:52:52.133Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/exams-results-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/exams-results-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e99606aabec1a4a03d64d8ef779367ee397cbcaa",
+    "width": 1440
+  },
+  "tasks/learners-add-student": {
+    "capturedAt": "2026-10-20T14:54:42.838Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/learners-add-student-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/learners-add-student-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "060825240c5f54cbe2126ce85c9edee77f74c4a9",
+    "width": 1440
+  },
+  "tasks/learners-invite-links": {
+    "capturedAt": "2026-10-20T14:54:29.133Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/learners-invite-links-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/learners-invite-links-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ba0e9d60ffd9229c5e6fd197c1ff920bc92d644d",
+    "width": 1440
+  },
+  "tasks/learners-policy": {
+    "capturedAt": "2026-10-20T14:54:16.966Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/learners-policy-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/learners-policy-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "87f0be1249e67ae2358151d785ae1473c992c07a",
+    "width": 1440
+  },
+  "tasks/learners-students-tab": {
+    "capturedAt": "2026-10-20T14:54:58.656Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/learners-students-tab-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/learners-students-tab-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "6a80ba89c44d942474b99160573659c039907ff7",
+    "width": 1440
+  },
+  "tasks/protect-devices": {
+    "capturedAt": "2026-10-20T14:53:37.524Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/protect-devices-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/protect-devices-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3a18c5d5571d2bde2c3c3ba88eeec80d21fa756a",
+    "width": 1440
+  },
+  "tasks/protect-learner-devices": {
+    "capturedAt": "2026-10-20T14:53:46.346Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/protect-learner-devices-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/protect-learner-devices-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "4c7540faeb1d7e98210be1d9f06764864f058f82",
+    "width": 1440
+  },
+  "tasks/protect-settings": {
+    "capturedAt": "2026-10-20T14:53:26.644Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/protect-settings-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/protect-settings-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "27389e9343f9e19f9ca2ce198ae909aaa2413cc8",
+    "width": 1440
+  },
+  "tasks/protect-sharing-signals": {
+    "capturedAt": "2026-10-20T14:53:56.181Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/protect-sharing-signals-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/protect-sharing-signals-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "5e2ba8f2f249cb12d8ed2d1d4089a46349a6209e",
+    "width": 1440
+  },
+  "tasks/protect-support": {
+    "capturedAt": "2026-10-20T14:54:05.888Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/protect-support-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/protect-support-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3254e153d65dc8acbd2e18fb1956e9ed58c53f85",
+    "width": 1440
+  },
+  "tasks/sell-learner-purchases": {
+    "capturedAt": "2026-10-20T14:51:14.101Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/sell-learner-purchases-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/sell-learner-purchases-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "648a238de8e60900cddb35ecebba40741353cd19",
+    "width": 1440
+  },
+  "tasks/sell-orders": {
+    "capturedAt": "2026-10-20T14:51:31.806Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/sell-orders-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/sell-orders-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "6f75f39c777d89034961c8cd92c1395e850f1aa8",
+    "width": 1440
+  },
   "tasks/sell-payment-methods": {
     "capturedAt": "2026-10-20T14:51:05.865Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -5863,6 +6135,23 @@
     "height": 900,
     "spec": "586b03785c249da5f003192ea826023a718a15ea",
     "width": 1440
+  },
+  "tasks/sell-review-payment": {
+    "capturedAt": "2026-10-20T14:51:23.347Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/tasks/sell-review-payment-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/tasks/sell-review-payment-1200.webp",
+        "width": 1200
+      }
+    ],
+    "height": 900,
+    "spec": "76b5eaad98df76d6378e31d84900ef21416b5842",
+    "width": 600
   },
   "tasks/website-domain": {
     "capturedAt": "2026-10-20T14:50:46.442Z",
@@ -5964,6 +6253,57 @@
     ],
     "height": 900,
     "spec": "76c09556962ca7b0833416b373327a2824fae972",
+    "width": 1440
+  },
+  "team/add-staff-buttons": {
+    "capturedAt": "2026-10-20T14:56:04.253Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/add-staff-buttons-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/add-staff-buttons-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f9e38726be791a61fc597d3660243f745dc0b1e7",
+    "width": 1440
+  },
+  "team/members-manager-view": {
+    "capturedAt": "2026-10-20T14:55:47.312Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/members-manager-view-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/members-manager-view-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "08072f5da8fce4f0bec2838c39107708817ac6f2",
+    "width": 1440
+  },
+  "team/members-team-tab": {
+    "capturedAt": "2026-10-20T14:55:36.850Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/team/members-team-tab-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/members-team-tab-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "d58ecc39f614a7bcb7873d02a821f82649e7685a",
     "width": 1440
   }
 }
