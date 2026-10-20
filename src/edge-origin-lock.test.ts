@@ -62,6 +62,7 @@ describe('origin lock (Caddyfile)', () => {
 
   it.each([
     ['platform and academy subdomains', 'atlass.dpdns.org, *.atlass.dpdns.org'],
+    ['the help center (DL-57)', 'docs.atlass.dpdns.org, doc.atlass.dpdns.org, help.atlass.dpdns.org'],
     ['plain HTTP', ':80'],
     ['connected custom domains', ':443'],
   ])('locks %s as the first directive of the site block', (_name, opening) => {

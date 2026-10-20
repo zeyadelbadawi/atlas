@@ -1,0 +1,23 @@
+# Screenshots for the "Security and privacy" category (content/docs/<lang>/security/).
+# Real routes (src/app/routes/route-paths.ts) and real i18n keys
+# (src/localization/resources/<lang>/*.json).
+
+- key: security/security-tab-overview
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  actions:
+    - click: { role: tab, name: profile:tabs.security }
+    - wait: 500
+  fullPage: true
+
+- key: security/learner-your-data
+  as: learner
+  surface: academy
+  path: /my/profile
+  waitFor: { text: learning:learnerDashboard.profile.subtitle }
+  actions:
+    - click: { role: tab, name: profile:tabs.account }
+    - scroll: { text: profile:privacyRequests.description }
+  highlight: { text: profile:privacyRequests.description }

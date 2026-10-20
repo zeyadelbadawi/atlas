@@ -7,7 +7,7 @@
  */
 import type { ReactElement, ReactNode } from 'react';
 import { Check, CheckCircle2, Minus } from 'lucide-react';
-import { Container, CtaBand, Section, SectionHeading, dirOf } from '../components/ui';
+import { Container, CtaBand, LearnMore, Section, SectionHeading, dirOf } from '../components/ui';
 import { CONTACT_LIMITS, CONTACT_TOPICS } from '../client/contact-validation';
 import { canFill, fill, link } from '../lib/copy';
 import { localePath } from '../lib/site';
@@ -48,11 +48,14 @@ function SecurityPage({ env }: { env: PageEnv }) {
           className={index > 0 ? 'border-t border-border' : undefined}
         >
           <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr]">
-            <SectionHeading
-              id={`${section.anchor ?? index}-title`}
-              title={fill(section.title, tokens)}
-              lead={section.lead ? fill(section.lead, tokens) : undefined}
-            />
+            <div>
+              <SectionHeading
+                id={`${section.anchor ?? index}-title`}
+                title={fill(section.title, tokens)}
+                lead={section.lead ? fill(section.lead, tokens) : undefined}
+              />
+              {section.learnMore ? <LearnMore lang={lang} value={section.learnMore} tokens={tokens} /> : null}
+            </div>
             <ul className="grid gap-4">
               {section.items.map((item) => (
                 <li key={item.title} className="mk-card p-5">

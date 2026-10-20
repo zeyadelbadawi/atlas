@@ -1,0 +1,177 @@
+# Selling and payments (DOC-COM-*). Academy Manual Payments only: the
+# organization owner's payment methods, the payment review page, course
+# orders, and the learner's Purchases page. Seeded demo data: all three
+# methods are set up and on (fake details), Ali's wallet payment is waiting
+# for review ({paymentId}), Salma's InstaPay order is approved
+# ({approvedOrderId}). No shot confirms a decision or saves a form.
+
+# --- DOC-COM-001 How selling works -------------------------------------
+- key: selling/how-it-works
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payment-methods
+  waitFor: { text: payments:academyMethods.title }
+  highlight: { text: payments:academyMethods.howItWorks.title }
+
+# --- DOC-COM-002 Payment methods ---------------------------------------
+- key: selling/payment-methods-nav
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payment-methods
+  waitFor: { text: payments:academyMethods.title }
+  highlight: { role: link, name: navigation:items.academyPaymentMethods }
+
+- key: selling/payment-method-edit
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payment-methods
+  waitFor: { text: payments:academyMethods.title }
+  highlight: { testId: academy-method-wallet-edit }
+
+- key: selling/payment-method-dialog
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payment-methods
+  waitFor: { text: payments:academyMethods.title }
+  actions:
+    - click: { testId: academy-method-wallet-edit }
+  highlight: { testId: academy-wallet-provider }
+  clip: dialog
+
+- key: selling/payment-method-texts
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payment-methods
+  waitFor: { text: payments:academyMethods.title }
+  actions:
+    - click: { testId: academy-method-wallet-edit }
+    - scroll: { testId: academy-wallet-instructions }
+  highlight:
+    - { testId: academy-wallet-instructions }
+    - { testId: academy-wallet-reference-instructions }
+  clip: dialog
+
+- key: selling/payment-method-save
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payment-methods
+  waitFor: { text: payments:academyMethods.title }
+  actions:
+    - click: { testId: academy-method-wallet-edit }
+    - scroll: { testId: academy-method-save }
+  highlight: { testId: academy-method-save }
+  clip: dialog
+
+- key: selling/payment-method-toggle
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payment-methods
+  waitFor: { text: payments:academyMethods.title }
+  highlight: { testId: academy-method-wallet-toggle }
+
+# --- DOC-COM-003 Review payment proofs ---------------------------------
+- key: selling/payments-nav
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payments
+  waitFor: { text: payments:academyReview.description }
+  highlight: { role: link, name: navigation:items.academyPayments }
+
+- key: selling/payments-pending
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payments
+  waitFor: { text: payments:academyReview.description }
+  highlight: { testId: academy-payments-tab-pending }
+
+- key: selling/payment-sheet
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payments?payment={paymentId}
+  waitFor: { text: payments:academyReview.proofTitle }
+  highlight: { text: payments:academyReview.proofTitle }
+  clip: dialog
+
+- key: selling/payment-decision-hint
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payments?payment={paymentId}
+  waitFor: { text: payments:academyReview.proofTitle }
+  highlight:
+    - { text: payments:academyReview.instructionsTitle }
+    - { text: payments:academyReview.decisionHint }
+  clip: dialog
+
+- key: selling/payment-approve-confirm
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payments?payment={paymentId}
+  waitFor: { text: payments:academyReview.proofTitle }
+  actions:
+    - click: { testId: academy-payment-approve }
+  highlight: { role: button, name: payments:academyReview.confirmApprove.confirm }
+  clip: dialog
+
+- key: selling/payment-reject-reason
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payments?payment={paymentId}
+  waitFor: { text: payments:academyReview.proofTitle }
+  actions:
+    - click: { testId: academy-payment-reject }
+    - fill:
+        testId: academy-payment-reject-reason
+        value: { en: "The amount received doesn't match the course price.", ar: "المبلغ اللي وصل مش مطابق لسعر الكورس." }
+  highlight: { testId: academy-payment-reject-reason }
+  clip: dialog
+
+- key: selling/payment-reject-confirm
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payments?payment={paymentId}
+  waitFor: { text: payments:academyReview.proofTitle }
+  actions:
+    - click: { testId: academy-payment-reject }
+    - fill:
+        testId: academy-payment-reject-reason
+        value: { en: "The amount received doesn't match the course price.", ar: "المبلغ اللي وصل مش مطابق لسعر الكورس." }
+    - click: { testId: academy-payment-reject-confirm }
+  highlight: { role: button, name: payments:academyReview.confirmReject.confirm, nth: -1 }
+  clip: dialog
+
+# --- DOC-COM-004 Course orders -----------------------------------------
+- key: selling/orders-nav
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/orders
+  waitFor: { text: payments:academyOrders.description }
+  highlight: { role: link, name: navigation:items.academyOrders }
+
+- key: selling/orders-filters
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/orders
+  waitFor: { text: payments:academyOrders.description }
+  highlight: { role: search, name: payments:listFilters.label }
+
+- key: selling/order-detail
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/orders/{approvedOrderId}
+  waitFor: { text: payments:academyOrders.detail.description }
+  highlight: { text: payments:academyOrders.detail.paymentsTitle }
+
+- key: selling/dashboard-revenue
+  as: owner
+  surface: dashboard
+  path: /dashboard
+  waitFor: { text: dashboard:revenue.description }
+  highlight: { text: dashboard:revenue.manualSales.title }
+
+# --- DOC-COM-005 Refunds -----------------------------------------------
+- key: selling/learner-refund-contact
+  as: learner
+  surface: academy
+  path: /my/purchases
+  waitFor: { text: learning:learnerDashboard.purchases.subtitle }
+  highlight: { text: learning:learnerDashboard.purchases.refund.contactAcademy }

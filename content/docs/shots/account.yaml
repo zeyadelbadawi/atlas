@@ -1,0 +1,343 @@
+# Screenshots for the "Your account and sign-in" category (content/docs/<lang>/account/).
+# Real routes (src/app/routes/route-paths.ts) and real i18n keys
+# (src/localization/resources/<lang>/*.json). Nothing here confirms a
+# destructive action: dialogs are opened and captured, never confirmed.
+
+# ---- Where to sign in -------------------------------------------------------
+
+- key: account/sign-in-dashboard
+  as: visitor
+  surface: platform
+  path: /auth/sign-in
+  waitFor: { text: auth:signIn.studentHint }
+  highlight: { text: auth:signIn.studentHint }
+
+- key: account/sign-in-academy
+  as: visitor
+  surface: academy
+  path: /sign-in
+  waitFor: { selector: 'input[type="email"]' }
+  highlight: { role: link, name: publicWebsite:auth.signIn.signUp }
+
+- key: account/account-menu-sign-out
+  as: owner
+  surface: dashboard
+  path: /dashboard
+  waitFor: { selector: '[data-testid="account-menu-trigger"]' }
+  actions:
+    - click: { testId: account-menu-trigger }
+  highlight: { role: menuitem, name: common:account.signOut }
+
+# ---- Password ---------------------------------------------------------------
+
+- key: account/sign-in-forgot-link
+  as: visitor
+  surface: platform
+  path: /auth/sign-in
+  waitFor: { text: auth:signIn.studentHint }
+  highlight: { role: link, name: auth:signIn.forgotPassword }
+
+- key: account/academy-sign-in-forgot-link
+  as: visitor
+  surface: academy
+  path: /sign-in
+  waitFor: { selector: 'input[type="email"]' }
+  highlight: { role: link, name: auth:signIn.forgotPassword }
+
+- key: account/forgot-password-form
+  as: visitor
+  surface: platform
+  path: /auth/forgot-password
+  waitFor: { text: auth:forgotPassword.emailHint }
+  actions:
+    - fill: { label: auth:forgotPassword.email, value: name@example.com }
+  highlight: { role: button, name: auth:forgotPassword.submit }
+
+- key: account/forgot-password-sent
+  as: visitor
+  surface: platform
+  path: /auth/forgot-password
+  waitFor: { text: auth:forgotPassword.emailHint }
+  actions:
+    - fill: { label: auth:forgotPassword.email, value: name@example.com }
+    - click: { role: button, name: auth:forgotPassword.submit }
+    - wait: 1500
+  highlight: { text: auth:forgotPassword.success.description }
+
+- key: account/reset-link-invalid
+  as: visitor
+  surface: platform
+  path: /auth/reset-password?token=example-expired-link
+  waitFor: { text: auth:resetPassword.errors.invalidToken }
+  highlight: { role: link, name: auth:resetPassword.requestNewLink }
+
+- key: account/profile-menu
+  as: owner
+  surface: dashboard
+  path: /dashboard
+  waitFor: { selector: '[data-testid="account-menu-trigger"]' }
+  actions:
+    - click: { testId: account-menu-trigger }
+  highlight: { role: menuitem, name: common:account.profile }
+
+- key: account/security-tab
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  actions:
+    - click: { role: tab, name: profile:tabs.security }
+  highlight: { role: tab, name: profile:tabs.security }
+
+- key: account/change-password-form
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  actions:
+    - click: { role: tab, name: profile:tabs.security }
+    - scroll: { role: button, name: profile:actions.changePassword }
+  highlight: { role: button, name: profile:actions.changePassword }
+
+- key: account/learner-security-page
+  as: learner
+  surface: academy
+  path: /my/security
+  waitFor: { text: learning:learnerDashboard.security.subtitle }
+  highlight: { role: button, name: profile:actions.changePassword }
+
+# ---- Verify your email ------------------------------------------------------
+
+- key: account/verify-email-request
+  as: owner
+  surface: dashboard
+  path: /auth/verify-email
+  waitFor: { text: auth:verifyEmail.requestDescription }
+  highlight: { role: button, name: auth:verifyEmail.resend.action }
+
+# ---- Sign-in codes and remembered devices -----------------------------------
+
+- key: account/remembered-devices
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  actions:
+    - click: { role: tab, name: profile:tabs.security }
+    - scroll: { text: profile:sections.security.trustedDevicesDescription }
+  highlight: { text: profile:sections.security.trustedDevices }
+
+- key: account/academy-code-setting
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:communication.sectionTitle }
+  actions:
+    - scroll: { text: academy:communication.readOnlyNotice }
+  highlight: { text: academy:communication.readOnlyNotice }
+
+# ---- Authenticator app (captured as the demo instructor; never confirmed) ---
+
+- key: account/two-factor-card
+  as: instructor
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  actions:
+    - click: { role: tab, name: profile:tabs.security }
+    - scroll: { text: profile:sections.security.twoFactorDescription }
+  highlight: { role: button, name: profile:actions.enable, exact: true }
+
+- key: account/two-factor-setup
+  as: instructor
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  actions:
+    - click: { role: tab, name: profile:tabs.security }
+    - click: { role: button, name: profile:actions.enable, exact: true }
+    - wait: 1000
+  highlight: { role: img, name: profile:twoFactor.qrAlt }
+  clip: dialog
+
+- key: account/two-factor-confirm
+  as: instructor
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  actions:
+    - click: { role: tab, name: profile:tabs.security }
+    - click: { role: button, name: profile:actions.enable, exact: true }
+    - wait: 1000
+  highlight:
+    - { selector: '#totp-code' }
+    - { selector: '#totp-setup-password' }
+  clip: dialog
+
+# ---- Active sessions --------------------------------------------------------
+
+- key: account/sessions-card
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  actions:
+    - click: { role: tab, name: profile:tabs.security }
+    - scroll: { text: profile:sections.security.sessionsDescription }
+  highlight: { text: profile:sections.security.sessions }
+
+- key: account/session-sign-out
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  actions:
+    - click: { role: tab, name: profile:tabs.security }
+    - scroll: { text: profile:sections.security.sessionsDescription }
+  highlight: { role: button, name: profile:sections.security.revokeSessionLabel, nth: -1 }
+
+- key: account/session-sign-out-confirm
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  actions:
+    - click: { role: tab, name: profile:tabs.security }
+    - scroll: { text: profile:sections.security.sessionsDescription }
+    - click: { role: button, name: profile:sections.security.revokeSessionLabel, nth: -1 }
+    - wait: 500
+  clip: dialog
+
+# ---- Profile, language and theme --------------------------------------------
+
+- key: account/profile-personal
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  highlight: { role: button, name: common:actions.edit, exact: true }
+
+- key: account/profile-preferences
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  actions:
+    - click: { role: tab, name: profile:tabs.preferences }
+  highlight:
+    - { selector: '#language' }
+    - { selector: '#theme' }
+
+- key: account/profile-preferences-save
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  actions:
+    - click: { role: tab, name: profile:tabs.preferences }
+  highlight: { role: button, name: common:actions.save, exact: true }
+
+- key: account/appearance-menu
+  as: owner
+  surface: dashboard
+  path: /dashboard
+  waitFor: { selector: '[data-testid="account-menu-trigger"]' }
+  actions:
+    - click: { testId: account-menu-trigger }
+    - click: { testId: appearance-toggle }
+  highlight: { testId: appearance-dark }
+
+- key: account/learner-profile
+  as: learner
+  surface: academy
+  path: /my/profile
+  waitFor: { text: learning:learnerDashboard.profile.subtitle }
+  highlight: { role: tab, name: profile:tabs.preferences }
+
+# ---- Phone number -------------------------------------------------------------
+
+- key: account/phone-card
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  actions:
+    - scroll: { text: profile:phone.description }
+  highlight: { text: profile:phone.description }
+
+- key: account/sign-up-phone
+  as: visitor
+  surface: platform
+  path: /auth/register
+  waitFor: { text: auth:register.title }
+  highlight: { label: auth:register.phone }
+
+# ---- Delete your account (dialogs opened, never confirmed) -------------------
+
+- key: account/delete-account-card
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  actions:
+    - click: { role: tab, name: profile:tabs.account }
+    - scroll: { testId: open-delete-account }
+  highlight: { testId: open-delete-account }
+
+- key: account/delete-account-dialog
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  actions:
+    - click: { role: tab, name: profile:tabs.account }
+    - click: { testId: open-delete-account }
+    - fill: { testId: delete-account-confirmation, value: nour.owner@example.com }
+  highlight: { testId: request-delete-code }
+  clip: dialog
+
+- key: account/delete-account-code
+  as: owner
+  surface: dashboard
+  path: /dashboard/profile
+  waitFor: { text: profile:sections.personal.title }
+  actions:
+    - click: { role: tab, name: profile:tabs.account }
+    - click: { testId: open-delete-account }
+    - fill: { testId: delete-account-confirmation, value: nour.owner@example.com }
+    - click: { testId: request-delete-code }
+    - wait: 1500
+  highlight: { testId: confirm-delete-account }
+  clip: dialog
+
+# ---- Accept an invitation -----------------------------------------------------
+
+- key: account/invite-staff-sign-in
+  as: visitor
+  surface: platform
+  path: /auth/sign-in
+  waitFor: { text: auth:signIn.studentHint }
+  highlight: { role: button, name: auth:signIn.submit, exact: true }
+
+- key: account/invite-staff-profile-menu
+  as: manager
+  surface: dashboard
+  path: /dashboard
+  waitFor: { selector: '[data-testid="account-menu-trigger"]' }
+  actions:
+    - click: { testId: account-menu-trigger }
+  highlight: { role: menuitem, name: common:account.profile }
+
+- key: account/invite-learner-sign-up
+  as: visitor
+  surface: academy
+  path: /sign-up?invite={inviteToken}
+  waitFor: { selector: 'input[type="email"]' }
+  highlight: { role: button, name: auth:register.submit, exact: true }
+
+- key: account/invite-learner-sign-in
+  as: visitor
+  surface: academy
+  path: /sign-in
+  waitFor: { selector: 'input[type="email"]' }
+  highlight: { role: button, name: auth:signIn.submit, exact: true }

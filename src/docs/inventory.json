@@ -1,0 +1,1550 @@
+[
+ {
+  "id": "DOC-HOME-001",
+  "category": "home",
+  "slug": "_home",
+  "type": "hub",
+  "priority": "P0",
+  "titleEn": "Atlas Help Center",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-START-001",
+  "category": "getting-started",
+  "slug": "overview",
+  "type": "feature-explanation",
+  "priority": "P0",
+  "titleEn": "Getting started with Atlas",
+  "audience": "Owner; Prospect"
+ },
+ {
+  "id": "DOC-START-002",
+  "category": "getting-started",
+  "slug": "create-account",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Create your account and start a trial",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-START-003",
+  "category": "getting-started",
+  "slug": "onboarding-wizard",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Complete the onboarding wizard",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-START-004",
+  "category": "getting-started",
+  "slug": "create-academy",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Create your academy",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-START-005",
+  "category": "getting-started",
+  "slug": "launch-checklist",
+  "type": "workflow",
+  "priority": "P0",
+  "titleEn": "Launch checklist: from a new academy to your first learner",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-START-006",
+  "category": "getting-started",
+  "slug": "plans-and-limits",
+  "type": "feature-explanation",
+  "priority": "P0",
+  "titleEn": "Plans, limits and what counts toward them",
+  "audience": "Owner; Prospect"
+ },
+ {
+  "id": "DOC-START-007",
+  "category": "getting-started",
+  "slug": "instructor-quick-start",
+  "type": "role-guide",
+  "priority": "P1",
+  "titleEn": "Quick start for instructors",
+  "audience": "Instructor"
+ },
+ {
+  "id": "DOC-START-008",
+  "category": "getting-started",
+  "slug": "learner-quick-start",
+  "type": "role-guide",
+  "priority": "P0",
+  "titleEn": "Quick start for learners",
+  "audience": "Learner"
+ },
+ {
+  "id": "DOC-ROLE-001",
+  "category": "roles",
+  "slug": "owners",
+  "type": "role-guide",
+  "priority": "P0",
+  "titleEn": "Guide for academy owners",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-ROLE-002",
+  "category": "roles",
+  "slug": "managers",
+  "type": "role-guide",
+  "priority": "P1",
+  "titleEn": "Guide for academy managers",
+  "audience": "Manager"
+ },
+ {
+  "id": "DOC-ROLE-003",
+  "category": "roles",
+  "slug": "instructors",
+  "type": "role-guide",
+  "priority": "P1",
+  "titleEn": "Guide for instructors",
+  "audience": "Instructor"
+ },
+ {
+  "id": "DOC-ROLE-004",
+  "category": "roles",
+  "slug": "learners",
+  "type": "role-guide",
+  "priority": "P0",
+  "titleEn": "Guide for learners",
+  "audience": "Learner"
+ },
+ {
+  "id": "DOC-ROLE-005",
+  "category": "roles",
+  "slug": "roles-and-permissions",
+  "type": "reference",
+  "priority": "P0",
+  "titleEn": "Roles and permissions: who can do what",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-TASK-000",
+  "category": "tasks",
+  "slug": "_index",
+  "type": "hub",
+  "priority": "P0",
+  "titleEn": "Common tasks",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-TASK-001",
+  "category": "tasks",
+  "slug": "launch-website",
+  "type": "workflow",
+  "priority": "P0",
+  "titleEn": "Launch your academy website",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-TASK-002",
+  "category": "tasks",
+  "slug": "sell-courses",
+  "type": "workflow",
+  "priority": "P0",
+  "titleEn": "Sell courses and collect payments",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-TASK-003",
+  "category": "tasks",
+  "slug": "run-exams",
+  "type": "workflow",
+  "priority": "P1",
+  "titleEn": "Run online quizzes and exams",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-TASK-004",
+  "category": "tasks",
+  "slug": "protect-content",
+  "type": "workflow",
+  "priority": "P0",
+  "titleEn": "Protect your content from sharing",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-TASK-005",
+  "category": "tasks",
+  "slug": "manage-learners",
+  "type": "workflow",
+  "priority": "P0",
+  "titleEn": "Manage learners and enrollments",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-ACD-001",
+  "category": "academy",
+  "slug": "_index",
+  "type": "hub",
+  "priority": "P1",
+  "titleEn": "Academy settings overview",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-ACD-002",
+  "category": "academy",
+  "slug": "profile",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Edit your academy profile and contact details",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-ACD-003",
+  "category": "academy",
+  "slug": "localization",
+  "type": "setup-config",
+  "priority": "P1",
+  "titleEn": "Language, currency and time zone",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-ACD-004",
+  "category": "academy",
+  "slug": "brand-studio",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Brand Studio: logo, colours and favicon",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-ACD-005",
+  "category": "academy",
+  "slug": "web-address",
+  "type": "feature-explanation",
+  "priority": "P0",
+  "titleEn": "Your academy web address (subdomain)",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-ACD-006",
+  "category": "academy",
+  "slug": "custom-domain",
+  "type": "setup-config",
+  "priority": "P0",
+  "titleEn": "Connect your own domain",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-ACD-007",
+  "category": "academy",
+  "slug": "another-academy",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Create another academy",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-ACD-008",
+  "category": "academy",
+  "slug": "switch",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Switch between academies and organizations",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-ACD-009",
+  "category": "academy",
+  "slug": "coming-soon-page",
+  "type": "feature-explanation",
+  "priority": "P1",
+  "titleEn": "The Coming Soon page",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-ACD-010",
+  "category": "academy",
+  "slug": "delete-academy",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Delete an academy (what is permanent)",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-ACD-011",
+  "category": "academy",
+  "slug": "creation-status",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Academy creation status, retries and failures",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-WEB-001",
+  "category": "website",
+  "slug": "overview",
+  "type": "feature-explanation",
+  "priority": "P0",
+  "titleEn": "Website builder overview",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-002",
+  "category": "website",
+  "slug": "themes",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Choose or change your theme",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-003",
+  "category": "website",
+  "slug": "pages",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Manage your website pages",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-004",
+  "category": "website",
+  "slug": "page-editor",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Edit a page with sections",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-005",
+  "category": "website",
+  "slug": "sections",
+  "type": "reference",
+  "priority": "P1",
+  "titleEn": "Section types reference",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-006",
+  "category": "website",
+  "slug": "arabic-and-english",
+  "type": "setup-config",
+  "priority": "P0",
+  "titleEn": "Build your site in Arabic and English",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-007",
+  "category": "website",
+  "slug": "sample-content",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Replace sample content before you launch",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-008",
+  "category": "website",
+  "slug": "publish",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Preview, publish and unpublish your site",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-009",
+  "category": "website",
+  "slug": "navigation",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Navigation, header, footer and social links",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-010",
+  "category": "website",
+  "slug": "faq-and-testimonials",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "FAQ and testimonials library",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-011",
+  "category": "website",
+  "slug": "settings",
+  "type": "setup-config",
+  "priority": "P1",
+  "titleEn": "Website settings and the cookie banner",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-012",
+  "category": "website",
+  "slug": "seo",
+  "type": "setup-config",
+  "priority": "P1",
+  "titleEn": "SEO settings for your academy site",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-013",
+  "category": "website",
+  "slug": "contact-messages",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Contact form and website messages",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-014",
+  "category": "website",
+  "slug": "course-pages",
+  "type": "feature-explanation",
+  "priority": "P1",
+  "titleEn": "Course catalogue and course pages on your site",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-LRN-001",
+  "category": "courses",
+  "slug": "overview",
+  "type": "feature-explanation",
+  "priority": "P0",
+  "titleEn": "Courses overview",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-LRN-002",
+  "category": "courses",
+  "slug": "create-course",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Create a course with the guided wizard",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-LRN-003",
+  "category": "courses",
+  "slug": "pricing",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Set a course price (free or paid)",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-LRN-004",
+  "category": "courses",
+  "slug": "course-details",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Course details: visibility, level, language, outcomes and thumbnail",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-LRN-005",
+  "category": "courses",
+  "slug": "curriculum",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Build your curriculum: sections and lessons",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-LRN-006",
+  "category": "courses",
+  "slug": "youtube-lesson",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Add a YouTube video lesson",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-LRN-007",
+  "category": "courses",
+  "slug": "link-lesson",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Add a link lesson (other video sites or web pages)",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-LRN-011",
+  "category": "courses",
+  "slug": "publish",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Publish your course",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-LRN-012",
+  "category": "courses",
+  "slug": "assign-instructors",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Assign instructors to a course",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-LRN-013",
+  "category": "courses",
+  "slug": "completion-and-progress",
+  "type": "feature-explanation",
+  "priority": "P1",
+  "titleEn": "Completion rules and learner progress",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-LRN-014",
+  "category": "courses",
+  "slug": "create-quiz",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Create a quiz",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-LRN-015",
+  "category": "courses",
+  "slug": "quiz-settings",
+  "type": "setup-config",
+  "priority": "P1",
+  "titleEn": "Quiz settings: time, attempts, grading and results",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-LRN-016",
+  "category": "courses",
+  "slug": "exam-integrity",
+  "type": "feature-explanation",
+  "priority": "P1",
+  "titleEn": "Exam integrity and full-screen exams",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-LRN-017",
+  "category": "courses",
+  "slug": "grade-quizzes",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Review attempts and grade essay answers",
+  "audience": "Instructor; Manager; Owner"
+ },
+ {
+  "id": "DOC-LRN-018",
+  "category": "courses",
+  "slug": "quiz-exceptions",
+  "type": "step-by-step",
+  "priority": "P2",
+  "titleEn": "Give a learner a quiz exception",
+  "audience": "Instructor; Manager; Owner"
+ },
+ {
+  "id": "DOC-LRN-019",
+  "category": "courses",
+  "slug": "assignments",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Assignments: create, collect and grade",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-LRN-020",
+  "category": "courses",
+  "slug": "certificates",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Certificates: design a template and issue automatically",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-LRN-021",
+  "category": "courses",
+  "slug": "manage-certificates",
+  "type": "step-by-step",
+  "priority": "P2",
+  "titleEn": "Issue, revoke or regenerate a certificate manually",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-LRN-022",
+  "category": "courses",
+  "slug": "certificate-verification",
+  "type": "feature-explanation",
+  "priority": "P1",
+  "titleEn": "How certificate verification works",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-LRN-023",
+  "category": "courses",
+  "slug": "reviews",
+  "type": "step-by-step",
+  "priority": "P2",
+  "titleEn": "Course reviews and moderation",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-LRN-024",
+  "category": "courses",
+  "slug": "teaching-dashboard",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Your teaching dashboard",
+  "audience": "Instructor"
+ },
+ {
+  "id": "DOC-LRN-025",
+  "category": "courses",
+  "slug": "integrity-report",
+  "type": "step-by-step",
+  "priority": "P2",
+  "titleEn": "Integrity report and CSV export",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-LRN-030",
+  "category": "for-learners",
+  "slug": "join-academy",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Sign up and join an academy",
+  "audience": "Learner"
+ },
+ {
+  "id": "DOC-LRN-031",
+  "category": "for-learners",
+  "slug": "my-learning",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Find your way around My Learn",
+  "audience": "Learner"
+ },
+ {
+  "id": "DOC-LRN-032",
+  "category": "for-learners",
+  "slug": "enroll-free",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Enroll in a free course",
+  "audience": "Learner"
+ },
+ {
+  "id": "DOC-LRN-033",
+  "category": "for-learners",
+  "slug": "take-quiz",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Take a quiz or exam",
+  "audience": "Learner"
+ },
+ {
+  "id": "DOC-LRN-034",
+  "category": "for-learners",
+  "slug": "submit-assignment",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Submit an assignment",
+  "audience": "Learner"
+ },
+ {
+  "id": "DOC-LRN-035",
+  "category": "for-learners",
+  "slug": "certificates",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Download and share your certificate",
+  "audience": "Learner"
+ },
+ {
+  "id": "DOC-LRN-036",
+  "category": "for-learners",
+  "slug": "review-course",
+  "type": "step-by-step",
+  "priority": "P2",
+  "titleEn": "Rate and review a course",
+  "audience": "Learner"
+ },
+ {
+  "id": "DOC-MED-001",
+  "category": "protection",
+  "slug": "overview",
+  "type": "feature-explanation",
+  "priority": "P0",
+  "titleEn": "Content protection: what Atlas does and does not do",
+  "audience": "Owner; Prospect"
+ },
+ {
+  "id": "DOC-MED-002",
+  "category": "protection",
+  "slug": "forensic-watermark",
+  "type": "feature-explanation",
+  "priority": "P0",
+  "titleEn": "The forensic watermark explained",
+  "audience": "Owner; Prospect; Learner"
+ },
+ {
+  "id": "DOC-MED-003",
+  "category": "protection",
+  "slug": "device-limits",
+  "type": "feature-explanation",
+  "priority": "P0",
+  "titleEn": "Device limits and one-screen-at-a-time viewing",
+  "audience": "Owner; Learner"
+ },
+ {
+  "id": "DOC-MED-004",
+  "category": "protection",
+  "slug": "settings",
+  "type": "setup-config",
+  "priority": "P1",
+  "titleEn": "Content protection settings",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-MED-005",
+  "category": "protection",
+  "slug": "leak-response",
+  "type": "workflow",
+  "priority": "P1",
+  "titleEn": "If your content leaks: tracing the account",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-MED-006",
+  "category": "protection",
+  "slug": "sharing-signals",
+  "type": "step-by-step",
+  "priority": "P2",
+  "titleEn": "Sharing signals report",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-MED-007",
+  "category": "protection",
+  "slug": "media-library",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Media library: upload and manage images and PDFs",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-MED-010",
+  "category": "for-learners",
+  "slug": "devices",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Manage your devices",
+  "audience": "Learner"
+ },
+ {
+  "id": "DOC-COM-001",
+  "category": "selling",
+  "slug": "overview",
+  "type": "feature-explanation",
+  "priority": "P0",
+  "titleEn": "How selling courses works in Atlas",
+  "audience": "Owner; Prospect"
+ },
+ {
+  "id": "DOC-COM-002",
+  "category": "selling",
+  "slug": "payment-methods",
+  "type": "setup-config",
+  "priority": "P0",
+  "titleEn": "Set up payment methods: bank transfer, mobile wallets and InstaPay",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-COM-003",
+  "category": "selling",
+  "slug": "review-payments",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Review payment proofs and approve enrollments",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-COM-004",
+  "category": "selling",
+  "slug": "course-orders",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Track course orders",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-COM-005",
+  "category": "selling",
+  "slug": "refunds",
+  "type": "feature-explanation",
+  "priority": "P1",
+  "titleEn": "Refunds for course purchases",
+  "audience": "Owner; Learner"
+ },
+ {
+  "id": "DOC-COM-006",
+  "category": "selling",
+  "slug": "receipts",
+  "type": "reference",
+  "priority": "P2",
+  "titleEn": "Receipts and purchase emails",
+  "audience": "Owner; Learner"
+ },
+ {
+  "id": "DOC-COM-010",
+  "category": "for-learners",
+  "slug": "buy-course",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Buy a course: pay and upload your proof",
+  "audience": "Learner"
+ },
+ {
+  "id": "DOC-COM-011",
+  "category": "for-learners",
+  "slug": "purchases",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Your purchases and payments",
+  "audience": "Learner"
+ },
+ {
+  "id": "DOC-BIL-001",
+  "category": "billing",
+  "slug": "overview",
+  "type": "feature-explanation",
+  "priority": "P0",
+  "titleEn": "Your subscription: plan, trial and status",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-BIL-002",
+  "category": "billing",
+  "slug": "trial",
+  "type": "feature-explanation",
+  "priority": "P0",
+  "titleEn": "How the trial works",
+  "audience": "Owner; Prospect"
+ },
+ {
+  "id": "DOC-BIL-003",
+  "category": "billing",
+  "slug": "gifted-days",
+  "type": "feature-explanation",
+  "priority": "P1",
+  "titleEn": "Gifted setup days",
+  "audience": "Owner; Prospect"
+ },
+ {
+  "id": "DOC-BIL-004",
+  "category": "billing",
+  "slug": "pay",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Pay for your subscription",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-BIL-005",
+  "category": "billing",
+  "slug": "change-plan",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Renew, upgrade or downgrade your plan",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-BIL-006",
+  "category": "billing",
+  "slug": "usage",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "The Usage page",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-BIL-007",
+  "category": "billing",
+  "slug": "lapsed",
+  "type": "feature-explanation",
+  "priority": "P0",
+  "titleEn": "When a subscription lapses: read-only mode and Coming Soon",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-BIL-008",
+  "category": "billing",
+  "slug": "cancel",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Cancel your trial or subscription",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-BIL-009",
+  "category": "billing",
+  "slug": "receipts",
+  "type": "reference",
+  "priority": "P2",
+  "titleEn": "Billing receipts and emails",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-ORG-001",
+  "category": "team",
+  "slug": "overview",
+  "type": "feature-explanation",
+  "priority": "P0",
+  "titleEn": "Team and learners overview",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-ORG-002",
+  "category": "team",
+  "slug": "add-staff",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Add a manager or instructor",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-ORG-003",
+  "category": "team",
+  "slug": "remove-staff",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Remove a staff member",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-ORG-004",
+  "category": "team",
+  "slug": "add-student",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Add a student yourself",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-ORG-005",
+  "category": "team",
+  "slug": "registration-policy",
+  "type": "setup-config",
+  "priority": "P0",
+  "titleEn": "Choose who can join: open, approval or invite-only",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-ORG-006",
+  "category": "team",
+  "slug": "invite-links",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Invite learners with invite links",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-ORG-007",
+  "category": "team",
+  "slug": "approvals",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Approve pending learners",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-ORG-008",
+  "category": "team",
+  "slug": "block-learner",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Block or unblock a learner",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-ORG-009",
+  "category": "team",
+  "slug": "students",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Student list and student details",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-ORG-010",
+  "category": "team",
+  "slug": "manual-enrollment",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Enroll a learner manually and set access expiry",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-ORG-011",
+  "category": "team",
+  "slug": "learner-accounts",
+  "type": "feature-explanation",
+  "priority": "P1",
+  "titleEn": "How learner accounts work across academies",
+  "audience": "Owner; Learner"
+ },
+ {
+  "id": "DOC-ORG-012",
+  "category": "team",
+  "slug": "organization",
+  "type": "feature-explanation",
+  "priority": "P2",
+  "titleEn": "Your organization and multiple organizations",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-IAM-001",
+  "category": "account",
+  "slug": "_index",
+  "type": "hub",
+  "priority": "P1",
+  "titleEn": "Your account and sign-in",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-IAM-002",
+  "category": "account",
+  "slug": "where-to-sign-in",
+  "type": "feature-explanation",
+  "priority": "P0",
+  "titleEn": "Where to sign in: the Atlas dashboard or your academy site",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-IAM-003",
+  "category": "account",
+  "slug": "password",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Reset or change your password",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-IAM-004",
+  "category": "account",
+  "slug": "verify-email",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Verify your email address",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-IAM-005",
+  "category": "account",
+  "slug": "email-codes",
+  "type": "feature-explanation",
+  "priority": "P0",
+  "titleEn": "Sign-in codes by email and remembered browsers",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-IAM-006",
+  "category": "account",
+  "slug": "authenticator-app",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Set up an authenticator app",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-IAM-007",
+  "category": "account",
+  "slug": "sessions",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "See and end your active sessions",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-IAM-008",
+  "category": "account",
+  "slug": "profile",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Edit your profile, language and theme",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-IAM-009",
+  "category": "account",
+  "slug": "phone",
+  "type": "feature-explanation",
+  "priority": "P2",
+  "titleEn": "Your phone number",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-IAM-010",
+  "category": "account",
+  "slug": "delete-account",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Delete your account",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-IAM-012",
+  "category": "account",
+  "slug": "accept-invitation",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Accept an invitation and set up your account",
+  "audience": "Manager; Instructor; Learner"
+ },
+ {
+  "id": "DOC-MSG-001",
+  "category": "notifications",
+  "slug": "overview",
+  "type": "feature-explanation",
+  "priority": "P1",
+  "titleEn": "Notifications: in-app and email",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-MSG-002",
+  "category": "notifications",
+  "slug": "preferences",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Email preferences and unsubscribing",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-MSG-003",
+  "category": "notifications",
+  "slug": "academy-messages",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Message your learners (Academy Messages)",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-MSG-004",
+  "category": "notifications",
+  "slug": "announcements",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Post announcements",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-SUP-001",
+  "category": "support",
+  "slug": "open-a-ticket",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Get help: open a support ticket",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-SUP-002",
+  "category": "support",
+  "slug": "service-requests",
+  "type": "step-by-step",
+  "priority": "P2",
+  "titleEn": "Request a service from the Atlas team",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-SUP-003",
+  "category": "support",
+  "slug": "learners",
+  "type": "feature-explanation",
+  "priority": "P1",
+  "titleEn": "How learners get help",
+  "audience": "Learner; Owner"
+ },
+ {
+  "id": "DOC-ANL-001",
+  "category": "analytics",
+  "slug": "overview",
+  "type": "feature-explanation",
+  "priority": "P1",
+  "titleEn": "Dashboards overview",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-ANL-002",
+  "category": "analytics",
+  "slug": "students",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Student analytics",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-ANL-003",
+  "category": "analytics",
+  "slug": "reports",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Academy reports (7, 30 and 90 days)",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-ANL-004",
+  "category": "analytics",
+  "slug": "activity-log",
+  "type": "step-by-step",
+  "priority": "P2",
+  "titleEn": "Academy activity log",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-SEC-001",
+  "category": "security",
+  "slug": "overview",
+  "type": "security-privacy",
+  "priority": "P0",
+  "titleEn": "Security at Atlas",
+  "audience": "All; Prospect"
+ },
+ {
+  "id": "DOC-SEC-002",
+  "category": "security",
+  "slug": "data-isolation",
+  "type": "security-privacy",
+  "priority": "P1",
+  "titleEn": "How your academy's data is kept separate",
+  "audience": "Owner; Prospect"
+ },
+ {
+  "id": "DOC-SEC-003",
+  "category": "security",
+  "slug": "account-protection",
+  "type": "security-privacy",
+  "priority": "P1",
+  "titleEn": "Account protection",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-SEC-004",
+  "category": "security",
+  "slug": "learner-data",
+  "type": "security-privacy",
+  "priority": "P0",
+  "titleEn": "What data Atlas keeps about learners",
+  "audience": "Owner; Learner"
+ },
+ {
+  "id": "DOC-SEC-005",
+  "category": "security",
+  "slug": "retention-and-deletion",
+  "type": "security-privacy",
+  "priority": "P1",
+  "titleEn": "Data retention and account deletion",
+  "audience": "Owner; Learner"
+ },
+ {
+  "id": "DOC-SEC-006",
+  "category": "security",
+  "slug": "report-issue",
+  "type": "security-privacy",
+  "priority": "P2",
+  "titleEn": "Report a security issue",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-INT-001",
+  "category": "reference",
+  "slug": "integrations",
+  "type": "integration",
+  "priority": "P1",
+  "titleEn": "Integrations: what Atlas connects to today",
+  "audience": "Owner; Prospect"
+ },
+ {
+  "id": "DOC-REF-000",
+  "category": "reference",
+  "slug": "_index",
+  "type": "hub",
+  "priority": "P1",
+  "titleEn": "Reference",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-REF-001",
+  "category": "reference",
+  "slug": "plan-limits",
+  "type": "reference",
+  "priority": "P1",
+  "titleEn": "Plan limits reference",
+  "audience": "Owner; Prospect"
+ },
+ {
+  "id": "DOC-REF-002",
+  "category": "reference",
+  "slug": "files",
+  "type": "reference",
+  "priority": "P1",
+  "titleEn": "Supported files and size limits",
+  "audience": "Owner; Manager; Learner"
+ },
+ {
+  "id": "DOC-REF-003",
+  "category": "reference",
+  "slug": "dns-records",
+  "type": "reference",
+  "priority": "P0",
+  "titleEn": "Custom domain DNS records",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-REF-004",
+  "category": "reference",
+  "slug": "academy-urls",
+  "type": "reference",
+  "priority": "P1",
+  "titleEn": "Academy site URLs (English, Arabic, learner portal, verification)",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-REF-005",
+  "category": "reference",
+  "slug": "emails",
+  "type": "reference",
+  "priority": "P2",
+  "titleEn": "Emails Atlas sends",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-REF-006",
+  "category": "reference",
+  "slug": "browsers-and-devices",
+  "type": "reference",
+  "priority": "P1",
+  "titleEn": "Browsers and devices",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-REF-007",
+  "category": "reference",
+  "slug": "messages",
+  "type": "reference",
+  "priority": "P2",
+  "titleEn": "Common messages and what they mean",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-CHG-001",
+  "category": "reference",
+  "slug": "whats-new",
+  "type": "changelog",
+  "priority": "P1",
+  "titleEn": "What's new in Atlas",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-TRB-001",
+  "category": "troubleshooting",
+  "slug": "_index",
+  "type": "hub",
+  "priority": "P0",
+  "titleEn": "Troubleshooting",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-TRB-002",
+  "category": "troubleshooting",
+  "slug": "cant-sign-in",
+  "type": "troubleshooting",
+  "priority": "P0",
+  "titleEn": "I can't sign in",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-TRB-003",
+  "category": "troubleshooting",
+  "slug": "device-limit",
+  "type": "troubleshooting",
+  "priority": "P0",
+  "titleEn": "\"Device limit reached\"",
+  "audience": "Learner; Owner"
+ },
+ {
+  "id": "DOC-TRB-004",
+  "category": "troubleshooting",
+  "slug": "lesson-wont-open",
+  "type": "troubleshooting",
+  "priority": "P0",
+  "titleEn": "A lesson won't open or play",
+  "audience": "Learner; Owner"
+ },
+ {
+  "id": "DOC-TRB-005",
+  "category": "troubleshooting",
+  "slug": "site-coming-soon",
+  "type": "troubleshooting",
+  "priority": "P0",
+  "titleEn": "My website shows \"Coming soon\"",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-TRB-006",
+  "category": "troubleshooting",
+  "slug": "custom-domain",
+  "type": "troubleshooting",
+  "priority": "P0",
+  "titleEn": "Custom domain not verifying or no HTTPS",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-TRB-007",
+  "category": "troubleshooting",
+  "slug": "academy-creation",
+  "type": "troubleshooting",
+  "priority": "P1",
+  "titleEn": "Academy creation is stuck or failed",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-TRB-008",
+  "category": "troubleshooting",
+  "slug": "payment-proof",
+  "type": "troubleshooting",
+  "priority": "P0",
+  "titleEn": "Payment proof pending or rejected",
+  "audience": "Learner; Owner"
+ },
+ {
+  "id": "DOC-TRB-009",
+  "category": "troubleshooting",
+  "slug": "missing-email",
+  "type": "troubleshooting",
+  "priority": "P0",
+  "titleEn": "I didn't get an email",
+  "audience": "All"
+ },
+ {
+  "id": "DOC-TRB-010",
+  "category": "troubleshooting",
+  "slug": "plan-limit",
+  "type": "troubleshooting",
+  "priority": "P1",
+  "titleEn": "You've reached a plan limit",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-TRB-011",
+  "category": "troubleshooting",
+  "slug": "quiz",
+  "type": "troubleshooting",
+  "priority": "P1",
+  "titleEn": "Quiz timer, autosave and full-screen problems",
+  "audience": "Learner; Instructor"
+ },
+ {
+  "id": "DOC-TRB-012",
+  "category": "troubleshooting",
+  "slug": "cant-delete-content",
+  "type": "troubleshooting",
+  "priority": "P2",
+  "titleEn": "Can't delete a lesson, quiz or section",
+  "audience": "Owner; Manager; Instructor"
+ },
+ {
+  "id": "DOC-TRB-013",
+  "category": "troubleshooting",
+  "slug": "website-save-conflict",
+  "type": "troubleshooting",
+  "priority": "P2",
+  "titleEn": "Website save conflict",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-TRB-014",
+  "category": "troubleshooting",
+  "slug": "learner-cant-join",
+  "type": "troubleshooting",
+  "priority": "P1",
+  "titleEn": "A learner can't join the academy",
+  "audience": "Owner; Learner"
+ },
+ {
+  "id": "DOC-TRB-015",
+  "category": "troubleshooting",
+  "slug": "read-only",
+  "type": "troubleshooting",
+  "priority": "P1",
+  "titleEn": "The dashboard is read-only or asks for a subscription",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-TRB-016",
+  "category": "troubleshooting",
+  "slug": "arabic-fallback",
+  "type": "troubleshooting",
+  "priority": "P1",
+  "titleEn": "Arabic text appears in English on my site",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-FAQ-001",
+  "category": "faq",
+  "slug": "general",
+  "type": "faq",
+  "priority": "P0",
+  "titleEn": "Frequently asked questions",
+  "audience": "All; Prospect"
+ },
+ {
+  "id": "DOC-FAQ-002",
+  "category": "faq",
+  "slug": "billing",
+  "type": "faq",
+  "priority": "P0",
+  "titleEn": "Billing and plans FAQ",
+  "audience": "Owner; Prospect"
+ },
+ {
+  "id": "DOC-FAQ-003",
+  "category": "faq",
+  "slug": "content-protection",
+  "type": "faq",
+  "priority": "P0",
+  "titleEn": "Content protection FAQ",
+  "audience": "Owner; Prospect"
+ },
+ {
+  "id": "DOC-FAQ-004",
+  "category": "faq",
+  "slug": "selling",
+  "type": "faq",
+  "priority": "P1",
+  "titleEn": "Selling and payments FAQ",
+  "audience": "Owner"
+ },
+ {
+  "id": "DOC-FAQ-005",
+  "category": "faq",
+  "slug": "learners",
+  "type": "faq",
+  "priority": "P0",
+  "titleEn": "Learner FAQ",
+  "audience": "Learner"
+ },
+ {
+  "id": "DOC-FAQ-006",
+  "category": "faq",
+  "slug": "exams",
+  "type": "faq",
+  "priority": "P1",
+  "titleEn": "Quizzes and exams FAQ",
+  "audience": "Owner; Instructor; Learner"
+ },
+ {
+  "id": "GLO-001",
+  "category": "faq",
+  "slug": "glossary",
+  "type": "glossary",
+  "priority": "P1",
+  "titleEn": "Glossary",
+  "audience": "All"
+ }
+]

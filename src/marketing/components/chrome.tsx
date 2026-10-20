@@ -7,7 +7,7 @@ import { ChevronDown, Menu, Monitor, Moon, Sun } from 'lucide-react';
 import type { MarketingContent } from '../content/content.types';
 import type { MarketingLang } from '../types';
 import { fill, link, type Tokens } from '../lib/copy';
-import { localePath } from '../lib/site';
+import { docsHref, localePath } from '../lib/site';
 import { Container } from './ui';
 
 /** Logo mark path (owner-approved, 20 Oct 2026), viewBox from public/brand/atlas-mark.svg. */
@@ -105,6 +105,7 @@ export function Header({
     { id: 'pricing', label: h.pricing, href: localePath(lang, '/pricing') },
     { id: 'security', label: h.security, href: localePath(lang, '/security') },
     { id: 'contact', label: h.contact, href: localePath(lang, '/contact') },
+    { id: 'help', label: h.help, href: docsHref(lang, '/') },
   ];
   const trial = link(lang, content.chrome.ctas.trial, tokens);
   const trialShort = link(lang, content.chrome.ctas.trialShort, tokens);
@@ -241,7 +242,7 @@ export function Footer({
   return (
     <footer className="border-t border-border bg-surface" aria-label={f.label}>
       <Container className="py-14">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(5,1fr)]">
           <div className="max-w-xs">
             <Logo lang={lang} brand={content.brand.name} label={content.chrome.header.homeLabel} />
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{fill(f.blurb, tokens)}</p>

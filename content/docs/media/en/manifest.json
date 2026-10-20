@@ -1,0 +1,138 @@
+{
+  "pipeline-sample/academy-home-mobile": {
+    "capturedAt": "2026-10-20T08:50:36.328Z",
+    "commit": "02a79da7e1c69ea489c2357c6ccf94cd0ad009fc",
+    "files": [
+      {
+        "src": "media/en/pipeline-sample/academy-home-mobile-390.webp",
+        "width": 390
+      },
+      {
+        "src": "media/en/pipeline-sample/academy-home-mobile-780.webp",
+        "width": 780
+      }
+    ],
+    "height": 844,
+    "spec": "3e61afe40f81d38368cb5ebf3867b023cdc7df62",
+    "width": 390
+  },
+  "pipeline-sample/course-builder-curriculum": {
+    "capturedAt": "2026-10-20T08:50:06.531Z",
+    "commit": "02a79da7e1c69ea489c2357c6ccf94cd0ad009fc",
+    "files": [
+      {
+        "src": "media/en/pipeline-sample/course-builder-curriculum-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/pipeline-sample/course-builder-curriculum-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ab22be1c5e9d5ae67df279597976e9806032468c",
+    "width": 1440
+  },
+  "pipeline-sample/dashboard-home": {
+    "capturedAt": "2026-10-20T08:49:40.958Z",
+    "commit": "02a79da7e1c69ea489c2357c6ccf94cd0ad009fc",
+    "files": [
+      {
+        "src": "media/en/pipeline-sample/dashboard-home-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/pipeline-sample/dashboard-home-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "9259c5854b6c0e50f00138434f1d0a84772f383a",
+    "width": 1440
+  },
+  "pipeline-sample/learner-my-courses": {
+    "capturedAt": "2026-10-20T08:50:29.471Z",
+    "commit": "02a79da7e1c69ea489c2357c6ccf94cd0ad009fc",
+    "files": [
+      {
+        "src": "media/en/pipeline-sample/learner-my-courses-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/pipeline-sample/learner-my-courses-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "66c458b3ef9fd6b45117d99d8977bd88f449ff0c",
+    "width": 1440
+  },
+  "pipeline-sample/payment-method-dialog": {
+    "capturedAt": "2026-10-20T08:49:57.180Z",
+    "commit": "02a79da7e1c69ea489c2357c6ccf94cd0ad009fc",
+    "files": [
+      {
+        "src": "media/en/pipeline-sample/payment-method-dialog-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/pipeline-sample/payment-method-dialog-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 813,
+    "spec": "84ccfacd094251022028c444252dd21a685c3d6c",
+    "width": 720
+  },
+  "pipeline-sample/payment-methods": {
+    "capturedAt": "2026-10-20T08:49:48.880Z",
+    "commit": "02a79da7e1c69ea489c2357c6ccf94cd0ad009fc",
+    "files": [
+      {
+        "src": "media/en/pipeline-sample/payment-methods-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/pipeline-sample/payment-methods-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "be2491171df2229a4cd5f4cf7ffd906c9b180e0a",
+    "width": 1440
+  },
+  "pipeline-sample/quiz-editor": {
+    "capturedAt": "2026-10-20T08:50:14.995Z",
+    "commit": "02a79da7e1c69ea489c2357c6ccf94cd0ad009fc",
+    "files": [
+      {
+        "src": "media/en/pipeline-sample/quiz-editor-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/pipeline-sample/quiz-editor-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e880460687696b373e9893f6de413daed152b776",
+    "width": 1440
+  },
+  "pipeline-sample/sign-up": {
+    "capturedAt": "2026-10-20T08:50:43.162Z",
+    "commit": "02a79da7e1c69ea489c2357c6ccf94cd0ad009fc",
+    "files": [
+      {
+        "src": "media/en/pipeline-sample/sign-up-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/pipeline-sample/sign-up-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "300e53f2056eebc6f0c45dbe5cadf9ba54c5d543",
+    "width": 1440
+  }
+}

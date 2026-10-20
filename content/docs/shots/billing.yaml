@@ -1,0 +1,135 @@
+# Your Atlas subscription (DOC-BIL-*). The demo organization is on a trial
+# of the Organization plan (key `enterprise`), so the trial state, the plan
+# comparison, the checkout review step and the cancel-trial dialog can be
+# captured. No shot starts a checkout, creates a payment or confirms a
+# cancellation: the demo stack has no enabled Atlas payment method, and
+# those steps would change the demo subscription.
+
+# --- DOC-BIL-001 Subscription overview ---------------------------------
+- key: billing/subscription-status
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/subscription
+  waitFor: { text: tenant:subscription.comparePlans }
+  highlight: { text: tenant:common.subscriptionStatusDescription.trialing }
+
+# --- DOC-BIL-002 Trial -------------------------------------------------
+- key: billing/trial-banner
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/subscription
+  waitFor: { text: tenant:subscription.comparePlans }
+  highlight: { testId: lifecycle-panel }
+
+# --- DOC-BIL-003 Gifted setup days -------------------------------------
+- key: billing/checkout-gift
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/billing/checkout/plan_subscription/enterprise
+  waitFor: { text: payments:checkout.reviewTitle }
+  actions:
+    - click: { selector: '#cycle-yearly' }
+  highlight: { testId: plan-gift-offer }
+
+# --- DOC-BIL-004 Pay for your subscription -----------------------------
+- key: billing/plans-open
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/subscription
+  waitFor: { text: tenant:subscription.comparePlans }
+  highlight: { role: link, name: navigation:items.plans }
+
+- key: billing/plans-select
+  as: owner
+  surface: dashboard
+  path: /dashboard/plans
+  waitFor: { text: tenant:planComparison.title }
+  highlight: { role: button, name: tenant:planComparison.selectPlan, nth: -1 }
+  clip: dialog
+
+- key: billing/checkout-cycle
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/billing/checkout/plan_subscription/enterprise
+  waitFor: { text: payments:checkout.reviewTitle }
+  highlight: { selector: '[role="radiogroup"]' }
+
+- key: billing/checkout-start
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/billing/checkout/plan_subscription/enterprise
+  waitFor: { text: payments:checkout.reviewTitle }
+  highlight: { role: button, name: payments:checkout.startCheckout }
+
+# --- DOC-BIL-005 Renew or change plan ----------------------------------
+- key: billing/subscription-compare
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/subscription
+  waitFor: { text: tenant:subscription.comparePlans }
+  highlight: { role: button, name: tenant:subscription.comparePlans }
+
+- key: billing/compare-select
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/subscription
+  waitFor: { text: tenant:subscription.comparePlans }
+  actions:
+    - click: { role: button, name: tenant:subscription.comparePlans }
+  highlight: { role: button, name: tenant:planComparison.selectPlan, nth: 0 }
+  clip: dialog
+
+# --- DOC-BIL-006 Usage -------------------------------------------------
+- key: billing/usage-nav
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/usage
+  waitFor: { text: tenant:usage.enforcementNote }
+  highlight: { role: link, name: navigation:items.tenantUsage }
+
+- key: billing/usage-rows
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/usage
+  waitFor: { text: tenant:usage.enforcementNote }
+  highlight:
+    - { text: tenant:common.usageStatus.allowed, nth: 0 }
+    - { text: tenant:usage.enforcementNote }
+
+# --- DOC-BIL-008 Cancel ------------------------------------------------
+- key: billing/cancel-button
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/subscription
+  waitFor: { text: tenant:subscription.comparePlans }
+  highlight: { role: button, name: tenant:trial.cancelAction }
+
+- key: billing/cancel-reason
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/subscription
+  waitFor: { text: tenant:subscription.comparePlans }
+  actions:
+    - click: { role: button, name: tenant:trial.cancelAction }
+  highlight: { selector: '#cancellation-reason' }
+  clip: dialog
+
+- key: billing/cancel-confirm
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/subscription
+  waitFor: { text: tenant:subscription.comparePlans }
+  actions:
+    - click: { role: button, name: tenant:trial.cancelAction }
+    - click: { selector: '#cancellation-reason' }
+    - click: { role: option, name: tenant:cancellation.reasons.temporary_pause }
+  highlight: { role: button, name: tenant:cancellation.confirmCancel }
+  clip: dialog
+
+# --- DOC-BIL-009 Receipts ----------------------------------------------
+- key: billing/billing-overview
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/billing
+  waitFor: { text: payments:overview.needsAttentionTitle }
+  highlight: { text: payments:overview.paymentHistoryLink }

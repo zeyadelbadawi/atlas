@@ -45,6 +45,13 @@ RUN ls dist/assets > "dist/assets/.build-$(date +%s).list"
 RUN mkdir -p dist-marketing \
  && if [ -d dist/marketing ]; then cp -R dist/marketing/. dist-marketing/ && rm -rf dist/marketing; fi \
  && if [ -d dist/marketing-assets ]; then mv dist/marketing-assets dist-marketing/marketing-assets; fi
+# DL-57 — the help center (`dist/docs/`, written by `pnpm build`: pages,
+# its own hashed assets, screenshots, search indexes) moves to /srv-docs,
+# served by Caddy on docs.<base> ONLY. It is never under /srv, so an academy
+# host can never be served a help page, and the docs host serves nothing
+# from the app.
+RUN mkdir -p dist-docs \
+ && if [ -d dist/docs ]; then cp -R dist/docs/. dist-docs/ && rm -rf dist/docs; fi
 
 # Phase 8 — the public Academy website's server renderer
 # (Reports/SSR_ARCHITECTURE_ANALYSIS.md): the same build, plus the SSR
@@ -97,6 +104,7 @@ COPY --from=caddy-build /usr/bin/caddy /usr/bin/caddy
 COPY previous-assets/ /srv/assets/
 COPY --from=build /app/dist /srv
 COPY --from=build /app/dist-marketing /srv-marketing
+COPY --from=build /app/dist-docs /srv-docs
 COPY Caddyfile /etc/caddy/Caddyfile
 
 EXPOSE 80 443

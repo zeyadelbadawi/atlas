@@ -52,6 +52,7 @@ export const en: MarketingContent = {
       security: 'Security',
       contact: 'Contact',
       about: 'About',
+      help: 'Help center',
       menuOpen: 'Open menu',
       menuClose: 'Close menu',
       menuLabel: 'Site menu',
@@ -137,6 +138,14 @@ export const en: MarketingContent = {
             { label: 'About', href: '/about' },
             { label: 'Contact', href: '/contact' },
             { label: 'Security and privacy', href: '/security' },
+          ],
+        },
+        {
+          title: 'Help',
+          links: [
+            { label: 'Help center', href: 'help:/' },
+            { label: 'Getting started', href: 'help:/getting-started' },
+            { label: 'FAQ', href: 'help:/faq/general' },
           ],
         },
         {
@@ -576,6 +585,7 @@ export const en: MarketingContent = {
       {
         id: 'payments',
         anchor: 'payments',
+        learnMore: { label: 'How to set up payment methods', href: 'help:/selling/payment-methods' },
         title: 'How do students pay?',
         lead: 'Students pay you directly by Vodafone Cash, Orange Cash, Etisalat Cash, WE Pay, InstaPay or bank transfer, using the details you add for each academy. They upload the proof in your academy, you approve it once, and they are enrolled and emailed. {brand} takes no commission on these payments.',
         points: [
@@ -590,6 +600,7 @@ export const en: MarketingContent = {
       {
         id: 'website',
         anchor: 'website',
+        learnMore: { label: 'How the website builder works', href: 'help:/website/overview' },
         title: 'What will my academy website look like?',
         lead: 'Every {brand} academy gets a public website on its own {brand} subdomain the moment you create it, and you can connect a domain you own. Pick one of four designs, upload your logo to set the colours, and build pages from ready-made sections in Arabic and English.',
         points: [
@@ -603,6 +614,7 @@ export const en: MarketingContent = {
       {
         id: 'lessons',
         anchor: 'lessons',
+        learnMore: { label: 'How to add a YouTube lesson', href: 'help:/courses/youtube-lesson' },
         title: 'Where do my lessons live?',
         lead: 'Lessons on {brand} are YouTube videos played inside your academy. You paste the link of a video you already have, unlisted works well, and arrange lessons into courses. Students watch inside your academy after you approve their payment, and each student account works on two devices, one screen at a time.',
         points: [
@@ -616,6 +628,7 @@ export const en: MarketingContent = {
       {
         id: 'assessments',
         anchor: 'assessments',
+        learnMore: { label: 'How to create a quiz', href: 'help:/courses/create-quiz' },
         title: 'How do quizzes, homework and certificates work?',
         lead: '{brand} quizzes support five question types and manual grading where an answer needs a person. Homework has due dates, a late policy and written feedback. When a student completes a course they receive a certificate, and anyone can confirm it on a public verification page.',
         points: [
@@ -628,6 +641,7 @@ export const en: MarketingContent = {
       {
         id: 'team',
         anchor: 'team',
+        learnMore: { label: 'How to add a manager or instructor', href: 'help:/team/add-staff' },
         title: 'Can my assistants work in it with me?',
         lead: 'Yes. On {brand}, you invite assistants by email as managers or instructors. Instructors see and grade only the courses you assign to them. Managers help you run the academy. Approving payments stays with you, the account owner. One account can also run more than one academy, as your plan allows.',
         points: [
@@ -640,6 +654,7 @@ export const en: MarketingContent = {
       {
         id: 'students',
         anchor: 'students',
+        learnMore: { label: 'How to choose who can join', href: 'help:/team/registration-policy' },
         title: 'How do I keep track of my students?',
         lead: 'Students sign up on your {brand} academy website, and you choose whether sign-up is open, needs your approval or is by invitation only. Reports show enrolments, progress and students at risk of falling behind. You can send email announcements to your students from the academy.',
         points: [
@@ -908,6 +923,7 @@ export const en: MarketingContent = {
     sections: [
       {
         anchor: 'separation',
+        learnMore: { label: 'How each academy’s data is kept separate', href: 'help:/security/data-isolation' },
         title: 'How is each academy’s data kept apart?',
         lead: '{brand} keeps every academy’s students, courses and payments separate in the database itself, and we have checked this separation in production. A student who joins one academy on {brand} has an account in that academy only and does not appear in any other academy on the platform.',
         items: [
@@ -925,6 +941,7 @@ export const en: MarketingContent = {
       },
       {
         anchor: 'roles',
+        learnMore: { label: 'What each role can do', href: 'help:/roles' },
         title: 'Who can see my academy’s data?',
         lead: 'On {brand}, the account owner decides who joins the team and in which role. The owner sees the whole account and is the only role that approves payments. Managers help run the academy, instructors see only their assigned courses, and {brand} platform administrators can see academy details to run the service.',
         items: [
@@ -952,6 +969,7 @@ export const en: MarketingContent = {
       },
       {
         anchor: 'sign-in',
+        learnMore: { label: 'How to protect your account', href: 'help:/security/account-protection' },
         title: 'How are sign-ins protected?',
         lead: '{brand} emails a confirmation code when someone signs in from a new device, and anyone on your team can turn on two-factor authentication with an authenticator app. Your dashboard and academy website are served over encrypted HTTPS connections, and {brand} manages the certificates for its subdomains.',
         items: [
@@ -972,6 +990,7 @@ export const en: MarketingContent = {
       },
       {
         anchor: 'stored-data',
+        learnMore: { label: 'What data {brand} keeps about learners', href: 'help:/security/learner-data' },
         title: 'How is data stored and backed up?',
         lead: '{brand} encrypts sensitive payment settings when it stores them, backs up the database every day and keeps copies of uploaded files. Lesson videos stay on YouTube and play inside your academy, so a determined student can still copy the YouTube link itself.',
         items: [

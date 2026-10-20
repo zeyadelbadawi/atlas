@@ -1,0 +1,61 @@
+# Representative shots that prove the capture pipeline end to end
+# (scripts/docs/README.md). Real routes (src/app/routes/route-paths.ts) and
+# real i18n keys (src/localization/resources/<lang>/*.json).
+
+- key: pipeline-sample/dashboard-home
+  as: owner
+  surface: dashboard
+  path: /dashboard
+  waitFor: { text: dashboard:metrics.students }
+
+- key: pipeline-sample/payment-methods
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payment-methods
+  waitFor: { text: payments:academyMethods.title }
+  highlight: { role: button, name: payments:academyMethods.editFor, nth: 0 }
+
+- key: pipeline-sample/payment-method-dialog
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/payment-methods
+  waitFor: { text: payments:academyMethods.title }
+  actions:
+    - click: { role: button, name: payments:academyMethods.editFor, nth: 0 }
+  highlight: { label: payments:bankTransferMethods.fields.accountNumber }
+  clip: dialog
+
+- key: pipeline-sample/course-builder-curriculum
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/builder
+  waitFor: { text: { en: Limits and continuity, ar: النهايات والاتصال } }
+  actions:
+    - click: { role: button, name: course:builder.addContent, nth: 0 }
+  highlight: { role: menuitem, name: course:builder.addLesson }
+
+- key: pipeline-sample/quiz-editor
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/{quizId}
+  waitFor: { text: course:quizAuthoring.editor.detailsTitle }
+
+- key: pipeline-sample/learner-my-courses
+  as: learner
+  surface: academy
+  path: /my/courses
+  waitFor: { text: learning:learnerDashboard.courses.title }
+
+- key: pipeline-sample/academy-home-mobile
+  as: visitor
+  surface: academy
+  path: /
+  viewport: mobile
+  waitFor: { text: { en: Understand every lesson, ar: افهم كل درس } }
+
+- key: pipeline-sample/sign-up
+  as: visitor
+  surface: platform
+  path: /auth/register
+  waitFor: { text: auth:register.title }
+  highlight: { label: auth:register.phone }
