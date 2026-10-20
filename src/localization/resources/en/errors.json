@@ -230,7 +230,8 @@
     "cannotRemoveOrganizationOwner": "The organization owner can't be removed from an academy.",
     "slugTaken": "This address is already used by another academy. Choose a different one.",
     "slugReserved": "This address is reserved for Atlas. Choose a different one.",
-    "invalidSlug": "Use 3 to 50 lowercase letters, numbers and hyphens."
+    "invalidSlug": "Use 3 to 50 lowercase letters, numbers and hyphens.",
+    "slugChangeTooSoon": "You can change the address only once every 60 days. You can change it again on {{date}}."
   },
   "course": {
     "slugTaken": "That web address is already used by another course in this academy. Please choose a different one.",

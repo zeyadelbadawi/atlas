@@ -28,6 +28,11 @@ export interface Academy {
   readonly createdAt: string;
   readonly updatedAt: string;
   /**
+   * Present only while the slug (the public address) may not change yet —
+   * one change every 60 days: when the next change becomes possible (ISO).
+   */
+  readonly nextSlugChangeAt?: string;
+  /**
    * W5 — the caller's role in this academy, present on `GET /academies`
    * rows (`owner` for the organization owner). The list only ever holds
    * academies the caller staffs.

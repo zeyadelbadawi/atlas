@@ -13,7 +13,9 @@ import { Form, FormField, FormItem } from '@/components/ui/form';
 import { AcademySlugDescription } from './AcademySlugDescription';
 import { academySlugErrorMessage } from '../utils/academy-slug-error.utils';
 
-function Field(props: { canChange: boolean; changing: boolean }) {
+type Props = { canChange: boolean; changing: boolean; nextChangeAt?: string };
+
+function Field(props: Props) {
   const form = useForm<{ slug: string }>({ defaultValues: { slug: 'nour' } });
   return (
     <Form {...form}>
@@ -30,7 +32,7 @@ function Field(props: { canChange: boolean; changing: boolean }) {
   );
 }
 
-function show(language: 'en' | 'ar', props: { canChange: boolean; changing: boolean }) {
+function show(language: 'en' | 'ar', props: Props) {
   render(
     <I18nextProvider i18n={createI18nInstance(language)}>
       <Field {...props} />
@@ -63,6 +65,30 @@ describe('AcademySlugDescription', () => {
     expect(screen.getByRole('status').textContent).toMatch(/عند الحفظ/);
   });
 
+  it('says when the next change is possible inside the 60-day window', () => {
+    show('en', {
+      canChange: true,
+      changing: false,
+      nextChangeAt: '2026-12-19T12:00:00.000Z',
+    });
+    expect(screen.getByText(/once every 60 days/)).toBeTruthy();
+    expect(
+      screen.getByText(
+        'You changed the address recently. You can change it again on 19 December 2026.'
+      )
+    ).toBeTruthy();
+    expect(screen.queryByRole('status')).toBeNull();
+  });
+
+  it('names the date in Arabic too', () => {
+    show('ar', {
+      canChange: true,
+      changing: false,
+      nextChangeAt: '2026-12-19T12:00:00.000Z',
+    });
+    expect(screen.getByText(/يمكنك تغييره مرة أخرى في 19 ديسمبر 2026/)).toBeTruthy();
+  });
+
   it('tells everyone else only the owner can change it', () => {
     show('en', { canChange: false, changing: true });
     expect(
@@ -73,20 +99,45 @@ describe('AcademySlugDescription', () => {
 });
 
 describe('academySlugErrorMessage', () => {
-  const refusal = (messageKey: string) =>
-    new ApiError({ kind: 'conflict', messageKey, status: 409, retryable: false });
+  const i18n = createI18nInstance('en');
+  const t = i18n.t.bind(i18n);
+  const refusal = (messageKey: string, details?: Record<string, unknown>) =>
+    new ApiError({
+      kind: 'conflict',
+      messageKey,
+      status: 409,
+      retryable: false,
+      ...(details ? { details } : {}),
+    } as never);
 
   it('maps the slug refusals to their field message', () => {
-    expect(academySlugErrorMessage(refusal('errors.academy.slugTaken'))).toBe(
-      'errors:academy.slugTaken'
-    );
-    expect(academySlugErrorMessage(refusal('errors.academy.slugReserved'))).toBe(
-      'errors:academy.slugReserved'
+    expect(
+      academySlugErrorMessage(refusal('errors.academy.slugTaken'), t, 'en')
+    ).toBe('errors:academy.slugTaken');
+    expect(
+      academySlugErrorMessage(refusal('errors.academy.slugReserved'), t, 'en')
+    ).toBe('errors:academy.slugReserved');
+  });
+
+  it('names the date a change becomes possible for a change made too soon', () => {
+    expect(
+      academySlugErrorMessage(
+        refusal('errors.academy.slugChangeTooSoon', {
+          nextSlugChangeAt: '2026-12-19T12:00:00.000Z',
+          intervalDays: 60,
+        }),
+        t,
+        'en'
+      )
+    ).toBe(
+      'You can change the address only once every 60 days. You can change it again on 19 December 2026.'
     );
   });
 
   it('leaves every other error alone', () => {
-    expect(academySlugErrorMessage(refusal('errors.academy.nameTaken'))).toBeNull();
-    expect(academySlugErrorMessage(new Error('boom'))).toBeNull();
+    expect(
+      academySlugErrorMessage(refusal('errors.academy.nameTaken'), t, 'en')
+    ).toBeNull();
+    expect(academySlugErrorMessage(new Error('boom'), t, 'en')).toBeNull();
   });
 });
