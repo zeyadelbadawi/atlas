@@ -41,6 +41,8 @@ Browsers on iPhone can't show the quiz in full screen. You can take the quiz as 
 
 Yes. In **Student overrides**, the instructor can give one learner extra time, extra attempts or a different window. It applies when that learner starts their next attempt, and the learner gets a notification. See [Give a learner a quiz exception](doc:DOC-LRN-018).
 
+If an attempt shouldn't count at all, the reviewer can void it instead. A voided attempt loses its result and no longer counts towards **Max attempts**, so the learner gets that attempt back. See [Review attempts and grade essay answers](doc:DOC-LRN-017).
+
 ## Who grades essay answers?
 
 A reviewer, usually the course instructor, grades them by hand. The learner sees "This question is graded by a reviewer." See [Review attempts and grade essay answers](doc:DOC-LRN-017).

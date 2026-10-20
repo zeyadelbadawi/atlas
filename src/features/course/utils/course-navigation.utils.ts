@@ -9,6 +9,13 @@
  * `getCourseEditorTabs` is the one place this sibling set is declared, so
  * every one of the five pages renders the exact same, single, "you are
  * here" strip instead.
+ *
+ * Each tab carries the permission its route guard requires
+ * (`AtlasAppRoutes.tsx`), so the strip never offers a tab that would only
+ * land on the forbidden page: an assigned course instructor (no
+ * `course.update` / `course.configure`) sees Builder, Quizzes,
+ * Assignments and Reviews, not Details or Settings. Filter with
+ * `useCourseEditorTabs`; the route guard stays the control.
  */
 import {
   BookOpen,
@@ -19,7 +26,7 @@ import {
   Star,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import type { NavigationItem } from '@types';
+import type { BreadcrumbItem, NavigationItem } from '@types';
 
 export function getCourseEditorTabs(
   academyId: string,
@@ -28,6 +35,7 @@ export function getCourseEditorTabs(
   return [
     {
       id: 'course-tab-details',
+      requiredPermissions: ['course.update'],
       labelKey: 'course:edit.detailsTabLabel',
       path: buildPath(DASHBOARD_ROUTES.academyCourseDetail, {
         academyId,
@@ -37,6 +45,7 @@ export function getCourseEditorTabs(
     },
     {
       id: 'course-tab-builder',
+      requiredPermissions: ['instructor.course.view'],
       labelKey: 'course:edit.goToBuilder',
       path: buildPath(DASHBOARD_ROUTES.academyCourseBuilder, {
         academyId,
@@ -46,6 +55,7 @@ export function getCourseEditorTabs(
     },
     {
       id: 'course-tab-quizzes',
+      requiredPermissions: ['quiz.manage'],
       labelKey: 'course:edit.goToQuizzes',
       path: buildPath(DASHBOARD_ROUTES.academyCourseQuizzes, {
         academyId,
@@ -57,6 +67,7 @@ export function getCourseEditorTabs(
     },
     {
       id: 'course-tab-assignments',
+      requiredPermissions: ['assignment.manage'],
       labelKey: 'course:edit.goToAssignments',
       path: buildPath(DASHBOARD_ROUTES.academyCourseAssignments, {
         academyId,
@@ -66,6 +77,7 @@ export function getCourseEditorTabs(
     },
     {
       id: 'course-tab-reviews',
+      requiredPermissions: ['instructor.course.view'],
       labelKey: 'course:edit.goToReviews',
       path: buildPath(DASHBOARD_ROUTES.academyCourseReviews, {
         academyId,
@@ -75,12 +87,63 @@ export function getCourseEditorTabs(
     },
     {
       id: 'course-tab-settings',
+      requiredPermissions: ['course.configure'],
       labelKey: 'course:edit.goToSettings',
       path: buildPath(DASHBOARD_ROUTES.academyCourseSettings, {
         academyId,
         courseId,
       }),
       icon: Settings2,
+    },
+  ];
+}
+
+/** The tabs the caller may open: every permission a tab's route requires. */
+export function filterCourseEditorTabs(
+  tabs: readonly NavigationItem[],
+  hasPermission: (permission: string) => boolean
+): readonly NavigationItem[] {
+  return tabs.filter((tab) =>
+    (tab.requiredPermissions ?? []).every((permission) =>
+      hasPermission(permission)
+    )
+  );
+}
+
+/**
+ * The leading crumbs of a course editor page — the course list, then the
+ * course itself — pointing only where this user may go. The course list
+ * (`course.view`) is owner/manager; a course instructor goes back to their
+ * Teaching Dashboard course list instead. The course crumb opens the first
+ * editor tab the user may open (Details for an owner or manager, the
+ * Builder for an instructor), never a page that ends on "forbidden".
+ */
+export function courseEditorLeadCrumbs(input: {
+  readonly academyId: string;
+  readonly courseTitle?: string;
+  /** The page's own label key, kept as the course crumb's key (its `label` is the title). */
+  readonly courseLabelKey: string;
+  readonly tabs: readonly NavigationItem[];
+  readonly canListCourses: boolean;
+}): BreadcrumbItem[] {
+  const list: BreadcrumbItem = input.canListCourses
+    ? {
+        labelKey: 'course:list.title',
+        path: buildPath(DASHBOARD_ROUTES.academyCourses, {
+          academyId: input.academyId,
+        }),
+      }
+    : {
+        labelKey: 'instructor:courses.title',
+        path: DASHBOARD_ROUTES.instructorCourses,
+      };
+  if (input.courseTitle === undefined) return [list];
+  return [
+    list,
+    {
+      labelKey: input.courseLabelKey,
+      label: input.courseTitle,
+      path: input.tabs[0]?.path,
     },
   ];
 }

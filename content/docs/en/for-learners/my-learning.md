@@ -31,7 +31,7 @@ signed in on the academy's own website ([Sign up and join an academy](doc:DOC-LR
 
    ![The Overview page of My Learn](shot:for-learners/my-learn-overview)
 
-3. Open **My Courses** and use the **All**, **In progress** and **Completed** tabs. Each course has one button: **Start course**, **Continue learning** or **Review course**.
+3. Open **My Courses** and use the **All**, **In progress** and **Completed** tabs. Each course card shows where you are, **Not started**, **In progress** or **Completed**, and one button: **Start course**, **Continue learning** or **Review course**.
 
    ![My Courses with the All, In progress and Completed tabs highlighted](shot:for-learners/my-courses)
 

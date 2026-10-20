@@ -158,7 +158,7 @@
       "noStudents": "No enrolled students to choose from.",
       "timeMultiplier": "Time multiplier",
       "timeMultiplierHelp": "1 keeps the normal time limit; 1.5 gives 50% more time.",
-      "timeMultiplierRange": "Enter a multiplier between 1 and 5.",
+      "timeMultiplierRange": "Enter a multiplier between 1 and 4.",
       "extraAttempts": "Extra attempts",
       "availableFrom": "Available from",
       "availableUntil": "Available until",

@@ -53,9 +53,13 @@ export function QuizIntroCard({
   const integrityOn = settings.integrityMode !== 'off';
   const [acknowledged, setAcknowledged] = useState(!integrityOn);
 
+  // A voided attempt is given back to the learner: the server does not
+  // count it toward the allowance, so neither does "attempts left".
   const finishedAttempts = attempts.filter(
     (attempt) =>
-      attempt.status !== 'in_progress' && attempt.status !== 'not_started'
+      attempt.status !== 'in_progress' &&
+      attempt.status !== 'not_started' &&
+      attempt.status !== 'invalidated'
   ).length;
   // Effective allowance = the server's override-aware `attemptsAllowed`
   // (single source of truth, extra-attempt override included). Fall back to

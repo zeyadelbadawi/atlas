@@ -83,7 +83,11 @@ export interface TeachingCourse {
 /** Teaching-operations overview for one authorized course. */
 export interface InstructorCourseOverview {
   readonly courseId: string;
-  /** P64 Phase 1 — see `TeachingCourse.academyId`. */
+  /**
+   * P64 Phase 1 — the owning academy, sent by `GET /instructor/courses/:id`;
+   * the "Edit curriculum" link needs it (the builder route is
+   * academy-scoped). Optional only for an older response.
+   */
   readonly academyId?: string;
   readonly title: string;
   readonly description?: string;

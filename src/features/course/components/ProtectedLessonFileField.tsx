@@ -9,6 +9,8 @@
  *
  * The server checks the real bytes (PDF or image) and who may upload
  * (academy owner or manager); its refusal is shown here as it comes.
+ * Without `onUpload` (a course instructor, who the server refuses) the
+ * field only reports what the lesson delivers and says who can upload.
  */
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -36,7 +38,8 @@ export interface ProtectedLessonFileFieldProps {
     readonly mediaAssetId: string;
     readonly fileName: string;
   }) => void;
-  readonly onUpload: (file: File) => Promise<ProtectedLessonFile>;
+  /** Absent for a caller who may not upload: the field is then read-only. */
+  readonly onUpload?: (file: File) => Promise<ProtectedLessonFile>;
   /** The lesson already delivers a protected file (edit mode). */
   readonly hasProtectedFile: boolean;
   /** The lesson still points at a public link (a legacy File lesson). */
@@ -63,7 +66,7 @@ export function ProtectedLessonFileField({
   };
 
   const handleFile = async (file: File | undefined) => {
-    if (!file) return;
+    if (!file || !onUpload) return;
     setError(null);
     if (file.size > MAX_PROTECTED_LESSON_FILE_BYTES) {
       setError(t('course:builder.lessonDialog.protectedFile.tooLarge'));
@@ -82,6 +85,7 @@ export function ProtectedLessonFileField({
   };
 
   const attached = !!value || hasProtectedFile;
+  const readOnly = !onUpload;
 
   return (
     <div className="space-y-2" data-testid="protected-lesson-file">
@@ -110,50 +114,68 @@ export function ProtectedLessonFileField({
             className="mt-0.5 size-4 shrink-0 text-success"
             aria-hidden
           />
-          <span>{t('course:builder.lessonDialog.protectedFile.attached')}</span>
+          <span>
+            {t(
+              readOnly
+                ? 'course:builder.lessonDialog.protectedFile.attachedReadOnly'
+                : 'course:builder.lessonDialog.protectedFile.attached'
+            )}
+          </span>
         </p>
       ) : hasPublicLink ? (
         <Alert variant="destructive">
           <AlertTriangle className="size-4" aria-hidden />
           <AlertDescription>
-            {t('course:builder.lessonDialog.protectedFile.publicLink')}
+            {t(
+              readOnly
+                ? 'course:builder.lessonDialog.protectedFile.publicLinkReadOnly'
+                : 'course:builder.lessonDialog.protectedFile.publicLink'
+            )}
           </AlertDescription>
         </Alert>
       ) : null}
 
-      <input
-        ref={inputRef}
-        type="file"
-        className="sr-only"
-        tabIndex={-1}
-        aria-hidden
-        accept={PROTECTED_LESSON_FILE_ACCEPT}
-        data-testid="protected-lesson-file-input"
-        onChange={(event) => void handleFile(event.target.files?.[0])}
-      />
-      <Button
-        type="button"
-        variant="outline"
-        disabled={uploading}
-        aria-describedby="protected-file-help"
-        onClick={() => inputRef.current?.click()}
-      >
-        {uploading ? (
-          <Loader2 className="size-4 animate-spin" aria-hidden />
-        ) : (
-          <Upload className="size-4" aria-hidden />
-        )}
-        {t(
-          uploading
-            ? 'course:builder.lessonDialog.protectedFile.uploading'
-            : attached
-              ? 'course:builder.lessonDialog.protectedFile.replace'
-              : 'course:builder.lessonDialog.protectedFile.upload'
-        )}
-      </Button>
-      <p id="protected-file-help" className="text-xs text-muted-foreground">
-        {t('course:builder.lessonDialog.protectedFile.help')}
-      </p>
+      {readOnly ? (
+        <p className="text-xs text-muted-foreground">
+          {t('course:builder.lessonDialog.protectedFile.managersOnly')}
+        </p>
+      ) : (
+        <>
+          <input
+            ref={inputRef}
+            type="file"
+            className="sr-only"
+            tabIndex={-1}
+            aria-hidden
+            accept={PROTECTED_LESSON_FILE_ACCEPT}
+            data-testid="protected-lesson-file-input"
+            onChange={(event) => void handleFile(event.target.files?.[0])}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            disabled={uploading}
+            aria-describedby="protected-file-help"
+            onClick={() => inputRef.current?.click()}
+          >
+            {uploading ? (
+              <Loader2 className="size-4 animate-spin" aria-hidden />
+            ) : (
+              <Upload className="size-4" aria-hidden />
+            )}
+            {t(
+              uploading
+                ? 'course:builder.lessonDialog.protectedFile.uploading'
+                : attached
+                  ? 'course:builder.lessonDialog.protectedFile.replace'
+                  : 'course:builder.lessonDialog.protectedFile.upload'
+            )}
+          </Button>
+          <p id="protected-file-help" className="text-xs text-muted-foreground">
+            {t('course:builder.lessonDialog.protectedFile.help')}
+          </p>
+        </>
+      )}
       {error ? (
         <p className="text-sm font-medium text-destructive" role="alert">
           {error}

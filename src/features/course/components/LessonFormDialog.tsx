@@ -63,7 +63,9 @@ export interface LessonFormDialogProps {
   /**
    * B0-MED-05 — when provided, a File lesson's file is uploaded to the
    * protected tier (signed, short-lived links for enrolled learners only)
-   * instead of the public media library it used to come from.
+   * instead of the public media library it used to come from. Omitted for
+   * a caller the server refuses (an instructor): the File lesson then
+   * shows what it delivers and who can upload, with no upload control.
    */
   readonly onUploadProtectedFile?: (file: File) => Promise<ProtectedLessonFile>;
   /** B0-MED-05 — the lesson being edited already delivers a protected file. */
@@ -88,10 +90,15 @@ export interface LessonFormDialogProps {
   readonly loadHostedVideos?: () => Promise<readonly HostedVideoAsset[]>;
 }
 
+/**
+ * A new lesson starts as a Video (YouTube link). Text lessons are retired
+ * for new content (CF-01): "Text" is offered only while editing a lesson
+ * that already is one, so it still opens, saves and can be switched away.
+ */
 const EMPTY_LESSON_VALUES: CourseLessonFormData = {
   title: '',
   description: '',
-  contentType: 'text',
+  contentType: 'video',
   contentUrl: '',
   status: 'draft',
   bodyHtml: '',
@@ -118,6 +125,7 @@ export function LessonFormDialog({
       ? { onUpload: onUploadHostedVideo, loadLibrary: loadHostedVideos }
       : null;
   const hostedVideoEnabled = hostedVideo !== null;
+  const offerTextType = defaultValues?.contentType === 'text';
 
   const form = useForm<CourseLessonFormData>({
     resolver: zodResolver(courseLessonSchema),
@@ -233,9 +241,11 @@ export function LessonFormDialog({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="text">
-                          {t('course:contentType.text')}
-                        </SelectItem>
+                        {offerTextType ? (
+                          <SelectItem value="text">
+                            {t('course:contentType.text')}
+                          </SelectItem>
+                        ) : null}
                         <SelectItem value="video">
                           {t('course:contentType.video')}
                         </SelectItem>
@@ -323,7 +333,7 @@ export function LessonFormDialog({
               />
             ) : null}
 
-            {form.watch('contentType') === 'file' && onUploadProtectedFile ? (
+            {form.watch('contentType') === 'file' ? (
               <FormField
                 control={form.control}
                 name="protectedFile"

@@ -38,10 +38,22 @@ const OPERATOR_ONLY_CATEGORIES: ReadonlySet<AuditCategory> = new Set([
   'platform',
 ]);
 
+/**
+ * Categories of a feature academies are not offered (live classes are not
+ * part of the product), so an Academy owner's filter does not list them.
+ * Entries already recorded keep their category and label — only the filter
+ * choice goes; the operator's platform log still filters on it.
+ */
+const NOT_OFFERED_TO_TENANTS: ReadonlySet<AuditCategory> = new Set([
+  'live_sessions',
+]);
+
 /** The category filter an Academy owner is offered. */
 export const TENANT_AUDIT_CATEGORIES: readonly AuditCategory[] =
   AUDIT_CATEGORIES.filter(
-    (category) => !OPERATOR_ONLY_CATEGORIES.has(category)
+    (category) =>
+      !OPERATOR_ONLY_CATEGORIES.has(category) &&
+      !NOT_OFFERED_TO_TENANTS.has(category)
   );
 
 export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =

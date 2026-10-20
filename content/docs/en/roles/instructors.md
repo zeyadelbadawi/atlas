@@ -38,6 +38,7 @@ On the courses you are assigned to:
 - See or work on courses they aren't assigned to.
 - Change a course's details, price or visibility, publish it, or manage certificates.
 - Edit the website, branding or academy settings, or open the media library.
+- Upload the file of a **File** lesson. The lesson dialog says **Only the academy owner or a manager can upload or replace the lesson file.**
 - See payments, orders or the Atlas subscription.
 - Add, approve, block or enrol learners. When you open a student, Atlas reminds you:
   **You are viewing this student through the courses you teach. Managing their
