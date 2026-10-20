@@ -61,8 +61,9 @@ you need.
 
 A file that is still used by a lesson, course, page or logo can't be
 deleted. The message names where it is used: replace or remove it there
-first, then try again. A deleted file leaves your library at once, but its
-stored copy isn't removed straight away.
+first, then try again. A deleted file leaves your library at once, but the
+file itself isn't erased from storage straight away, and the dashboard
+doesn't show when it is.
 
 ## Who can see your files
 
@@ -78,5 +79,6 @@ stored copy isn't removed straight away.
 >   images or PDFs.
 > - Deleting a file doesn't make its address stop working right away: a page
 >   or link that already uses it may still open the file.
+> - Deleting a file doesn't remove the copies kept in Atlas's backups.
 >
 > Don't upload private documents, answer keys or personal data to the library.

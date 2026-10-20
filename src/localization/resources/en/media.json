@@ -75,13 +75,13 @@
     "deleting": "Deleting…",
     "confirmOne": {
       "title": "Delete “{{fileName}}”?",
-      "description": "It will be removed from your library now. Files are deleted from storage later. Media still used by a lesson, course, page or logo can't be deleted until you replace or remove it there.",
+      "description": "It will be removed from your library now. The file itself isn't erased from storage right away, so a link to it may keep working for a while. Media still used by a lesson, course, page or logo can't be deleted until you replace or remove it there.",
       "confirmLabel": "Delete"
     },
     "confirmMany": {
       "title_one": "Delete {{count}} media item?",
       "title_other": "Delete {{count}} media items?",
-      "description": "They will be removed from your library now. Files are deleted from storage later. Any item still used by a lesson, course, page or logo won't be deleted — you'll see which ones, so you can replace or remove them there first.",
+      "description": "They will be removed from your library now. The files themselves aren't erased from storage right away, so links to them may keep working for a while. Any item still used by a lesson, course, page or logo won't be deleted — you'll see which ones, so you can replace or remove them there first.",
       "confirmLabel": "Delete"
     },
     "successOne": "“{{fileName}}” was removed from your library.",
@@ -99,7 +99,7 @@
       "headline": "{{deleted}}, {{refused}}:",
       "refusedInUse": "“{{fileName}}” is used by {{usages}}. Replace or remove it there first.",
       "refusedNotFound": "“{{fileName}}” wasn't found. It may already have been deleted.",
-      "graceNote": "Files are deleted from storage later.",
+      "graceNote": "The files aren't erased from storage right away.",
       "dismiss": "Dismiss"
     },
     "selection": {
