@@ -713,6 +713,57 @@
     "spec": "074f3c822f0b909512a3a0ece13d194caa9200d4",
     "width": 1440
   },
+  "account/delete-account-card": {
+    "capturedAt": "2026-10-20T15:52:35.378Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/delete-account-card-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/delete-account-card-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "478b01f4cd3530cf42e89ae59146af582bfd7b72",
+    "width": 1440
+  },
+  "account/delete-account-code": {
+    "capturedAt": "2026-10-20T15:52:57.921Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/delete-account-code-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/delete-account-code-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 420,
+    "spec": "3ba696038ba0dbc9ef3935e87596f2c260833750",
+    "width": 560
+  },
+  "account/delete-account-dialog": {
+    "capturedAt": "2026-10-20T15:52:45.116Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/delete-account-dialog-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/delete-account-dialog-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 508,
+    "spec": "a7fc775e0bba51caa6e2a6e0b3c9d79d871916e9",
+    "width": 560
+  },
   "account/forgot-password-form": {
     "capturedAt": "2026-10-20T15:47:33.786Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -747,6 +798,57 @@
     "spec": "5b7ec4d004e3356c55f6bd78f3af71c36d13e4ee",
     "width": 1440
   },
+  "account/invite-learner-sign-in": {
+    "capturedAt": "2026-10-20T15:53:38.665Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/invite-learner-sign-in-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/invite-learner-sign-in-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "a83d8743a2f8fd68f7e2f68bb77b13b508bc5fff",
+    "width": 1440
+  },
+  "account/invite-learner-sign-up": {
+    "capturedAt": "2026-10-20T15:53:30.768Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/invite-learner-sign-up-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/invite-learner-sign-up-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "1ce40b76ae2db7e4d88f55b32ed357daa01b5c18",
+    "width": 1440
+  },
+  "account/invite-staff-profile-menu": {
+    "capturedAt": "2026-10-20T15:53:22.868Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/invite-staff-profile-menu-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/invite-staff-profile-menu-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "a3de17ff763a670b7ee92ad569cb0319b8846642",
+    "width": 1440
+  },
   "account/learner-profile": {
     "capturedAt": "2026-10-20T15:52:03.426Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -779,6 +881,23 @@
     ],
     "height": 900,
     "spec": "b2b39103f9ac2d764b863a10e8d05045cf8c73a4",
+    "width": 1440
+  },
+  "account/phone-card": {
+    "capturedAt": "2026-10-20T15:52:14.751Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/phone-card-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/phone-card-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "64e81dc6fd767f4611f7aea6d968aae548728d8b",
     "width": 1440
   },
   "account/profile-menu": {
@@ -1002,6 +1121,40 @@
     "spec": "e8c5718489cb56cef5cfc7d3835985584edafc8f",
     "width": 1440
   },
+  "account/sign-in-submit": {
+    "capturedAt": "2026-10-20T15:53:05.384Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/sign-in-submit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/sign-in-submit-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "283511a14b43266243c8febd244d04945b33e75f",
+    "width": 1440
+  },
+  "account/sign-up-phone": {
+    "capturedAt": "2026-10-20T15:52:23.259Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/sign-up-phone-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/sign-up-phone-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "03c496b396c896c9a583806cfdb63dc3bd5fa562",
+    "width": 1440
+  },
   "account/two-factor-card": {
     "capturedAt": "2026-10-20T15:50:08.201Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -1068,6 +1221,23 @@
     ],
     "height": 900,
     "spec": "0c4e772ab06d0bf181d71a7ccb6b33f4d664efd3",
+    "width": 1440
+  },
+  "analytics/dashboard-owner": {
+    "capturedAt": "2026-10-20T15:53:49.341Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/analytics/dashboard-owner-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/analytics/dashboard-owner-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "25771992cde1171a27e3fe82a7b8aefb7ff81a6e",
     "width": 1440
   },
   "billing/billing-overview": {
