@@ -259,7 +259,8 @@
     "notFound": "This academy wasn't found. Check the address and try again.",
     "studentAlreadyMember": "This person is already a student in this academy.",
     "studentBlocked": "This student is blocked. Unblock them first.",
-    "studentNotPending": "This registration is no longer awaiting approval."
+    "studentNotPending": "This registration is no longer awaiting approval.",
+    "slugChangeTooSoon": "You can change the address only once every 60 days. You can change it again on {{date}}."
   },
   "course": {
     "slugTaken": "That web address is already used by another course in this academy. Please choose a different one.",

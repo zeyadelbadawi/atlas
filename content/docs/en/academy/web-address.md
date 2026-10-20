@@ -5,9 +5,9 @@ description: Every academy gets an Atlas address with HTTPS. Find and share it, 
 summary: >
   Every academy gets its own Atlas address with HTTPS managed by Atlas. You
   find it on the Domain tab of your website settings. The organization owner
-  can change it by saving a new Academy Slug: the website moves to the new
-  address, and the old address keeps working, sends visitors to the new one
-  and stays reserved for your academy.
+  can change it, once every 60 days, by saving a new Academy Slug: the
+  website moves to the new address, and the old address keeps working, sends
+  visitors to the new one and stays reserved for your academy.
 type: feature-explanation
 audience: [owner]
 order: 4
@@ -44,7 +44,9 @@ You can connect a domain you own, such as `learn.your-academy.com`. When it is v
 
 ## Change the address
 
-Only the organization owner can change the address. Everyone else sees the **Academy Slug** field read-only, with "Only the organization owner can change the web address."
+Only the organization owner can change the address, and only **once every 60 days**. Everyone else sees the **Academy Slug** field read-only, with "Only the organization owner can change the web address."
+
+Your first change after creating the academy is always allowed. After a change, the field stays read-only for 60 days and tells you the date you can change it again, for example "You changed the address recently. You can change it again on 19 December 2026." Changing back to one of your old addresses counts as a change too.
 
 1. In the sidebar, open **Academy Settings**. Under **General**, type the new address in **Academy Slug**. The same naming rules apply as when you created the academy. Under the field, Atlas tells you what will happen when you save.
 
@@ -61,7 +63,7 @@ You can also change the **Academy Slug** on the **Academy Profile** page and sel
 - **Your website moves to the new address straight away.** The **Domain** tab shows the new address.
 - **The old address keeps working.** Anyone who opens it, or an old link or bookmark, is sent to the same page on your new address. Links in emails you sent earlier keep working too.
 - **New emails and invite links use the new address.** Invite links you copied earlier keep working, through the old address.
-- **The old address stays reserved for your academy.** No other academy can take it. You can change back to it whenever you want, and it becomes your address again.
+- **The old address stays reserved for your academy.** No other academy can take it. You can change back to it later (the 60-day rule applies), and it becomes your address again.
 - **Your own domain stays your main address.** If you connected one, it stays the address your website uses, and the old Atlas address sends visitors to it.
 
 > [!NOTE]
