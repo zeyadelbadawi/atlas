@@ -32,6 +32,7 @@
     "titleLabel": "Title",
     "bodyLabel": "Message",
     "scheduledAtLabel": "Schedule for",
+    "scheduledAtHelp": "With a date, the announcement is scheduled and published automatically within about 15 minutes after that time. Leave it empty to keep a draft you publish yourself.",
     "optional": "optional",
     "cancelButton": "Cancel",
     "saveButton": "Save",
