@@ -50,6 +50,9 @@ Access ends at the end of the chosen day. The date must be in the future.
 
 The learner loses access to that course immediately. Their progress is kept: if you enroll them in the same course again, they continue where they stopped.
 
+> [!NOTE]
+> Revoking doesn't refund anything, and the dialog says so. If the learner paid for the course, return the money to them yourself; the order stays **Paid**. See [Refunds for course purchases](doc:DOC-COM-005).
+
 ## How this counts toward your plan
 
 A learner counts once toward your plan's student limit, as soon as they hold a course enrollment in your organization. Giving a second course to someone already counted doesn't use another place. When your plan's student limit is full, enrolling a new learner is refused. See [Plans and limits](doc:DOC-START-006).
