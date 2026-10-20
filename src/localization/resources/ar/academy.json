@@ -289,7 +289,7 @@
     },
     "status": {
       "active": "نشط",
-      "inactive": "غير نشط",
+      "inactive": "مرفوض",
       "pending": "بانتظار الموافقة",
       "blocked": "محظور"
     },

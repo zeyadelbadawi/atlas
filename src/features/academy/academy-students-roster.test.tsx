@@ -509,6 +509,24 @@ describe('AcademyStudentDrawer — approval and enrollment by membership state',
     expect(arAcademy.students.errors.studentNotApproved).toBeTruthy();
   });
 
+  it(
+    'labels a rejected learner Rejected — in the drawer, and as the status filter option',
+    async () => {
+      detail = detailWithStudent({
+        membershipStatus: 'inactive',
+        blocked: false,
+      });
+      await openDrawer();
+      const drawer = screen.getByRole('dialog');
+      expect(drawer.textContent).toContain('Rejected');
+      expect(
+        screen.getByRole('option', { name: 'Rejected', hidden: true })
+      ).toBeTruthy();
+      expect(arAcademy.students.status.inactive).toBe('مرفوض');
+    },
+    INTERACTION_TIMEOUT
+  );
+
   it('tells staff a rejected learner can come back, in both languages', () => {
     expect(enAcademy.students.reject.description).toContain('register again');
     expect(enAcademy.students.reject.description).toContain(

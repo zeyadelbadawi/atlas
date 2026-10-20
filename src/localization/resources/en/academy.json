@@ -289,7 +289,7 @@
     },
     "status": {
       "active": "Active",
-      "inactive": "Inactive",
+      "inactive": "Rejected",
       "pending": "Pending approval",
       "blocked": "Blocked"
     },

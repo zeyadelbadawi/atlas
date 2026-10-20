@@ -37,7 +37,13 @@ type RosterStatusInput = Pick<
   'blocked' | 'membershipStatus'
 >;
 
-/** Blocked wins over membership status — it is the one state that needs acting on. */
+/**
+ * Blocked wins over membership status — it is the one state that needs
+ * acting on. So `inactive` only ever renders for an unblocked row, which on
+ * the student roster is a REJECTED registration (`isRejectedRegistration`):
+ * its copy is "Rejected", and the status filter's `inactive` option (the
+ * backend filters `inactive` AND not blocked) uses the same label.
+ */
 export function getRosterStatusLabelKey(student: RosterStatusInput): string {
   if (student.blocked) return 'academy:students.status.blocked';
   return `academy:students.status.${student.membershipStatus}`;
