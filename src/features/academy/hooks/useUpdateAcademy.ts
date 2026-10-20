@@ -7,6 +7,7 @@ import { useApiMutation, useInvalidate } from '@/shared/hooks';
 import {
   INLINE_ERRORS_META,
   academyKeys,
+  domainKeys,
   publicWebsiteKeys,
 } from '@services/query';
 import type { ApiError } from '@api';
@@ -37,6 +38,9 @@ export function useUpdateAcademy() {
       // The academy name shown by the LMS/public shell comes from the
       // identity read, cached for five minutes unless told otherwise.
       await invalidate(publicWebsiteKeys.identity(id));
+      // A new slug moves the website's address: the address shown on the
+      // dashboard and in invite links comes from the domain configuration.
+      await invalidate(domainKeys.configuration(id));
     },
   });
 }

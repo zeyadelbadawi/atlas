@@ -23,7 +23,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -51,6 +50,8 @@ import {
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAcademy, useUpdateAcademy } from '../hooks';
 import { DeleteAcademyCard } from '../components/DeleteAcademyCard';
+import { AcademySlugDescription } from '../components/AcademySlugDescription';
+import { academySlugErrorMessage } from '../utils/academy-slug-error.utils';
 import { RegistrationPolicyCard } from '../components/RegistrationPolicyCard';
 import { CommunicationSettingsCard } from '../components/CommunicationSettingsCard';
 import { AcademyInvitesCard } from '../components/AcademyInvitesCard';
@@ -161,6 +162,15 @@ export default function AcademySettingsPage(): JSX.Element {
       return true;
     } catch (error) {
       if (nameConflictFromError(error)) return false;
+      const slugError = academySlugErrorMessage(error);
+      if (slugError) {
+        form.setError(
+          'slug',
+          { type: 'server', message: slugError },
+          { shouldFocus: true }
+        );
+        return false;
+      }
       toast({
         title: t('academy:settings.error'),
         description: t('errors:generic.description'),
@@ -278,11 +288,10 @@ export default function AcademySettingsPage(): JSX.Element {
                         aria-readonly={!canChangeSlug || undefined}
                       />
                     </FormControl>
-                    <FormDescription>
-                      {canChangeSlug
-                        ? t('academy:create.slugHelp')
-                        : t('academy:settings.slugOwnerOnly')}
-                    </FormDescription>
+                    <AcademySlugDescription
+                      canChange={canChangeSlug}
+                      changing={!!academy && field.value !== academy.slug}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
