@@ -400,7 +400,7 @@
     },
     "platformContactSubmissionReceived": {
       "title": "استفسار تواصل جديد",
-      "message": "وصلت رسالة جديدة عبر نموذج التواصل في موقع Atlas."
+      "message": "وصلت رسالة جديدة عبر نموذج التواصل في موقع أطلس."
     },
     "platformSubscriptionPaymentSubmitted": {
       "title": "دفعة اشتراك للمراجعة",
@@ -416,7 +416,7 @@
     },
     "platformOrganizationSignedUp": {
       "title": "مؤسسة جديدة",
-      "message": "سجّلت {{organizationName}} في Atlas."
+      "message": "سجّلت {{organizationName}} في أطلس."
     },
     "platformCoursePaymentSubmitted": {
       "title": "دفعة دورة للمراجعة",
@@ -440,14 +440,14 @@
     },
     "customerRequestSubmitted": {
       "title": "استلمنا طلبك",
-      "message": "وصل طلبك \"{{title}}\" إلى فريق Atlas، وسنرد عليك هنا."
+      "message": "وصل طلبك \"{{title}}\" إلى فريق أطلس، وسنرد عليك هنا."
     },
     "customerRequestStatusChanged": {
       "title": "تحديث على طلبك",
       "message": "تغيّرت حالة طلبك \"{{title}}\". افتحه لمعرفة الخطوة التالية."
     },
     "customerRequestTeamReplied": {
-      "title": "رد فريق Atlas",
+      "title": "رد فريق أطلس",
       "message": "هناك رد جديد على طلبك \"{{title}}\"."
     },
     "academyMemberInvited": {
@@ -480,11 +480,11 @@
     },
     "academyMemberAdded": {
       "title": "تمت إضافتك إلى أكاديمية",
-      "message": "أصبح لديك الآن وصول إلى {{academyName}}. سجّل الدخول ببيانات حسابك الحالية في Atlas."
+      "message": "أصبح لديك الآن وصول إلى {{academyName}}. سجّل الدخول ببيانات حسابك الحالية في أطلس."
     },
     "academyLearnerAdded": {
       "title": "تمت إضافتك إلى أكاديمية",
-      "message": "أصبحت الآن طالبًا في {{academyName}}. سجّل الدخول ببيانات حسابك الحالية في Atlas."
+      "message": "أصبحت الآن طالبًا في {{academyName}}. سجّل الدخول ببيانات حسابك الحالية في أطلس."
     },
     "coursePaymentApproved": {
       "title": "تمت الموافقة على الدفع",
@@ -592,7 +592,7 @@
   "liveProvider": {
     "deauthorized": {
       "title": "تم إلغاء وصول Zoom",
-      "message": "لم يعد حساب Zoom الخاص بك يمنح Atlas التفويض، لذلك لا يمكن إنشاء الجلسات المباشرة أو بدؤها حتى تعيد الربط."
+      "message": "لم يعد حساب Zoom الخاص بك يمنح أطلس التفويض، لذلك لا يمكن إنشاء الجلسات المباشرة أو بدؤها حتى تعيد الربط."
     },
     "action": {
       "reconnect": "إعادة ربط Zoom"

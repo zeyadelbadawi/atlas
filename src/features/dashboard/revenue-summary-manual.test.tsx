@@ -109,7 +109,7 @@ describe('RevenueSummary — manual-payment sales (B0-COM-02)', () => {
       'ar'
     );
     expect(
-      screen.getByText('المبيعات المسجّلة في Atlas (المدفوعات اليدوية)')
+      screen.getByText('المبيعات المسجّلة في أطلس (المدفوعات اليدوية)')
     ).toBeTruthy();
     expect(screen.getByText('الطلبات المعتمدة: 1')).toBeTruthy();
   });
