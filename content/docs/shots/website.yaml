@@ -343,6 +343,8 @@
   waitFor: { text: website:editor.compositionTitle }
   actions:
     - click: { role: button, name: website:sections.faq.label, nth: 0 }
+    # The library block renders once the entries have loaded.
+    - wait: 2000
     - scroll: { text: website:editor.libraryEntries }
   highlight: { text: website:editor.libraryEntries }
   clip: dialog
