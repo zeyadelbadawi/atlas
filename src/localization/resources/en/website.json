@@ -49,7 +49,7 @@
     "publishAction": "Publish",
     "archiveAction": "Archive",
     "archiveConfirmTitle": "Archive this entry?",
-    "archiveConfirmDescription": "It will no longer appear on your website, even where it's referenced from a page. This does not delete it and can be reversed later.",
+    "archiveConfirmDescription": "It will no longer appear on your website, even where it's referenced from a page. This does not delete it, but it can't be undone: you can still edit an archived entry, but it can't be published again. To show this content later, create a new entry.",
     "reordering": "Saving the new order…",
     "status": {
       "draft": "Draft",

@@ -56,12 +56,12 @@ Each entry in the list has these controls:
 - **Publish**: makes a draft entry available to your site. Only **Published** entries appear.
 - **Visible**: a switch that hides a published entry from your site without unpublishing it.
 - **Move up** / **Move down**: set the order of the list.
-- **Archive**: removes the entry from every page that uses it, after you confirm in **Archive this entry?**. The entry isn't deleted and stays in your list as **Archived**.
+- **Archive**: removes the entry from every page that uses it, after you confirm in **Archive this entry?**. The entry isn't deleted and stays in your list as **Archived**, but archiving can't be undone: an archived entry can't be published again.
 
 To edit an entry, choose its text in the list. Edits to a published entry show on your live pages without publishing those pages again.
 
 > [!WARNING]
-> The archive dialog says archiving can be reversed, but the dashboard can't publish an archived entry again. You can still edit its text, but it stays archived and off your site. Archive only entries you no longer need; to take one off your site for a while, switch off **Visible** instead.
+> Archiving is final. You can still edit an archived entry's text, but it stays archived and off your site. Archive only entries you no longer need; to take one off your site for a while, switch off **Visible** instead. To show archived content again, create a new entry.
 
 ## Library entries and section items
 

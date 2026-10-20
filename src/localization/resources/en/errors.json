@@ -166,7 +166,7 @@
     "corePageNotDeletable": "Built-in pages can't be deleted. You can hide one instead.",
     "courseDetailsNotToggleable": "The Course Details page can't be hidden — course pages need it.",
     "courseNotFound": "That course no longer exists.",
-    "contentArchived": "This item has been archived and can't be edited. Restore it first.",
+    "contentArchived": "This item is archived, so it can't be published or archived again. Create a new entry to show this content.",
     "duplicateSectionId": "Two sections on this page share an identifier. Reload and try again.",
     "invalidSectionOrder": "The new section order doesn't match the sections on this page. Reload and try again.",
     "faqEntryNotFound": "That FAQ entry no longer exists.",
