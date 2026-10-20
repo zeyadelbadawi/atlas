@@ -645,6 +645,23 @@
     "spec": "3e9cbac870737178ebc121f39ceac5da8bdbda45",
     "width": 1440
   },
+  "account/academy-code-setting": {
+    "capturedAt": "2026-10-20T14:09:37.277Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/academy-code-setting-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/academy-code-setting-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "67d630453bff0700d274e2be15a22ee93fb757e5",
+    "width": 1440
+  },
   "account/academy-sign-in-forgot-link": {
     "capturedAt": "2026-10-20T14:06:11.943Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -764,6 +781,23 @@
     "spec": "9d327e20b90c5b8861ea0571e6b38fbbbc8b159e",
     "width": 1440
   },
+  "account/remembered-devices": {
+    "capturedAt": "2026-10-20T14:09:23.726Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/remembered-devices-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/remembered-devices-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e5eddd87be593a299b8b619d936279c96b8fc336",
+    "width": 1440
+  },
   "account/reset-link-invalid": {
     "capturedAt": "2026-10-20T14:06:55.864Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -847,6 +881,40 @@
     ],
     "height": 900,
     "spec": "e8c5718489cb56cef5cfc7d3835985584edafc8f",
+    "width": 1440
+  },
+  "account/two-factor-card": {
+    "capturedAt": "2026-10-20T14:09:55.595Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/two-factor-card-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/two-factor-card-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "af41bac0a948cd68bee1585465c1159e145d94e0",
+    "width": 1440
+  },
+  "account/verify-email-request": {
+    "capturedAt": "2026-10-20T14:09:05.690Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/verify-email-request-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/verify-email-request-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "0c4e772ab06d0bf181d71a7ccb6b33f4d664efd3",
     "width": 1440
   },
   "billing/billing-overview": {

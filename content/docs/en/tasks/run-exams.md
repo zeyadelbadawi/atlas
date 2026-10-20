@@ -72,14 +72,6 @@ only on the courses they are assigned to.
 | Review attempts, grade, give exceptions, export the CSV | Yes | Yes | Assigned courses |
 | Academy Reports | Yes | Yes | No |
 
-> [!NOTE]
-> The time limit, availability dates, shuffling, one-question-per-page layout and
-> integrity recording are applied only where Atlas has switched these exam features on
-> for your academy. The settings always appear in the quiz editor. Where the features
-> are off, learners still take the quiz, but with no timer, all questions on one page
-> and nothing recorded. If a learner sees no timer on a timed quiz, contact Atlas
-> through **Support**.
-
 > [!LIMITATION]
 > Integrity signals are for your review. They record events such as leaving full
 > screen; they don't prove that a learner cheated, and they can't stop screen recording
