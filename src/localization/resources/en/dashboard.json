@@ -47,7 +47,7 @@
         "30": "No approved manual payments in the last 30 days.",
         "90": "No approved manual payments in the last 90 days."
       },
-      "note": "Amounts of the payments you approved. Your academy received this money directly; Atlas does not hold it. Refunds you make outside Atlas are not subtracted."
+      "note": "Amounts of the payments you approved. Your academy received this money directly; Atlas does not hold it. A payment you record as refunded is not counted."
     }
   },
   "usage": {

@@ -42,12 +42,20 @@ export interface ResetPasswordFormProps {
    * tree. Absent, behaviour is unchanged.
    */
   readonly onSuccess?: () => void;
+  /**
+   * `setup` — the account-setup link (`setup=1`): the person never had a
+   * password, so the button and the confirmation say "set", not "reset".
+   * Same token, same endpoint.
+   */
+  readonly variant?: 'reset' | 'setup';
 }
 
 export function ResetPasswordForm({
   token,
   onSuccess,
+  variant = 'reset',
 }: ResetPasswordFormProps): JSX.Element {
+  const copy = variant === 'setup' ? 'auth:setPassword' : 'auth:resetPassword';
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -92,8 +100,8 @@ export function ResetPasswordForm({
       {
         onSuccess: () => {
           toast({
-            title: t('auth:resetPassword.success.title'),
-            description: t('auth:resetPassword.success.description'),
+            title: t(`${copy}.success.title`),
+            description: t(`${copy}.success.description`),
           });
           if (onSuccess) {
             onSuccess();
@@ -210,7 +218,7 @@ export function ResetPasswordForm({
       >
         {isLoading
           ? t('common:actions.loading')
-          : t('auth:resetPassword.submit')}
+          : t(`${copy}.submit`)}
       </Button>
     </form>
   );

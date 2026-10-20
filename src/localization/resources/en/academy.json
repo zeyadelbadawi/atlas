@@ -207,7 +207,9 @@
       "doneButton": "Done",
       "errors": {
         "insufficientRole": "Only the academy owner can create a student account.",
-        "generic": "Could not create this student account. Please try again."
+        "generic": "Could not create this student account. Please try again.",
+        "alreadyMember": "This person is already a student in this academy.",
+        "userNotFound": "Could not create this student account. Reload the page and try again."
       },
       "addButton": "Add student",
       "outcome": {
@@ -367,6 +369,7 @@
     "revoke": {
       "title": "Revoke access",
       "description": "The student loses access to {{course}} immediately. Their progress is kept.",
+      "refundNote": "Revoking access doesn't refund the learner, and the order stays paid in your sales. If you gave the money back, use Record refund on the payment in Payments instead: it records the refund, ends access and tells the learner.",
       "reasonLabel": "Reason",
       "reasons": {
         "manual": "Revoked by staff",
@@ -732,7 +735,7 @@
     },
     "manualSales": {
       "title": "Sales recorded in Atlas (manual payments)",
-      "description": "Payments you approved for course orders that are still paid. Your academy received this money directly; Atlas does not hold it. Amounts are what learners paid, before anything you refund outside Atlas.",
+      "description": "Payments you approved for course orders that are still paid. Your academy received this money directly; Atlas does not hold it. A payment you record as refunded drops out of these figures.",
       "window": {
         "7": "Last 7 days",
         "30": "Last 30 days",

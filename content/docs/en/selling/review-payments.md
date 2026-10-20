@@ -63,12 +63,13 @@ Atlas emails you and adds a notification each time a learner submits a proof. Th
 - A learner can have only one payment waiting for review on an order, so they can't pay twice by mistake.
 - The panel's **Review history** shows who approved or rejected a payment and when.
 - Proof files are private: only the learner who uploaded a proof and the organization owner can open it.
+- Reviewing keeps working even if your Atlas subscription has lapsed, so learners who already paid aren't left waiting. See [When a subscription lapses](doc:DOC-BIL-007).
 
 > [!LIMITATION]
 > Atlas does not check your bank statement or wallet. Approving is your confirmation that the money arrived. Approve only after you see it in your own account.
 
 > [!NOTE]
-> If you need to give money back after approving, do it outside Atlas and then end the learner's access. See [Refunds for course purchases](doc:DOC-COM-005).
+> If you need to give money back after approving, send it yourself, then open the payment and choose **Record refund…**. That ends the learner's access and takes the payment out of your sales. See [Refunds for course purchases](doc:DOC-COM-005).
 
 ## Related
 

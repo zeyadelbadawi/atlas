@@ -4,7 +4,7 @@
  *   - `academies/:id/payment-methods[/<type>]` — the manual methods (bank
  *     transfer, InstaPay, mobile wallet) THIS academy accepts, with the
  *     details its learners are shown;
- *   - `academies/:id/course-payments[/:paymentId[/approve|reject|proof/file]]`
+ *   - `academies/:id/course-payments[/:paymentId[/approve|reject|refund|proof/file]]`
  *     — the payments learners made with them, reviewed here.
  *
  * Organization Owner only, server-side (`assertCanViewAcademyFinance`); a
@@ -22,6 +22,7 @@ import {
   type AcademyPaymentMethod,
   type ApproveAcademyCoursePaymentPayload,
   type PaginatedResult,
+  type RecordAcademyCoursePaymentRefundPayload,
   type RejectAcademyCoursePaymentPayload,
   type SaveAcademyPaymentMethodPayload,
 } from '@types';
@@ -125,6 +126,29 @@ export class AcademyPaymentsService extends BaseService {
         'course-payments',
         paymentId,
         'reject'
+      ),
+      payload,
+      options
+    );
+  }
+
+  /** Records that the academy refunded this approved payment itself. */
+  async recordRefund(
+    academyId: string,
+    paymentId: string,
+    payload: RecordAcademyCoursePaymentRefundPayload,
+    options?: WriteOptions
+  ): Promise<AcademyCoursePaymentDetail> {
+    return this.client.post<
+      AcademyCoursePaymentDetail,
+      RecordAcademyCoursePaymentRefundPayload
+    >(
+      resourcePath(
+        'academies',
+        academyId,
+        'course-payments',
+        paymentId,
+        'refund'
       ),
       payload,
       options

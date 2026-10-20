@@ -339,7 +339,7 @@ describe('smart member invitation — student dialog', () => {
     expect(screen.getByLabelText('الاسم الكامل')).toBeTruthy();
     expect(
       screen.getByText(
-        'يُستخدم إذا لم يكن لديه حساب Atlas بعد. من يستخدم Atlas بالفعل يحتفظ باسمه.'
+        'يُستخدم إذا لم يكن لديه حساب أطلس بعد. من يستخدم أطلس بالفعل يحتفظ باسمه.'
       )
     ).toBeTruthy();
     await user.click(screen.getByRole('button', { name: 'إضافة الطالب' }));

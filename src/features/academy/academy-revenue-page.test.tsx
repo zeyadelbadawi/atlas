@@ -333,10 +333,10 @@ describe('AcademyRevenuePage — manual sales (D5-5)', () => {
 
     expect(
       screen.getByRole('list', {
-        name: 'المبيعات المسجّلة في Atlas (المدفوعات اليدوية)',
+        name: 'المبيعات المسجّلة في أطلس (المدفوعات اليدوية)',
       })
     ).toBeTruthy();
-    expect(screen.getByText('دفعات Atlas Payments')).toBeTruthy();
+    expect(screen.getByText('دفعات أطلس للمدفوعات')).toBeTruthy();
   });
 
   it('shows a loading state and a retryable error for the sales read', () => {

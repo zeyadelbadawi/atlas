@@ -490,6 +490,10 @@
       "title": "Payment not approved",
       "message": "Your payment for \"{{courseTitle}}\" was not approved. Open My payments to see why and pay again."
     },
+    "coursePaymentRefunded": {
+      "title": "Refund recorded",
+      "message": "The academy recorded a refund of {{amount}} {{currency}} for \"{{courseTitle}}\". Your access to the course has ended."
+    },
     "academyPaymentSubmitted": {
       "title": "New payment to review",
       "message": "A learner sent {{amount}} {{currency}} for \"{{courseTitle}}\". Check it and approve or reject."

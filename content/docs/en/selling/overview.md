@@ -60,7 +60,7 @@ No. With these payment methods the money never passes through Atlas, so Atlas ta
 > Atlas does not check that a transfer arrived. It doesn't connect to your bank, wallet or InstaPay account. You confirm each payment yourself in your own app before you approve it.
 
 > [!LIMITATION]
-> Atlas doesn't take card payments and has no coupon codes. Refunds for these payments happen between you and the learner, outside Atlas. See [Refunds for course purchases](doc:DOC-COM-005).
+> Atlas doesn't take card payments and has no coupon codes. You send any refund for these payments back yourself, then record it in Atlas. See [Refunds for course purchases](doc:DOC-COM-005).
 
 ## Next steps
 

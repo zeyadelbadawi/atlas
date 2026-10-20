@@ -24,7 +24,12 @@ import {
   Upload,
   XCircle,
 } from 'lucide-react';
-import { cn, isOnboardingReturnPath, MIRROR_IN_RTL } from '@utils';
+import {
+  cn,
+  isOnboardingReturnPath,
+  MIRROR_IN_RTL,
+  toErrorsNamespaceKey,
+} from '@utils';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
@@ -66,6 +71,12 @@ export default function PaymentDetailsPage(): JSX.Element {
   const returnTo = searchParams.get('returnTo');
   const setupReturnPath = isOnboardingReturnPath(returnTo) ? returnTo : null;
   const { t, i18n } = useTranslation();
+  // A failure reason is usually a backend message KEY
+  // (`errors.payment.rejectedByReviewer`); show its sentence, never the key.
+  const failureReasonText = (reason: string): string => {
+    const key = toErrorsNamespaceKey(reason);
+    return key !== reason && i18n.exists(key) ? t(key) : reason;
+  };
   const { paymentId } = useParams<{ paymentId: string }>();
   const { organization } = useAuth();
 
@@ -258,7 +269,7 @@ export default function PaymentDetailsPage(): JSX.Element {
             </div>
             {payment.failureReason ? (
               <p className="rounded-md bg-destructive-surface p-3 text-destructive">
-                {payment.failureReason}
+                {failureReasonText(payment.failureReason)}
               </p>
             ) : null}
             {payment.reviewStatus === 'rejected' && payment.reviewNotes ? (
@@ -288,7 +299,7 @@ export default function PaymentDetailsPage(): JSX.Element {
                   <div className="flex items-center gap-2">
                     {attempt.failureReason ? (
                       <span className="text-xs text-destructive">
-                        {attempt.failureReason}
+                        {failureReasonText(attempt.failureReason)}
                       </span>
                     ) : null}
                     <StatusBadge

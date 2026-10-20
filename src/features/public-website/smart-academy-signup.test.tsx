@@ -535,12 +535,12 @@ describe('smart academy signup — existing account', () => {
     renderPage('ar');
     expect(screen.getByTestId('root').getAttribute('dir')).toBe('rtl');
     await user.click(screen.getByRole('button', { name: 'انضم به' }));
-    expect(screen.getByText('انضم باستخدام حسابك على Atlas')).toBeTruthy();
+    expect(screen.getByText('انضم باستخدام حسابك على أطلس')).toBeTruthy();
     expect(
-      screen.getByText('استخدم كلمة المرور التي تستخدمها بالفعل على Atlas.')
+      screen.getByText('استخدم كلمة المرور التي تستخدمها بالفعل على أطلس.')
     ).toBeTruthy();
     expect(
-      screen.getByRole('button', { name: 'المتابعة بحسابي على Atlas' })
+      screen.getByRole('button', { name: 'المتابعة بحسابي على أطلس' })
     ).toBeTruthy();
   });
 
@@ -568,8 +568,8 @@ describe('smart academy signup — existing account', () => {
     await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByRole('button', { name: 'إنشاء حساب' }));
 
-    expect(await screen.findByText('لديك حساب على Atlas بالفعل')).toBeTruthy();
-    expect(screen.getByText(/تعمل Nile Academy على منصة Atlas/)).toBeTruthy();
+    expect(await screen.findByText('لديك حساب على أطلس بالفعل')).toBeTruthy();
+    expect(screen.getByText(/تعمل Nile Academy على منصة أطلس/)).toBeTruthy();
     const email = screen.getByLabelText(
       'البريد الإلكتروني'
     ) as HTMLInputElement;

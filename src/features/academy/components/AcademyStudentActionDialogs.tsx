@@ -274,6 +274,16 @@ export function RevokeEnrollmentDialog({
             {t('academy:students.revoke.description', { course: courseTitle })}
           </DialogDescription>
         </DialogHeader>
+        {/* Revoking only ends access: the order stays paid. A refund is
+            recorded with Record refund on the payment (Payments), which
+            also ends access — the dialog says so instead of implying the
+            learner gets their money back. */}
+        <p
+          className="rounded-md bg-warning-surface p-3 text-sm text-foreground"
+          data-testid="revoke-refund-note"
+        >
+          {t('academy:students.revoke.refundNote')}
+        </p>
         <div className="space-y-2">
           <Label htmlFor="revoke-reason">
             {t('academy:students.revoke.reasonLabel')}

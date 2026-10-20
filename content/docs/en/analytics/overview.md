@@ -42,7 +42,7 @@ Atlas has a few places that show numbers. This page explains what each one count
 
 What the **Revenue** card shows depends on who you are and how you collect payments.
 
-- **Owner, with manual payment methods** (bank transfer, mobile wallet, InstaPay): the card shows **Sales recorded in Atlas (manual payments)**. Choose **Last 7 days**, **Last 30 days** or **Last 90 days** to see the total of the payments you approved, and how many approved orders it covers. Your academy received this money directly. An order you refunded in Atlas drops out of the total; money you return outside Atlas isn't subtracted.
+- **Owner, with manual payment methods** (bank transfer, mobile wallet, InstaPay): the card shows **Sales recorded in Atlas (manual payments)**. Choose **Last 7 days**, **Last 30 days** or **Last 90 days** to see the total of the payments you approved, and how many approved orders it covers. Your academy received this money directly. A payment you record as refunded (**Record refund…**) drops out of the total; money you return without recording it isn't subtracted.
 - **Owner, with no payment method set up yet**: **Not tracked here**, with a prompt to set up how you collect payments. See [Set up payment methods](doc:DOC-COM-002).
 - **Manager**: always **Not tracked here**. Sales figures are for the owner only.
 

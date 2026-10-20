@@ -41,7 +41,7 @@ updated: 2026-10-20
 | **Paid** | You approved a payment. The student has access to the course. |
 | **Expired** | The time to pay ran out before a payment was sent. The student can start again from the course page. |
 | **Cancelled** | The order was cancelled and can't be paid. |
-| **Refunded** | A refund was recorded in Atlas. Money you give back yourself, outside Atlas, doesn't change the order: it stays **Paid**. |
+| **Refunded** | A refund was recorded in Atlas: you used **Record refund…** on the payment after sending the money back. Only recording it changes the order; money you return without recording it leaves the order **Paid**. See [Refunds for course purchases](doc:DOC-COM-005). |
 
 The **Payment** column shows each payment's method and review status (for example **Awaiting review**, **Approved** or **Rejected**).
 
@@ -56,7 +56,7 @@ On your dashboard, the **Revenue** card shows **Sales recorded in Atlas (manual 
 ![The dashboard Revenue card showing Sales recorded in Atlas (manual payments)](shot:selling/dashboard-revenue)
 
 > [!LIMITATION]
-> These figures are the amounts you approved. Your academy received the money directly; Atlas doesn't hold it. Money you give back outside Atlas is not subtracted. Course orders has no export and shows no total.
+> These figures are the amounts you approved. Your academy received the money directly; Atlas doesn't hold it. A payment you record as refunded drops out; money you give back without recording it is not subtracted. Course orders has no export and shows no total.
 
 > [!NOTE]
 > Student emails are partly hidden in the orders list. Open the student from **Members** if you need their full details.

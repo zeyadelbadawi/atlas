@@ -47,7 +47,7 @@ The learner gets no access, and the order stays open so they can pay again and s
 
 ## How do refunds work?
 
-The money went to you, so a refund is between you and the learner, outside Atlas. A learner who asks Atlas for a refund is told to contact your academy. See [Refunds for course purchases](doc:DOC-COM-005).
+The money went to you, so you agree the refund with the learner and send the money back yourself. Then record it with **Record refund…** on the payment: the learner's access ends, the order shows **Refunded** and the learner gets an email. A learner who asks Atlas for a refund is told to contact your academy. See [Refunds for course purchases](doc:DOC-COM-005).
 
 ## Do learners get a receipt?
 

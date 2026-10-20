@@ -35,6 +35,7 @@ Your trial or paid period ended and no new payment has been approved yet. Atlas 
 | Opening and reading your academies, courses, students and reports | Saving any change: courses, website, members, settings |
 | Plans, checkout, paying and uploading your payment proof | Your academy websites: visitors see Coming soon |
 | Billing history and Support | Creating new academies |
+| Approving or rejecting payments learners already sent (owner) | Setting up or changing payment methods |
 
 "Nothing has been deleted. Your academies, courses, students and content are all still here, exactly as you left them."
 

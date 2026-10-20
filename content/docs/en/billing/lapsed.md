@@ -38,6 +38,7 @@ The change happens automatically shortly after the date passes.
 - You can still sign in and see everything in your dashboard: your academies, courses, students and content.
 - **Subscription**, **Plans**, **Billing** and checkout keep working, so you can pay.
 - **Support** keeps working, so you can still contact Atlas support.
+- The organization owner can still approve or reject course payments that learners already sent to your academy (**Payments**), so no one who paid is left waiting, and can record a refund of one. Setting up or changing payment methods stays locked.
 
 ## Is anything deleted?
 

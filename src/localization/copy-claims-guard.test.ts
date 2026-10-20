@@ -18,6 +18,13 @@
  *   Word attachments, one AR spelling of MB and of "custom domain", no
  *   invoices link, no legacy `billing` namespace, and the trial is never
  *   called "free" in customer-facing copy.
+ * - 20 Oct 2026: Arabic copy names the product «أطلس» — no Latin "Atlas"
+ *   inside any Arabic string (the unlaunched "Atlas Payments" is
+ *   «أطلس للمدفوعات», as `errors.payment.collectionModeNotAvailable`
+ *   already wrote it); and an academy's payment review is never
+ *   described as Atlas's.
+ * - 20 Oct 2026 (owner decision): Arabic billing labels say «مدفوعات
+ *   الاشتراك» / «المدفوعات», never «الفواتير», while no invoices exist.
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -71,6 +78,7 @@ const BANNED: Record<'en' | 'ar', { pattern: RegExp; scope?: RegExp }[]> = {
     { pattern: /a day or two/i, scope: /^tenant\.lifecycle\./ },
     { pattern: /brand-new Atlas account/i },
     { pattern: /reviewed by Atlas/i, scope: /^payments\.academy/ },
+    { pattern: /Atlas/, scope: /^errors\.payment\.rejectedByAcademy$/ },
     { pattern: /only the academy owner/i, scope: /^payments\./ },
     { pattern: /invoices/i, scope: /^notifications\.communication\./ },
     { pattern: /receipts/i, scope: /^learning\.learnerDashboard\.purchases\./ },
@@ -125,11 +133,18 @@ const BANNED: Record<'en' | 'ar', { pattern: RegExp; scope?: RegExp }[]> = {
     },
     { pattern: /مُطبَّق:/, scope: QUIZ_MODE },
     { pattern: /بعد 30 يومًا/, scope: /^media\./ },
-    { pattern: /تخزّن Atlas الفيديو/ },
+    { pattern: /تخزّن (Atlas|أطلس) الفيديو/ },
+    { pattern: /Atlas/ },
+    { pattern: /أطلس/, scope: /^errors\.payment\.rejectedByAcademy$/ },
     { pattern: /Word أو صورة/ },
     { pattern: /ميغابايت/ },
     { pattern: /نطاق خاص/ },
-    { pattern: /الفواتير|فواتيرك/, scope: /^payments\.overview\.(?!title)/ },
+    // No invoice is ever issued, so no Arabic string may promise one. The
+    // only exemption is the dormant Invoices page's own copy
+    // (`payments.invoices.*`), which no route renders (the old path
+    // redirects to the payment history) and which waits for a real
+    // invoice feature.
+    { pattern: /فاتور|فواتير/, scope: /^(?!payments\.invoices\.)/ },
     {
       pattern:
         /تجربة مجانية|التجربة المجانية|تجربتك المجانية|التجارب المجانية|تجريبية مجانية|ابدأ مجانًا|جرّب .*مجانًا|أيام مجانًا/,
