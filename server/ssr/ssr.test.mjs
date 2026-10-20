@@ -1462,6 +1462,80 @@ describe('canonical host redirect', () => {
   });
 });
 
+// Slug change — the Academy's OLD address is kept and redirects: the backend
+// answers it with `redirectHost` (its canonical host), and the renderer
+// answers a page there with a 301 to the same path and query. Not optional
+// (`canonicalRedirect` off) and not skipped for a signed-in visitor: the old
+// address only redirects.
+describe('old address after a slug change', () => {
+  const OLD = `alpha-old.${BASE}`;
+  const onOldAddress = () => {
+    state.academies[ALPHA_ID].host = OLD;
+    state.academies[ALPHA_ID].resolve.canonicalHost = ALPHA;
+    state.academies[ALPHA_ID].resolve.redirectHost = ALPHA;
+  };
+
+  it('301s a page on the old address to the new one, path and query kept', async () => {
+    onOldAddress();
+    const result = await get(handler, OLD, '/courses?level=beginner');
+    assert.equal(result.status, 301);
+    assert.equal(
+      result.headers.Location,
+      `https://${ALPHA}/courses?level=beginner`
+    );
+    // Revalidated: the Academy may take the old address back.
+    assert.equal(result.headers['Cache-Control'], 'private, no-cache');
+    assert.equal(result.headers['X-Atlas-SSR'], 'redirect');
+    assert.equal(result.body, '');
+  });
+
+  it('redirects before fetching any page data', async () => {
+    onOldAddress();
+    await get(handler, OLD, '/');
+    assert.deepEqual(
+      state.requests.map((r) => r.path.split('?')[0]),
+      ['/api/v1/public/websites/resolve']
+    );
+  });
+
+  it('moves a signed-in visitor too, and Coming Soon', async () => {
+    onOldAddress();
+    const signedIn = await get(handler, OLD, '/ar/about', {
+      cookieHeader: '__Host-atlas_session=abc',
+    });
+    assert.equal(signedIn.status, 301);
+    assert.equal(signedIn.headers.Location, `https://${ALPHA}/ar/about`);
+
+    state.academies[GAMMA_ID].host = `gamma-old.${BASE}`;
+    state.academies[GAMMA_ID].resolve.redirectHost = GAMMA;
+    const comingSoon = await get(handler, `gamma-old.${BASE}`, '/');
+    assert.equal(comingSoon.status, 301);
+    assert.equal(comingSoon.headers.Location, `https://${GAMMA}/`);
+  });
+
+  it('never redirects to a target that is not a plain hostname', async () => {
+    onOldAddress();
+    state.academies[ALPHA_ID].resolve.redirectHost = 'evil.example/path';
+    const result = await get(handler, OLD, '/');
+    assert.notEqual(result.status, 301);
+  });
+
+  it('renders on the new address itself', async () => {
+    state.academies[ALPHA_ID].resolve.canonicalHost = ALPHA;
+    const result = await get(handler, ALPHA, '/');
+    assert.equal(result.status, 200);
+    assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
+  });
+
+  it('leaves account and auth paths to the app, which moves them itself', async () => {
+    onOldAddress();
+    for (const path of ['/my/courses', '/sign-in']) {
+      const result = await get(handler, OLD, path);
+      assert.equal(result.headers['X-Atlas-SSR'], 'pass', path);
+    }
+  });
+});
+
 // B0-WEB-02 — an Arabic-default site: Arabic at `/`, English under `/en`,
 // old `/ar/...` links one permanent hop from their page; switching back
 // restores the English-default URLs (and `/en/...` links come home).

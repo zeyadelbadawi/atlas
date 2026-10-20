@@ -308,7 +308,8 @@ export async function createSsrHandler({
           headers: {
             Location: result.location,
             // Revalidated, never remembered for good: the canonical host
-            // moves back to the subdomain if the custom domain breaks.
+            // moves back to the subdomain if the custom domain breaks, and
+            // an Academy may take an old address back as its address.
             'Cache-Control': 'private, no-cache',
             'X-Atlas-SSR': 'redirect',
           },

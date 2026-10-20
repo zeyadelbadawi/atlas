@@ -48,6 +48,7 @@ import {
   renderSeoHeadHtml,
   resolveCanonicalRedirect,
   resolveLocalePrefixRedirect,
+  resolveMovedHostRedirect,
   SeoHeadCollectorContext,
   type PublicWebsiteDataState,
   type UseDocumentSeoOptions,
@@ -414,6 +415,26 @@ export async function renderPublicWebsitePage(
       }
 
       if (responseTooLarge) return pass('api response over budget');
+
+      // Slug change — this host is one of the Academy's OLD addresses: a
+      // permanent redirect to the address the backend named, same path and
+      // query, as soon as the hostname answer arrives (before any page data
+      // or cached page). Unlike the canonical-host move below it is not
+      // optional and applies to signed-in visitors too: the old address
+      // only redirects.
+      const movedTo = queryState<HostnameResolution | null>(
+        queryClient,
+        publicWebsiteKeys.hostnameResolution(lookupKey)
+      ).data?.redirectHost;
+      if (movedTo && !isDevOverride) {
+        const location = resolveMovedHostRedirect(
+          { hostname, pathname: url.pathname, search: url.search, hash: '' },
+          movedTo,
+          ENV.isDevelopment
+        );
+        if (location) return { kind: 'redirect', location };
+      }
+
       const state = classify(queryClient, lookupKey);
       if (state.status === 'not-found' || state.status === 'unavailable') {
         return pass(state.status);

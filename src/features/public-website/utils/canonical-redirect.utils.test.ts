@@ -3,6 +3,7 @@ import {
   probeHostAnswers,
   resolveCanonicalOrigin,
   resolveCanonicalRedirect,
+  resolveMovedHostRedirect,
 } from './canonical-redirect.utils';
 
 const at = (hostname: string) => ({
@@ -117,5 +118,54 @@ describe('probeHostAnswers (P63g) — never redirect to a host that does not ans
         hang as unknown as typeof fetch
       )
     ).resolves.toBe(false);
+  });
+});
+
+describe('resolveMovedHostRedirect (slug change: the old address redirects)', () => {
+  it('moves a visitor on an old address to the new one, keeping path, query and hash', () => {
+    expect(
+      resolveMovedHostRedirect(
+        at('nour-old.atlass.dpdns.org'),
+        'nour-new.atlass.dpdns.org',
+        false
+      )
+    ).toBe('https://nour-new.atlass.dpdns.org/ar/courses/x?utm=1#top');
+  });
+
+  it('does nothing without a redirect, on the target itself, or in development', () => {
+    expect(
+      resolveMovedHostRedirect(at('nour.atlass.dpdns.org'), undefined, false)
+    ).toBeNull();
+    expect(
+      resolveMovedHostRedirect(
+        at('nour-new.atlass.dpdns.org'),
+        'NOUR-NEW.atlass.dpdns.org',
+        false
+      )
+    ).toBeNull();
+    expect(
+      resolveMovedHostRedirect(
+        at('nour-old.atlass.dpdns.org'),
+        'nour-new.atlass.dpdns.org',
+        true
+      )
+    ).toBeNull();
+  });
+
+  it('never follows a target that is not a plain hostname (no open redirect)', () => {
+    for (const target of [
+      'evil.example/path',
+      'evil.example:8443',
+      'user@evil.example',
+      '//evil.example',
+      'https://evil.example',
+      'evil.example?x=1',
+      'localhost',
+      '',
+    ]) {
+      expect(
+        resolveMovedHostRedirect(at('nour-old.atlass.dpdns.org'), target, false)
+      ).toBeNull();
+    }
   });
 });

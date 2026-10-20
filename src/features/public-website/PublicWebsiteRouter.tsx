@@ -59,6 +59,7 @@ import type { PublicWebsiteContext } from './utils/hostname-resolution.utils';
 import {
   probeHostAnswers,
   resolveCanonicalRedirect,
+  resolveMovedHostRedirect,
 } from './utils/canonical-redirect.utils';
 import { ENV } from '@config';
 import { publicWebsiteLookupKey } from '@utils';
@@ -192,6 +193,33 @@ function useCanonicalHostRedirect(canonicalHost: string | undefined): void {
       cancelled = true;
     };
   }, [canonicalHost]);
+}
+
+/**
+ * Slug change — this host is one of the Academy's OLD addresses: move to
+ * the address the backend named (`redirectHost`), same path, query and
+ * hash, at once. `true` while moving, so the old address never renders the
+ * site. The server renderer answers the same request with a 301 when it
+ * renders the page (`entry-server.tsx`); this covers everything else.
+ */
+function useMovedHostRedirect(redirectHost: string | undefined): boolean {
+  const { hostname, search } = useRequestLocation();
+  const { pathname } = useLocation();
+  const moving =
+    resolveMovedHostRedirect(
+      { hostname, pathname, search, hash: '' },
+      redirectHost,
+      ENV.isDevelopment
+    ) !== null;
+  useEffect(() => {
+    const target = resolveMovedHostRedirect(
+      window.location,
+      redirectHost,
+      ENV.isDevelopment
+    );
+    if (target) window.location.replace(target);
+  }, [redirectHost]);
+  return moving;
 }
 
 function PublicWebsiteShell({
@@ -455,6 +483,15 @@ export function PublicWebsiteRouter({
   const otherLocale =
     PUBLIC_WEBSITE_LOCALES.find((locale) => locale !== defaultLocale) ??
     defaultLocale;
+  // An old address (the slug changed) renders nothing of the site — not a
+  // page, not sign-in, not the learner area — while the browser moves on.
+  const movingToNewAddress = useMovedHostRedirect(
+    resolution.data?.redirectHost
+  );
+
+  if (movingToNewAddress) {
+    return <PublicWebsiteStatus state={{ status: 'loading' }} />;
+  }
 
   return (
     <AcademyTitleBaselineContext.Provider value={academyName}>
