@@ -33,6 +33,23 @@
     "spec": "b905c17f324bf768bbe793e18e74e38d82d5452b",
     "width": 1440
   },
+  "academy/domain-progress": {
+    "capturedAt": "2026-10-20T15:42:12.475Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/domain-progress-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/domain-progress-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "32f50dff996514e2bbf3f628a521e41498b255d9",
+    "width": 1440
+  },
   "academy/domain-tab": {
     "capturedAt": "2026-10-20T15:41:45.140Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
