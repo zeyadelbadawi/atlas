@@ -1,4 +1,72 @@
 {
+  "billing/billing-overview": {
+    "capturedAt": "2026-10-20T09:17:24.149Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/billing/billing-overview-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/billing/billing-overview-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "408a2708ce3493a65cfb95974822aa5143412396",
+    "width": 1440
+  },
+  "billing/cancel-button": {
+    "capturedAt": "2026-10-20T09:16:57.486Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/billing/cancel-button-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/billing/cancel-button-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "164ea13ebc78f2b461b6d7b712c29c73ef9af5c5",
+    "width": 1440
+  },
+  "billing/cancel-confirm": {
+    "capturedAt": "2026-10-20T09:17:16.815Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/billing/cancel-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/billing/cancel-confirm-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 480,
+    "spec": "3a1f24ed3e929717f2ed04b8c4f202a3799586fe",
+    "width": 560
+  },
+  "billing/cancel-reason": {
+    "capturedAt": "2026-10-20T09:17:07.167Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/billing/cancel-reason-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/billing/cancel-reason-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 480,
+    "spec": "11796b2d7cd23a2b6229cbb0160d8d67e0db0359",
+    "width": 560
+  },
   "billing/checkout-cycle": {
     "capturedAt": "2026-10-20T09:16:03.516Z",
     "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
@@ -50,6 +118,23 @@
     "spec": "08a1856b3b97d70ee3812303911031376244e8cb",
     "width": 1440
   },
+  "billing/compare-select": {
+    "capturedAt": "2026-10-20T09:16:30.673Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/billing/compare-select-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/billing/compare-select-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 490,
+    "spec": "83e54bc3e4ac2209ce7435e27d9062d213d88f92",
+    "width": 944
+  },
   "billing/plans-open": {
     "capturedAt": "2026-10-20T09:15:47.388Z",
     "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
@@ -84,6 +169,23 @@
     "spec": "1d30ffb5d7dded7a35d686548ae6b0472f26a696",
     "width": 944
   },
+  "billing/subscription-compare": {
+    "capturedAt": "2026-10-20T09:16:21.141Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/billing/subscription-compare-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/billing/subscription-compare-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "41a4f2c88326feb636807124d8b27fb9468825b9",
+    "width": 1440
+  },
   "billing/subscription-status": {
     "capturedAt": "2026-10-20T09:15:16.759Z",
     "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
@@ -116,6 +218,40 @@
     ],
     "height": 900,
     "spec": "439963b725c3db075cdf480c717f6c53561c701a",
+    "width": 1440
+  },
+  "billing/usage-nav": {
+    "capturedAt": "2026-10-20T09:16:39.621Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/billing/usage-nav-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/billing/usage-nav-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ffe40d3b1ab866536e02df516927ab00ae440076",
+    "width": 1440
+  },
+  "billing/usage-rows": {
+    "capturedAt": "2026-10-20T09:16:48.133Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/billing/usage-rows-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/billing/usage-rows-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f6c0ed0a525053cce46d45c3bf53747b7012e0f2",
     "width": 1440
   },
   "pipeline-sample/academy-home-mobile": {
@@ -252,6 +388,329 @@
     ],
     "height": 900,
     "spec": "300e53f2056eebc6f0c45dbe5cadf9ba54c5d543",
+    "width": 1440
+  },
+  "selling/dashboard-revenue": {
+    "capturedAt": "2026-10-20T09:20:01.149Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/dashboard-revenue-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/dashboard-revenue-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "bbd671be0609d2f141ade1f4fba127025b06f2f7",
+    "width": 1440
+  },
+  "selling/how-it-works": {
+    "capturedAt": "2026-10-20T09:17:31.826Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/how-it-works-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/how-it-works-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "485cd1f90b8afb95f4d092bc46627c920c26ade2",
+    "width": 1440
+  },
+  "selling/learner-refund-contact": {
+    "capturedAt": "2026-10-20T09:20:15.571Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/learner-refund-contact-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/learner-refund-contact-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "bf913a252876b7ea829d534c657f3c7328a49814",
+    "width": 1440
+  },
+  "selling/order-detail": {
+    "capturedAt": "2026-10-20T09:19:52.875Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/order-detail-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/order-detail-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "2ac90cdf719f0fa647a8295a997386b78887fa5f",
+    "width": 1440
+  },
+  "selling/orders-filters": {
+    "capturedAt": "2026-10-20T09:19:45.244Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/orders-filters-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/orders-filters-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f86ca9d28798d77eeafe2786f47d6989f8e47f5b",
+    "width": 1440
+  },
+  "selling/orders-nav": {
+    "capturedAt": "2026-10-20T09:19:37.019Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/orders-nav-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/orders-nav-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "69ed5d1cdb847371048f95f9251d088780bdb830",
+    "width": 1440
+  },
+  "selling/payment-approve-confirm": {
+    "capturedAt": "2026-10-20T09:19:10.093Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/payment-approve-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/payment-approve-confirm-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 230,
+    "spec": "f451d8cd7961ce9bdae1ebfaeb178116d1fa23db",
+    "width": 560
+  },
+  "selling/payment-decision-hint": {
+    "capturedAt": "2026-10-20T09:19:01.760Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/payment-decision-hint-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/payment-decision-hint-1200.webp",
+        "width": 1200
+      }
+    ],
+    "height": 900,
+    "spec": "eb578b7552bf5d370bfc30341ee2410663aa7fe3",
+    "width": 600
+  },
+  "selling/payment-method-dialog": {
+    "capturedAt": "2026-10-20T09:17:57.046Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/payment-method-dialog-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/payment-method-dialog-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 813,
+    "spec": "3f04b48b4caae71ffe039a24c83808e8518df1e2",
+    "width": 720
+  },
+  "selling/payment-method-edit": {
+    "capturedAt": "2026-10-20T09:17:48.342Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/payment-method-edit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/payment-method-edit-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "b316f3f97bd4dee0bcdcc83da111f9896a51490c",
+    "width": 1440
+  },
+  "selling/payment-method-save": {
+    "capturedAt": "2026-10-20T09:18:16.129Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/payment-method-save-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/payment-method-save-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 813,
+    "spec": "2f83c5c7eea55098f39a4f671fb77d3ecfcac354",
+    "width": 720
+  },
+  "selling/payment-method-texts": {
+    "capturedAt": "2026-10-20T09:18:06.693Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/payment-method-texts-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/payment-method-texts-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 813,
+    "spec": "7668e8f8cfadb7367ab912045c33d258f9711666",
+    "width": 720
+  },
+  "selling/payment-method-toggle": {
+    "capturedAt": "2026-10-20T09:18:23.537Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/payment-method-toggle-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/payment-method-toggle-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "565feb726b6be5a0f53af26c81e1349a077d3d90",
+    "width": 1440
+  },
+  "selling/payment-methods-nav": {
+    "capturedAt": "2026-10-20T09:17:39.934Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/payment-methods-nav-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/payment-methods-nav-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ee80b3628319cb045eb06736acb30f7642c95d0b",
+    "width": 1440
+  },
+  "selling/payment-reject-confirm": {
+    "capturedAt": "2026-10-20T09:19:28.757Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/payment-reject-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/payment-reject-confirm-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 230,
+    "spec": "22b24c6cbb84983a2098a9cea71c5b9adf7827b6",
+    "width": 560
+  },
+  "selling/payment-reject-reason": {
+    "capturedAt": "2026-10-20T09:19:19.434Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/payment-reject-reason-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/payment-reject-reason-1200.webp",
+        "width": 1200
+      }
+    ],
+    "height": 900,
+    "spec": "0d924221e9ce3dae01bb3166da9d8192aa7ffafd",
+    "width": 600
+  },
+  "selling/payment-sheet": {
+    "capturedAt": "2026-10-20T09:18:48.960Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/payment-sheet-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/payment-sheet-1200.webp",
+        "width": 1200
+      }
+    ],
+    "height": 900,
+    "spec": "29e449cba5ed538bb221ab489ce228fb5de9e6dc",
+    "width": 600
+  },
+  "selling/payments-nav": {
+    "capturedAt": "2026-10-20T09:18:31.311Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/payments-nav-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/payments-nav-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "549a0e6339af164599da8f7f40db0fccd35198a5",
+    "width": 1440
+  },
+  "selling/payments-pending": {
+    "capturedAt": "2026-10-20T09:18:39.867Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/ar/selling/payments-pending-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/selling/payments-pending-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e6d566047fe6cbe222ab3d4f3b56bce36a3350f5",
     "width": 1440
   }
 }

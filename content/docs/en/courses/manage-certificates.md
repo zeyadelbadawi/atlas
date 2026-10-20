@@ -50,7 +50,7 @@ Use this when the learner met the completion rule outside Atlas, or an automatic
 
    ![The student details panel with the Issue certificate button next to an enrollment](shot:courses/student-issue-certificate)
 
-5. Optionally enter a **Reason**. Tick **Issue even if the completion rule is not met** if the learner hasn't met the rule; the certificate then records the learner's current score. Choose **Issue certificate**.
+5. Optionally fill in **Reason (optional)**. Tick **Issue even if the completion rule is not met** if the learner hasn't met the rule; the certificate then records the learner's current score. Choose **Issue certificate**.
 
    ![The Issue a certificate dialog with the reason and the issue even if not met option](shot:courses/issue-certificate-dialog)
 
