@@ -85,10 +85,10 @@ describe('isReservedSubdomain (DL-57)', () => {
     }
   });
 
-  it('keeps the backend list size (72 exact labels at DL-57)', () => {
+  it('keeps the backend list size (71 exact labels at DL-57)', () => {
     expect(RESERVED_SUBDOMAINS).toContain('docs');
     expect(RESERVED_SUBDOMAINS).toContain('doc');
     expect(RESERVED_SUBDOMAINS).toContain('help');
-    expect(RESERVED_SUBDOMAINS.length).toBe(72);
+    expect(RESERVED_SUBDOMAINS.length).toBe(71);
   });
 });

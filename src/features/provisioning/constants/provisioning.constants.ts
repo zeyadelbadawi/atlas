@@ -88,7 +88,6 @@ export const RESERVED_SUBDOMAINS: readonly string[] = [
   'test',
   'preview',
   'sandbox',
-  'beta',
   'demo',
   'internal',
   'system',
