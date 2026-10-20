@@ -21,6 +21,8 @@
  * Academy id by itself (see "Multi-Academy Isolation").
  */
 
+import { RESERVED_SUBDOMAINS } from '@/features/provisioning/constants/provisioning.constants';
+
 export type PublicWebsiteLookupType =
   'subdomain' | 'custom-domain' | 'dev-override';
 
@@ -82,7 +84,12 @@ export function resolvePublicWebsiteContext(
     // Only a single-label subdomain (`harvard.<base>`) is an Academy
     // subdomain; anything with an extra dot is unrecognized shape and
     // falls back to the normal app rather than being guessed at.
-    if (label && !label.includes('.')) {
+    // DL-57 — a reserved platform label (`docs`, `help`, `api`, …) is never
+    // an academy, even if the request reaches the SPA (the docs host is
+    // served by Caddy; this guards a kill-switched or mistyped route). Exact
+    // labels only: look-alikes such as `atlas-…` are refused for NEW
+    // academies, but a few older academies hold one and must keep resolving.
+    if (label && !label.includes('.') && !RESERVED_SUBDOMAINS.includes(label)) {
       return { mode: 'academy-website', lookupType: 'subdomain', value: label };
     }
     return { mode: 'atlas-app' };
