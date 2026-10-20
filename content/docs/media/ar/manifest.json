@@ -815,6 +815,40 @@
     "spec": "308a9766e20ab8410575ed06fda5fc75f35e6796",
     "width": 1440
   },
+  "account/session-sign-out": {
+    "capturedAt": "2026-10-20T15:50:54.894Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/session-sign-out-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/session-sign-out-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ff333820b0e88c13b4f15bc8ec75ede964b1bff7",
+    "width": 1440
+  },
+  "account/sessions-card": {
+    "capturedAt": "2026-10-20T15:50:44.751Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/account/sessions-card-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/account/sessions-card-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "fad140c0e0cd9b0183e96e7c178d2028f73a35d5",
+    "width": 1440
+  },
   "account/sign-in-academy": {
     "capturedAt": "2026-10-20T15:46:48.670Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
