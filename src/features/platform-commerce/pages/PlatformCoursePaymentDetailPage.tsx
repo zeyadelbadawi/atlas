@@ -43,7 +43,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useConfirmDialog, useToast } from '@app/providers';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import { apiErrorMessage } from '@utils';
+import { apiErrorMessage, toErrorsNamespaceKey } from '@utils';
 import {
   formatMoney,
   getCourseOrderStatusTone,
@@ -356,7 +356,11 @@ export default function PlatformCoursePaymentDetailPage(): JSX.Element {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-foreground" dir="auto">
-                {payment.reviewNotes ?? payment.failureReason}
+                {payment.reviewNotes ??
+                  (payment.failureReason &&
+                  i18n.exists(toErrorsNamespaceKey(payment.failureReason))
+                    ? t(toErrorsNamespaceKey(payment.failureReason))
+                    : payment.failureReason)}
               </p>
             </CardContent>
           </Card>
