@@ -1547,8 +1547,8 @@
     "width": 1440
   },
   "billing/billing-overview": {
-    "capturedAt": "2026-10-20T09:11:38.015Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:31:50.251Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/billing/billing-overview-960.webp",
@@ -1564,8 +1564,8 @@
     "width": 1440
   },
   "billing/cancel-button": {
-    "capturedAt": "2026-10-20T09:10:52.214Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:31:26.424Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/billing/cancel-button-960.webp",
@@ -1581,8 +1581,8 @@
     "width": 1440
   },
   "billing/cancel-confirm": {
-    "capturedAt": "2026-10-20T09:11:20.050Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:31:42.852Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/billing/cancel-confirm-960.webp",
@@ -1598,8 +1598,8 @@
     "width": 560
   },
   "billing/cancel-reason": {
-    "capturedAt": "2026-10-20T09:11:01.389Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:31:34.019Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/billing/cancel-reason-960.webp",
@@ -1615,8 +1615,8 @@
     "width": 560
   },
   "billing/checkout-cycle": {
-    "capturedAt": "2026-10-20T09:09:57.735Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:30:39.535Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/billing/checkout-cycle-960.webp",
@@ -1632,8 +1632,8 @@
     "width": 1440
   },
   "billing/checkout-gift": {
-    "capturedAt": "2026-10-20T09:09:32.075Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:30:17.292Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/billing/checkout-gift-960.webp",
@@ -1649,8 +1649,8 @@
     "width": 1440
   },
   "billing/checkout-start": {
-    "capturedAt": "2026-10-20T09:10:06.877Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:30:47.115Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/billing/checkout-start-960.webp",
@@ -1666,8 +1666,8 @@
     "width": 1440
   },
   "billing/compare-select": {
-    "capturedAt": "2026-10-20T09:10:25.541Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:31:04.075Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/billing/compare-select-960.webp",
@@ -1683,8 +1683,8 @@
     "width": 944
   },
   "billing/plans-open": {
-    "capturedAt": "2026-10-20T09:09:41.419Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:30:25.492Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/billing/plans-open-960.webp",
@@ -1700,8 +1700,8 @@
     "width": 1440
   },
   "billing/plans-select": {
-    "capturedAt": "2026-10-20T09:09:49.551Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:30:32.332Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/billing/plans-select-960.webp",
@@ -1717,8 +1717,8 @@
     "width": 944
   },
   "billing/subscription-compare": {
-    "capturedAt": "2026-10-20T09:10:16.188Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:30:55.694Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/billing/subscription-compare-960.webp",
@@ -1734,8 +1734,8 @@
     "width": 1440
   },
   "billing/subscription-status": {
-    "capturedAt": "2026-10-20T09:09:10.028Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:30:00.705Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/billing/subscription-status-960.webp",
@@ -1751,8 +1751,8 @@
     "width": 1440
   },
   "billing/trial-banner": {
-    "capturedAt": "2026-10-20T09:09:21.520Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:30:08.291Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/billing/trial-banner-960.webp",
@@ -1768,8 +1768,8 @@
     "width": 1440
   },
   "billing/usage-nav": {
-    "capturedAt": "2026-10-20T09:10:33.815Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:31:11.085Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/billing/usage-nav-960.webp",
@@ -1785,8 +1785,8 @@
     "width": 1440
   },
   "billing/usage-rows": {
-    "capturedAt": "2026-10-20T09:10:43.042Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:31:18.251Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/billing/usage-rows-960.webp",
@@ -5372,8 +5372,8 @@
     "width": 1440
   },
   "selling/dashboard-revenue": {
-    "capturedAt": "2026-10-20T09:14:41.049Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:34:12.456Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/dashboard-revenue-960.webp",
@@ -5389,8 +5389,8 @@
     "width": 1440
   },
   "selling/how-it-works": {
-    "capturedAt": "2026-10-20T09:11:48.825Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:31:57.804Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/how-it-works-960.webp",
@@ -5406,8 +5406,8 @@
     "width": 1440
   },
   "selling/learner-refund-contact": {
-    "capturedAt": "2026-10-20T09:14:55.536Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:34:24.485Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/learner-refund-contact-960.webp",
@@ -5423,8 +5423,8 @@
     "width": 1440
   },
   "selling/order-detail": {
-    "capturedAt": "2026-10-20T09:14:30.980Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:34:04.298Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/order-detail-960.webp",
@@ -5440,8 +5440,8 @@
     "width": 1440
   },
   "selling/orders-filters": {
-    "capturedAt": "2026-10-20T09:14:20.068Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:33:56.842Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/orders-filters-960.webp",
@@ -5457,8 +5457,8 @@
     "width": 1440
   },
   "selling/orders-nav": {
-    "capturedAt": "2026-10-20T09:14:10.951Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:33:49.031Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/orders-nav-960.webp",
@@ -5474,8 +5474,8 @@
     "width": 1440
   },
   "selling/payment-approve-confirm": {
-    "capturedAt": "2026-10-20T09:13:39.554Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:33:24.053Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/payment-approve-confirm-960.webp",
@@ -5491,8 +5491,8 @@
     "width": 560
   },
   "selling/payment-decision-hint": {
-    "capturedAt": "2026-10-20T09:13:28.436Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:33:16.219Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/payment-decision-hint-960.webp",
@@ -5508,8 +5508,8 @@
     "width": 600
   },
   "selling/payment-method-dialog": {
-    "capturedAt": "2026-10-20T09:12:18.657Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:32:20.521Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/payment-method-dialog-960.webp",
@@ -5525,8 +5525,8 @@
     "width": 720
   },
   "selling/payment-method-edit": {
-    "capturedAt": "2026-10-20T09:12:07.828Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:32:12.240Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/payment-method-edit-960.webp",
@@ -5542,8 +5542,8 @@
     "width": 1440
   },
   "selling/payment-method-save": {
-    "capturedAt": "2026-10-20T09:12:38.916Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:32:37.783Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/payment-method-save-960.webp",
@@ -5559,8 +5559,8 @@
     "width": 720
   },
   "selling/payment-method-texts": {
-    "capturedAt": "2026-10-20T09:12:29.110Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:32:29.110Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/payment-method-texts-960.webp",
@@ -5576,8 +5576,8 @@
     "width": 720
   },
   "selling/payment-method-toggle": {
-    "capturedAt": "2026-10-20T09:12:49.314Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:32:45.512Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/payment-method-toggle-960.webp",
@@ -5593,8 +5593,8 @@
     "width": 1440
   },
   "selling/payment-methods-nav": {
-    "capturedAt": "2026-10-20T09:11:57.601Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:32:05.137Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/payment-methods-nav-960.webp",
@@ -5610,8 +5610,8 @@
     "width": 1440
   },
   "selling/payment-reject-confirm": {
-    "capturedAt": "2026-10-20T09:14:01.298Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:33:41.526Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/payment-reject-confirm-960.webp",
@@ -5627,8 +5627,8 @@
     "width": 560
   },
   "selling/payment-reject-reason": {
-    "capturedAt": "2026-10-20T09:13:50.409Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:33:32.916Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/payment-reject-reason-960.webp",
@@ -5644,8 +5644,8 @@
     "width": 600
   },
   "selling/payment-sheet": {
-    "capturedAt": "2026-10-20T09:13:17.840Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:33:08.530Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/payment-sheet-960.webp",
@@ -5661,8 +5661,8 @@
     "width": 600
   },
   "selling/payments-nav": {
-    "capturedAt": "2026-10-20T09:12:58.747Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:32:53.119Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/payments-nav-960.webp",
@@ -5678,8 +5678,8 @@
     "width": 1440
   },
   "selling/payments-pending": {
-    "capturedAt": "2026-10-20T09:13:07.746Z",
-    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "capturedAt": "2026-10-20T17:33:00.562Z",
+    "commit": "ff5eb533efe2f1274a94c356cbfe55fc8673270b",
     "files": [
       {
         "src": "media/en/selling/payments-pending-960.webp",
