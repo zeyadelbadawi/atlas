@@ -1767,6 +1767,40 @@
     "spec": "4870880440fc17f8d9b61a2fa238d41ed1165e64",
     "width": 1440
   },
+  "courses/assignment-dialog": {
+    "capturedAt": "2026-10-20T14:22:37.170Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/assignment-dialog-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/assignment-dialog-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 813,
+    "spec": "34ade86e91c4572c2dae6e22fc47d2cd89d80016",
+    "width": 560
+  },
+  "courses/assignments-list": {
+    "capturedAt": "2026-10-20T14:22:25.914Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/assignments-list-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/assignments-list-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "7b32aca56a848e6fc76869b3294ed387b12eb920",
+    "width": 1440
+  },
   "courses/attach-assignment": {
     "capturedAt": "2026-10-20T14:19:28.407Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -1971,6 +2005,23 @@
     "spec": "cb51914486e8d5f830d3afaecdd962da0c04caea",
     "width": 1440
   },
+  "courses/instructor-assessments": {
+    "capturedAt": "2026-10-20T14:22:46.503Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/instructor-assessments-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/instructor-assessments-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f138ca8fe63244f84589f51e7f06bf3a70fd55c4",
+    "width": 1440
+  },
   "courses/instructors-card": {
     "capturedAt": "2026-10-20T14:17:35.183Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -2141,6 +2192,57 @@
     "spec": "95fce7deb3ef6da76b08f57dbfe3ea96e919931f",
     "width": 1440
   },
+  "courses/quiz-advanced-toggle": {
+    "capturedAt": "2026-10-20T14:21:24.483Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/quiz-advanced-toggle-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/quiz-advanced-toggle-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "09396d4757d17644d1cc24e486b2805aac812b34",
+    "width": 1440
+  },
+  "courses/quiz-attempts": {
+    "capturedAt": "2026-10-20T14:21:43.451Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/quiz-attempts-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/quiz-attempts-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ab6664ee8ed76487b7275870346d42356616c7e8",
+    "width": 1440
+  },
+  "courses/quiz-details": {
+    "capturedAt": "2026-10-20T14:20:46.195Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/quiz-details-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/quiz-details-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "975292cd36867b1864653e3a146ff0152619a509",
+    "width": 1440
+  },
   "courses/quiz-edit-menu": {
     "capturedAt": "2026-10-20T14:20:37.096Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -2156,6 +2258,159 @@
     ],
     "height": 900,
     "spec": "79d0ec07915830bd03c6a18efaf4701f377eec4f",
+    "width": 1440
+  },
+  "courses/quiz-essentials": {
+    "capturedAt": "2026-10-20T14:21:01.448Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/quiz-essentials-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/quiz-essentials-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "7805d74a64643c4d9d13b479c4660d0d54ff5984",
+    "width": 1440
+  },
+  "courses/quiz-integrity-settings": {
+    "capturedAt": "2026-10-20T14:22:06.486Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/quiz-integrity-settings-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/quiz-integrity-settings-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "255d43cb8b0df7996a9d6c8f0ed1401c47b94eb9",
+    "width": 1440
+  },
+  "courses/quiz-presets": {
+    "capturedAt": "2026-10-20T14:20:53.673Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/quiz-presets-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/quiz-presets-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f575e16f777429a130ec8ab26f8a697e6a361b7f",
+    "width": 1440
+  },
+  "courses/quiz-progression": {
+    "capturedAt": "2026-10-20T14:22:16.108Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/quiz-progression-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/quiz-progression-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "2ea81f9a75e3c8cb4c5eef1713a4e934adc469f4",
+    "width": 1440
+  },
+  "courses/quiz-questions": {
+    "capturedAt": "2026-10-20T14:21:09.684Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/quiz-questions-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/quiz-questions-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "db56962106d30c86f9ff78f99ccd8df23000d990",
+    "width": 1440
+  },
+  "courses/quiz-results": {
+    "capturedAt": "2026-10-20T14:22:55.849Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/quiz-results-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/quiz-results-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ca694161ddf11adb298f8b4dc403ddd0ad701e56",
+    "width": 1440
+  },
+  "courses/quiz-results-settings": {
+    "capturedAt": "2026-10-20T14:21:55.603Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/quiz-results-settings-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/quiz-results-settings-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "bf6ee147dab38baaee73d7afbd9762084607baa7",
+    "width": 1440
+  },
+  "courses/quiz-save": {
+    "capturedAt": "2026-10-20T14:21:17.644Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/quiz-save-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/quiz-save-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3bd7bb2862e65ebcaaba92fe38b7f87a2488d39a",
+    "width": 1440
+  },
+  "courses/quiz-timing": {
+    "capturedAt": "2026-10-20T14:21:32.640Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/quiz-timing-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/quiz-timing-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "927b86e6f00a90f8235d504676ce60f70e22294a",
     "width": 1440
   },
   "courses/quizzes-list": {
