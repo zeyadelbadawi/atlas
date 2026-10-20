@@ -7445,6 +7445,23 @@
     "spec": "3b2a830fcf648861f513c4402b8d448e79288c9f",
     "width": 1440
   },
+  "website/contact-section-form": {
+    "capturedAt": "2026-10-20T15:31:50.488Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/website/contact-section-form-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/contact-section-form-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 813,
+    "spec": "a5e82af7ecd550690612907e146075e82e2cde30",
+    "width": 944
+  },
   "website/editor": {
     "capturedAt": "2026-10-20T15:27:41.222Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
