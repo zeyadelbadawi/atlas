@@ -1,0 +1,30 @@
+name: Cloudflare ranges
+
+# B0-OPS-04 — the origin lock in the Caddyfile admits only Cloudflare's
+# published edge ranges. If Cloudflare adds a range, visitors routed through
+# it would be dropped, so this compares the Caddyfile with
+# https://www.cloudflare.com/ips-v4 and /ips-v6 weekly and on demand, and
+# fails naming the ranges to add or remove. Read-only.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 4 * * 1'
+  pull_request:
+    paths:
+      - Caddyfile
+      - scripts/edge/check-cloudflare-ranges.mjs
+      - .github/workflows/cloudflare-ranges.yml
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - run: node scripts/edge/check-cloudflare-ranges.mjs Caddyfile
