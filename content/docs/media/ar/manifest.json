@@ -1240,6 +1240,23 @@
     "spec": "90f4ce3e2fd8084d7236d3039ad35ae8d5d75931",
     "width": 1440
   },
+  "analytics/activity-log-open": {
+    "capturedAt": "2026-10-20T15:57:39.485Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/analytics/activity-log-open-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/analytics/activity-log-open-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "bad885c6e712fd99de80481c4f289264dcd0befa",
+    "width": 1440
+  },
   "analytics/dashboard-manager": {
     "capturedAt": "2026-10-20T15:54:14.438Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -1323,6 +1340,40 @@
     ],
     "height": 900,
     "spec": "db6c2763182e32cc561d2483c66d67b9947cd8d4",
+    "width": 1440
+  },
+  "analytics/reports-quota": {
+    "capturedAt": "2026-10-20T15:57:28.176Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/analytics/reports-quota-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/analytics/reports-quota-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "7652649b345a296a9a19033d39275d7520a765d1",
+    "width": 1440
+  },
+  "analytics/reports-sharing": {
+    "capturedAt": "2026-10-20T15:57:15.993Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/analytics/reports-sharing-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/analytics/reports-sharing-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "74c21fdf3081a5d6b477ea63d3066b55865acdae",
     "width": 1440
   },
   "analytics/student-analytics-at-risk": {
