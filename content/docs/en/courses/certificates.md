@@ -58,7 +58,7 @@ Every certificate gets a serial number and a public verification code. See [How 
 New certificates use the saved template from then on. Certificates already issued keep the version they were made with until you regenerate them; see [Issue, revoke or regenerate a certificate](doc:DOC-LRN-021).
 
 > [!NOTE]
-> The certificate footer is fixed and reads "Issued via Atlas".
+> The certificate footer is fixed: it shows the serial, the issue date and the version, and reads "Issued & verified through Atlas".
 
 ## Related
 

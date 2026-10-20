@@ -33,7 +33,7 @@ Video lessons in Atlas use YouTube links. Owners, managers and the course's assi
 
 2. Enter the **Lesson Title**, open **Content Type** and choose **Video**.
 
-   ![The Content Type list in the Add Lesson dialog with Video highlighted](shot:courses/lesson-type-video)
+   ![The Add Lesson dialog with Video chosen as the content type](shot:courses/lesson-type-video)
 
 3. Paste the YouTube link into **Content URL**. Links from youtube.com and youtu.be work, including Shorts and links with a start time. When the link is recognized, the dialog shows **YouTube video detected**. If the link is broken, you'll see a message asking you to check it.
 

@@ -696,6 +696,23 @@
     "spec": "fe614dfbad3c9d0719cfbb9dc79d1f60e8ecd7da",
     "width": 1440
   },
+  "account/appearance-menu": {
+    "capturedAt": "2026-10-20T14:11:16.811Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/appearance-menu-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/appearance-menu-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "99e6703b462dff023e541f2b5b62ee122ba39425",
+    "width": 1440
+  },
   "account/change-password-form": {
     "capturedAt": "2026-10-20T14:08:14.646Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -712,6 +729,57 @@
     "height": 900,
     "spec": "074f3c822f0b909512a3a0ece13d194caa9200d4",
     "width": 1440
+  },
+  "account/delete-account-card": {
+    "capturedAt": "2026-10-20T14:11:45.487Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/delete-account-card-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/delete-account-card-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "478b01f4cd3530cf42e89ae59146af582bfd7b72",
+    "width": 1440
+  },
+  "account/delete-account-code": {
+    "capturedAt": "2026-10-20T14:12:04.733Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/delete-account-code-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/delete-account-code-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 440,
+    "spec": "3ba696038ba0dbc9ef3935e87596f2c260833750",
+    "width": 560
+  },
+  "account/delete-account-dialog": {
+    "capturedAt": "2026-10-20T14:11:54.148Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/delete-account-dialog-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/delete-account-dialog-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 528,
+    "spec": "a7fc775e0bba51caa6e2a6e0b3c9d79d871916e9",
+    "width": 560
   },
   "account/forgot-password-form": {
     "capturedAt": "2026-10-20T14:06:19.576Z",
@@ -747,6 +815,74 @@
     "spec": "5b7ec4d004e3356c55f6bd78f3af71c36d13e4ee",
     "width": 1440
   },
+  "account/invite-learner-sign-in": {
+    "capturedAt": "2026-10-20T14:12:37.017Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/invite-learner-sign-in-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/invite-learner-sign-in-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "a83d8743a2f8fd68f7e2f68bb77b13b508bc5fff",
+    "width": 1440
+  },
+  "account/invite-learner-sign-up": {
+    "capturedAt": "2026-10-20T14:12:31.344Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/invite-learner-sign-up-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/invite-learner-sign-up-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "1ce40b76ae2db7e4d88f55b32ed357daa01b5c18",
+    "width": 1440
+  },
+  "account/invite-staff-profile-menu": {
+    "capturedAt": "2026-10-20T14:12:25.225Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/invite-staff-profile-menu-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/invite-staff-profile-menu-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "a3de17ff763a670b7ee92ad569cb0319b8846642",
+    "width": 1440
+  },
+  "account/learner-profile": {
+    "capturedAt": "2026-10-20T14:11:24.181Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/learner-profile-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/learner-profile-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "4b08d9c5b622f4a393b89679660cb61098ca7d87",
+    "width": 1440
+  },
   "account/learner-security-page": {
     "capturedAt": "2026-10-20T14:08:53.912Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -764,6 +900,23 @@
     "spec": "b2b39103f9ac2d764b863a10e8d05045cf8c73a4",
     "width": 1440
   },
+  "account/phone-card": {
+    "capturedAt": "2026-10-20T14:11:31.695Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/phone-card-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/phone-card-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "64e81dc6fd767f4611f7aea6d968aae548728d8b",
+    "width": 1440
+  },
   "account/profile-menu": {
     "capturedAt": "2026-10-20T14:07:31.183Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -779,6 +932,57 @@
     ],
     "height": 900,
     "spec": "9d327e20b90c5b8861ea0571e6b38fbbbc8b159e",
+    "width": 1440
+  },
+  "account/profile-personal": {
+    "capturedAt": "2026-10-20T14:10:49.041Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/profile-personal-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/profile-personal-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3e653f2c9eb3ad216a629c3daed7fe5900c3c2eb",
+    "width": 1440
+  },
+  "account/profile-preferences": {
+    "capturedAt": "2026-10-20T14:10:57.495Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/profile-preferences-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/profile-preferences-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "7121f5c01c072657dc342e74628580b18aaee45f",
+    "width": 1440
+  },
+  "account/profile-preferences-save": {
+    "capturedAt": "2026-10-20T14:11:06.965Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/profile-preferences-save-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/profile-preferences-save-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "cea20c451831c80fac417d75f5235e3a5b25283c",
     "width": 1440
   },
   "account/remembered-devices": {
@@ -831,6 +1035,40 @@
     "height": 900,
     "spec": "308a9766e20ab8410575ed06fda5fc75f35e6796",
     "width": 1440
+  },
+  "account/session-sign-out": {
+    "capturedAt": "2026-10-20T14:10:32.621Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/session-sign-out-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/session-sign-out-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ff333820b0e88c13b4f15bc8ec75ede964b1bff7",
+    "width": 1440
+  },
+  "account/session-sign-out-confirm": {
+    "capturedAt": "2026-10-20T14:10:41.686Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/session-sign-out-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/session-sign-out-confirm-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 230,
+    "spec": "92d2b4b9318a9871b61e1efd7653e8f6a912a0ec",
+    "width": 560
   },
   "account/sessions-card": {
     "capturedAt": "2026-10-20T14:10:24.229Z",
@@ -900,6 +1138,40 @@
     "spec": "e8c5718489cb56cef5cfc7d3835985584edafc8f",
     "width": 1440
   },
+  "account/sign-in-submit": {
+    "capturedAt": "2026-10-20T14:12:10.189Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/sign-in-submit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/sign-in-submit-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "283511a14b43266243c8febd244d04945b33e75f",
+    "width": 1440
+  },
+  "account/sign-up-phone": {
+    "capturedAt": "2026-10-20T14:11:37.541Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/sign-up-phone-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/sign-up-phone-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "03c496b396c896c9a583806cfdb63dc3bd5fa562",
+    "width": 1440
+  },
   "account/two-factor-card": {
     "capturedAt": "2026-10-20T14:09:55.595Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -966,6 +1238,261 @@
     ],
     "height": 900,
     "spec": "0c4e772ab06d0bf181d71a7ccb6b33f4d664efd3",
+    "width": 1440
+  },
+  "analytics/academy-overview": {
+    "capturedAt": "2026-10-20T14:13:08.375Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/analytics/academy-overview-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/analytics/academy-overview-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "90f4ce3e2fd8084d7236d3039ad35ae8d5d75931",
+    "width": 1440
+  },
+  "analytics/activity-log-filters": {
+    "capturedAt": "2026-10-20T14:14:32.450Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/analytics/activity-log-filters-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/analytics/activity-log-filters-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e2f862bd6cefaa7949a0ceaa3e68b854f52ad335",
+    "width": 1440
+  },
+  "analytics/activity-log-open": {
+    "capturedAt": "2026-10-20T14:14:25.021Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/analytics/activity-log-open-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/analytics/activity-log-open-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "bad885c6e712fd99de80481c4f289264dcd0befa",
+    "width": 1440
+  },
+  "analytics/dashboard-manager": {
+    "capturedAt": "2026-10-20T14:13:00.734Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/analytics/dashboard-manager-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/analytics/dashboard-manager-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "5c23c9ec5f568cf199817c7ee679877855a4c3ef",
+    "width": 1440
+  },
+  "analytics/dashboard-owner": {
+    "capturedAt": "2026-10-20T14:12:44.388Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/analytics/dashboard-owner-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/analytics/dashboard-owner-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "25771992cde1171a27e3fe82a7b8aefb7ff81a6e",
+    "width": 1440
+  },
+  "analytics/dashboard-revenue-owner": {
+    "capturedAt": "2026-10-20T14:12:52.733Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/analytics/dashboard-revenue-owner-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/analytics/dashboard-revenue-owner-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "1916ac077676e092778eed80d25e869bc7905db6",
+    "width": 1440
+  },
+  "analytics/reports-integrity": {
+    "capturedAt": "2026-10-20T14:14:01.691Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/analytics/reports-integrity-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/analytics/reports-integrity-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f489166191b888406be20177a6e9be44d84ec207",
+    "width": 1440
+  },
+  "analytics/reports-open": {
+    "capturedAt": "2026-10-20T14:13:45.650Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/analytics/reports-open-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/analytics/reports-open-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "db6c2763182e32cc561d2483c66d67b9947cd8d4",
+    "width": 1440
+  },
+  "analytics/reports-quota": {
+    "capturedAt": "2026-10-20T14:14:17.511Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/analytics/reports-quota-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/analytics/reports-quota-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "7652649b345a296a9a19033d39275d7520a765d1",
+    "width": 1440
+  },
+  "analytics/reports-sharing": {
+    "capturedAt": "2026-10-20T14:14:09.657Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/analytics/reports-sharing-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/analytics/reports-sharing-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "74c21fdf3081a5d6b477ea63d3066b55865acdae",
+    "width": 1440
+  },
+  "analytics/reports-window": {
+    "capturedAt": "2026-10-20T14:13:53.873Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/analytics/reports-window-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/analytics/reports-window-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "a6c5f8124e8735a318fa786ce94ca15f19d3d238",
+    "width": 1440
+  },
+  "analytics/student-analytics-at-risk": {
+    "capturedAt": "2026-10-20T14:13:37.793Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/analytics/student-analytics-at-risk-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/analytics/student-analytics-at-risk-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "987362e2902b41b43ae6f28c63f7b707fed43436",
+    "width": 1440
+  },
+  "analytics/student-analytics-funnel": {
+    "capturedAt": "2026-10-20T14:13:22.732Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/analytics/student-analytics-funnel-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/analytics/student-analytics-funnel-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "861429f4bbe99bbe3143095b06f4db4b2abc1cb7",
+    "width": 1440
+  },
+  "analytics/student-analytics-open": {
+    "capturedAt": "2026-10-20T14:13:15.313Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/analytics/student-analytics-open-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/analytics/student-analytics-open-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "83bef459df5c5b6cb1b4905114d372a5c23f229b",
+    "width": 1440
+  },
+  "analytics/student-analytics-trends": {
+    "capturedAt": "2026-10-20T14:13:30.137Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/analytics/student-analytics-trends-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/analytics/student-analytics-trends-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ed7d9e13634d459a2d829d383db6dbd564229855",
     "width": 1440
   },
   "billing/billing-overview": {
@@ -1221,6 +1748,23 @@
     ],
     "height": 900,
     "spec": "f6c0ed0a525053cce46d45c3bf53747b7012e0f2",
+    "width": 1440
+  },
+  "courses/course-list": {
+    "capturedAt": "2026-10-20T14:15:02.376Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/course-list-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/course-list-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "bec1acd41524977fb045f518abdcaf7384599760",
     "width": 1440
   },
   "pipeline-sample/academy-home-mobile": {

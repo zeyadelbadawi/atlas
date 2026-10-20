@@ -205,7 +205,9 @@
     - click: { role: menuitem, name: course:builder.addLesson }
     - fill: { label: course:builder.lessonDialog.titleLabel, value: { en: Limits at infinity, ar: النهايات عند اللانهاية } }
     - click: { label: course:builder.lessonDialog.contentTypeLabel }
-  highlight: { role: option, name: course:contentType.video }
+    - click: { role: option, name: course:contentType.video }
+  highlight: { label: course:builder.lessonDialog.contentTypeLabel }
+  clip: dialog
 
 - key: courses/lesson-youtube-detected
   as: owner
@@ -247,7 +249,9 @@
     - click: { role: menuitem, name: course:builder.addLesson }
     - fill: { label: course:builder.lessonDialog.titleLabel, value: { en: Revision sheet, ar: ورقة المراجعة } }
     - click: { label: course:builder.lessonDialog.contentTypeLabel }
-  highlight: { role: option, name: course:contentType.file }
+    - click: { role: option, name: course:contentType.file }
+  highlight: { label: course:builder.lessonDialog.contentTypeLabel }
+  clip: dialog
 
 - key: courses/lesson-file-link
   as: owner

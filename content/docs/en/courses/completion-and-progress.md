@@ -38,6 +38,7 @@ Items open in order, unit by unit. A learner sees one of these reasons on a lock
 | **Finish the activity before this one first** | The previous lesson isn't complete, or the previous assignment isn't submitted yet. |
 | **Pass the required quiz before this one first** | An earlier quiz is set as **Required to continue** and hasn't been passed. |
 | **Your access to this course has ended** | The learner's access expired or was removed. |
+| **Opens on** a date | The item has an opening time that hasn't come yet, such as a quiz's **Opens** time. |
 
 A quiz that isn't set as **Required to continue** never holds learners back, even if they haven't taken it. See [Quiz settings](doc:DOC-LRN-015).
 

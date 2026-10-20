@@ -4,7 +4,7 @@ title: Give a learner a quiz exception
 description: Give one learner extra time, extra attempts or their own opening window on a quiz, without changing it for anyone else.
 summary: >
   On a quiz's Quiz Results page, choose Overrides to open Student overrides.
-  Pick the learner, set a time multiplier between 1 and 5, extra attempts or a
+  Pick the learner, set a time multiplier between 1 and 4, extra attempts or a
   personal window, write a reason and choose Save override. The server applies
   it when that learner starts an attempt. Remove it to return the learner to
   the quiz's own settings.
@@ -30,7 +30,7 @@ An exception (override) changes a quiz for one learner only, for example extra t
    ![The Student overrides panel with the add or update form](shot:courses/overrides-sheet)
 
 3. Choose the **Student**, then set what they need:
-   - **Time multiplier**: 1 keeps the normal time limit, 1.5 gives 50% more time. It must be between 1 and 5.
+   - **Time multiplier**: 1 keeps the normal time limit, 1.5 gives 50% more time. It must be between 1 and 4: the form accepts up to 5, but the server refuses anything above 4.
    - **Extra attempts**: added to the quiz's maximum.
    - **Available from** and **Available until**: a personal window. Leave both empty to keep the quiz's window.
    - **Reason**: why the learner gets the exception, under 500 characters.

@@ -84,7 +84,7 @@ Before you save, choose **Preview as student** to see the quiz the way a learner
 | Preset | What it sets |
 |---|---|
 | **Practice** | No time limit, results and answers shown immediately, nothing recorded. Good for self-checks. |
-| **Exam** | 30-minute limit, one question per page, score after the due date, answers never shown, and learners warned about recorded events. |
+| **Exam** | 30-minute limit, one question per page, questions shuffled, the latest attempt kept, score after the due date, answers never shown, integrity set to **Warn** (learners warned about recorded events) and full screen required. |
 
 Every setting is explained in [Quiz settings](doc:DOC-LRN-015).
 

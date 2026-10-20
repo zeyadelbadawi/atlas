@@ -21,7 +21,7 @@ Certificate verification lets an employer, a school or anyone else check that a 
 
 ## Where the code is
 
-Each certificate carries a verification code of letters and digits. Learners find it on their certificate in the academy site, with **Copy code** and **Copy verification link** buttons. The letters I, L and O are never used in codes, so they can't be confused with 1 and 0.
+Each certificate carries a verification code of letters and digits. Learners find it on their certificate in the academy site, with **Copy code** and **Copy verification link** buttons. The letters I, L, O and U are never used in codes, so they can't be confused with 1, 0 or V.
 
 ## Check a certificate
 

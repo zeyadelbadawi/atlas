@@ -27,7 +27,7 @@ Use a link lesson when the material lives on another site: a video on Vimeo, a f
 
 2. Enter the **Lesson Title**, open **Content Type** and choose **File** for a document, or **Video** for a video on another site.
 
-   ![The Content Type list with File highlighted](shot:courses/lesson-type-file)
+   ![The Add Lesson dialog with File chosen as the content type](shot:courses/lesson-type-file)
 
 3. Paste the full web address, starting with https://, into **Content URL**.
 

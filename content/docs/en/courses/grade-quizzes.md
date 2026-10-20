@@ -7,7 +7,7 @@ summary: >
   status and grading state. Open an attempt to see the learner's answers,
   enter points for each essay under Manual grading and choose Save grades; the
   attempt is finalised once every essay is graded. Void attempt cancels an
-  attempt and gives the learner the attempt back.
+  attempt and removes its result; the reason is recorded.
 type: step-by-step
 audience: [instructor, manager, owner]
 order: 14
@@ -41,7 +41,7 @@ The course's assigned instructors, the owner and managers can review attempts. O
 
 - When every manual grade is in, the attempt is finalised and the score is computed. Until then, the learner sees the attempt as awaiting grading.
 - The finalised score counts towards completion and certificates according to the quiz's **Score to keep** setting.
-- A voided attempt is marked invalid, loses its result, and is given back to the learner so they can start a new one. The reason is recorded, and voiding can't be undone.
+- A voided attempt is marked invalid and loses its result. The reason is recorded, and voiding can't be undone. The voided attempt still counts towards the learner's **Max attempts**: to let them try again, give them an extra attempt with a [quiz exception](doc:DOC-LRN-018).
 
 > [!NOTE]
 > There is no gradebook export. The only export on Quiz Results is the integrity CSV; see [Integrity report and CSV export](doc:DOC-LRN-025).
