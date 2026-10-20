@@ -114,13 +114,13 @@
   as: learner
   surface: academy
   path: /my/courses/{courseId}/activities/{quizId}
-  waitFor: { text: learning:quiz.intro.passingScore }
+  waitFor: { text: learning:quiz.intro.gradingPolicy }
 
 - key: for-learners/quiz-start
   as: learner
   surface: academy
   path: /my/courses/{courseId}/activities/{quizId}
-  waitFor: { text: learning:quiz.intro.passingScore }
+  waitFor: { text: learning:quiz.intro.gradingPolicy }
   actions:
     - scroll: { testId: quiz-start }
   highlight: { testId: quiz-start }
