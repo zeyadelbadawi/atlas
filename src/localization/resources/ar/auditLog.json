@@ -556,6 +556,7 @@
     "domain": {
       "custom_domain_added": "{{actor}} ربط النطاق «{{target}}»",
       "custom_domain_removed": "{{actor}} ألغى ربط النطاق «{{target}}»",
+      "subdomain_changed": "{{actor}} نقل عنوان الموقع إلى «{{target}}»، وأصبح العنوان القديم يحوّل إليه",
       "verification_checked": "{{actor}} فحص النطاق «{{target}}»",
       "platform_check": "أطلس فحص النطاق «{{target}}»",
       "platform_release": "أطلس حرّر النطاق «{{target}}»"

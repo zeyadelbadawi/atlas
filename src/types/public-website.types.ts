@@ -16,6 +16,14 @@ export interface HostnameResolution {
   readonly academyLogo?: string;
   /** P63 — the one host this website advertises (connected custom domain, otherwise the Atlas subdomain). The public runtime sets `rel="canonical"` to it and moves a visitor on the other host there. */
   readonly canonicalHost?: string;
+  /**
+   * Present only when this host is one of the Academy's OLD addresses (its
+   * slug changed; the old address is kept and redirects): the host to move
+   * the visitor to, same path and query. The backend computes it from the
+   * Academy's own canonical host, never from the request. The SPA follows
+   * it with `location.replace`, the server renderer with a 301.
+   */
+  readonly redirectHost?: string;
   /** The Academy's own favicon, when it has one: linked as `public/websites/:academyId/favicon?v=<faviconVersion>`. Absent: the platform's default icon stays. */
   readonly faviconVersion?: string;
   /**

@@ -556,6 +556,7 @@
     "domain": {
       "custom_domain_added": "{{actor}} connected the domain “{{target}}”",
       "custom_domain_removed": "{{actor}} disconnected the domain “{{target}}”",
+      "subdomain_changed": "{{actor}} moved the website address to “{{target}}”; the old address now redirects there",
       "verification_checked": "{{actor}} checked the domain “{{target}}”",
       "platform_check": "Atlas checked the domain “{{target}}”",
       "platform_release": "Atlas released the domain “{{target}}”"

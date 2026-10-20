@@ -44,6 +44,29 @@ export function resolveCanonicalRedirect(
   return `https://${target}${location.pathname}${location.search}${location.hash}`;
 }
 
+/** A bare hostname (letters, digits, hyphens, dots) — anything else is never a redirect target. */
+const HOSTNAME_PATTERN = /^(?=.{1,253}$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/;
+
+/**
+ * Slug change — the absolute URL an Academy's OLD address moves to (the
+ * resolution's `redirectHost`, the Academy's canonical host as the backend
+ * computed it), or `null` to stay. Unlike the canonical-host move this is
+ * not a preference between two live hosts: the old address only redirects,
+ * so it is followed at once (no reachability probe), for signed-in visitors
+ * too. Same path, query and hash; same exceptions (local development, the
+ * Google return path). Defence in depth: a target that is not a plain
+ * hostname is ignored, so this can never become an open redirect.
+ */
+export function resolveMovedHostRedirect(
+  location: CanonicalRedirectLocation,
+  redirectHost: string | undefined,
+  isDevelopment: boolean
+): string | null {
+  const target = redirectHost?.toLowerCase();
+  if (!target || !HOSTNAME_PATTERN.test(target)) return null;
+  return resolveCanonicalRedirect(location, target, isDevelopment);
+}
+
 /** Origin for `<link rel="canonical">`: the canonical host when known, else the current origin. */
 export function resolveCanonicalOrigin(
   currentOrigin: string,

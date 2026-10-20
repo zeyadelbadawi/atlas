@@ -34,7 +34,7 @@ You started a new academy and one of these appears:
 | Setup hasn't made progress | One stage is taking longer than expected. |
 | Provisioning could not be completed | A stage failed. The stages that finished stay finished. |
 | Branding could not be applied | The academy was created, but your logo or colours weren't applied. |
-| Address taken, reserved or assigned | Each Atlas address belongs to one academy, and some words are reserved by Atlas. |
+| Address taken, reserved or assigned | Each Atlas address belongs to one academy, and some words are reserved by Atlas. An address an academy used before it changed its address stays reserved for that academy too. |
 | "This address is already being set up from another tab or an earlier attempt." | You already started a setup with this address. |
 | Academy limit reached | Your plan allows a limited number of academies and you are using them all. |
 | Setup refused with a subscription message | Creating an academy needs an active trial or subscription. |
@@ -63,7 +63,7 @@ If you don't want this academy any more, choose **Cancel provisioning**. "This r
 2. If it says "Already taken" or "This address is reserved", change the address until it says "Available".
 3. If it says the address is already being set up, choose **Follow that setup** instead of starting again.
 
-You can connect your own domain later, so the Atlas address doesn't need to be perfect.
+The Atlas address doesn't need to be perfect: the organization owner can change it later (the old address then sends visitors to the new one), and you can connect your own domain. See [Your academy web address](doc:DOC-ACD-005).
 
 ### Academy limit or subscription
 

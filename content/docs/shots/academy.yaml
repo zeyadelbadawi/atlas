@@ -141,6 +141,26 @@
     - wait: 2000
   highlight: { label: provisioning:start.subdomainLabel }
 
+# Changing the address: typed only, never saved (the capture must not move
+# the demo academy). The note under the field appears once it differs.
+- key: academy/settings-slug
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:settings.general }
+  actions:
+    - fill: { label: academy:create.slugLabel, value: nour-academy-new }
+  highlight: { label: academy:create.slugLabel }
+
+- key: academy/settings-slug-save
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/settings
+  waitFor: { text: academy:settings.general }
+  actions:
+    - fill: { label: academy:create.slugLabel, value: nour-academy-new }
+  highlight: { role: button, name: academy:settings.saveButton }
+
 # --- Connect your own domain (DOC-ACD-006) ----------------------------------
 
 - key: academy/domain-tab

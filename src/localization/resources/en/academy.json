@@ -101,7 +101,9 @@
     "success": "Settings updated successfully",
     "error": "Failed to update settings",
     "unsavedChanges": "You have unsaved settings changes. Are you sure you want to leave?",
-    "slugOwnerOnly": "Only the organization owner can change the web address."
+    "slugOwnerOnly": "Only the organization owner can change the web address.",
+    "slugMoveHelp": "Your academy's address on Atlas (lowercase letters, numbers and hyphens). Changing it moves your website to the new address. The old address keeps working: it sends visitors to the new one and stays reserved for you.",
+    "slugMoveNotice": "When you save, your website moves to this new address and links to the old address will open it. A custom domain you connected stays your main address."
   },
   "branding": {
     "title": "Academy Branding",
