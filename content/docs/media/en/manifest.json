@@ -713,6 +713,23 @@
     "spec": "5b7ec4d004e3356c55f6bd78f3af71c36d13e4ee",
     "width": 1440
   },
+  "account/reset-link-invalid": {
+    "capturedAt": "2026-10-20T14:06:55.864Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/account/reset-link-invalid-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/account/reset-link-invalid-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "65fed7d71dbdc3341dfb7402e26f5ffee4288118",
+    "width": 1440
+  },
   "account/sign-in-academy": {
     "capturedAt": "2026-10-20T14:05:51.496Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
