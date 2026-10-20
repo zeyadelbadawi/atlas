@@ -50,6 +50,8 @@ first lesson. The course is now listed in **My Courses** with a
 
 If you see "We couldn't enroll you in this course. Please try again." and it
 keeps happening, contact the academy. Enrolling a second time does no harm.
+If the message adds that the academy didn't approve your registration, you
+can apply again ([Sign up and join an academy](doc:DOC-LRN-030)).
 
 > [!NOTE]
 > Your account must belong to this academy. If you learn at another academy

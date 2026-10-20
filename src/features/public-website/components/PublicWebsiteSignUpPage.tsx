@@ -102,7 +102,14 @@ export function PublicWebsiteSignUpPage({
   const { t } = useTranslation();
   usePublicWebsiteDocumentDirection(locale);
   const data = usePublicWebsiteData(lookupKey);
-  const [step, setStep] = useState<SignUpStep>({ kind: 'register' });
+  const [searchParams] = useSearchParams();
+  // `?join=1` — "Apply again" from the learner dashboard of someone this
+  // academy did not admit: straight to the existing-account join step.
+  const [step, setStep] = useState<SignUpStep>(() =>
+    searchParams.get('join') === '1'
+      ? { kind: 'join', reason: 'proactive' }
+      : { kind: 'register' }
+  );
   const {
     signIn,
     completeTwoFactor,
@@ -116,7 +123,6 @@ export function PublicWebsiteSignUpPage({
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
   const buildHref = usePublicWebsiteHrefBuilder(locale);
   const defaultLocale = usePublicWebsiteDefaultLocale();
-  const [searchParams] = useSearchParams();
   const { session } = useAuth();
   const { signOut } = useSignOut();
 

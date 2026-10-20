@@ -76,6 +76,18 @@ Some academies review every new student. After you sign up you see
 "Your request to join … has been sent. You'll be able to sign in once the
 academy approves it." Wait for the academy, or contact it.
 
+Signed in while you wait, My Learn shows **Your membership is awaiting
+approval**.
+
+## If the academy didn't approve you
+
+You get an email saying so, and when you sign in My Learn shows
+**You haven't been admitted to this academy**. You can't open or buy its
+courses. To try again, choose **Apply again**: you are signed out and the
+sign-up page asks for your Atlas account's email and password. The academy's
+rules apply again: you may wait for approval, need an invitation, or get in
+straight away.
+
 ## If the academy uses invitations
 
 Some academies only accept students with an invitation link. Without one,

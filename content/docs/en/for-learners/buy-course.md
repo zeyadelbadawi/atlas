@@ -69,6 +69,12 @@ How long the review takes depends on the academy.
   setting up payments. Try again later or contact the academy.
 - **You already own this course** means you are already enrolled: choose
   **Go to course**.
+- **You can't buy courses here yet** means the academy didn't approve your
+  registration. You can apply again
+  ([Sign up and join an academy](doc:DOC-LRN-030)).
+- **Waiting for the academy to approve you?** You can still buy. You get
+  into the course once the academy has approved both your payment and your
+  membership.
 
 > [!LIMITATION]
 > Atlas doesn't take card payments or coupon codes for these courses, and it

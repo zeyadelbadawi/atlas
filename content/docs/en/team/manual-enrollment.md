@@ -16,7 +16,7 @@ keywords: [manual enrollment, give course access, access expiry, cash payment, m
 updated: 2026-10-20
 ---
 
-Use manual enrollment when a learner paid you outside Atlas (cash at the center, for example) or when you want to give them a course. The owner and managers can do this. The learner must already be on your **Students** tab: if they aren't, the owner can [add them](doc:DOC-ORG-004) first.
+Use manual enrollment when a learner paid you outside Atlas (cash at the center, for example) or when you want to give them a course. The owner and managers can do this. The learner must already be on your **Students** tab with the status **Active**: if they aren't on it, the owner can [add them](doc:DOC-ORG-004) first.
 
 ## Give access to a course
 
@@ -60,7 +60,7 @@ A learner counts once toward your plan's student limit, as soon as they hold a c
 > [!NOTE]
 > You can't enroll a blocked learner. Unblock them first. The course list shows only courses the learner isn't already enrolled in.
 >
-> A learner who is **Pending approval** (or **Inactive** after a rejection) can be enrolled, but they can't open the course until their membership is **Active**.
+> You can't enroll a learner who is **Pending approval**, or **Rejected**, either: **Enroll in a course** stays unavailable and their details say **Approve this student before enrolling them in a course.** [Approve them](doc:DOC-ORG-007) first, then enroll them.
 
 ## Related articles
 

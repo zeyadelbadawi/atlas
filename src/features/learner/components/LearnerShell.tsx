@@ -27,6 +27,7 @@ import { isPathActive } from '@app/routes/route-paths';
 import { SectionLoader } from '@components/loading';
 import { cn } from '@utils';
 import { LearnerBottomNav } from './LearnerBottomNav';
+import { LearnerMembershipNotice } from './LearnerMembershipNotice';
 import { LearnerNavigationDrawer } from './LearnerNavigationDrawer';
 import { LearnerNotificationBell } from './LearnerNotificationBell';
 import { LearnerNavigationList } from './LearnerNavigationList';
@@ -91,6 +92,9 @@ export function LearnerShell(): JSX.Element {
               `SectionLoader` is already a `role="status"` live region, so
               a lazily arriving section is announced rather than appearing
               in silence. */}
+          {/* Not admitted yet (pending) or not admitted (rejected): said
+              once, above whichever section is open. */}
+          <LearnerMembershipNotice />
           <Suspense fallback={<SectionLoader />}>
             <Outlet />
           </Suspense>

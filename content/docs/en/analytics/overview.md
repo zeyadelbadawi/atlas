@@ -63,7 +63,7 @@ For each order and payment one by one, the owner uses **Course orders**. See [Tr
 **Academy Overview** in the sidebar opens one academy's page. Its cards show:
 
 - **Total Members**: people on the academy's team, including the owner. Learners aren't counted here.
-- **Active Staff**: team members with the older Staff role only. Managers and instructors aren't counted here, so it is usually 0.
+- **Active Staff**: active members of the academy's team, whatever their role: the owner, managers and instructors. Team members you removed aren't counted.
 - **Active Instructors** and **Published Courses**.
 
 The owner also sees **Recent Activity** for this academy, with **View full activity log**.

@@ -218,7 +218,7 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-function renderPage(language: 'en' | 'ar' = 'en') {
+function renderPage(language: 'en' | 'ar' = 'en', entry = '/sign-up') {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   });
@@ -227,7 +227,7 @@ function renderPage(language: 'en' | 'ar' = 'en') {
       <I18nextProvider i18n={createI18nInstance(language)}>
         <ToastContext.Provider value={toastValue}>
           <div dir={language === 'ar' ? 'rtl' : 'ltr'} data-testid="root">
-            <MemoryRouter initialEntries={['/sign-up']}>
+            <MemoryRouter initialEntries={[entry]}>
               <Routes>
                 <Route
                   path="/sign-up"
@@ -520,6 +520,14 @@ describe('smart academy signup — existing account', () => {
     await user.click(screen.getByRole('button', { name: 'Join with it' }));
     await user.click(screen.getByRole('button', { name: 'Back to sign up' }));
     expect(screen.getByLabelText('Full Name')).toBeTruthy();
+  });
+
+  it('opens straight on the join step from "Apply again" (?join=1)', async () => {
+    renderPage('en', '/sign-up?join=1');
+    expect(
+      await screen.findByText('Join with your Atlas account')
+    ).toBeTruthy();
+    expect(screen.queryByLabelText('Full Name')).toBeNull();
   });
 
   it('renders the join step in Arabic, right-to-left', async () => {

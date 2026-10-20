@@ -22,7 +22,7 @@ import { LEARNER_ROUTES, buildPath } from '@app/routes/route-paths';
 import { toast } from '@/hooks/use-toast';
 import { usePublicCourse, usePublicCourseCurriculum, useAuth } from '@hooks';
 import { DEV_OVERRIDE_PARAM } from '@features/public-website';
-import { learningStateOf } from '@utils';
+import { hasMessageKey, learningStateOf } from '@utils';
 import { useEnrollment, useEnroll } from '@features/learning';
 import type { PublicWebsiteLocale } from '@types';
 import { usePublicWebsiteDefaultLocale } from './PublicWebsiteLocaleContext';
@@ -114,10 +114,15 @@ export function useCourseDetails(
       navigate(
         buildHref(buildPath(LEARNER_ROUTES.courseProgress, { courseId }))
       );
-    } catch {
+    } catch (error) {
       setEnrollError(true);
       toast({
         title: t('website:renderer.courseDetails.enrollError'),
+        // The academy rejected this learner's registration: say so, and
+        // that they can apply again, rather than a bare failure.
+        ...(hasMessageKey(error, 'errors.academy.registrationRejected')
+          ? { description: t('errors:academy.registrationRejected') }
+          : {}),
         variant: 'destructive',
       });
     }

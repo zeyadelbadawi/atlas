@@ -29,6 +29,9 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { I18nextProvider } from 'react-i18next';
 import { createI18nInstance } from '@/localization/i18n';
+import enAcademy from '@/localization/resources/en/academy.json';
+import arAcademy from '@/localization/resources/ar/academy.json';
+import { getRosterErrorKey } from './utils/academy-roster.utils';
 import type {
   AcademyRosterQuery,
   AcademyRosterStudent,
@@ -88,6 +91,13 @@ function detailFor(
 }
 
 let detail: AcademyStudentDetail = detailFor('academy');
+
+/** The drawer's learner in a given membership state, viewed by a manager. */
+function detailWithStudent(
+  overrides: Partial<AcademyRosterStudent>
+): AcademyStudentDetail {
+  return { ...detailFor('academy'), student: { ...rows[0], ...overrides } };
+}
 
 /* ------------------------------------------------------------------ *
  * Mocks — the roster hooks are the seam; the network is not under test.
@@ -387,4 +397,143 @@ describe('AcademyStudentsTab', () => {
     },
     INTERACTION_TIMEOUT
   );
+});
+
+/*
+  Fix round (20 Oct 2026) — a rejection is not final, and an enrollment
+  cannot be granted to someone who is not an active member:
+   - a REJECTED learner (inactive, not blocked) can be approved from the
+     drawer; a rejected learner who is also blocked cannot (the block
+     decides) — the backend enforces both (`isRejectedRegistration`);
+   - Enroll is unavailable for a pending or rejected learner, and says
+     why; the backend refuses it with `errors.academy.studentNotApproved`,
+     which maps to its own translated copy.
+*/
+describe('AcademyStudentDrawer — approval and enrollment by membership state', () => {
+  async function openDrawer() {
+    const user = userEvent.setup(USER_EVENT_OPTIONS);
+    renderTab();
+    await user.click(
+      screen.getAllByRole('button', { name: /Layla Hassan/ })[0]
+    );
+    await screen.findByRole('dialog');
+    return user;
+  }
+
+  const enrollButton = () =>
+    screen.getByRole('button', {
+      name: /Enroll in a course/,
+    }) as HTMLButtonElement;
+
+  it(
+    'offers Approve (and no Reject) for a rejected learner, and disables Enroll with the reason',
+    async () => {
+      detail = detailWithStudent({
+        membershipStatus: 'inactive',
+        blocked: false,
+      });
+      const user = await openDrawer();
+
+      expect(screen.queryByRole('button', { name: /^Reject$/ })).toBeNull();
+      expect(enrollButton().disabled).toBe(true);
+      expect(
+        screen.getByText(
+          'Approve this student before enrolling them in a course.'
+        )
+      ).toBeTruthy();
+
+      await user.click(screen.getByRole('button', { name: /^Approve$/ }));
+      expect(idleMutation.mutate).toHaveBeenCalledWith(
+        { userId: 'u1' },
+        expect.anything()
+      );
+    },
+    INTERACTION_TIMEOUT
+  );
+
+  it(
+    'offers Approve and Reject for a pending learner, and disables Enroll',
+    async () => {
+      detail = detailWithStudent({ membershipStatus: 'pending' });
+      await openDrawer();
+
+      expect(screen.getByRole('button', { name: /^Approve$/ })).toBeTruthy();
+      expect(screen.getByRole('button', { name: /^Reject$/ })).toBeTruthy();
+      expect(enrollButton().disabled).toBe(true);
+    },
+    INTERACTION_TIMEOUT
+  );
+
+  it(
+    'offers no Approve for a rejected learner who is blocked — only Unblock',
+    async () => {
+      detail = detailWithStudent({
+        membershipStatus: 'inactive',
+        blocked: true,
+      });
+      await openDrawer();
+
+      expect(screen.queryByRole('button', { name: /^Approve$/ })).toBeNull();
+      expect(screen.getByRole('button', { name: /^Unblock$/ })).toBeTruthy();
+      expect(enrollButton().disabled).toBe(true);
+      expect(
+        screen.queryByText(
+          'Approve this student before enrolling them in a course.'
+        )
+      ).toBeNull();
+    },
+    INTERACTION_TIMEOUT
+  );
+
+  it(
+    'keeps Enroll available for an active learner, with nothing to approve',
+    async () => {
+      await openDrawer();
+
+      expect(screen.queryByRole('button', { name: /^Approve$/ })).toBeNull();
+      expect(enrollButton().disabled).toBe(false);
+    },
+    INTERACTION_TIMEOUT
+  );
+
+  it('maps the backend refusal of an enrollment to its own copy in both languages', () => {
+    expect(
+      getRosterErrorKey({
+        kind: 'conflict',
+        messageKey: 'errors.academy.studentNotApproved',
+      })
+    ).toBe('academy:students.errors.studentNotApproved');
+    expect(enAcademy.students.errors.studentNotApproved).toMatch(
+      /Approve them first/
+    );
+    expect(arAcademy.students.errors.studentNotApproved).toBeTruthy();
+  });
+
+  it(
+    'labels a rejected learner Rejected — in the drawer, and as the status filter option',
+    async () => {
+      detail = detailWithStudent({
+        membershipStatus: 'inactive',
+        blocked: false,
+      });
+      await openDrawer();
+      const drawer = screen.getByRole('dialog');
+      expect(drawer.textContent).toContain('Rejected');
+      expect(
+        screen.getByRole('option', { name: 'Rejected', hidden: true })
+      ).toBeTruthy();
+      expect(arAcademy.students.status.inactive).toBe('مرفوض');
+    },
+    INTERACTION_TIMEOUT
+  );
+
+  it('tells staff a rejected learner can come back, in both languages', () => {
+    expect(enAcademy.students.reject.description).toContain('register again');
+    expect(enAcademy.students.reject.description).toContain(
+      'approve them later'
+    );
+    expect(arAcademy.students.reject.description).toContain(
+      'الموافقة عليه لاحقاً'
+    );
+  });
 });

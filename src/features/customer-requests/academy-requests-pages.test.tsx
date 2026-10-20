@@ -373,7 +373,7 @@ describe('My Requests', () => {
   it('tells a manager who can use requests, and fetches nothing', async () => {
     renderAt(LIST_PATH, { role: 'manager' });
     expect(
-      await screen.findByText('Only owners and administrators can see requests')
+      await screen.findByText('Only the academy owner can see requests')
     ).toBeTruthy();
     expect(list).not.toHaveBeenCalled();
     expect(screen.queryByTestId('new-customer-request')).toBeNull();

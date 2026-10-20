@@ -67,6 +67,7 @@ import {
   getRosterSourceLabelKey,
   getRosterStatusLabelKey,
   getRosterStatusTone,
+  isRejectedRegistration,
 } from '../utils/academy-roster.utils';
 import {
   BlockStudentDialog,
@@ -138,6 +139,14 @@ export function AcademyStudentDrawer({
 
   const student = data?.student;
   const canManage = data?.viewerScope === 'academy';
+  // A rejected registration is not final: the same Approve admits them.
+  const isPending = student?.membershipStatus === 'pending';
+  const isRejected = !!student && isRejectedRegistration(student);
+  // Learning access needs an active membership, so the backend refuses an
+  // enrollment for a pending or rejected learner (`studentNotApproved`).
+  // (A blocked learner's Enroll is disabled for that reason instead.)
+  const needsApproval =
+    !!student && !student.blocked && student.membershipStatus !== 'active';
   const activeCourseIds =
     data?.enrollments.filter((e) => e.isActive).map((e) => e.courseId) ?? [];
 
@@ -365,32 +374,32 @@ export function AcademyStudentDrawer({
                 className="flex flex-wrap gap-2"
                 data-testid="student-actions"
               >
-                {student.membershipStatus === 'pending' ? (
-                  <>
-                    <Button
-                      type="button"
-                      size="sm"
-                      disabled={isActing}
-                      onClick={handleApprove}
-                    >
-                      {approve.isPending ? (
-                        <Loader2 className="size-4 animate-spin" aria-hidden />
-                      ) : (
-                        <Check className="size-4" aria-hidden />
-                      )}
-                      {t('academy:students.actions.approve')}
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      disabled={isActing}
-                      onClick={() => void handleReject()}
-                    >
-                      <X className="size-4" aria-hidden />
-                      {t('academy:students.actions.reject')}
-                    </Button>
-                  </>
+                {isPending || isRejected ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={isActing}
+                    onClick={handleApprove}
+                  >
+                    {approve.isPending ? (
+                      <Loader2 className="size-4 animate-spin" aria-hidden />
+                    ) : (
+                      <Check className="size-4" aria-hidden />
+                    )}
+                    {t('academy:students.actions.approve')}
+                  </Button>
+                ) : null}
+                {isPending ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={isActing}
+                    onClick={() => void handleReject()}
+                  >
+                    <X className="size-4" aria-hidden />
+                    {t('academy:students.actions.reject')}
+                  </Button>
                 ) : null}
                 {student.blocked ? (
                   <Button
@@ -420,12 +429,23 @@ export function AcademyStudentDrawer({
                   type="button"
                   size="sm"
                   variant="secondary"
-                  disabled={isActing || student.blocked}
+                  disabled={isActing || student.blocked || needsApproval}
+                  aria-describedby={
+                    needsApproval ? 'student-approve-before-enroll' : undefined
+                  }
                   onClick={() => setIsEnrollOpen(true)}
                 >
                   <BookPlus className="size-4" aria-hidden />
                   {t('academy:students.actions.enroll')}
                 </Button>
+                {needsApproval ? (
+                  <p
+                    id="student-approve-before-enroll"
+                    className="w-full text-xs text-muted-foreground"
+                  >
+                    {t('academy:students.drawer.approveBeforeEnroll')}
+                  </p>
+                ) : null}
               </div>
             ) : (
               <p className="text-xs text-muted-foreground">
