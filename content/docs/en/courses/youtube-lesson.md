@@ -4,7 +4,7 @@ title: Add a YouTube video lesson
 description: Paste a YouTube link as a lesson, check what learners see, and understand the limit that the YouTube link itself can be copied.
 summary: >
   To add a video lesson, choose Add content then Add Lesson in the Course
-  Builder, set Content Type to Video and paste a YouTube link to a Public or
+  Builder, keep Content Type on Video and paste a YouTube link to a Public or
   Unlisted video that allows embedding. The dialog shows YouTube video
   detected. Learners watch it inside the lesson with their personal watermark,
   but the video stays on YouTube and its link can be copied out.
@@ -31,7 +31,7 @@ Video lessons in Atlas use YouTube links. Owners, managers and the course's assi
 
    ![The Add content menu with Add Lesson highlighted](shot:courses/add-content-menu)
 
-2. Enter the **Lesson Title**, open **Content Type** and choose **Video**.
+2. Enter the **Lesson Title**. **Content Type** is already **Video**: a new lesson starts as a video.
 
    ![The Add Lesson dialog with Video chosen as the content type](shot:courses/lesson-type-video)
 

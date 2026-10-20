@@ -58,7 +58,7 @@ Owners, managers and the course's assigned instructors can change a quiz's setti
 | Setting | What it does |
 |---|---|
 | **Passing score (%)** | The percentage needed to pass. Empty means no pass mark: every submitted attempt counts as passed. |
-| **Max attempts** | How many attempts a learner may start. Empty means unlimited. |
+| **Max attempts** | How many attempts a learner may start. Empty means unlimited. A voided attempt doesn't count. |
 | **Time limit (minutes)** | When time runs out, the saved answers are submitted automatically and graded as they are. Empty means no limit. |
 | **Required for course completion** | Counts towards the course completion rule when **Required quizzes** is on in Course Settings. |
 

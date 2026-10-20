@@ -56,7 +56,7 @@ Owners and managers can edit any course's curriculum. An instructor can edit the
 | Content Type | Use it for | What learners see |
 |---|---|---|
 | **Video** with a YouTube link | Your teaching videos | The video plays inside the lesson with the learner's personal watermark. See [Add a YouTube video lesson](doc:DOC-LRN-006). |
-| **File** with an uploaded file | Worksheets and notes as PDF or images | **Upload file** under **Lesson file** (PDF or image, up to 20 MB). Only learners enrolled in the course can open it, through a link that expires. Uploading is for owners and managers. |
+| **File** with an uploaded file | Worksheets and notes as PDF or images | **Upload file** under **Lesson file** (PDF or image, up to 20 MB). Only learners enrolled in the course can open it, through a link that expires. Uploading is for owners and managers: an instructor sees a note instead of the button. |
 | **Video** or **File** with any other link | Vimeo, Google Drive, a website | The link opens in a new tab, outside the academy. Anyone with the link can open it. See [Add a link lesson](doc:DOC-LRN-007). |
 
 Add the link or file before you publish a lesson: a published lesson with nothing to open doesn't count towards publishing the course.
