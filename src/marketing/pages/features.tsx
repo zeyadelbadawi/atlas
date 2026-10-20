@@ -19,7 +19,6 @@ const GROUP_SHOTS: Record<string, ScreenshotKey> = {
   lessons: 'course-builder',
   assessments: 'quiz-builder',
   students: 'students-list',
-  team: 'dashboard-overview',
 };
 
 function FeaturesPage({ env }: { env: PageEnv }) {

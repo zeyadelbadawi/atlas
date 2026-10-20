@@ -13,12 +13,14 @@ import sys
 from pathlib import Path
 from PIL import Image
 
+# Only the screens the site shows. Left out on purpose (SPEC D.1/A.10):
+# dashboard-overview (revenue widget), learner-course-player (text lesson),
+# reports (protection signals / empty cohort months), signup.
 DESKTOP = {
-    'dashboard-overview', 'course-builder', 'quiz-builder', 'website-editor',
-    'academy-site-home', 'academy-site-course', 'payments-review',
-    'payment-methods', 'students-list', 'learner-course-player', 'reports',
+    'course-builder', 'quiz-builder', 'website-editor', 'academy-site-home',
+    'academy-site-course', 'payments-review', 'payment-methods', 'students-list',
 }
-MOBILE = {'academy-site-home-mobile', 'learner-course-player-mobile'}
+MOBILE = {'academy-site-home-mobile'}
 DESKTOP_WIDTHS = (640, 960, 1280, 1600)
 MOBILE_WIDTHS = (390, 780)
 

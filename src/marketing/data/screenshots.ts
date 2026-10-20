@@ -42,7 +42,6 @@ function mobile(key: string): Record<MarketingLang, ScreenshotAsset> {
 }
 
 export const SCREENSHOTS = {
-  'dashboard-overview': desktop('dashboard-overview'),
   'course-builder': desktop('course-builder'),
   'quiz-builder': desktop('quiz-builder'),
   'website-editor': desktop('website-editor'),
@@ -52,9 +51,6 @@ export const SCREENSHOTS = {
   'payments-review': desktop('payments-review'),
   'payment-methods': desktop('payment-methods'),
   'students-list': desktop('students-list'),
-  'learner-course-player': desktop('learner-course-player'),
-  'learner-course-player-mobile': mobile('learner-course-player-mobile'),
-  reports: desktop('reports'),
 } as const satisfies Record<string, Record<MarketingLang, ScreenshotAsset>>;
 
 export type ScreenshotKey = keyof typeof SCREENSHOTS;
