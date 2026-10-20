@@ -526,6 +526,13 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 			import ssr_proxy
 		}
 		handle {
+			# B1-4 — on the platform host everything that reaches the app
+			# shell is the app itself (sign-in, registration, dashboards):
+			# the marketing pages, root files and branded 404s were all
+			# answered above. Keep it out of search results so only the
+			# marketing site is indexed. Academy subdomains are untouched.
+			@platform_app host atlass.dpdns.org www.atlass.dpdns.org
+			header @platform_app X-Robots-Tag "noindex, follow"
 			try_files {path} /index.html
 			file_server
 		}

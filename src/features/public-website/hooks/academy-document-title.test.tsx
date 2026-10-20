@@ -22,10 +22,10 @@ import { buildSsrDocument } from '@/ssr/ssr-document';
 
 const ATLAS_HEAD = `
   <title>Atlas</title>
-  <meta name="description" content="The operating system for education businesses." />
+  <meta name="description" content="Your own teaching academy online, under your name." />
   <meta property="og:title" content="Atlas" />
-  <meta property="og:description" content="The operating system for education businesses." />
-  <meta name="twitter:description" content="The operating system for education businesses." />`;
+  <meta property="og:description" content="Your own teaching academy online, under your name." />
+  <meta name="twitter:description" content="Your own teaching academy online, under your name." />`;
 
 const description = () =>
   Array.from(document.head.querySelectorAll('meta[name="description"]')).map(
@@ -62,7 +62,7 @@ describe('useAcademyHeadDefaults', () => {
     unmount();
     expect(document.title).toBe('Atlas');
     expect(description()).toEqual([
-      'The operating system for education businesses.',
+      'Your own teaching academy online, under your name.',
     ]);
   });
 
@@ -181,6 +181,6 @@ describe('Coming Soon', () => {
       'content="Elzozo Academy — our website is coming soon."'
     );
     expect(html).not.toContain('<title>Atlas</title>');
-    expect(html).not.toContain('operating system for education businesses');
+    expect(html).not.toContain('teaching academy online, under your name');
   });
 });

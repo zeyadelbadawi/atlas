@@ -22,7 +22,7 @@ function escapeHtmlAttr(str: string): string {
 process.env.VITE_APP_TITLE ??= process.env.OVERVIEW_TITLE ?? 'Atlas';
 process.env.VITE_APP_DESCRIPTION ??=
   process.env.OVERVIEW_DESCRIPTION ??
-  'The operating system for education businesses.';
+  'Your own teaching academy online, under your name.';
 process.env.VITE_APP_TITLE = escapeHtmlAttr(process.env.VITE_APP_TITLE);
 process.env.VITE_APP_DESCRIPTION = escapeHtmlAttr(
   process.env.VITE_APP_DESCRIPTION
