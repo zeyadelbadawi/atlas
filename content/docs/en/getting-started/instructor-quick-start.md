@@ -24,8 +24,8 @@ This page is for teachers and assistants who were added to an academy as an
 Atlas sends you an email when the owner adds you.
 
 - **New to Atlas?** The email has a link to set up your account. It opens **Set your
-  password**: choose a password of at least 8 characters, type it again and choose **Reset
-  Password**. Then sign in with it.
+  password**: choose a password of at least 8 characters, type it again and choose **Set
+  password**. Then sign in with it.
   The link lasts 72 hours. If it has expired, choose **Get a new link**, or ask the
   owner to add you again. See [Accept an invitation](doc:DOC-IAM-012).
 - **Already have an Atlas account?** The email tells you that you were added. Sign in

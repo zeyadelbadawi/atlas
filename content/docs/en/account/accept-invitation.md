@@ -26,7 +26,7 @@ ready**: "An account was created for you at" followed by the academy's name.
 
 Open the email and select its button. The **Set your password** page opens:
 type a password of at least 8 characters in **New Password** and **Confirm
-Password**, then confirm. Your account is now active, and your email address
+Password**, then choose **Set password**. Your account is now active, and your email address
 counts as verified.
 
 The setup link lasts 72 hours. If it has expired, the page says "This setup
