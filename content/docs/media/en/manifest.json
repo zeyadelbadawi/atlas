@@ -2192,6 +2192,23 @@
     "spec": "95fce7deb3ef6da76b08f57dbfe3ea96e919931f",
     "width": 1440
   },
+  "courses/overrides-sheet": {
+    "capturedAt": "2026-10-20T14:23:19.582Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/overrides-sheet-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/overrides-sheet-1072.webp",
+        "width": 1072
+      }
+    ],
+    "height": 900,
+    "spec": "297df8a63fb06716947f5065d44d542faeb584ed",
+    "width": 536
+  },
   "courses/quiz-advanced-toggle": {
     "capturedAt": "2026-10-20T14:21:24.483Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
@@ -2360,6 +2377,40 @@
     ],
     "height": 900,
     "spec": "ca694161ddf11adb298f8b4dc403ddd0ad701e56",
+    "width": 1440
+  },
+  "courses/quiz-results-export": {
+    "capturedAt": "2026-10-20T14:23:10.893Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/quiz-results-export-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/quiz-results-export-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e0d11f69c81ecfe44c7e926ec47b605f6a2f4a2d",
+    "width": 1440
+  },
+  "courses/quiz-results-overrides": {
+    "capturedAt": "2026-10-20T14:23:03.103Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/en/courses/quiz-results-overrides-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/courses/quiz-results-overrides-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3db3d8594c2c94fb1392a355411292fd9e20da44",
     "width": 1440
   },
   "courses/quiz-results-settings": {
