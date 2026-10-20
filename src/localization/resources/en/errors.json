@@ -366,7 +366,8 @@
     "expired": "This order has expired. Start a new order to buy the course.",
     "notPayable": "This order can't be paid anymore: it's already paid, cancelled or refunded. Reload to see its current status.",
     "commissionNotConfigured": "This payment option isn't available for this academy yet. Choose another payment method or contact the academy.",
-    "gatewayNotConfigured": "This payment option isn't available for this academy yet. Choose another payment method or contact the academy."
+    "gatewayNotConfigured": "This payment option isn't available for this academy yet. Choose another payment method or contact the academy.",
+    "alreadyRefunded": "A refund was already recorded for this order."
   },
   "payment": {
     "notPendingReview": "This payment is no longer waiting for review. Reload to see its current status.",

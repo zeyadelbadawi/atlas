@@ -1,9 +1,9 @@
 /**
- * Revoking a learner's access only ends access. Atlas has no way to record
- * that an academy refunded a learner it was paid by directly (the order
- * stays paid, and the revoke API takes no refund reason), so the dialog
- * must not let the owner think revoking refunds anyone. It says so, in
- * both languages, and does not offer "Refunded" as a reason.
+ * Revoking a learner's access only ends access: the order stays paid and
+ * nothing is refunded. Recording a refund is a separate action (Record
+ * refund on the payment), so the dialog says revoking doesn't refund and
+ * points there, in both languages, and does not offer "Refunded" as a
+ * reason (the revoke API takes none).
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
@@ -28,19 +28,19 @@ function renderDialog(language: 'en' | 'ar') {
 }
 
 describe('revoke access dialog — refunds', () => {
-  it('says revoking does not refund, and the owner returns the money', () => {
+  it('says revoking does not refund, and points to Record refund', () => {
     renderDialog('en');
     const note = screen.getByTestId('revoke-refund-note').textContent ?? '';
     expect(note).toMatch(/doesn't refund/);
-    expect(note).toMatch(/return the money to them yourself/);
+    expect(note).toMatch(/Record refund/);
     expect(screen.queryByText('Refunded')).toBeNull();
   });
 
-  it('says the same in Arabic, naming «أطلس»', () => {
+  it('says the same in Arabic', () => {
     renderDialog('ar');
     const note = screen.getByTestId('revoke-refund-note').textContent ?? '';
     expect(note).toMatch(/لا يردّ أي مبلغ/);
-    expect(note).toMatch(/أطلس/);
+    expect(note).toMatch(/تسجيل استرداد/);
     expect(note).not.toMatch(/Atlas/);
   });
 });

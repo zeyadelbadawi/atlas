@@ -502,7 +502,8 @@
       "course_payment": {
         "proof_submitted": "أرسل {{actor}} إثبات دفع إلى الأكاديمية",
         "approved": "وافق {{actor}} على دفعة متعلّم",
-        "rejected": "رفض {{actor}} دفعة متعلّم"
+        "rejected": "رفض {{actor}} دفعة متعلّم",
+        "refunded": "سجّل {{actor}} استرداد دفعة متعلّم"
       }
     },
     "enrollment": {

@@ -158,6 +158,7 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     'academy.course_payment.proof_submitted': 'payments',
     'academy.course_payment.approved': 'payments',
     'academy.course_payment.rejected': 'payments',
+    'academy.course_payment.refunded': 'payments',
     'course_order.refund_recorded': 'payments',
     'organization.created': 'subscription',
     'organization.onboarding.completed': 'subscription',

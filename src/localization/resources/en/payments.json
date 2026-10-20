@@ -663,6 +663,22 @@
     },
     "approvedToast": "Payment approved — {{learner}} now has access",
     "rejectedToast": "Payment rejected — {{learner}} has been told",
-    "decisionError": "Couldn’t save your decision. Please try again."
+    "decisionError": "Couldn’t save your decision. Please try again.",
+    "refund": {
+      "label": "Refund",
+      "hint": "Gave this money back to the learner yourself? Record it here. Atlas doesn't move money: this records the full refund you made.",
+      "action": "Record refund…",
+      "noteLabel": "Note for the learner (optional)",
+      "noteHelp": "Shown to the learner and sent in their email.",
+      "submit": "Record refund",
+      "confirm": {
+        "title": "Record a refund of {{amount}}?",
+        "description": "Record it only after you have sent {{amount}} back to {{learner}}. {{learner}} loses access to “{{course}}” straight away, the order shows as Refunded and leaves your sales figures, and they get an email. This can't be undone.",
+        "confirm": "Record refund"
+      },
+      "doneToast": "Refund recorded. {{learner}} has been told, and their access has ended.",
+      "error": "The refund could not be recorded. Please try again.",
+      "recorded": "Refund of {{amount}} recorded on {{when}} by {{who}}."
+    }
   }
 }

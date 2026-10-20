@@ -124,10 +124,21 @@ export interface AcademyCoursePaymentReview {
   readonly reviewerName?: string;
 }
 
+/** The refund the academy recorded for an approved payment (full refunds only). */
+export interface AcademyCoursePaymentRefund {
+  readonly id: string;
+  readonly money: Money;
+  readonly note?: string;
+  readonly recordedAt: string;
+  readonly recordedByName?: string;
+}
+
 export interface AcademyCoursePaymentDetail extends AcademyCoursePayment {
   /** The details the learner was shown when they chose the method. */
   readonly instructions?: ManualPaymentInstructions;
   readonly reviews: readonly AcademyCoursePaymentReview[];
+  /** Present once the academy recorded that it refunded this payment. */
+  readonly refund?: AcademyCoursePaymentRefund;
 }
 
 export interface AcademyCoursePaymentCounts {
@@ -161,6 +172,12 @@ export interface ApproveAcademyCoursePaymentPayload {
 export interface RejectAcademyCoursePaymentPayload {
   /** Optional — shown to the learner and sent in their email. */
   readonly reason?: string;
+}
+
+/** `POST …/refund` — the academy refunded the learner itself (full refund). */
+export interface RecordAcademyCoursePaymentRefundPayload {
+  /** Optional — shown to the learner and sent in their email. */
+  readonly note?: string;
 }
 
 /** One entry of the learner's own payment history (`GET course-payments`). */

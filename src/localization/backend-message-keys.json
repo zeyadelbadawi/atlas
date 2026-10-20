@@ -123,6 +123,7 @@
     "errors.course.notReady",
     "errors.course.slugTaken",
     "errors.courseOrder.alreadyEnrolled",
+    "errors.courseOrder.alreadyRefunded",
     "errors.courseOrder.commissionNotConfigured",
     "errors.courseOrder.courseNotPaid",
     "errors.courseOrder.expired",

@@ -502,7 +502,8 @@
       "course_payment": {
         "proof_submitted": "{{actor}} sent a payment proof to the academy",
         "approved": "{{actor}} approved a learner payment",
-        "rejected": "{{actor}} rejected a learner payment"
+        "rejected": "{{actor}} rejected a learner payment",
+        "refunded": "{{actor}} recorded a refund of a learner payment"
       }
     },
     "enrollment": {

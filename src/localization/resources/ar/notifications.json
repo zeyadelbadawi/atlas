@@ -494,6 +494,10 @@
       "title": "لم تتم الموافقة على الدفع",
       "message": "لم تتم الموافقة على دفعتك لدورة \"{{courseTitle}}\". افتح صفحة مدفوعاتي لمعرفة السبب والدفع مرة أخرى."
     },
+    "coursePaymentRefunded": {
+      "title": "تم تسجيل الاسترداد",
+      "message": "سجّلت الأكاديمية استرداد {{amount}} {{currency}} لدورة \"{{courseTitle}}\". انتهى وصولك إلى الدورة."
+    },
     "academyPaymentSubmitted": {
       "title": "دفعة جديدة للمراجعة",
       "message": "أرسل أحد المتعلّمين {{amount}} {{currency}} لدورة \"{{courseTitle}}\". راجعها ووافق عليها أو ارفضها."
