@@ -73,9 +73,9 @@
 - key: for-learners/lesson-player
   as: learner
   surface: academy
-  # The free study course: Salma has finished calculus, where every activity
-  # is her last one (Finish course instead of Next).
-  path: /my/courses/{freeCourseId}/learn/{freeLessonId}
+  # The English course, one lesson of two done: Salma has finished calculus,
+  # where every activity is her last one (Finish course instead of Next).
+  path: /my/courses/{englishCourseId}/learn/{inProgressLessonId}
   waitFor: { text: learning:player.next }
   highlight: { role: button, name: learning:player.next }
 

@@ -226,7 +226,7 @@
   surface: dashboard
   path: /dashboard/academy/{academyId}/settings
   waitFor: { text: academy:registration.policy.title }
-  highlight: { role: button, name: academy:registration.invites.revoke.action, exact: true, nth: 0 }
+  highlight: { testId: invite-revoke, nth: 0 }
 
 - key: team/invites-revoke-confirm
   as: owner
@@ -234,8 +234,9 @@
   path: /dashboard/academy/{academyId}/settings
   waitFor: { text: academy:registration.policy.title }
   actions:
-    - scroll: { role: button, name: academy:registration.invites.revoke.action, exact: true, nth: 0 }
-    - click: { role: button, name: academy:registration.invites.revoke.action, exact: true, nth: 0 }
+    # By test id: in Arabic the button reads «إلغاء», the same word as every Cancel.
+    - scroll: { testId: invite-revoke, nth: 0 }
+    - click: { testId: invite-revoke, nth: 0 }
   highlight: { role: button, name: academy:registration.invites.revoke.confirm }
   clip: dialog
 

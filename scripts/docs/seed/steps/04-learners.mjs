@@ -146,16 +146,13 @@ export default async function run() {
     save();
   }
 
-  // Salma also takes the free study course, one lesson of three done: the
-  // lesson-player shot needs a course she has not finished (calculus is all
-  // done, so every activity there is her last one and shows Finish course).
-  if (!L('salma').freeEnrolled) {
-    const s = await session('salma');
-    await attempt('free enrollment salma', 'POST', '/enrollments', { token: s.token, body: { courseId: state.courses.study.id } });
-    L('salma').freeEnrolled = true;
-    save();
-  }
-  await complete('salma', 'study', 1);
+  // Salma also bought the English course (InstaPay, approved) and has done one
+  // lesson of two: the lesson-player shot needs a course she has not finished
+  // (calculus is all done, so every activity there is her last one and shows
+  // Finish course). Not the free course: free-course-enroll needs her not
+  // enrolled there.
+  await order('salma', 'english', { methodKey: 'instapay', proof: 'receipt-instapay.png', reference: 'DEMO-IPN-0007', review: 'approve' });
+  await complete('salma', 'english', 1);
 
   // Omar: calculus via bank transfer, every lesson done → completed (certificate below).
   await order('omar', 'calculus', { methodKey: 'bank', proof: 'receipt-bank.png', reference: 'DEMO-TRX-0002', review: 'approve' });
@@ -278,7 +275,7 @@ export default async function run() {
     submissionId: L('salma').submissionId,
     expiringEnrollmentId: L('ziad').enrollmentId,
     completedLearnerId: L('omar').userId,
-    freeLessonId: state.courses.study.sections[0].lessons[0],
+    inProgressLessonId: state.courses.english.sections[0].lessons[0],
   });
   save();
 }

@@ -171,7 +171,7 @@ uncommitted app changes do not count as a change).
 | `{draftCourseId}` | draft course "Physics: Mechanics" |
 | `{sectionId}` | unit 1 of `{courseId}` ("Limits and continuity") |
 | `{lessonId}` | YouTube lesson in `{courseId}` ("What is a limit?", free preview) |
-| `{freeLessonId}` | first lesson of `{freeCourseId}`; Salma has done it and has two lessons to go |
+| `{inProgressLessonId}` | first lesson of `{englishCourseId}`; Salma bought the course and has done this lesson, one to go |
 | `{linkLessonId}` | link lesson in `{courseId}` ("Limits worksheet (PDF)") |
 | `{quizId}` | quiz "Limits check-up" in `{courseId}`: single, multiple choice, true/false, short answer and essay questions; required for completion |
 | `{quizAttemptId}` | Salma's attempt, essay awaiting grading |
