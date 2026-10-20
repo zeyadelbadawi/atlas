@@ -130,7 +130,8 @@ export default async function run() {
       'Substituting x = 2 gives 0/0, which is undefined. Factorise the top: (x − 2)(x + 2). Cancel (x − 2), then substitute x = 2 into x + 2 to get 4.',
   });
   // The quiz is waiting for its essay to be graded; the next unit is open meanwhile.
-  await complete('salma', 'calculus', 6);
+  // Five of six lessons: one stays open so the player still offers Next.
+  await complete('salma', 'calculus', 5);
   if (!L('salma').submissionId) {
     const s = await session('salma');
     const c = state.courses.calculus;

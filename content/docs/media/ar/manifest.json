@@ -16,6 +16,23 @@
     "spec": "8991aeaf2f1be9a92befb20e36ee06f281ba95eb",
     "width": 1440
   },
+  "academy/domain-hostname-form": {
+    "capturedAt": "2026-10-20T15:41:58.317Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/domain-hostname-form-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/domain-hostname-form-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "b905c17f324bf768bbe793e18e74e38d82d5452b",
+    "width": 1440
+  },
   "academy/domain-tab": {
     "capturedAt": "2026-10-20T15:41:45.140Z",
     "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
