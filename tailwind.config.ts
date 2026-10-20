@@ -59,6 +59,11 @@ export default {
           700: 'hsl(var(--brand-700))',
           800: 'hsl(var(--brand-800))',
           900: 'hsl(var(--brand-900))',
+          gold: {
+            DEFAULT: 'hsl(var(--brand-gold))',
+            foreground: 'hsl(var(--brand-gold-foreground))',
+            text: 'hsl(var(--brand-gold-text))',
+          },
         },
         surface: {
           DEFAULT: 'hsl(var(--surface))',

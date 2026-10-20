@@ -1,0 +1,178 @@
+/*
+ * Atlas marketing site (B1 / M1a). Built by its own Tailwind pass whose
+ * content globs cover src/marketing only, so this stylesheet stays small.
+ *
+ * Tokens: the platform token layer (index.css) is the single source of truth
+ * for colour, radius and type, so the site and the product share one brand
+ * (Royal Navy + Gold, DL-50). Nothing here hard-codes a colour.
+ */
+@import '../../index.css';
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+  body.mk {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+  }
+  .mk h1,
+  .mk h2,
+  .mk h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+  .mk p {
+    text-wrap: pretty;
+  }
+  [dir='rtl'] .mk-heading {
+    letter-spacing: 0;
+    line-height: 1.5;
+  }
+  .mk :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  /* Anchored sections clear the sticky header. */
+  .mk [id] {
+    scroll-margin-top: calc(var(--layout-header-height) + 1rem);
+  }
+}
+
+@layer components {
+  /* Skip link: hidden until focused. */
+  .mk-skip {
+    @apply absolute start-3 top-3 z-[60] -translate-y-20 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-transform;
+  }
+  .mk-skip:focus {
+    @apply translate-y-0;
+  }
+
+  .mk-eyebrow {
+    @apply inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.08em] text-primary rtl:tracking-normal;
+  }
+  .mk-eyebrow::before {
+    content: '';
+    @apply inline-block size-2 rounded-full bg-brand-gold;
+  }
+
+  /* Gold underline used on one key word per headline. */
+  .mk-mark {
+    background-image: linear-gradient(transparent 62%, hsl(var(--brand-gold) / 0.45) 62%);
+    border-radius: 2px;
+  }
+
+  .mk-btn {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-[0.95rem] font-semibold transition-colors duration-200;
+  }
+  .mk-btn-primary {
+    @apply bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover;
+  }
+  .mk-btn-secondary {
+    @apply border border-border-strong bg-background text-foreground hover:bg-surface;
+  }
+  .mk-btn-ghost {
+    @apply text-primary underline-offset-4 hover:underline;
+  }
+
+  .mk-card {
+    @apply rounded-xl border border-border bg-card text-card-foreground;
+  }
+
+  /* Hero ground: faint grid + navy/gold light, tokens only. */
+  .mk-hero-ground {
+    background-image:
+      radial-gradient(40rem 26rem at 88% 0%, hsl(var(--brand-gold) / 0.14), transparent 70%),
+      radial-gradient(46rem 30rem at 0% 100%, hsl(var(--primary) / 0.1), transparent 70%),
+      linear-gradient(hsl(var(--border) / 0.55) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.55) 1px, transparent 1px);
+    background-size: auto, auto, 56px 56px, 56px 56px;
+    mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  }
+
+  /* Browser frame around product screenshots. */
+  .mk-frame {
+    @apply overflow-hidden rounded-xl border border-border bg-card shadow-[0_24px_60px_-24px_hsl(var(--brand-700)/0.35)] dark:shadow-[0_24px_60px_-24px_hsl(0_0%_0%/0.7)];
+  }
+  .mk-frame-bar {
+    @apply flex items-center gap-1.5 border-b border-border bg-surface px-3 py-2;
+  }
+  .mk-frame-dot {
+    @apply size-2.5 rounded-full bg-border-strong;
+  }
+
+  /* FAQ: native <details>, works without JS. */
+  .mk-faq summary {
+    @apply flex cursor-pointer list-none items-start justify-between gap-4 py-5 text-start text-base font-semibold sm:text-lg;
+  }
+  .mk-faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .mk-faq summary .mk-faq-icon {
+    @apply mt-1 size-5 shrink-0 text-muted-foreground transition-transform duration-200;
+  }
+  .mk-faq details[open] summary .mk-faq-icon {
+    @apply rotate-45;
+  }
+
+  /* Billing toggle: two radios, CSS shows the matching price (no JS needed). */
+  .mk-billing:has(input[value='yearly']:checked) [data-billing='monthly'],
+  .mk-billing:has(input[value='monthly']:checked) [data-billing='yearly'] {
+    display: none;
+  }
+  .mk-toggle {
+    @apply inline-flex rounded-full border border-border bg-surface p-1;
+  }
+  .mk-toggle label {
+    @apply cursor-pointer rounded-full px-4 py-2 text-sm font-semibold text-muted-foreground transition-colors;
+  }
+  .mk-toggle input:checked + label {
+    @apply bg-background text-foreground shadow-sm;
+  }
+  .mk-toggle input:focus-visible + label {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* Header product menu and mobile drawer use <details> too. */
+  .mk-menu > summary {
+    @apply cursor-pointer list-none;
+  }
+  .mk-menu > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mk-field {
+    @apply block w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-base text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/30;
+  }
+  .mk-field[aria-invalid='true'] {
+    @apply border-destructive;
+  }
+}
+
+/* Entrance motion for the hero only; content is visible without it. */
+@media (prefers-reduced-motion: no-preference) {
+  .mk-rise {
+    animation: mk-rise 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .mk-rise-delay {
+    animation-delay: 90ms;
+  }
+  @keyframes mk-rise {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

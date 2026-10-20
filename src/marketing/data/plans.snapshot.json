@@ -1,0 +1,131 @@
+[
+    {
+        "id": "d08443f5-d79c-4020-ad7c-31927a76f5de",
+        "key": "starter",
+        "name": "Teacher",
+        "description": "For a teacher starting to sell courses online.",
+        "nameLocalized": {
+            "en": "Teacher",
+            "ar": "\u0627\u0644\u0645\u0639\u0644\u0651\u0645"
+        },
+        "descriptionLocalized": {
+            "en": "For a teacher starting to sell courses online.",
+            "ar": "\u0644\u0644\u0645\u0639\u0644\u0651\u0645 \u0627\u0644\u0630\u064a \u064a\u0628\u062f\u0623 \u0628\u064a\u0639 \u0643\u0648\u0631\u0633\u0627\u062a\u0647 \u0623\u0648\u0646\u0644\u0627\u064a\u0646."
+        },
+        "status": "active",
+        "displayOrder": 1,
+        "family": "normal",
+        "tier": "basic",
+        "limits": {
+            "staff": 3,
+            "courses": 20,
+            "students": 100,
+            "academies": 1,
+            "instructors": 3,
+            "videoStorage": 30,
+            "generalStorage": 10,
+            "recordedSessions": 3,
+            "videoStorageMinutes": 1200
+        },
+        "features": {
+            "liveSessions": false
+        },
+        "pricing": {
+            "amount": 1190,
+            "currency": "EGP",
+            "billingCycle": "monthly",
+            "yearlyAmount": 11900
+        },
+        "trialEligible": true,
+        "giftedDaysMonthly": null,
+        "giftedDaysYearly": 14,
+        "version": 3,
+        "trialDurationDays": 14
+    },
+    {
+        "id": "8f5ee71f-3eab-4e21-9c34-dbff77c5ad20",
+        "key": "growth",
+        "name": "Academy",
+        "description": "For an established teacher with assistants, or a small team under one brand.",
+        "nameLocalized": {
+            "en": "Academy",
+            "ar": "\u0627\u0644\u0623\u0643\u0627\u062f\u064a\u0645\u064a\u0629"
+        },
+        "descriptionLocalized": {
+            "en": "For an established teacher with assistants, or a small team under one brand.",
+            "ar": "\u0644\u0644\u0645\u0639\u0644\u0651\u0645 \u0627\u0644\u0630\u064a \u064a\u0639\u0645\u0644 \u0645\u0639 \u0641\u0631\u064a\u0642 \u0645\u0633\u0627\u0639\u062f\u060c \u0623\u0648 \u0644\u0641\u0631\u064a\u0642 \u0635\u063a\u064a\u0631 \u062a\u062d\u062a \u0639\u0644\u0627\u0645\u0629 \u0648\u0627\u062d\u062f\u0629."
+        },
+        "status": "active",
+        "displayOrder": 2,
+        "family": "normal",
+        "tier": "growth",
+        "limits": {
+            "staff": 8,
+            "courses": "unlimited",
+            "students": 400,
+            "academies": 1,
+            "instructors": 8,
+            "videoStorage": 75,
+            "generalStorage": 30,
+            "recordedSessions": 10,
+            "videoStorageMinutes": 3000
+        },
+        "features": {
+            "liveSessions": false
+        },
+        "pricing": {
+            "amount": 2790,
+            "currency": "EGP",
+            "billingCycle": "monthly",
+            "yearlyAmount": 27900
+        },
+        "trialEligible": true,
+        "giftedDaysMonthly": null,
+        "giftedDaysYearly": 14,
+        "version": 5,
+        "trialDurationDays": 14
+    },
+    {
+        "id": "b5bb1f9e-3069-4309-aeef-57abc280dad8",
+        "key": "enterprise",
+        "name": "Organization",
+        "description": "For organizations running several academies.",
+        "nameLocalized": {
+            "en": "Organization",
+            "ar": "\u0627\u0644\u0645\u0624\u0633\u0633\u0629"
+        },
+        "descriptionLocalized": {
+            "en": "For organizations running several academies.",
+            "ar": "\u0644\u0644\u0645\u0624\u0633\u0633\u0627\u062a \u0627\u0644\u062a\u064a \u062a\u062f\u064a\u0631 \u0639\u062f\u0629 \u0623\u0643\u0627\u062f\u064a\u0645\u064a\u0627\u062a."
+        },
+        "status": "active",
+        "displayOrder": 3,
+        "family": "normal",
+        "tier": "enterprise",
+        "limits": {
+            "staff": 25,
+            "courses": "unlimited",
+            "students": 1500,
+            "academies": 5,
+            "instructors": 25,
+            "videoStorage": 200,
+            "generalStorage": 100,
+            "recordedSessions": 30,
+            "videoStorageMinutes": 8000
+        },
+        "features": {
+            "liveSessions": false
+        },
+        "pricing": {
+            "amount": 7490,
+            "currency": "EGP",
+            "billingCycle": "monthly",
+            "yearlyAmount": 74900
+        },
+        "trialEligible": true,
+        "giftedDaysMonthly": null,
+        "giftedDaysYearly": 14,
+        "version": 3,
+        "trialDurationDays": 14
+    }
+]

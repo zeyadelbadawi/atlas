@@ -2,10 +2,9 @@
  * Public layout.
  *
  * Wraps the platform host's public pages — contact, the legal documents,
- * certificate verification — and the system pages. Since owner decision D6
- * (14 Oct 2026) retired the marketing site, its header and footer link only
- * to the holding page (the logo), the contact page, sign-in and the legal
- * documents. It carries the same brand identity as the product shell so a
+ * certificate verification — and the system pages. Its header and footer
+ * link only to the home page (the logo; the static marketing site since
+ * B1), the contact page, sign-in and the legal documents. It carries the same brand identity as the product shell so a
  * visitor who signs in experiences one continuous product rather than two
  * different applications.
  *

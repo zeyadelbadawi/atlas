@@ -17,54 +17,58 @@
 @layer base {
   :root {
     /* ---------------------------------------------------------------- *
-     * Brand scale — Atlas Deep Teal.
+     * Brand scale — Atlas Royal Navy (owner-approved 20 Oct 2026; gold accent in --brand-gold).
      * The single saturated hue of the platform. Used sparingly so that
      * primary actions always remain the focal point of a screen.
      * ---------------------------------------------------------------- */
-    --brand-50: 184 44% 96%;
-    --brand-100: 184 44% 90%;
-    --brand-200: 184 42% 79%;
-    --brand-300: 184 42% 65%;
-    --brand-400: 184 50% 48%;
-    --brand-500: 184 62% 34%;
-    --brand-600: 184 68% 26%;
-    --brand-700: 184 70% 21%;
-    --brand-800: 185 68% 16%;
-    --brand-900: 186 62% 12%;
+    --brand-50: 224 60% 97%;
+    --brand-100: 224 64% 93%;
+    --brand-200: 224 66% 85%;
+    --brand-300: 224 64% 72%;
+    --brand-400: 224 60% 56%;
+    --brand-500: 224 64% 42%;
+    --brand-600: 224 68% 33%;
+    --brand-700: 223 69% 25%;
+    --brand-800: 223 68% 19%;
+    --brand-900: 222 64% 13%;
+    /* Gold accent (the guiding star): highlights, badges, never body text on light. */
+    --brand-gold: 41 75% 51%;
+    --brand-gold-foreground: 40 79% 6%;
+    --brand-gold-text: 39 100% 27%;
 
     /* ---------------------------------------------------------------- *
      * Surfaces & content — neutrals tinted toward the brand hue.
      * Pure white and pure black are never used.
      * ---------------------------------------------------------------- */
-    --background: 200 20% 99%;
-    --foreground: 199 34% 12%;
+    --background: 222 20% 99%;
+    --foreground: 222 34% 12%;
 
-    --surface: 200 24% 97%;
-    --surface-foreground: 199 34% 12%;
+    --surface: 222 24% 97%;
+    --surface-foreground: 222 34% 12%;
     --surface-raised: 0 0% 100%;
     --surface-overlay: 0 0% 100%;
 
     --card: 0 0% 100%;
-    --card-foreground: 199 34% 12%;
+    --card-foreground: 222 34% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 199 34% 12%;
+    --popover-foreground: 222 34% 12%;
 
     /* ---------------------------------------------------------------- *
      * Interactive roles
      * ---------------------------------------------------------------- */
-    --primary: 184 68% 26%;
-    --primary-foreground: 184 44% 97%;
-    --primary-hover: 184 70% 21%;
+    --primary: 224 68% 33%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 223 69% 25%;
 
-    --secondary: 199 22% 93%;
-    --secondary-foreground: 199 34% 18%;
+    --secondary: 222 22% 93%;
+    --secondary-foreground: 222 34% 18%;
 
-    --muted: 199 20% 94%;
-    --muted-foreground: 199 14% 42%;
+    --muted: 222 20% 94%;
+    --muted-foreground: 222 14% 42%;
 
-    --accent: 184 40% 92%;
-    --accent-foreground: 184 70% 19%;
+    --accent: 224 64% 95%;
+    --accent-foreground: 223 69% 25%;
 
     /* ---------------------------------------------------------------- *
      * Semantic feedback roles
@@ -88,27 +92,27 @@
     /* ---------------------------------------------------------------- *
      * Lines, fields, focus
      * ---------------------------------------------------------------- */
-    --border: 199 18% 88%;
-    --border-strong: 199 16% 76%;
-    --input: 199 18% 86%;
-    --ring: 184 62% 34%;
+    --border: 222 18% 88%;
+    --border-strong: 222 16% 76%;
+    --input: 222 18% 86%;
+    --ring: 224 64% 42%;
 
     /* ---------------------------------------------------------------- *
      * Navigation shell
      * ---------------------------------------------------------------- */
-    --sidebar-background: 199 28% 97%;
-    --sidebar-foreground: 199 26% 26%;
-    --sidebar-primary: 184 68% 26%;
-    --sidebar-primary-foreground: 184 44% 97%;
-    --sidebar-accent: 184 34% 92%;
-    --sidebar-accent-foreground: 184 70% 19%;
-    --sidebar-border: 199 18% 89%;
-    --sidebar-ring: 184 62% 34%;
+    --sidebar-background: 222 28% 97%;
+    --sidebar-foreground: 222 26% 26%;
+    --sidebar-primary: 224 68% 33%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 224 60% 94%;
+    --sidebar-accent-foreground: 223 69% 25%;
+    --sidebar-border: 222 18% 89%;
+    --sidebar-ring: 224 64% 42%;
 
     /* ---------------------------------------------------------------- *
      * Data visualization — ordered for categorical series.
      * ---------------------------------------------------------------- */
-    --chart-1: 184 62% 34%;
+    --chart-1: 224 64% 42%;
     --chart-2: 212 58% 46%;
     --chart-3: 38 74% 48%;
     --chart-4: 268 40% 52%;
@@ -130,7 +134,7 @@
     /* ---------------------------------------------------------------- *
      * Elevation — deliberately restrained for an enterprise surface.
      * ---------------------------------------------------------------- */
-    --shadow-color: 199 40% 18%;
+    --shadow-color: 222 40% 18%;
     --shadow-xs: 0 1px 2px 0 hsl(var(--shadow-color) / 0.05);
     --shadow-sm:
       0 1px 2px 0 hsl(var(--shadow-color) / 0.06),
@@ -180,32 +184,35 @@
 
   .dark {
     /* Depth in Dark Mode comes from surface lightness, not from shadow. */
-    --background: 199 32% 8%;
-    --foreground: 195 24% 94%;
+    --brand-gold: 42 85% 62%;
+    --brand-gold-foreground: 40 79% 6%;
+    --brand-gold-text: 42 85% 62%;
+    --background: 222 32% 8%;
+    --foreground: 222 24% 94%;
 
-    --surface: 199 30% 10%;
-    --surface-foreground: 195 24% 94%;
-    --surface-raised: 199 28% 13%;
-    --surface-overlay: 199 28% 15%;
+    --surface: 222 30% 10%;
+    --surface-foreground: 222 24% 94%;
+    --surface-raised: 222 28% 13%;
+    --surface-overlay: 222 28% 15%;
 
-    --card: 199 28% 12%;
-    --card-foreground: 195 24% 94%;
+    --card: 222 28% 12%;
+    --card-foreground: 222 24% 94%;
 
-    --popover: 199 28% 14%;
-    --popover-foreground: 195 24% 94%;
+    --popover: 222 28% 14%;
+    --popover-foreground: 222 24% 94%;
 
-    --primary: 184 52% 46%;
-    --primary-foreground: 186 62% 9%;
-    --primary-hover: 184 54% 52%;
+    --primary: 221 100% 72%;
+    --primary-foreground: 222 76% 11%;
+    --primary-hover: 221 100% 78%;
 
-    --secondary: 199 22% 18%;
-    --secondary-foreground: 195 22% 92%;
+    --secondary: 222 22% 18%;
+    --secondary-foreground: 222 22% 92%;
 
-    --muted: 199 20% 17%;
-    --muted-foreground: 197 14% 66%;
+    --muted: 222 20% 17%;
+    --muted-foreground: 222 14% 66%;
 
-    --accent: 184 34% 20%;
-    --accent-foreground: 184 46% 84%;
+    --accent: 223 50% 22%;
+    --accent-foreground: 221 100% 90%;
 
     --destructive: 358 56% 52%;
     --destructive-foreground: 0 0% 100%;
@@ -223,28 +230,28 @@
     --info-foreground: 212 60% 10%;
     --info-surface: 212 40% 17%;
 
-    --border: 199 20% 20%;
-    --border-strong: 199 18% 30%;
-    --input: 199 20% 22%;
-    --ring: 184 52% 46%;
+    --border: 222 20% 20%;
+    --border-strong: 222 18% 30%;
+    --input: 222 20% 22%;
+    --ring: 221 100% 72%;
 
-    --sidebar-background: 199 32% 10%;
-    --sidebar-foreground: 196 18% 84%;
-    --sidebar-primary: 184 52% 46%;
-    --sidebar-primary-foreground: 186 62% 9%;
-    --sidebar-accent: 184 32% 19%;
-    --sidebar-accent-foreground: 184 46% 86%;
-    --sidebar-border: 199 20% 18%;
-    --sidebar-ring: 184 52% 46%;
+    --sidebar-background: 222 32% 10%;
+    --sidebar-foreground: 222 18% 84%;
+    --sidebar-primary: 221 100% 72%;
+    --sidebar-primary-foreground: 222 76% 11%;
+    --sidebar-accent: 223 46% 21%;
+    --sidebar-accent-foreground: 221 100% 90%;
+    --sidebar-border: 222 20% 18%;
+    --sidebar-ring: 221 100% 72%;
 
-    --chart-1: 184 52% 50%;
+    --chart-1: 221 100% 72%;
     --chart-2: 212 56% 60%;
     --chart-3: 38 70% 58%;
     --chart-4: 268 44% 66%;
     --chart-5: 152 42% 50%;
     --chart-6: 358 54% 62%;
 
-    --shadow-color: 199 60% 3%;
+    --shadow-color: 222 60% 3%;
     --shadow-overlay: 0 16px 48px -12px hsl(var(--shadow-color) / 0.55);
   }
 

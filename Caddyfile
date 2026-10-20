@@ -286,6 +286,17 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 
 	encode zstd gzip
 
+	# B1 M0 (RDM L3–L8) — `www` is not a second copy of the platform: one
+	# 301 to the apex, path and query kept (`{uri}`), on every path except
+	# the API (RDM L7: unchanged until logs show no use). Matched before any
+	# handler (`redir` sorts ahead of `handle`), so www never reaches the
+	# marketing pages, root files or the app with its own host.
+	@www_host {
+		host www.atlass.dpdns.org
+		not path /api/*
+	}
+	redir @www_host https://atlass.dpdns.org{uri} permanent
+
 	handle /api/* {
 		reverse_proxy backend:3000 {
 			header_up X-Real-IP {client_ip}
@@ -322,27 +333,132 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 		root * /srv
 		import static_cache
 		import page_policy_headers
-		# B0-WEB-13 (owner decision D6) — the platform host's holding page
-		# (`/`, `/ar`; the router renders `/ar/` as `/ar`) is `noindex,
-		# follow`: kept out of search results, its links to the contact and
-		# legal pages still followed. Its meta tag only exists once the app
-		# has run; this header is on the response itself. Platform host only
-		# (apex, www) — an academy subdomain's `/` is that academy's home
-		# page. Deferred, as `@verify_page` is.
-		@holding_page {
-			host atlass.dpdns.org www.atlass.dpdns.org
+		# B1 / M1a (DL-50) — the static marketing site, platform apex ONLY.
+		# Prerendered by `pnpm build` (scripts/marketing/prerender.mjs) and
+		# kept in its own tree, /srv-marketing (Dockerfile), which no other
+		# host's handler ever reads: academy subdomains and connected
+		# domains cannot be served a marketing page or file. The same rules
+		# run on `vite preview`/dev (src/marketing/prerender/routing.ts).
+		#
+		# ATLAS_MARKETING_STATIC (compose passes it; unset or empty = on):
+		# `off` turns the pages off without a rebuild — `/`, `/pricing`… go
+		# back to the single-page app (marked noindex below) — after one
+		# `docker compose up -d --no-deps caddy`. The root files stay on.
+		#
+		# Order: root files → trailing-slash 301 → page → branded 404s →
+		# (below) retired blog, academy renderer, the app.
+
+		# Root files: /robots.txt, the sitemaps, llms.txt, llms-full.txt,
+		# pricing.md and the OG images. A missing one is a real 404, never
+		# the app shell. UTF-8 declared for the text formats.
+		@marketing_root_file {
+			host atlass.dpdns.org
+			path /robots.txt /sitemap.xml /sitemaps/* /llms.txt /llms-full.txt /pricing.md /marketing-assets/*
+		}
+		handle @marketing_root_file {
+			root * /srv-marketing
+			header /pricing.md Content-Type "text/markdown; charset=utf-8"
+			header /llms.txt Content-Type "text/plain; charset=utf-8"
+			header /llms-full.txt Content-Type "text/plain; charset=utf-8"
+			header /robots.txt Content-Type "text/plain; charset=utf-8"
+			file_server
+		}
+
+		# One 301 from a page URL with a trailing slash to the URL without
+		# it (`/ar/` → `/ar`, `/pricing/` → `/pricing`), query kept; only
+		# when that page exists, so app routes are untouched.
+		@marketing_slash {
+			host atlass.dpdns.org
+			method GET HEAD
+			expression `{env.ATLAS_MARKETING_STATIC} != "off"`
+			path */
+			not path /
+			file {
+				root /srv-marketing
+				try_files {path}index.html
+			}
+		}
+		handle @marketing_slash {
+			route {
+				uri strip_suffix /
+				redir * {path}{?query} permanent
+			}
+		}
+
+		# A page: `/x` is /srv-marketing/x/index.html, `/` is index.html.
+		# Only when that file exists — /dashboard, /auth/*, /index.html and
+		# every other app path have none and fall through to the app.
+		@marketing_page {
+			host atlass.dpdns.org
+			method GET HEAD
+			expression `{env.ATLAS_MARKETING_STATIC} != "off"`
+			file {
+				root /srv-marketing
+				try_files {path}/index.html
+			}
+		}
+		handle @marketing_page {
+			root * /srv-marketing
+			rewrite * {file_match.relative}
+			file_server
+		}
+
+		# Genuine 404s with the branded page (SPEC §B.1, §E.4, F-12): any
+		# other `/ar/...` gets the Arabic one; the retired blog and the
+		# planned feature pages (never a 200, a redirect or a soft 404) the
+		# English one. Listed in src/marketing/prerender/routing.ts too.
+		@marketing_gone_ar {
+			host atlass.dpdns.org
+			expression `{env.ATLAS_MARKETING_STATIC} != "off"`
+			path /ar/*
+			file {
+				root /srv-marketing
+				try_files /ar/404.html
+			}
+		}
+		handle @marketing_gone_ar {
+			root * /srv-marketing
+			rewrite * /ar/404.html
+			file_server {
+				status 404
+			}
+		}
+		@marketing_gone {
+			host atlass.dpdns.org
+			expression `{env.ATLAS_MARKETING_STATIC} != "off"`
+			path /blog /blog/* /ar/blog /ar/blog/* /features/academy-website /features/payments /features/content-protection /features/teams-and-academies /features/quizzes-and-certificates /ar/features/academy-website /ar/features/payments /ar/features/content-protection /ar/features/teams-and-academies /ar/features/quizzes-and-certificates
+			file {
+				root /srv-marketing
+				try_files /404.html
+			}
+		}
+		handle @marketing_gone {
+			root * /srv-marketing
+			rewrite * /404.html
+			file_server {
+				status 404
+			}
+		}
+
+		# With the static site switched off, the app answers the marketing
+		# home and keeps it out of search results (the B0 holding state).
+		@marketing_static_off {
+			host atlass.dpdns.org
+			expression `{env.ATLAS_MARKETING_STATIC} == "off"`
 			path / /ar /ar/
 		}
-		header @holding_page {
+		header @marketing_static_off {
 			X-Robots-Tag "noindex, follow"
 			defer
 		}
+
 		# B0-WEB-13 — the legacy marketing site's blog is gone, and the SPA
 		# answered `/blog` with a 200 "not found" page (a soft 404). On the
-		# platform host it is now a real 404: the same shell (the app still
-		# shows its own not-found page), with the status set, as
-		# `ssr_unavailable` sets 200. Platform host only — an academy website
-		# may have a page whose slug is `blog`.
+		# platform host it is a real 404: the branded page above while the
+		# static site is on; otherwise the same shell (the app still shows
+		# its own not-found page), with the status set, as
+		# `ssr_unavailable` sets 200. Platform host only — an academy
+		# website may have a page whose slug is `blog`.
 		@retired_blog {
 			host atlass.dpdns.org www.atlass.dpdns.org
 			path /blog /blog/*
