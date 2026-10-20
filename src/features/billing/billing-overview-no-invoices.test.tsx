@@ -63,10 +63,9 @@ describe('billing overview — no invoices link', () => {
 
   it('has no invoices wording in Arabic either', () => {
     renderPage('ar');
-    // The page title «الفواتير والمدفوعات» is the existing nav label for
-    // Billing; only the always-empty link must be gone.
-    expect(screen.queryByText('الفواتير')).toBeNull();
-    expect(screen.queryByText(/فواتيرك|الفواتير الصادرة/)).toBeNull();
+    // The page is «مدفوعات الاشتراك» — no Arabic label promises invoices.
+    expect(screen.queryByText(/فاتور|فواتير/)).toBeNull();
+    expect(screen.getAllByText('مدفوعات الاشتراك').length).toBeGreaterThan(0);
     expect(screen.getByText('سجل المدفوعات')).toBeTruthy();
   });
 });

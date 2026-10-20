@@ -33,7 +33,7 @@ updated: 2026-10-20
 
 ## اعمل مؤسسة تانية
 
-المؤسسة التانية مفيدة لو عندك شغل منفصل بخطة وفواتير لوحده. افتح [/dashboard/organization/create](app:/dashboard/organization/create)، واكتب **اسم المؤسسة**، واضغط **إنشاء مؤسسة**.
+المؤسسة التانية مفيدة لو عندك شغل منفصل بخطة ومدفوعات لوحدها. افتح [/dashboard/organization/create](app:/dashboard/organization/create)، واكتب **اسم المؤسسة**، واضغط **إنشاء مؤسسة**.
 
 ![صفحة أنشئ مؤسستك](shot:team/organization-create)
 

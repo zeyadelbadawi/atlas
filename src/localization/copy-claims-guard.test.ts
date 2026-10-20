@@ -23,6 +23,8 @@
  *   «أطلس للمدفوعات», as `errors.payment.collectionModeNotAvailable`
  *   already wrote it); and an academy's payment review is never
  *   described as Atlas's.
+ * - 20 Oct 2026 (owner decision): Arabic billing labels say «مدفوعات
+ *   الاشتراك» / «المدفوعات», never «الفواتير», while no invoices exist.
  */
 import { describe, expect, it } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -137,7 +139,12 @@ const BANNED: Record<'en' | 'ar', { pattern: RegExp; scope?: RegExp }[]> = {
     { pattern: /Word أو صورة/ },
     { pattern: /ميغابايت/ },
     { pattern: /نطاق خاص/ },
-    { pattern: /الفواتير|فواتيرك/, scope: /^payments\.overview\.(?!title)/ },
+    // No invoice is ever issued, so no Arabic string may promise one. The
+    // only exemption is the dormant Invoices page's own copy
+    // (`payments.invoices.*`), which no route renders (the old path
+    // redirects to the payment history) and which waits for a real
+    // invoice feature.
+    { pattern: /فاتور|فواتير/, scope: /^(?!payments\.invoices\.)/ },
     {
       pattern:
         /تجربة مجانية|التجربة المجانية|تجربتك المجانية|التجارب المجانية|تجريبية مجانية|ابدأ مجانًا|جرّب .*مجانًا|أيام مجانًا/,
