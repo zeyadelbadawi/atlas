@@ -23,7 +23,7 @@ updated: 2026-10-20
 - JavaScript turned on. The dashboard and the learner area don't work without it.
 - Cookies allowed for the Atlas site and your academy's site. Atlas uses them to keep you signed in and, for learners, to recognize each device.
 
-There is no Atlas app to install. You and your learners use Atlas in the browser, and every screen adapts to phone width.
+There is no Atlas app to install. You and your learners use Atlas in the browser, and the screens adapt to phone size.
 
 ## Each browser is a learning device
 

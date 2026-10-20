@@ -1,4 +1,55 @@
 {
+  "billing/checkout-gift": {
+    "capturedAt": "2026-10-20T09:09:32.075Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/billing/checkout-gift-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/billing/checkout-gift-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "fc48e013d0a9dbdeb1f49dd2bc743af3e46d1758",
+    "width": 1440
+  },
+  "billing/subscription-status": {
+    "capturedAt": "2026-10-20T09:09:10.028Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/billing/subscription-status-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/billing/subscription-status-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "e456b860ce7463d5af5fbce6c4f6b87b5165403f",
+    "width": 1440
+  },
+  "billing/trial-banner": {
+    "capturedAt": "2026-10-20T09:09:21.520Z",
+    "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",
+    "files": [
+      {
+        "src": "media/en/billing/trial-banner-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/billing/trial-banner-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "439963b725c3db075cdf480c717f6c53561c701a",
+    "width": 1440
+  },
   "pipeline-sample/academy-home-mobile": {
     "capturedAt": "2026-10-20T08:50:36.328Z",
     "commit": "02a79da7e1c69ea489c2357c6ccf94cd0ad009fc",

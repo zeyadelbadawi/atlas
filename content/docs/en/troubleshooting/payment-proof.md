@@ -21,7 +21,7 @@ updated: 2026-10-20
 
 - **Learners:** your course payment shows **Under review** and you can't open the course yet, or it shows **Rejected**. At checkout you may see "Your payment is under review" or "Not available for purchase yet".
 - **Owners:** learners say they paid, but they can't open the course.
-- **Owners paying for Atlas:** your subscription payment is still waiting, or Atlas says "Atlas reviewed this payment and couldn't accept it."
+- **Owners paying for Atlas:** your subscription payment still says **Awaiting review**, or it says **Rejected**.
 
 ## Why it happens
 
@@ -80,8 +80,8 @@ Only the organization owner can review learners' payments. Managers see "Only th
 
    ![The Payment History page with the Review column highlighted](shot:troubleshooting/subscription-payment-history)
 
-2. If it is still pending, there is nothing to resend: the Atlas team reviews it and your plan activates once it is approved.
-3. If it was rejected ("Atlas reviewed this payment and couldn't accept it."), open the payment to read the reason, then pay again with the correct details.
+2. If it says **Awaiting review**, there is nothing to resend: "Your proof of payment has been submitted and is awaiting review by our team. This can take a little time — you don't need to do anything else." Your plan activates once it is approved.
+3. If it says **Rejected**, open the payment to read the reviewer's note, then pay again with the correct details.
 
 ## Still stuck?
 
