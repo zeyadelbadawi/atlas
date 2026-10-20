@@ -240,6 +240,37 @@
 	}
 }
 
+# B0-OPS-04 — origin lock. Every legitimate request reaches this origin
+# through Cloudflare: the platform and academy subdomains are proxied
+# records, and connected custom domains arrive through Cloudflare for SaaS
+# (certificates come from DNS-01, so nothing needs a direct HTTP-01 path).
+# A connection whose socket peer is not a Cloudflare edge address is
+# somebody who found the origin IP and is going around the WAF, the rate
+# limits and the edge cache; it is dropped (no response bytes, no
+# headers) before any route runs. `remote_ip` is the socket peer, never a
+# forwarded header, so it cannot be spoofed by a client.
+#
+# `private_ranges` (loopback, RFC 1918, fd00::/8) keeps the in-container
+# health check (`wget https://localhost/`), the deploy self-check and
+# Docker's own proxy on the bridge gateway working; none of those is
+# reachable from the internet.
+#
+# The ranges must equal `trusted_proxies` in the global options and the
+# lists Cloudflare publishes (https://www.cloudflare.com/ips-v4, /ips-v6);
+# `src/edge-origin-lock.test.ts` checks the first and the scheduled
+# `cloudflare-ranges` workflow checks the second. A range Cloudflare adds
+# and this list lacks would drop real visitors routed through it.
+#
+# Kill switch: ATLAS_ORIGIN_LOCK=off (compose passes it; unset or empty =
+# on) serves direct connections again without a rebuild.
+(origin_lock) {
+	@direct_to_origin {
+		expression `{env.ATLAS_ORIGIN_LOCK} != "off"`
+		not remote_ip 173.245.48.0/20 103.21.244.0/22 103.22.200.0/22 103.31.4.0/22 141.101.64.0/18 108.162.192.0/18 190.93.240.0/20 188.114.96.0/20 197.234.240.0/22 198.41.128.0/17 162.158.0.0/15 104.16.0.0/13 104.24.0.0/14 172.64.0.0/13 131.0.72.0/22 2400:cb00::/32 2606:4700::/32 2803:f800::/32 2405:b500::/32 2405:8100::/32 2a06:98c0::/29 2c0f:f248::/32 private_ranges
+	}
+	abort @direct_to_origin
+}
+
 # Global options.
 #
 # fallback_sni (P63d): Cloudflare for SaaS connects to this origin for a
@@ -257,6 +288,18 @@
 # not (the Platform Owner readiness page reports the mode).
 {
 	fallback_sni atlass.dpdns.org
+
+	# B0-OPS-04 — `abort` sorts after `redir` and `handle` by default, which
+	# would let the origin lock run only after a route had answered. First
+	# means it is evaluated before every other directive in every site.
+	order abort first
+
+	# B0-OPS-04 — Caddy's automatic HTTP->HTTPS redirect for the platform
+	# names is a route of its own, inserted ahead of every site block, so it
+	# answered direct connections to port 80 that the origin lock could not
+	# see. The `:80` catch-all below performs the same redirect for every
+	# host (platform names included) behind the lock.
+	auto_https disable_redirects
 
 	# P63g — Cloudflare's published edge ranges are the only proxies whose
 	# forwarded headers are believed. With this, `{client_ip}` is the real
@@ -280,6 +323,8 @@
 # internal` policy below. CLOUDFLARE_API_TOKEN is provided at container
 # start via env_file, never baked into the image.
 atlass.dpdns.org, *.atlass.dpdns.org {
+	import origin_lock
+
 	tls {
 		dns cloudflare {env.CLOUDFLARE_API_TOKEN}
 	}
@@ -493,9 +538,11 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 
 # P63g — custom hostnames arriving over plain HTTP (a customer's own
 # proxy in a non-TLS origin mode, or a stray http:// link) are redirected
-# to HTTPS instead of hitting an unhandled port. The platform names get
-# this automatically from Caddy; the catch-all must declare it.
+# to HTTPS instead of hitting an unhandled port. Since B0-OPS-04 the
+# platform names use this block too (`auto_https disable_redirects`), so
+# every port-80 request passes the origin lock first.
 :80 {
+	import origin_lock
 	redir https://{host}{uri} permanent
 }
 
@@ -510,6 +557,8 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 # internal` here only names the issuer for this block's (empty) hostname
 # set and does NOT issue certificates for arbitrary SNI.
 :443 {
+	import origin_lock
+
 	tls internal
 
 	encode zstd gzip
