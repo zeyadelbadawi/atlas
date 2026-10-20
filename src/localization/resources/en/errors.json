@@ -26,7 +26,7 @@
   },
   "forbidden": {
     "title": "You do not have access",
-    "description": "Your account does not have permission to view this page. Contact your administrator if you need access."
+    "description": "Your account does not have permission to view this page. If you need access, ask the owner of your academy or organization."
   },
   "notFound": {
     "title": "Page not found",
@@ -356,7 +356,7 @@
     "nameTakenInAcademy": "Another learner already uses this name in {{academies}}. Add a middle or family name so your name stays unique there."
   },
   "messaging": {
-    "notAllowed": "Only an owner or administrator of this academy can send messages.",
+    "notAllowed": "Only the owner of this academy can send messages.",
     "academyInactive": "This academy is suspended or archived, so messages can't be sent. Your message history and allowance are still shown.",
     "audienceChanged": "The number of recipients changed since your preview, so nothing was sent. Preview again, then send.",
     "audienceInvalid": "Choose who should receive this message.",
