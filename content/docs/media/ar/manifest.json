@@ -84,6 +84,142 @@
     "spec": "f1cdcb11cc162be0e6c8a438c9eee153a52236ba",
     "width": 1440
   },
+  "academy/settings-currency": {
+    "capturedAt": "2026-10-20T15:37:51.838Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/settings-currency-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/settings-currency-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3bc973d32e42093c75cb77c77189745d91d4f0bc",
+    "width": 1440
+  },
+  "academy/settings-language": {
+    "capturedAt": "2026-10-20T15:37:20.490Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/settings-language-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/settings-language-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "79087fc54cab6a98a1be6074192bea30c8a64b24",
+    "width": 1440
+  },
+  "academy/settings-localization": {
+    "capturedAt": "2026-10-20T15:37:05.003Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/settings-localization-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/settings-localization-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "612649899192dbe500707d81336ad54ca14b8660",
+    "width": 1440
+  },
+  "academy/settings-save": {
+    "capturedAt": "2026-10-20T15:38:06.767Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/settings-save-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/settings-save-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "3099fbf40ac453ae85b0708ce1e20575a7fbf5b6",
+    "width": 1440
+  },
+  "academy/settings-timezone": {
+    "capturedAt": "2026-10-20T15:37:36.279Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/settings-timezone-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/settings-timezone-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "6a4440747b5ec38831c188b37f4921d1e78525fd",
+    "width": 1440
+  },
+  "academy/visual-identity": {
+    "capturedAt": "2026-10-20T15:38:24.568Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/visual-identity-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/visual-identity-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "c07ad4d6752e4eea0165753678cb453d8c316bc8",
+    "width": 1440
+  },
+  "academy/visual-identity-logo": {
+    "capturedAt": "2026-10-20T15:38:39.954Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/visual-identity-logo-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/visual-identity-logo-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "71785dcacb6268fdf5b1a3ddbc304bfc011e8685",
+    "width": 1440
+  },
+  "academy/visual-identity-palette": {
+    "capturedAt": "2026-10-20T15:39:01.219Z",
+    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "files": [
+      {
+        "src": "media/ar/academy/visual-identity-palette-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/ar/academy/visual-identity-palette-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "20faa1421c9e829c395ec917532db21715afc762",
+    "width": 1440
+  },
   "billing/billing-overview": {
     "capturedAt": "2026-10-20T09:17:24.149Z",
     "commit": "71a957e848ccdce9930355bd40983df1ae4022c2",

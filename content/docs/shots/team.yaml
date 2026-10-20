@@ -159,7 +159,9 @@
   waitFor: { text: academy:registration.policy.title }
   actions:
     - scroll: { role: radiogroup, name: academy:registration.policy.title }
-    - click: { label: academy:registration.policy.options.approval.label }
+    # The radio's accessible name is "<label> <description>" (one <Label>
+    # wraps both), so an anchored label match never finds it.
+    - click: { selector: "#registration-policy-approval" }
   highlight: { text: academy:registration.policy.options.approval.label, exact: true }
 
 - key: team/registration-save
@@ -169,7 +171,9 @@
   waitFor: { text: academy:registration.policy.title }
   actions:
     - scroll: { role: radiogroup, name: academy:registration.policy.title }
-    - click: { label: academy:registration.policy.options.approval.label }
+    # The radio's accessible name is "<label> <description>" (one <Label>
+    # wraps both), so an anchored label match never finds it.
+    - click: { selector: "#registration-policy-approval" }
   highlight: { role: button, name: academy:registration.policy.save }
 
 - key: team/registration-manager

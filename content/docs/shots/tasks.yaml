@@ -88,6 +88,10 @@
   surface: dashboard
   path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/{quizId}
   waitFor: { text: course:quizAuthoring.editor.detailsTitle }
+  # Mode and Integrity live under the collapsed "Advanced options"; the Exam
+  # preset opens that panel (and is what the article describes). Not saved.
+  actions:
+    - click: { role: button, name: course:quizAuthoring.settings.presets.exam.label }
   highlight: { text: course:quizAuthoring.settings.fields.mode.label, exact: true }
 
 - key: tasks/exams-integrity
@@ -95,6 +99,10 @@
   surface: dashboard
   path: /dashboard/academy/{academyId}/courses/{courseId}/quizzes/{quizId}
   waitFor: { text: course:quizAuthoring.editor.detailsTitle }
+  # Mode and Integrity live under the collapsed "Advanced options"; the Exam
+  # preset opens that panel (and is what the article describes). Not saved.
+  actions:
+    - click: { role: button, name: course:quizAuthoring.settings.presets.exam.label }
   highlight: { text: course:quizAuthoring.settings.integrity.title, exact: true }
 
 - key: tasks/exams-learner-assessments
@@ -193,8 +201,10 @@
   as: owner
   surface: dashboard
   path: /dashboard/academy/{academyId}/members?tab=students
-  waitFor: { text: academy:students.table.student }
+  # Clickable rows are role="button" (DataTable onRowSelect), not role="row":
+  # open Salma's details by her name, as courses/issue-certificate does.
+  waitFor: { text: { en: Salma Ibrahim, ar: سلمى إبراهيم } }
   actions:
-    - click: { role: row, nth: 1 }
+    - click: { text: { en: Salma Ibrahim, ar: سلمى إبراهيم } }
     - wait: 800
   clip: dialog

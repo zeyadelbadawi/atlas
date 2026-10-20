@@ -162,7 +162,11 @@
   surface: dashboard
   path: /dashboard/tenant/billing/payments
   waitFor: { text: payments:paymentHistory.subtitle }
-  highlight: { text: payments:paymentHistory.table.reviewStatus }
+  # SEED GAP: the demo organization is on the Enterprise trial and never pays
+  # a subscription, so this page shows "No payments yet" and has no table.
+  # Sortable headers also read "Sort ascending" (sr-only): a literal, not an
+  # anchored key, matches the header's name (payments:paymentHistory.table.reviewStatus).
+  highlight: { role: columnheader, name: { en: Review, ar: المراجعة } }
 
 # ---- I didn't get an email (DOC-TRB-009) ----
 - key: troubleshooting/owner-email-preferences
