@@ -88,10 +88,15 @@ export interface LessonFormDialogProps {
   readonly loadHostedVideos?: () => Promise<readonly HostedVideoAsset[]>;
 }
 
+/**
+ * A new lesson starts as a Video (YouTube link). Text lessons are retired
+ * for new content (CF-01): "Text" is offered only while editing a lesson
+ * that already is one, so it still opens, saves and can be switched away.
+ */
 const EMPTY_LESSON_VALUES: CourseLessonFormData = {
   title: '',
   description: '',
-  contentType: 'text',
+  contentType: 'video',
   contentUrl: '',
   status: 'draft',
   bodyHtml: '',
@@ -118,6 +123,7 @@ export function LessonFormDialog({
       ? { onUpload: onUploadHostedVideo, loadLibrary: loadHostedVideos }
       : null;
   const hostedVideoEnabled = hostedVideo !== null;
+  const offerTextType = defaultValues?.contentType === 'text';
 
   const form = useForm<CourseLessonFormData>({
     resolver: zodResolver(courseLessonSchema),
@@ -233,9 +239,11 @@ export function LessonFormDialog({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="text">
-                          {t('course:contentType.text')}
-                        </SelectItem>
+                        {offerTextType ? (
+                          <SelectItem value="text">
+                            {t('course:contentType.text')}
+                          </SelectItem>
+                        ) : null}
                         <SelectItem value="video">
                           {t('course:contentType.video')}
                         </SelectItem>
