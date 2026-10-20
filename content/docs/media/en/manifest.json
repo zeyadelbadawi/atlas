@@ -1292,8 +1292,8 @@
     "width": 1440
   },
   "analytics/academy-overview": {
-    "capturedAt": "2026-10-20T14:13:08.375Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:39:43.745Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/analytics/academy-overview-960.webp",
@@ -1308,9 +1308,26 @@
     "spec": "90f4ce3e2fd8084d7236d3039ad35ae8d5d75931",
     "width": 1440
   },
+  "analytics/activity-log-entry": {
+    "capturedAt": "2026-10-20T17:41:16.098Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "files": [
+      {
+        "src": "media/en/analytics/activity-log-entry-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/analytics/activity-log-entry-1200.webp",
+        "width": 1200
+      }
+    ],
+    "height": 900,
+    "spec": "315dedee185ff11208c6d7d0c54b8c250dde1133",
+    "width": 600
+  },
   "analytics/activity-log-filters": {
-    "capturedAt": "2026-10-20T14:14:32.450Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:41:06.978Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/analytics/activity-log-filters-960.webp",
@@ -1326,8 +1343,8 @@
     "width": 1440
   },
   "analytics/activity-log-open": {
-    "capturedAt": "2026-10-20T14:14:25.021Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:40:59.664Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/analytics/activity-log-open-960.webp",
@@ -1343,8 +1360,8 @@
     "width": 1440
   },
   "analytics/dashboard-manager": {
-    "capturedAt": "2026-10-20T14:13:00.734Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:39:36.116Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/analytics/dashboard-manager-960.webp",
@@ -1360,8 +1377,8 @@
     "width": 1440
   },
   "analytics/dashboard-owner": {
-    "capturedAt": "2026-10-20T14:12:44.388Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:39:14.479Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/analytics/dashboard-owner-960.webp",
@@ -1377,8 +1394,8 @@
     "width": 1440
   },
   "analytics/dashboard-revenue-owner": {
-    "capturedAt": "2026-10-20T14:12:52.733Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:39:21.926Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/analytics/dashboard-revenue-owner-960.webp",
@@ -1394,8 +1411,8 @@
     "width": 1440
   },
   "analytics/reports-integrity": {
-    "capturedAt": "2026-10-20T14:14:01.691Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:40:35.956Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/analytics/reports-integrity-960.webp",
@@ -1411,8 +1428,8 @@
     "width": 1440
   },
   "analytics/reports-open": {
-    "capturedAt": "2026-10-20T14:13:45.650Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:40:20.374Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/analytics/reports-open-960.webp",
@@ -1428,8 +1445,8 @@
     "width": 1440
   },
   "analytics/reports-quota": {
-    "capturedAt": "2026-10-20T14:14:17.511Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:40:52.094Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/analytics/reports-quota-960.webp",
@@ -1445,8 +1462,8 @@
     "width": 1440
   },
   "analytics/reports-sharing": {
-    "capturedAt": "2026-10-20T14:14:09.657Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:40:43.656Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/analytics/reports-sharing-960.webp",
@@ -1462,8 +1479,8 @@
     "width": 1440
   },
   "analytics/reports-window": {
-    "capturedAt": "2026-10-20T14:13:53.873Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:40:28.119Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/analytics/reports-window-960.webp",
@@ -1479,8 +1496,8 @@
     "width": 1440
   },
   "analytics/student-analytics-at-risk": {
-    "capturedAt": "2026-10-20T14:13:37.793Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:40:12.636Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/analytics/student-analytics-at-risk-960.webp",
@@ -1496,8 +1513,8 @@
     "width": 1440
   },
   "analytics/student-analytics-funnel": {
-    "capturedAt": "2026-10-20T14:13:22.732Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:39:58.142Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/analytics/student-analytics-funnel-960.webp",
@@ -1513,8 +1530,8 @@
     "width": 1440
   },
   "analytics/student-analytics-open": {
-    "capturedAt": "2026-10-20T14:13:15.313Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:39:50.585Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/analytics/student-analytics-open-960.webp",
@@ -1530,8 +1547,8 @@
     "width": 1440
   },
   "analytics/student-analytics-trends": {
-    "capturedAt": "2026-10-20T14:13:30.137Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:40:05.507Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/analytics/student-analytics-trends-960.webp",
@@ -3213,8 +3230,8 @@
     "width": 1440
   },
   "for-learners/academy-home-my-learn": {
-    "capturedAt": "2026-10-20T14:27:41.297Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:42:01.891Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/academy-home-my-learn-960.webp",
@@ -3230,8 +3247,8 @@
     "width": 1440
   },
   "for-learners/academy-home-sign-up": {
-    "capturedAt": "2026-10-20T14:27:08.947Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:41:22.932Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/academy-home-sign-up-960.webp",
@@ -3247,8 +3264,8 @@
     "width": 1440
   },
   "for-learners/assessments-assignments": {
-    "capturedAt": "2026-10-20T14:30:07.055Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:43:40.896Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/assessments-assignments-960.webp",
@@ -3264,8 +3281,8 @@
     "width": 1440
   },
   "for-learners/assessments-quizzes": {
-    "capturedAt": "2026-10-20T14:28:54.439Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:43:15.839Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/assessments-quizzes-960.webp",
@@ -3281,8 +3298,8 @@
     "width": 1440
   },
   "for-learners/assignment-attach": {
-    "capturedAt": "2026-10-20T14:30:31.209Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:44:04.983Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/assignment-attach-960.webp",
@@ -3298,8 +3315,8 @@
     "width": 1440
   },
   "for-learners/assignment-page": {
-    "capturedAt": "2026-10-20T14:30:13.990Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:43:48.108Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/assignment-page-960.webp",
@@ -3315,8 +3332,8 @@
     "width": 1440
   },
   "for-learners/assignment-response": {
-    "capturedAt": "2026-10-20T14:30:22.744Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:43:56.614Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/assignment-response-960.webp",
@@ -3332,8 +3349,8 @@
     "width": 1440
   },
   "for-learners/assignment-submit": {
-    "capturedAt": "2026-10-20T14:30:39.631Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:44:13.118Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/assignment-submit-960.webp",
@@ -3349,8 +3366,8 @@
     "width": 1440
   },
   "for-learners/assignment-submitted": {
-    "capturedAt": "2026-10-20T14:30:47.102Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:44:20.892Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/assignment-submitted-960.webp",
@@ -3366,8 +3383,8 @@
     "width": 1440
   },
   "for-learners/certificate-verify": {
-    "capturedAt": "2026-10-20T14:31:00.825Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:44:34.436Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/certificate-verify-960.webp",
@@ -3383,8 +3400,8 @@
     "width": 1440
   },
   "for-learners/certificates-page": {
-    "capturedAt": "2026-10-20T14:30:54.683Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:44:27.967Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/certificates-page-960.webp",
@@ -3400,8 +3417,8 @@
     "width": 1440
   },
   "for-learners/checkout-instructions": {
-    "capturedAt": "2026-10-20T14:32:12.437Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:45:44.097Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/checkout-instructions-960.webp",
@@ -3417,8 +3434,8 @@
     "width": 1440
   },
   "for-learners/checkout-method": {
-    "capturedAt": "2026-10-20T14:32:00.787Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:45:32.924Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/checkout-method-960.webp",
@@ -3434,8 +3451,8 @@
     "width": 1440
   },
   "for-learners/checkout-proof": {
-    "capturedAt": "2026-10-20T14:32:23.852Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:45:54.890Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/checkout-proof-960.webp",
@@ -3451,8 +3468,8 @@
     "width": 1440
   },
   "for-learners/checkout-submit": {
-    "capturedAt": "2026-10-20T14:32:34.174Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:46:04.567Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/checkout-submit-960.webp",
@@ -3468,8 +3485,8 @@
     "width": 1440
   },
   "for-learners/course-progress": {
-    "capturedAt": "2026-10-20T14:28:02.178Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:42:22.519Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/course-progress-960.webp",
@@ -3485,8 +3502,8 @@
     "width": 1440
   },
   "for-learners/devices-nav": {
-    "capturedAt": "2026-10-20T14:31:32.182Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:45:04.319Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/devices-nav-960.webp",
@@ -3502,8 +3519,8 @@
     "width": 1440
   },
   "for-learners/devices-page": {
-    "capturedAt": "2026-10-20T14:31:38.952Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:45:11.066Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/devices-page-960.webp",
@@ -3519,8 +3536,8 @@
     "width": 1440
   },
   "for-learners/devices-remove-confirm": {
-    "capturedAt": "2026-10-20T14:31:45.580Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:45:17.710Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/devices-remove-confirm-960.webp",
@@ -3553,8 +3570,8 @@
     "width": 1440
   },
   "for-learners/free-course-signed-out": {
-    "capturedAt": "2026-10-20T14:28:39.115Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:42:46.714Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/free-course-signed-out-960.webp",
@@ -3569,9 +3586,26 @@
     "spec": "99c3bf6881b786a5bad84b1c30f8c64320ee7e9e",
     "width": 1440
   },
+  "for-learners/lesson-player": {
+    "capturedAt": "2026-10-20T17:42:31.443Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "files": [
+      {
+        "src": "media/en/for-learners/lesson-player-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/lesson-player-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "6e614a89bb405989d804a45018b22207afeb8ab0",
+    "width": 1440
+  },
   "for-learners/my-courses": {
-    "capturedAt": "2026-10-20T14:27:55.437Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:42:15.641Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/my-courses-960.webp",
@@ -3587,8 +3621,8 @@
     "width": 1440
   },
   "for-learners/my-learn-overview": {
-    "capturedAt": "2026-10-20T14:27:48.606Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:42:08.619Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/my-learn-overview-960.webp",
@@ -3604,8 +3638,8 @@
     "width": 1440
   },
   "for-learners/paid-course-buy": {
-    "capturedAt": "2026-10-20T14:31:53.171Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:45:25.425Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/paid-course-buy-960.webp",
@@ -3621,8 +3655,8 @@
     "width": 1440
   },
   "for-learners/payment-proof": {
-    "capturedAt": "2026-10-20T14:32:56.769Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:46:27.258Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/payment-proof-960.webp",
@@ -3638,8 +3672,8 @@
     "width": 720
   },
   "for-learners/payments-page": {
-    "capturedAt": "2026-10-20T14:32:47.498Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:46:18.092Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/payments-page-960.webp",
@@ -3655,8 +3689,8 @@
     "width": 1440
   },
   "for-learners/profile-your-data": {
-    "capturedAt": "2026-10-20T14:28:32.729Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:42:39.663Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/profile-your-data-960.webp",
@@ -3672,8 +3706,8 @@
     "width": 1440
   },
   "for-learners/purchases-page": {
-    "capturedAt": "2026-10-20T14:32:40.807Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:46:11.121Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/purchases-page-960.webp",
@@ -3688,9 +3722,43 @@
     "spec": "ea13ce131aba406fdd06ce3597c8621c040cbbfa",
     "width": 1440
   },
+  "for-learners/quiz-intro": {
+    "capturedAt": "2026-10-20T17:43:24.644Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "files": [
+      {
+        "src": "media/en/for-learners/quiz-intro-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/quiz-intro-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "71db28561820a414153c7576ce03a982ded98f79",
+    "width": 1440
+  },
+  "for-learners/quiz-start": {
+    "capturedAt": "2026-10-20T17:43:33.165Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "files": [
+      {
+        "src": "media/en/for-learners/quiz-start-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/for-learners/quiz-start-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "58a641a24c4ac97b2b69ad8ee48a2d33994e7c81",
+    "width": 1440
+  },
   "for-learners/review-form": {
-    "capturedAt": "2026-10-20T14:31:09.105Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:44:41.832Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/review-form-960.webp",
@@ -3706,8 +3774,8 @@
     "width": 728
   },
   "for-learners/review-rating": {
-    "capturedAt": "2026-10-20T14:31:16.661Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:44:49.386Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/review-rating-960.webp",
@@ -3723,8 +3791,8 @@
     "width": 728
   },
   "for-learners/review-submit": {
-    "capturedAt": "2026-10-20T14:31:24.775Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:44:57.754Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/review-submit-960.webp",
@@ -3740,8 +3808,8 @@
     "width": 728
   },
   "for-learners/sign-in": {
-    "capturedAt": "2026-10-20T14:27:34.554Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:41:49.072Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/sign-in-960.webp",
@@ -3757,8 +3825,8 @@
     "width": 1440
   },
   "for-learners/sign-up-form": {
-    "capturedAt": "2026-10-20T14:27:15.047Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:41:29.204Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/sign-up-form-960.webp",
@@ -3774,8 +3842,8 @@
     "width": 1440
   },
   "for-learners/sign-up-join-existing": {
-    "capturedAt": "2026-10-20T14:27:28.595Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:41:42.917Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/sign-up-join-existing-960.webp",
@@ -3791,8 +3859,8 @@
     "width": 1440
   },
   "for-learners/sign-up-submit": {
-    "capturedAt": "2026-10-20T14:27:22.114Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:41:36.316Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/for-learners/sign-up-submit-960.webp",
@@ -4879,8 +4947,8 @@
     "width": 1440
   },
   "protection/media-delete-confirm": {
-    "capturedAt": "2026-10-20T14:45:52.127Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:48:49.232Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/media-delete-confirm-960.webp",
@@ -4891,13 +4959,13 @@
         "width": 1120
       }
     ],
-    "height": 250,
+    "height": 270,
     "spec": "bba28ce8b48d881f12ae3e5c109ccdb49f6edb7f",
     "width": 560
   },
   "protection/media-details": {
-    "capturedAt": "2026-10-20T14:45:34.912Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:48:32.054Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/media-details-960.webp",
@@ -4913,8 +4981,8 @@
     "width": 560
   },
   "protection/media-nav": {
-    "capturedAt": "2026-10-20T14:45:18.662Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:48:16.026Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/media-nav-960.webp",
@@ -4930,8 +4998,8 @@
     "width": 1440
   },
   "protection/media-search": {
-    "capturedAt": "2026-10-20T14:45:42.711Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:48:39.875Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/media-search-960.webp",
@@ -4947,8 +5015,8 @@
     "width": 1440
   },
   "protection/media-upload": {
-    "capturedAt": "2026-10-20T14:45:27.087Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:48:23.654Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/media-upload-960.webp",
@@ -4964,8 +5032,8 @@
     "width": 1440
   },
   "protection/reports-nav": {
-    "capturedAt": "2026-10-20T14:44:51.034Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:47:51.902Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/reports-nav-960.webp",
@@ -4981,8 +5049,8 @@
     "width": 1440
   },
   "protection/reports-sharing": {
-    "capturedAt": "2026-10-20T14:45:07.919Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:48:08.056Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/reports-sharing-960.webp",
@@ -4998,8 +5066,8 @@
     "width": 1440
   },
   "protection/reports-window": {
-    "capturedAt": "2026-10-20T14:44:59.011Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:47:59.979Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/reports-window-960.webp",
@@ -5015,8 +5083,8 @@
     "width": 1440
   },
   "protection/settings-devices": {
-    "capturedAt": "2026-10-20T14:44:04.240Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:47:03.083Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/settings-devices-960.webp",
@@ -5032,8 +5100,8 @@
     "width": 1440
   },
   "protection/settings-devices-save": {
-    "capturedAt": "2026-10-20T14:44:13.031Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:47:12.127Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/settings-devices-save-960.webp",
@@ -5049,8 +5117,8 @@
     "width": 1440
   },
   "protection/settings-nav": {
-    "capturedAt": "2026-10-20T14:43:45.995Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:46:45.287Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/settings-nav-960.webp",
@@ -5066,8 +5134,8 @@
     "width": 1440
   },
   "protection/settings-video-protection": {
-    "capturedAt": "2026-10-20T14:43:54.719Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:46:54.315Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/settings-video-protection-960.webp",
@@ -5083,8 +5151,8 @@
     "width": 1440
   },
   "protection/support-center": {
-    "capturedAt": "2026-10-20T14:44:20.251Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:47:19.533Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/support-center-960.webp",
@@ -5100,8 +5168,8 @@
     "width": 1440
   },
   "protection/support-new-ticket": {
-    "capturedAt": "2026-10-20T14:44:28.198Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:47:28.038Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/support-new-ticket-960.webp",
@@ -5117,8 +5185,8 @@
     "width": 560
   },
   "protection/support-ticket-attach": {
-    "capturedAt": "2026-10-20T14:44:35.383Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:47:35.662Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/support-ticket-attach-960.webp",
@@ -5134,8 +5202,8 @@
     "width": 560
   },
   "protection/support-ticket-submit": {
-    "capturedAt": "2026-10-20T14:44:42.898Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:47:43.672Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/support-ticket-submit-960.webp",
@@ -5151,8 +5219,8 @@
     "width": 560
   },
   "protection/watermark-about": {
-    "capturedAt": "2026-10-20T14:43:37.995Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:46:36.624Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/protection/watermark-about-960.webp",
@@ -6392,8 +6460,8 @@
     "width": 1440
   },
   "team/add-instructor-email": {
-    "capturedAt": "2026-10-20T14:56:27.589Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:49:23.342Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/add-instructor-email-960.webp",
@@ -6409,8 +6477,8 @@
     "width": 560
   },
   "team/add-instructor-name": {
-    "capturedAt": "2026-10-20T14:56:42.841Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:49:34.132Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/add-instructor-name-960.webp",
@@ -6426,8 +6494,8 @@
     "width": 560
   },
   "team/add-instructor-submit": {
-    "capturedAt": "2026-10-20T14:57:01.357Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:49:45.346Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/add-instructor-submit-960.webp",
@@ -6443,8 +6511,8 @@
     "width": 560
   },
   "team/add-staff-already-member": {
-    "capturedAt": "2026-10-20T14:57:22.712Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:49:55.962Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/add-staff-already-member-960.webp",
@@ -6460,8 +6528,8 @@
     "width": 560
   },
   "team/add-staff-buttons": {
-    "capturedAt": "2026-10-20T14:56:04.253Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:49:12.432Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/add-staff-buttons-960.webp",
@@ -6477,8 +6545,8 @@
     "width": 1440
   },
   "team/add-student-button": {
-    "capturedAt": "2026-10-20T14:58:06.911Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:50:18.974Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/add-student-button-960.webp",
@@ -6494,8 +6562,8 @@
     "width": 1440
   },
   "team/add-student-email": {
-    "capturedAt": "2026-10-20T14:58:28.489Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:50:29.599Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/add-student-email-960.webp",
@@ -6511,8 +6579,8 @@
     "width": 560
   },
   "team/add-student-name": {
-    "capturedAt": "2026-10-20T14:58:46.751Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:50:40.381Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/add-student-name-960.webp",
@@ -6528,8 +6596,8 @@
     "width": 560
   },
   "team/add-student-submit": {
-    "capturedAt": "2026-10-20T14:59:05.421Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:50:51.639Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/add-student-submit-960.webp",
@@ -6545,8 +6613,8 @@
     "width": 560
   },
   "team/approve-drawer": {
-    "capturedAt": "2026-10-20T15:04:12.553Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:53:07.752Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/approve-drawer-960.webp",
@@ -6562,8 +6630,8 @@
     "width": 600
   },
   "team/block-dialog": {
-    "capturedAt": "2026-10-20T15:05:16.053Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:53:38.245Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/block-dialog-960.webp",
@@ -6579,8 +6647,8 @@
     "width": 560
   },
   "team/block-drawer": {
-    "capturedAt": "2026-10-20T15:04:51.499Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:53:26.933Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/block-drawer-960.webp",
@@ -6596,8 +6664,8 @@
     "width": 600
   },
   "team/invites-card": {
-    "capturedAt": "2026-10-20T15:00:54.733Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:51:38.347Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/invites-card-960.webp",
@@ -6613,8 +6681,8 @@
     "width": 1440
   },
   "team/invites-create-button": {
-    "capturedAt": "2026-10-20T15:01:13.006Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:51:46.664Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/invites-create-button-960.webp",
@@ -6630,8 +6698,8 @@
     "width": 1440
   },
   "team/invites-create-dialog": {
-    "capturedAt": "2026-10-20T15:01:32.099Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:51:55.745Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/invites-create-dialog-960.webp",
@@ -6647,8 +6715,8 @@
     "width": 560
   },
   "team/invites-create-submit": {
-    "capturedAt": "2026-10-20T15:01:54.951Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:52:05.059Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/invites-create-submit-960.webp",
@@ -6664,8 +6732,8 @@
     "width": 560
   },
   "team/invites-revoke-button": {
-    "capturedAt": "2026-10-20T15:02:12.775Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:52:13.577Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/invites-revoke-button-960.webp",
@@ -6681,8 +6749,8 @@
     "width": 1440
   },
   "team/invites-revoke-confirm": {
-    "capturedAt": "2026-10-20T15:02:31.678Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:52:22.395Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/invites-revoke-confirm-960.webp",
@@ -6698,8 +6766,8 @@
     "width": 560
   },
   "team/manual-enroll-dialog": {
-    "capturedAt": "2026-10-20T15:06:09.766Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:54:09.553Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/manual-enroll-dialog-960.webp",
@@ -6715,8 +6783,8 @@
     "width": 560
   },
   "team/manual-enroll-drawer": {
-    "capturedAt": "2026-10-20T15:05:51.954Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:53:58.295Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/manual-enroll-drawer-960.webp",
@@ -6732,8 +6800,8 @@
     "width": 600
   },
   "team/manual-enroll-expiry": {
-    "capturedAt": "2026-10-20T15:06:25.858Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:54:19.329Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/manual-enroll-expiry-960.webp",
@@ -6749,8 +6817,8 @@
     "width": 560
   },
   "team/manual-enroll-revoke": {
-    "capturedAt": "2026-10-20T15:06:41.459Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:54:29.404Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/manual-enroll-revoke-960.webp",
@@ -6761,13 +6829,13 @@
         "width": 1120
       }
     ],
-    "height": 308,
+    "height": 428,
     "spec": "02b57a618b70ec82cea3d96c761025ae88c01ca8",
     "width": 560
   },
   "team/members-manager-view": {
-    "capturedAt": "2026-10-20T14:55:47.312Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:49:04.727Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/members-manager-view-960.webp",
@@ -6783,8 +6851,8 @@
     "width": 1440
   },
   "team/members-team-tab": {
-    "capturedAt": "2026-10-20T14:55:36.850Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:48:57.565Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/members-team-tab-960.webp",
@@ -6800,8 +6868,8 @@
     "width": 1440
   },
   "team/organization-create": {
-    "capturedAt": "2026-10-20T15:07:14.852Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:54:56.843Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/organization-create-960.webp",
@@ -6817,8 +6885,8 @@
     "width": 1440
   },
   "team/organization-overview": {
-    "capturedAt": "2026-10-20T15:07:04.848Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:54:49.695Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/organization-overview-960.webp",
@@ -6833,9 +6901,26 @@
     "spec": "a47fccf2a6ca07b5742291554105f16845250b00",
     "width": 1440
   },
+  "team/registration-choose": {
+    "capturedAt": "2026-10-20T17:51:10.362Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "files": [
+      {
+        "src": "media/en/team/registration-choose-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/registration-choose-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "b6b1721a009338f71d05540c9c08042bf387458e",
+    "width": 1440
+  },
   "team/registration-manager": {
-    "capturedAt": "2026-10-20T15:00:38.921Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:51:29.443Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/registration-manager-960.webp",
@@ -6850,9 +6935,26 @@
     "spec": "9d25894838af2727b1d58828500c61c931b2de8b",
     "width": 1440
   },
+  "team/registration-save": {
+    "capturedAt": "2026-10-20T17:51:20.427Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
+    "files": [
+      {
+        "src": "media/en/team/registration-save-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/team/registration-save-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "0968433152310135c187a04286c90b29cf858ab3",
+    "width": 1440
+  },
   "team/registration-section": {
-    "capturedAt": "2026-10-20T14:59:21.570Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:51:00.810Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/registration-section-960.webp",
@@ -6868,8 +6970,8 @@
     "width": 1440
   },
   "team/reject-confirm": {
-    "capturedAt": "2026-10-20T15:04:31.595Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:53:17.477Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/reject-confirm-960.webp",
@@ -6880,13 +6982,13 @@
         "width": 1120
       }
     ],
-    "height": 230,
+    "height": 250,
     "spec": "80112f4ab941d9cc745034abfd5079683ac834c8",
     "width": 560
   },
   "team/remove-staff-button": {
-    "capturedAt": "2026-10-20T14:57:38.897Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:50:03.298Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/remove-staff-button-960.webp",
@@ -6902,8 +7004,8 @@
     "width": 1440
   },
   "team/remove-staff-confirm": {
-    "capturedAt": "2026-10-20T14:57:53.146Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:50:11.271Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/remove-staff-confirm-960.webp",
@@ -6919,8 +7021,8 @@
     "width": 560
   },
   "team/student-drawer": {
-    "capturedAt": "2026-10-20T15:03:51.084Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:52:58.331Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/student-drawer-960.webp",
@@ -6936,8 +7038,8 @@
     "width": 600
   },
   "team/students-filter-pending": {
-    "capturedAt": "2026-10-20T15:03:32.671Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:52:48.593Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/students-filter-pending-960.webp",
@@ -6953,8 +7055,8 @@
     "width": 1440
   },
   "team/students-filters": {
-    "capturedAt": "2026-10-20T15:03:12.738Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:52:37.966Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/students-filters-960.webp",
@@ -6970,8 +7072,8 @@
     "width": 1440
   },
   "team/students-instructor": {
-    "capturedAt": "2026-10-20T15:06:53.859Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:54:42.613Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/students-instructor-960.webp",
@@ -6987,8 +7089,8 @@
     "width": 1440
   },
   "team/students-tab": {
-    "capturedAt": "2026-10-20T15:02:51.112Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:52:30.133Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/students-tab-960.webp",
@@ -7004,8 +7106,8 @@
     "width": 1440
   },
   "team/unblock-drawer": {
-    "capturedAt": "2026-10-20T15:05:36.523Z",
-    "commit": "fd783a05ea6690d8d80fe806abd762f59d31c361",
+    "capturedAt": "2026-10-20T17:53:48.327Z",
+    "commit": "be142b4044937b36c3fdfba92f630d4d23605a1a",
     "files": [
       {
         "src": "media/en/team/unblock-drawer-960.webp",
