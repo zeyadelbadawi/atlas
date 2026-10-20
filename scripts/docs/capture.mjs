@@ -76,6 +76,7 @@ const ACCOUNTS = {
   manager: MANAGER.email,
   instructor: INSTRUCTOR.email,
   learner: state.learnerEmail,
+  learner2: state.inProgressLearnerEmail,
 };
 
 // ---- manifest ----
@@ -125,7 +126,7 @@ async function signIn(browser, role, lang) {
   const page = await ctx.newPage();
   const { clearLimits } = await import('./seed/lib.mjs');
   clearLimits();
-  if (role === 'learner') {
+  if (role === 'learner' || role === 'learner2') {
     // Every capture browser is a "new device"; free the demo learner's device slots first (local DB).
     await psqlLocal(`update student_devices set revoked_at = now() where revoked_at is null and user_id = (select id from users where lower(email) = lower('${email}'))`);
     await page.goto(`${BASE}/sign-in?${PREVIEW_PARAM}=${state.academySlug}`);

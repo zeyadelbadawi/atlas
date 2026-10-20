@@ -89,7 +89,7 @@ screenshot, captured in English and Arabic.
 
 | Field | Meaning |
 |---|---|
-| `as` | `owner` Nour, `manager` Karim, `instructor` Mona (all sign in at `/auth/sign-in`); `learner` Salma, signed in on the academy site; `visitor` signed out. One session per role and language is reused for every shot. |
+| `as` | `owner` Nour, `manager` Karim, `instructor` Mona (all sign in at `/auth/sign-in`); `learner` Salma, signed in on the academy site; `learner2` Hana (part-way through the free course, for the player's Next); `visitor` signed out. One session per role and language is reused for every shot. |
 | `surface` | `dashboard`: app routes as written. `academy`: the demo academy's public site and learner area (`/`, `/courses/…`, `/my/…`); on localhost the capture adds `?__atlas_academy_preview=al-nour` and, for Arabic, the site's `/ar` prefix. `platform`: signed-out platform pages (`/auth/register`). |
 | `path` | Real route (`src/app/routes/route-paths.ts`) with `{placeholders}` from the seed (below). An unknown placeholder fails the shot. |
 | `waitFor` | `{ text: <value> }` or `{ selector: <css> }`: must be visible before anything else happens. Then the page settles (network idle, fonts, images, no skeleton / spinner / `aria-busy` in view). |
@@ -171,7 +171,7 @@ uncommitted app changes do not count as a change).
 | `{draftCourseId}` | draft course "Physics: Mechanics" |
 | `{sectionId}` | unit 1 of `{courseId}` ("Limits and continuity") |
 | `{lessonId}` | YouTube lesson in `{courseId}` ("What is a limit?", free preview) |
-| `{inProgressLessonId}` | first lesson of `{englishCourseId}`; Salma bought the course and has done this lesson, one to go |
+| `{freeLessonId}` | first lesson of `{freeCourseId}`; `learner2` (Hana) is two lessons of three into that course |
 | `{linkLessonId}` | link lesson in `{courseId}` ("Limits worksheet (PDF)") |
 | `{quizId}` | quiz "Limits check-up" in `{courseId}`: single, multiple choice, true/false, short answer and essay questions; required for completion |
 | `{quizAttemptId}` | Salma's attempt, essay awaiting grading |

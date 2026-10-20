@@ -71,11 +71,11 @@
   waitFor: { text: learning:learnerDashboard.courseProgress.subtitle }
 
 - key: for-learners/lesson-player
-  as: learner
-  surface: academy
-  # The English course, one lesson of two done: Salma has finished calculus,
+  # Hana, part-way through the free course: Salma has finished calculus,
   # where every activity is her last one (Finish course instead of Next).
-  path: /my/courses/{englishCourseId}/learn/{inProgressLessonId}
+  as: learner2
+  surface: academy
+  path: /my/courses/{freeCourseId}/learn/{freeLessonId}
   waitFor: { text: learning:player.next }
   highlight: { role: button, name: learning:player.next }
 

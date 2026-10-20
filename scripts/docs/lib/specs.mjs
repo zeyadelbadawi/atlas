@@ -5,7 +5,7 @@ import path from 'node:path';
 import { parse } from 'yaml';
 import { SpecError } from './i18n.mjs';
 
-export const ROLES = ['owner', 'manager', 'instructor', 'learner', 'visitor'];
+export const ROLES = ['owner', 'manager', 'instructor', 'learner', 'learner2', 'visitor'];
 export const SURFACES = ['dashboard', 'academy', 'platform'];
 export const VIEWPORTS = {
   desktop: { width: 1440, height: 900, mobile: false, widths: [960, 1440] },
