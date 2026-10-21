@@ -110,6 +110,13 @@ export function Header({
   const trial = link(lang, content.chrome.ctas.trial, tokens);
   const trialShort = link(lang, content.chrome.ctas.trialShort, tokens);
   const signIn = link(lang, content.chrome.ctas.signIn, tokens);
+  // DL-63 — swapped in by the client script when the signed-in hint exists.
+  const dashboard = link(lang, content.chrome.ctas.goToDashboard, tokens);
+  const authCta = {
+    'data-auth-cta': '',
+    'data-signed-in-href': dashboard.href,
+    'data-signed-in-label': dashboard.label,
+  };
   const overview = localePath(lang, '/features');
 
   return (
@@ -169,6 +176,7 @@ export function Header({
           </a>
           <a
             href={signIn.href}
+            {...authCta}
             className="hidden min-h-11 items-center rounded-md px-3 text-[0.95rem] font-medium text-foreground/80 hover:text-foreground lg:inline-flex"
           >
             {signIn.label}
@@ -207,7 +215,7 @@ export function Header({
                       </li>
                     ))}
                     <li>
-                      <a href={signIn.href} className="block rounded-lg px-3 py-3 font-medium">
+                      <a href={signIn.href} {...authCta} className="block rounded-lg px-3 py-3 font-medium">
                         {signIn.label}
                       </a>
                     </li>
@@ -331,6 +339,31 @@ export function PageShell({
         {children}
       </main>
       <Footer content={content} tokens={tokens} enPath={enPath} arPath={arPath} />
+      <AppHandoff content={content} />
+    </div>
+  );
+}
+
+/**
+ * DL-63 — the screen shown while a link opens the dashboard host (shown by
+ * `client/app-handoff.ts`; hidden, and inert, without JavaScript).
+ */
+function AppHandoff({ content }: { content: MarketingContent }) {
+  const copy = content.chrome.appHandoff;
+  return (
+    <div
+      id="mk-app-handoff"
+      hidden
+      role="status"
+      aria-live="polite"
+      data-text-dashboard={copy.dashboard}
+      data-text-sign-in={copy.signIn}
+      data-text-sign-up={copy.signUp}
+      className="mk-app-handoff fixed inset-0 z-[100] flex flex-col items-center justify-center gap-5 bg-background text-foreground"
+    >
+      <img src="/brand/atlas-mark-color.svg" alt="" width={64} height={64} className="size-16 dark:brightness-0 dark:invert" />
+      <span className="mk-app-handoff-ring" aria-hidden />
+      <p data-handoff-text className="text-base font-medium" />
     </div>
   );
 }

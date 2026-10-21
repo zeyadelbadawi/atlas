@@ -36,6 +36,7 @@ import {
   PUBLIC_ROUTES,
 } from '@app/routes/route-paths';
 import { useAuth, useOnlineStatus } from '@hooks';
+import { appMarketingHref } from '@app/routes/marketing-href';
 import { CookiePreferencesButton } from '@features/legal';
 
 /** Id of the main landmark, targeted by the skip link. */
@@ -76,12 +77,12 @@ export function PublicLayout(): JSX.Element {
             in English, and pushed the logo off the start edge in Arabic. */}
         <div className="mx-auto flex h-layout-header max-w-marketing items-center justify-between gap-2 px-4 sm:gap-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-8">
-            <Link
-              to={PUBLIC_ROUTES.home}
+            <a
+              href={appMarketingHref(PUBLIC_ROUTES.home)}
               className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <AtlasLogo />
-            </Link>
+            </a>
 
             <nav
               className="hidden items-center gap-7 lg:flex"

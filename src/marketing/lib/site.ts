@@ -6,10 +6,23 @@ import type { LimitValue, Plan } from '@/types/plan.types';
 import type { MarketingLang } from '../types';
 
 /**
- * Where the app lives. Today the marketing site and the app share the apex
- * origin (DL-39), so links are relative; a later domain split only changes this.
+ * Where the app lives (DL-63): its own host, `dashboard.<site host>`, so
+ * links into it (sign in, start a trial, the dashboard) are absolute.
+ * VITE_APP_URL overrides it; a build with no VITE_SITE_URL (local
+ * development, tests without one) keeps them relative, on the same origin.
  */
-export const APP_ORIGIN = '';
+export const APP_ORIGIN = appOrigin(import.meta.env.VITE_APP_URL, import.meta.env.VITE_SITE_URL);
+
+export function appOrigin(appUrl?: string, siteUrl?: string): string {
+  if (appUrl) return appUrl.replace(/\/+$/, '');
+  if (!siteUrl) return '';
+  return `https://dashboard.${new URL(siteUrl).host}`;
+}
+
+/** An app path (`/auth/...`, `/dashboard...`) as a link from the marketing site. */
+export function appHref(pathWithQuery: string): string {
+  return `${APP_ORIGIN}${pathWithQuery}`;
+}
 
 /**
  * The help center (DL-57) lives on its own host, `docs.<site host>`; links to

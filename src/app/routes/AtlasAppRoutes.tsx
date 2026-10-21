@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 // Stale-tab recovery: route chunks retry, then reload once for a new build.
 import { lazyWithRetry as lazy } from '@utils/lazy-with-retry.utils';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
@@ -24,6 +24,8 @@ import { RouteGuard } from './guards';
 import { RouteFallback } from './RouteFallback';
 import { ArabicPlatformRedirect } from './ArabicPlatformRedirect';
 import { StaticMarketingRedirect } from './StaticMarketingRedirect';
+import { dismissBootSplash } from '@app/boot/boot-splash';
+import { useAuth } from '@hooks';
 
 // Lazily loaded so each route ships as its own chunk.
 const ContactPage = lazy(() => import('@features/home/pages/ContactPage'));
@@ -550,6 +552,12 @@ const NotFoundPage = lazy(() => import('@features/system/pages/NotFoundPage'));
  */
 export default function AtlasAppRoutes(): JSX.Element {
   const location = useLocation();
+  // DL-63 — the dashboard host's boot screen stays until the session check
+  // has finished, so it never flashes the sign-in page at a signed-in user.
+  const { isRestoring } = useAuth();
+  useEffect(() => {
+    if (!isRestoring) dismissBootSplash();
+  }, [isRestoring]);
 
   return (
     <ErrorBoundary resetKey={location.pathname}>

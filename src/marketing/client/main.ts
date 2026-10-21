@@ -7,10 +7,14 @@
  *   - a live refresh of catalog prices (a failed refresh keeps the
  *     build-time values: SPEC §C);
  *   - the contact form (`POST /api/v1/public/contact`);
- *   - the cookieless marketing beacon (`client/beacon.ts`, DL-51).
+ *   - the cookieless marketing beacon (`client/beacon.ts`, DL-51);
+ *   - the header's Sign in / Open dashboard swap and the transition into
+ *     the dashboard host (`client/app-handoff.ts`, DL-63).
  */
 import '../styles/marketing.css';
 import { startBeacon } from './beacon';
+import { initAppHandoff } from './app-handoff';
+import { APP_ORIGIN } from '../lib/site';
 import { CONTACT_LIMITS, validateContact, type ContactField } from './contact-validation';
 
 const THEME_KEY = 'atlas:marketing-theme';
@@ -252,4 +256,5 @@ initMenus();
 initHeader();
 initPricing();
 initContactForm();
+initAppHandoff(APP_ORIGIN);
 startBeacon();

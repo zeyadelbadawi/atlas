@@ -7,6 +7,7 @@ import type { Plan } from '@/types/plan.types';
 import type { MarketingContent, MkLink, MkPlural } from '../content/content.types';
 import type { MarketingLang } from '../types';
 import {
+  appHref,
   catalogTrialDays,
   docsHref,
   fill,
@@ -112,7 +113,7 @@ export function canFill(text: string, tokens: Tokens): boolean {
 
 /**
  * A copy href made concrete for this page: `/ar` prefix on site pages,
- * `?plan=&lang=ar` on registration, app paths untouched, anchors kept;
+ * `?plan=&lang=ar` on registration, app paths on the app origin (DL-63), anchors kept;
  * `help:/path` is a help-center page in the same language.
  */
 export function resolveHref(lang: MarketingLang, href: string, planKey?: string): string {
@@ -129,7 +130,7 @@ export function resolveHref(lang: MarketingLang, href: string, planKey?: string)
     const params = new URLSearchParams(query);
     if (lang === 'ar' && path.startsWith('/auth/')) params.set('lang', 'ar');
     const qs = params.toString();
-    return `${path}${qs ? `?${qs}` : ''}${suffix}`;
+    return appHref(`${path}${qs ? `?${qs}` : ''}${suffix}`);
   }
   const params = new URLSearchParams(query);
   if (planKey && path === '/contact') params.set('plan', planKey);
