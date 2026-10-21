@@ -135,7 +135,12 @@ function PlanCard({ plan, content }: { plan: Plan; content: MarketingContent }) 
           {cta.signedIn.label}
         </a>
       ) : null}
-      {trial ? <p className="mt-3 text-center text-sm text-muted-foreground">{trial}</p> : null}
+      {trial ? (
+        // The trial offer goes with the trial button: a signed-in visitor gets "Manage my plan" instead.
+        <p className="mt-3 text-center text-sm text-muted-foreground" data-signed-out-only={cta.signedIn ? '' : undefined}>
+          {trial}
+        </p>
+      ) : null}
 
       {lines.length > 0 ? (
         <div className="mt-6 border-t border-border pt-6">

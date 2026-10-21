@@ -261,6 +261,17 @@ describe('trial CTAs for a signed-in visitor', () => {
     expect(pairs).toBeGreaterThanOrEqual(2 * 9);
   });
 
+  it('hides each pricing card\'s trial line along with its trial button', () => {
+    for (const { page, html } of rendered.filter(({ page: p }) => p.id === 'pricing')) {
+      const cards = [...html.matchAll(/<li\b[^>]*data-plan="[^"]*"[^>]*>[\s\S]*?<\/li>(?=<li\b[^>]*data-plan|<\/ul>)/g)].map(([m]) => m);
+      expect(cards.length, page.path).toBeGreaterThan(0);
+      for (const card of cards) {
+        if (!/\/auth\/register/.test(card)) continue;
+        expect(card, page.path).toMatch(/<p\b[^>]*data-signed-out-only[^>]*>[^<]*(trial|تجربة)/i);
+      }
+    }
+  });
+
   it('hides the trial microcopy from signed-in visitors', () => {
     for (const { page, html } of rendered.filter(({ page: p }) => p.id === 'home')) {
       // The microcopy line itself ("14-day trial. No card needed."), not prose that mentions the trial.
