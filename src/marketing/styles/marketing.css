@@ -216,3 +216,12 @@ html[data-signed-in] [data-signed-in-only] {
 html[data-signed-in] [data-signed-out-only] {
   display: none !important;
 }
+
+/*
+  The `hidden` attribute always wins: a display utility on the same element
+  (`flex`, `grid`, …) would otherwise show it. The contact form's success
+  box (`hidden` + `flex`) showed on page load before this (21 Oct 2026).
+*/
+[hidden]:where(:not([hidden='until-found'])) {
+  display: none !important;
+}
