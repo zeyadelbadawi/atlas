@@ -216,14 +216,9 @@ test.describe('J12 — content library on the public site', () => {
   }
 
   test('an edit and a hide show on the very next visit (no stale cache)', async ({
-    browser,
+    page,
     request,
   }) => {
-    // Each visit is a new visitor (fresh browser cache): published website
-    // reads are `Cache-Control: private, max-age=60` (backend 52dbd41), so
-    // the same tab may keep its copy for a minute by design. What this
-    // journey guards is the server's own cache, which must never be stale.
-    let page = await browser.newPage();
     await seedCookieDecision(page);
     const edited = {
       en: `J12 edited question ${stamp}`,
@@ -248,15 +243,11 @@ test.describe('J12 — content library on the public site', () => {
       { visible: false }
     );
     expect(hide.status()).toBe(200);
-    await page.close();
-    page = await browser.newPage();
-    await seedCookieDecision(page);
     await page.goto(academyPath('/faqs'));
     await expect(
       page.locator('main').getByText(edited.en, { exact: true })
     ).toBeVisible({ timeout: 30_000 });
     await expect(page.locator('main').getByText(Q('second').en)).toHaveCount(0);
-    await page.close();
   });
 
   test('another Academy’s public site never shows these entries', async ({
