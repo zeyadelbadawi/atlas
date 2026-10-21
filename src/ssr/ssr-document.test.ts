@@ -53,3 +53,18 @@ describe('buildSsrDocument — theme stylesheets', () => {
     expect(html).toContain(`${THEME_LINK}</head>`);
   });
 });
+
+describe('buildSsrDocument — dashboard boot screen (DL-63)', () => {
+  it('leaves out the marked boot screen, its style and its script', () => {
+    const template = TEMPLATE.replace(
+      '</head>',
+      '<!-- atlas-boot-splash --><style>#atlas-boot-splash{}</style><!-- /atlas-boot-splash -->\n</head>'
+    ).replace(
+      '<body>',
+      '<body><!-- atlas-boot-splash -->\n<div id="atlas-boot-splash" hidden><p></p></div>\n<script src="/boot-splash.js" async></script>\n<!-- /atlas-boot-splash -->\n'
+    );
+    const html = buildSsrDocument(template, parts());
+    expect(html).not.toMatch(/atlas-boot-splash|boot-splash\.js/);
+    expect(html).toContain('<div id="root"><main>page</main></div>');
+  });
+});

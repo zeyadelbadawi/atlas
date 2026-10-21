@@ -53,6 +53,14 @@ const DEFAULT_HEAD_TAGS: readonly RegExp[] = [
   /<meta name="twitter:description"[^>]*>\s*/,
 ];
 
+/**
+ * The dashboard's boot screen (DL-63), marked in `index.html`: an Academy
+ * page never shows it, so it leaves the server-rendered document whole,
+ * its script included.
+ */
+const DASHBOARD_BOOT_SPLASH =
+  /<!-- atlas-boot-splash -->[^]*?<!-- \/atlas-boot-splash -->\s*/g;
+
 export interface SsrDocumentParts {
   readonly locale: 'en' | 'ar';
   readonly direction: 'ltr' | 'rtl';
@@ -76,10 +84,12 @@ export function buildSsrDocument(
 ): string {
   // Replacement functions, never strings: page content may contain `$`
   // sequences that `String.prototype.replace` would otherwise interpret.
-  let html = template.replace(
-    /<html[^>]*>/,
-    () => `<html lang="${parts.locale}" dir="${parts.direction}">`
-  );
+  let html = template
+    .replace(DASHBOARD_BOOT_SPLASH, () => '')
+    .replace(
+      /<html[^>]*>/,
+      () => `<html lang="${parts.locale}" dir="${parts.direction}">`
+    );
   if (parts.headHtml) {
     for (const pattern of DEFAULT_HEAD_TAGS)
       html = html.replace(pattern, () => '');

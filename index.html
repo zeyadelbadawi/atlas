@@ -18,7 +18,10 @@
   <meta name="twitter:title" content="Atlas" />
   <meta name="twitter:description" content="Your own teaching academy online, under your name." />
   <!-- DL-63 — the dashboard's boot screen (hidden unless boot-splash.js
-       shows it, which it does on the dashboard host only). -->
+       shows it, which it does on the dashboard host only). The marked
+       blocks are removed from server-rendered Academy pages
+       (`ssr-document.ts`). -->
+  <!-- atlas-boot-splash -->
   <style>
     #atlas-boot-splash[hidden] { display: none !important; }
     #atlas-boot-splash {
@@ -43,15 +46,18 @@
       #atlas-boot-splash .atlas-boot-ring { animation: none; }
     }
   </style>
+  <!-- /atlas-boot-splash -->
 </head>
 
 <body>
+  <!-- atlas-boot-splash -->
   <div id="atlas-boot-splash" data-app-url="%VITE_APP_URL%" role="status" aria-live="polite" hidden>
     <img src="/brand/atlas-mark-color.svg" alt="" width="64" height="64" />
     <div class="atlas-boot-ring" aria-hidden="true"></div>
     <p data-splash-text></p>
   </div>
   <script src="/boot-splash.js" async></script>
+  <!-- /atlas-boot-splash -->
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
