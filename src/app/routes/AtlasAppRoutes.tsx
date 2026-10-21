@@ -26,6 +26,7 @@ import { ArabicPlatformRedirect } from './ArabicPlatformRedirect';
 import { StaticMarketingRedirect } from './StaticMarketingRedirect';
 import { dismissBootSplash } from '@app/boot/boot-splash';
 import { useAuth } from '@hooks';
+import { useTranslation } from 'react-i18next';
 
 // Lazily loaded so each route ships as its own chunk.
 const ContactPage = lazy(() => import('@features/home/pages/ContactPage'));
@@ -558,6 +559,12 @@ export default function AtlasAppRoutes(): JSX.Element {
   useEffect(() => {
     if (!isRestoring) dismissBootSplash();
   }, [isRestoring]);
+  // The browser tab names the dashboard, not just "Atlas" (owner request,
+  // 21 Oct 2026); Academy websites set their own titles elsewhere.
+  const { t, i18n } = useTranslation();
+  useEffect(() => {
+    document.title = t('common:product.dashboardTitle');
+  }, [t, i18n.language]);
 
   return (
     <ErrorBoundary resetKey={location.pathname}>

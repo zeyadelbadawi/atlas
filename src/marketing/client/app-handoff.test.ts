@@ -34,6 +34,15 @@ describe('marketing → dashboard handoff (DL-63)', () => {
     expect(link.href).toBe(`${APP}/dashboard`);
   });
 
+  it('marks <html data-signed-in> only when signed in, so the header shows the dashboard button instead of the trial', () => {
+    document.documentElement.removeAttribute('data-signed-in');
+    applyAuthCtas(document, false);
+    expect(document.documentElement.hasAttribute('data-signed-in')).toBe(false);
+    applyAuthCtas(document, true);
+    expect(document.documentElement.hasAttribute('data-signed-in')).toBe(true);
+    document.documentElement.removeAttribute('data-signed-in');
+  });
+
   it('shows the transition on a plain click and navigates; leaves modified clicks alone', () => {
     vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
       cb(0);

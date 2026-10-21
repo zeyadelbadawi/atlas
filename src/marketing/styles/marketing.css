@@ -200,3 +200,19 @@
     transform: rotate(360deg);
   }
 }
+
+/*
+  DL-63 — header CTAs by sign-in state. `client/app-handoff.ts` marks <html>
+  with `data-signed-in` when the `atlas_signed_in` hint exists: the trial and
+  "Sign in" buttons give way to one "Open dashboard" button. Without the
+  hint (or without JS) the signed-out set shows.
+*/
+[data-signed-in-only] {
+  display: none !important;
+}
+html[data-signed-in] [data-signed-in-only] {
+  display: inline-flex !important;
+}
+html[data-signed-in] [data-signed-out-only] {
+  display: none !important;
+}

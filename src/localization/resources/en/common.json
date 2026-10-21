@@ -1,10 +1,12 @@
 {
   "product": {
     "name": "Atlas",
+    "dashboardTitle": "Atlas Dashboard",
     "tagline": "Your academy, your name."
   },
   "attribution": {
-    "poweredBy": "Powered by"
+    "poweredBy": "Powered by",
+    "opensInNewTab": "(Atlas website, opens in a new tab)"
   },
   "languages": {
     "en": "English",

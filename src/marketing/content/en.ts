@@ -122,6 +122,7 @@ export const en: MarketingContent = {
       signIn: { label: 'Sign in', href: '/auth/sign-in' },
       talkToUs: { label: 'Talk to us', href: SALES },
       goToDashboard: { label: 'Open dashboard', href: '/dashboard' },
+      goToDashboardShort: { label: 'Dashboard', href: '/dashboard' },
     },
     trialMicrocopy: '{trialDays}-day trial. No card needed.',
     stickyCta: { regionLabel: 'Quick actions' },

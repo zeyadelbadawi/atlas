@@ -14,6 +14,7 @@ import {
   AcademyBrandMark,
   AcademyBrandScope,
   AtlasPlatformAttribution,
+  AtlasSiteLink,
 } from '@components/branding';
 import { useAcademyIdentity } from '@hooks';
 import { getDashboardNavigation, filterNavigationItems } from '@app/navigation';
@@ -115,12 +116,19 @@ export function DashboardSidebar({
         isCollapsed && !isMobile ? 'justify-center' : 'justify-between'
       )}
     >
-      <AcademyBrandMark
-        size="sm"
-        markOnly={isCollapsed && !isMobile}
-        name={academyIdentity?.name}
-        logoUrl={academyIdentity?.logoUrl}
-      />
+      {academyIdentity?.logoUrl && academyIdentity.name ? (
+        <AcademyBrandMark
+          size="sm"
+          markOnly={isCollapsed && !isMobile}
+          name={academyIdentity.name}
+          logoUrl={academyIdentity.logoUrl}
+        />
+      ) : (
+        // The Atlas mark (no Academy logo here) links to the Atlas website.
+        <AtlasSiteLink>
+          <AcademyBrandMark size="sm" markOnly={isCollapsed && !isMobile} />
+        </AtlasSiteLink>
+      )}
 
       {!isMobile ? (
         <Button

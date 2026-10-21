@@ -220,6 +220,8 @@ export interface MkChrome {
     readonly talkToUs: MkLink;
     /** Replaces Sign in when the `atlas_signed_in` hint says a dashboard session exists (DL-63). */
     readonly goToDashboard: MkLink;
+    /** Compact "Open dashboard" for the mobile header bar (DL-63). */
+    readonly goToDashboardShort: MkLink;
   };
   /** DL-63 — the full-screen transition shown while a link opens the dashboard host. */
   readonly appHandoff: {
@@ -236,7 +238,7 @@ export interface MkChrome {
     readonly columns: readonly {
       readonly title: string;
       readonly links: readonly MkLink[];
-      /** Planned pages listed in this column, rendered with `plannedBadge`. */
+      /** Product topics listed in this column, linked to their sections on the product overview page. */
       readonly planned?: boolean;
     }[];
     /** Render only if a consent dialog exists on the marketing host. */

@@ -11,7 +11,7 @@ import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { AtlasLogo } from '@components/branding';
+import { AtlasLogo, AtlasSiteLink } from '@components/branding';
 import { LanguageSwitcher } from '@components/controls';
 
 export interface OnboardingLayoutProps {
@@ -36,7 +36,9 @@ export function OnboardingLayout({
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75">
         <div className="mx-auto flex h-layout-header max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <AtlasLogo size="sm" />
+            <AtlasSiteLink>
+              <AtlasLogo size="sm" />
+            </AtlasSiteLink>
             <span className="hidden text-sm text-muted-foreground sm:inline">
               {t('onboarding:shell.title')}
             </span>
