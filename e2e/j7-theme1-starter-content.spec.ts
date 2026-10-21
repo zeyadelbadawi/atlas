@@ -373,7 +373,16 @@ test.describe('J7 — Theme 1 starter content', () => {
       .first()
       .click();
     await dialog.getByRole('button', { name: 'Apply changes' }).click();
+    // The button is disabled from the click (busy), not only once saved:
+    // wait for the save itself, or the publish below races it.
+    const saved = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'PATCH' &&
+        new URL(response.url()).pathname.endsWith(`/website/pages/${home.id}`),
+      { timeout: 15_000 }
+    );
     await page.getByTestId('website-save-page').click();
+    expect((await saved).ok()).toBe(true);
     await expect(page.getByTestId('website-save-page')).toBeDisabled({
       timeout: 15_000,
     });
