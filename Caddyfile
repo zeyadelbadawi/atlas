@@ -652,7 +652,8 @@ dashboard.atlass.dpdns.org {
 				Allow: /
 				ROBOTS 200
 		}
-		handle /sitemap.xml /marketing-assets/* /sw-retired.js {
+		@dashboard_not_here path /sitemap.xml /marketing-assets/* /sw-retired.js
+		handle @dashboard_not_here {
 			respond 404
 		}
 		handle {
