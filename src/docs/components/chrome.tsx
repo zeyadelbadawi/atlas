@@ -2,7 +2,8 @@
  * Help center chrome: header (logo, search, language, theme, back to Atlas),
  * the topics sidebar, breadcrumbs and footer. Everything works without
  * JavaScript (`<details>` for the menus, a GET form for search); the client
- * script only enhances it (instant results, theme memory, `/` shortcut).
+ * script only enhances it (instant results, theme memory, `/` shortcut,
+ * the signed-in "Open dashboard" button and its transition notice).
  */
 import type { ReactNode } from 'react';
 import { ChevronDown, ChevronLeft, ChevronRight, Menu, Monitor, Moon, Search, Sun, X } from 'lucide-react';
@@ -15,7 +16,10 @@ import { CategoryIcon } from './icons';
 
 export interface ChromeProps {
   readonly lang: DocLang;
+  /** Marketing origin (home, pricing, legal). */
   readonly siteUrl: string;
+  /** App origin: sign-in and dashboards (DL-63, `dashboard.<base>`). */
+  readonly appUrl: string;
   /** The same page in the other language. */
   readonly altPath: string;
   /** Articles per category (current language), in display order. */
@@ -25,14 +29,62 @@ export interface ChromeProps {
   readonly query?: string;
 }
 
-/** Atlas app / marketing link in a language (`/pricing` → `/ar/pricing`). */
+/** Marketing site link in a language (`/pricing` → `/ar/pricing`). */
 export function siteHref(siteUrl: string, lang: DocLang, path: string): string {
   const localised = lang === 'ar' ? (path === '/' ? '/ar' : `/ar${path}`) : path;
   return `${siteUrl}${localised}`;
 }
 
-export function appHref(siteUrl: string, lang: DocLang, path: string): string {
-  return `${siteUrl}${path}${lang === 'ar' ? `${path.includes('?') ? '&' : '?'}lang=ar` : ''}`;
+/** Atlas app link (`appUrl` = the dashboard origin); `?lang=ar` on Arabic pages. */
+export function appHref(appUrl: string, lang: DocLang, path: string): string {
+  return `${appUrl}${path}${lang === 'ar' ? `${path.includes('?') ? '&' : '?'}lang=ar` : ''}`;
+}
+
+/**
+ * The header's account button. Renders "Sign in" (the no-JS state);
+ * `client/auth-cta.ts` swaps it to "Open dashboard" when the
+ * `atlas_signed_in` hint cookie is set, using only these attributes.
+ */
+function AuthCta({ lang, appUrl, className }: { lang: DocLang; appUrl: string; className: string }) {
+  const c = DOCS_COPY[lang].nav;
+  const signedOutHref = appHref(appUrl, lang, '/auth/sign-in');
+  return (
+    <a
+      href={signedOutHref}
+      className={className}
+      data-auth-cta
+      data-href-signed-out={signedOutHref}
+      data-label-signed-out={c.signIn}
+      data-href-signed-in={`${appUrl}/dashboard`}
+      data-label-signed-in={c.openDashboard}
+    >
+      {c.signIn}
+    </a>
+  );
+}
+
+/** Full-screen notice shown by `client/auth-cta.ts` while it navigates to the app. */
+function AuthOverlay({ lang }: { lang: DocLang }) {
+  const c = DOCS_COPY[lang].authOverlay;
+  return (
+    <div
+      className="doc-auth-overlay"
+      role="status"
+      aria-live="polite"
+      data-auth-overlay
+      data-text-signed-in={c.signedIn}
+      data-text-signed-out={c.signedOut}
+      hidden
+    >
+      <div className="doc-auth-overlay-inner">
+        <span className="doc-auth-overlay-logo flex items-center gap-2 text-foreground" aria-hidden>
+          <AtlasMark className="size-12 text-primary" />
+          <span className="font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight">{lang === 'ar' ? 'أطلس' : 'Atlas'}</span>
+        </span>
+        <p className="doc-auth-overlay-text text-base font-medium text-foreground" data-auth-overlay-text />
+      </div>
+    </div>
+  );
 }
 
 export function Container({ children, className = '' }: { children: ReactNode; className?: string }) {
@@ -134,7 +186,7 @@ function LanguageLink({ lang, altPath }: { lang: DocLang; altPath: string }) {
 }
 
 export function Header(props: ChromeProps) {
-  const { lang, siteUrl, altPath, query } = props;
+  const { lang, siteUrl, appUrl, altPath, query } = props;
   const c = DOCS_COPY[lang];
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/85" data-header>
@@ -159,9 +211,7 @@ export function Header(props: ChromeProps) {
           <a href={siteHref(siteUrl, lang, '/')} className="hidden min-h-11 items-center rounded-lg px-3 text-sm font-medium text-muted-foreground hover:text-foreground lg:inline-flex">
             {c.nav.backToAtlas}
           </a>
-          <a href={appHref(siteUrl, lang, '/auth/sign-in')} className="doc-btn doc-btn-primary hidden sm:inline-flex">
-            {c.nav.signIn}
-          </a>
+          <AuthCta lang={lang} appUrl={appUrl} className="doc-btn doc-btn-primary hidden sm:inline-flex" />
           <details className="doc-popover lg:hidden" data-menu>
             <summary className="inline-flex size-11 cursor-pointer items-center justify-center rounded-lg text-foreground hover:bg-surface" aria-label={c.nav.mainMenu}>
               <Menu className="size-5 doc-when-closed" aria-hidden />
@@ -185,9 +235,7 @@ export function Header(props: ChromeProps) {
                 <a href={siteHref(siteUrl, lang, '/')} className="inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-muted-foreground hover:text-foreground">
                   {c.nav.backToAtlas}
                 </a>
-                <a href={appHref(siteUrl, lang, '/auth/sign-in')} className="doc-btn doc-btn-primary sm:hidden">
-                  {c.nav.signIn}
-                </a>
+                <AuthCta lang={lang} appUrl={appUrl} className="doc-btn doc-btn-primary sm:hidden" />
               </div>
             </div>
           </details>
@@ -335,6 +383,7 @@ export function Shell(props: ChromeProps & { readonly children: ReactNode; reado
         </main>
       </Container>
       <Footer lang={lang} siteUrl={props.siteUrl} buildYear={props.buildYear} />
+      <AuthOverlay lang={lang} />
     </>
   );
 }

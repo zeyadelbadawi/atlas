@@ -44,7 +44,7 @@ There's no undo button. To keep going, pay for a new period from **Plans**, befo
 
 ## Refunds
 
-There's no refund button for subscription payments. Atlas's [terms](app:/terms) explain that refund requests are considered case by case. To ask, contact Atlas support from **Support** in the dashboard.
+There's no refund button for subscription payments. Atlas's [terms](site:/terms) explain that refund requests are considered case by case. To ask, contact Atlas support from **Support** in the dashboard.
 
 ## Cancelling isn't deleting
 
