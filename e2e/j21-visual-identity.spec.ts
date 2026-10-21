@@ -141,7 +141,7 @@ test.describe('J21 — one Visual Identity, live on save', () => {
     page,
     browser,
   }, testInfo) => {
-    test.setTimeout(180_000);
+    test.setTimeout(300_000);
 
     // A visitor with the public site open: caches warm, cookies kept.
     const visitorContext = await browser.newContext();
@@ -206,18 +206,23 @@ test.describe('J21 — one Visual Identity, live on save', () => {
       fullPage: true,
     });
 
-    // The visitor's next load: new name and colours, both languages.
+    // The visitor's next loads: new name and colours, both languages. The
+    // visitor's browser may keep published website reads for up to a minute
+    // (`Cache-Control: private, max-age=60, stale-while-revalidate=300`,
+    // backend 52dbd41), so reload until that window has passed.
     for (const locale of ['en', 'ar'] as const) {
-      await visitor.goto(academyPath(locale === 'en' ? '/' : '/ar'));
+      await expect(async () => {
+        await visitor.goto(academyPath(locale === 'en' ? '/' : '/ar'));
+        // The academy name is in the page title and the header logo's name
+        // (the hero copy is authored page content, not the name).
+        await expect(visitor).toHaveTitle(new RegExp(NEW_NAME), {
+          timeout: 5_000,
+        });
+      }).toPass({ timeout: 120_000, intervals: [5_000] });
       await expect(visitor.locator('html')).toHaveAttribute(
         'dir',
         locale === 'ar' ? 'rtl' : 'ltr'
       );
-      // The academy name is in the page title and the header logo's name
-      // (the hero copy is authored page content, not the name).
-      await expect(visitor).toHaveTitle(new RegExp(NEW_NAME), {
-        timeout: 30_000,
-      });
       await expect(
         visitor.getByRole('img', { name: NEW_NAME }).first()
       ).toBeVisible();

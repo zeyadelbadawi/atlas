@@ -2,12 +2,12 @@
  * J29 — the Atlas platform contact form and the Platform Owner's inbox
  * (Task 7), Chromium against the real stack and database.
  *
- *  - A visitor on the Atlas contact page, `/contact` (the platform host —
- *    the plain dashboard origin, without the academy preview selector; the
- *    form was the marketing homepage's `#contact` section until owner
- *    decision D6 retired that homepage) submits
+ *  - A visitor on the Atlas contact page — the static marketing site since
+ *    B1 (DL-50): `/contact` in English, `/ar/contact` in Arabic, served by
+ *    `src/marketing/prerender/dev-server.ts` on the dev server — submits
  *    the empty form and sees an error on every required field (EN desktop,
- *    AR phone with RTL and Arabic messages).
+ *    AR phone with RTL and Arabic messages). The topic is a native select
+ *    that starts on "Plans and pricing", so it is never missing.
  *  - The visitor fills it in, waits past the server's minimum fill time
  *    (`PLATFORM_CONTACT_MIN_FILL_MS` = 3 s, measured from when the form was
  *    first shown — a faster submission is silently discarded), sends it and
@@ -46,10 +46,8 @@ const FILL_WAIT_MS = 4_000;
 
 async function openContactSection(page: Page, language: 'en' | 'ar') {
   await seedCookieDecision(page);
-  await page.addInitScript((lang) => {
-    window.localStorage.setItem('atlas:language', JSON.stringify(lang));
-  }, language);
-  await page.goto('/contact');
+  // The static marketing site takes its language from the address.
+  await page.goto(language === 'ar' ? '/ar/contact' : '/contact');
   const form = page.getByRole('form', {
     name: language === 'ar' ? 'تواصل مع فريق أطلس' : 'Contact the Atlas team',
   });
@@ -83,16 +81,15 @@ test.describe('J29 — marketing contact form → Platform Owner inbox', () => {
     const form = await openContactSection(page, 'ar');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     await form.getByRole('button', { name: 'إرسال الرسالة' }).click();
-    await expect(form.getByText('أدخل اسمك.')).toBeVisible();
-    await expect(form.getByText('أدخل بريدك الإلكتروني.')).toBeVisible();
-    await expect(form.getByText('اختر موضوعًا.')).toBeVisible();
-    await expect(form.getByText('أدخل رسالتك.')).toBeVisible();
+    await expect(form.getByText('أدخل اسمك.').first()).toBeVisible();
+    await expect(form.getByText('أدخل بريدك الإلكتروني.').first()).toBeVisible();
+    await expect(form.getByText('أدخل رسالتك.').first()).toBeVisible();
     await expect(form.getByLabel('اسمك')).toHaveAttribute(
       'aria-invalid',
       'true'
     );
     // Nothing was sent: the form is still there, no success state.
-    await expect(page.getByTestId('marketing-contact-success')).toHaveCount(0);
+    await expect(page.locator('[data-contact-success]')).toBeHidden();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth - window.innerWidth
@@ -111,23 +108,24 @@ test.describe('J29 — marketing contact form → Platform Owner inbox', () => {
     const shownAt = Date.now();
 
     await form.getByRole('button', { name: 'Send message' }).click();
-    await expect(form.getByText('Enter your name.')).toBeVisible();
-    await expect(form.getByText('Enter your email address.')).toBeVisible();
-    await expect(form.getByText('Choose a topic.')).toBeVisible();
-    await expect(form.getByText('Enter a message.')).toBeVisible();
-    // Focus moves to the first invalid field.
-    await expect(form.getByLabel('Your name')).toBeFocused();
+    // Each error shows twice: under its field and in the summary above.
+    await expect(form.getByText('Enter your name.').first()).toBeVisible();
+    await expect(form.getByText('Enter your email address.').first()).toBeVisible();
+    await expect(form.getByText('Enter a message.').first()).toBeVisible();
+    await expect(form.getByLabel('Your name')).toHaveAttribute('aria-invalid', 'true');
+    // Focus moves to the error summary, which links to each field.
+    await expect(form.locator('[data-error-summary]')).toBeFocused();
     await page.screenshot({
       path: testInfo.outputPath('contact-errors-en.png'),
     });
 
     await form.getByLabel('Your name').fill(visitorName);
-    await form.getByLabel('Work email').fill(visitorEmail);
-    await form.getByLabel('Organization (optional)').fill('J29 Academy Group');
-    await form.getByRole('combobox', { name: 'Topic' }).click();
-    await page.getByRole('option', { name: 'Plans and pricing' }).click();
-    await form.getByLabel('Message').fill(message);
-    await expect(form.getByText('Enter your name.')).toHaveCount(0);
+    await form.getByLabel('Email', { exact: true }).fill(visitorEmail);
+    await form
+      .getByLabel('Academy or organization (optional)')
+      .fill('J29 Academy Group');
+    await form.getByLabel('Topic', { exact: true }).selectOption('sales');
+    await form.getByLabel('Message', { exact: true }).fill(message);
 
     const elapsed = Date.now() - shownAt;
     if (elapsed < FILL_WAIT_MS)
@@ -140,12 +138,11 @@ test.describe('J29 — marketing contact form → Platform Owner inbox', () => {
     );
     await form.getByRole('button', { name: 'Send message' }).click();
     expect((await sent).ok()).toBeTruthy();
-    const success = page.getByTestId('marketing-contact-success');
+    const success = page.locator('[data-contact-success]');
     await expect(success).toBeVisible();
     await expect(success).toContainText('Message sent');
-    await expect(
-      success.getByRole('button', { name: 'Send another message' })
-    ).toBeVisible();
+    await expect(success).toBeFocused();
+    await expect(form).toBeHidden();
     await page.screenshot({
       path: testInfo.outputPath('contact-success-en.png'),
     });

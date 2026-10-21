@@ -185,7 +185,11 @@ test.describe('J31 — email verification links', () => {
   test('desktop (EN): a valid link verifies the account; reusing it shows "already used"', async ({
     page,
   }, testInfo) => {
+    await clearAuthRateLimits();
     await seedCookieDecision(page);
+    // A link is verified only for its own account's session (ATO F1,
+    // frontend b587a3e): signed out, the page asks the reader to sign in.
+    await signInOnWebsite(page, learnerEmail);
     // Created after the resend above, so it is the account's live link.
     const valid = await insertToken(60 * 60 * 1000);
     await page.goto(academyPath(`/verify-email?token=${valid}`));

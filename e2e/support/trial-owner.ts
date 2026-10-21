@@ -11,7 +11,9 @@
  *
  * Everything goes through the public API, exactly as a customer would:
  * register, create the organization, start the trial (owner-only,
- * server-checked). The trial plan defaults to Growth (5 Academies).
+ * server-checked). The trial plan defaults to Enterprise, the self-serve
+ * plan that allows more than one Academy (5) since backend B0-CAT-03
+ * (1a54b33) set Growth and Starter to 1.
  */
 import { expect, type APIRequestContext } from '@playwright/test';
 import {
@@ -36,7 +38,7 @@ export interface TrialOwner {
 export async function createTrialOrganizationOwner(
   request: APIRequestContext,
   label: string,
-  planKey = 'growth'
+  planKey = 'enterprise'
 ): Promise<TrialOwner> {
   const email = uniqueLearnerEmail(`${label}-owner`);
   const password = LEARNER_PASSWORD;
