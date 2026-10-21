@@ -53,6 +53,7 @@ import { RequestServiceCard } from '@features/customer-requests';
 import { WEBSITE_STATUS_TONE } from '../utils/academy-status.utils';
 import { useAcademyScope } from '../scope/academy-scope.context';
 import { readLastAcademy } from '../scope/last-academy';
+import { academyEntryRoute } from '../utils/academy-entry-route';
 import type { Academy } from '@types';
 
 /**
@@ -231,7 +232,7 @@ export default function AcademyDashboardPage(): JSX.Element {
     if (target) {
       return (
         <Navigate
-          to={buildPath(DASHBOARD_ROUTES.academyOverview, {
+          to={buildPath(academyEntryRoute(searchParams.get('open')), {
             academyId: target,
           })}
           replace

@@ -83,7 +83,8 @@ export function SectionHeading({
   );
 }
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost';
+/** `bare`: only the base `mk-btn` shape; the caller supplies the colours. */
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'bare';
 
 export function ButtonLink({
   href,
@@ -94,6 +95,7 @@ export function ButtonLink({
   arrow = false,
   dir,
   track,
+  signedIn,
 }: {
   track?: 'cta_t' | 'cta_c' | 'cta_pricing';
   href: string;
@@ -103,13 +105,25 @@ export function ButtonLink({
   lang?: string;
   arrow?: boolean;
   dir?: 'ltr' | 'rtl';
+  /** A trial CTA's dashboard stand-in, shown instead of it to a signed-in visitor. */
+  signedIn?: { href: string; label: string };
 }) {
   const Arrow = dir === 'rtl' ? ArrowLeft : ArrowRight;
+  const arrowIcon = arrow ? <Arrow className="size-4" aria-hidden strokeWidth={1.75} /> : null;
+  const classes = cn('mk-btn', variant !== 'bare' && `mk-btn-${variant}`, className);
   return (
-    <a href={href} lang={lang} data-mkt-cta={track} className={cn('mk-btn', `mk-btn-${variant}`, className)}>
-      {children}
-      {arrow ? <Arrow className="size-4" aria-hidden strokeWidth={1.75} /> : null}
-    </a>
+    <>
+      <a href={href} lang={lang} data-mkt-cta={track} data-signed-out-only={signedIn ? '' : undefined} className={classes}>
+        {children}
+        {arrowIcon}
+      </a>
+      {signedIn ? (
+        <a href={signedIn.href} lang={lang} data-signed-in-only="" className={classes}>
+          {signedIn.label}
+          {arrowIcon}
+        </a>
+      ) : null}
+    </>
   );
 }
 
@@ -231,14 +245,17 @@ export function Faq({ items }: { items: readonly { question: string; answer: Rea
 export function CtaBand({
   title,
   body,
+  microcopy,
   primary,
   secondary,
   dir,
 }: {
   title: string;
   body?: ReactNode;
-  primary: { href: string; label: string };
-  secondary?: { href: string; label: string };
+  /** The trial line ("14-day trial. No card needed."); hidden from a signed-in visitor. */
+  microcopy?: string;
+  primary: { href: string; label: string; signedIn?: { href: string; label: string } };
+  secondary?: { href: string; label: string; signedIn?: { href: string; label: string } };
   dir: 'ltr' | 'rtl';
 }) {
   return (
@@ -256,27 +273,33 @@ export function CtaBand({
             {title}
           </h2>
           {body ? <p className="relative mx-auto mt-4 max-w-[56ch] text-white/80">{body}</p> : null}
+          {microcopy ? (
+            <p className="relative mx-auto mt-4 max-w-[56ch] text-sm text-white/70" data-signed-out-only="">
+              {microcopy}
+            </p>
+          ) : null}
           <div className="relative mt-8 flex flex-wrap items-center justify-center gap-3">
-            <a
+            <ButtonLink
               href={primary.href}
-              data-mkt-cta="cta_t"
-              className="mk-btn bg-brand-gold text-brand-gold-foreground hover:bg-brand-gold/90"
+              track="cta_t"
+              signedIn={primary.signedIn}
+              arrow
+              dir={dir}
+              variant="bare"
+              className="bg-brand-gold text-brand-gold-foreground hover:bg-brand-gold/90"
             >
               {primary.label}
-              {dir === 'rtl' ? (
-                <ArrowLeft className="size-4" aria-hidden strokeWidth={1.75} />
-              ) : (
-                <ArrowRight className="size-4" aria-hidden strokeWidth={1.75} />
-              )}
-            </a>
+            </ButtonLink>
             {secondary ? (
-              <a
+              <ButtonLink
                 href={secondary.href}
-                data-mkt-cta="cta_c"
-                className="mk-btn border border-white/30 text-white hover:bg-white/10"
+                track="cta_c"
+                signedIn={secondary.signedIn}
+                variant="bare"
+                className="border border-white/30 text-white hover:bg-white/10"
               >
                 {secondary.label}
-              </a>
+              </ButtonLink>
             ) : null}
           </div>
         </div>

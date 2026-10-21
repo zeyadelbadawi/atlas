@@ -138,17 +138,28 @@ export function resolveHref(lang: MarketingLang, href: string, planKey?: string)
   return `${localePath(lang, path || '/')}${qs ? `?${qs}` : ''}${suffix}`;
 }
 
+export interface ResolvedLink {
+  label: string;
+  href: string;
+  ariaLabel?: string;
+  /** The signed-in stand-in (`MkLink.signedIn`), resolved the same way. */
+  signedIn?: { label: string; href: string };
+}
+
 /** Link with text tokens filled and href resolved. */
 export function link(
   lang: MarketingLang,
   value: MkLink,
   tokens: Tokens = {},
   planKey?: string,
-): { label: string; href: string; ariaLabel?: string } {
+): ResolvedLink {
   return {
     label: fill(value.label, tokens),
     href: resolveHref(lang, value.href, planKey),
     ariaLabel: value.ariaLabel ? fill(value.ariaLabel, tokens) : undefined,
+    signedIn: value.signedIn
+      ? { label: fill(value.signedIn.label, tokens), href: resolveHref(lang, value.signedIn.href) }
+      : undefined,
   };
 }
 

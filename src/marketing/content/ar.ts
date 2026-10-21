@@ -11,6 +11,12 @@
 import type { MarketingContent } from './content.types';
 
 const REGISTER = '/auth/register';
+// Signed-in stand-ins for the trial CTAs: the app resolves `?open=` to the
+// visitor's current academy (AcademyDashboardPage).
+const DASHBOARD = '/dashboard';
+const SUBSCRIPTION = '/dashboard/tenant/subscription';
+const inAcademy = (section: 'payments' | 'courses' | 'team' | 'website') =>
+  `/dashboard/academy?open=${section}`;
 const SALES = '/contact?topic=sales';
 
 export const ar: MarketingContent = {
@@ -170,6 +176,7 @@ export const ar: MarketingContent = {
       talkToUs: { label: 'كلّمنا', href: SALES },
       goToDashboard: { label: 'افتح لوحة التحكم', href: '/dashboard' },
       goToDashboardShort: { label: 'لوحة التحكم', href: '/dashboard' },
+      managePlan: { label: 'إدارة باقتك', href: SUBSCRIPTION },
     },
     trialMicrocopy: 'تجربة {trialDuration}، من غير كارت.',
     stickyCta: { regionLabel: 'إجراءات سريعة' },
@@ -279,7 +286,11 @@ export const ar: MarketingContent = {
       eyebrow: 'للمدرسين في مصر اللي بيبيعوا دروسهم أونلاين',
       title: 'انقل طلابك من جروبات الواتساب لأكاديمية باسمك',
       lead: '{brand} يعطيك موقع أكاديمية باسمك أنت. يدفع لك الطلاب بفودافون كاش أو إنستاباي أو التحويل البنكي، ثم يرفعون إثبات الدفع داخل أكاديميتك. توافق مرة واحدة فيدخلون الكورس، و{brand} لا يأخذ أي عمولة على هذه المدفوعات، فالمبلغ كله يصل إليك أنت.',
-      primaryCta: { label: 'ابدأ تجربة أكاديميتك', href: REGISTER },
+      primaryCta: {
+        label: 'ابدأ تجربة أكاديميتك',
+        href: REGISTER,
+        signedIn: { label: 'افتح لوحة التحكم', href: DASHBOARD },
+      },
       secondaryCta: { label: 'جهّزها معانا', href: SALES },
       microcopy: 'تجربة {trialDuration}، من غير كارت.',
     },
@@ -359,7 +370,11 @@ export const ar: MarketingContent = {
       ],
       disclosure:
         'الموافقة يدوية، ويقوم بها صاحب الحساب. لا يوجد حاليًا دفع بالكارت أو عن طريق فوري.',
-      cta: { label: 'ابدأ تجربة أكاديميتك', href: REGISTER },
+      cta: {
+        label: 'ابدأ تجربة أكاديميتك',
+        href: REGISTER,
+        signedIn: { label: 'راجع مدفوعاتك في لوحة التحكم', href: inAcademy('payments') },
+      },
     },
 
     website: {
@@ -615,7 +630,11 @@ export const ar: MarketingContent = {
     closing: {
       title: 'خلّي الدفعة الجاية من طلابك في أكاديمية باسمك.',
       microcopy: 'تجربة {trialDuration}، من غير كارت.',
-      primaryCta: { label: 'ابدأ تجربة أكاديميتك', href: REGISTER },
+      primaryCta: {
+        label: 'ابدأ تجربة أكاديميتك',
+        href: REGISTER,
+        signedIn: { label: 'افتح كورساتك', href: inAcademy('courses') },
+      },
       secondaryCta: { label: 'جهّزها معانا', href: SALES },
     },
   },
@@ -626,7 +645,11 @@ export const ar: MarketingContent = {
       eyebrow: 'المنتج',
       title: 'اللي تقدر تشغّله على {brand} النهارده',
       lead: '{brand} يعطي المدرس في مصر موقع أكاديمية باسمه، ومدفوعات من الطلاب بالمحافظ أو إنستاباي أو التحويل البنكي يوافق عليها صاحب الحساب، وكورسات فيها امتحانات وواجبات وشهادات، وأدوارًا للمساعدين. كل جزء بالأسفل يوضّح ما يقدّمه {brand} اليوم، وأين يتوقف بالضبط.',
-      primaryCta: { label: 'ابدأ تجربة أكاديميتك', href: REGISTER },
+      primaryCta: {
+        label: 'ابدأ تجربة أكاديميتك',
+        href: REGISTER,
+        signedIn: { label: 'افتح لوحة التحكم', href: DASHBOARD },
+      },
       secondaryCta: { label: 'شوف الأسعار', href: '/pricing' },
     },
     groups: [
@@ -720,7 +743,11 @@ export const ar: MarketingContent = {
     closing: {
       title: 'جرّبه بكورساتك وطلابك',
       microcopy: 'تجربة {trialDuration}، من غير كارت.',
-      primaryCta: { label: 'ابدأ تجربة أكاديميتك', href: REGISTER },
+      primaryCta: {
+        label: 'ابدأ تجربة أكاديميتك',
+        href: REGISTER,
+        signedIn: { label: 'افتح كورساتك', href: inAcademy('courses') },
+      },
       secondaryCta: { label: 'جهّزها معانا', href: SALES },
     },
   },
@@ -954,7 +981,11 @@ export const ar: MarketingContent = {
       title: 'مش متأكد أنهي باقة تناسبك؟',
       lead: 'قولنا عندك كام طالب وكام أكاديمية، وفريق {brand} يساعدك تختار.',
       primaryCta: { label: 'كلّمنا', href: SALES },
-      secondaryCta: { label: 'ابدأ تجربة أكاديميتك', href: REGISTER },
+      secondaryCta: {
+        label: 'ابدأ تجربة أكاديميتك',
+        href: REGISTER,
+        signedIn: { label: 'إدارة باقتك', href: SUBSCRIPTION },
+      },
     },
   },
 
@@ -1079,7 +1110,11 @@ export const ar: MarketingContent = {
       title: 'عندك سؤال عن الأمان؟',
       lead: 'اسأل فريق {brand} قبل ما تنقل طلابك، وهنرد عليك بالبريد الإلكتروني.',
       primaryCta: { label: 'اسألنا سؤال عن الأمان', href: SALES },
-      secondaryCta: { label: 'ابدأ تجربة أكاديميتك', href: REGISTER },
+      secondaryCta: {
+        label: 'ابدأ تجربة أكاديميتك',
+        href: REGISTER,
+        signedIn: { label: 'راجع صلاحيات فريقك', href: inAcademy('team') },
+      },
     },
   },
 
@@ -1146,7 +1181,11 @@ export const ar: MarketingContent = {
     closing: {
       title: 'شوف أكاديميتك هتبقى شكلها إيه',
       microcopy: 'تجربة {trialDuration}، من غير كارت.',
-      primaryCta: { label: 'ابدأ تجربة أكاديميتك', href: REGISTER },
+      primaryCta: {
+        label: 'ابدأ تجربة أكاديميتك',
+        href: REGISTER,
+        signedIn: { label: 'عدّل موقع أكاديميتك', href: inAcademy('website') },
+      },
       secondaryCta: { label: 'شوف الأسعار', href: '/pricing' },
     },
   },
