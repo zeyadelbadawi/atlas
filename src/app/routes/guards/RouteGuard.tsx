@@ -94,11 +94,18 @@ export function RouteGuard({
     return <>{pendingFallback}</>;
   }
 
-  // If authentication is required but user is not signed in, redirect to sign-in.
+  // If authentication is required but user is not signed in, redirect to
+  // sign-in, carrying the requested page as `?redirect=` so a deep link
+  // (e.g. the marketing site's `/dashboard/academy?open=payments`) lands
+  // where it pointed once signed in. SignInPage accepts it only as a
+  // same-site relative path (`isSafeReturnPath`).
   if (requireAuthentication && !isAuthenticated) {
-    return (
-      <Navigate to={AUTH_ROUTES.signIn} state={{ from: location }} replace />
-    );
+    const requested = `${location.pathname}${location.search}`;
+    const to =
+      requested === AUTHENTICATED_ENTRY_ROUTE
+        ? AUTH_ROUTES.signIn
+        : `${AUTH_ROUTES.signIn}?redirect=${encodeURIComponent(requested)}`;
+    return <Navigate to={to} state={{ from: location }} replace />;
   }
 
   // If authentication is explicitly not required and user is signed in,
