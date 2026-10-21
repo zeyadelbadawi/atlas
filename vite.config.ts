@@ -281,6 +281,14 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
         output: ssr
           ? {}
           : {
+              // Rollup otherwise gives every module shared between lazy
+              // routes its own file (one per icon, one per small util): an
+              // Academy page loaded 68 scripts, 53 of them under 2 KB, and
+              // each is a request (a trip to the origin when the cache is
+              // cold, as after every deploy). Side-effect-free chunks below
+              // this size are merged into a chunk loaded under the same
+              // conditions.
+              experimentalMinChunkSize: 20_000,
               // The public router's chunk keeps a stable file name: the
               // server renderer finds it in the manifest by that name
               // (`findPublicRouterChunk`), and Rollup's own name for a
