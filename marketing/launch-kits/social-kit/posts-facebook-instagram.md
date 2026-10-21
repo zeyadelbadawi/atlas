@@ -6,7 +6,7 @@
 ## How to read each post
 - **Caption** is the text that goes in the post. On Facebook the link goes in the **first comment** (posted by the Page right after publishing). Captions below are written for Facebook («اللينك في أول كومنت»). **Instagram version = the same caption with that phrase replaced by «اللينك في البايو»**; the bio link carries `utm_medium=bio`. That swap is the only platform difference.
 - **Link** = base URL + `utm_source=facebook&utm_medium=social&utm_campaign={campaign}&utm_content={post id}`. Replace `{yyyy-mm}` with the launch month.
-  - `TRIAL` = `https://atlass.dpdns.org/auth/register?lang=ar&…` (add `plan=` only where stated)
+  - `TRIAL` = `https://dashboard.atlass.dpdns.org/auth/register?lang=ar&…` (the app's host since DL-63; `SITE`, `PRICING` and `SALES` stay on the apex) (add `plan=` only where stated)
   - `SITE` = `https://atlass.dpdns.org/ar?…`
   - `PRICING` = `https://atlass.dpdns.org/ar/pricing?…`
   - `SALES` = `https://atlass.dpdns.org/ar/contact?topic=sales&…`

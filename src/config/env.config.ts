@@ -44,6 +44,15 @@ export interface EnvironmentConfig {
   readonly platformBaseDomain?: string;
 
   /**
+   * DL-63 — the marketing site's origin (`VITE_SITE_URL`, the apex) and the
+   * platform app's origin (`VITE_APP_URL`, `dashboard.<base>`). Both
+   * optional: unset (development, tests) means "same origin", and every
+   * link stays relative.
+   */
+  readonly siteUrl?: string;
+  readonly appUrl?: string;
+
+  /**
    * P6 — share of visits measured by real-user monitoring (0–1). 0 (the
    * default) turns it off entirely: no code is downloaded, nothing sent.
    * Reports/REAL_USER_MONITORING.md.
@@ -83,6 +92,18 @@ function getPlatformBaseDomain(): string | undefined {
     : undefined;
 }
 
+/** An absolute `https://` origin (no path, no trailing slash), or `undefined` for anything else. */
+export function parseOrigin(value: unknown): string | undefined {
+  if (typeof value !== 'string' || value.trim().length === 0) return undefined;
+  try {
+    const url = new URL(value.trim());
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') return undefined;
+    return url.origin;
+  } catch {
+    return undefined;
+  }
+}
+
 /** `VITE_RUM_SAMPLE_RATE` clamped to 0–1; anything unparsable is 0 (off). */
 export function parseRumSampleRate(value: unknown): number {
   const rate = typeof value === 'string' ? Number(value) : NaN;
@@ -97,5 +118,7 @@ export const ENV: EnvironmentConfig = Object.freeze({
   version: import.meta.env.VITE_APP_VERSION ?? '1.0.0',
   enableDebugLogging: import.meta.env.VITE_ENABLE_DEBUG_LOGGING === 'true',
   platformBaseDomain: getPlatformBaseDomain(),
+  siteUrl: parseOrigin(import.meta.env.VITE_SITE_URL),
+  appUrl: parseOrigin(import.meta.env.VITE_APP_URL),
   rumSampleRate: parseRumSampleRate(import.meta.env.VITE_RUM_SAMPLE_RATE),
 });

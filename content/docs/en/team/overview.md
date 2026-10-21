@@ -14,7 +14,7 @@ order: 1
 priority: P0
 related: [DOC-ORG-002, DOC-ORG-009, DOC-ORG-005, DOC-ROLE-005, DOC-ORG-011]
 keywords: [team, staff, members, students, learners, roles, permissions, manager, instructor, فريق, طلاب, صلاحيات, مدرس, مساعد]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 An academy on Atlas has two kinds of people. Your **team** runs the academy from the Atlas dashboard. Your **learners** study on the academy website. They are separate lists with separate rules, and they share one place in the dashboard: **Members**.
@@ -26,7 +26,7 @@ An academy on Atlas has two kinds of people. Your **team** runs the academy from
 | | Team | Learners |
 |---|---|---|
 | Who | The owner, managers and instructors | Students |
-| Where they sign in | The Atlas dashboard | Your academy website |
+| Where they sign in | The Atlas dashboard, `dashboard.atlass.dpdns.org` | Your academy website |
 | Where you see them | **Members** → **Team** | **Members** → **Students** |
 | How they get in | The organization owner adds them by email | They sign up on your website, or the owner adds them |
 

@@ -13,7 +13,7 @@ order: 12
 priority: P2
 related: [DOC-ACD-007, DOC-ACD-008, DOC-BIL-001, DOC-BIL-002, DOC-ROLE-001]
 keywords: [organization, second organization, switch organization, rename organization, المؤسسة, مؤسسة تانية, تغيير اسم المؤسسة, تبديل المؤسسة]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 Atlas groups everything you own under an **organization**. You create it when you sign up, and you are its owner.
@@ -28,7 +28,7 @@ Managers and instructors work in academies inside your organization. Atlas doesn
 
 ## Your organization page
 
-The organization page at [/dashboard/organization](app:/dashboard/organization) shows its **Slug**, **Your relationship** and the date it was **Created**. It has nothing to edit.
+The organization page in the dashboard, [dashboard.atlass.dpdns.org/dashboard/organization](app:/dashboard/organization), shows its **Slug**, **Your relationship** and the date it was **Created**. It has nothing to edit.
 
 ![The Organization page with its slug, your relationship and creation date](shot:team/organization-overview)
 

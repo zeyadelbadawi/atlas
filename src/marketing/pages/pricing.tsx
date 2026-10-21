@@ -187,7 +187,10 @@ function offers(env: PageEnv, plan: Plan): object[] {
   const pricing = plan.pricing;
   if (!pricing?.currency) return [];
   const name = planTokens(env.content, plan).planName;
-  const url = `${env.ctx.siteUrl}${registerHref(env.lang, plan.key)}`;
+  // DL-63 — absolute already when the app has its own origin; relative
+  // (same origin) only in builds without one.
+  const register = registerHref(env.lang, plan.key);
+  const url = /^https?:\/\//.test(register) ? register : `${env.ctx.siteUrl}${register}`;
   const offer = (price: number, duration: 'P1M' | 'P1Y') => ({
     '@type': 'Offer',
     name: String(name),

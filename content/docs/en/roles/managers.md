@@ -13,11 +13,11 @@ order: 2
 priority: P1
 related: [DOC-ROLE-005, DOC-ACD-008, DOC-LRN-012, DOC-TASK-005]
 keywords: [manager, permissions, manager role, can a manager add students, مدير, صلاحيات المدير, المدير يقدر يعمل إيه]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 The owner adds you as a **Manager** of one or more academies. You sign in on the
-[Atlas dashboard](app:/auth/sign-in), and you only see the academies you were added to.
+[Atlas dashboard](app:/auth/sign-in) at `dashboard.atlass.dpdns.org`, and you only see the academies you were added to.
 If you manage more than one, switch between them with the academy switcher
 ([Switch between academies](doc:DOC-ACD-008)).
 

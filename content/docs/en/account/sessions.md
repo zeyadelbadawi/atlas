@@ -13,11 +13,11 @@ order: 6
 priority: P1
 related: [DOC-IAM-003, DOC-IAM-005, DOC-IAM-006, DOC-MED-010, DOC-SEC-003]
 keywords: [active sessions, sign out other devices, log out everywhere, someone logged into my account, الجلسات النشطة, تسجيل الخروج من جهاز تاني, حد دخل على حسابي, اطلع من كل الأجهزة]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 Anyone can do this for their own account. Owners, managers and instructors use
-their profile in the dashboard. Learners use **Security** in **My Learn** on
+their profile in the Atlas dashboard (`dashboard.atlass.dpdns.org`). Learners use **Security** in **My Learn** on
 their academy's website, which has the same card.
 
 ## Sign out one device

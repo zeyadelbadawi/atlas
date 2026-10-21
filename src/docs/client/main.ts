@@ -5,11 +5,13 @@
  *     fetched the first time a box is used) and the /search results page;
  *   - the `/` shortcut to the search box, arrow-key navigation of results;
  *   - the theme toggle (choice in localStorage), closing menus on Escape;
- *   - the "Was this helpful?" buttons and the cookieless beacon.
+ *   - the "Was this helpful?" buttons and the cookieless beacon;
+ *   - the header's "Sign in" / "Open dashboard" button (auth-cta.ts).
  */
 import '../styles/docs.css';
 import { searchIndex, type SearchHit, type SearchIndex } from '../search/index-build';
 import { sendDocsEvent } from './beacon';
+import { initAuthCta } from './auth-cta';
 
 const THEME_KEY = 'atlas:docs-theme';
 type ThemeChoice = 'light' | 'dark' | 'system';
@@ -265,4 +267,5 @@ document.querySelectorAll<HTMLFormElement>('[data-search-form]').forEach(initSea
 void initSearchPage();
 initHelpful();
 initLanguageLinks();
+initAuthCta();
 sendDocsEvent({ name: 'page_viewed' });

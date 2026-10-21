@@ -45,7 +45,7 @@ Every plan starts with a 14-day trial with the plan's full limits. No card neede
 There is no mobile app (academies run in the phone browser). There are no live classes, no video file uploads, and no WhatsApp or SMS messages to parents. Payment approval is manual and done by the account owner; there is no card or Fawry checkout today. Lessons are YouTube videos played inside your academy, and a determined student can still copy the YouTube link itself.
 
 ### Next step
-- **Start my academy trial:** `atlass.dpdns.org/auth/register?lang=en` (or scan the code)
+- **Start my academy trial:** `dashboard.atlass.dpdns.org/auth/register?lang=en` (or scan the code)
 - **Set it up with us:** `atlass.dpdns.org/contact?topic=sales`
 - **Contact:** [owner contact — pending OC-17] · WhatsApp: [WA-NUMBER]
 

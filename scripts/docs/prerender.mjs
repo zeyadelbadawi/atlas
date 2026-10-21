@@ -12,9 +12,11 @@
  *      the content rules (src/docs/content/validate.ts) fail the build;
  *   4. the screenshots (content/docs/media) and favicons are copied in.
  *
- * Env: VITE_SITE_URL (app + marketing origin, default
- * https://atlass.dpdns.org), VITE_DOCS_URL (default https://docs.<host of
- * VITE_SITE_URL>), DOCS_REQUIRE_COMPLETE=1 (every inventory page written),
+ * Env: VITE_SITE_URL (marketing origin, default https://atlass.dpdns.org),
+ * VITE_APP_URL (app origin: sign-in, registration, dashboards — DL-63;
+ * default https://dashboard.<host of VITE_SITE_URL>), VITE_DOCS_URL
+ * (default https://docs.<host of VITE_SITE_URL>),
+ * DOCS_REQUIRE_COMPLETE=1 (every inventory page written),
  * DOCS_ALLOW_MISSING_SHOTS=1 (local drafts only), MARKETING_BUILD_DATE.
  */
 import { createHash } from 'node:crypto';
@@ -88,6 +90,7 @@ async function main() {
   const site = await import(pathToFileURL(entryFile).href);
 
   const siteUrl = (process.env.VITE_SITE_URL || 'https://atlass.dpdns.org').replace(/\/+$/, '');
+  const appUrl = (process.env.VITE_APP_URL || site.defaultAppUrl(siteUrl)).replace(/\/+$/, '');
   const docsUrl = (process.env.VITE_DOCS_URL || `https://docs.${new URL(siteUrl).host}`).replace(/\/+$/, '');
   const buildDate = today();
 
@@ -136,6 +139,7 @@ async function main() {
     plans: loaded.plans,
     docsUrl,
     siteUrl,
+    appUrl,
     buildDate,
     assets: { ...client, themeScript: `/${themeFile}` },
     requireComplete: process.env.DOCS_REQUIRE_COMPLETE === '1',
@@ -162,7 +166,7 @@ async function main() {
   cpSync(join(ROOT, 'public/marketing-assets/og/og-ar.jpg'), join(OUT, 'og-docs-ar.jpg'));
   rmSync(join(OUT, '.vite'), { recursive: true, force: true });
 
-  log(`wrote ${built.pages} pages, ${articles.length} articles, ${built.files.length} files to dist/docs/ (${docsUrl}, ${buildDate})`);
+  log(`wrote ${built.pages} pages, ${articles.length} articles, ${built.files.length} files to dist/docs/ (${docsUrl}, app ${appUrl}, ${buildDate})`);
 }
 
 main().catch((error) => fail(error?.stack ?? String(error)));

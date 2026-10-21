@@ -82,8 +82,14 @@ what the screenshot shows, in the article's language.
 | Write | Becomes |
 |---|---|
 | `[Review payment proofs](doc:DOC-COM-003)` | the article in the same language |
-| `[Sign in](app:/auth/sign-in)` | the Atlas app (absolute URL) |
-| `[Pricing](site:/pricing)` | the marketing site, same language |
+| `[Sign in](app:/auth/sign-in)` | the Atlas app on the dashboard host, `https://dashboard.atlass.dpdns.org/auth/sign-in` (absolute URL; `VITE_APP_URL`) |
+| `[Pricing](site:/pricing)` | the marketing site on the apex, same language, `https://atlass.dpdns.org/pricing` (`VITE_SITE_URL`) |
+
+Since DL-63 the app (sign-in, registration, every dashboard) lives on
+`dashboard.atlass.dpdns.org`; the apex keeps only the marketing pages
+(home, features, pricing, security, about, contact, privacy policy,
+terms). Use `app:` for app routes (`/auth/…`, `/dashboard…`) and `site:`
+for those marketing pages — `/terms` and `/privacy-policy` are `site:`.
 
 **Catalog tokens**: `{trialDays}` (number of trial days) and
 `{trialDuration}` ("14 days" / «١٤ يومًا») come from the live plan catalog

@@ -13,7 +13,7 @@ order: 2
 priority: P0
 related: [DOC-IAM-002, DOC-IAM-005, DOC-IAM-007, DOC-TRB-002, DOC-TRB-009]
 keywords: [forgot password, reset password, change password, reset link expired, نسيت كلمة المرور, نسيت الباسورد, تغيير الباسورد, تغيير كلمة السر, رابط إعادة التعيين]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 Anyone with an Atlas account can do this. To reset, you need access to the
@@ -22,7 +22,7 @@ your current password.
 
 ## If you forgot your password
 
-**Owners, managers and instructors** start on the Atlas sign-in page:
+**Owners, managers and instructors** start on the Atlas sign-in page, on `dashboard.atlass.dpdns.org`:
 
 1. On the [Atlas sign-in page](app:/auth/sign-in), choose **Forgot password?**
 

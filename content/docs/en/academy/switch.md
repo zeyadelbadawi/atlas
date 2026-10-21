@@ -14,10 +14,10 @@ order: 7
 priority: P1
 related: [DOC-ACD-007, DOC-ORG-012, DOC-ROLE-002, DOC-ORG-011]
 keywords: [switch academy, change academy, academy switcher, multiple academies, organization, تبديل الاكاديمية, اغير الاكاديمية, اكتر من اكاديمية]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
-Every screen in the dashboard works on one academy at a time. The academy switcher in the top bar tells you which one is open and lets you move to another.
+Every screen in the Atlas dashboard (`dashboard.atlass.dpdns.org`) works on one academy at a time. The academy switcher in the top bar tells you which one is open and lets you move to another.
 
 ## Switch academy
 

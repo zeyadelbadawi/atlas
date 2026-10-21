@@ -71,6 +71,7 @@ import type { AccountDeletionChallenge } from '@services/identity/current-user.s
 import type { ApiError } from '@api';
 import type { CurrentUser } from '@types';
 import { PUBLIC_ROUTES } from '@app/routes/route-paths';
+import { appMarketingHref } from '@app/routes/marketing-href';
 
 /**
  * Mirrors `ACCOUNT_DELETION_REASONS` in the backend exactly. A value not
@@ -169,7 +170,10 @@ export function DeleteAccountCard({
       // the local tokens so the app does not keep retrying with
       // credentials that can only ever 401 from here on.
       await signOut();
-      navigate(PUBLIC_ROUTES.home, { replace: true });
+      // DL-63 — on the dashboard host the marketing home is on the apex.
+      const home = appMarketingHref(PUBLIC_ROUTES.home);
+      if (home === PUBLIC_ROUTES.home) navigate(home, { replace: true });
+      else window.location.replace(home);
     } catch (error) {
       // Kept open on failure: closing would suggest it worked. A wrong code
       // can be retried; an expired or spent one needs a new code.

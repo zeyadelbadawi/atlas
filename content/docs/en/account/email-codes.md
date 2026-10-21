@@ -13,7 +13,7 @@ order: 4
 priority: P0
 related: [DOC-IAM-006, DOC-IAM-003, DOC-IAM-007, DOC-TRB-009, DOC-ACD-001]
 keywords: [verification code, sign-in code, OTP, 6-digit code, remember this device, code not arriving, كود التحقق, رمز الدخول, الكود مش بيوصل, ليه بيبعتلي كود, تذكر هذا الجهاز]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 An emailed sign-in code is a second check after your password. Someone who
@@ -25,7 +25,7 @@ After you enter the right password, the page may change to **Check your
 email**: "We sent a 6-digit code to" followed by your address, partly hidden.
 
 - **Organization owners** always get a code when they sign in to the dashboard
-  from a browser Atlas doesn't remember yet.
+  (`dashboard.atlass.dpdns.org`) from a browser Atlas doesn't remember yet.
 - **Everyone else**, on the dashboard and on academy websites, gets a code when
   the platform's sign-in code setting asks for one. Depending on that setting,
   a code is asked for on new browsers, at every sign-in, or not at all.

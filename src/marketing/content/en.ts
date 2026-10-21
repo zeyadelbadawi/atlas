@@ -98,6 +98,11 @@ export const en: MarketingContent = {
         dismiss: 'إخفاء',
       },
     },
+    appHandoff: {
+      dashboard: 'Opening your dashboard…',
+      signIn: 'Opening the sign-in page…',
+      signUp: 'Opening the sign-up page…',
+    },
     theme: {
       label: 'Theme',
       light: 'Light',
@@ -116,7 +121,7 @@ export const en: MarketingContent = {
       seePricing: { label: 'See pricing', href: '/pricing' },
       signIn: { label: 'Sign in', href: '/auth/sign-in' },
       talkToUs: { label: 'Talk to us', href: SALES },
-      goToDashboard: { label: 'Go to dashboard', href: '/dashboard' },
+      goToDashboard: { label: 'Open dashboard', href: '/dashboard' },
     },
     trialMicrocopy: '{trialDays}-day trial. No card needed.',
     stickyCta: { regionLabel: 'Quick actions' },

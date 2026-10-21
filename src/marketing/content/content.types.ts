@@ -218,8 +218,14 @@ export interface MkChrome {
     readonly seePricing: MkLink;
     readonly signIn: MkLink;
     readonly talkToUs: MkLink;
-    /** Replaces CTA-T and Sign in when a session exists. */
+    /** Replaces Sign in when the `atlas_signed_in` hint says a dashboard session exists (DL-63). */
     readonly goToDashboard: MkLink;
+  };
+  /** DL-63 — the full-screen transition shown while a link opens the dashboard host. */
+  readonly appHandoff: {
+    readonly dashboard: string;
+    readonly signIn: string;
+    readonly signUp: string;
   };
   /** Standard trial microcopy under CTA-T. Omit when the catalog has no trial. */
   readonly trialMicrocopy: string;

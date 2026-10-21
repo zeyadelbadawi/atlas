@@ -98,7 +98,7 @@ Arabic has not been natively reviewed (RV-14 deferred, DL-50). Nothing in the co
 10. **Student limit scope** (shared across academies on multi-academy plans). Not stated anywhere. Add it to the pricing FAQ once confirmed.
 
 ## 6. For the component author
-- `href` values are language-neutral. Prefix `/ar` on AR pages, except app paths (`/auth/*`, `/dashboard`). Append `?plan=<key>&lang=ar` plus UTM to `/auth/register`.
+- `href` values are language-neutral. Prefix `/ar` on AR pages, except app paths (`/auth/*`, `/dashboard`). App paths go to the app origin, `https://dashboard.atlass.dpdns.org` (`VITE_APP_URL`, DL-63), not the apex. Append `?plan=<key>&lang=ar` plus UTM to `/auth/register`.
 - `claim` fields map to `content/claims.yaml`. Hide an item when its gate is closed.
 - `chrome.languageSwitch.suggestion` is written in the TARGET language (Arabic inside `en.ts`, English inside `ar.ts`) by design.
 - FAQ `answer` text is meant to go verbatim into the `FAQPage` JSON-LD.

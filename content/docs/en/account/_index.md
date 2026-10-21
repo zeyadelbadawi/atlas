@@ -13,15 +13,16 @@ order: 0
 priority: P1
 related: [DOC-IAM-002, DOC-IAM-003, DOC-SEC-003, DOC-TRB-002, DOC-ROLE-004]
 keywords: [account, login, sign in, profile, settings, حسابي, تسجيل الدخول, الملف الشخصي, اعدادات الحساب, لوجين]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 Your Atlas account is the email address and password you sign in with. The
 same account works in every academy you join, but where you manage it
 depends on how you use Atlas:
 
-- **Owners, managers and instructors** open the account menu (your name at
-  the top of the Atlas dashboard) and choose **Profile**. It has four tabs:
+- **Owners, managers and instructors** sign in on the Atlas dashboard at
+  `dashboard.atlass.dpdns.org`, open the account menu (your name at the top) and
+  choose **Profile**. It has four tabs:
   **Personal**, **Account**, **Preferences** and **Security**.
 - **Learners** open **My Learn** on the academy's website and choose
   **Profile** or **Security**.

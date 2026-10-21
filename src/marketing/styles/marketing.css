@@ -55,6 +55,24 @@
     @apply translate-y-0;
   }
 
+  /* DL-63 — the transition into the dashboard host. */
+  .mk-app-handoff[hidden] {
+    display: none !important;
+  }
+  .mk-app-handoff-ring {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 9999px;
+    border: 3px solid rgb(224 165 38 / 0.25);
+    border-top-color: #e0a526;
+    animation: mk-handoff-spin 800ms linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mk-app-handoff-ring {
+      animation: none;
+    }
+  }
+
   .mk-eyebrow {
     @apply inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.08em] text-primary rtl:tracking-normal;
   }
@@ -174,5 +192,11 @@
       opacity: 1;
       transform: none;
     }
+  }
+}
+
+@keyframes mk-handoff-spin {
+  to {
+    transform: rotate(360deg);
   }
 }

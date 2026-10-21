@@ -1,7 +1,7 @@
 # Live demo scripts: 15 minutes and 30 minutes
 
 > PREPARED ONLY. No demo is booked or given before launch and owner approval. Talk track is spoken Egyptian Arabic, not natively reviewed (RV-14).
-> Click paths follow the product as of the 20 Oct 2026 build (routes from the frontend source; UI labels from the Arabic locale files). **Re-walk the path on the demo machine the day before**: labels and menu positions can change.
+> Click paths follow the product as of the 20 Oct 2026 build (routes from the frontend source; UI labels from the Arabic locale files). **Re-walk the path on the demo machine the day before**: labels and menu positions can change. Hosts (DL-63): `/dashboard/…`, `/auth/…` and `/onboarding/…` routes are on the dashboard, `https://dashboard.atlass.dpdns.org`; `/ar/pricing` is on the marketing site, `https://atlass.dpdns.org`; `[demo academy]`, `/my/…` and `/verify/…` are on the demo academy's own address.
 
 ## 1. The demo academy (fictional)
 Identity is pending the owner (OC-29 / OD-08). Use this fictional setup until then, and keep «تجريبي» in every name so nobody mistakes it for a real teacher.
@@ -20,7 +20,7 @@ Identity is pending the owner (OC-29 / OD-08). Use this fictional setup until th
 | Hero notice | «أكاديمية تجريبية، من فضلك ما تدفعش» |
 
 ## 2. Before every demo (10 minutes)
-- [ ] Two browser profiles open: **Owner** (dashboard) and **Student** (academy site), plus a phone (or responsive view) for the student side.
+- [ ] Two browser profiles open: **Owner** (dashboard, signed in on `dashboard.atlass.dpdns.org`) and **Student** (academy site), plus a phone (or responsive view) for the student side.
 - [ ] One fresh "under review" proof waiting in the payments list (upload it as «طالب تجريبي ٢» before the call, with the demo receipt «إيصال تجريبي — Demo receipt»).
 - [ ] Notifications muted; other tabs closed; no personal email or real customer data on screen; never open the Platform Owner console.
 - [ ] «محتوى تجريبي» visible: say it out loud at the start.

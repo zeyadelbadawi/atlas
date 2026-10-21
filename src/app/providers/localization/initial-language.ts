@@ -6,10 +6,32 @@ import { APP_CONFIG } from '@config';
 import { STORAGE_KEYS } from '@constants';
 import { isSupportedLanguage } from '@localization';
 import type { LanguageCode } from '@types';
-import { readStoredValue } from '@utils';
+import { readStoredValue, writeStoredValue } from '@utils';
 
-/** Reads the persisted language, falling back to the browser then the default. */
+/**
+ * DL-63 — a `?lang=` the marketing site puts on its links into the
+ * dashboard (a visitor on the Arabic pages opens the dashboard in Arabic;
+ * the dashboard is another origin, so the preference does not carry over).
+ * Only the two supported codes; anything else is ignored.
+ */
+function readLanguageFromUrl(): LanguageCode | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const value = new URLSearchParams(window.location.search).get('lang');
+    return value && isSupportedLanguage(value) ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Reads the language from the URL (`?lang=`, then remembered), else the persisted one, the browser's, the default. */
 export function readInitialLanguage(): LanguageCode {
+  const fromUrl = readLanguageFromUrl();
+  if (fromUrl) {
+    writeStoredValue(STORAGE_KEYS.language, fromUrl);
+    return fromUrl;
+  }
+
   const stored = readStoredValue<unknown>(
     STORAGE_KEYS.language,
     APP_CONFIG.defaultLanguage

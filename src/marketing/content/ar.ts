@@ -145,6 +145,11 @@ export const ar: MarketingContent = {
         dismiss: 'Dismiss',
       },
     },
+    appHandoff: {
+      dashboard: 'بنفتحلك لوحة التحكم…',
+      signIn: 'بنفتحلك صفحة الدخول…',
+      signUp: 'بنفتحلك صفحة التسجيل…',
+    },
     theme: {
       label: 'المظهر',
       light: 'فاتح',
@@ -163,7 +168,7 @@ export const ar: MarketingContent = {
       seePricing: { label: 'شوف الأسعار', href: '/pricing' },
       signIn: { label: 'تسجيل الدخول', href: '/auth/sign-in' },
       talkToUs: { label: 'كلّمنا', href: SALES },
-      goToDashboard: { label: 'ادخل لوحة التحكم', href: '/dashboard' },
+      goToDashboard: { label: 'افتح لوحة التحكم', href: '/dashboard' },
     },
     trialMicrocopy: 'تجربة {trialDuration}، من غير كارت.',
     stickyCta: { regionLabel: 'إجراءات سريعة' },

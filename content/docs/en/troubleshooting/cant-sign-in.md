@@ -13,7 +13,7 @@ order: 1
 priority: P0
 related: [DOC-IAM-002, DOC-IAM-003, DOC-TRB-009, DOC-TRB-014, DOC-IAM-006]
 keywords: [sign in, login, log in, password, forgot password, invalid email or password, code, مش عارف أدخل, تسجيل الدخول, الباسورد, نسيت كلمة السر, كود, لوجين]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 ## Symptom
@@ -27,6 +27,7 @@ You press **Sign In** and stay on the sign-in page, usually with one of these me
 - "Too many attempts. Please wait a few minutes and try again."
 - "That code didn't work. Check the latest email and try again." or "That code has expired. Request a new one."
 - "Your session has expired" (after you were already signed in).
+- You were signed out after the Atlas dashboard moved to its new address.
 
 ## Why it happens
 
@@ -39,9 +40,10 @@ You press **Sign In** and stay on the sign-in page, usually with one of these me
 | "Too many attempts. Please wait a few minutes and try again." | Several failed attempts in a short time. Atlas pauses sign-in for a while to protect the account. |
 | Code messages | You typed an old code, the code expired, or too many wrong codes were entered. |
 | "Your session has expired" | You were signed out after a while, or your sign-in was ended from another device. |
+| Signed out after the move | The Atlas dashboard moved to `dashboard.atlass.dpdns.org`. Everyone who uses the dashboard signs in once again on the new address. |
 
 > [!NOTE]
-> Each website has its own sign-in. Signing in to one academy's site does not sign you in to another academy's site, and it does not sign you in to the Atlas dashboard. Academy staff manage their academy from the Atlas dashboard address.
+> Each website has its own sign-in. Signing in to one academy's site does not sign you in to another academy's site, and it does not sign you in to the Atlas dashboard. Academy staff manage their academy from the Atlas dashboard at `dashboard.atlass.dpdns.org`.
 
 ## Fix
 
@@ -79,6 +81,16 @@ When Atlas asks you to "Check your email", it sends a 6-digit code.
 - If the code expired, choose **Send a new code**. If the button shows a countdown, wait for it to finish.
 - After "Too many wrong codes. Please sign in again.", go back and sign in again to get a fresh code.
 - If the code doesn't arrive, see [I didn't get an email](doc:DOC-TRB-009).
+
+### Signed out after the dashboard moved
+
+The Atlas dashboard is now at `dashboard.atlass.dpdns.org`, and the Atlas website keeps
+`atlass.dpdns.org`. Old links to `atlass.dpdns.org/auth/...` still work: they
+forward you to the same page on the dashboard. After the move, everyone who
+uses the dashboard is signed out one time. Sign in again on
+`dashboard.atlass.dpdns.org` with the same email and password.
+
+Learners keep signing in on their academy's website, as before.
 
 ### Lost your authenticator app
 

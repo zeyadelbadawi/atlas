@@ -13,14 +13,14 @@ order: 2
 priority: P0
 related: [DOC-START-002, DOC-BIL-004, DOC-BIL-003, DOC-BIL-007, DOC-BIL-008]
 keywords: [trial, trial length, trial ended, no credit card, extend trial, الفترة التجريبية, التجربة, مدة التجربة, التجربة خلصت, من غير فيزا]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 The trial lets you build your academy on a real plan before you pay. It lasts {trialDuration} and includes everything on the plan you choose.
 
 ## How long it lasts
 
-The trial lasts {trialDuration}. Your exact end date is shown on the **Subscription** page and in the banner at the top of the dashboard.
+The trial lasts {trialDuration}. Your exact end date is shown on the **Subscription** page and in the banner at the top of the Atlas dashboard (`dashboard.atlass.dpdns.org`).
 
 ![The dashboard banner during a trial, showing the plan, the days left and the Subscribe button](shot:billing/trial-banner)
 

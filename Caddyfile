@@ -350,6 +350,24 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 	}
 	redir @www_host https://atlass.dpdns.org{uri} permanent
 
+	# DL-63 — the platform app lives on dashboard.atlass.dpdns.org (its own
+	# site block below). With ATLAS_DASHBOARD_REDIRECT=on every old app link
+	# on the apex (sign-in, registration, email links, invites, certificate
+	# QR codes) is sent there with ONE 302, path and query kept (`{uri}`);
+	# the URL fragment stays with the browser. `/api/*` is never redirected:
+	# unsubscribe POSTs, webhooks, email logos and the Google callback keep
+	# working on the apex. Unset or `off` (the compose default until the
+	# dashboard host is verified): the apex keeps serving the app as before.
+	# Temporary on purpose: browsers do not cache a 302, so switching the
+	# redirect back off takes effect for everyone at once. It becomes a 301
+	# only once the move is confirmed for good.
+	@app_moved {
+		host atlass.dpdns.org
+		expression `{env.ATLAS_DASHBOARD_REDIRECT} == "on"`
+		path /auth /auth/* /dashboard /dashboard/* /onboarding /onboarding/* /academy-chooser /academy-chooser/* /verify /verify/* /403 /index.html
+	}
+	redir @app_moved https://dashboard.atlass.dpdns.org{uri} 302
+
 	handle /api/* {
 		reverse_proxy backend:3000 {
 			header_up X-Real-IP {client_ip}
@@ -546,6 +564,35 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 		handle @academy_page {
 			import ssr_proxy
 		}
+		# DL-63 — once the app has moved, the apex no longer runs it: a
+		# browser that installed the dashboard's service worker here gets a
+		# worker that unregisters itself and clears its caches (it cannot
+		# keep serving a stale app shell for the marketing site), and any
+		# other path that is not a real file is the branded 404 — never the
+		# app shell.
+		@apex_retired_worker {
+			host atlass.dpdns.org
+			expression `{env.ATLAS_DASHBOARD_REDIRECT} == "on"`
+			path /sw.js
+		}
+		handle @apex_retired_worker {
+			header Cache-Control "no-cache"
+			rewrite * /sw-retired.js
+			file_server
+		}
+		@apex_no_app {
+			host atlass.dpdns.org
+			expression `{env.ATLAS_DASHBOARD_REDIRECT} == "on"`
+			expression `{env.ATLAS_MARKETING_STATIC} != "off"`
+			not file
+		}
+		handle @apex_no_app {
+			root * /srv-marketing
+			rewrite * /404.html
+			file_server {
+				status 404
+			}
+		}
 		handle {
 			# B1-4 — on the platform host everything that reaches the app
 			# shell is the app itself (sign-in, registration, dashboards):
@@ -561,6 +608,61 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 
 	handle_errors {
 		import ssr_unavailable hsts_platform
+	}
+}
+
+# DL-63 — the platform web app: sign-in, registration and every dashboard
+# (Platform Owner, academy owner, manager, instructor). An exact name, so it
+# wins over `*.atlass.dpdns.org`: the academy SEO files, the server renderer
+# and the marketing pages never apply here. `dashboard` is reserved for
+# academies in the API and the database (DL-58). Same app build, same API,
+# same security headers as the apex; the whole host is kept out of search
+# results. The session cookie is `__Host-` and bound to this host.
+dashboard.atlass.dpdns.org {
+	import origin_lock
+
+	tls {
+		dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+	}
+
+	encode zstd gzip
+
+	handle /api/* {
+		reverse_proxy backend:3000 {
+			header_up X-Real-IP {client_ip}
+			header_up X-Forwarded-Host {host}
+		}
+	}
+
+	import theme_assets
+	import app_assets
+
+	handle {
+		import security_headers
+		import csp
+		import hsts_platform
+		root * /srv
+		import static_cache
+		import page_policy_headers
+		header X-Robots-Tag "noindex, nofollow"
+
+		# Crawlers may fetch pages (so they read the noindex header); there is
+		# nothing to list. The marketing site's own files are not served here.
+		handle /robots.txt {
+			header Content-Type "text/plain; charset=utf-8"
+			respond <<ROBOTS
+				User-agent: *
+				Allow: /
+				ROBOTS 200
+		}
+		@dashboard_not_here path /sitemap.xml /marketing-assets/* /sw-retired.js
+		handle @dashboard_not_here {
+			respond 404
+		}
+		handle {
+			try_files {path} /index.html
+			file_server
+		}
 	}
 }
 

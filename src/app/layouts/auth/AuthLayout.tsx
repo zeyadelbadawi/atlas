@@ -9,13 +9,13 @@
  * authentication module will render into.
  */
 import { Outlet } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Check } from 'lucide-react';
 import { AtlasLogo } from '@components/branding';
 import { LanguageSwitcher, ThemeSwitcher } from '@components/controls';
 import { OfflineNotice } from '@components/feedback';
 import { PUBLIC_ROUTES } from '@app/routes/route-paths';
+import { appMarketingHref } from '@app/routes/marketing-href';
 import { useOnlineStatus } from '@hooks';
 
 /** Translation keys for the brand panel's supporting points. */
@@ -46,12 +46,12 @@ export function AuthLayout(): JSX.Element {
         />
 
         <div className="relative">
-          <Link
-            to={PUBLIC_ROUTES.home}
+          <a
+            href={appMarketingHref(PUBLIC_ROUTES.home)}
             className="inline-flex rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-200 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-800"
           >
             <AtlasLogo size="lg" className="text-brand-50" />
-          </Link>
+          </a>
         </div>
 
         <div className="relative space-y-8">
@@ -83,12 +83,12 @@ export function AuthLayout(): JSX.Element {
         {!isOnline ? <OfflineNotice /> : null}
 
         <header className="flex h-layout-header items-center justify-between px-4 sm:px-6">
-          <Link
-            to={PUBLIC_ROUTES.home}
+          <a
+            href={appMarketingHref(PUBLIC_ROUTES.home)}
             className="rounded-md lg:invisible focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             <AtlasLogo size="sm" />
-          </Link>
+          </a>
 
           <div className="flex items-center gap-1">
             <LanguageSwitcher />

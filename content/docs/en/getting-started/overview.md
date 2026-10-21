@@ -13,7 +13,7 @@ order: 1
 priority: P0
 related: [DOC-START-002, DOC-START-005, DOC-ROLE-005, DOC-START-006]
 keywords: [start, setup, organization, academy, how to start, ابدأ, أكاديمية, منصة, إزاي أبدأ, اعمل أكاديمية]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 Atlas gives a teacher or an education business its own online academy: a website
@@ -26,7 +26,7 @@ learners sign up, pay you and study.
 |---|---|
 | **Organization** | Your account on Atlas: the school, company or brand your academies belong to. It holds your plan and subscription. You create it when you sign up. |
 | **Academy** | One academy inside your organization. It has its own Atlas address, website, courses, payment methods, team and learners. Your plan decides how many academies you can have. |
-| **Team** | The people who help you run an academy: managers and instructors. You add them; they sign in on the Atlas dashboard. |
+| **Team** | The people who help you run an academy: managers and instructors. You add them; they sign in on the Atlas dashboard at `dashboard.atlass.dpdns.org`. |
 | **Learners** | Your students. They sign up and sign in on your academy's own website, not on the Atlas dashboard. One Atlas account can join several academies, and each academy's courses, progress and certificates stay separate. |
 
 ![The Atlas dashboard of an organization owner](shot:getting-started/owner-dashboard)

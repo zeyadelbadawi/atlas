@@ -15,7 +15,7 @@ import { HOME_CATEGORY, INDEX_SLUG, articlePath, categoryPath, localDocsPath } f
 import { validateDocs, type RenderReport } from '../content/validate';
 import { renderArticleBody } from '../render/markdown';
 import { buildSearchIndex, type SearchSource } from '../search/index-build';
-import { DOC_LANGS, type DocArticle, type DocLang, type DocShot, type DocsRenderContext } from '../types';
+import { DOC_LANGS, defaultAppUrl, type DocArticle, type DocLang, type DocShot, type DocsRenderContext } from '../types';
 import { ArticlePage, CategoryPage, HomePage, NotFoundPage, SearchPage, type PageEnv } from '../pages/pages';
 import { renderDocsDocument, type DocsAssets, type DocsHead } from './document';
 
@@ -31,8 +31,10 @@ export interface DocsBuildInput {
   readonly plans: readonly Plan[];
   /** `https://docs.atlass.dpdns.org` */
   readonly docsUrl: string;
-  /** `https://atlass.dpdns.org` */
+  /** Marketing origin, `https://atlass.dpdns.org` */
   readonly siteUrl: string;
+  /** App (dashboard) origin, `https://dashboard.atlass.dpdns.org` (DL-63); default `dashboard.<host of siteUrl>`. */
+  readonly appUrl?: string;
   readonly buildDate: string;
   readonly assets: DocsAssets;
   readonly requireComplete?: boolean;
@@ -78,6 +80,7 @@ function byOrder(a: DocArticle, b: DocArticle): number {
 
 export function buildDocsSite(input: DocsBuildInput): DocsBuildResult {
   const { articles, docsUrl, siteUrl, assets } = input;
+  const appUrl = (input.appUrl || defaultAppUrl(siteUrl)).replace(/\/+$/, '');
   const files: DocsFile[] = [];
   const reports: RenderReport[] = [];
   const buildYear = Number(input.buildDate.slice(0, 4));
@@ -88,6 +91,7 @@ export function buildDocsSite(input: DocsBuildInput): DocsBuildResult {
     plans: input.plans,
     docsUrl,
     siteUrl,
+    appUrl,
     buildDate: input.buildDate,
     shots: input.shots,
     byId,
@@ -105,7 +109,7 @@ export function buildDocsSite(input: DocsBuildInput): DocsBuildResult {
     for (const category of DOC_CATEGORIES) {
       nav.set(category.id, regular.filter((a) => a.category === category.id).sort(byOrder));
     }
-    const env: PageEnv = { lang, siteUrl, docsUrl, nav, buildYear };
+    const env: PageEnv = { lang, siteUrl, appUrl, docsUrl, nav, buildYear };
     const popular = regular
       .filter((a) => a.priority === 'P0' && a.type !== 'hub')
       .sort((a, b) => (categoryById(a.category)?.order ?? 99) - (categoryById(b.category)?.order ?? 99) || byOrder(a, b))

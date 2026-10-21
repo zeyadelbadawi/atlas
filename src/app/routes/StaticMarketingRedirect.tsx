@@ -19,7 +19,9 @@
  */
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
-import { AUTH_ROUTES, PUBLIC_ROUTES } from './route-paths';
+import { ENV } from '@config';
+import { isDashboardHost, marketingHref } from '@utils';
+import { AUTH_ROUTES, DASHBOARD_ROUTES, PUBLIC_ROUTES } from './route-paths';
 import {
   claimStaticMarketingReload,
   sessionStorageOrNull,
@@ -78,7 +80,42 @@ export interface StaticMarketingRedirectProps {
   readonly reload?: () => void;
 }
 
-export function StaticMarketingRedirect({
+/**
+ * DL-63 — on the dashboard host the marketing pages are on another origin.
+ * `/` is the app's own entry (the dashboard, or sign-in without a session);
+ * any other marketing path is a full navigation to the same page on the
+ * apex.
+ */
+function DashboardHostMarketingRedirect(): JSX.Element {
+  const { pathname, search, hash } = useLocation();
+  const target =
+    pathname === PUBLIC_ROUTES.home && hash !== '#contact'
+      ? null
+      : marketingHref(`${pathname}${search}${hash}`, {
+          hostname: window.location.hostname,
+          siteUrl: ENV.siteUrl,
+          appUrl: ENV.appUrl,
+        });
+  useEffect(() => {
+    if (target) window.location.replace(target);
+  }, [target]);
+  if (!target) return <Navigate to={DASHBOARD_ROUTES.root} replace />;
+  return <div role="status" aria-busy="true" className="min-h-dvh" />;
+}
+
+export function StaticMarketingRedirect(
+  props: StaticMarketingRedirectProps
+): JSX.Element {
+  if (
+    typeof window !== 'undefined' &&
+    isDashboardHost(window.location.hostname, ENV.appUrl)
+  ) {
+    return <DashboardHostMarketingRedirect />;
+  }
+  return <ApexStaticMarketingRedirect {...props} />;
+}
+
+function ApexStaticMarketingRedirect({
   reload = reloadDocument,
 }: StaticMarketingRedirectProps): JSX.Element {
   const { pathname, search, hash } = useLocation();

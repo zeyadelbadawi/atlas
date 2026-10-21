@@ -18,14 +18,34 @@
  * load of this build takes that refresh token ONCE (`takeLegacyRefreshToken`)
  * to convert the session into a cookie, and deletes it.
  */
+import { ENV } from '@config/env.config';
 import { STORAGE_KEYS } from '@constants';
 import type { TokenMetadata } from '@types';
+import { signedInHintClearCookie } from '@utils/platform-hosts.utils';
 
 /**
  * Threshold in milliseconds before expiration when a token should be refreshed.
  * Default: 5 minutes.
  */
 const REFRESH_THRESHOLD_MS = 5 * 60 * 1000;
+
+/**
+ * DL-63 — the session on this platform host is over: expire the base-domain
+ * `atlas_signed_in` hint too, so the marketing header stops offering "Open
+ * dashboard". The server clears it on sign-out and on a refused refresh;
+ * this covers the rest (an offline sign-out, account deletion). Only the
+ * platform's own hosts do it — never an academy website.
+ */
+function clearSignedInHint(): void {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+  const cookie = signedInHintClearCookie({
+    hostname: window.location.hostname,
+    protocol: window.location.protocol,
+    platformBaseDomain: ENV.platformBaseDomain,
+    appUrl: ENV.appUrl,
+  });
+  if (cookie) document.cookie = cookie;
+}
 
 function storageGet(key: string): string | null {
   try {
@@ -131,6 +151,7 @@ export class TokenService {
     this.current = null;
     storageRemove(STORAGE_KEYS.sessionHint);
     storageRemove(STORAGE_KEYS.legacyAuthTokens);
+    clearSignedInHint();
   }
 
   /**

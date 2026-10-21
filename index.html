@@ -17,9 +17,47 @@
 
   <meta name="twitter:title" content="Atlas" />
   <meta name="twitter:description" content="Your own teaching academy online, under your name." />
+  <!-- DL-63 — the dashboard's boot screen (hidden unless boot-splash.js
+       shows it, which it does on the dashboard host only). The marked
+       blocks are removed from server-rendered Academy pages
+       (`ssr-document.ts`). -->
+  <!-- atlas-boot-splash -->
+  <style>
+    #atlas-boot-splash[hidden] { display: none !important; }
+    #atlas-boot-splash {
+      position: fixed; inset: 0; z-index: 2147483647;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.25rem;
+      background: #ffffff; color: #1b3a8c;
+      font: 500 1rem/1.5 "Rubik", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+      opacity: 1; transition: opacity 200ms ease-out;
+    }
+    #atlas-boot-splash[data-dark] { background: #0b1530; color: #e7ecf7; }
+    #atlas-boot-splash[data-leaving] { opacity: 0; }
+    #atlas-boot-splash img { width: 64px; height: 64px; }
+    #atlas-boot-splash[data-dark] img { filter: brightness(0) invert(1); }
+    #atlas-boot-splash .atlas-boot-ring {
+      width: 28px; height: 28px; border-radius: 9999px;
+      border: 3px solid rgba(224, 165, 38, 0.25); border-top-color: #e0a526;
+      animation: atlas-boot-spin 800ms linear infinite;
+    }
+    @keyframes atlas-boot-spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      #atlas-boot-splash { transition: none; }
+      #atlas-boot-splash .atlas-boot-ring { animation: none; }
+    }
+  </style>
+  <!-- /atlas-boot-splash -->
 </head>
 
 <body>
+  <!-- atlas-boot-splash -->
+  <div id="atlas-boot-splash" data-app-url="%VITE_APP_URL%" role="status" aria-live="polite" hidden>
+    <img src="/brand/atlas-mark-color.svg" alt="" width="64" height="64" />
+    <div class="atlas-boot-ring" aria-hidden="true"></div>
+    <p data-splash-text></p>
+  </div>
+  <script src="/boot-splash.js" async></script>
+  <!-- /atlas-boot-splash -->
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
