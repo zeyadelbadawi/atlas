@@ -5,6 +5,8 @@
  * (SPEC §A.10), required disclosures, and FAQPage JSON-LD that matches the
  * visible text (GEO: answer engines quote the same words people read).
  */
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { Plan } from '@/types/plan.types';
@@ -61,6 +63,26 @@ const BANNED: readonly RegExp[] = [
 const LEGAL_IDS = new Set(['privacy-policy', 'terms']);
 
 describe('marketing pages', () => {
+  it('gives every page except home its own hero illustration, decorative, with every file present', () => {
+    for (const { page, html } of rendered) {
+      const arts = [...html.matchAll(/<img[^>]*data-hero-art="([a-z-]+)"[^>]*>/g)];
+      if (page.id === 'home') {
+        // Home keeps the real product screenshot as its hero.
+        expect(arts, page.path).toHaveLength(0);
+        continue;
+      }
+      expect(arts, page.path).toHaveLength(1);
+      const [tag, name] = arts[0];
+      expect(tag).toContain('alt=""');
+      expect(tag).toContain('aria-hidden="true"');
+      expect(tag).toMatch(/width="1080"[^>]*height="810"/);
+      for (const src of tag.match(/\/marketing-assets\/heroes\/v1\/[a-z-]+-\d+w\.webp/g) ?? []) {
+        expect(src.startsWith(`/marketing-assets/heroes/v1/${name}-`), src).toBe(true);
+        expect(existsSync(resolve(__dirname, '../../../public', src.slice(1))), src).toBe(true);
+      }
+    }
+  });
+
   it('registers every M1a page in both languages', () => {
     const ids = new Set(MARKETING_PAGES.map((p) => `${p.id}:${p.lang}`));
     for (const id of ['home', 'features', 'pricing', 'security', 'about', 'contact', 'privacy-policy', 'terms', '404']) {

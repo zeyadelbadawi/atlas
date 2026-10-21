@@ -13,6 +13,7 @@ import type { LegalBlock, LegalDocument } from '@/features/legal/content/legal-c
 import enLegal from '@/localization/resources/en/legal.json';
 import arLegal from '@/localization/resources/ar/legal.json';
 import { Container } from '../components/ui';
+import { HeroArt } from '../components/hero-art';
 import { fill, link } from '../lib/copy';
 import { localePath } from '../lib/site';
 import type { MarketingLang, MarketingPageDef } from '../types';
@@ -57,19 +58,23 @@ function LegalPage({ env, doc, path, id }: { env: PageEnv; doc: LegalDocument; p
     <Shell env={env} path={path} currentId={id}>
       <Container className="py-12 lg:py-16">
         <article className="mx-auto max-w-[70ch]">
-          <header className="space-y-3 border-b border-border pb-6">
-            <h1 className="mk-heading text-3xl font-semibold text-foreground sm:text-4xl">{doc.title}</h1>
-            <p className="text-muted-foreground">{doc.summary}</p>
-            <dl className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted-foreground">
-              <div className="flex gap-2">
-                <dt>{labels.effectiveDate}:</dt>
-                <dd>{doc.effectiveDate}</dd>
-              </div>
-              <div className="flex gap-2">
-                <dt>{labels.lastUpdated}:</dt>
-                <dd>{doc.lastUpdated}</dd>
-              </div>
-            </dl>
+          <header className="flex items-center gap-6 border-b border-border pb-6">
+            <div className="min-w-0 flex-1 space-y-3">
+              <h1 className="mk-heading text-3xl font-semibold text-foreground sm:text-4xl">{doc.title}</h1>
+              <p className="text-muted-foreground">{doc.summary}</p>
+              <dl className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted-foreground">
+                <div className="flex gap-2">
+                  <dt>{labels.effectiveDate}:</dt>
+                  <dd>{doc.effectiveDate}</dd>
+                </div>
+                <div className="flex gap-2">
+                  <dt>{labels.lastUpdated}:</dt>
+                  <dd>{doc.lastUpdated}</dd>
+                </div>
+              </dl>
+            </div>
+            {/* Beside the title from tablet width up; on a phone the text comes first. */}
+            <HeroArt name={id === 'terms' ? 'terms' : 'privacy'} sizes="11rem" hiddenOnPhones className="hidden w-44 shrink-0 md:block" />
           </header>
           <nav aria-label={labels.tableOfContents} className="my-8">
             <h2 className="mb-3 text-sm font-semibold text-muted-foreground">{labels.tableOfContents}</h2>
@@ -134,25 +139,30 @@ function NotFoundPage({ env }: { env: PageEnv }) {
     <Shell env={env} path="/">
       <section className="relative overflow-hidden" aria-labelledby="not-found-title">
         <div aria-hidden className="mk-hero-ground pointer-events-none absolute inset-0" />
-        <Container className="relative flex min-h-[60svh] flex-col items-start justify-center py-20">
-          <p className="mk-eyebrow mb-4">{fill(n.eyebrow, tokens)}</p>
-          <h1 id="not-found-title" className="mk-heading text-4xl font-semibold text-foreground sm:text-5xl">
-            {fill(n.title, tokens)}
-          </h1>
-          <p className="mt-5 max-w-[56ch] text-lg leading-relaxed text-muted-foreground">{fill(n.body, tokens)}</p>
-          <p className="mt-2 max-w-[56ch] text-muted-foreground">{fill(n.plannedHint, tokens)}</p>
-          <ul className="mt-8 flex flex-wrap gap-3">
-            {n.links.map((item, index) => {
-              const resolved = link(lang, item, tokens);
-              return (
-                <li key={item.href}>
-                  <a href={resolved.href} className={index === 0 ? 'mk-btn mk-btn-primary' : 'mk-btn mk-btn-secondary'}>
-                    {resolved.label}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
+        <Container className="relative grid min-h-[60svh] items-center gap-10 py-20 lg:grid-cols-12 lg:gap-12">
+          <div className="flex flex-col items-start lg:col-span-7">
+            <p className="mk-eyebrow mb-4">{fill(n.eyebrow, tokens)}</p>
+            <h1 id="not-found-title" className="mk-heading text-4xl font-semibold text-foreground sm:text-5xl">
+              {fill(n.title, tokens)}
+            </h1>
+            <p className="mt-5 max-w-[56ch] text-lg leading-relaxed text-muted-foreground">{fill(n.body, tokens)}</p>
+            <p className="mt-2 max-w-[56ch] text-muted-foreground">{fill(n.plannedHint, tokens)}</p>
+            <ul className="mt-8 flex flex-wrap gap-3">
+              {n.links.map((item, index) => {
+                const resolved = link(lang, item, tokens);
+                return (
+                  <li key={item.href}>
+                    <a href={resolved.href} className={index === 0 ? 'mk-btn mk-btn-primary' : 'mk-btn mk-btn-secondary'}>
+                      {resolved.label}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+          <div className="lg:col-span-5">
+            <HeroArt name="not-found" className="mx-auto max-w-xs lg:max-w-none" />
+          </div>
         </Container>
       </section>
     </Shell>

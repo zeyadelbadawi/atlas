@@ -8,6 +8,7 @@
 import type { ReactElement, ReactNode } from 'react';
 import { Check, CheckCircle2, Minus } from 'lucide-react';
 import { Container, CtaBand, LearnMore, Section, SectionHeading, dirOf } from '../components/ui';
+import { HeroArt, type HeroArtName } from '../components/hero-art';
 import { CONTACT_LIMITS, CONTACT_TOPICS } from '../client/contact-validation';
 import { canFill, fill, link } from '../lib/copy';
 import { localePath } from '../lib/site';
@@ -15,18 +16,23 @@ import type { MkSectionHead } from '../content/content.types';
 import type { MarketingLang, MarketingPageDef } from '../types';
 import { Shell, breadcrumb, orgId, pageEnv, seoHead, webPage, type PageEnv } from './shared';
 
-function PageHero({ env, head, id }: { env: PageEnv; head: MkSectionHead; id: string }) {
+function PageHero({ env, head, id, art }: { env: PageEnv; head: MkSectionHead; id: string; art: HeroArtName }) {
   return (
     <section className="relative overflow-hidden border-b border-border" aria-labelledby={id}>
       <div aria-hidden className="mk-hero-ground pointer-events-none absolute inset-0" />
-      <Container className="relative py-14 lg:py-20">
-        <SectionHeading
-          id={id}
-          level={1}
-          eyebrow={head.eyebrow ? fill(head.eyebrow, env.tokens) : undefined}
-          title={fill(head.title, env.tokens)}
-          lead={head.lead ? fill(head.lead, env.tokens) : undefined}
-        />
+      <Container className="relative grid items-center gap-10 py-14 lg:grid-cols-12 lg:gap-12 lg:py-20">
+        <div className="lg:col-span-7">
+          <SectionHeading
+            id={id}
+            level={1}
+            eyebrow={head.eyebrow ? fill(head.eyebrow, env.tokens) : undefined}
+            title={fill(head.title, env.tokens)}
+            lead={head.lead ? fill(head.lead, env.tokens) : undefined}
+          />
+        </div>
+        <div className="lg:col-span-5">
+          <HeroArt name={art} className="mx-auto max-w-sm lg:max-w-none" />
+        </div>
       </Container>
     </section>
   );
@@ -39,7 +45,7 @@ function SecurityPage({ env }: { env: PageEnv }) {
   const s = content.security;
   return (
     <Shell env={env} path="/security" currentId="security">
-      <PageHero env={env} head={s.hero} id="security-title" />
+      <PageHero env={env} head={s.hero} id="security-title" art="security" />
       {s.sections.map((section, index) => (
         <Section
           key={section.anchor ?? section.title}
@@ -116,7 +122,7 @@ function AboutPage({ env }: { env: PageEnv }) {
   const micro = a.closing.microcopy && canFill(a.closing.microcopy, tokens) ? fill(a.closing.microcopy, tokens) : undefined;
   return (
     <Shell env={env} path="/about" currentId="about">
-      <PageHero env={env} head={a.hero} id="about-title" />
+      <PageHero env={env} head={a.hero} id="about-title" art="about" />
       <Section labelledBy="story-title">
         <div className="grid gap-10 lg:grid-cols-[1fr_1.5fr]">
           <h2 id="story-title" className="mk-heading text-3xl font-semibold text-foreground sm:text-4xl">
@@ -220,7 +226,7 @@ function ContactPage({ env }: { env: PageEnv }) {
   const data = Object.fromEntries(Object.entries(errorData).map(([k, v]) => [k, fill(v, limits)]));
   return (
     <Shell env={env} path="/contact" currentId="contact">
-      <PageHero env={env} head={c.hero} id="contact-title" />
+      <PageHero env={env} head={c.hero} id="contact-title" art="contact" />
       <Section labelledBy="contact-form-title">
         <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr]">
           <div className="mk-card p-6 sm:p-8">

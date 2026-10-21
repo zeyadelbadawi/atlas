@@ -6,6 +6,7 @@
 import { Check } from 'lucide-react';
 import { ButtonLink, Container, CtaBand, LearnMore, Section, SectionHeading, dirOf } from '../components/ui';
 import { Screenshot } from '../components/screenshot';
+import { HeroArt } from '../components/hero-art';
 import type { ScreenshotKey } from '../data/screenshots';
 import { fill, link } from '../lib/copy';
 import { localePath } from '../lib/site';
@@ -31,33 +32,38 @@ function FeaturesPage({ env }: { env: PageEnv }) {
     <Shell env={env} path="/features" currentId="features">
       <section className="relative overflow-hidden border-b border-border" aria-labelledby="features-title">
         <div aria-hidden className="mk-hero-ground pointer-events-none absolute inset-0" />
-        <Container className="relative py-14 lg:py-20">
-          <SectionHeading
-            id="features-title"
-            level={1}
-            eyebrow={f.hero.eyebrow ? fill(f.hero.eyebrow, tokens) : undefined}
-            title={fill(f.hero.title, tokens)}
-            lead={f.hero.lead ? fill(f.hero.lead, tokens) : undefined}
-          />
-          <div className="mt-8 flex flex-wrap gap-3">
-            <ButtonLink href={primary.href} arrow dir={dir}>
-              {primary.label}
-            </ButtonLink>
-            <ButtonLink href={secondary.href} variant="secondary">
-              {secondary.label}
-            </ButtonLink>
+        <Container className="relative grid items-center gap-10 py-14 lg:grid-cols-12 lg:gap-12 lg:py-20">
+          <div className="lg:col-span-7">
+            <SectionHeading
+              id="features-title"
+              level={1}
+              eyebrow={f.hero.eyebrow ? fill(f.hero.eyebrow, tokens) : undefined}
+              title={fill(f.hero.title, tokens)}
+              lead={f.hero.lead ? fill(f.hero.lead, tokens) : undefined}
+            />
+            <div className="mt-8 flex flex-wrap gap-3">
+              <ButtonLink href={primary.href} arrow dir={dir}>
+                {primary.label}
+              </ButtonLink>
+              <ButtonLink href={secondary.href} variant="secondary">
+                {secondary.label}
+              </ButtonLink>
+            </div>
+            <nav aria-label={fill(f.hero.title, tokens)} className="mt-10 flex flex-wrap gap-2">
+              {f.groups.map((group) => (
+                <a
+                  key={group.id}
+                  href={`#${group.anchor ?? group.id}`}
+                  className="rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground/80 hover:border-primary hover:text-primary"
+                >
+                  {fill(group.title, tokens)}
+                </a>
+              ))}
+            </nav>
           </div>
-          <nav aria-label={fill(f.hero.title, tokens)} className="mt-10 flex flex-wrap gap-2">
-            {f.groups.map((group) => (
-              <a
-                key={group.id}
-                href={`#${group.anchor ?? group.id}`}
-                className="rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground/80 hover:border-primary hover:text-primary"
-              >
-                {fill(group.title, tokens)}
-              </a>
-            ))}
-          </nav>
+          <div className="lg:col-span-5">
+            <HeroArt name="features" className="mx-auto max-w-md lg:max-w-none" />
+          </div>
         </Container>
       </section>
 
