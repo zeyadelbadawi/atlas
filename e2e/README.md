@@ -32,7 +32,8 @@ seed as it found it. Journeys run in order (`workers: 1`).
 ## In CI
 
 `.github/workflows/journeys.yml` runs them against a backend built from
-`atlas-backend` `main`: the `@critical` set (J38 sign-up, J16, J20, J42,
+`atlas-backend` `main` and a development-mode build of the app served by
+`vite preview` (not the dev server; see FLAKY.md, 2026-10-21): the `@critical` set (J38 sign-up, J16, J20, J42,
 J6, J27, J48) on every pull request and push to `main` (the `Critical
 journeys` job of `CI`), everything nightly. `@quarantine` tests never
 block; they are listed, with the reason, in [`FLAKY.md`](FLAKY.md).

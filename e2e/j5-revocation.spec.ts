@@ -82,7 +82,7 @@ test.describe('J5 — revocation after refund', () => {
     const stamp = `${Date.now()}`;
     courseId = await createCourse(request, owner, academyId, {
       title: `J5 Paid Course ${stamp}`,
-      pricing: { type: 'paid', amount: 120, currency: 'USD' },
+      pricing: { type: 'paid', amount: 120, currency: 'EGP' },
       level: 'intermediate',
       description: 'Playwright journey J5: access ends with the refund.',
     });

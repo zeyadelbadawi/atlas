@@ -459,11 +459,18 @@ test.describe('J3 — roster and RBAC', () => {
 
     // The sharper case: organization membership is not membership of every
     // academy under it. A second academy of the SAME organization that the
-    // staff member does not belong to must still refuse them.
+    // staff member does not belong to must still refuse them — except the
+    // organization OWNER, who owns every academy of their organization
+    // (backend `AcademyScopeGuard`, W5: `academyRoleSource:
+    // 'organization_owner'`).
     const sibling = home!.items.find((item) => item.id !== academyId);
     if (sibling) {
+      const ownerRoster = await apiGet(request, owner, `/academies/${sibling.id}/students`);
+      expect(
+        ownerRoster.status(),
+        'the organization owner reads every academy of their organization'
+      ).toBe(200);
       for (const [who, session] of [
-        ['owner', owner],
         ['manager', manager],
         ['instructor', instructor],
       ] as const) {

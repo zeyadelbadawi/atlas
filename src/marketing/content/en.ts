@@ -6,6 +6,12 @@
 import type { MarketingContent } from './content.types';
 
 const REGISTER = '/auth/register';
+// Signed-in stand-ins for the trial CTAs: the app resolves `?open=` to the
+// visitor's current academy (AcademyDashboardPage).
+const DASHBOARD = '/dashboard';
+const SUBSCRIPTION = '/dashboard/tenant/subscription';
+const inAcademy = (section: 'payments' | 'courses' | 'team' | 'website') =>
+  `/dashboard/academy?open=${section}`;
 const SALES = '/contact?topic=sales';
 
 export const en: MarketingContent = {
@@ -123,6 +129,7 @@ export const en: MarketingContent = {
       talkToUs: { label: 'Talk to us', href: SALES },
       goToDashboard: { label: 'Open dashboard', href: '/dashboard' },
       goToDashboardShort: { label: 'Dashboard', href: '/dashboard' },
+      managePlan: { label: 'Manage my plan', href: SUBSCRIPTION },
     },
     trialMicrocopy: '{trialDays}-day trial. No card needed.',
     stickyCta: { regionLabel: 'Quick actions' },
@@ -233,7 +240,11 @@ export const en: MarketingContent = {
       title:
         'Move your paid students from WhatsApp groups to an academy with your name on it',
       lead: '{brand} gives you an academy website under your own name. Students pay you by Vodafone Cash, InstaPay or bank transfer, then upload the proof in your academy. You approve it once and they’re enrolled in the course. {brand} takes no commission on those payments.',
-      primaryCta: { label: 'Start my academy trial', href: REGISTER },
+      primaryCta: {
+        label: 'Start my academy trial',
+        href: REGISTER,
+        signedIn: { label: 'Open my dashboard', href: DASHBOARD },
+      },
       secondaryCta: { label: 'Set it up with us', href: SALES },
       microcopy: '{trialDays}-day trial. No card needed.',
     },
@@ -315,7 +326,11 @@ export const en: MarketingContent = {
       ],
       disclosure:
         'Approval is manual and done by the account owner. There is no card or Fawry checkout today.',
-      cta: { label: 'Start my academy trial', href: REGISTER },
+      cta: {
+        label: 'Start my academy trial',
+        href: REGISTER,
+        signedIn: { label: 'See my payments in the dashboard', href: inAcademy('payments') },
+      },
     },
 
     website: {
@@ -573,7 +588,11 @@ export const en: MarketingContent = {
       title:
         'Put your next group of paid students in an academy with your name on it.',
       microcopy: '{trialDays}-day trial. No card needed.',
-      primaryCta: { label: 'Start my academy trial', href: REGISTER },
+      primaryCta: {
+        label: 'Start my academy trial',
+        href: REGISTER,
+        signedIn: { label: 'Open my courses', href: inAcademy('courses') },
+      },
       secondaryCta: { label: 'Set it up with us', href: SALES },
     },
   },
@@ -584,7 +603,11 @@ export const en: MarketingContent = {
       eyebrow: 'Product',
       title: 'What you can run on {brand} today',
       lead: '{brand} gives an Egyptian teacher an academy website under their own name, student payments by wallet, InstaPay or bank transfer that the owner approves, courses with quizzes, homework and certificates, and roles for assistants. Each part below says what {brand} does today and where it stops.',
-      primaryCta: { label: 'Start my academy trial', href: REGISTER },
+      primaryCta: {
+        label: 'Start my academy trial',
+        href: REGISTER,
+        signedIn: { label: 'Open my dashboard', href: DASHBOARD },
+      },
       secondaryCta: { label: 'See pricing', href: '/pricing' },
     },
     groups: [
@@ -678,7 +701,11 @@ export const en: MarketingContent = {
     closing: {
       title: 'Try it with your own courses and students',
       microcopy: '{trialDays}-day trial. No card needed.',
-      primaryCta: { label: 'Start my academy trial', href: REGISTER },
+      primaryCta: {
+        label: 'Start my academy trial',
+        href: REGISTER,
+        signedIn: { label: 'Open my courses', href: inAcademy('courses') },
+      },
       secondaryCta: { label: 'Set it up with us', href: SALES },
     },
   },
@@ -915,7 +942,11 @@ export const en: MarketingContent = {
       title: 'Not sure which plan fits?',
       lead: 'Tell us how many students and academies you have, and the {brand} team will help you choose.',
       primaryCta: { label: 'Talk to us', href: SALES },
-      secondaryCta: { label: 'Start my academy trial', href: REGISTER },
+      secondaryCta: {
+        label: 'Start my academy trial',
+        href: REGISTER,
+        signedIn: { label: 'Manage my plan', href: SUBSCRIPTION },
+      },
     },
   },
 
@@ -1040,7 +1071,11 @@ export const en: MarketingContent = {
       title: 'Have a security question?',
       lead: 'Ask the {brand} team before you move your students. We’ll reply by email.',
       primaryCta: { label: 'Ask us a security question', href: SALES },
-      secondaryCta: { label: 'Start my academy trial', href: REGISTER },
+      secondaryCta: {
+        label: 'Start my academy trial',
+        href: REGISTER,
+        signedIn: { label: 'Review my team’s access', href: inAcademy('team') },
+      },
     },
   },
 
@@ -1107,7 +1142,11 @@ export const en: MarketingContent = {
     closing: {
       title: 'See how your academy would look',
       microcopy: '{trialDays}-day trial. No card needed.',
-      primaryCta: { label: 'Start my academy trial', href: REGISTER },
+      primaryCta: {
+        label: 'Start my academy trial',
+        href: REGISTER,
+        signedIn: { label: 'Edit my academy website', href: inAcademy('website') },
+      },
       secondaryCta: { label: 'See pricing', href: '/pricing' },
     },
   },

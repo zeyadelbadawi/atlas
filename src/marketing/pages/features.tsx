@@ -42,7 +42,7 @@ function FeaturesPage({ env }: { env: PageEnv }) {
               lead={f.hero.lead ? fill(f.hero.lead, tokens) : undefined}
             />
             <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href={primary.href} arrow dir={dir}>
+              <ButtonLink href={primary.href} signedIn={primary.signedIn} arrow dir={dir}>
                 {primary.label}
               </ButtonLink>
               <ButtonLink href={secondary.href} variant="secondary">

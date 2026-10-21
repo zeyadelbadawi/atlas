@@ -62,8 +62,14 @@ function PlanCard({ plan, content }: { plan: Plan; content: MarketingContent }) 
   const trial = 'trialDuration' in tokens ? fill(card.trialLine, tokens) : fill(card.noTrialLine, tokens);
   const cta =
     'trialDuration' in tokens
-      ? { href: registerHref(lang, plan.key), label: fill(card.ctaTrial, tokens) }
-      : { href: contactHref(lang, 'sales', plan.key), label: fill(card.ctaTalk, tokens) };
+      ? {
+          href: registerHref(lang, plan.key),
+          label: fill(card.ctaTrial, tokens),
+          // A signed-in visitor already has an account: their plan page, not a second trial.
+          signedIn: link(lang, content.chrome.ctas.managePlan, tokens),
+        }
+      : { href: contactHref(lang, 'sales', plan.key), label: fill(card.ctaTalk, tokens), signedIn: undefined };
+  const ctaClass = cn('mk-btn mt-6 w-full', recommended ? 'mk-btn-primary' : 'mk-btn-secondary');
   const lines = (['students', 'academies', 'instructors', 'courses'] as const)
     .map((key) => tokens[key])
     .filter((line): line is string => typeof line === 'string');
@@ -121,10 +127,20 @@ function PlanCard({ plan, content }: { plan: Plan; content: MarketingContent }) 
         ) : null}
       </div>
 
-      <a href={cta.href} data-mkt-cta="cta_pricing" className={cn('mk-btn mt-6 w-full', recommended ? 'mk-btn-primary' : 'mk-btn-secondary')}>
+      <a href={cta.href} data-mkt-cta="cta_pricing" data-signed-out-only={cta.signedIn ? '' : undefined} className={ctaClass}>
         {cta.label}
       </a>
-      {trial ? <p className="mt-3 text-center text-sm text-muted-foreground">{trial}</p> : null}
+      {cta.signedIn ? (
+        <a href={cta.signedIn.href} data-signed-in-only="" className={ctaClass}>
+          {cta.signedIn.label}
+        </a>
+      ) : null}
+      {trial ? (
+        // The trial offer goes with the trial button: a signed-in visitor gets "Manage my plan" instead.
+        <p className="mt-3 text-center text-sm text-muted-foreground" data-signed-out-only={cta.signedIn ? '' : undefined}>
+          {trial}
+        </p>
+      ) : null}
 
       {lines.length > 0 ? (
         <div className="mt-6 border-t border-border pt-6">

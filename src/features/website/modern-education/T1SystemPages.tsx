@@ -13,6 +13,7 @@
  */
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AtlasSiteLink } from '@components/branding';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@utils';
 import { useWebsiteContainerClass } from '../renderer/renderer-style.utils';
@@ -142,7 +143,7 @@ export function T1ComingSoon({
           {t('website:theme1.comingSoon.description')}
         </p>
         <p className="mt-12 text-xs text-[var(--website-foreground-muted)]">
-          {t('publicWebsite:comingSoon.attribution')}
+          <AtlasSiteLink>{t('publicWebsite:comingSoon.attribution')}</AtlasSiteLink>
         </p>
       </div>
     </main>

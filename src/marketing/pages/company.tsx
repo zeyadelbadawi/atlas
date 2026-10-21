@@ -163,7 +163,8 @@ function AboutPage({ env }: { env: PageEnv }) {
       </Section>
       <CtaBand
         title={fill(a.closing.title, tokens)}
-        body={a.closing.lead ? fill(a.closing.lead, tokens) : micro}
+        body={a.closing.lead ? fill(a.closing.lead, tokens) : undefined}
+        microcopy={micro}
         primary={link(lang, a.closing.primaryCta, tokens)}
         secondary={a.closing.secondaryCta ? link(lang, a.closing.secondaryCta, tokens) : undefined}
         dir={dirOf(lang)}

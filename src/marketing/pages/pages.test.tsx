@@ -228,3 +228,57 @@ describe('links to the help center (DL-57)', () => {
     }
   });
 });
+
+describe('trial CTAs for a signed-in visitor', () => {
+  // The dashboard actions a body trial CTA may give way to (header aside,
+  // which has its own "Open dashboard" button). `?open=` is resolved by the
+  // app's academy chooser (academyEntryRoute).
+  const SIGNED_IN_TARGETS = /^(\/dashboard|\/dashboard\/tenant\/subscription|\/dashboard\/academy\?open=(payments|courses|team|website))$/;
+  const anchors = (html: string) =>
+    [...html.replace(/<header[\s\S]*?<\/header>/, '').matchAll(/<a\b[^>]*>[\s\S]*?<\/a>/g)].map(([tag]) => tag);
+  const hrefOf = (tag: string) => tag.match(/href="([^"]*)"/)?.[1].replace(/&amp;/g, '&') ?? '';
+  const pathOf = (href: string) => {
+    const url = new URL(href, 'https://app.invalid');
+    return `${url.pathname}${url.search}`;
+  };
+
+  it('pairs every body trial link with a dashboard action, shown instead of it', () => {
+    let pairs = 0;
+    for (const { page, html } of rendered) {
+      const links = anchors(html);
+      links.forEach((tag, index) => {
+        if (!/\/auth\/register/.test(hrefOf(tag))) return;
+        expect(tag, `${page.path}: ${hrefOf(tag)}`).toContain('data-signed-out-only');
+        const next = links[index + 1] ?? '';
+        expect(next, `${page.path}: no stand-in after ${hrefOf(tag)}`).toContain('data-signed-in-only');
+        expect(pathOf(hrefOf(next)), page.path).toMatch(SIGNED_IN_TARGETS);
+        expect(text(next).trim().length, page.path).toBeGreaterThan(0);
+        pairs += 1;
+      });
+    }
+    // Home: hero, payments, closing; features: hero, closing; pricing: the
+    // closing band and every trial plan card; security and about: closing.
+    expect(pairs).toBeGreaterThanOrEqual(2 * 9);
+  });
+
+  it('hides each pricing card\'s trial line along with its trial button', () => {
+    for (const { page, html } of rendered.filter(({ page: p }) => p.id === 'pricing')) {
+      const cards = [...html.matchAll(/<li\b[^>]*data-plan="[^"]*"[^>]*>[\s\S]*?<\/li>(?=<li\b[^>]*data-plan|<\/ul>)/g)].map(([m]) => m);
+      expect(cards.length, page.path).toBeGreaterThan(0);
+      for (const card of cards) {
+        if (!/\/auth\/register/.test(card)) continue;
+        expect(card, page.path).toMatch(/<p\b[^>]*data-signed-out-only[^>]*>[^<]*(trial|تجربة)/i);
+      }
+    }
+  });
+
+  it('hides the trial microcopy from signed-in visitors', () => {
+    for (const { page, html } of rendered.filter(({ page: p }) => p.id === 'home')) {
+      // The microcopy line itself ("14-day trial. No card needed."), not prose that mentions the trial.
+      const micro = page.lang === 'ar' ? 'تجربة [^<]*، من غير كارت\\.' : '\\d+-day trial\\. No card needed\\.';
+      const tags = [...html.matchAll(new RegExp(`<(p|span)\\b[^>]*>(?:(?:(?!</\\1>|<(?:p|span)\\b)[\\s\\S])*?>)?${micro}`, 'g'))].map(([m]) => m);
+      expect(tags.length, page.path).toBeGreaterThanOrEqual(2);
+      for (const tag of tags) expect(tag, page.path).toMatch(/^<(p|span)\b[^>]*data-signed-out-only/);
+    }
+  });
+});

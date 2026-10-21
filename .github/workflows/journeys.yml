@@ -211,31 +211,29 @@ jobs:
           pnpm exec playwright install --with-deps chromium
           echo "E2E_CHROMIUM=$(node -e "console.log(require('playwright').chromium.executablePath())")" >> "$GITHUB_ENV"
 
-      - name: App — Vite dev server (:3001)
+      # The app is served as a BUNDLE, not by the Vite dev server. The dev
+      # server loads every page as ~1,400 separate modules; under that load
+      # Chromium refused requests (net::ERR_INSUFFICIENT_RESOURCES) or the tab
+      # crashed, which left pages blank at random points (J1 and J47 in the
+      # nightly run, 21 Oct 2026). A development-mode build keeps what the
+      # journeys rely on (`import.meta.env.DEV`: the academy preview parameter
+      # and the dev host-academy header) in a handful of chunks; it exists only
+      # on this runner and is never deployed. The static marketing site is
+      # built next to it (plans from the local API) because `vite preview`
+      # serves it from `dist/marketing`, with the same /api proxy as dev.
+      - name: App — development build + marketing, served on :3001
         run: |
-          nohup pnpm exec vite --port 3001 --strictPort > "$GITHUB_WORKSPACE/logs/frontend.log" 2>&1 &
+          mkdir -p "$GITHUB_WORKSPACE/logs"
+          {
+            NODE_ENV=development pnpm exec vite build --mode development &&
+            MARKETING_PLANS_URL=http://127.0.0.1:3000/api/v1/public/plans pnpm run build:marketing
+          } > "$GITHUB_WORKSPACE/logs/frontend-build.log" 2>&1 || { tail -50 "$GITHUB_WORKSPACE/logs/frontend-build.log"; exit 1; }
+          nohup pnpm exec vite preview --port 3001 --strictPort > "$GITHUB_WORKSPACE/logs/frontend.log" 2>&1 &
           for i in $(seq 1 60); do
             curl -sf -o /dev/null http://127.0.0.1:3001/ && exit 0
             sleep 2
           done
           cat "$GITHUB_WORKSPACE/logs/frontend.log"; exit 1
-
-      # The dev server compiles the app and pre-bundles its dependencies on
-      # the first page load; doing that here keeps it out of the first
-      # journey's time budget.
-      - name: App — warm up
-        run: |
-          node -e "
-            const { chromium } = require('playwright');
-            (async () => {
-              const browser = await chromium.launch({ executablePath: process.env.E2E_CHROMIUM });
-              const page = await browser.newPage();
-              for (const path of ['/', '/auth/login']) {
-                await page.goto('http://localhost:3001' + path, { waitUntil: 'networkidle', timeout: 300000 });
-              }
-              await browser.close();
-            })().catch((error) => { console.error(error); process.exit(1); });
-          "
 
       - name: Journeys (${{ env.SUITE }})
         run: |

@@ -178,9 +178,16 @@ test.describe('J35 — provisioning progress @quarantine', () => {
       page.getByRole('radio', { name: /Modern Education/ })
     ).toHaveAttribute('aria-checked', 'true');
 
-    await page.getByText('Logo & colours (optional)').click();
+    // The block opens by default on this page (7fb5548); clicking its
+    // summary would close it, so open it only if it is closed.
+    const brand = page.locator('details', {
+      hasText: 'Logo, colours & favicon (optional)',
+    });
+    if (!(await brand.evaluate((el) => (el as HTMLDetailsElement).open))) {
+      await brand.locator('summary').click();
+    }
     await page
-      .locator('input[type="file"][accept*="image/png"]')
+      .locator('input[type="file"][accept*="image/svg+xml"]')
       .setInputFiles({
         name: 'logo.png',
         mimeType: 'image/png',

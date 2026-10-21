@@ -11,6 +11,7 @@
  */
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AtlasSiteLink } from '@components/branding';
 import { resolveCatalogHref } from '@/features/website/utils/catalog-url.utils';
 import { resolvePagePath } from '@/features/website/utils/link-resolution.utils';
 import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
@@ -137,7 +138,7 @@ export function AtelierComingSoon({
           </p>
         </div>
         <p className="text-xs text-[var(--atelier-text-muted)]">
-          {t('publicWebsite:comingSoon.attribution')}
+          <AtlasSiteLink>{t('publicWebsite:comingSoon.attribution')}</AtlasSiteLink>
         </p>
       </div>
     </main>

@@ -168,6 +168,12 @@ test.describe('J46 — customer requests', () => {
     await expect(platform.locator('main')).toContainText(INTERNAL_NOTE, {
       timeout: 30_000,
     });
+    // The note shows once the thread refetches; the composer clears its box
+    // just after that, when the send settles. Typing the reply before then
+    // loses it to that clear and leaves "Send reply" disabled.
+    await expect(platform.getByTestId('platform-request-message')).toHaveValue(
+      ''
+    );
     await composer.getByRole('radio', { name: 'Reply to customer' }).click();
     await platform.getByTestId('platform-request-message').fill(REPLY);
     await composer.getByRole('button', { name: 'Send reply' }).click();

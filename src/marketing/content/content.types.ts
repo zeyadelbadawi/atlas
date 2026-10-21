@@ -92,6 +92,12 @@ export interface MkLink {
   readonly href: string;
   /** Accessible name when the visible label is short or ambiguous. */
   readonly ariaLabel?: string;
+  /**
+   * A trial CTA's stand-in for a visitor with the `atlas_signed_in` hint: a
+   * short dashboard action for the same section (the page renders both and
+   * the stylesheet shows one). `href` is a dashboard path.
+   */
+  readonly signedIn?: { readonly label: string; readonly href: string };
 }
 
 export interface MkItem {
@@ -222,6 +228,8 @@ export interface MkChrome {
     readonly goToDashboard: MkLink;
     /** Compact "Open dashboard" for the mobile header bar (DL-63). */
     readonly goToDashboardShort: MkLink;
+    /** The pricing cards' trial button, for a signed-in visitor: their subscription page. */
+    readonly managePlan: MkLink;
   };
   /** DL-63 — the full-screen transition shown while a link opens the dashboard host. */
   readonly appHandoff: {

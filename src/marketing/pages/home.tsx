@@ -73,6 +73,7 @@ function HomePage({ env }: { env: PageEnv }) {
   const micro = canFill(h.hero.microcopy, tokens) ? fill(h.hero.microcopy, tokens) : undefined;
   const primary = link(lang, h.hero.primaryCta, tokens);
   const secondary = link(lang, h.hero.secondaryCta, tokens);
+  const paymentsCta = link(lang, h.payments.cta, tokens);
   const closing = h.closing;
   const closingMicro = closing.microcopy && canFill(closing.microcopy, tokens) ? fill(closing.microcopy, tokens) : undefined;
 
@@ -92,7 +93,7 @@ function HomePage({ env }: { env: PageEnv }) {
             </h1>
             <p className="mt-6 max-w-[58ch] text-lg leading-relaxed text-muted-foreground">{fill(h.hero.lead, tokens)}</p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <ButtonLink href={primary.href} arrow dir={dir} track="cta_t" className="px-6 text-base">
+              <ButtonLink href={primary.href} signedIn={primary.signedIn} arrow dir={dir} track="cta_t" className="px-6 text-base">
                 {primary.label}
               </ButtonLink>
               <ButtonLink href={secondary.href} variant="secondary" track="cta_c" className="px-6 text-base">
@@ -100,7 +101,7 @@ function HomePage({ env }: { env: PageEnv }) {
               </ButtonLink>
             </div>
             {micro ? (
-              <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+              <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground" data-signed-out-only="">
                 <Check className="size-4 text-success" aria-hidden strokeWidth={2.25} />
                 {micro}
               </p>
@@ -193,7 +194,7 @@ function HomePage({ env }: { env: PageEnv }) {
                 {fill(h.payments.disclosure, tokens)}
               </p>
               <div className="mt-8">
-                <ButtonLink href={link(lang, h.payments.cta, tokens).href} arrow dir={dir} track="cta_t">
+                <ButtonLink href={paymentsCta.href} signedIn={paymentsCta.signedIn} arrow dir={dir} track="cta_t">
                   {fill(h.payments.cta.label, tokens)}
                 </ButtonLink>
               </div>
@@ -369,14 +370,8 @@ function HomePage({ env }: { env: PageEnv }) {
       {/* S14 Closing */}
       <CtaBand
         title={fill(closing.title, tokens)}
-        body={
-          closing.lead || closingMicro ? (
-            <>
-              {closing.lead ? fill(closing.lead, tokens) : null}
-              {closingMicro ? <span className="mt-2 block text-sm text-white/70">{closingMicro}</span> : null}
-            </>
-          ) : undefined
-        }
+        body={closing.lead ? fill(closing.lead, tokens) : undefined}
+        microcopy={closingMicro}
         primary={link(lang, closing.primaryCta, tokens)}
         secondary={closing.secondaryCta ? link(lang, closing.secondaryCta, tokens) : undefined}
         dir={dir}

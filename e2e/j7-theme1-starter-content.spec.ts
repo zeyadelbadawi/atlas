@@ -29,7 +29,10 @@ import {
   seedCookieDecision,
 } from './support/atlas';
 
-test.describe.configure({ mode: 'serial' });
+// Provisioning through the form now shows the 45–75 s academy build screen
+// (ACADEMY_BUILD_MAX_MS) before the ready card, so a test that provisions
+// needs more than the default 60 s.
+test.describe.configure({ mode: 'serial', timeout: 180_000 });
 
 /** A 96×96 PNG: a solid brand-coloured disc on a transparent background. */
 function logoPng([r, g, b]: readonly [number, number, number]): Buffer {
@@ -122,9 +125,16 @@ async function provisionThroughForm(
   await page.getByRole('radio', { name: /Modern Education/ }).click();
 
   if (withLogo) {
-    await page.getByText('Logo & colours (optional)').click();
+    // The block opens by default on this page (7fb5548); clicking its
+    // summary would close it, so open it only if it is closed.
+    const brand = page.locator('details', {
+      hasText: 'Logo, colours & favicon (optional)',
+    });
+    if (!(await brand.evaluate((el) => (el as HTMLDetailsElement).open))) {
+      await brand.locator('summary').click();
+    }
     await page
-      .locator('input[type="file"][accept*="image/png"]')
+      .locator('input[type="file"][accept*="image/svg+xml"]')
       .setInputFiles({
         name: 'logo.png',
         mimeType: 'image/png',
@@ -147,7 +157,7 @@ async function provisionThroughForm(
   await page.getByRole('button', { name: 'Start provisioning' }).click();
 
   await expect(page.getByText('Your Academy is ready')).toBeVisible({
-    timeout: 60_000,
+    timeout: 120_000,
   });
   // W2 — the palette travelled with the request (the server's branding
   // step applied it); the logo is attached inline once the Academy exists.
@@ -363,7 +373,16 @@ test.describe('J7 — Theme 1 starter content', () => {
       .first()
       .click();
     await dialog.getByRole('button', { name: 'Apply changes' }).click();
+    // The button is disabled from the click (busy), not only once saved:
+    // wait for the save itself, or the publish below races it.
+    const saved = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'PATCH' &&
+        new URL(response.url()).pathname.endsWith(`/website/pages/${home.id}`),
+      { timeout: 15_000 }
+    );
     await page.getByTestId('website-save-page').click();
+    expect((await saved).ok()).toBe(true);
     await expect(page.getByTestId('website-save-page')).toBeDisabled({
       timeout: 15_000,
     });

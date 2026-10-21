@@ -149,7 +149,15 @@ test.describe('J32 — a change in one session reaches another without a reload'
       request,
       owner,
       `/academies/${academyId}/courses/${publishCourseId}/sections/${(await section.json()).id}/lessons`,
-      { title: 'J32 Lesson', contentType: 'text', status: 'published' }
+      // A text lesson counts as publishable activity only with a body
+      // (backend B0-LRN-03 publish readiness); without one, Publish
+      // Course stays disabled.
+      {
+        title: 'J32 Lesson',
+        contentType: 'text',
+        description: 'J32 lesson body.',
+        status: 'published',
+      }
     );
     expect(lesson.status(), await lesson.text()).toBe(201);
   });

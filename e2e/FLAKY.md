@@ -70,3 +70,15 @@ so `--grep @critical` / `--grep-invert @quarantine` select them.
   in the J6 and J42 traces. J38a passed in another run; J38b, J42 step 2
   and J6 step 4 have not yet passed locally, so whether they are machine
   load or real is open. Not quarantined: the first CI runs decide.
+- 2026-10-21 — the dev-server blank pages explained. The nightly run had J1
+  (a different step each run) and J47 ("Target crashed") failing; locally
+  J1 failed on 4 of 4 runs, each time at a different step, every time on a
+  blank page with `net::ERR_INSUFFICIENT_RESOURCES` on the dev server's
+  modules (~1,400 per page load) or a renderer crash, and never on an app
+  request loop (141 API requests in the whole file) or memory (renderer peak
+  ~620 MB). The journeys job now serves a development-mode build with
+  `vite preview` (`journeys.yml`; `import.meta.env.DEV` keeps the academy
+  preview parameter): J1 passed 3 of 3 there, in half the time, and a full
+  local run took 29 min instead of the job's 52. J7c (publish raced the
+  page save) and J46 (reply typed before the composer cleared) were test
+  races, fixed in the same change.
