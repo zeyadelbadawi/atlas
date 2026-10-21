@@ -51,7 +51,7 @@ function ctxWith(articles: DocArticle[], shots: DocShot[] = []) {
   const byId = new Map<string, Partial<Record<'en' | 'ar', DocArticle>>>();
   for (const a of articles) byId.set(a.id, { ...byId.get(a.id), [a.lang]: a });
   const map = new Map(shots.map((s) => [s.key, s]));
-  return { byId, siteUrl: 'https://atlass.dpdns.org', shots: { en: map, ar: map } };
+  return { byId, siteUrl: 'https://atlass.dpdns.org', appUrl: 'https://dashboard.atlass.dpdns.org', shots: { en: map, ar: map } };
 }
 
 describe('parseArticle', () => {
@@ -88,7 +88,7 @@ describe('renderArticleBody', () => {
     '> [!LIMITATION]',
     '> Atlas does not check that a transfer arrived.',
     '',
-    'See [how selling works](doc:DOC-COM-001) and [sign in](app:/auth/sign-in). Trial: {trialDays} days.',
+    'See [how selling works](doc:DOC-COM-001) and [sign in](app:/auth/sign-in). Trial: {trialDays} days. Read the [terms](site:/terms).',
     '',
     '<script>alert(1)</script>',
   ].join('\n');
@@ -104,7 +104,10 @@ describe('renderArticleBody', () => {
     expect(html).toContain('doc-callout-limitation');
     expect(html).toContain('What this does not do');
     expect(html).toContain('href="/selling/overview"');
-    expect(html).toContain('href="https://atlass.dpdns.org/auth/sign-in"');
+    // DL-63: app: links go to the dashboard host, site: links to the marketing apex.
+    expect(html).toContain('href="https://dashboard.atlass.dpdns.org/auth/sign-in"');
+    expect(html).not.toContain('href="https://atlass.dpdns.org/auth/');
+    expect(html).toContain('href="https://atlass.dpdns.org/terms"');
     expect(html).toContain('Trial: 14 days');
     expect(html).not.toContain('<script');
     expect(html).toContain('&lt;script&gt;');
@@ -125,6 +128,13 @@ describe('renderArticleBody', () => {
         'unresolved link doc:DOC-NOPE-001',
       ]),
     );
+  });
+
+  it('localises site: links but not app: links in Arabic', () => {
+    const ar = article('ar', '[الدخول](app:/auth/sign-in) و[الشروط](site:/terms).');
+    const html = renderToStaticMarkup(<>{renderArticleBody(ar, ctxWith([ar]), {}).element}</>);
+    expect(html).toContain('href="https://dashboard.atlass.dpdns.org/auth/sign-in"');
+    expect(html).toContain('href="https://atlass.dpdns.org/ar/terms"');
   });
 
   it('keeps Arabic heading ids', () => {
@@ -228,6 +238,23 @@ describe('the help center build (real content)', () => {
       expect(f.contents, f.path).not.toMatch(/ on[a-z]+="/);
       expect(f.contents, f.path).not.toMatch(/style="/);
     }
+  });
+
+  it('points the header account button at the dashboard host (DL-63), footer links at the apex', () => {
+    const en = file('index.html');
+    expect(en.match(/<a [^>]*data-auth-cta=/g)).toHaveLength(2); // desktop + drawer
+    expect(en).toContain('href="https://dashboard.atlass.dpdns.org/auth/sign-in"');
+    expect(en).toContain('data-href-signed-in="https://dashboard.atlass.dpdns.org/dashboard"');
+    expect(en).toContain('data-label-signed-in="Open dashboard"');
+    expect(en).toContain('data-text-signed-in="Opening your dashboard…"');
+    expect(en).toContain('role="status" aria-live="polite"');
+    expect(en).not.toContain('href="https://atlass.dpdns.org/auth/');
+    expect(en).toContain('href="https://atlass.dpdns.org/pricing"');
+    const ar = file('ar/index.html');
+    expect(ar).toContain('href="https://dashboard.atlass.dpdns.org/auth/sign-in?lang=ar"');
+    expect(ar).toContain('data-label-signed-in="افتح لوحة التحكم"');
+    expect(ar).toContain('data-text-signed-out="بنفتحلك صفحة الدخول…"');
+    expect(ar).toContain('href="https://atlass.dpdns.org/ar/terms"');
   });
 
   it('builds a search index per language and in-app /go links', () => {

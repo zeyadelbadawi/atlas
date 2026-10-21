@@ -49,13 +49,13 @@ These are owner gates. The kit does not decide them.
 - [ ] **RV-14**: Arabic review done, or waiver recorded (OD-05).
 - [ ] **Screenshots released** (AG-5: checklist + owner spot-check). Until then, posts that need a screenshot wait or use the text-only fallback in their visual brief.
 - [ ] **Marketing site live** at `https://atlass.dpdns.org/ar` (switch passed). If the site is still in holding state, no post links to it.
-- [ ] **Register page wording** checked: no "free trial" / «تجربة مجانية» on `/auth/register` (B0-CPY-24, SPEC C-9, OD-14). If it still says so, hold every CTA-T link.
+- [ ] **Register page wording** checked: no "free trial" / «تجربة مجانية» on `https://dashboard.atlass.dpdns.org/auth/register` (B0-CPY-24, SPEC C-9, OD-14). If it still says so, hold every CTA-T link.
 - [ ] **WhatsApp Business number** live with the profile, away message and quick replies (OD-04).
 - [ ] **UTM register rows** added for every value in INDEX §3 before the first link is posted.
 
 ## 5. Launch-day checklist (D0)
 **Morning, before the first post**
-- [ ] Open `https://atlass.dpdns.org/ar`, `/ar/pricing`, `/ar/contact?topic=sales`, `/auth/register?lang=ar`: all load, Arabic, correct plan names.
+- [ ] Open `https://atlass.dpdns.org/ar`, `/ar/pricing`, `/ar/contact?topic=sales` and `https://dashboard.atlass.dpdns.org/auth/register?lang=ar`: all load, Arabic, correct plan names.
 - [ ] Prices on `/ar/pricing` match CL-19. If not, edit P18, P19, R10, WS04 and the reply template "بكام؟" before approval.
 - [ ] Trial shows 14 days and "no card" on the pricing page and the register page.
 - [ ] Profiles (created by the owner, OD-03): display name «أطلس | Atlas», bio from `strategy.md` §2, avatar and cover only if RV-08 is cleared, link in bio with `utm_medium=bio`.

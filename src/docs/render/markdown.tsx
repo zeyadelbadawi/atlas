@@ -6,6 +6,7 @@
  *   ![alt](shot:key)      a captured screenshot in the article's language
  *   > [!NOTE] / [!TIP] / [!LIMITATION] / [!WARNING]   callouts
  *   [x](doc:DOC-ID) / (app:/path) / (site:/path)    resolved links
+ *     (app: → the dashboard origin, site: → the marketing origin, DL-63)
  *
  * Raw HTML in the source is never parsed (`disableParsingRawHTML`): content
  * is Markdown only, so nothing can add a script, a style or a handler.
@@ -102,7 +103,7 @@ function plainText(nodes: readonly unknown[]): string {
 export function resolveDocLink(
   href: string,
   lang: DocLang,
-  ctx: Pick<DocsRenderContext, 'byId' | 'siteUrl'>,
+  ctx: Pick<DocsRenderContext, 'byId' | 'siteUrl' | 'appUrl'>,
 ): { href: string; external: boolean } | null {
   if (href.startsWith('doc:')) {
     const [id, hash] = href.slice(4).split('#');
@@ -116,7 +117,7 @@ export function resolveDocLink(
   if (href.startsWith('app:')) {
     const path = href.slice(4);
     if (!path.startsWith('/')) return null;
-    return { href: `${ctx.siteUrl}${path}`, external: true };
+    return { href: `${ctx.appUrl}${path}`, external: true };
   }
   if (href.startsWith('site:')) {
     const path = href.slice(5);
@@ -175,7 +176,7 @@ function Callout({ kind, lang, children }: { kind: CalloutKind; lang: DocLang; c
 
 export function renderArticleBody(
   article: Pick<DocArticle, 'body' | 'lang' | 'source'>,
-  ctx: Pick<DocsRenderContext, 'byId' | 'siteUrl' | 'shots'>,
+  ctx: Pick<DocsRenderContext, 'byId' | 'siteUrl' | 'appUrl' | 'shots'>,
   tokens: Readonly<Record<string, string>>,
 ): RenderedArticle {
   const { lang } = article;

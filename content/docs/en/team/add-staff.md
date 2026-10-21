@@ -13,7 +13,7 @@ order: 2
 priority: P0
 related: [DOC-ORG-001, DOC-ORG-003, DOC-IAM-012, DOC-LRN-012, DOC-ROLE-005]
 keywords: [add instructor, add manager, invite teacher, staff, team, إضافة مدرس, إضافة مدرب, مساعد, صلاحية, دعوة]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 Only the **organization owner** can add managers and instructors. Managers see the Members page but not the add buttons. You need the person's email address and their full name.
@@ -55,7 +55,7 @@ A message tells you what Atlas did:
 - **Added. We sent them a fresh link to finish setting up their account.** They had an account but never finished setting it up.
 - **Added. We've emailed them to let them know.** They already use Atlas. They sign in with their usual email and password and find your academy there.
 
-The person appears in the Team list straight away. To learn what the invited person does, see [Accept an invitation](doc:DOC-IAM-012).
+Managers and instructors sign in on the Atlas dashboard at `dashboard.atlass.dpdns.org`, not on your academy's website. The person appears in the Team list straight away. To learn what the invited person does, see [Accept an invitation](doc:DOC-IAM-012).
 
 An instructor sees no course until you assign them to one. Open the course and use its **Instructors** card. See [Assign instructors to a course](doc:DOC-LRN-012).
 

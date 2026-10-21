@@ -13,7 +13,7 @@ order: 2
 priority: P0
 related: [DOC-START-003, DOC-BIL-002, DOC-IAM-005, DOC-TRB-009]
 keywords: [تسجيل, اعمل حساب, حساب جديد, تجربة, فترة تجريبية, باسورد, كلمة السر, من غير فيزا, sign up, register, trial]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 الصفحة دي للشخص اللي هيبقى صاحب الأكاديمية: مدرّس، أو صاحب سنتر، أو أي حد هيدفع
@@ -29,7 +29,7 @@ updated: 2026-10-20
 
 ## املأ نموذج التسجيل
 
-1. افتح [صفحة التسجيل في أطلس](app:/auth/register). عنوان الصفحة **إنشاء حساب**.
+1. افتح [صفحة التسجيل في أطلس](app:/auth/register) على `dashboard.atlass.dpdns.org`. عنوان الصفحة **إنشاء حساب**.
 
    ![صفحة إنشاء حساب في أطلس](shot:getting-started/sign-up-page)
 

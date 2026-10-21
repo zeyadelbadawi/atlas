@@ -3,7 +3,8 @@ id: DOC-IAM-002
 title: "Where to sign in: the Atlas dashboard or your academy site"
 description: Owners, managers and instructors sign in on the Atlas dashboard. Learners sign in on their academy's own website. Here is what to do if Atlas says you are a student.
 summary: >
-  Owners, managers and instructors sign in on the Atlas dashboard. Learners
+  Owners, managers and instructors sign in on the Atlas dashboard, now at
+  dashboard.atlass.dpdns.org. Learners
   sign in on the website of the academy they study at, and each academy has
   its own sign-in page. You use the same email and password everywhere, but
   signing in at one place does not sign you in anywhere else.
@@ -12,8 +13,8 @@ audience: [everyone]
 order: 1
 priority: P0
 related: [DOC-IAM-003, DOC-IAM-005, DOC-IAM-007, DOC-ORG-011, DOC-TRB-002]
-keywords: [sign in, login, log in, student login, dashboard, academy website, you are a student, تسجيل الدخول, لوجين, أسجل دخول منين, موقع الأكاديمية, أنت طالب]
-updated: 2026-10-20
+keywords: [sign in, login, log in, student login, dashboard, dashboard address, new address, academy website, you are a student, تسجيل الدخول, لوجين, أسجل دخول منين, موقع الأكاديمية, أنت طالب]
+updated: 2026-10-21
 ---
 
 Atlas has two kinds of sign-in page. Which one you use depends on what you
@@ -21,12 +22,28 @@ do on Atlas, not on which email you have.
 
 ## Team members: the Atlas dashboard
 
-Owners, managers and instructors sign in at the
-[Atlas sign-in page](app:/auth/sign-in) with their email and password, then
-choose **Sign In**. The page reminds you: "Students sign in on their own
+Owners, managers and instructors sign in on the Atlas dashboard, at
+`dashboard.atlass.dpdns.org`. Open the [Atlas sign-in page](app:/auth/sign-in), enter
+your email and password, then choose **Sign In**. The page reminds you: "Students sign in on their own
 academy website, not here."
 
 ![The Atlas dashboard sign-in page with the note that students sign in on their academy website](shot:account/sign-in-dashboard)
+
+## The dashboard has a new address
+
+The Atlas dashboard moved from `atlass.dpdns.org` to `dashboard.atlass.dpdns.org`.
+`atlass.dpdns.org` is now only the Atlas website (home, features, pricing and
+contact pages).
+
+- **Old links still work.** A bookmark or an email link to
+  `atlass.dpdns.org/auth/...` forwards you to the same page on
+  `dashboard.atlass.dpdns.org`.
+- **Sign in once more.** After the move, everyone who uses the dashboard is
+  signed out one time and signs in again on the new address, with the same
+  email and password. After that, sign in as usual.
+
+Learners are not part of this change: they still sign in on their academy's
+website.
 
 ## Learners: your academy's website
 

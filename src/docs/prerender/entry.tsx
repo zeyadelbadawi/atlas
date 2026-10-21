@@ -5,6 +5,7 @@
  * TypeScript, next to its tests.
  */
 export { buildDocsSite } from './site';
+export { defaultAppUrl } from '../types';
 export { loadArticles, loadShots, loadShotSpecs, shotFiles } from '../content/load';
 export { DOCS_THEME_SCRIPT, docsThemeScriptFileName } from './theme-script';
 export {

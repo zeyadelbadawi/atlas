@@ -14,7 +14,7 @@ order: 5
 priority: P1
 related: [DOC-ACD-005, DOC-ACD-006, DOC-WEB-006, DOC-IAM-002, DOC-LRN-022]
 keywords: [academy link, url, sign up link, register link, arabic url, /ar, my learn, certificate verification, subdomain]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 Every path below goes after your academy's address. For example, if your address is `learn.your-academy.com`, the sign-up page is `learn.your-academy.com/sign-up`.
@@ -66,6 +66,14 @@ Anyone can open `/verify/` followed by a certificate code to see whether the cer
 
 ## The Atlas dashboard is a different address
 
-You and your team manage the academy in the [Atlas dashboard](app:/dashboard). Learners never use it: they sign in on your academy's site. A learner who tries to sign in to the dashboard sees "You are a student. Please sign in through your academy’s website." See [Where to sign in](doc:DOC-IAM-002).
+Three different addresses are involved:
+
+| Address | What it is |
+|---|---|
+| `dashboard.atlass.dpdns.org` | The [Atlas dashboard](app:/dashboard), where you and your team sign in and manage the academy. |
+| `atlass.dpdns.org` | The Atlas website: home, features, pricing and contact pages. Old dashboard links on it, such as `atlass.dpdns.org/auth/sign-in`, forward to the same page on the dashboard. |
+| Your academy's Atlas subdomain or your own domain | Your academy site, where learners sign up and sign in. |
+
+Learners never use the dashboard: they sign in on your academy's site. A learner who tries to sign in to the dashboard sees "You are a student. Please sign in through your academy’s website." See [Where to sign in](doc:DOC-IAM-002).
 
 Related: [Your academy web address](doc:DOC-ACD-005) · [Build your site in Arabic and English](doc:DOC-WEB-006)

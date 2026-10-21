@@ -32,6 +32,8 @@ export interface DocsCopy {
   readonly nav: {
     readonly backToAtlas: string;
     readonly signIn: string;
+    /** Replaces "Sign in" when the `atlas_signed_in` hint cookie is set (client/auth-cta.ts). */
+    readonly openDashboard: string;
     readonly startTrial: string;
     readonly browse: string;
     readonly topics: string;
@@ -44,6 +46,8 @@ export interface DocsCopy {
     readonly allArticles: string;
     readonly mainMenu: string;
   };
+  /** Full-screen notice shown while the header button navigates to the app. */
+  readonly authOverlay: { readonly signedIn: string; readonly signedOut: string };
   readonly theme: { readonly label: string; readonly light: string; readonly dark: string; readonly system: string };
   readonly languageSwitch: { readonly label: string; readonly name: string };
   readonly article: {
@@ -115,6 +119,7 @@ export const DOCS_COPY: Readonly<Record<DocLang, DocsCopy>> = {
     nav: {
       backToAtlas: 'Back to Atlas',
       signIn: 'Sign in',
+      openDashboard: 'Open dashboard',
       startTrial: 'Start your trial',
       browse: 'Browse topics',
       topics: 'Help topics',
@@ -127,6 +132,7 @@ export const DOCS_COPY: Readonly<Record<DocLang, DocsCopy>> = {
       allArticles: 'All articles in this topic',
       mainMenu: 'Main menu',
     },
+    authOverlay: { signedIn: 'Opening your dashboard…', signedOut: 'Opening the sign-in page…' },
     theme: { label: 'Theme', light: 'Light', dark: 'Dark', system: 'Use device setting' },
     languageSwitch: { label: 'اقرأ بالعربي', name: 'العربية' },
     article: {
@@ -211,6 +217,7 @@ export const DOCS_COPY: Readonly<Record<DocLang, DocsCopy>> = {
     nav: {
       backToAtlas: 'رجوع لأطلس',
       signIn: 'تسجيل الدخول',
+      openDashboard: 'افتح لوحة التحكم',
       startTrial: 'ابدأ الفترة التجريبية',
       browse: 'تصفّح الموضوعات',
       topics: 'موضوعات المساعدة',
@@ -223,6 +230,7 @@ export const DOCS_COPY: Readonly<Record<DocLang, DocsCopy>> = {
       allArticles: 'كل مقالات الموضوع ده',
       mainMenu: 'القائمة الرئيسية',
     },
+    authOverlay: { signedIn: 'بنفتحلك لوحة التحكم…', signedOut: 'بنفتحلك صفحة الدخول…' },
     theme: { label: 'المظهر', light: 'فاتح', dark: 'داكن', system: 'حسب إعداد الجهاز' },
     languageSwitch: { label: 'Read in English', name: 'English' },
     article: {

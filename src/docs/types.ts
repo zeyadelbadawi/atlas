@@ -78,8 +78,13 @@ export interface DocsRenderContext {
   readonly plans: readonly Plan[];
   /** Origin of the help center, e.g. `https://docs.atlass.dpdns.org`. */
   readonly docsUrl: string;
-  /** Origin of the Atlas app and marketing site, e.g. `https://atlass.dpdns.org`. */
+  /** Origin of the marketing site (home, pricing, terms…), e.g. `https://atlass.dpdns.org`. */
   readonly siteUrl: string;
+  /**
+   * Origin of the Atlas web app (sign-in, registration, every dashboard),
+   * e.g. `https://dashboard.atlass.dpdns.org` (DL-63). `app:` links resolve here.
+   */
+  readonly appUrl: string;
   readonly buildDate: string;
   /** Screenshots per language, by key. */
   readonly shots: Readonly<Record<DocLang, ReadonlyMap<string, DocShot>>>;
@@ -90,4 +95,14 @@ export interface DocsRenderContext {
 export interface DocHeading {
   readonly id: string;
   readonly text: string;
+}
+
+/**
+ * The app origin when `VITE_APP_URL` is unset: `dashboard.<host of the
+ * marketing origin>` (DL-63), e.g. `https://atlass.dpdns.org` →
+ * `https://dashboard.atlass.dpdns.org`.
+ */
+export function defaultAppUrl(siteUrl: string): string {
+  const url = new URL(siteUrl);
+  return `${url.protocol}//dashboard.${url.host}`;
 }

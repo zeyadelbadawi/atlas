@@ -13,7 +13,7 @@ order: 2
 priority: P0
 related: [DOC-START-003, DOC-BIL-002, DOC-IAM-005, DOC-TRB-009]
 keywords: [sign up, register, create account, trial, no card, تسجيل, اعمل حساب, حساب جديد, تجربة, فترة تجريبية, باسورد, كلمة السر]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 This page is for the person who will own the academy: a teacher, a centre owner or
@@ -30,7 +30,7 @@ own website (see [Quick start for learners](doc:DOC-START-008)).
 
 ## Fill in the sign-up form
 
-1. Open the [Atlas sign-up page](app:/auth/register). The page is titled **Create Account**.
+1. Open the [Atlas sign-up page](app:/auth/register) on `dashboard.atlass.dpdns.org`. The page is titled **Create Account**.
 
    ![The Create Account page on Atlas](shot:getting-started/sign-up-page)
 

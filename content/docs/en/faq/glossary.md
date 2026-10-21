@@ -13,7 +13,7 @@ order: 7
 priority: P1
 related: [DOC-FAQ-001, DOC-ROLE-005, DOC-REF-000, DOC-START-001]
 keywords: [glossary, terms, definitions, meaning, arabic terms, مصطلحات, معنى]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 Each term shows its Arabic name in the Arabic version of the app in brackets.
@@ -42,6 +42,7 @@ Each term shows its Arabic name in the Arabic version of the app in brackets.
 
 ## Website and domain
 
+- **Atlas dashboard** (لوحة تحكم أطلس): where owners, managers and instructors sign in and run their academies, at `dashboard.atlass.dpdns.org`. The Atlas website (home, pricing) stays at `atlass.dpdns.org`. See [Where to sign in](doc:DOC-IAM-002).
 - **Atlas subdomain** (النطاق الفرعي في أطلس): the address Atlas gives every academy site. See [Your academy web address](doc:DOC-ACD-005).
 - **Custom domain** (نطاق مخصص): your own domain, such as `learn.your-academy.com`, connected with DNS records. See [Custom domain DNS records](doc:DOC-REF-003).
 - **Main language** (اللغة الرئيسية): the language your site opens in at its plain address. See [Academy site URLs](doc:DOC-REF-004).

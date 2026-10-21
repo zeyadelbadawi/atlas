@@ -113,7 +113,7 @@ Day 0 = trial start. The product's own `trial.started` email exists; send T0 onl
 أول خطوة: اختار تصميم أكاديميتك وارفع شعارك، والألوان هتطلع منه. بعدها ضيف طرق الدفع اللي بتقبلها.
 لو تحب نجهزها معاك خطوة بخطوة، رد على الإيميل ده بالمادة وعدد طلابك تقريبًا.
 {اسم المندوب}، أطلس
-- **Link:** `https://atlass.dpdns.org/dashboard?utm_source=email&utm_medium=email&utm_campaign={yyyy-mm}-trial-onboarding&utm_content=em-t00` (internal app link: drop the UTMs if the owner prefers no tags on app links)
+- **Link:** `https://dashboard.atlass.dpdns.org/dashboard?utm_source=email&utm_medium=email&utm_campaign={yyyy-mm}-trial-onboarding&utm_content=em-t00` (internal app link: drop the UTMs if the owner prefers no tags on app links)
 - **Claims:** CL-03, CL-05, CL-20, CL-25.
 
 **T2 · day 2 · Payments and first course**

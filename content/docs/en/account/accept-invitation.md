@@ -13,7 +13,7 @@ order: 10
 priority: P1
 related: [DOC-IAM-002, DOC-IAM-003, DOC-ORG-002, DOC-ORG-006, DOC-LRN-030]
 keywords: [invitation, invite, set password, setup link expired, join academy, account is ready, دعوة, تفعيل الحساب, اختيار كلمة المرور, رابط الدعوة, حسابك جاهز]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 How you start depends on whether you already had an Atlas account with the
@@ -40,8 +40,9 @@ with the email and password you already use.
 
 ## Team members: your first sign-in
 
-1. Go to the [Atlas sign-in page](app:/auth/sign-in), enter your email and
-   password, and choose **Sign In**.
+1. Go to the [Atlas sign-in page](app:/auth/sign-in) on
+   `dashboard.atlass.dpdns.org`, enter your email and password, and choose
+   **Sign In**.
 
    ![The Atlas sign-in page with the Sign In button highlighted](shot:account/sign-in-submit)
 

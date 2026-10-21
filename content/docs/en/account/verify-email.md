@@ -13,7 +13,7 @@ order: 3
 priority: P1
 related: [DOC-IAM-005, DOC-IAM-010, DOC-IAM-002, DOC-TRB-009]
 keywords: [verify email, confirm email, verification link, link expired, تأكيد البريد, تفعيل الإيميل, رابط التأكيد منتهي, تأكيد الايميل]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 Atlas verifies your email address in one of two ways, depending on how sign-in
@@ -54,8 +54,8 @@ When it works, you see "Your email is verified".
 
 ## Get a new link
 
-1. Sign in. Team members use the [Atlas sign-in page](app:/auth/sign-in);
-   learners sign in on their academy's website.
+1. Sign in. Team members use the [Atlas sign-in page](app:/auth/sign-in) on
+   `dashboard.atlass.dpdns.org`; learners sign in on their academy's website.
 
    ![The Atlas sign-in page with the Sign In button highlighted](shot:account/sign-in-submit)
 
