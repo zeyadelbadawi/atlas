@@ -36,20 +36,31 @@ export function handoffKind(href: string, appOrigin: string): HandoffKind | null
 }
 
 /**
- * Signed in: marks `<html data-signed-in>` (the stylesheet then shows the
+ * Applies the sign-in state to the page. Signed in: marks
+ * `<html data-signed-in>` (the stylesheet then shows the
  * `[data-signed-in-only]` header button and hides the `[data-signed-out-only]`
  * ones) and swaps every `[data-auth-cta]` link to its signed-in target and
- * label.
+ * label. Signed out: undoes both, so a page restored from the back-forward
+ * cache after a sign-out shows "Sign in" again.
  */
 export function applyAuthCtas(root: Document | ParentNode, signedIn: boolean): void {
-  if (!signedIn) return;
-  if ('documentElement' in root) root.documentElement.setAttribute('data-signed-in', '');
+  if ('documentElement' in root) {
+    root.documentElement.toggleAttribute('data-signed-in', signedIn);
+  }
   root.querySelectorAll<HTMLAnchorElement>('a[data-auth-cta]').forEach((link) => {
-    const href = link.dataset.signedInHref;
-    const label = link.dataset.signedInLabel;
-    if (!href || !label) return;
-    link.href = href;
-    link.textContent = label;
+    const data = link.dataset;
+    if (signedIn) {
+      if (!data.signedInHref || !data.signedInLabel) return;
+      if (data.signedOutHref === undefined) {
+        data.signedOutHref = link.getAttribute('href') ?? '';
+        data.signedOutLabel = link.textContent ?? '';
+      }
+      link.href = data.signedInHref;
+      link.textContent = data.signedInLabel;
+    } else if (data.signedOutHref !== undefined) {
+      link.setAttribute('href', data.signedOutHref);
+      link.textContent = data.signedOutLabel ?? '';
+    }
   });
 }
 
@@ -90,6 +101,10 @@ export function initAppHandoff(
   });
 
   window.addEventListener('pageshow', (event) => {
-    if (event.persisted) overlay.hidden = true;
+    if (!event.persisted) return;
+    overlay.hidden = true;
+    // Restored from the back-forward cache: the session may have started or
+    // ended meanwhile.
+    applyAuthCtas(doc, hasSignedInHint(doc.cookie));
   });
 }
