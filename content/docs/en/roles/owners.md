@@ -13,11 +13,12 @@ order: 1
 priority: P0
 related: [DOC-ROLE-005, DOC-START-005, DOC-ORG-002, DOC-COM-003, DOC-BIL-001]
 keywords: [owner, permissions, owner only, organization owner, مالك الأكاديمية, صلاحيات المالك, صاحب الأكاديمية, المالك]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 When you sign up for Atlas you become the **owner** of your organization and of every
-academy you create in it. The team list shows you with the role **Owner**.
+academy you create in it. You sign up and sign in on the Atlas dashboard at
+ `dashboard.atlass.dpdns.org`. The team list shows you with the role **Owner**.
 
 ## Your first steps
 

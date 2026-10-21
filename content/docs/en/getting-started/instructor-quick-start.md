@@ -13,7 +13,7 @@ order: 7
 priority: P1
 related: [DOC-ROLE-003, DOC-IAM-012, DOC-LRN-024, DOC-LRN-005]
 keywords: [instructor, teacher, invitation, teaching dashboard, مدرب, مدرس, دعوة, تفعيل حساب المدرب, لوحة التدريس]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 This page is for teachers and assistants who were added to an academy as an
@@ -33,7 +33,7 @@ Atlas sends you an email when the owner adds you.
 
 ## Sign in on the Atlas dashboard
 
-Instructors sign in on the [Atlas sign-in page](app:/auth/sign-in), not on the
+Instructors sign in on the [Atlas sign-in page](app:/auth/sign-in), at `dashboard.atlass.dpdns.org`, not on the
 academy website, which is for learners. If Atlas asks for a code, check your email
 for it. See [Where to sign in](doc:DOC-IAM-002).
 

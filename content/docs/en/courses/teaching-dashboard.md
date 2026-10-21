@@ -14,10 +14,10 @@ order: 21
 priority: P1
 related: [DOC-START-007, DOC-ROLE-003, DOC-LRN-012, DOC-LRN-017, DOC-MSG-004]
 keywords: [teaching dashboard, instructor dashboard, my courses, لوحة المدرس, لوحة تحكم التدريس, دوراتي, المدرّس, التصحيح]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
-Sign in to the Atlas dashboard with your instructor account. You only see the courses an owner or manager has assigned to you; if none are assigned yet, ask them to [assign you to a course](doc:DOC-LRN-012). Owners and managers can open these pages too.
+Sign in to the Atlas dashboard (`dashboard.atlass.dpdns.org`) with your instructor account. You only see the courses an owner or manager has assigned to you; if none are assigned yet, ask them to [assign you to a course](doc:DOC-LRN-012). Owners and managers can open these pages too.
 
 ## Find your way around
 

@@ -13,11 +13,12 @@ order: 3
 priority: P1
 related: [DOC-START-007, DOC-ROLE-005, DOC-LRN-024, DOC-TASK-003]
 keywords: [instructor, teacher permissions, grade, assigned courses, مدرب, مدرس, صلاحيات المدرب, تصحيح, الدورات المسندة]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 The academy owner adds you as an **Instructor**, and the owner or a manager assigns you
-to courses. New here? Start with the [Quick start for instructors](doc:DOC-START-007).
+to courses. You sign in on the Atlas dashboard at `dashboard.atlass.dpdns.org`, not on
+the academy website. New here? Start with the [Quick start for instructors](doc:DOC-START-007).
 
 ## What instructors can do
 

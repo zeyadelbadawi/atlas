@@ -12,7 +12,7 @@ order: 12
 priority: P2
 related: [DOC-ACD-007, DOC-ACD-008, DOC-BIL-001, DOC-BIL-002, DOC-ROLE-001]
 keywords: [المؤسسة, مؤسسة تانية, تغيير اسم المؤسسة, تبديل المؤسسة, شركتين, organization]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 أطلس بيجمع كل حاجة تملكها تحت **مؤسسة**. بتعملها وإنت بتسجّل، وإنت مالكها.
@@ -27,7 +27,7 @@ updated: 2026-10-20
 
 ## صفحة مؤسستك
 
-صفحة المؤسسة على [/dashboard/organization](app:/dashboard/organization) بتوريك **المعرّف** و**علاقتك** و**تاريخ الإنشاء**، ومفيهاش حاجة تتعدّل.
+صفحة المؤسسة في اللوحة، [dashboard.atlass.dpdns.org/dashboard/organization](app:/dashboard/organization)، بتوريك **المعرّف** و**علاقتك** و**تاريخ الإنشاء**، ومفيهاش حاجة تتعدّل.
 
 ![صفحة المؤسسة وفيها المعرّف وعلاقتك وتاريخ الإنشاء](shot:team/organization-overview)
 

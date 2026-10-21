@@ -13,7 +13,7 @@ order: 1
 priority: P0
 related: [DOC-TRB-001, DOC-SUP-002, DOC-SUP-003, DOC-MSG-002]
 keywords: [support, help, contact atlas, ticket, problem, الدعم, مساعدة, تذكرة, اكلم الدعم, مشكلة]
-updated: 2026-10-20
+updated: 2026-10-21
 ---
 
 Anyone on your academy team (owner, manager or instructor) can open a ticket with the Atlas team. Learners can't: they get help from their academy (see [How learners get help](doc:DOC-SUP-003)).
@@ -23,6 +23,8 @@ Anyone on your academy team (owner, manager or instructor) can open a ticket wit
 Many problems have a quick fix in [Troubleshooting](doc:DOC-TRB-001). If it's still not solved, open a ticket.
 
 ## Open a ticket
+
+Tickets are opened from the Atlas dashboard at `dashboard.atlass.dpdns.org`.
 
 1. In the sidebar, open **Support**. You can also find it in the account menu at the top.
 
