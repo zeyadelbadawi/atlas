@@ -57,7 +57,7 @@ describe('dashboard host (Caddyfile)', () => {
 describe('apex after the move (Caddyfile)', () => {
   it('redirects old app links to the dashboard only when switched on, path and query kept', () => {
     expect(apex).toMatch(/@app_moved \{\s*host atlass\.dpdns\.org\s*expression `\{env\.ATLAS_DASHBOARD_REDIRECT\} == "on"`/);
-    expect(apex).toContain('redir @app_moved https://dashboard.atlass.dpdns.org{uri} permanent');
+    expect(apex).toContain('redir @app_moved https://dashboard.atlass.dpdns.org{uri} 302');
     const paths = apex.match(/@app_moved \{[\s\S]*?path ([^\n]+)/)?.[1] ?? '';
     for (const path of ['/auth/*', '/dashboard/*', '/onboarding/*', '/verify/*', '/academy-chooser']) {
       expect(paths.split(' ')).toContain(path);
