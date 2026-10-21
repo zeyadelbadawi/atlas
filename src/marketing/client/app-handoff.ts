@@ -2,8 +2,8 @@
  * DL-63 — the header knows the dashboard, and the hop to it shows a
  * transition.
  *
- * 1. "Sign in" becomes "Open dashboard" when the base-domain hint cookie
- *    `atlas_signed_in=1` is present. The hint is set and cleared by the
+ * 1. "Sign in" becomes "Open dashboard", and the trial button gives way to
+ *    it, when the base-domain hint cookie `atlas_signed_in=1` is present. The hint is set and cleared by the
  *    platform (a constant, never a credential); a stale one costs nothing:
  *    the dashboard checks the real session and shows sign-in. Both labels
  *    and targets are rendered into the page; this only swaps them.
@@ -35,15 +35,32 @@ export function handoffKind(href: string, appOrigin: string): HandoffKind | null
   return 'dashboard';
 }
 
-/** Swaps every `[data-auth-cta]` link to its signed-in target and label. */
-export function applyAuthCtas(root: ParentNode, signedIn: boolean): void {
-  if (!signedIn) return;
+/**
+ * Applies the sign-in state to the page. Signed in: marks
+ * `<html data-signed-in>` (the stylesheet then shows the
+ * `[data-signed-in-only]` header button and hides the `[data-signed-out-only]`
+ * ones) and swaps every `[data-auth-cta]` link to its signed-in target and
+ * label. Signed out: undoes both, so a page restored from the back-forward
+ * cache after a sign-out shows "Sign in" again.
+ */
+export function applyAuthCtas(root: Document | ParentNode, signedIn: boolean): void {
+  if ('documentElement' in root) {
+    root.documentElement.toggleAttribute('data-signed-in', signedIn);
+  }
   root.querySelectorAll<HTMLAnchorElement>('a[data-auth-cta]').forEach((link) => {
-    const href = link.dataset.signedInHref;
-    const label = link.dataset.signedInLabel;
-    if (!href || !label) return;
-    link.href = href;
-    link.textContent = label;
+    const data = link.dataset;
+    if (signedIn) {
+      if (!data.signedInHref || !data.signedInLabel) return;
+      if (data.signedOutHref === undefined) {
+        data.signedOutHref = link.getAttribute('href') ?? '';
+        data.signedOutLabel = link.textContent ?? '';
+      }
+      link.href = data.signedInHref;
+      link.textContent = data.signedInLabel;
+    } else if (data.signedOutHref !== undefined) {
+      link.setAttribute('href', data.signedOutHref);
+      link.textContent = data.signedOutLabel ?? '';
+    }
   });
 }
 
@@ -84,6 +101,10 @@ export function initAppHandoff(
   });
 
   window.addEventListener('pageshow', (event) => {
-    if (event.persisted) overlay.hidden = true;
+    if (!event.persisted) return;
+    overlay.hidden = true;
+    // Restored from the back-forward cache: the session may have started or
+    // ended meanwhile.
+    applyAuthCtas(doc, hasSignedInHint(doc.cookie));
   });
 }

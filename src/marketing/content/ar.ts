@@ -169,6 +169,7 @@ export const ar: MarketingContent = {
       signIn: { label: 'تسجيل الدخول', href: '/auth/sign-in' },
       talkToUs: { label: 'كلّمنا', href: SALES },
       goToDashboard: { label: 'افتح لوحة التحكم', href: '/dashboard' },
+      goToDashboardShort: { label: 'لوحة التحكم', href: '/dashboard' },
     },
     trialMicrocopy: 'تجربة {trialDuration}، من غير كارت.',
     stickyCta: { regionLabel: 'إجراءات سريعة' },

@@ -1,10 +1,12 @@
 {
   "product": {
     "name": "أطلس",
+    "dashboardTitle": "لوحة تحكم أطلس",
     "tagline": "أكاديميتك باسمك."
   },
   "attribution": {
-    "poweredBy": "مدعوم بواسطة"
+    "poweredBy": "مدعوم بواسطة",
+    "opensInNewTab": "(موقع أطلس، يفتح في علامة تبويب جديدة)"
   },
   "languages": {
     "en": "الإنجليزية",

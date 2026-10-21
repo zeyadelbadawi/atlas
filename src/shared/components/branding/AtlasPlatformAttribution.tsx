@@ -27,6 +27,7 @@
  */
 import { useTranslation } from 'react-i18next';
 import { AtlasLogo } from './AtlasLogo';
+import { AtlasSiteLink } from './AtlasSiteLink';
 import { cn } from '@utils';
 
 export interface AtlasPlatformAttributionProps {
@@ -46,11 +47,14 @@ export function AtlasPlatformAttribution({
         className
       )}
     >
-      <span>{t('common:attribution.poweredBy')}</span>
-      <AtlasLogo size="sm" markOnly decorative className="gap-0" />
-      <span className="font-medium text-foreground/80">
-        {t('common:product.name')}
-      </span>
+      {/* The mark and name link to the Atlas website (owner request, 21 Oct 2026). */}
+      <AtlasSiteLink className="inline-flex items-center gap-1.5">
+        <span>{t('common:attribution.poweredBy')}</span>
+        <AtlasLogo size="sm" markOnly decorative className="gap-0" />
+        <span className="font-medium text-foreground/80">
+          {t('common:product.name')}
+        </span>
+      </AtlasSiteLink>
     </p>
   );
 }

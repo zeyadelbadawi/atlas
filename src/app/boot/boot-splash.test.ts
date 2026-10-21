@@ -21,6 +21,14 @@ describe('dashboard boot splash (DL-63)', () => {
     vi.unstubAllGlobals();
   });
 
+  it('names the tab after the dashboard on the dashboard host only', () => {
+    document.title = 'Atlas';
+    mount('nour.atlass.dpdns.org');
+    expect(document.title).toBe('Atlas');
+    mount('dashboard.atlass.dpdns.org', '/dashboard');
+    expect(['Atlas Dashboard', 'لوحة تحكم أطلس']).toContain(document.title);
+  });
+
   it('stays hidden on any host but the dashboard', () => {
     expect(mount('nour.atlass.dpdns.org').hidden).toBe(true);
     expect(mount('atlass.dpdns.org').hidden).toBe(true);

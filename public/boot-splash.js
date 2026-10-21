@@ -69,12 +69,14 @@
       signin: 'Opening the sign-in page…',
       register: 'Opening the sign-up page…',
       wait: 'One moment…',
+      title: 'Atlas Dashboard',
     },
     ar: {
       dashboard: 'بنفتحلك لوحة التحكم…',
       signin: 'بنفتحلك صفحة الدخول…',
       register: 'بنفتحلك صفحة التسجيل…',
       wait: 'لحظة واحدة…',
+      title: 'لوحة تحكم أطلس',
     },
   };
 
@@ -85,6 +87,8 @@
       window.matchMedia &&
       window.matchMedia('(prefers-color-scheme: dark)').matches);
 
+  // The tab says what this is from the first paint (the app keeps it).
+  document.title = copy[lang].title;
   var text = el.querySelector('[data-splash-text]');
   if (text) text.textContent = copy[lang][kind];
   el.setAttribute('lang', lang);

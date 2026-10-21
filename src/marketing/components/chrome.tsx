@@ -4,7 +4,7 @@
  */
 import type { ReactNode } from 'react';
 import { ChevronDown, Menu, Monitor, Moon, Sun } from 'lucide-react';
-import type { MarketingContent } from '../content/content.types';
+import type { MarketingContent, MarketingPlannedPageId } from '../content/content.types';
 import type { MarketingLang } from '../types';
 import { fill, link, type Tokens } from '../lib/copy';
 import { docsHref, localePath } from '../lib/site';
@@ -68,18 +68,29 @@ function ThemeToggle({ copy }: { copy: MarketingContent['chrome']['theme'] }) {
   );
 }
 
-function PlannedList({ content }: { content: MarketingContent }) {
+/**
+ * Where each product topic is covered today: its section on the product
+ * overview page. The detailed product pages are still planned, so the
+ * menu and footer link to these sections instead of listing pages that
+ * do not exist yet.
+ */
+export const PRODUCT_SECTION_ANCHOR: Record<MarketingPlannedPageId, string> = {
+  'academy-website': 'website',
+  payments: 'payments',
+  'content-protection': 'lessons',
+  'teams-and-academies': 'team',
+  'quizzes-and-certificates': 'assessments',
+};
+
+function ProductSectionList({ content, overview }: { content: MarketingContent; overview: string }) {
   return (
     <ul className="mt-1 border-t border-border pt-1">
       {content.chrome.plannedPages.map((item) => (
-        <li key={item.id} className="rounded-lg p-3">
-          <span className="flex items-center gap-2 font-medium text-foreground/80">
-            {item.label}
-            <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
-              {content.chrome.plannedBadge}
-            </span>
-          </span>
-          <span className="mt-0.5 block text-sm text-muted-foreground">{item.description}</span>
+        <li key={item.id}>
+          <a href={`${overview}#${PRODUCT_SECTION_ANCHOR[item.id]}`} className="block rounded-lg p-3 hover:bg-surface">
+            <span className="block font-medium text-foreground">{item.label}</span>
+            <span className="mt-0.5 block text-sm text-muted-foreground">{item.description}</span>
+          </a>
         </li>
       ))}
     </ul>
@@ -112,6 +123,7 @@ export function Header({
   const signIn = link(lang, content.chrome.ctas.signIn, tokens);
   // DL-63 — swapped in by the client script when the signed-in hint exists.
   const dashboard = link(lang, content.chrome.ctas.goToDashboard, tokens);
+  const dashboardShort = link(lang, content.chrome.ctas.goToDashboardShort, tokens);
   const authCta = {
     'data-auth-cta': '',
     'data-signed-in-href': dashboard.href,
@@ -144,7 +156,7 @@ export function Header({
                     {h.productOverview.description}
                   </span>
                 </a>
-                <PlannedList content={content} />
+                <ProductSectionList content={content} overview={overview} />
               </div>
             </details>
             {nav.map((item) => (
@@ -174,18 +186,27 @@ export function Header({
             <span className="hidden sm:inline">{sw.targetName}</span>
             <span className="sm:hidden">{sw.targetShort}</span>
           </a>
+          {/*
+            DL-63 — signed out: "Sign in" and the trial button. Signed in (the
+            `atlas_signed_in` hint, read by `client/app-handoff.ts`): one
+            primary "Open dashboard" button instead; nothing to start.
+          */}
           <a
             href={signIn.href}
-            {...authCta}
+            data-signed-out-only
             className="hidden min-h-11 items-center rounded-md px-3 text-[0.95rem] font-medium text-foreground/80 hover:text-foreground lg:inline-flex"
           >
             {signIn.label}
           </a>
-          <a href={trial.href} data-mkt-cta="cta_t" className="mk-btn mk-btn-primary hidden px-4 text-sm sm:inline-flex">
+          <a href={trial.href} data-mkt-cta="cta_t" data-signed-out-only className="mk-btn mk-btn-primary hidden px-4 text-sm sm:inline-flex">
             {trial.label}
           </a>
-          <a href={trialShort.href} data-mkt-cta="cta_t" className="mk-btn mk-btn-primary px-3 text-sm sm:hidden" aria-label={trial.label}>
+          <a href={trialShort.href} data-mkt-cta="cta_t" data-signed-out-only className="mk-btn mk-btn-primary px-3 text-sm sm:hidden" aria-label={trial.label}>
             {trialShort.label}
+          </a>
+          <a href={dashboard.href} data-signed-in-only className="mk-btn mk-btn-primary px-3 text-sm sm:px-4">
+            <span className="hidden sm:inline">{dashboard.label}</span>
+            <span className="sm:hidden">{dashboardShort.label}</span>
           </a>
           <details className="mk-menu lg:hidden" data-drawer>
             <summary
@@ -270,12 +291,16 @@ export function Footer({
                   );
                 })}
                 {column.planned ? (
-                  <li className="pt-1">
-                    <span className="text-xs font-semibold text-muted-foreground">{content.chrome.plannedBadge}</span>
-                    <ul className="mt-2 space-y-2">
+                  <li>
+                    <ul className="space-y-3">
                       {content.chrome.plannedPages.map((item) => (
-                        <li key={item.id} className="text-muted-foreground/80">
-                          {item.label}
+                        <li key={item.id}>
+                          <a
+                            href={`${localePath(lang, '/features')}#${PRODUCT_SECTION_ANCHOR[item.id]}`}
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            {item.label}
+                          </a>
                         </li>
                       ))}
                     </ul>
