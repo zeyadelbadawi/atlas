@@ -8,6 +8,7 @@ import { Check, Minus } from 'lucide-react';
 import type { Plan } from '@/types/plan.types';
 import { Container, CtaBand, Faq, Section, SectionHeading, dirOf } from '../components/ui';
 import { LimitsTable, PricingCards } from '../components/pricing';
+import { HeroArt } from '../components/hero-art';
 import { canFill, fill, link, planTokens, plural } from '../lib/copy';
 import { formatDate, localePath, registerHref, selfServePlans } from '../lib/site';
 import type { MarketingLang, MarketingPageDef } from '../types';
@@ -53,14 +54,21 @@ function PricingPage({ env }: { env: PageEnv }) {
       <section className="relative overflow-hidden border-b border-border" aria-labelledby="pricing-title">
         <div aria-hidden className="mk-hero-ground pointer-events-none absolute inset-0" />
         <Container className="relative py-14 lg:py-20">
-          <SectionHeading
-            id="pricing-title"
-            level={1}
-            align="center"
-            eyebrow={p.hero.eyebrow ? fill(p.hero.eyebrow, tokens) : undefined}
-            title={fill(p.hero.title, tokens)}
-            lead={p.hero.lead ? fill(p.hero.lead, tokens) : undefined}
-          />
+          <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
+            <div className="lg:col-span-7">
+              <SectionHeading
+                id="pricing-title"
+                level={1}
+                eyebrow={p.hero.eyebrow ? fill(p.hero.eyebrow, tokens) : undefined}
+                title={fill(p.hero.title, tokens)}
+                lead={p.hero.lead ? fill(p.hero.lead, tokens) : undefined}
+              />
+            </div>
+            {/* Beside the heading on large screens only: on a phone the plans come first. */}
+            <div className="hidden lg:col-span-5 lg:block">
+              <HeroArt name="pricing" sizes="40vw" hiddenOnPhones />
+            </div>
+          </div>
           <PricingCards plans={ctx.plans} content={content} tokens={tokens} />
           <p className="mt-6 text-center text-sm text-muted-foreground">
             {fill(p.currencyNote, tokens)} · <time dateTime={ctx.buildDate}>{updated}</time>
