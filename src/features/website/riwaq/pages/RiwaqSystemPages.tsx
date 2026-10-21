@@ -12,6 +12,7 @@
  */
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AtlasSiteLink } from '@components/branding';
 import { resolveCatalogHref } from '@/features/website/utils/catalog-url.utils';
 import { resolvePagePath } from '@/features/website/utils/link-resolution.utils';
 import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
@@ -123,7 +124,7 @@ export function RiwaqComingSoon({ academyName, academyLogo }: ThemeComingSoonPro
             <p className={`rw-lead ${riwaqEnter(0).className}`} style={riwaqEnter(0).style}>
               {t('website:riwaq.pages.comingSoon.description')}
             </p>
-            <p className="rw-label">{t('publicWebsite:comingSoon.attribution')}</p>
+            <p className="rw-label"><AtlasSiteLink>{t('publicWebsite:comingSoon.attribution')}</AtlasSiteLink></p>
           </div>
           <RiwaqWindow
             priority

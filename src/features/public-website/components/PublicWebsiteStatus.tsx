@@ -8,6 +8,7 @@
  * (plain, chrome-free components — safe outside the dashboard shell).
  */
 import { useTranslation } from 'react-i18next';
+import { AtlasSiteLink } from '@components/branding';
 import { Globe } from 'lucide-react';
 import { ErrorState } from '@components/feedback';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -71,7 +72,7 @@ export function PublicWebsiteStatus({
           headingLevel="h1"
         />
         <p className="text-xs text-muted-foreground">
-          {t('website:public.poweredBy')}
+          <AtlasSiteLink>{t('website:public.poweredBy')}</AtlasSiteLink>
         </p>
       </div>
     </main>
