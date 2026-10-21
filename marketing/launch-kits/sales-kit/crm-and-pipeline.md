@@ -52,7 +52,7 @@ Other tabs: **Interactions** (lead_id, date, channel, summary, objection numbers
 ## 3. Hand-offs: where leads come from and what happens first
 | Source | Where it shows up | First action | Sequence |
 |---|---|---|---|
-| **Contact form, `topic=sales`** | Platform Owner contact submissions inbox (`/dashboard/platform/contact-submissions`) + the email/in-app notification | Copy into Leads (source `contact-form`, consent fields as submitted); reply by email (CF1); WhatsApp only if they gave a number for that and ticked contact consent | S3 |
+| **Contact form, `topic=sales`** | Platform Owner contact submissions inbox (`https://dashboard.atlass.dpdns.org/dashboard/platform/contact-submissions`) + the email/in-app notification | Copy into Leads (source `contact-form`, consent fields as submitted); reply by email (CF1); WhatsApp only if they gave a number for that and ticked contact consent | S3 |
 | **Self-serve trial signup** | Platform Owner organisations console (plan, trial status, onboarding status) | Add to Leads (source `trial-signup`); stage Trial; email T0 unless the product's welcome already covers it; check onboarding status on days 1, 3, 5 | S4 (+ S5 only if they opted in to WhatsApp) |
 | **WhatsApp chat** (from posts, statuses, QR, referrals) | WhatsApp Business | Label New; reply W1; record the pre-filled source code | S1 |
 | **Social comment or DM** | Facebook / Instagram / TikTok inbox | Public answer from the reply templates, then the DM hand-off line to WhatsApp | S1 once on WhatsApp |

@@ -49,7 +49,7 @@ Nothing in these folders has been posted, scheduled, sent, uploaded or bought. N
 | Site (AR) | «شوف أطلس» / "See Atlas" | `https://atlass.dpdns.org/ar` |
 | Site (EN) | "See Atlas" | `https://atlass.dpdns.org/` |
 | Pricing | «شوف الأسعار» / "See pricing" | `https://atlass.dpdns.org/ar/pricing` · `https://atlass.dpdns.org/pricing` |
-| CTA-T trial | «ابدأ تجربة أكاديميتك» / "Start my academy trial" | `https://atlass.dpdns.org/auth/register?plan=<key>&lang=ar` (EN: `&lang=en`) |
+| CTA-T trial | «ابدأ تجربة أكاديميتك» / "Start my academy trial" | `https://dashboard.atlass.dpdns.org/auth/register?plan=<key>&lang=ar` (EN: `&lang=en`). The app (sign-up, sign-in, dashboards) is on `dashboard.atlass.dpdns.org` since DL-63; the apex keeps the marketing pages |
 | CTA-C set it up with us | «جهّزها معانا» / "Set it up with us" | `https://atlass.dpdns.org/ar/contact?topic=sales` · EN `https://atlass.dpdns.org/contact?topic=sales` |
 | WhatsApp click-to-chat | «كلّمنا على واتساب» | `https://wa.me/[WA-NUMBER]?text=<pre-filled text with source code>` · number pending owner (OC-26/OC-30) |
 
@@ -88,7 +88,7 @@ Rules (AMP §6.3): lowercase; hyphens only; no spaces, underscores or Arabic in 
 | TikTok (link in bio) | `tiktok` | `bio` | `…/ar?utm_source=tiktok&utm_medium=bio&utm_campaign=2027-02-launch-month&utm_content=bio` |
 | YouTube Shorts (description / pinned comment) | `youtube` | `video` | `…/ar?utm_source=youtube&utm_medium=video&utm_campaign=2027-02-launch-week&utm_content=r01` |
 | WhatsApp Status (link in status text) | `whatsapp` | `whatsapp-status` | `…/ar/pricing?utm_source=whatsapp&utm_medium=whatsapp-status&utm_campaign=2027-02-launch-week&utm_content=ws04` |
-| WhatsApp 1:1 reply | `whatsapp` | `whatsapp-chat` | `…/auth/register?lang=ar&utm_source=whatsapp&utm_medium=whatsapp-chat&utm_campaign=2027-02-sales-followup&utm_content=wr03` |
+| WhatsApp 1:1 reply | `whatsapp` | `whatsapp-chat` | `https://dashboard.atlass.dpdns.org/auth/register?lang=ar&utm_source=whatsapp&utm_medium=whatsapp-chat&utm_campaign=2027-02-sales-followup&utm_content=wr03` |
 | WhatsApp broadcast (opt-in list only) | `whatsapp` | `whatsapp-broadcast` | `…/ar?utm_source=whatsapp&utm_medium=whatsapp-broadcast&utm_campaign=2027-02-launch-week&utm_content=wb01` |
 | Facebook teacher group (only where the admin allows links) | `facebook` | `group` | `…/ar?utm_source=facebook&utm_medium=group&utm_campaign=evergreen-honest-fit&utm_content=g02` |
 | LinkedIn | `linkedin` | `social` | `…/?utm_source=linkedin&utm_medium=social&utm_campaign=2027-02-launch-month&utm_content=l01` |

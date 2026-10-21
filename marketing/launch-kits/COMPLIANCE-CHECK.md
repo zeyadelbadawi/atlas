@@ -112,8 +112,8 @@
 | 58 | `Fawry` | `sales-kit/sales-deck.md` | 130 | s manual and done by the account owner. There is no card or Fawry checkout today." ¦ | J2 |
 | 59 | `Fawry` | `sales-kit/sales-deck.md` | 136 | ¦ 13 ¦ Plainly: what we don't do yet ¦ No app, no card/Fawry, manual approval, no live classes, no video uploa | J2 |
 | 60 | `Fawry` | `social-kit/00-README.md` | 22 | lessons or videos come up; D-2 (manual approval, no card or Fawry) in every long-form payments explanation; D- | J1 |
-| 61 | `free` | `social-kit/00-README.md` | 52 | - [ ] **Register page wording** checked: no "free trial" / «تجربة مجانية» on '/auth/register' (B0-CPY-24, SPE | J4 |
-| 62 | `مجان` | `social-kit/00-README.md` | 52 | **Register page wording** checked: no "free trial" / «تجربة مجانية» on '/auth/register' (B0-CPY-24, SPEC C-9,  | J4 |
+| 61 | `free` | `social-kit/00-README.md` | 52 | - [ ] **Register page wording** checked: no "free trial" / «تجربة مجانية» on 'https://dashboard.atlass.dpdns.org/auth/register' (B0-CPY- | J4 |
+| 62 | `مجان` | `social-kit/00-README.md` | 52 | **Register page wording** checked: no "free trial" / «تجربة مجانية» on 'https://dashboard.atlass.dpdns.org/auth/register' (B0-CPY-24 | J4 |
 | 63 | `free` | `social-kit/ad-variants.md` | 5 | X.md' §4. No testimonials, counts, discounts, deadlines or "free" anywhere. | J1 |
 | 64 | `testimonial` | `social-kit/ad-variants.md` | 5 | natively reviewed** (RV-14). Claims → '../INDEX.md' §4. No testimonials, counts, discounts, deadlines or "free | J1 |
 | 65 | `فوري` | `social-kit/ad-variants.md` | 19 | فيدخل الكورس. الموافقة يدوية، ومفيش دفع بالكارت أو عن طريق فوري دلوقتي. ¦ 175 ¦ طلابك يدفعولك وانت توافق ¦ 24  | J2 |

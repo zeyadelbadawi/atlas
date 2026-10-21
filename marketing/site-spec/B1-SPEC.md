@@ -263,7 +263,7 @@ EN at the root, AR under `/ar` with the **same Latin slugs**, no trailing slash,
 | 404 | any unknown path | any unknown `/ar/*` | — | **no**; `noindex`, no canonical, no hreflang, no OG | static branded, HTTP 404 |
 | **Planned (DL-37)** | `/features/academy-website`, `/features/payments`, `/features/content-protection`, `/features/teams-and-academies`, `/features/quizzes-and-certificates` | same under `/ar` | Header dropdown + hub + footer, **visibly labelled "Planned"** (AR via RV-14) | **no** (nor hreflang, llms.txt, pricing.md, search) | `status:'planned'` in the manifest → **genuine HTTP 404** with the branded page; no redirect, no catch-all 200 |
 
-- **App and system paths** (`noindex`, never prerendered): `/dashboard*`, `/auth*`, `/onboarding*`, `/academy-chooser`, `/verify/:code`, `/403`, `/index.html` (SEO §4.1 L118–127).
+- **App and system paths** (`noindex`, never prerendered): `/dashboard*`, `/auth*`, `/onboarding*`, `/academy-chooser`, `/verify/:code`, `/403`, `/index.html` (SEO §4.1 L118–127). Since DL-63 the app is served on `https://dashboard.<base>` (`dashboard.atlass.dpdns.org`); old app links on the apex `301` to the same path there.
 - **Not in scope:** `/design-partners`, `/founding`, `/demo`, `/partners`, `/press`, `/resources*`, `/docs*`, `/blog*` (404), `/lp/*`, `/solutions/*`, `/compare/*` (DISP XW-06, XW-07; IA §7).
 - Sources: IA §2.3 L99–122; DISP XA-03; REC R-13; RDM L44–53.
 
@@ -272,7 +272,7 @@ EN at the root, AR under `/ar` with the **same Latin slugs**, no trailing slash,
 |---|---|---|
 | Header ≥ 1024 px | Order in reading direction: Logo (→ `/` or `/ar`) · **Product** dropdown (Product overview first, then the 5 planned items with one-line descriptions) · Pricing · Security · Contact · end cluster: language link · Sign in (`/auth/sign-in`) · CTA-T button (rightmost in EN, leftmost in AR). ≤ 6 primary items | IA §4.1 L294–306; LPB B.1 |
 | Header style | Sticky; `--header-height` 3.75 rem; `bg-background/90` **without backdrop-blur**; hairline border after 8 px scroll; logical properties; the dropdown opens to the inline end | LPB B.1 L46–47 |
-| Signed-in state | CTA → "Go to dashboard" → `/dashboard`; Sign in hidden | IA L306; RMP §6 |
+| Signed-in state | CTA → "Go to dashboard" → `<app>/dashboard` (`https://dashboard.<base>/dashboard`, DL-63); Sign in hidden | IA L306; RMP §6 |
 | Tablet/mobile | Bar: logo · language link (short "ع"/"EN" with a full accessible name) · compact CTA "Start trial" / «ابدأ التجربة» · menu. Drawer = Radix Sheet from the inline end, focus trap, Escape; lists Product (expanded), Pricing, Security, Contact, About, **Sign in**, language. Targets ≥ 44 px | IA §4.2 L308–310 |
 | Header acceptance | Tab order logo → nav → language → Sign in → CTA. Dropdown: Enter/Space/ArrowDown opens, Escape closes and returns focus. `aria-current="page"`. No overflow at 375 px; CTA visible | LPB B.1 L49 |
 | Language link | Real `<a href>` to the paired URL (anchor kept), label in the target language with `lang` and `hreflang`. No-JS HTML must contain `<a href="/ar" hreflang="ar" lang="ar">العربية</a>` on `/` and the reverse on `/ar` | LPB B.2 L51–57; TAC A-5 |
@@ -285,20 +285,20 @@ EN at the root, AR under `/ar` with the **same Latin slugs**, no trailing slash,
 | Depth | Every page ≤ 2 clicks from home | IA L122; RM WS-05 |
 
 ### B.3 CTA targets
-- **App origin:** today the marketing and app hosts are the **same origin** `https://atlass.dpdns.org` (DL-39). Still build CTAs from a config origin, and always carry the query parameters, so that a later WS-NAME split needs no code change. On a split, `sessionStorage['atlas:intendedPlanKey']` does not cross origins and `?plan=` is the only carrier (RMP §6 L145; SEO §2.1).
+- **App origin:** at B1 the marketing and app hosts were the **same origin** `https://atlass.dpdns.org` (DL-39). **DL-63 split them:** the app (sign-in, registration, every dashboard) moved to `https://dashboard.atlass.dpdns.org` (`VITE_APP_URL`); the apex keeps only the marketing pages, and old app links on the apex `301` to the same path on the dashboard host. CTAs are built from the config origin and always carry the query parameters, so the split needed no copy change. In the table below, `<app>` is that app origin; paths without it are on the marketing origin. Across the two origins, `sessionStorage['atlas:intendedPlanKey']` does not cross origins and `?plan=` is the only carrier (RMP §6 L145; SEO §2.1).
 
 | CTA | Label EN / AR | Target | Source |
 |---|---|---|---|
-| CTA-T (primary, every page) | "Start my academy trial" / «ابدأ تجربة أكاديميتك» | `/auth/register` + `?plan=<key>` when a plan is in context + `lang=ar` from `/ar/*` pages (RM §3.1 item 4: `/auth/register?plan=<key>&lang=…`) | IA L131; LPB S1 acceptance 6; RMP §6 L146 |
+| CTA-T (primary, every page) | "Start my academy trial" / «ابدأ تجربة أكاديميتك» | `<app>/auth/register` + `?plan=<key>` when a plan is in context + `lang=ar` from `/ar/*` pages (RM §3.1 item 4: `/auth/register?plan=<key>&lang=…`) | IA L131; LPB S1 acceptance 6; RMP §6 L146 |
 | CTA-C (secondary) | "Set it up with us" / «جهّزها معانا» | `/contact?topic=sales` | IA L132 |
-| Pricing card, trial plan | "Start my trial on {Plan}" | `/auth/register?plan=<key>&lang=…` | LPB §I L324 |
+| Pricing card, trial plan | "Start my trial on {Plan}" | `<app>/auth/register?plan=<key>&lang=…` | LPB §I L324 |
 | Pricing card, no-trial plan / Enterprise | "Talk to us about {Plan}" / "Talk to us" | `/contact?topic=sales&plan=<key>` (Enterprise has no catalog key; §G C-13) | LPB §I; RMP §6 L149 |
 | S7 variant | "Running several academy brands? Talk to us" | `/contact?topic=sales` | LPB S7 L180 |
 | `/security` primary | "Ask us a security question" (CTA-C) | `/contact?topic=sales` (or `support`) | IA §3.9 L243 |
 | Contact topics (B1) | **sales / support / partnership / other only.** `founding` is **not** exposed until B2 (the backend enum lacks it) | DISP XW-12; RM L205 |
 
 - **Plan keys:** come from the catalog. The current keys are `starter` = Teacher, `growth` = Academy, `enterprise` = **Organization** (the cosmetic mismatch is known). Tests read the key from `GET /public/plans` at test time, never hard-coded (OQ-05 L59; PRC L166; TAC H-2).
-- **App behaviour:** reads `lang` once for that render, even with Preferences consent declined (EP-11; TAC H-5). The `/auth/sign-up` alias keeps the query (RMP §4 L111).
+- **App behaviour:** reads `lang` once for that render, even with Preferences consent declined (EP-11; TAC H-5). The `<app>/auth/sign-up` alias keeps the query (RMP §4 L111).
 - **UTM pass-through:** UTM on the landing URL is passed to the registration and contact URLs, **held in memory only** (no browser storage before consent) (RMP §6 L147; RM WS-09 L2). Storage-side attribution (B0-ANL-04) moved to B4.
 - **The app page itself:** `auth:register.plan.freeTrial` exists in the UI, and B0-CPY-24 has moved to B4. The register screen may still say "free trial" (§G C-9).
 
@@ -426,7 +426,7 @@ EN at the root, AR under `/ar` with the **same Latin slugs**, no trailing slash,
 | SS-004 | Theme riwaq home | EN+AR · D/M | Academy 4, column grid | S6 | Yes |
 | SS-006 | Learner checkout: method choice + frozen instructions (`/my/courses/:id/checkout`) | EN+AR · M | InstaPay or Vodafone Cash selected, demo details; callout "Student picks a method"; DS-D | S4 step 1 | Yes (OC-09 done) |
 | SS-007 | Proof upload → "under review" | EN+AR · M | Demo receipt + reference; callout "Upload the proof" | S4 step 2 | Yes |
-| SS-008 | Owner payment review sheet (`/dashboard/academy/:id/payments?payment=`) | EN+AR · D | Sheet with proof, amount, method, Approve/Reject; mixed-status list; callout "Approve once" | S4 step 3; hub | Yes |
+| SS-008 | Owner payment review sheet (`<app>/dashboard/academy/:id/payments?payment=`) | EN+AR · D | Sheet with proof, amount, method, Approve/Reject; mixed-status list; callout "Approve once" | S4 step 3; hub | Yes |
 | SS-009 | Learner My courses / My payments (optional) | EN+AR · M | Enrolled; one approved + one rejected with a reason; DS-C/D | S4 | Yes |
 | SS-011 | Lesson player with viewer-code overlay (desktop) | EN+AR · D | YouTube demo lesson paused on a clean frame; code + masked email + tile; ring on the code; **never crop the code out**; DS-C | S5; hub; `/security` | **No (OC-10)** |
 | SS-012 | Player, mobile | EN+AR · M | Portrait overlay, phone frame | S1 overlap (only after OC-10), S5 | **No** |
@@ -555,7 +555,7 @@ Server-rendered, one `@graph` per page, data blocks only (CSP-compatible), value
 Platform host only, evaluated in order:
 1. `/api/*` → backend.
 2. Static: `/assets/*`, `/theme-assets/*`, `/marketing-assets/*` and platform root files (`robots.txt`, `sitemap*.xml`, `llms.txt`, `pricing.md`, favicons) → file or a **real 404**.
-3. App prefixes `/dashboard`, `/auth`, `/onboarding`, `/academy-chooser`, `/verify`, `/403`, `/index.html` → SPA shell, 200, **`X-Robots-Tag: noindex`** (header, not robots.txt Disallow).
+3. App prefixes `/dashboard`, `/auth`, `/onboarding`, `/academy-chooser`, `/verify`, `/403`, `/index.html` → SPA shell, 200, **`X-Robots-Tag: noindex`** (header, not robots.txt Disallow). Since DL-63 the app prefixes are served on `dashboard.<base>`; on the apex, old app links `301` to the same path on `dashboard.<base>`.
 4. Manifest URLs (EN + `/ar`, `render:'static'`) → prerendered HTML, 200.
 5. Normalisation: trailing slash or case on a manifest URL → **one** 301 to the normalised URL.
 6. **Everything else → 404 with the branded HTML** (localized by `/ar` prefix). This includes `planned` URLs.
@@ -634,7 +634,7 @@ Sitemap: https://atlass.dpdns.org/sitemap.xml
 | L8 | www `/index.html` → apex `/index.html` (host normalisation only) | `301 $O/index.html` |
 | L16, L17 | `/privacy-policy/`, `/terms/` → slash-less 301 | `301 $O/privacy-policy`, `301 $O/terms` |
 | L24 | `/ar/` → `/ar` 301 | `301 $O/ar` |
-| L58–L65 | `/dashboard`, nested dashboard, `/auth/sign-in`, `/auth/register?plan=`, `/auth/sign-up?plan=`, `/onboarding/{step}`, `/academy-chooser`, `/403` → keep 200 shell + `X-Robots-Tag: noindex` (not disallowed) | `200` and `grep -ci "x-robots-tag: noindex"` → 1 |
+| L58–L65 | `/dashboard`, nested dashboard, `/auth/sign-in`, `/auth/register?plan=`, `/auth/sign-up?plan=`, `/onboarding/{step}`, `/academy-chooser`, `/403` → keep 200 shell + `X-Robots-Tag: noindex` (not disallowed); since DL-63 on `dashboard.<base>`, and the apex answers `301` to the same path there | `200` and `grep -ci "x-robots-tag: noindex"` → 1 |
 | L66 | `/verify/{code}` keep 200 + `noindex` (on `$O` and `$A`; D-6 is decided) | header present |
 | L67 | platform `/robots.txt` generated, host-aware, lists only `$O/sitemap.xml`, `text/plain` | grep `Sitemap: $O/sitemap.xml` → 1 |
 
@@ -754,7 +754,7 @@ Sitemap: https://atlass.dpdns.org/sitemap.xml
 | 1 | No-JS fetch of every M1a URL EN/AR: 200, title/description, canonical, hreflang, lang/dir, H1, JSON-LD parses, pricing equals the API | A-1…A-7, B-1, B-2, C-1, E-2 |
 | 2 | Redirect matrix + 404s (`/this-does-not-exist`, `/ar/does-not-exist`, `/blog`) + planned URLs 404 (F-12) | F-1, F-8 |
 | 3 | Host matrix: robots/sitemap/llms on apex, www, academy, custom domain; llms 404 on academy hosts | G-1…G-4, I-3 |
-| 4 | App regression: 10 dashboard deep links, `AUTH_ROUTES`, `?plan=` (key from the API), `/verify` on both host types, offline `/dashboard` reload gives the SPA shell | H-1…H-4 |
+| 4 | App regression: 10 dashboard deep links on `dashboard.<base>` (DL-63) and their apex `301`s, `AUTH_ROUTES`, `?plan=` (key from the API), `/verify` on both host types, offline `/dashboard` reload gives the SPA shell | H-1…H-4 |
 | 5 | Academy SSR `x-atlas-ssr: render` on 3 hosts | G-7 |
 | 6 | Forms: real submission reaches contact-submissions + owner notification; consent stored (**topic `sales`, marked TEST**; staging posts to the local stack) | H-7; XB-06 |
 | 7 | Attribution (local stack) + beacon aggregate received | — |
