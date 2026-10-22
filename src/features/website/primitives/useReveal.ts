@@ -13,6 +13,7 @@
  * and opacity animate.
  */
 import { useLayoutEffect, useRef, useState } from 'react';
+import { intersectionRootFor, windowOf } from '../utils/frame-window.utils';
 
 export type RevealState = 'pending' | 'revealed';
 
@@ -25,9 +26,11 @@ function prefersReducedMotion(): boolean {
   );
 }
 
+/** In view on the screen it is shown on — the preview frame's, in a preview (`windowOf`). */
 function isInViewport(element: Element): boolean {
   const rect = element.getBoundingClientRect();
-  const height = window.innerHeight || document.documentElement.clientHeight;
+  const view = windowOf(element);
+  const height = view.innerHeight || view.document.documentElement.clientHeight;
   return rect.top < height && rect.bottom > 0;
 }
 
@@ -58,7 +61,7 @@ export function useReveal<TElement extends Element>(): {
           observer.disconnect();
         }
       },
-      { threshold: THRESHOLD }
+      intersectionRootFor(element, { threshold: THRESHOLD })
     );
     observer.observe(element);
     return () => observer.disconnect();

@@ -60,6 +60,7 @@ import { SectionConfigForm } from '../components/SectionConfigForm';
 import { WebsitePageSeoDialog } from '../components/WebsitePageSeoDialog';
 import {
   PreviewViewport,
+  initialPreviewBreakpoint,
   type PreviewBreakpoint,
 } from '../components/PreviewViewport';
 import { WebsiteRenderer } from '../renderer';
@@ -167,7 +168,9 @@ function WebsitePageEditor(): JSX.Element {
   const [previewLocale, setPreviewLocale] = useState<PublicWebsiteLocale>(
     DEFAULT_PUBLIC_WEBSITE_LOCALE
   );
-  const [breakpoint, setBreakpoint] = useState<PreviewBreakpoint>('desktop');
+  const [breakpoint, setBreakpoint] = useState<PreviewBreakpoint>(
+    initialPreviewBreakpoint
+  );
   const seoDialog = useDisclosure();
 
   /*

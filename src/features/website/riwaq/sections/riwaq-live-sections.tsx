@@ -36,6 +36,10 @@ import { formatCatalogDuration } from '@/features/website/sections/CourseCatalog
 import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '@/features/website/utils/localized-text.utils';
 import { Reveal } from '@/features/website/primitives';
+import {
+  intersectionRootFor,
+  windowOf,
+} from '@/features/website/utils/frame-window.utils';
 import type { SectionRenderProps } from '@/features/website/theme-packs/theme-pack.types';
 import type { WebsiteLinkRenderer } from '@/features/website/renderer/website-link-renderer.types';
 import {
@@ -97,7 +101,11 @@ export function RiwaqCourseCategories({
         description={resolveLocalizedText(config.description, locale)}
         action={
           catalogHref ? (
-            <RiwaqLink href={catalogHref} linkRenderer={linkRenderer} className="rw-link">
+            <RiwaqLink
+              href={catalogHref}
+              linkRenderer={linkRenderer}
+              className="rw-link"
+            >
               {t('website:riwaq.home.categories.viewAll')}
               <RiwaqArrow />
             </RiwaqLink>
@@ -106,7 +114,9 @@ export function RiwaqCourseCategories({
       />
       <ul
         className="rwl-index"
-        aria-label={title ? undefined : t('website:riwaq.home.categories.listLabel')}
+        aria-label={
+          title ? undefined : t('website:riwaq.home.categories.listLabel')
+        }
       >
         {categories.map((category, index) => {
           const body = (
@@ -186,7 +196,9 @@ function ProgrammeSheet({
     facts.push({
       key: 'lessons',
       term: t('website:riwaq.home.courses.facts.lessons'),
-      value: t('website:renderer.courseDetails.lessonCount', { count: lessons }),
+      value: t('website:renderer.courseDetails.lessonCount', {
+        count: lessons,
+      }),
     });
   }
   if (duration) {
@@ -273,12 +285,14 @@ function ProgrammeExplorer({
   const { locale } = usePublicWebsiteLocale();
   const baseId = useId();
   const [open, setOpen] = useState<number | null>(0);
-  const select = (index: number) => {
+  const select = (index: number, control: HTMLElement) => {
     // Side by side, one programme is always shown; stacked (phones), a row
-    // can also be closed again.
+    // can also be closed again. Asked of the window the explorer is shown
+    // in — the preview frame's, in a preview (`windowOf`).
+    const view = windowOf(control);
     const sideBySide =
-      typeof window.matchMedia === 'function' &&
-      window.matchMedia(SIDE_BY_SIDE).matches;
+      typeof view.matchMedia === 'function' &&
+      view.matchMedia(SIDE_BY_SIDE).matches;
     setOpen((current) => (current === index && !sideBySide ? null : index));
   };
   return (
@@ -306,7 +320,7 @@ function ProgrammeExplorer({
                 className="rwx-row"
                 aria-expanded={expanded}
                 aria-controls={panelId}
-                onClick={() => select(index)}
+                onClick={(event) => select(index, event.currentTarget)}
               >
                 <span aria-hidden className="rw-label rw-num rwx-row-no">
                   {formatRiwaqIndex(index, locale)}
@@ -316,7 +330,9 @@ function ProgrammeExplorer({
                     {course.title}
                   </span>
                   {meta.length > 0 ? (
-                    <span className="rw-label rwx-row-meta">{meta.join(' · ')}</span>
+                    <span className="rw-label rwx-row-meta">
+                      {meta.join(' · ')}
+                    </span>
                   ) : null}
                 </span>
                 <span aria-hidden className="rwx-row-mark" />
@@ -391,9 +407,17 @@ export function RiwaqFeaturedCourses({
     // A failed request is not "no programmes": say so and offer a retry.
     content = (
       <div data-courses-error="" className="rw-cell rwl-notice" data-tick="">
-        <p className="rw-subtitle">{t('website:riwaq.home.courses.errorTitle')}</p>
-        <p className="rw-body">{t('website:riwaq.home.courses.errorDescription')}</p>
-        <button type="button" className="rw-btn rw-btn-line" onClick={() => void refetch()}>
+        <p className="rw-subtitle">
+          {t('website:riwaq.home.courses.errorTitle')}
+        </p>
+        <p className="rw-body">
+          {t('website:riwaq.home.courses.errorDescription')}
+        </p>
+        <button
+          type="button"
+          className="rw-btn rw-btn-line"
+          onClick={() => void refetch()}
+        >
           <RotateCw className="size-4" aria-hidden />
           {t('website:riwaq.home.courses.retry')}
         </button>
@@ -411,8 +435,12 @@ export function RiwaqFeaturedCourses({
           className="rwl-launching-window aspect-[3/2]"
         />
         <div className="rw-cell rwl-launching-copy" data-tick="">
-          <h3 className="rw-subtitle">{t('website:riwaq.home.courses.launchingTitle')}</h3>
-          <p className="rw-body">{t('website:riwaq.home.courses.launchingDescription')}</p>
+          <h3 className="rw-subtitle">
+            {t('website:riwaq.home.courses.launchingTitle')}
+          </h3>
+          <p className="rw-body">
+            {t('website:riwaq.home.courses.launchingDescription')}
+          </p>
           {contactPage ? (
             <RiwaqLink
               href={contactHref}
@@ -438,14 +466,21 @@ export function RiwaqFeaturedCourses({
   }
 
   return (
-    <RiwaqBand labelledBy={title ? headingId : undefined} label={title ? undefined : t('website:riwaq.home.courses.listLabel')}>
+    <RiwaqBand
+      labelledBy={title ? headingId : undefined}
+      label={title ? undefined : t('website:riwaq.home.courses.listLabel')}
+    >
       <RiwaqSectionHead
         id={headingId}
         title={title}
         description={resolveLocalizedText(config.description, locale)}
         action={
           catalogHref && courses.length > 0 && !failed ? (
-            <RiwaqLink href={catalogHref} linkRenderer={linkRenderer} className="rw-link">
+            <RiwaqLink
+              href={catalogHref}
+              linkRenderer={linkRenderer}
+              className="rw-link"
+            >
               {t('website:riwaq.home.courses.viewAll')}
               <RiwaqArrow />
             </RiwaqLink>
@@ -478,7 +513,10 @@ export function RiwaqInstructors({
   }
   // Derived from the real catalogue (never a parallel instructor model),
   // with how many published programmes each teaches.
-  const byId = new Map<string, { instructor: CourseInstructorSummary; courses: number }>();
+  const byId = new Map<
+    string,
+    { instructor: CourseInstructorSummary; courses: number }
+  >();
   for (const course of data?.items ?? []) {
     for (const instructor of course.instructors) {
       const entry = byId.get(instructor.id);
@@ -522,10 +560,16 @@ export function RiwaqInstructors({
 
   return (
     <RiwaqBand labelledBy={title ? headingId : undefined}>
-      <RiwaqSectionHead id={headingId} title={title} description={description} />
+      <RiwaqSectionHead
+        id={headingId}
+        title={title}
+        description={description}
+      />
       <ul
         className="rw-ledger rwl-faculty"
-        aria-label={title ? undefined : t('website:riwaq.home.instructors.listLabel')}
+        aria-label={
+          title ? undefined : t('website:riwaq.home.instructors.listLabel')
+        }
       >
         {instructors.map(({ instructor, courses }, index) => (
           <li key={instructor.id} className="rwl-plate">
@@ -600,7 +644,8 @@ function CountUp({
       return undefined;
     }
     const rect = element.getBoundingClientRect();
-    if (rect.top < window.innerHeight && rect.bottom > 0) return undefined;
+    if (rect.top < windowOf(element).innerHeight && rect.bottom > 0)
+      return undefined;
     element.textContent = formatRiwaqNumber(0, locale);
     let frame = 0;
     const observer = new IntersectionObserver(
@@ -619,7 +664,7 @@ function CountUp({
         };
         frame = requestAnimationFrame(tick);
       },
-      { threshold: 0.4 }
+      intersectionRootFor(element, { threshold: 0.4 })
     );
     observer.observe(element);
     return () => {
@@ -685,7 +730,9 @@ export function RiwaqStatistics({
     }));
     if (labels.length === 0) {
       return (
-        <RiwaqPreviewNote>{t('website:riwaq.home.statistics.previewHidden')}</RiwaqPreviewNote>
+        <RiwaqPreviewNote>
+          {t('website:riwaq.home.statistics.previewHidden')}
+        </RiwaqPreviewNote>
       );
     }
     return (
@@ -701,7 +748,9 @@ export function RiwaqStatistics({
               <span aria-hidden className="rw-figure rwl-figure">
                 —
               </span>
-              <span className="rw-sr-only">{t('website:riwaq.home.statistics.sampleValue')}</span>
+              <span className="rw-sr-only">
+                {t('website:riwaq.home.statistics.sampleValue')}
+              </span>
               <span className="rw-label rwl-figure-label">{item.label}</span>
             </li>
           ))}
@@ -717,7 +766,10 @@ export function RiwaqStatistics({
       label={title ? undefined : t('website:riwaq.home.statistics.label')}
     >
       <RiwaqSectionHead id={headingId} title={title} />
-      <ul className="rw-ledger rwl-figures" data-count={Math.min(items.length, 4)}>
+      <ul
+        className="rw-ledger rwl-figures"
+        data-count={Math.min(items.length, 4)}
+      >
         {items.map((item) => (
           <li key={item.id} className="rwl-figure-cell">
             <CountUp value={item.value} text={item.text} locale={locale} />

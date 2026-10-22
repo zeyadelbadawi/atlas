@@ -35,6 +35,7 @@ import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useWebsiteConfiguration, useWebsitePages } from '../hooks';
 import {
   PreviewViewport,
+  initialPreviewBreakpoint,
   type PreviewBreakpoint,
 } from '../components/PreviewViewport';
 import { WebsiteRenderer } from '../renderer';
@@ -59,7 +60,9 @@ export default function WebsitePreviewPage(): JSX.Element {
     query: { pagination: { page: 1, pageSize: 50 } },
   });
 
-  const [breakpoint, setBreakpoint] = useState<PreviewBreakpoint>('desktop');
+  const [breakpoint, setBreakpoint] = useState<PreviewBreakpoint>(
+    initialPreviewBreakpoint
+  );
   const [selectedPageId, setSelectedPageId] = useState<string>();
   // Phase 6 — the site is bilingual by default; the review surface should
   // let the Owner check both real, rendered languages before they ever
