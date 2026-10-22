@@ -414,7 +414,46 @@ describe('server-rendered public pages', () => {
       result.body,
       /<link rel="canonical" href="https:\/\/alpha\.atlass\.dpdns\.org\/"/
     );
-    assert.equal(result.headers['Cache-Control'], 'private, no-cache');
+    // No session, no cookie decision: the page every visitor of this URL
+    // gets, which Cloudflare may keep — tagged for the backend's purge.
+    assert.equal(
+      result.headers['Cache-Control'],
+      'public, max-age=0, s-maxage=300'
+    );
+    assert.equal(
+      result.headers['Cache-Tag'],
+      `atlas-academy-${ALPHA_ID},atlas-host-${ALPHA}`
+    );
+  });
+
+  it('never lets a shared cache keep a page for a visitor with a session or a cookie decision', async () => {
+    for (const cookieHeader of [
+      'atlas_consent=1',
+      'theme=dark; atlas_consent=1',
+      '__Host-atlas_session=abc',
+      'atlas_session=abc',
+    ]) {
+      const result = await get(handler, ALPHA, '/', { cookieHeader });
+      assert.equal(result.status, 200, cookieHeader);
+      assert.equal(
+        result.headers['Cache-Control'],
+        'private, no-cache',
+        cookieHeader
+      );
+      assert.equal(result.headers['Cache-Tag'], undefined, cookieHeader);
+    }
+  });
+
+  it('serves the shared-cache headers on an in-memory cache hit too, tagging the host it was asked on', async () => {
+    const cached = await makeHandler({ cacheTtlMs: 60_000 });
+    await get(cached, ALPHA, '/about');
+    const hit = await get(cached, ALPHA, '/about');
+    assert.equal(hit.headers['X-Atlas-SSR'], 'hit', hit.reason);
+    assert.equal(
+      hit.headers['Cache-Control'],
+      'public, max-age=0, s-maxage=300'
+    );
+    assert.match(hit.headers['Cache-Tag'], new RegExp(`atlas-host-${ALPHA}$`));
   });
 
   it('does not preload the router chunks unless asked (they would delay the first paint)', async () => {
