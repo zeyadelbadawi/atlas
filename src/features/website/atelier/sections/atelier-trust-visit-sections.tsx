@@ -186,10 +186,10 @@ export function AtelierSchedule({
         locale={locale}
         classes={{
           columnHeader:
-            'at-label border-b border-[var(--atelier-text)] !px-0 pe-4',
+            'at-label border-b border-[var(--atelier-text)] !ps-0 !pe-4',
           dayGroup: 'border-b border-[var(--atelier-hairline)]',
-          dayHeader: 'at-serif w-48 !px-0 text-xl text-[var(--atelier-text)]',
-          cell: '!py-4 text-[var(--atelier-text)]',
+          dayHeader: 'at-serif w-48 text-xl text-[var(--atelier-text)]',
+          cell: '!py-4 !ps-0 !pe-4 text-[var(--atelier-text)]',
           meta: 'text-[var(--atelier-text-muted)]',
           time: 'at-numeral text-lg',
           rowTitle: 'font-medium',

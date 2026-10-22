@@ -179,7 +179,8 @@ export function RiwaqSchedule({
         locale={locale}
         classes={{
           table: 'border-y border-[var(--rw-env-rule-strong)]',
-          columnHeader: 'rw-label border-b border-[var(--rw-env-rule)]',
+          columnHeader:
+            'border-b border-[var(--rw-env-rule)] text-[0.8125rem] font-medium tracking-[0.04em] text-[var(--rw-env-muted)]',
           dayGroup: 'border-t border-[var(--rw-env-rule)]',
           dayHeader: 'w-44',
           dayLabel:
