@@ -30,6 +30,7 @@ let academyId: string;
 let owner: Session;
 let homeId: string;
 let originalSections: unknown;
+let originalTheme: string;
 
 interface PageResponse {
   readonly id: string;
@@ -59,9 +60,21 @@ test.beforeAll(async ({ request }) => {
   const pages = (await list.json()).items as PageResponse[];
   homeId = pages.find((page) => page.coreType === 'home')!.id;
   originalSections = (await home(request)).sections;
+  const config = await apiGet(
+    request,
+    owner,
+    `/academies/${academyId}/website/configuration`
+  );
+  originalTheme = (await config.json()).themeKey;
 });
 
 test.afterAll(async ({ request }) => {
+  await apiPatch(
+    request,
+    owner,
+    `/academies/${academyId}/website/configuration`,
+    { themeKey: originalTheme }
+  );
   const current = await home(request);
   await apiPatch(
     request,
@@ -176,6 +189,55 @@ test.describe('J51 — visual editor @critical', () => {
 
     await page.screenshot({
       path: test.info().outputPath('visual-editor.png'),
+    });
+  });
+
+  test('Site: switching the theme redraws the page in it, as a draft', async ({
+    page,
+    request,
+  }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await seedCookieDecision(page);
+    await signInThroughDashboard(page, SEED.owner, SEED.password);
+    await page.waitForURL(/\/dashboard/);
+    await page.goto(
+      `/dashboard/academy/${academyId}/website/pages/${homeId}/visual`
+    );
+    await expect(page.getByTestId('visual-editor')).toBeVisible({
+      timeout: 30_000,
+    });
+    const frame = page.frameLocator('iframe[title="Website preview"]');
+    const pack = frame.locator('[data-theme-pack]').first();
+    await expect(pack).toBeAttached({ timeout: 30_000 });
+    const target = originalTheme === 'atelier' ? 'manara' : 'atelier';
+
+    await page.getByTestId('visual-editor-site').click();
+    const site = page.getByTestId('site-settings');
+    await expect(site).toBeVisible();
+    await site.locator(`[data-theme-option="${target}"]`).click();
+    await expect(pack).toHaveAttribute('data-theme-pack', target, {
+      timeout: 20_000,
+    });
+    await expect(
+      site.locator(`[data-theme-option="${target}"]`)
+    ).toHaveAttribute('aria-pressed', 'true');
+    // Saved to the website's draft.
+    await expect
+      .poll(async () => {
+        const response = await apiGet(
+          request,
+          owner,
+          `/academies/${academyId}/website/configuration`
+        );
+        return (await response.json()).themeKey;
+      })
+      .toBe(target);
+
+    // Back to the theme it had.
+    await site.locator(`[data-theme-option="${originalTheme}"]`).click();
+    await expect(pack).toHaveAttribute('data-theme-pack', originalTheme, {
+      timeout: 20_000,
     });
   });
 });

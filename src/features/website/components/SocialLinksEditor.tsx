@@ -53,11 +53,14 @@ function normalised(link: WebsiteFooterLink): WebsiteFooterLink {
 export interface SocialLinksEditorProps {
   readonly links: readonly WebsiteFooterLink[];
   readonly onChange: (links: readonly WebsiteFooterLink[]) => void;
+  /** A narrow column (the visual editor's panel): each link stacks, whatever the window's width. */
+  readonly compact?: boolean;
 }
 
 export function SocialLinksEditor({
   links,
   onChange,
+  compact = false,
 }: SocialLinksEditorProps): JSX.Element {
   const { t } = useTranslation();
   const headingId = useId();
@@ -134,7 +137,11 @@ export function SocialLinksEditor({
             <li
               key={link.id}
               data-testid="social-link-row"
-              className="grid gap-2 rounded-lg border border-border p-3 sm:grid-cols-[12rem_minmax(0,1fr)_auto] sm:items-end sm:border-0 sm:p-0"
+              className={
+                compact
+                  ? 'grid gap-2 rounded-lg border border-border p-3'
+                  : 'grid gap-2 rounded-lg border border-border p-3 sm:grid-cols-[12rem_minmax(0,1fr)_auto] sm:items-end sm:border-0 sm:p-0'
+              }
             >
               <div className="min-w-0 space-y-1.5">
                 <Label
@@ -217,7 +224,13 @@ export function SocialLinksEditor({
                 <X className="size-4" aria-hidden />
               </Button>
               {!platform ? (
-                <p className="text-xs text-muted-foreground sm:col-span-3">
+                <p
+                  className={
+                    compact
+                      ? 'text-xs text-muted-foreground'
+                      : 'text-xs text-muted-foreground sm:col-span-3'
+                  }
+                >
                   {t('website:navigation.social.legacy', {
                     label: link.label.en || link.label.ar,
                   })}

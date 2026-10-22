@@ -21,6 +21,13 @@ export interface UpdateWebsiteConfigurationVariables {
   readonly payload: UpdateWebsiteConfigurationPayload;
 }
 
+/** Every in-flight website-settings save (`useIsMutating` / `isMutating`). */
+export const UPDATE_WEBSITE_CONFIGURATION_MUTATION_KEY = [
+  'website',
+  'configuration',
+  'update',
+] as const;
+
 export function useUpdateWebsiteConfiguration() {
   const { invalidate } = useInvalidate();
   const queryClient = useQueryClient();
@@ -30,6 +37,7 @@ export function useUpdateWebsiteConfiguration() {
     UpdateWebsiteConfigurationVariables,
     ApiError
   >({
+    mutationKey: UPDATE_WEBSITE_CONFIGURATION_MUTATION_KEY,
     mutationFn: ({ academyId, payload }) =>
       websiteConfigurationService.updateConfiguration(academyId, payload),
     showSuccessToast: false,

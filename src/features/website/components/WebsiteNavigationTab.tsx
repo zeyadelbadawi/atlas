@@ -8,6 +8,7 @@
  * (Prompt 3C) — never drag-and-drop as the only way to reorder.
  */
 import { useTranslation } from 'react-i18next';
+import { cn } from '@utils';
 import { ArrowDown, ArrowUp, Loader2, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -51,6 +52,8 @@ export interface WebsiteNavigationTabProps {
   readonly academyId: string;
   readonly configuration: WebsiteConfiguration;
   readonly pages: readonly WebsitePage[];
+  /** A narrow column (the visual editor's panel): fields stack, whatever the window's width. */
+  readonly compact?: boolean;
 }
 
 function reorder<T>(
@@ -69,7 +72,10 @@ export function WebsiteNavigationTab({
   academyId,
   configuration,
   pages,
+  compact = false,
 }: WebsiteNavigationTabProps): JSX.Element {
+  // Two columns from `sm` on a page; one in a narrow panel.
+  const wide = compact ? '' : 'sm:col-span-2';
   const { t } = useTranslation();
   const updateConfig = useUpdateWebsiteConfiguration();
   const { invalidate } = useInvalidate();
@@ -329,8 +335,10 @@ export function WebsiteNavigationTab({
             {t('website:navigation.headerCtaTitle')}
           </CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-2">
-          <div className="sm:col-span-2">
+        <CardContent
+          className={compact ? 'grid gap-4' : 'grid gap-4 sm:grid-cols-2'}
+        >
+          <div className={wide}>
             <LocalizedTextField
               id="header-cta-label"
               labelKey="website:navigation.ctaLabel"
@@ -376,7 +384,7 @@ export function WebsiteNavigationTab({
             </Select>
           </div>
           {configuration.header.cta?.url !== undefined ? (
-            <div className="space-y-1.5 sm:col-span-2">
+            <div className={cn('space-y-1.5', wide)}>
               <Label htmlFor="header-cta-url">
                 {t('website:navigation.ctaTarget')}
               </Label>
@@ -392,7 +400,7 @@ export function WebsiteNavigationTab({
               />
             </div>
           ) : configuration.header.cta?.authAction ? (
-            <div className="space-y-1.5 sm:col-span-2">
+            <div className={cn('space-y-1.5', wide)}>
               <Label>{t('website:navigation.ctaTarget')}</Label>
               <Select
                 value={configuration.header.cta.authAction}
@@ -414,7 +422,7 @@ export function WebsiteNavigationTab({
               </Select>
             </div>
           ) : (
-            <div className="space-y-1.5 sm:col-span-2">
+            <div className={cn('space-y-1.5', wide)}>
               <Label>{t('website:navigation.ctaTarget')}</Label>
               <Select
                 value={configuration.header.cta?.pageId}
@@ -455,6 +463,7 @@ export function WebsiteNavigationTab({
           <SocialLinksEditor
             links={configuration.footer.socialLinks}
             onChange={persistSocialLinks}
+            compact={compact}
           />
         </CardContent>
       </Card>
