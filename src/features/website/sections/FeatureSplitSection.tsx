@@ -41,7 +41,7 @@ export function FeatureSplitSection({
     ? resolveLocalizedText(config.cta.label, locale)
     : '';
   const href = linkRenderer
-    ? resolveWebsiteCtaHref(config.cta, pages)
+    ? resolveWebsiteCtaHref(config.cta, pages, locale)
     : undefined;
 
   return (

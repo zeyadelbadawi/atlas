@@ -22,7 +22,11 @@ import {
   resolveWebsiteCtaHref,
 } from '../utils/link-resolution.utils';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
-import type { WebsiteCta, WebsitePage } from '@types';
+import type { WebsiteCta, WebsitePage, WebsiteCtaStyle } from '@types';
+import {
+  sectionDesignAttributes,
+  useSectionDesign,
+} from '../sections/section-design';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 
 /* ------------------------------------------------------------------ */
@@ -75,13 +79,17 @@ export function AtelierChapter({
   readonly children: ReactNode;
   readonly as?: 'section' | 'div' | 'header';
 }): JSX.Element {
+  // An Owner's chosen ground (CMS phase 3) replaces the chapter's own.
+  const { design, ground } = useSectionDesign();
+  const shown = (ground as AtelierEnv | undefined) ?? env;
   return (
     <Tag
       aria-labelledby={Tag === 'section' ? labelledBy : undefined}
       aria-label={Tag === 'section' && !labelledBy ? label : undefined}
-      data-env={env}
+      data-env={shown}
+      {...(Tag === 'section' ? sectionDesignAttributes(design) : {})}
       data-numbered={numbered ? '' : undefined}
-      data-unveil={unveil && env === 'ink' ? '' : undefined}
+      data-unveil={unveil && shown === 'ink' ? '' : undefined}
       data-flush-top={flushTop ? '' : undefined}
       className={cn('at-chapter', className)}
       style={style}
@@ -338,6 +346,20 @@ const ACTION_CLASSES: Record<AtelierActionVariant, string> = {
   inkGhost: 'at-btn-ink-ghost',
 };
 
+/** What an Owner's button look (`WebsiteCta.style`) draws as, by ground (the ink ground recolours `.at-link` itself). */
+export const ATELIER_LOOKS: Record<WebsiteCtaStyle, AtelierActionVariant> = {
+  primary: 'primary',
+  secondary: 'ghost',
+  link: 'link',
+};
+
+export const ATELIER_INK_LOOKS: Record<WebsiteCtaStyle, AtelierActionVariant> =
+  {
+    primary: 'ink',
+    secondary: 'inkGhost',
+    link: 'link',
+  };
+
 /**
  * A path as a link when the runtime can navigate, else an inert button
  * (dashboard previews). On the public site a target that resolves to
@@ -370,12 +392,17 @@ export function AtelierLink({
   );
 }
 
-/** A `WebsiteCta` as an Atelier action (nothing when it has no label). */
+/**
+ * A `WebsiteCta` as an Atelier action (nothing when it has no label).
+ * `variant` is the look for the button's position; an Owner's own choice
+ * (`cta.style`) wins, drawn by `looks` for the ground it sits on.
+ */
 export function AtelierAction({
   cta,
   pages,
   linkRenderer,
   variant = 'primary',
+  looks = ATELIER_LOOKS,
   large = false,
   arrow = true,
   className,
@@ -384,6 +411,7 @@ export function AtelierAction({
   readonly pages: readonly WebsitePage[];
   readonly linkRenderer?: WebsiteLinkRenderer;
   readonly variant?: AtelierActionVariant;
+  readonly looks?: Record<WebsiteCtaStyle, AtelierActionVariant>;
   readonly large?: boolean;
   readonly arrow?: boolean;
   readonly className?: string;
@@ -392,14 +420,21 @@ export function AtelierAction({
   if (!cta) return null;
   const label = resolveLocalizedText(cta.label, locale);
   if (!label) return null;
+  const look = cta.style ? looks[cta.style] : variant;
   return (
     <AtelierLink
-      href={linkRenderer ? resolveWebsiteCtaHref(cta, pages) : undefined}
+      href={
+        linkRenderer ? resolveWebsiteCtaHref(cta, pages, locale) : undefined
+      }
       linkRenderer={linkRenderer}
-      className={cn(ACTION_CLASSES[variant], large && 'at-btn-lg', className)}
+      className={cn(
+        ACTION_CLASSES[look],
+        large && look !== 'link' && 'at-btn-lg',
+        className
+      )}
     >
       {label}
-      {arrow && variant !== 'link' ? <AtelierArrow /> : null}
+      {arrow && look !== 'link' ? <AtelierArrow /> : null}
     </AtelierLink>
   );
 }

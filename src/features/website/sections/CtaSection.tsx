@@ -32,11 +32,11 @@ export function CtaSection({
   const heading = useWebsiteHeadingClass();
   const { locale } = usePublicWebsiteLocale();
   const href = linkRenderer
-    ? resolveWebsiteCtaHref(config.cta, pages)
+    ? resolveWebsiteCtaHref(config.cta, pages, locale)
     : undefined;
   const ctaLabel = resolveLocalizedText(config.cta.label, locale);
   const secondaryHref = linkRenderer
-    ? resolveWebsiteCtaHref(config.secondaryCta, pages)
+    ? resolveWebsiteCtaHref(config.secondaryCta, pages, locale)
     : undefined;
   const secondaryLabel = config.secondaryCta
     ? resolveLocalizedText(config.secondaryCta.label, locale)

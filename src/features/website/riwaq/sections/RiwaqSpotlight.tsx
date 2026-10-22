@@ -61,7 +61,7 @@ export function RiwaqSpotlight({
   const ctaLabel = config.cta ? resolveLocalizedText(config.cta.label, locale) : '';
   const ctaHref = config.cta
     ? linkRenderer
-      ? resolveWebsiteCtaHref(config.cta, pages)
+      ? resolveWebsiteCtaHref(config.cta, pages, locale)
       : undefined
     : `/courses/${course.id}`;
   const facts = [

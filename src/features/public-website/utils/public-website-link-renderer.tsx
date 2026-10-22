@@ -102,11 +102,14 @@ export function usePublicWebsiteLinkRenderer(
 
   return ({ href, external, className, ariaCurrent, ariaLabel, children }) => {
     if (external) {
+      // A web page opens in a new tab; a call or an email hands off to the
+      // device's own app, where a new tab would only leave a blank one.
+      const opensPage = /^https?:/i.test(href);
       return (
         <a
           href={href}
-          target="_blank"
-          rel="noopener noreferrer"
+          target={opensPage ? '_blank' : undefined}
+          rel={opensPage ? 'noopener noreferrer' : undefined}
           className={className}
           aria-current={ariaCurrent}
           aria-label={ariaLabel}

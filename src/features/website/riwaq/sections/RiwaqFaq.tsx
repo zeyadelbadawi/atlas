@@ -103,7 +103,7 @@ export function RiwaqFaq({
 
   const title = resolveLocalizedText(config.title, locale);
   const ctaLabel = config.cta ? resolveLocalizedText(config.cta.label, locale) : '';
-  const ctaHref = linkRenderer ? resolveWebsiteCtaHref(config.cta, pages) : undefined;
+  const ctaHref = linkRenderer ? resolveWebsiteCtaHref(config.cta, pages, locale) : undefined;
   const teaser = config.maxItems !== undefined && config.maxItems > 0;
   // The FAQs page: the header's question filter narrows the list.
   const visible = teaser

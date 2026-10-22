@@ -23,7 +23,11 @@ import {
   resolveWebsiteCtaHref,
 } from '../utils/link-resolution.utils';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
-import type { WebsiteCta, WebsitePage } from '@types';
+import type { WebsiteCta, WebsitePage, WebsiteCtaStyle } from '@types';
+import {
+  sectionDesignAttributes,
+  useSectionDesign,
+} from '../sections/section-design';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 
 /* ------------------------------------------------------------------ */
@@ -73,11 +77,14 @@ export function ManaraBlock({
   readonly children: ReactNode;
   readonly as?: 'section' | 'div' | 'header' | 'footer';
 }): JSX.Element {
+  // An Owner's chosen ground (CMS phase 3) replaces the block's own.
+  const { design, ground } = useSectionDesign();
   return (
     <Tag
       aria-labelledby={Tag === 'section' ? labelledBy : undefined}
       aria-label={Tag === 'section' && !labelledBy ? label : undefined}
-      data-env={env}
+      data-env={(ground as ManaraEnv | undefined) ?? env}
+      {...(Tag === 'section' ? sectionDesignAttributes(design) : {})}
       data-seam-top={seamTop ? '' : undefined}
       data-seam-bottom={seamBottom ? '' : undefined}
       data-tight={tight ? '' : undefined}
@@ -349,6 +356,13 @@ const ACTION_CLASSES: Record<ManaraActionVariant, string> = {
   link: 'mn-link',
 };
 
+/** What an Owner's button look (`WebsiteCta.style`) draws as; every ground recolours these classes itself. */
+export const MANARA_LOOKS: Record<WebsiteCtaStyle, ManaraActionVariant> = {
+  primary: 'accent',
+  secondary: 'outline',
+  link: 'link',
+};
+
 /**
  * A path as a link when the runtime can navigate, else an inert button
  * (dashboard previews). On the public site a target that resolves to
@@ -381,7 +395,11 @@ export function ManaraLink({
   );
 }
 
-/** A `WebsiteCta` as a Manara action (nothing when it has no label). */
+/**
+ * A `WebsiteCta` as a Manara action (nothing when it has no label).
+ * `variant` is the look for the button's position; an Owner's own choice
+ * (`cta.style`) wins.
+ */
 export function ManaraAction({
   cta,
   pages,
@@ -403,11 +421,18 @@ export function ManaraAction({
   if (!cta) return null;
   const label = resolveLocalizedText(cta.label, locale);
   if (!label) return null;
+  const look = cta.style ? MANARA_LOOKS[cta.style] : variant;
   return (
     <ManaraLink
-      href={linkRenderer ? resolveWebsiteCtaHref(cta, pages) : undefined}
+      href={
+        linkRenderer ? resolveWebsiteCtaHref(cta, pages, locale) : undefined
+      }
       linkRenderer={linkRenderer}
-      className={cn(ACTION_CLASSES[variant], large && 'mn-btn-lg', className)}
+      className={cn(
+        ACTION_CLASSES[look],
+        large && look !== 'link' && 'mn-btn-lg',
+        className
+      )}
     >
       <span className="min-w-0 break-words">{label}</span>
       {arrow ? <ManaraArrow /> : null}

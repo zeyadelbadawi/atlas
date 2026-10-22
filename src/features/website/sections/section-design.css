@@ -1,0 +1,54 @@
+/*
+ * CMS phase 3 — a section's design, drawn on the attributes its shell puts
+ * on its own root (`section-design.tsx`). Theme-agnostic: each theme's
+ * shell multiplies its own rhythm by `--ws-space` and reads its own
+ * container width variable, so these rules only choose the factor.
+ */
+
+/* Spacing: the theme's rhythm, tighter or roomier. */
+[data-ws-space='compact'] {
+  --ws-space: 0.5;
+}
+[data-ws-space='spacious'] {
+  --ws-space: 1.5;
+}
+/* Phones may differ from larger screens (below Tailwind's `md`, where every
+   theme stacks to one column). */
+@media (max-width: 767.98px) {
+  [data-ws-space-mobile='compact'] {
+    --ws-space: 0.5;
+  }
+  [data-ws-space-mobile='default'] {
+    --ws-space: 1;
+  }
+  [data-ws-space-mobile='spacious'] {
+    --ws-space: 1.5;
+  }
+}
+
+/* Width: Theme 1's container, as wide as the other themes' (88rem; never
+   past the screen, the container keeps its gutters). Atelier, Manara and
+   Riwaq are already that wide, so they do not offer it. */
+[data-ws-width='wide'] {
+  --website-container-width: 88rem;
+}
+
+/* Alignment: the section's copy, headings and rows of actions centred. */
+[data-ws-align='center'] {
+  text-align: center;
+}
+[data-ws-align='center'] :where(h1, h2, h3, p) {
+  margin-inline: auto;
+}
+[data-ws-align='center'] :where(.flex-wrap) {
+  justify-content: center;
+}
+
+/* Two columns on phones, the second first. Below `md` every theme stacks
+   these to one column, so reversing the stack changes the order only. */
+@media (max-width: 767.98px) {
+  [data-ws-reverse-mobile] [data-ws-columns] {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+}

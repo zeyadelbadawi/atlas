@@ -22,6 +22,8 @@ import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsit
 import { useWebsiteIdentity } from '@/features/website/renderer/WebsiteIdentityContext';
 import { resolveLocalizedText } from '@/features/website/utils/localized-text.utils';
 import { resolveCatalogHref } from '@/features/website/utils/catalog-url.utils';
+import { hasSectionButtons } from '@/features/website/utils/link-resolution.utils';
+import { useSectionDesignAttributes } from '@/features/website/sections/section-design';
 import { useT1Navigate } from '@/features/website/modern-education/t1-navigation';
 import { MAX_HERO_HIGHLIGHTS } from '@/features/website/constants/website.constants';
 import type { SectionRenderProps } from '@/features/website/theme-packs/theme-pack.types';
@@ -135,7 +137,8 @@ export function RiwaqHero({
     }))
     .filter((item) => item.label)
     .slice(0, MAX_HERO_HIGHLIGHTS);
-  const hasActions = !!config.cta || !!config.secondaryCta;
+  const hasActions = hasSectionButtons(config);
+  const designAttributes = useSectionDesignAttributes();
   const showSearch = !!config.showSearch && !!resolveCatalogHref(pages);
   const hasImage = !!config.image;
   // The label line: the academy, then the eyebrow — whichever exist (the
@@ -158,12 +161,13 @@ export function RiwaqHero({
     <section
       aria-labelledby={headingId}
       data-ground="porcelain"
+      {...designAttributes}
       data-colonnade="off"
       className="rw-band rwh-hero"
     >
       <div className="rw-container">
         <RisingColumns />
-        <div className="rw-grid rwh-hero-grid" data-image={hasImage ? '' : undefined}>
+        <div className="rw-grid rwh-hero-grid" data-ws-columns="" data-image={hasImage ? '' : undefined}>
           <div className="rwh-hero-copy">
             {labelMotion ? (
               <p
@@ -226,6 +230,12 @@ export function RiwaqHero({
                   variant="line"
                   large
                   arrow={false}
+                />
+                <RiwaqAction
+                  cta={config.tertiaryCta}
+                  pages={pages}
+                  linkRenderer={linkRenderer}
+                  variant="link"
                 />
               </div>
             ) : null}

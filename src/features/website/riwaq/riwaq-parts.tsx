@@ -25,7 +25,8 @@ import {
   resolveWebsiteCtaHref,
 } from '../utils/link-resolution.utils';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
-import type { WebsiteCta, WebsitePage } from '@types';
+import type { WebsiteCta, WebsitePage, WebsiteCtaStyle } from '@types';
+import { sectionDesignAttributes, useSectionDesign } from '../sections/section-design';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 
 /* ------------------------------------------------------------------ */
@@ -64,11 +65,14 @@ export function RiwaqBand({
   readonly children: ReactNode;
 }): JSX.Element {
   const landmark = Tag === 'section';
+  // An Owner's chosen ground (CMS phase 3) replaces the band's own.
+  const design = useSectionDesign();
   return (
     <Tag
       aria-labelledby={landmark ? labelledBy : undefined}
       aria-label={landmark && !labelledBy ? label : undefined}
-      data-ground={ground}
+      data-ground={(design.ground as RiwaqGround | undefined) ?? ground}
+      {...(landmark ? sectionDesignAttributes(design.design) : {})}
       data-tight={tight ? '' : undefined}
       data-colonnade={colonnade ? undefined : 'off'}
       className={cn('rw-band', className)}
@@ -351,7 +355,18 @@ export function RiwaqArrow({
 
 export type RiwaqActionVariant = 'solid' | 'line' | 'link';
 
-/** A `WebsiteCta` as a Riwaq action (nothing when it has no label). */
+/** What an Owner's button look (`WebsiteCta.style`) draws as; every ground recolours these classes itself. */
+export const RIWAQ_LOOKS: Record<WebsiteCtaStyle, RiwaqActionVariant> = {
+  primary: 'solid',
+  secondary: 'line',
+  link: 'link',
+};
+
+/**
+ * A `WebsiteCta` as a Riwaq action (nothing when it has no label).
+ * `variant` is the look for the button's position; an Owner's own choice
+ * (`cta.style`) wins.
+ */
 export function RiwaqAction({
   cta,
   pages,
@@ -373,11 +388,12 @@ export function RiwaqAction({
   if (!cta) return null;
   const label = resolveLocalizedText(cta.label, locale);
   if (!label) return null;
+  const look = cta.style ? RIWAQ_LOOKS[cta.style] : variant;
   return (
     <RiwaqLink
-      href={linkRenderer ? resolveWebsiteCtaHref(cta, pages) : undefined}
+      href={linkRenderer ? resolveWebsiteCtaHref(cta, pages, locale) : undefined}
       linkRenderer={linkRenderer}
-      className={cn(riwaqActionClass(variant, large), className)}
+      className={cn(riwaqActionClass(look, large), className)}
     >
       <span className="min-w-0 break-words">{label}</span>
       {arrow ? <RiwaqArrow /> : null}

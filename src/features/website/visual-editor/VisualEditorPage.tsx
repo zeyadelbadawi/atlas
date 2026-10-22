@@ -115,6 +115,7 @@ import {
   removeSection,
   replaceSectionConfig,
   toggleSectionEnabled,
+  replaceSectionDesign,
   toggleSectionVisibility,
 } from '../utils/section-list.utils';
 import { useEditHistory } from './useEditHistory';
@@ -300,6 +301,10 @@ function VisualEditor(): JSX.Element {
     clearServerIssues(id);
     record(replaceSectionConfig(draftSections, id, config), `config:${id}`);
   };
+  // Each design choice is a click of its own, so each is its own undo step
+  // (no group: typed content coalesces, choices do not).
+  const handleDesignChange = (id: string, design: SectionInstance['design']) =>
+    record(replaceSectionDesign(draftSections, id, design));
   const handleToggleEnabled = (id: string) =>
     record(toggleSectionEnabled(draftSections, id));
   const handleToggleVisibility = (
@@ -507,6 +512,9 @@ function VisualEditor(): JSX.Element {
       serverIssues={selected ? serverIssuesById[selected.id] : undefined}
       onConfigChange={(config) =>
         selected && handleConfigChange(selected.id, config)
+      }
+      onDesignChange={(design) =>
+        selected && handleDesignChange(selected.id, design)
       }
       onToggleVisibility={(key) =>
         selected && handleToggleVisibility(selected.id, key)

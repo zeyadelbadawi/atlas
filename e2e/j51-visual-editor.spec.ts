@@ -10,10 +10,20 @@
  *   3. undoes (Ctrl+Z) — the field and the page are back, and that is
  *      saved too;
  *   4. adds an FAQ from the section library right after the first section
- *      — it is selected, on the page, and saved; undo removes it again.
+ *      — it is selected, on the page, and saved; undo removes it again;
+ *   5. gives the hero a WhatsApp button: a half-typed number is flagged
+ *      only once its field is left, and the button is saved with the
+ *      number in international form;
+ *   6. gives a section a compact, centred design: on its own root on the
+ *      page, and saved as named choices.
  * Nothing is published. The page's sections are restored afterwards.
  */
-import { test, expect, type APIRequestContext } from '@playwright/test';
+import {
+  test,
+  expect,
+  type APIRequestContext,
+  type Page,
+} from '@playwright/test';
 import {
   apiGet,
   apiPatch,
@@ -23,6 +33,7 @@ import {
   SEED,
   type Session,
 } from './support/atlas';
+import { clearAuthRateLimits } from './support/global-setup';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -47,6 +58,14 @@ async function home(request: APIRequestContext): Promise<PageResponse> {
   );
   expect(response.ok()).toBeTruthy();
   return response.json();
+}
+
+/** Each test signs in afresh: clear the sign-in limiter first, as the other journeys do, or the fourth sign-in in a row is refused. */
+async function signIn(page: Page): Promise<void> {
+  await clearAuthRateLimits();
+  await seedCookieDecision(page);
+  await signInThroughDashboard(page, SEED.owner, SEED.password);
+  await page.waitForURL(/\/dashboard/);
 }
 
 test.beforeAll(async ({ request }) => {
@@ -91,9 +110,7 @@ test.describe('J51 — visual editor @critical', () => {
   }) => {
     test.setTimeout(180_000);
     await page.setViewportSize({ width: 1440, height: 900 });
-    await seedCookieDecision(page);
-    await signInThroughDashboard(page, SEED.owner, SEED.password);
-    await page.waitForURL(/\/dashboard/);
+    await signIn(page);
     await page.goto(
       `/dashboard/academy/${academyId}/website/pages/${homeId}/visual`
     );
@@ -192,15 +209,131 @@ test.describe('J51 — visual editor @critical', () => {
     });
   });
 
+  test('Buttons: a WhatsApp button on the hero, checked on leaving the number, saved as a number', async ({
+    page,
+    request,
+  }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await signIn(page);
+    await page.goto(
+      `/dashboard/academy/${academyId}/website/pages/${homeId}/visual`
+    );
+    await expect(page.getByTestId('visual-editor')).toBeVisible({
+      timeout: 30_000,
+    });
+    const frame = page.frameLocator('iframe[title="Website preview"]');
+    const hero = (await home(request)).sections.find((s) => s.type === 'hero')!;
+    await expect(
+      frame.locator(`[data-preview-section="${hero.id}"]`)
+    ).toBeAttached({ timeout: 30_000 });
+    await page
+      .getByTestId(`structure-row-${hero.id}`)
+      .getByRole('button')
+      .filter({ hasText: 'Hero' })
+      .first()
+      .click();
+    const buttons = page.getByTestId('section-buttons');
+    await expect(buttons).toBeVisible();
+    const before = await buttons.getByRole('listitem').count();
+    test.skip(before >= 3, 'the seeded hero already has three buttons');
+
+    await page.getByTestId('section-buttons-add').click();
+    const row = buttons.getByRole('listitem').last();
+    await row.getByRole('textbox').first().fill('J51 WhatsApp');
+    await row.getByTestId('cta-link-type').click();
+    await page.getByRole('option', { name: /WhatsApp chat/ }).click();
+    const number = row.locator('input[type="tel"]');
+    // Half a number: no complaint while typing, a fix on leaving the field.
+    await number.fill('0100');
+    await expect(row.getByRole('alert')).toHaveCount(0);
+    await number.blur();
+    await expect(row.getByRole('alert')).toBeVisible();
+    await number.fill('01001234567');
+    await number.blur();
+    await expect(row.getByRole('alert')).toHaveCount(0);
+
+    await expect(
+      frame.locator('a, button').filter({ hasText: 'J51 WhatsApp' })
+    ).toBeVisible();
+    await expect(
+      page.getByTestId('save-status').locator('[data-state]')
+    ).toHaveAttribute('data-state', 'ok', { timeout: 20_000 });
+    await expect
+      .poll(async () => {
+        const saved = (await home(request)).sections.find(
+          (s) => s.id === hero.id
+        )!.config as Record<string, { whatsapp?: string } | undefined>;
+        return [saved.cta, saved.secondaryCta, saved.tertiaryCta].find(
+          (cta) => cta?.whatsapp
+        )?.whatsapp;
+      })
+      .toBe('+201001234567');
+  });
+
+  test('Design: a section’s spacing and alignment show on the page and save as named choices', async ({
+    page,
+    request,
+  }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await signIn(page);
+    await page.goto(
+      `/dashboard/academy/${academyId}/website/pages/${homeId}/visual`
+    );
+    await expect(page.getByTestId('visual-editor')).toBeVisible({
+      timeout: 30_000,
+    });
+    const frame = page.frameLocator('iframe[title="Website preview"]');
+    const target = (await home(request)).sections.find(
+      (s) => s.type === 'features'
+    );
+    test.skip(!target, 'the seeded Home has no features section');
+    await expect(
+      frame.locator(`[data-preview-section="${target!.id}"]`)
+    ).toBeAttached({ timeout: 30_000 });
+    await page
+      .getByTestId(`structure-row-${target!.id}`)
+      .getByRole('button')
+      .filter({ hasText: 'Features' })
+      .first()
+      .click();
+    await page.getByTestId('settings-tab-design').click();
+    const design = page.getByTestId('section-design');
+    await design
+      .getByTestId('design-spacing')
+      .getByRole('radio', { name: 'Compact' })
+      .click();
+    await design
+      .getByTestId('design-align')
+      .getByRole('radio', { name: 'Center' })
+      .click();
+    // On the section's own root: no wrapper is added to the page.
+    const root = frame.locator(
+      `[data-preview-section="${target!.id}"] > section`
+    );
+    await expect(root).toHaveAttribute('data-ws-space', 'compact');
+    await expect(root).toHaveAttribute('data-ws-align', 'center');
+    await expect(
+      page.getByTestId('save-status').locator('[data-state]')
+    ).toHaveAttribute('data-state', 'ok', { timeout: 20_000 });
+    await expect
+      .poll(async () => {
+        const saved = (await home(request)).sections.find(
+          (s) => s.id === target!.id
+        ) as { design?: unknown } | undefined;
+        return saved?.design;
+      })
+      .toEqual({ spacing: 'compact', align: 'center' });
+  });
+
   test('Site: switching the theme redraws the page in it, as a draft', async ({
     page,
     request,
   }) => {
     test.setTimeout(120_000);
     await page.setViewportSize({ width: 1440, height: 900 });
-    await seedCookieDecision(page);
-    await signInThroughDashboard(page, SEED.owner, SEED.password);
-    await page.waitForURL(/\/dashboard/);
+    await signIn(page);
     await page.goto(
       `/dashboard/academy/${academyId}/website/pages/${homeId}/visual`
     );

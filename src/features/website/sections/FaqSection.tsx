@@ -79,7 +79,7 @@ export function FaqSection({
     ? resolveLocalizedText(config.cta.label, locale)
     : '';
   const ctaHref = linkRenderer
-    ? resolveWebsiteCtaHref(config.cta, pages)
+    ? resolveWebsiteCtaHref(config.cta, pages, locale)
     : undefined;
 
   return (

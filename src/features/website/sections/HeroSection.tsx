@@ -48,7 +48,10 @@ function CtaButton({
   readonly linkRenderer?: WebsiteLinkRenderer;
   readonly children: ReactNode;
 } & ComponentProps<typeof Button>): JSX.Element {
-  const href = linkRenderer ? resolveWebsiteCtaHref(cta, pages) : undefined;
+  const { locale } = usePublicWebsiteLocale();
+  const href = linkRenderer
+    ? resolveWebsiteCtaHref(cta, pages, locale)
+    : undefined;
 
   if (href) {
     return (

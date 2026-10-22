@@ -78,7 +78,36 @@ export interface WebsiteCta {
   readonly url?: string;
   /** Phase 1 (Extended Scope, Decision 11, dependency C) — targets this Academy's own public Sign In/Sign Up page, preserving Academy context. Takes precedence over `pageId`/`courseId`/`url` when set — see `resolveWebsiteCtaHref`. */
   readonly authAction?: 'signIn' | 'signUp';
+  /** CMS phase 3 — a WhatsApp chat with this international number (`+201001234567`). Stored as a number; the renderer builds the `wa.me` link. */
+  readonly whatsapp?: string;
+  /** The text the WhatsApp chat opens with, in the visitor's language. */
+  readonly whatsappMessage?: LocalizedText;
+  /** CMS phase 3 — a call to this international number or short hotline (`19999`). */
+  readonly phone?: string;
+  /** The button's look. Absent = the theme's own look for its position. */
+  readonly style?: WebsiteCtaStyle;
 }
+
+/** See `CTA_STYLES` (`website.constants.ts`). */
+export type WebsiteCtaStyle = 'primary' | 'secondary' | 'link';
+
+/**
+ * CMS phase 3 — the button slots of a section that has buttons, in order.
+ * Stored as three named slots (not a list) so every page saved before a
+ * section could have three buttons reads exactly as it did.
+ */
+export const SECTION_BUTTON_SLOTS = [
+  'cta',
+  'secondaryCta',
+  'tertiaryCta',
+] as const;
+
+export type SectionButtonSlot = (typeof SECTION_BUTTON_SLOTS)[number];
+
+/** A section config's button slots. */
+export type SectionButtons = {
+  readonly [TSlot in SectionButtonSlot]?: WebsiteCta;
+};
 
 export interface HeroSectionConfig {
   /** A short label shown above the title (e.g. "New Cohort Open") — real tenant-authored content, not a translation key. */
@@ -91,6 +120,7 @@ export interface HeroSectionConfig {
   readonly imageAlt?: LocalizedText;
   readonly cta?: WebsiteCta;
   readonly secondaryCta?: WebsiteCta;
+  readonly tertiaryCta?: WebsiteCta;
   /** Theme 1 plan §D.2 — the one title phrase a theme may emphasise (ignored if no longer in the title). */
   readonly highlight?: LocalizedText;
   /** Short value chips under the hero (≤ 4). */
@@ -104,7 +134,7 @@ export interface HeroHighlight {
   readonly label: LocalizedText;
 }
 
-export interface AboutSectionConfig {
+export interface AboutSectionConfig extends SectionButtons {
   readonly title: LocalizedText;
   readonly body: LocalizedText;
   readonly image?: string;
@@ -280,6 +310,7 @@ export interface CtaSectionConfig {
   readonly description?: LocalizedText;
   readonly cta: WebsiteCta;
   readonly secondaryCta?: WebsiteCta;
+  readonly tertiaryCta?: WebsiteCta;
   readonly image?: string;
   readonly imageAlt?: LocalizedText;
 }
@@ -372,6 +403,8 @@ export interface FeatureSplitSectionConfig {
   readonly imagePosition: 'start' | 'end';
   readonly items: readonly FeatureSplitItem[];
   readonly cta?: WebsiteCta;
+  readonly secondaryCta?: WebsiteCta;
+  readonly tertiaryCta?: WebsiteCta;
 }
 
 /**
@@ -415,6 +448,26 @@ export interface SectionConfigMap {
   readonly courseSpotlight: CourseSpotlightSectionConfig;
 }
 
+/** CMS phase 3 — the ground a section sits on (see `SECTION_BACKGROUNDS`). */
+export type SectionBackground = 'light' | 'soft' | 'brand' | 'dark';
+export type SectionSpacing = 'compact' | 'default' | 'spacious';
+
+/**
+ * CMS phase 3 — a section's design: named choices only, drawn by each
+ * theme with its own grounds and rhythm. Every key is optional; absent is
+ * the theme's own choice for that section.
+ */
+export interface SectionDesign {
+  readonly background?: SectionBackground;
+  readonly spacing?: SectionSpacing;
+  /** Phones only; absent = the same as `spacing`. */
+  readonly spacingMobile?: SectionSpacing;
+  readonly align?: 'start' | 'center';
+  readonly width?: 'default' | 'wide';
+  /** Phones only: a two-column section stacks its second column first. */
+  readonly reverseOnMobile?: boolean;
+}
+
 /**
  * One section placed on a page. A discriminated union on `type` — `config`
  * is always the exact shape that `type` promises, so the Section Editor
@@ -427,6 +480,7 @@ export type SectionInstance = {
     readonly enabled: boolean;
     readonly visibility: ResponsiveVisibility;
     readonly config: SectionConfigMap[TType];
+    readonly design?: SectionDesign;
   };
 }[SectionType];
 

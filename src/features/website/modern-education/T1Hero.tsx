@@ -23,6 +23,8 @@ import { usePublicWebsiteStatistics } from '@hooks';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import { resolveCatalogHref } from '../utils/catalog-url.utils';
+import { hasSectionButtons } from '../utils/link-resolution.utils';
+import { useSectionDesignAttributes } from '../sections/section-design';
 import type { SectionRenderProps } from '../theme-packs/theme-pack.types';
 import type { WebsitePage } from '@types';
 import {
@@ -164,9 +166,11 @@ export function T1Hero({
     }))
     .filter((item) => item.label)
     .slice(0, 4);
-  const hasActions = !!config.cta || !!config.secondaryCta;
+  const hasActions = hasSectionButtons(config);
   const showSearch = !!config.showSearch && !!resolveCatalogHref(pages);
   const hasImage = !!config.image;
+
+  const designAttributes = useSectionDesignAttributes();
 
   let index = 0;
   const next = () => enter(index++);
@@ -182,9 +186,11 @@ export function T1Hero({
       aria-labelledby={headingId}
       data-tone="default"
       data-t1-hero=""
+      {...designAttributes}
       className="relative overflow-hidden text-[var(--website-foreground)]"
     >
       <div
+        data-ws-columns=""
         className={`mx-auto grid w-full max-w-[var(--website-container-width)] gap-12 px-4 pb-16 pt-8 sm:px-6 md:gap-14 md:pb-20 md:pt-12 lg:px-8 lg:pb-24 lg:pt-14 ${hasImage ? 'lg:grid-cols-[minmax(0,11fr)_minmax(0,9fr)] lg:items-center lg:gap-16' : ''}`}
       >
         <div
@@ -239,6 +245,13 @@ export function T1Hero({
                 pages={pages}
                 linkRenderer={linkRenderer}
                 variant="secondary"
+                large
+              />
+              <T1Action
+                cta={config.tertiaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="link"
                 large
               />
             </div>

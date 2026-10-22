@@ -124,3 +124,16 @@ export function replaceSectionConfig<TType extends SectionType>(
     section.id === id ? ({ ...section, config } as SectionInstance) : section
   );
 }
+
+/** A section with its design (CMS phase 3) replaced; `undefined` removes it. */
+export function replaceSectionDesign(
+  sections: Sections,
+  id: string,
+  design: SectionInstance['design']
+): SectionInstance[] {
+  return sections.map((section) => {
+    if (section.id !== id) return section;
+    const { design: _previous, ...rest } = section;
+    return (design ? { ...rest, design } : rest) as SectionInstance;
+  });
+}

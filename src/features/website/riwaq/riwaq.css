@@ -324,11 +324,12 @@ a[href='#main-content'] {
   position: relative;
   background: var(--rw-env-bg);
   color: var(--rw-env-text);
-  padding-block: var(--rw-rhythm);
+  /* `--ws-space`: an Owner's spacing choice (sections/section-design.css). */
+  padding-block: calc(var(--rw-rhythm) * var(--ws-space, 1));
 }
 
 .rw-band[data-tight] {
-  padding-block: calc(var(--rw-rhythm) * 0.6);
+  padding-block: calc(var(--rw-rhythm) * 0.6 * var(--ws-space, 1));
 }
 
 /* Two bands on the same ground read as one surface: halve the seam. */

@@ -223,7 +223,8 @@
   /* The beam overshoots its block by design; `clip` (not `hidden`) keeps
      sticky descendants working and never adds a scroll container. */
   overflow: clip;
-  padding-block: var(--mn-rhythm);
+  /* `--ws-space`: an Owner's spacing choice (sections/section-design.css). */
+  padding-block: calc(var(--mn-rhythm) * var(--ws-space, 1));
   background-color: var(--mn-day);
   color: var(--mn-text);
   --mn-env-text: var(--mn-text);
@@ -301,7 +302,7 @@
 }
 
 [data-theme-pack='manara'] .mn-block[data-tight] {
-  padding-block: calc(var(--mn-rhythm) * 0.55);
+  padding-block: calc(var(--mn-rhythm) * 0.55 * var(--ws-space, 1));
 }
 
 [data-theme-pack='manara'] .mn-block[data-flush-top] {
@@ -316,12 +317,16 @@
  */
 [data-theme-pack='manara'] .mn-block[data-seam-top] {
   margin-block-start: calc(-1 * var(--mn-seam));
-  padding-block-start: calc(var(--mn-rhythm) + var(--mn-seam));
+  padding-block-start: calc(
+    var(--mn-rhythm) * var(--ws-space, 1) + var(--mn-seam)
+  );
   clip-path: polygon(0 var(--mn-seam), 100% 0, 100% 100%, 0 100%);
 }
 
 [data-theme-pack='manara'] .mn-block[data-seam-bottom] {
-  padding-block-end: calc(var(--mn-rhythm) + var(--mn-seam));
+  padding-block-end: calc(
+    var(--mn-rhythm) * var(--ws-space, 1) + var(--mn-seam)
+  );
   clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--mn-seam)), 0 100%);
 }
 

@@ -25,6 +25,8 @@ import {
   usePreviewSelection,
 } from '../renderer/WebsitePreviewContext';
 import type { SectionRenderProps } from '../theme-packs/theme-pack.types';
+import { SectionDesignContext, resolveSectionDesign } from './section-design';
+import './section-design.css';
 
 export interface SectionRendererProps {
   readonly instance: SectionInstance;
@@ -65,12 +67,16 @@ export function SectionRenderer({
     return null;
 
   const rendered = (
-    <Renderer
-      config={instance.config as never}
-      academyId={academyId}
-      pages={pages}
-      linkRenderer={linkRenderer}
-    />
+    <SectionDesignContext.Provider
+      value={resolveSectionDesign(instance.design, pack.key, instance.type)}
+    >
+      <Renderer
+        config={instance.config as never}
+        academyId={academyId}
+        pages={pages}
+        linkRenderer={linkRenderer}
+      />
+    </SectionDesignContext.Provider>
   );
   const visibilityClass = sectionVisibilityClass(visibility);
   // Wrapped only when something is hidden; `display: contents` keeps the

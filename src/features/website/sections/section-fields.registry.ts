@@ -85,12 +85,7 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
         labelKey: 'website:fields.imageAlt',
         localized: true,
       },
-      { key: 'cta', kind: 'cta', labelKey: 'website:fields.primaryCta' },
-      {
-        key: 'secondaryCta',
-        kind: 'cta',
-        labelKey: 'website:fields.secondaryCta',
-      },
+      { key: 'buttons', kind: 'buttons', labelKey: 'website:fields.buttons' },
       {
         key: 'highlight',
         kind: 'text',
@@ -142,6 +137,7 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
         labelKey: 'website:fields.imageAlt',
         localized: true,
       },
+      { key: 'buttons', kind: 'buttons', labelKey: 'website:fields.buttons' },
     ],
   },
   featuredCourses: {
@@ -389,11 +385,11 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
         labelKey: 'website:fields.description',
         localized: true,
       },
-      { key: 'cta', kind: 'cta', labelKey: 'website:fields.primaryCta' },
       {
-        key: 'secondaryCta',
-        kind: 'cta',
-        labelKey: 'website:fields.secondaryCta',
+        key: 'buttons',
+        kind: 'buttons',
+        labelKey: 'website:fields.buttons',
+        minButtons: 1,
       },
       { key: 'image', kind: 'image', labelKey: 'website:fields.image' },
       {
@@ -697,7 +693,7 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
           { value: 'end', labelKey: 'website:fields.imagePositionEnd' },
         ],
       },
-      { key: 'cta', kind: 'cta', labelKey: 'website:fields.primaryCta' },
+      { key: 'buttons', kind: 'buttons', labelKey: 'website:fields.buttons' },
     ],
     repeatable: {
       key: 'items',

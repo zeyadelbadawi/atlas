@@ -249,7 +249,8 @@
 
 [data-theme-pack='atelier'] .at-chapter {
   position: relative;
-  padding-block: var(--at-rhythm);
+  /* `--ws-space`: an Owner's spacing choice (sections/section-design.css). */
+  padding-block: calc(var(--at-rhythm) * var(--ws-space, 1));
   isolation: isolate;
 }
 [data-theme-pack='atelier'] .at-chapter[data-flush-top] {

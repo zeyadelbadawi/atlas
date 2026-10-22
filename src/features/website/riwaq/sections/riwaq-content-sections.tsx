@@ -11,6 +11,7 @@ import { cn } from '@utils';
 import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
 import { useWebsiteIdentity } from '@/features/website/renderer/WebsiteIdentityContext';
 import { resolveLocalizedText } from '@/features/website/utils/localized-text.utils';
+import { hasSectionButtons } from '@/features/website/utils/link-resolution.utils';
 import { resolveFeatureIcon } from '@/features/website/utils/feature-icons';
 import { Reveal } from '@/features/website/primitives';
 import type { SectionRenderProps } from '@/features/website/theme-packs/theme-pack.types';
@@ -33,6 +34,8 @@ import '../riwaq-sections.css';
 
 export function RiwaqAbout({
   config,
+  pages,
+  linkRenderer,
 }: SectionRenderProps<'about'>): JSX.Element {
   const { locale } = usePublicWebsiteLocale();
   const headingId = useId();
@@ -41,7 +44,7 @@ export function RiwaqAbout({
   const hasImage = !!config.image;
   return (
     <RiwaqBand labelledBy={title ? headingId : undefined}>
-      <div className="rw-grid rws-split" data-image={hasImage ? 'end' : undefined}>
+      <div className="rw-grid rws-split" data-ws-columns="" data-image={hasImage ? 'end' : undefined}>
         <div className="rws-split-copy">
           {title ? <RiwaqHeading id={headingId}>{title}</RiwaqHeading> : null}
           {paragraphs.length > 0 ? (
@@ -57,6 +60,24 @@ export function RiwaqAbout({
                   {paragraph}
                 </p>
               ))}
+            </div>
+          ) : null}
+          {hasSectionButtons(config) ? (
+            <div className="rws-actions">
+              <RiwaqAction cta={config.cta} pages={pages} linkRenderer={linkRenderer} />
+              <RiwaqAction
+                cta={config.secondaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="line"
+                arrow={false}
+              />
+              <RiwaqAction
+                cta={config.tertiaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="link"
+              />
             </div>
           ) : null}
         </div>
@@ -222,6 +243,7 @@ export function RiwaqFeatureSplit({
     <RiwaqBand labelledBy={headingId}>
       <div
         className="rw-grid rws-split"
+        data-ws-columns=""
         data-image={hasImage ? (config.imagePosition === 'end' ? 'end' : 'start') : undefined}
       >
         {hasImage ? (
@@ -261,7 +283,24 @@ export function RiwaqFeatureSplit({
               ))}
             </ol>
           ) : null}
-          <RiwaqAction cta={config.cta} pages={pages} linkRenderer={linkRenderer} />
+          {hasSectionButtons(config) ? (
+            <div className="rws-actions">
+              <RiwaqAction cta={config.cta} pages={pages} linkRenderer={linkRenderer} />
+              <RiwaqAction
+                cta={config.secondaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="line"
+                arrow={false}
+              />
+              <RiwaqAction
+                cta={config.tertiaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="link"
+              />
+            </div>
+          ) : null}
         </div>
       </div>
     </RiwaqBand>
@@ -357,6 +396,12 @@ export function RiwaqCta({
               variant="line"
               large
               arrow={false}
+            />
+            <RiwaqAction
+              cta={config.tertiaryCta}
+              pages={pages}
+              linkRenderer={linkRenderer}
+              variant="link"
             />
           </div>
         </div>
