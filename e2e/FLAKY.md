@@ -82,3 +82,9 @@ so `--grep @critical` / `--grep-invert @quarantine` select them.
   local run took 29 min instead of the job's 52. J7c (publish raced the
   page save) and J46 (reply typed before the composer cleared) were test
   races, fixed in the same change.
+- 2026-10-22 — first nightly run on the development-mode build: 192 passed,
+  one non-quarantined failure, J7a, which read the call-to-action's hue as
+  NaN (the CI's Chrome reported the computed colour in a syntax the test's
+  string parser did not read; it passed on the local Chromium). The hue is
+  now read back through a 1×1 canvas (sRGB whatever the syntax) and polled
+  until the button is painted. Not quarantined: a test bug, fixed.
