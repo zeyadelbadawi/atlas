@@ -19,7 +19,9 @@ const store = vi.fn();
 const takeLegacyRefreshToken = vi.fn();
 
 vi.mock('./authentication.service', () => ({
-  authenticationService: { refreshToken: (...a: unknown[]) => refreshToken(...a) },
+  authenticationService: {
+    refreshToken: (...a: unknown[]) => refreshToken(...a),
+  },
 }));
 vi.mock('./current-user.service', () => ({
   currentUserService: { getCurrent: () => getCurrent() },
@@ -86,19 +88,48 @@ describe('sessionService.refresh — single-flight, cookie session', () => {
     await sessionService.refresh();
     await sessionService.refresh();
 
-    expect(refreshToken).toHaveBeenNthCalledWith(1, { refreshToken: 'LEGACY-R0' });
+    expect(refreshToken).toHaveBeenNthCalledWith(1, {
+      refreshToken: 'LEGACY-R0',
+    });
     expect(refreshToken).toHaveBeenNthCalledWith(2, {});
   });
 
   it('takes the cross-tab lock before refreshing when Web Locks exist', async () => {
-    const request = vi.fn((_name: string, work: () => Promise<unknown>) => work());
+    const request = vi.fn((_name: string, work: () => Promise<unknown>) =>
+      work()
+    );
     vi.stubGlobal('navigator', { ...globalThis.navigator, locks: { request } });
     refreshToken.mockResolvedValue({ accessToken: 'A', expiresIn: 900 });
     getCurrent.mockResolvedValue({ id: 'u1', organizations: [] });
 
     await sessionService.refresh();
 
-    expect(request).toHaveBeenCalledWith('atlas:session-refresh', expect.any(Function));
+    expect(request).toHaveBeenCalledWith(
+      'atlas:session-refresh',
+      expect.any(Function)
+    );
     expect(refreshToken).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('sessionService.refresh — the profile the refresh carries', () => {
+  it('uses the user on the refresh answer: one round trip, no /users/me', async () => {
+    const user = { id: 'u1', organizations: [] };
+    refreshToken.mockResolvedValue({ accessToken: 'A', expiresIn: 900, user });
+
+    const session = await sessionService.refresh();
+
+    expect(getCurrent).not.toHaveBeenCalled();
+    expect(session.user).toEqual(user);
+  });
+
+  it('falls back to /users/me when the answer has no user (older API)', async () => {
+    refreshToken.mockResolvedValue({ accessToken: 'A', expiresIn: 900 });
+    getCurrent.mockResolvedValue({ id: 'u2', organizations: [] });
+
+    const session = await sessionService.refresh();
+
+    expect(getCurrent).toHaveBeenCalledTimes(1);
+    expect(session.user).toEqual({ id: 'u2', organizations: [] });
   });
 });

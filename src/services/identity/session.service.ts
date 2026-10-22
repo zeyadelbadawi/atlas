@@ -332,12 +332,18 @@ export class SessionService {
       // profile afterwards inside it could wait on itself: a 401 there sends
       // the interceptor back into `refresh()`, i.e. into this very promise,
       // while the lock stays held for every tab.
-      const tokens = await withCrossTabRefreshLock(() => this.rotateToken());
-      // Marked as already-refreshed: a 401 here is a final answer, never a
-      // second refresh of the session just obtained.
-      const user = await currentUserService.getCurrent({
-        headers: { 'X-Retry-After-Refresh': 'true' },
-      });
+      const { tokens, user: carried } = await withCrossTabRefreshLock(() =>
+        this.rotateToken()
+      );
+      // The refresh answer normally carries the profile already (one round
+      // trip instead of two). Otherwise it is read here — marked as
+      // already-refreshed: a 401 there is a final answer, never a second
+      // refresh of the session just obtained.
+      const user =
+        carried ??
+        (await currentUserService.getCurrent({
+          headers: { 'X-Retry-After-Refresh': 'true' },
+        }));
       return {
         status: 'authenticated' as const,
         tokens,
@@ -351,7 +357,10 @@ export class SessionService {
   }
 
   /** The cookie rotation — always invoked through the single-flight `refresh`, under the cross-tab lock. */
-  private async rotateToken(): Promise<TokenMetadata> {
+  private async rotateToken(): Promise<{
+    readonly tokens: TokenMetadata;
+    readonly user?: CurrentUser;
+  }> {
     // A session an older build left in localStorage is converted into the
     // cookie by presenting its token once; it is deleted as it is read.
     const legacy = tokenService.takeLegacyRefreshToken();
@@ -393,7 +402,7 @@ export class SessionService {
     );
 
     tokenService.store(tokens);
-    return tokens;
+    return { tokens, user: response.user };
   }
 
   /**

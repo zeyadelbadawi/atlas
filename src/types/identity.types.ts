@@ -212,6 +212,13 @@ export interface TokenRefreshRequest {
 export interface TokenRefreshResponse {
   readonly accessToken: string;
   readonly expiresIn: number;
+  /**
+   * The signed-in person as `GET /users/me` would answer with the new token,
+   * so a restore takes one round trip instead of two. Optional: absent from
+   * an older API or when the server could not read it — then the client
+   * asks `/users/me` itself.
+   */
+  readonly user?: CurrentUser;
 }
 
 /**
