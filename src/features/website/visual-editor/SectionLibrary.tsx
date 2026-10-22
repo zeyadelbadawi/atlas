@@ -31,10 +31,17 @@ export const SECTION_LIBRARY_GROUPS: readonly {
   },
   {
     key: 'trust',
-    types: ['testimonials', 'statistics', 'instructors', 'gallery'],
+    types: [
+      'testimonials',
+      'results',
+      'statistics',
+      'logos',
+      'instructors',
+      'gallery',
+    ],
   },
-  { key: 'info', types: ['features', 'steps', 'faq'] },
-  { key: 'action', types: ['cta', 'contact'] },
+  { key: 'info', types: ['features', 'steps', 'schedule', 'faq'] },
+  { key: 'action', types: ['cta', 'contact', 'map'] },
 ];
 
 export interface SectionLibraryProps {

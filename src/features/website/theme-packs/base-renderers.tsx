@@ -25,6 +25,10 @@ import { CourseCategoriesSection } from '../sections/CourseCategoriesSection';
 import { StepsSection } from '../sections/StepsSection';
 import { FeatureSplitSection } from '../sections/FeatureSplitSection';
 import { CourseSpotlightSection } from '../sections/CourseSpotlightSection';
+import { LogosSection } from '../sections/LogosSection';
+import { MapSection } from '../sections/MapSection';
+import { ScheduleSection } from '../sections/ScheduleSection';
+import { ResultsSection } from '../sections/ResultsSection';
 import type { SectionRenderers } from './theme-pack.types';
 
 export const BASE_RENDERERS: SectionRenderers = {
@@ -145,5 +149,19 @@ export const BASE_RENDERERS: SectionRenderers = {
         linkRenderer={linkRenderer}
       />
     );
+  },
+  logos: function BaseLogos({ config, linkRenderer }) {
+    return <LogosSection config={config} linkRenderer={linkRenderer} />;
+  },
+  map: function BaseMap({ config, linkRenderer }) {
+    return <MapSection config={config} linkRenderer={linkRenderer} />;
+  },
+  // CMS phase 3d — like testimonials, sample rows and results never reach
+  // the public site (`linkRenderer` marks it).
+  schedule: function BaseSchedule({ config, linkRenderer }) {
+    return <ScheduleSection config={config} isPublic={!!linkRenderer} />;
+  },
+  results: function BaseResults({ config, linkRenderer }) {
+    return <ResultsSection config={config} isPublic={!!linkRenderer} />;
   },
 };

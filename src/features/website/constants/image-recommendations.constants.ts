@@ -172,6 +172,9 @@ export function resolveSectionImagePurpose(
   fieldKey: string
 ): WebsiteImagePurpose {
   if (fieldKey === 'avatar') return 'avatar';
+  // CMS phase 3d — a partner logo (transparent, wide); a student's photo.
+  if (sectionType === 'logos') return 'logo';
+  if (sectionType === 'results' && fieldKey === 'photo') return 'avatar';
   if (sectionType === 'hero') return 'hero';
   if (sectionType === 'gallery') return 'gallery';
   if (sectionType === 'featuredCourses') return 'cardThumbnail';

@@ -34,12 +34,28 @@ import {
   MIN_COURSE_CATEGORIES,
   MAX_SPOTLIGHT_MODULES,
   MIN_SPOTLIGHT_MODULES,
+  MAX_LOGOS,
+  MAX_LONG_TEXT,
+  MAX_MAP_ADDRESS_LENGTH,
+  MAX_MAP_NOTE_LENGTH,
+  MAX_RESULT_VALUE_LENGTH,
+  MAX_RESULTS,
+  MAX_SCHEDULE_ROW_DETAIL_LENGTH,
+  MAX_SCHEDULE_ROW_TITLE_LENGTH,
+  MAX_SCHEDULE_ROWS,
 } from '../constants/website.constants';
 import type { SectionFieldSchema } from './section-field.types';
+import { SCHEDULE_DAYS } from '@types';
 import type { SectionType, WebsiteThemeKey } from '@types';
 
 /** Fields only Atelier draws — see `SectionFieldDescriptor.themes`. */
 const ATELIER_ONLY: readonly WebsiteThemeKey[] = ['atelier'];
+
+/** Saturday first — the order an Egyptian week runs. */
+const dayOptions = SCHEDULE_DAYS.map((day) => ({
+  value: day,
+  labelKey: `website:days.${day}`,
+}));
 
 const iconOptions = FEATURE_ICON_OPTIONS.map((icon) => ({
   value: icon,
@@ -756,5 +772,203 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
       },
       { key: 'cta', kind: 'cta', labelKey: 'website:fields.primaryCta' },
     ],
+  },
+  logos: {
+    type: 'logos',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_LONG_TEXT,
+      },
+    ],
+    repeatable: {
+      key: 'items',
+      maxItems: MAX_LOGOS,
+      labelKey: 'website:fields.logoItems',
+      itemLabelKey: 'website:fields.logoItem',
+      itemFields: [
+        { key: 'image', kind: 'image', labelKey: 'website:fields.logoImage' },
+        {
+          key: 'alt',
+          kind: 'text',
+          labelKey: 'website:fields.logoAlt',
+          localized: true,
+          maxLength: MAX_SHORT_TEXT,
+        },
+        {
+          key: 'url',
+          kind: 'url',
+          labelKey: 'website:fields.logoUrl',
+          hintKey: 'website:fields.logoUrlHint',
+        },
+      ],
+    },
+  },
+  map: {
+    type: 'map',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'address',
+        kind: 'longText',
+        labelKey: 'website:fields.mapAddress',
+        localized: true,
+        maxLength: MAX_MAP_ADDRESS_LENGTH,
+      },
+      {
+        key: 'note',
+        kind: 'text',
+        labelKey: 'website:fields.mapNote',
+        localized: true,
+        maxLength: MAX_MAP_NOTE_LENGTH,
+      },
+      {
+        key: 'query',
+        kind: 'text',
+        labelKey: 'website:fields.mapQuery',
+        hintKey: 'website:fields.mapQueryHint',
+      },
+    ],
+  },
+  schedule: {
+    type: 'schedule',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_LONG_TEXT,
+      },
+    ],
+    repeatable: {
+      key: 'items',
+      maxItems: MAX_SCHEDULE_ROWS,
+      labelKey: 'website:fields.scheduleRows',
+      itemLabelKey: 'website:fields.scheduleRow',
+      itemFields: [
+        {
+          key: 'day',
+          kind: 'select',
+          labelKey: 'website:fields.scheduleDay',
+          options: dayOptions,
+          defaultValue: 'sat',
+        },
+        {
+          key: 'start',
+          kind: 'time',
+          labelKey: 'website:fields.scheduleStart',
+        },
+        {
+          key: 'end',
+          kind: 'time',
+          labelKey: 'website:fields.scheduleEnd',
+          hintKey: 'website:fields.scheduleEndHint',
+        },
+        {
+          key: 'title',
+          kind: 'text',
+          labelKey: 'website:fields.scheduleTitle',
+          localized: true,
+          maxLength: MAX_SCHEDULE_ROW_TITLE_LENGTH,
+        },
+        {
+          key: 'teacher',
+          kind: 'text',
+          labelKey: 'website:fields.scheduleTeacher',
+          localized: true,
+          maxLength: MAX_SCHEDULE_ROW_DETAIL_LENGTH,
+        },
+        {
+          key: 'location',
+          kind: 'text',
+          labelKey: 'website:fields.scheduleLocation',
+          localized: true,
+          maxLength: MAX_SCHEDULE_ROW_DETAIL_LENGTH,
+        },
+      ],
+    },
+  },
+  results: {
+    type: 'results',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_LONG_TEXT,
+      },
+    ],
+    repeatable: {
+      key: 'items',
+      maxItems: MAX_RESULTS,
+      labelKey: 'website:fields.resultItems',
+      itemLabelKey: 'website:fields.resultItem',
+      itemFields: [
+        {
+          key: 'studentName',
+          kind: 'text',
+          labelKey: 'website:fields.studentName',
+        },
+        {
+          key: 'result',
+          kind: 'text',
+          labelKey: 'website:fields.resultValue',
+          localized: true,
+          maxLength: MAX_RESULT_VALUE_LENGTH,
+        },
+        {
+          key: 'detail',
+          kind: 'text',
+          labelKey: 'website:fields.resultDetail',
+          localized: true,
+          maxLength: MAX_SHORT_TEXT,
+        },
+        {
+          key: 'photo',
+          kind: 'image',
+          labelKey: 'website:fields.studentPhoto',
+        },
+        {
+          key: 'photoAlt',
+          kind: 'text',
+          labelKey: 'website:fields.studentPhotoAlt',
+          localized: true,
+          maxLength: MAX_SHORT_TEXT,
+        },
+        { key: 'top', kind: 'boolean', labelKey: 'website:fields.resultTop' },
+      ],
+    },
   },
 };

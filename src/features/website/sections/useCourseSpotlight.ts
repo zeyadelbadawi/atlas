@@ -6,8 +6,16 @@
  * course that is missing, unpublished or private resolves to `course:
  * null`, which the renderers turn into "hidden on the public site".
  */
-import { usePublicCourse, usePublicCourseCurriculum, usePublicCourses } from '@hooks';
-import type { Course, CourseSpotlightSectionConfig, PublicCourseCurriculumSection } from '@types';
+import {
+  usePublicCourse,
+  usePublicCourseCurriculum,
+  usePublicCourses,
+} from '@hooks';
+import type {
+  Course,
+  CourseSpotlightSectionConfig,
+  PublicCourseCurriculumSection,
+} from '@types';
 import {
   MAX_SPOTLIGHT_MODULES,
   MIN_SPOTLIGHT_MODULES,

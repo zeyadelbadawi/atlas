@@ -56,11 +56,15 @@ export const SECTION_TYPE_ORDER: readonly SectionType[] = [
   'featureSplit',
   'courseSpotlight',
   'steps',
+  'schedule',
   'testimonials',
+  'results',
+  'logos',
   'instructors',
   'faq',
   'gallery',
   'contact',
+  'map',
   'cta',
 ];
 
@@ -174,6 +178,34 @@ export const MAX_STATISTICS_TITLE_LENGTH = 80;
 export const MAX_STATISTIC_LABEL_LENGTH = 40;
 /** A statistic's authored value ("500+", "٥٠٠+"). */
 export const MAX_STATISTIC_VALUE_LENGTH = 20;
+
+/**
+ * CMS phase 3d (batch B) limits — the backend's `website.constants.ts`
+ * values exactly (the parity cases prove both schemas agree).
+ *
+ * | Field                          | Limit |
+ * | ------------------------------ | ----- |
+ * | logos per section              | 12    |
+ * | map address (multi-line)       | 300   |
+ * | map note                       | 140   |
+ * | map query (address or lat,lng) | 200   |
+ * | schedule rows                  | 30    |
+ * | schedule row title             | 80    |
+ * | schedule teacher / location    | 60    |
+ * | results per section            | 24    |
+ * | a result ("98%", "الأول …")    | 40    |
+ */
+export const MAX_LOGOS = 12;
+export const MAX_MAP_ADDRESS_LENGTH = 300;
+export const MAX_MAP_NOTE_LENGTH = 140;
+export const MAX_MAP_QUERY_LENGTH = 200;
+export const MAX_SCHEDULE_ROWS = 30;
+export const MAX_SCHEDULE_ROW_TITLE_LENGTH = 80;
+export const MAX_SCHEDULE_ROW_DETAIL_LENGTH = 60;
+export const MAX_RESULTS = 24;
+export const MAX_RESULT_VALUE_LENGTH = 40;
+/** A 24-hour clock time, `HH:MM` (what `<input type="time">` gives). */
+export const SCHEDULE_TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
 
 /** The public Contact form's field limits — the backend's `SubmitContactMessageDto` bounds exactly. */
 export const CONTACT_NAME_MAX_LENGTH = 200;

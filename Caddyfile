@@ -64,15 +64,30 @@
 #   connect-src https:           direct-to-storage uploads and HLS segments,
 #                                same reason
 #   frame-src                    YouTube lessons (nocookie first), the website
-#                                builder's same-origin preview, and `blob:` for
+#                                builder's same-origin preview, `blob:` for
 #                                the certificate template's PDF preview (an
-#                                object URL of the server-rendered PDF)
+#                                object URL of the server-rendered PDF), and
+#                                the academy site's map section (CMS phase 3d):
+#                                `https://www.google.com/maps` is PATH-scoped,
+#                                not the whole google.com origin. The map frame
+#                                is inserted only when a visitor presses "Show
+#                                map", and its src is always
+#                                `https://www.google.com/maps?q=…&output=embed`.
+#                                Written without a trailing slash on purpose: a
+#                                source ending in `/` matches only paths UNDER
+#                                it, so `…/maps/` would block `/maps?q=…`
+#                                (verified in Chromium), while `…/maps` matches
+#                                exactly the path `/maps` (any query) and no
+#                                other path on www.google.com. Redirects Google
+#                                makes from there stay allowed by CSP's
+#                                redirect rule (paths are not re-checked after
+#                                a redirect; the origin still is).
 #   worker-src blob:             hls.js
 #   object-src 'none'            no plugins (Chromium's PDF viewer in a blob
 #                                frame is unaffected — verified)
 (csp) {
 	header Reporting-Endpoints `csp-endpoint="/api/v1/security/csp-reports"`
-	header Content-Security-Policy `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src 'self' blob: https://www.youtube-nocookie.com https://www.youtube.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; report-uri /api/v1/security/csp-reports; report-to csp-endpoint`
+	header Content-Security-Policy `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src 'self' blob: https://www.youtube-nocookie.com https://www.youtube.com https://www.google.com/maps; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; report-uri /api/v1/security/csp-reports; report-to csp-endpoint`
 }
 
 # DL-57 — the help center's CSP: static pages with one same-origin script,

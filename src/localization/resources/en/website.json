@@ -666,7 +666,7 @@
     "sampleBadge": "Sample",
     "markTestimonialReal": "This is a real testimonial",
     "sampleHelp": "Sample testimonials are placeholders to show the design. They're never shown on your live website. Replace the text with a real testimonial, then mark it as real.",
-    "sampleSectionHint": "Holds sample testimonials, which are hidden on your live website.",
+    "sampleSectionHint": "Holds sample content, which is hidden on your live website.",
     "publishPageAction": "Publish page",
     "publishPageConfirmTitle": "Publish this page?",
     "publishPageConfirmDescription": "Your changes to this page will be saved and replace what visitors see. Other pages and the site settings stay as they are published.",
@@ -694,7 +694,11 @@
     "spotlightCourseTitle": "Course",
     "spotlightCourseHelp": "Choose the course this section presents. Left on automatic, it shows your newest published course.",
     "spotlightCourseAutomatic": "Automatic: newest published course",
-    "spotlightCourseUnavailable": "The chosen course is no longer published and public, so this section is hidden on your website. Choose another course or switch to automatic."
+    "spotlightCourseUnavailable": "The chosen course is no longer published and public, so this section is hidden on your website. Choose another course or switch to automatic.",
+    "sampleHelpResults": "Sample results are placeholders to show the design. They're never shown on your live website. Replace them with your students' real results, then mark each one as real.",
+    "markResultReal": "This is a real result",
+    "sampleHelpSchedule": "Sample rows are placeholders to show the design. They're never shown on your live website. Enter your real days and times, then mark each row as real.",
+    "markScheduleRowReal": "This row is real"
   },
   "preview": {
     "title": "Preview",
@@ -728,8 +732,8 @@
     "unpublishConfirmDescription": "Visitors will no longer be able to reach your academy's public website. You can publish it again at any time.",
     "unpublishConfirmAction": "Unpublish",
     "unpublishedHint": "Your website is offline and not reachable by visitors.",
-    "sampleWarningTitle": "Publish with sample testimonials?",
-    "sampleWarningDescription": "Sample testimonials are never shown on your live website. Replace them with real ones, or mark them as real, to show them. You can publish now and review them later.",
+    "sampleWarningTitle": "Publish with sample content?",
+    "sampleWarningDescription": "Sample testimonials, results and timetable rows are never shown on your live website. Replace them with real ones, or mark them as real, to show them. You can publish now and review them later.",
     "sampleWarningAction": "Publish anyway",
     "upToDateHint": "This website is live and shows everything you have saved.",
     "publishChangesAction": "Publish changes",
@@ -794,6 +798,18 @@
     },
     "courseSpotlight": {
       "label": "Course in focus"
+    },
+    "logos": {
+      "label": "Logos and accreditations"
+    },
+    "map": {
+      "label": "Map and directions"
+    },
+    "schedule": {
+      "label": "Class schedule"
+    },
+    "results": {
+      "label": "Student results"
     }
   },
   "fields": {
@@ -892,7 +908,34 @@
     "linkTypeWhatsapp": "WhatsApp chat",
     "linkTypePhone": "Phone call",
     "linkTypeSignUp": "Sign-up page",
-    "linkTypeSignIn": "Sign-in page"
+    "linkTypeSignIn": "Sign-in page",
+    "logoItems": "Logos",
+    "logoItem": "Logo",
+    "logoImage": "Logo image",
+    "logoAlt": "Organisation name (read aloud by screen readers)",
+    "logoUrl": "Link",
+    "logoUrlHint": "Optional. A web address starting with https://. Leave it empty for no link.",
+    "mapAddress": "Address",
+    "mapNote": "Landmark note",
+    "mapQuery": "Map search",
+    "mapQueryHint": "Optional. An address or coordinates, such as 30.0444, 31.2357, for the map and directions. Leave it empty to use the address above.",
+    "scheduleRows": "Timetable rows",
+    "scheduleRow": "Row",
+    "scheduleDay": "Day",
+    "scheduleStart": "Start time",
+    "scheduleEnd": "End time",
+    "scheduleEndHint": "Must be later than the start time.",
+    "scheduleTitle": "Course or group",
+    "scheduleTeacher": "Teacher",
+    "scheduleLocation": "Place",
+    "resultItems": "Results",
+    "resultItem": "Result",
+    "studentName": "Student name",
+    "resultValue": "Result",
+    "resultDetail": "Grade, year or exam",
+    "studentPhoto": "Photo",
+    "studentPhotoAlt": "Photo description (read aloud by screen readers)",
+    "resultTop": "Top student"
   },
   "buttons": {
     "button": "Button",
@@ -1058,6 +1101,31 @@
       "priceLabel": "Price",
       "moreSections_one": "and {{count}} more section",
       "moreSections_other": "and {{count}} more sections"
+    },
+    "opensInNewTab": "(opens in a new tab)",
+    "logos": {
+      "previewEmpty": "Add logos in this section's settings. Visitors don't see the section until it has one."
+    },
+    "map": {
+      "directions": "Get directions",
+      "showMap": "Show map",
+      "mapNotice": "The map loads from Google Maps when you open it.",
+      "frameTitle": "Map: {{place}}",
+      "addressLabel": "Address",
+      "previewEmpty": "Add the address in this section's settings. Visitors don't see the section until it has one."
+    },
+    "schedule": {
+      "day": "Day",
+      "time": "Time",
+      "class": "Course or group",
+      "teacher": "Teacher",
+      "location": "Place",
+      "to": "to",
+      "previewEmpty": "Add a row with a day and time in this section's settings. Visitors don't see the section until it has one."
+    },
+    "results": {
+      "top": "Top student",
+      "previewEmpty": "Add your students' results in this section's settings. Visitors don't see the section until it has one."
     }
   },
   "common": {
@@ -1340,7 +1408,17 @@
     "count_one": "{{count}} sample testimonial",
     "count_other": "{{count}} sample testimonials",
     "review": "Review",
-    "reviewLabel": "Review the sample testimonials on {{page}}"
+    "reviewLabel": "Review the sample testimonials on {{page}}",
+    "results": {
+      "count_one": "{{count}} sample result",
+      "count_other": "{{count}} sample results",
+      "reviewLabel": "Review the sample results on {{page}}"
+    },
+    "schedule": {
+      "count_one": "{{count}} sample timetable row",
+      "count_other": "{{count}} sample timetable rows",
+      "reviewLabel": "Review the sample timetable rows on {{page}}"
+    }
   },
   "launchChecklist": {
     "title": "Launch checklist",
@@ -1354,10 +1432,10 @@
       "action": "Open Visual Identity"
     },
     "samples": {
-      "title": "Replace the sample testimonials",
-      "todo_one": "Your starter website has a sample testimonial. Samples appear only in previews: replace it with a real one, or mark it as real if it is.",
-      "todo_other": "Your starter website has sample testimonials. Samples appear only in previews: replace them with real ones, or mark them as real if they are.",
-      "done": "No sample testimonials left."
+      "title": "Replace the sample content",
+      "todo_one": "Your website has a sample item. Samples appear only in previews: replace it with a real one, or mark it as real if it is.",
+      "todo_other": "Your website has sample items, such as testimonials, results or timetable rows. Samples appear only in previews: replace them with real ones, or mark them as real if they are.",
+      "done": "No sample content left."
     },
     "publish": {
       "title": "Publish your website",
@@ -1960,7 +2038,11 @@
         "faq": "Answers to the questions visitors ask most.",
         "gallery": "A set of photos of your academy or classes.",
         "contact": "A form visitors can use to message you.",
-        "cta": "A closing band that asks visitors to act."
+        "cta": "A closing band that asks visitors to act.",
+        "logos": "Partner and accreditation logos in a calm grid.",
+        "map": "Your address, a directions link and a map visitors can open.",
+        "schedule": "Your weekly timetable, by day and time.",
+        "results": "Your top students and their results."
       }
     },
     "settings": {
@@ -2030,5 +2112,14 @@
       "publishHint": "Theme, menu, header and footer changes reach visitors when you publish the website. This page’s Publish button publishes this page only.",
       "themeSaveError": "Couldn’t change the theme. Try again."
     }
+  },
+  "days": {
+    "sat": "Saturday",
+    "sun": "Sunday",
+    "mon": "Monday",
+    "tue": "Tuesday",
+    "wed": "Wednesday",
+    "thu": "Thursday",
+    "fri": "Friday"
   }
 }

@@ -41,6 +41,12 @@ import { T1Faq } from './T1Faq';
 import { T1PageHeader, T1PageIntro } from './T1PageHeader';
 import { T1CourseCatalog } from './T1CourseCatalog';
 import { T1Contact, T1Gallery } from './t1-page-sections';
+import {
+  T1Logos,
+  T1Map,
+  T1Results,
+  T1Schedule,
+} from './t1-trust-visit-sections';
 import { T1CourseDetails } from './T1CourseDetails';
 import { T1ComingSoon, T1NotFound } from './T1SystemPages';
 import { MODERN_EDUCATION_ASSETS } from '../theme-assets/manifests/modern-education.manifest';
@@ -64,6 +70,11 @@ export const MODERN_EDUCATION_PACK: ThemePack = {
     courseCatalog: T1CourseCatalog,
     contact: T1Contact,
     gallery: T1Gallery,
+    // CMS phase 3d.
+    logos: T1Logos,
+    map: T1Map,
+    schedule: T1Schedule,
+    results: T1Results,
   },
   pages: {
     PageIntro: T1PageIntro,

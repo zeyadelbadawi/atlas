@@ -13,6 +13,10 @@
 import {
   Award,
   BookOpenCheck,
+  CalendarClock,
+  Handshake,
+  MapPin,
+  Trophy,
   Columns2,
   Heading1,
   ListOrdered,
@@ -127,7 +131,100 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadataEntry> = {
     labelKey: 'website:sections.courseSpotlight.label',
     icon: BookOpenCheck,
   },
+  logos: {
+    type: 'logos',
+    labelKey: 'website:sections.logos.label',
+    icon: Handshake,
+  },
+  map: { type: 'map', labelKey: 'website:sections.map.label', icon: MapPin },
+  schedule: {
+    type: 'schedule',
+    labelKey: 'website:sections.schedule.label',
+    icon: CalendarClock,
+  },
+  results: {
+    type: 'results',
+    labelKey: 'website:sections.results.label',
+    icon: Trophy,
+  },
 };
+
+/**
+ * CMS phase 3d — starter rows and results. They are samples (`sample:
+ * true`): shown labelled "Sample" in previews, never on the public site
+ * (the API strips them and the renderers filter them), until the Owner
+ * replaces them or marks each one real. A starter timetable or "top
+ * student" must never pass for a real one.
+ */
+const SAMPLE_SCHEDULE_ROWS: SectionConfigMap['schedule']['items'] = [
+  {
+    id: 'sample-row-1',
+    sample: true,
+    day: 'sat',
+    start: '16:00',
+    end: '17:30',
+    title: {
+      en: 'Mathematics — Grade 9',
+      ar: 'الرياضيات — الصف الثالث الإعدادي',
+    },
+    teacher: { en: 'Mr. Ahmed', ar: 'أ. أحمد' },
+    location: { en: 'Hall 1', ar: 'القاعة ١' },
+  },
+  {
+    id: 'sample-row-2',
+    sample: true,
+    day: 'mon',
+    start: '18:00',
+    end: '19:30',
+    title: {
+      en: 'Physics — Secondary 3',
+      ar: 'الفيزياء — الصف الثالث الثانوي',
+    },
+    teacher: { en: 'Ms. Salma', ar: 'أ. سلمى' },
+    location: { en: 'Online', ar: 'عبر الإنترنت' },
+  },
+  {
+    id: 'sample-row-3',
+    sample: true,
+    day: 'wed',
+    start: '16:00',
+    end: '17:00',
+    title: {
+      en: 'Arabic — Grade 6',
+      ar: 'اللغة العربية — الصف السادس الابتدائي',
+    },
+    teacher: { en: 'Mr. Ahmed', ar: 'أ. أحمد' },
+    location: { en: 'Hall 2', ar: 'القاعة ٢' },
+  },
+];
+
+const SAMPLE_RESULTS: SectionConfigMap['results']['items'] = [
+  {
+    id: 'sample-result-1',
+    sample: true,
+    top: true,
+    studentName: 'Mariam A.',
+    result: { en: '99.2%', ar: '٩٩٫٢٪' },
+    detail: {
+      en: 'Secondary school certificate, science',
+      ar: 'الثانوية العامة، شعبة علمي علوم',
+    },
+  },
+  {
+    id: 'sample-result-2',
+    sample: true,
+    studentName: 'Omar K.',
+    result: { en: 'First in the governorate', ar: 'الأول على المحافظة' },
+    detail: { en: 'Preparatory certificate', ar: 'الشهادة الإعدادية' },
+  },
+  {
+    id: 'sample-result-3',
+    sample: true,
+    studentName: 'Youssef H.',
+    result: { en: '98%', ar: '٩٨٪' },
+    detail: { en: 'Grade 6 final exams', ar: 'امتحانات الصف السادس الابتدائي' },
+  },
+];
 
 /** Every registered section type's metadata, in the Page Composer's "Add section" display order. */
 export function listSectionMetadata(
@@ -183,6 +280,34 @@ export function getDefaultSectionConfig<TType extends SectionType>(
       showOutcomes: true,
       showSyllabus: true,
       maxModules: DEFAULT_SPOTLIGHT_MODULES,
+    },
+    logos: {
+      title: { en: 'Accreditations and partners', ar: 'الاعتمادات والشركاء' },
+      description: {
+        en: 'The organisations that accredit us and work with us.',
+        ar: 'الجهات التي تعتمدنا ونتعاون معها.',
+      },
+      items: [],
+    },
+    map: {
+      title: { en: 'Visit us', ar: 'زورونا' },
+      address: EMPTY_LOCALIZED_TEXT,
+    },
+    schedule: {
+      title: { en: 'Weekly class schedule', ar: 'جدول الحصص الأسبوعي' },
+      description: {
+        en: 'Find your group’s day and time.',
+        ar: 'اعرف يوم مجموعتك وموعدها.',
+      },
+      items: SAMPLE_SCHEDULE_ROWS,
+    },
+    results: {
+      title: { en: 'Our top students', ar: 'أوائلنا' },
+      description: {
+        en: 'Results our students achieved this year.',
+        ar: 'نتائج حققها طلابنا هذا العام.',
+      },
+      items: SAMPLE_RESULTS,
     },
   };
 

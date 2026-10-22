@@ -46,6 +46,11 @@ export const SECTION_TYPES = [
   'featureSplit',
   // Theme 4 plan §6 (Reports/THEME_4_RIWAQ_PLAN.md) — shared by every theme, with a base renderer.
   'courseSpotlight',
+  // CMS phase 3d (batch B) — shared by every theme, each with a renderer.
+  'logos',
+  'map',
+  'schedule',
+  'results',
 ] as const;
 
 export type SectionType = (typeof SECTION_TYPES)[number];
@@ -427,6 +432,99 @@ export interface CourseSpotlightSectionConfig {
   readonly cta?: WebsiteCta;
 }
 
+/** CMS phase 3d — one partner / accreditation logo. */
+export interface LogoItem {
+  readonly id: string;
+  /** Required — any image value (`WebsiteImageField`, media library). */
+  readonly image: string;
+  /** The partner's name, announced by screen readers (the link's name when linked). */
+  readonly alt: LocalizedText;
+  /** Optional web address the logo links to (new tab). Empty = no link. */
+  readonly url?: string;
+}
+
+/** CMS phase 3d — up to 12 logos in a calm wrapping grid (never a marquee). */
+export interface LogosSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly items: readonly LogoItem[];
+}
+
+/**
+ * CMS phase 3d — where the academy is: the address card, a "Get directions"
+ * link and a map that loads only when the visitor asks for it.
+ */
+export interface MapSectionConfig {
+  readonly title: LocalizedText;
+  /** Multi-line; each line break is kept. */
+  readonly address: LocalizedText;
+  /** A landmark hint ("Next to Dokki metro"). */
+  readonly note?: LocalizedText;
+  /** An address or `lat,lng` for the map and directions; empty → the address. Never an `href` itself. */
+  readonly query?: string;
+}
+
+/** The days of a schedule row, in the order an Egyptian week runs (Saturday first). */
+export const SCHEDULE_DAYS = [
+  'sat',
+  'sun',
+  'mon',
+  'tue',
+  'wed',
+  'thu',
+  'fri',
+] as const;
+
+export type ScheduleDay = (typeof SCHEDULE_DAYS)[number];
+
+export interface ScheduleRow {
+  readonly id: string;
+  readonly day: ScheduleDay;
+  /** `HH:MM`, 24-hour; shown in the visitor's locale. */
+  readonly start: string;
+  readonly end: string;
+  /** The course or group meeting at that time. */
+  readonly title: LocalizedText;
+  readonly teacher?: LocalizedText;
+  readonly location?: LocalizedText;
+  /** Starter row for preview only — never public, labelled "Sample" in previews. */
+  readonly sample?: boolean;
+}
+
+/** CMS phase 3d — a weekly timetable (≤ 30 rows), shown by day. */
+export interface ScheduleSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly items: readonly ScheduleRow[];
+}
+
+export interface ResultItem {
+  readonly id: string;
+  /** A proper name — not translated (like `TestimonialItem.authorName`). */
+  readonly studentName: string;
+  /** The achievement ("98%", "الأول على الجمهورية"). */
+  readonly result: LocalizedText;
+  /** Grade, year or exam. */
+  readonly detail?: LocalizedText;
+  readonly photo?: string;
+  readonly photoAlt?: LocalizedText;
+  /** A top achiever: drawn with a labelled badge. */
+  readonly top?: boolean;
+  /**
+   * Starter content for preview only — exactly `TestimonialItem.sample`:
+   * never public (the API strips it, the renderer filters it), labelled
+   * "Sample" in previews, cleared only by the Owner's "This is a real result".
+   */
+  readonly sample?: boolean;
+}
+
+/** CMS phase 3d — student results and achievements ("أوائل"), ≤ 24. */
+export interface ResultsSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly items: readonly ResultItem[];
+}
+
 /** Every section's config, keyed by its `SectionType`. */
 export interface SectionConfigMap {
   readonly hero: HeroSectionConfig;
@@ -446,6 +544,10 @@ export interface SectionConfigMap {
   readonly steps: StepsSectionConfig;
   readonly featureSplit: FeatureSplitSectionConfig;
   readonly courseSpotlight: CourseSpotlightSectionConfig;
+  readonly logos: LogosSectionConfig;
+  readonly map: MapSectionConfig;
+  readonly schedule: ScheduleSectionConfig;
+  readonly results: ResultsSectionConfig;
 }
 
 /**
