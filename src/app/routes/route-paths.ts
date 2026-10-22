@@ -432,6 +432,9 @@ export const DASHBOARD_ROUTES = {
   websiteContent: '/dashboard/academy/:academyId/website/content',
   websitePages: '/dashboard/academy/:academyId/website/pages',
   websitePageEditor: '/dashboard/academy/:academyId/website/pages/:pageId',
+  /** The visual editor: full screen, without the dashboard's navigation (`DashboardLayout`). */
+  websiteVisualEditor:
+    '/dashboard/academy/:academyId/website/pages/:pageId/visual',
   websitePreview: '/dashboard/academy/:academyId/website/preview',
   /** Messages visitors sent through the website's Contact form — Owner/Manager inbox. */
   websiteMessages: '/dashboard/academy/:academyId/website/messages',

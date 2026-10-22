@@ -89,8 +89,11 @@ interface Layout {
 
 /**
  * Measured in the document the site is drawn in (the page, or the preview
- * frame), once its fonts and images have loaded. Network idleness is no
- * signal here: the dashboard polls.
+ * frame), once it has settled: fonts and images loaded and two readings in
+ * a row the same. `document.fonts.status` can read "loaded" before a font
+ * the page uses has even started loading, so one reading can catch text
+ * still set in the fallback font (wider, wrapping onto more lines).
+ * Network idleness is no signal here: the dashboard polls.
  */
 async function measure(target: Page | Frame): Promise<Layout> {
   await target.waitForFunction(
@@ -102,7 +105,19 @@ async function measure(target: Page | Frame): Promise<Layout> {
     undefined,
     { timeout: 30_000 }
   );
-  await target.waitForTimeout(500);
+  let previous = '';
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    await target.waitForTimeout(400);
+    const reading = await read(target);
+    const key = JSON.stringify(reading);
+    if (key === previous) return reading;
+    previous = key;
+  }
+  return JSON.parse(previous) as Layout;
+}
+
+async function read(target: Page | Frame): Promise<Layout> {
+  await target.evaluate(() => document.fonts.ready.then(() => undefined));
   return target.evaluate(() => {
     const visible = (element: Element | null) =>
       !!element && element.getBoundingClientRect().height > 0;

@@ -23,10 +23,16 @@
  * save's path-level violations reach the same messages: the tree marker
  * and the section editor's field errors.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, useSearchParams } from 'react-router-dom';
-import { Loader2, Save, Search, UploadCloud } from 'lucide-react';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+import {
+  Loader2,
+  MousePointerClick,
+  Save,
+  Search,
+  UploadCloud,
+} from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { Button } from '@/components/ui/button';
@@ -43,11 +49,8 @@ import { useConfirmDialog } from '@app/providers';
 import { useDisclosure, useUnsavedChanges, usePermissions } from '@hooks';
 import { useAcademy } from '@features/academy';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import type { ApiError } from '@api';
-import type { BreadcrumbItem, WebsitePage } from '@types';
+import type { BreadcrumbItem } from '@types';
 import {
-  usePublishWebsitePage,
-  useUpdateWebsitePage,
   useWebsiteConfiguration,
   useWebsitePage,
   useWebsitePages,
@@ -77,41 +80,31 @@ import {
   PUBLIC_WEBSITE_LOCALE_LABELS,
   type PublicWebsiteLocale,
 } from '../constants/locale.constants';
-import { SECTION_METADATA, getDefaultSectionConfig } from '../sections';
+import { SECTION_METADATA } from '../sections';
 import { useEditingPresence } from '../hooks/useEditingPresence';
 import { EditingPresenceBanner } from '../components/EditingPresenceBanner';
 import { SaveConflictDialog } from '../components/SaveConflictDialog';
+import { readSaveConflict } from '../utils/save-conflict.utils';
+import { usePageDraft } from '../hooks/usePageDraft';
 import {
-  readSaveConflict,
-  type SaveConflict,
-} from '../utils/save-conflict.utils';
-import { stableJsonKey } from '../utils/stable-json.utils';
+  duplicateSection,
+  insertSection,
+  moveSection,
+  removeSection,
+  replaceSectionConfig,
+  toggleSectionEnabled,
+  toggleSectionVisibility,
+} from '../utils/section-list.utils';
 import {
   isContentValidationFailure,
   rejectedSections,
 } from '../utils/save-validation.utils';
-import {
-  isOverLimitIssue,
-  sectionIssuesFromViolations,
-  sectionNeedsShortening,
-  type SectionContentIssue,
-} from '../schemas/section-content-issues';
-import { DEFAULT_RESPONSIVE_VISIBILITY } from '@types';
+import { isOverLimitIssue } from '../schemas/section-content-issues';
 import type {
   ResponsiveVisibility,
   SectionInstance,
   SectionType,
 } from '@types';
-
-/** Which action a conflict interrupted, so "keep my changes" can finish it. */
-type ConflictIntent = 'save' | 'publish';
-
-interface PendingConflict {
-  readonly value: SaveConflict;
-  readonly intent: ConflictIntent;
-  /** False when there is no local work left to re-apply. */
-  readonly canKeepMine: boolean;
-}
 
 /**
  * B0-WEB-02 — every bilingual field on this page requires the site's main
@@ -146,11 +139,8 @@ function WebsitePageEditor(): JSX.Element {
     query: { pagination: { page: 1, pageSize: 50 } },
   });
   const pageQuery = useWebsitePage(academyId ?? '', pageId ?? '');
-  const updatePage = useUpdateWebsitePage();
-  const publishPage = usePublishWebsitePage();
   const canPublish = hasPermission('academy.website.publish');
 
-  const [draftSections, setDraftSections] = useState<SectionInstance[]>([]);
   // `?section=<id>` opens that section's editor once the page loads (the
   // launch checklist and the publish warning link straight to a section).
   const [searchParams] = useSearchParams();
@@ -182,149 +172,40 @@ function WebsitePageEditor(): JSX.Element {
       names colleagues with the same page open, so a collision is avoided
       rather than resolved. Only announced when the user can actually
       manage the page — a read-only viewer is not editing.
-    - The conflict below is the load-bearing half: the save carries the
-      version it was based on, and the server refuses a stale one instead
-      of overwriting whoever committed in between.
+    - The conflict (`usePageDraft`) is the load-bearing half: the save
+      carries the version it was based on, and the server refuses a stale
+      one instead of overwriting whoever committed in between.
   */
   const participants = useEditingPresence({
     academyId: academyId ?? '',
     pageId: pageId ?? '',
     enabled: canManage,
   });
-  const [conflict, setConflict] = useState<PendingConflict | null>(null);
 
-  /*
-    THE DRAFT AND THE SERVER COPY IT WAS STARTED FROM.
-
-    The draft used to be overwritten by every refetch of the page — after
-    an SEO save, a site publish, a window refocus — silently discarding
-    unsaved edits. Now a refetch only replaces the draft when there is
-    nothing local to lose. `baseRef` is the server copy the draft is based
-    on: its version is what a save is checked against. When the server
-    copy moves under unsaved edits, the version is only moved along if the
-    sections did not change (your own SEO save, say); if a colleague
-    changed the sections, the draft keeps its old base so the save
-    surfaces the conflict instead of overwriting their work.
-  */
-  const draftRef = useRef<SectionInstance[]>(draftSections);
-  const baseRef = useRef<{ version: number; key: string } | null>(null);
-  useEffect(() => {
-    draftRef.current = draftSections;
-  }, [draftSections]);
-
-  const adoptServerPage = useCallback((data: WebsitePage) => {
-    const sections = data.sections as SectionInstance[];
-    baseRef.current = { version: data.version, key: stableJsonKey(sections) };
-    draftRef.current = sections;
-    setDraftSections(sections);
-  }, []);
-
-  useEffect(() => {
-    const data = pageQuery.data;
-    if (!data) return;
-    const base = baseRef.current;
-    if (!base || stableJsonKey(draftRef.current) === base.key) {
-      adoptServerPage(data);
-    } else if (stableJsonKey(data.sections) === base.key) {
-      baseRef.current = { version: data.version, key: base.key };
-    }
-  }, [pageQuery.data, adoptServerPage]);
-
-  const serverKey = useMemo(
-    () => (pageQuery.data ? stableJsonKey(pageQuery.data.sections) : null),
-    [pageQuery.data]
-  );
-  const draftKey = useMemo(() => stableJsonKey(draftSections), [draftSections]);
-  const isDirty = serverKey !== null && draftKey !== serverKey;
-
-  // What the API refused on the last save, per section id (see the doc
-  // comment's "Content limits"); cleared by a successful save, and per
-  // section when that section is edited.
-  const [serverIssuesById, setServerIssuesById] = useState<
-    Readonly<Record<string, readonly SectionContentIssue[]>>
-  >({});
-  const needsShorteningIds = useMemo(
-    () =>
-      new Set(
-        draftSections
-          .filter(
-            (section) =>
-              sectionNeedsShortening(section) ||
-              (serverIssuesById[section.id] ?? []).some(isOverLimitIssue)
-          )
-          .map((section) => section.id)
-      ),
-    [draftSections, serverIssuesById]
-  );
-  const isBlockedByLimits = needsShorteningIds.size > 0;
-
-  // One save or publish at a time, whichever button started it.
-  const busyRef = useRef(false);
-
-  /**
-   * Saves the draft against the version it was based on. Resolves the
-   * saved page, or `null` when the save failed (the error or the conflict
-   * dialog is already showing).
-   *
-   * `overrideVersion` is supplied only by "keep my changes" after a
-   * conflict: it re-bases this editor's work on the version the server
-   * just reported, so the colleague's committed save is built on rather
-   * than erased. It is never a way to skip the check.
-   */
-  const saveSections = async (
-    intent: ConflictIntent,
-    overrideVersion?: number
-  ): Promise<WebsitePage | null> => {
-    if (!academyId || !pageId) return null;
-    // The API would refuse the whole page; the notice says which sections.
-    if (isBlockedByLimits) return null;
-    const sections = draftRef.current;
-    const sentKey = stableJsonKey(sections);
-    try {
-      const saved = await updatePage.mutateAsync({
-        academyId,
-        pageId,
-        payload: {
-          sections,
-          expectedVersion: overrideVersion ?? baseRef.current?.version,
-        },
-      });
-      setConflict(null);
-      setServerIssuesById({});
-      if (stableJsonKey(draftRef.current) === sentKey) {
-        adoptServerPage(saved);
-      } else {
-        // Edited again while the save was in flight: keep those edits,
-        // based on the version that was just saved.
-        baseRef.current = {
-          version: saved.version,
-          key: stableJsonKey(saved.sections),
-        };
-      }
-      return saved;
-    } catch (error) {
-      // A 409 that is NOT a stale version (a duplicate slug, say) reads
-      // as `null` here and falls through to ordinary error handling —
-      // see `readSaveConflict`.
-      const stale = readSaveConflict(error as ApiError);
-      setConflict(stale ? { value: stale, intent, canKeepMine: true } : null);
-      const violations = (error as ApiError).violations;
-      setServerIssuesById(
-        Object.fromEntries(
-          sections
-            .map(
-              (section, index) =>
-                [
-                  section.id,
-                  sectionIssuesFromViolations(violations, index),
-                ] as const
-            )
-            .filter(([, issues]) => issues.length > 0)
-        )
-      );
-      return null;
-    }
-  };
+  const {
+    draftSections,
+    setDraftSections,
+    isDirty,
+    serverIssuesById,
+    clearServerIssues,
+    needsShorteningIds,
+    isBlockedByLimits,
+    conflict,
+    setConflict,
+    saveSections,
+    saveDraft,
+    publishThisPage,
+    reloadLatest,
+    keepMine,
+    isWorking,
+    updatePage,
+    publishPage,
+  } = usePageDraft({
+    academyId,
+    pageId,
+    page: pageQuery.data,
+    refetchPage: pageQuery.refetch,
+  });
 
   useUnsavedChanges({
     isDirty,
@@ -434,51 +315,21 @@ function WebsitePageEditor(): JSX.Element {
   ];
 
   const handleToggleEnabled = (id: string) =>
-    setDraftSections((prev) =>
-      prev.map((section) =>
-        section.id === id ? { ...section, enabled: !section.enabled } : section
-      )
-    );
+    setDraftSections((prev) => toggleSectionEnabled(prev, id));
 
   const handleToggleVisibility = (
     id: string,
     breakpointKey: keyof ResponsiveVisibility
   ) =>
     setDraftSections((prev) =>
-      prev.map((section) =>
-        section.id === id
-          ? {
-              ...section,
-              visibility: {
-                ...section.visibility,
-                [breakpointKey]: !section.visibility[breakpointKey],
-              },
-            }
-          : section
-      )
+      toggleSectionVisibility(prev, id, breakpointKey)
     );
 
   const handleMove = (index: number, direction: -1 | 1) =>
-    setDraftSections((prev) => {
-      const targetIndex = index + direction;
-      if (targetIndex < 0 || targetIndex >= prev.length) return prev;
-      const next = [...prev];
-      [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
-      return next;
-    });
+    setDraftSections((prev) => moveSection(prev, index, direction));
 
   const handleDuplicate = (id: string) =>
-    setDraftSections((prev) => {
-      const index = prev.findIndex((section) => section.id === id);
-      if (index === -1) return prev;
-      const clone: SectionInstance = {
-        ...prev[index],
-        id: crypto.randomUUID(),
-      };
-      const next = [...prev];
-      next.splice(index + 1, 0, clone);
-      return next;
-    });
+    setDraftSections((prev) => duplicateSection(prev, id).sections);
 
   const handleDelete = async (id: string) => {
     const confirmed = await confirm({
@@ -488,86 +339,31 @@ function WebsitePageEditor(): JSX.Element {
       intent: 'destructive',
     });
     if (!confirmed) return;
-    setDraftSections((prev) => prev.filter((section) => section.id !== id));
+    setDraftSections((prev) => removeSection(prev, id));
   };
 
   const handleAdd = (type: SectionType) => {
-    const instance = {
-      id: crypto.randomUUID(),
-      type,
-      enabled: true,
-      visibility: DEFAULT_RESPONSIVE_VISIBILITY,
-      config: getDefaultSectionConfig(type),
-    } as SectionInstance;
-    setDraftSections((prev) => [...prev, instance]);
-    setSelectedId(instance.id);
+    const added = insertSection(draftSections, type);
+    setDraftSections(added.sections);
+    setSelectedId(added.id);
   };
 
   const handleSaveSectionConfig = (config: SectionInstance['config']) => {
     if (selectedId) {
-      setServerIssuesById((prev) => {
-        const next = { ...prev };
-        delete next[selectedId];
-        return next;
-      });
+      clearServerIssues(selectedId);
+      setDraftSections((prev) =>
+        replaceSectionConfig(prev, selectedId, config)
+      );
     }
-    setDraftSections((prev) =>
-      prev.map((section) =>
-        section.id === selectedId
-          ? ({ ...section, config } as SectionInstance)
-          : section
-      )
-    );
     setSelectedId(undefined);
   };
 
   const handleSaveDraft = async (overrideVersion?: number) => {
-    if (busyRef.current) return;
-    busyRef.current = true;
-    try {
-      await saveSections('save', overrideVersion);
-    } finally {
-      busyRef.current = false;
-    }
-  };
-
-  /**
-   * Saves (when there is anything to save), then publishes THIS page,
-   * pinned to the version just saved — or, with nothing to save, to the
-   * version on screen. If anyone saved the page in between, the publish is
-   * refused and the conflict dialog says who; nothing unseen goes live.
-   */
-  const publishThisPage = async (overrideVersion?: number) => {
-    if (!academyId || !pageId || busyRef.current) return;
-    busyRef.current = true;
-    try {
-      let version = baseRef.current?.version;
-      if (isDirty || overrideVersion !== undefined) {
-        const saved = await saveSections('publish', overrideVersion);
-        if (!saved) return;
-        version = saved.version;
-      }
-      try {
-        await publishPage.mutateAsync({
-          academyId,
-          pageId,
-          expectedVersion: version,
-        });
-      } catch (error) {
-        const stale = readSaveConflict(error as ApiError);
-        // A colleague's save landed after the copy being published: there
-        // is nothing of this editor's left to re-apply, so the only
-        // honest choice is to look at their version first.
-        if (stale)
-          setConflict({ value: stale, intent: 'publish', canKeepMine: false });
-      }
-    } finally {
-      busyRef.current = false;
-    }
+    await saveDraft(overrideVersion);
   };
 
   const handlePublishPage = async () => {
-    if (busyRef.current) return;
+    if (isWorking()) return;
     const confirmed = await confirm({
       titleKey: 'website:editor.publishPageConfirmTitle',
       descriptionKey: 'website:editor.publishPageConfirmDescription',
@@ -579,19 +375,11 @@ function WebsitePageEditor(): JSX.Element {
 
   /** Throws this editor's local work away and shows the server's copy. */
   const handleReloadLatest = async () => {
-    setConflict(null);
-    const refreshed = await pageQuery.refetch();
-    if (refreshed.data) adoptServerPage(refreshed.data);
+    await reloadLatest();
   };
 
   /** Re-applies this editor's work ON TOP of the newer version — never over it. */
-  const handleKeepMine = () => {
-    if (!conflict?.canKeepMine) return;
-    const { value, intent } = conflict;
-    setConflict(null);
-    if (intent === 'publish') void publishThisPage(value.currentVersion);
-    else void handleSaveDraft(value.currentVersion);
-  };
+  const handleKeepMine = keepMine;
 
   const isSiteLive = configuration.status === 'published';
   const showPublishPage = canPublish && isSiteLive;
@@ -611,6 +399,24 @@ function WebsitePageEditor(): JSX.Element {
           actions={
             canManage ? (
               <div className="flex flex-wrap items-center gap-2">
+                {page.coreType !== 'courseDetails' ? (
+                  <Button asChild variant="secondary">
+                    <Link
+                      to={buildPath(DASHBOARD_ROUTES.websiteVisualEditor, {
+                        academyId,
+                        pageId,
+                      })}
+                      title={t('website:visualEditor.openHint')}
+                    >
+                      <MousePointerClick
+                        className="size-4"
+                        strokeWidth={2}
+                        aria-hidden
+                      />
+                      {t('website:visualEditor.open')}
+                    </Link>
+                  </Button>
+                ) : null}
                 <Select
                   value={previewLocale}
                   onValueChange={(value) =>

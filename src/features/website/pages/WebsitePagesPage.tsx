@@ -8,10 +8,10 @@
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, Lock, Plus, Trash2 } from 'lucide-react';
+import { Loader2, Lock, MousePointerClick, Plus, Trash2 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
@@ -274,6 +274,22 @@ export default function WebsitePagesPage(): JSX.Element {
               </button>
 
               <div className="flex items-center gap-3">
+                {page.coreType !== 'courseDetails' ? (
+                  <Button asChild variant="outline" size="sm" className="h-9">
+                    <Link
+                      to={buildPath(DASHBOARD_ROUTES.websiteVisualEditor, {
+                        academyId,
+                        pageId: page.id,
+                      })}
+                      aria-label={`${t('website:visualEditor.open')}: ${page.title}`}
+                    >
+                      <MousePointerClick className="size-4" aria-hidden />
+                      <span className="hidden sm:inline">
+                        {t('website:visualEditor.open')}
+                      </span>
+                    </Link>
+                  </Button>
+                ) : null}
                 {page.pageType === 'core' ? (
                   <StatusBadge
                     labelKey="website:pages.coreBadge"

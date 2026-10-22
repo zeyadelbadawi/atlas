@@ -65,6 +65,8 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@utils';
 import {
   PREVIEW_SECTION_ATTRIBUTE,
+  PREVIEW_SELECTED_ATTRIBUTE,
+  PreviewSelectionProvider,
   WebsitePreviewProvider,
 } from '../renderer/WebsitePreviewContext';
 
@@ -93,6 +95,9 @@ const BREAKPOINT_ICON: Record<PreviewBreakpoint, typeof Laptop> = {
   tablet: Tablet,
   mobile: Smartphone,
 };
+
+/** A filled screen is never shorter than this (CSS px of the device). */
+const MIN_FILL_HEIGHT = 320;
 
 /** Below Tailwind's `md`, the admin is on a phone: open the preview on the phone frame. */
 const PHONE_QUERY = '(max-width: 767px)';
@@ -211,6 +216,32 @@ export function sectionScrollTop(
 const FOCUS_SETTLE_MS = 4000;
 
 /**
+ * The visual editor's affordances inside the frame: a section shows a
+ * dashed outline under the pointer and a solid one when selected, drawn on
+ * its first box (its anchor has none) and inset, so nothing moves. The
+ * white inner line keeps the blue visible on dark sections too.
+ */
+const SELECTION_CSS = `
+[${PREVIEW_SECTION_ATTRIBUTE}] { cursor: pointer; }
+[${PREVIEW_SECTION_ATTRIBUTE}]:hover > :not([data-section-visibility]),
+[${PREVIEW_SECTION_ATTRIBUTE}]:hover > [data-section-visibility] > * {
+  outline: 2px dashed rgb(37 99 235 / 0.65);
+  outline-offset: -2px;
+}
+[${PREVIEW_SELECTED_ATTRIBUTE}] > :not([data-section-visibility]),
+[${PREVIEW_SELECTED_ATTRIBUTE}] > [data-section-visibility] > *,
+[${PREVIEW_SELECTED_ATTRIBUTE}]:hover > :not([data-section-visibility]),
+[${PREVIEW_SELECTED_ATTRIBUTE}]:hover > [data-section-visibility] > * {
+  outline: 2px solid rgb(37 99 235);
+  outline-offset: -2px;
+  box-shadow: inset 0 0 0 3px rgb(255 255 255 / 0.9);
+}
+@media (prefers-reduced-motion: no-preference) {
+  [${PREVIEW_SECTION_ATTRIBUTE}] > * { transition: outline-color 150ms ease; }
+}
+`;
+
+/**
  * Mounts an `<iframe>` of the device's real size, keeps the host
  * document's stylesheets mirrored into it, then portals `children` into
  * its `<body>`.
@@ -222,6 +253,9 @@ function IframeViewport({
   lang,
   title,
   focusSectionId,
+  focusRequest,
+  selectedSectionId,
+  onSectionSelect,
   children,
 }: {
   readonly width: number;
@@ -230,6 +264,9 @@ function IframeViewport({
   readonly lang: string;
   readonly title: string;
   readonly focusSectionId?: string;
+  readonly focusRequest?: number;
+  readonly selectedSectionId?: string;
+  readonly onSectionSelect?: (sectionId: string) => void;
   readonly children: ReactNode;
 }): JSX.Element {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -346,7 +383,30 @@ function IframeViewport({
         doc.removeEventListener(type, settle);
       }
     };
-  }, [mountNode, focusSectionId]);
+  }, [mountNode, focusSectionId, focusRequest]);
+
+  // Selecting a section on the canvas (the visual editor). A click inside
+  // a section selects it and does nothing else: its buttons and links are
+  // the site's, not the editor's. Caught on the frame's document in the
+  // capture phase, before the site's own handlers (on the body) see it.
+  const onSelectRef = useRef(onSectionSelect);
+  onSelectRef.current = onSectionSelect;
+  const selectable = !!onSectionSelect;
+  useEffect(() => {
+    if (!mountNode || !selectable) return undefined;
+    const doc = mountNode.ownerDocument;
+    const onClick = (event: MouseEvent): void => {
+      const target = event.target as Element | null;
+      const anchor = target?.closest?.(`[${PREVIEW_SECTION_ATTRIBUTE}]`);
+      const id = anchor?.getAttribute(PREVIEW_SECTION_ATTRIBUTE);
+      if (!id) return;
+      event.preventDefault();
+      event.stopPropagation();
+      onSelectRef.current?.(id);
+    };
+    doc.addEventListener('click', onClick, true);
+    return () => doc.removeEventListener('click', onClick, true);
+  }, [mountNode, selectable]);
 
   return (
     <>
@@ -358,7 +418,12 @@ function IframeViewport({
       />
       {mountNode
         ? createPortal(
-            <WebsitePreviewProvider value>{children}</WebsitePreviewProvider>,
+            <WebsitePreviewProvider value>
+              <PreviewSelectionProvider value={selectedSectionId}>
+                {selectable ? <style>{SELECTION_CSS}</style> : null}
+                {children}
+              </PreviewSelectionProvider>
+            </WebsitePreviewProvider>,
             mountNode
           )
         : null}
@@ -381,6 +446,23 @@ export interface PreviewViewportProps {
   readonly lang?: string;
   /** A section to scroll the page to (the section editor's preview). */
   readonly focusSectionId?: string;
+  /** Bump to scroll to `focusSectionId` again (it was picked again elsewhere). */
+  readonly focusRequest?: number;
+  /** The visual editor's selected section, outlined on the canvas. */
+  readonly selectedSectionId?: string;
+  /** Makes sections selectable by clicking them on the canvas. */
+  readonly onSectionSelect?: (sectionId: string) => void;
+  /** Extra controls at the end of the device toolbar. */
+  readonly toolbarEnd?: ReactNode;
+  /**
+   * The visual editor's canvas: the device takes all the height it is
+   * given. Its width is still the device's (scaled to fit); its screen is
+   * as tall as the canvas, so no room is wasted around it. Safe because
+   * no section's layout depends on the screen's height — only the
+   * full-screen menus and system pages do, which fill whatever screen they
+   * are on.
+   */
+  readonly fill?: boolean;
   readonly children: React.ReactNode;
 }
 
@@ -390,14 +472,25 @@ export function PreviewViewport({
   dir = 'ltr',
   lang = 'en',
   focusSectionId,
+  focusRequest,
+  selectedSectionId,
+  onSectionSelect,
+  toolbarEnd,
+  fill,
   children,
 }: PreviewViewportProps): JSX.Element {
   const { t } = useTranslation();
   const stageRef = useRef<HTMLDivElement>(null);
   const [availableWidth, setAvailableWidth] = useState(0);
+  const [availableHeight, setAvailableHeight] = useState(0);
   const [zoom, setZoom] = useState<PreviewZoom>('fit');
   const device = PREVIEW_DEVICE_SIZE[breakpoint];
   const scale = previewScale(device.width, availableWidth, zoom);
+  // The screen's height: the device's own, or (`fill`) the canvas's.
+  const screenHeight =
+    fill && availableHeight > 0
+      ? Math.max(MIN_FILL_HEIGHT, Math.round(availableHeight / scale))
+      : device.height;
 
   // The column's own width (inside its padding), followed as the window,
   // the sidebar or the editor's layout changes it.
@@ -410,6 +503,11 @@ export function PreviewViewport({
         stage.clientWidth -
           parseFloat(style.paddingLeft || '0') -
           parseFloat(style.paddingRight || '0')
+      );
+      setAvailableHeight(
+        stage.clientHeight -
+          parseFloat(style.paddingTop || '0') -
+          parseFloat(style.paddingBottom || '0')
       );
     };
     measure();
@@ -427,7 +525,12 @@ export function PreviewViewport({
     // this column must take the width it is given, never widen itself to
     // fit the full-size device inside it — that width is what the device
     // is scaled to.
-    <div className="min-w-0 space-y-3">
+    <div
+      className={cn(
+        'min-w-0',
+        fill ? 'flex h-full min-h-0 flex-col gap-3' : 'space-y-3'
+      )}
+    >
       <div className="flex flex-wrap items-center justify-center gap-1 rounded-md border border-border p-1">
         {(['desktop', 'tablet', 'mobile'] as const).map((bp) => {
           const Icon = BREAKPOINT_ICON[bp];
@@ -470,6 +573,7 @@ export function PreviewViewport({
         >
           {t('website:preview.zoom.actual')}
         </Button>
+        {toolbarEnd}
       </div>
       <div
         ref={stageRef}
@@ -479,6 +583,7 @@ export function PreviewViewport({
         // would otherwise hold the column at the device's width.
         className={cn(
           'rounded-lg border border-border bg-muted p-4 [contain:inline-size]',
+          fill && 'min-h-0 flex-1 overflow-hidden',
           zoom === 'actual' && 'overflow-x-auto'
         )}
       >
@@ -488,10 +593,10 @@ export function PreviewViewport({
             from its top-left corner — physical `left`, not inline-start,
             so it stays put whichever way the dashboard reads. */}
         <div
-          className="relative mx-auto overflow-hidden rounded-md bg-background shadow-sm ring-1 ring-border"
+          className="relative mx-auto shrink-0 overflow-hidden rounded-md bg-background shadow-sm ring-1 ring-border"
           style={{
             width: device.width * scale,
-            height: device.height * scale,
+            height: screenHeight * scale,
             // Not drawn until the column has been measured, so the device
             // never flashes at full size before it is scaled.
             visibility: availableWidth > 0 ? undefined : 'hidden',
@@ -510,11 +615,14 @@ export function PreviewViewport({
             <IframeViewport
               key={breakpoint}
               width={device.width}
-              height={device.height}
+              height={screenHeight}
               dir={dir}
               lang={lang}
               title={t('website:preview.frameTitle')}
               focusSectionId={focusSectionId}
+              focusRequest={focusRequest}
+              selectedSectionId={selectedSectionId}
+              onSectionSelect={onSectionSelect}
             >
               {children}
             </IframeViewport>

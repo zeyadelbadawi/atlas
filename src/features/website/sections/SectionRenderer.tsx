@@ -20,7 +20,9 @@ import { resolveSectionRenderer } from '../theme-packs/theme-pack.registry';
 import { useThemePack } from '../theme-packs/ThemePackContext';
 import {
   PREVIEW_SECTION_ATTRIBUTE,
+  PREVIEW_SELECTED_ATTRIBUTE,
   useIsWebsitePreview,
+  usePreviewSelection,
 } from '../renderer/WebsitePreviewContext';
 import type { SectionRenderProps } from '../theme-packs/theme-pack.types';
 
@@ -46,6 +48,7 @@ export function SectionRenderer({
 }: SectionRendererProps): JSX.Element | null {
   const pack = useThemePack();
   const isPreview = useIsWebsitePreview();
+  const selectedId = usePreviewSelection();
   if (!instance.enabled) return null;
 
   // Keyed by `instance.type`, so the renderer and `instance.config` always
@@ -82,7 +85,14 @@ export function SectionRenderer({
   // In the dashboard's device preview only: a box-less anchor naming the
   // section, so the editor can find it in the frame (`WebsitePreviewContext`).
   return isPreview ? (
-    <div className="contents" {...{ [PREVIEW_SECTION_ATTRIBUTE]: instance.id }}>
+    <div
+      className="contents"
+      {...{
+        [PREVIEW_SECTION_ATTRIBUTE]: instance.id,
+        [PREVIEW_SELECTED_ATTRIBUTE]:
+          selectedId === instance.id ? '' : undefined,
+      }}
+    >
       {placed}
     </div>
   ) : (
