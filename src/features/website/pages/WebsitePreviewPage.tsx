@@ -44,7 +44,7 @@ import {
   PUBLIC_WEBSITE_LOCALES,
   PUBLIC_WEBSITE_LOCALE_DIRECTION,
   PUBLIC_WEBSITE_LOCALE_LABELS,
-  DEFAULT_PUBLIC_WEBSITE_LOCALE,
+  resolveDefaultLocale,
   type PublicWebsiteLocale,
 } from '../constants/locale.constants';
 import type { BreadcrumbItem } from '@types';
@@ -67,8 +67,9 @@ export default function WebsitePreviewPage(): JSX.Element {
   // Phase 6 — the site is bilingual by default; the review surface should
   // let the Owner check both real, rendered languages before they ever
   // publish, not just trust the site "is" bilingual.
-  const [previewLocale, setPreviewLocale] = useState<PublicWebsiteLocale>(
-    DEFAULT_PUBLIC_WEBSITE_LOCALE
+  // Opens in the site's main language (null until the admin picks one).
+  const [chosenLocale, setPreviewLocale] = useState<PublicWebsiteLocale | null>(
+    null
   );
 
   const isLoading =
@@ -110,6 +111,11 @@ export default function WebsitePreviewPage(): JSX.Element {
   const academy = academyQuery.data;
   const configuration = configQuery.data;
   const pages = pagesQuery.data.items;
+  const previewLocale =
+    chosenLocale ?? resolveDefaultLocale(configuration.defaultLocale);
+  // The site's navigation and links are built from the pages a visitor
+  // can reach; a hidden page is not among them.
+  const previewPages = pages.filter((candidate) => candidate.visible);
   const activePage =
     pages.find((page) => page.id === selectedPageId) ??
     pages.find((page) => page.coreType === 'home') ??
@@ -186,7 +192,7 @@ export default function WebsitePreviewPage(): JSX.Element {
               academyName={academy.name}
               academyLogo={academy.logo}
               configuration={configuration}
-              pages={pages}
+              pages={previewPages}
               page={activePage}
               previewCourseId={undefined}
               onNavigate={setSelectedPageId}

@@ -63,6 +63,10 @@ import { useTranslation } from 'react-i18next';
 import { Laptop, Smartphone, Tablet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@utils';
+import {
+  PREVIEW_SECTION_ATTRIBUTE,
+  WebsitePreviewProvider,
+} from '../renderer/WebsitePreviewContext';
 
 export type PreviewBreakpoint = 'desktop' | 'tablet' | 'mobile';
 
@@ -123,6 +127,7 @@ export function previewScale(
 }
 
 const MIRRORED_STYLESHEETS = 'style, link[rel="stylesheet"]';
+const MIRRORED_LINK_ATTRIBUTES = ['href', 'media', 'disabled'] as const;
 
 /**
  * Makes `target`'s head carry a copy of every stylesheet in `source`, in
@@ -153,11 +158,18 @@ export function mirrorStylesheets(
     if (!copy) {
       copy = original.cloneNode(true) as Element;
       copies.set(original, copy);
-    } else if (
-      original.tagName === 'STYLE' &&
-      copy.textContent !== original.textContent
-    ) {
-      copy.textContent = original.textContent;
+    } else if (original.tagName === 'STYLE') {
+      if (copy.textContent !== original.textContent) {
+        copy.textContent = original.textContent;
+      }
+    } else {
+      // A `<link>` can be re-pointed or re-scoped in place.
+      for (const name of MIRRORED_LINK_ATTRIBUTES) {
+        const value = original.getAttribute(name);
+        if (value === copy.getAttribute(name)) continue;
+        if (value === null) copy.removeAttribute(name);
+        else copy.setAttribute(name, value);
+      }
     }
     const expectedAt: ChildNode | null = previous
       ? previous.nextSibling
@@ -166,6 +178,37 @@ export function mirrorStylesheets(
     previous = copy;
   }
 }
+
+/**
+ * Where the frame should scroll to show a section: the top of its first
+ * drawn box (its anchor is box-less), less the height of a header that
+ * stays on screen, so the section is not tucked under it. `null` while the
+ * section is not drawn (still loading, disabled, or hidden on this device).
+ */
+export function sectionScrollTop(
+  doc: Document,
+  sectionId: string
+): number | null {
+  const view = doc.defaultView;
+  const anchor = doc.querySelector(
+    `[${PREVIEW_SECTION_ATTRIBUTE}="${CSS.escape(sectionId)}"]`
+  );
+  if (!view || !anchor) return null;
+  const box = Array.from(anchor.querySelectorAll('*')).find(
+    (element) => element.getBoundingClientRect().height > 0
+  );
+  if (!box) return null;
+  const header = doc.querySelector('header');
+  const position = header ? view.getComputedStyle(header).position : '';
+  const covered =
+    header && (position === 'sticky' || position === 'fixed')
+      ? header.getBoundingClientRect().height
+      : 0;
+  return Math.max(0, box.getBoundingClientRect().top + view.scrollY - covered);
+}
+
+/** How long a preview keeps re-aiming at its section while the page is still filling in above it. */
+const FOCUS_SETTLE_MS = 4000;
 
 /**
  * Mounts an `<iframe>` of the device's real size, keeps the host
@@ -178,6 +221,7 @@ function IframeViewport({
   dir,
   lang,
   title,
+  focusSectionId,
   children,
 }: {
   readonly width: number;
@@ -185,6 +229,7 @@ function IframeViewport({
   readonly dir: string;
   readonly lang: string;
   readonly title: string;
+  readonly focusSectionId?: string;
   readonly children: ReactNode;
 }): JSX.Element {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -221,6 +266,8 @@ function IframeViewport({
         childList: true,
         subtree: true,
         characterData: true,
+        attributes: true,
+        attributeFilter: [...MIRRORED_LINK_ATTRIBUTES],
       });
       observer.observe(document.documentElement, {
         attributes: true,
@@ -265,6 +312,42 @@ function IframeViewport({
     root.setAttribute('lang', lang);
   }, [dir, lang, mountNode]);
 
+  // Scroll to the section being edited. Its position moves while the page
+  // fills in above it (theme, images, courses), so the frame keeps
+  // re-aiming at it as the page grows — until the admin scrolls the frame
+  // themselves, or the page has settled.
+  useEffect(() => {
+    if (!mountNode || !focusSectionId) return undefined;
+    const doc = mountNode.ownerDocument;
+    const view = doc.defaultView;
+    if (!view) return undefined;
+    let settled = false;
+    const aim = (): void => {
+      if (settled) return;
+      const top = sectionScrollTop(doc, focusSectionId);
+      if (top !== null) view.scrollTo({ top });
+    };
+    const settle = (): void => {
+      settled = true;
+    };
+    const Observer = (view as typeof window).ResizeObserver;
+    const observer = Observer ? new Observer(aim) : null;
+    observer?.observe(doc.body);
+    aim();
+    const timer = view.setTimeout(settle, FOCUS_SETTLE_MS);
+    const interactions = ['wheel', 'touchstart', 'pointerdown', 'keydown'];
+    for (const type of interactions) {
+      doc.addEventListener(type, settle, { passive: true });
+    }
+    return () => {
+      observer?.disconnect();
+      view.clearTimeout(timer);
+      for (const type of interactions) {
+        doc.removeEventListener(type, settle);
+      }
+    };
+  }, [mountNode, focusSectionId]);
+
   return (
     <>
       <iframe
@@ -273,7 +356,12 @@ function IframeViewport({
         title={title}
         style={{ width, height, border: 0, display: 'block' }}
       />
-      {mountNode ? createPortal(children, mountNode) : null}
+      {mountNode
+        ? createPortal(
+            <WebsitePreviewProvider value>{children}</WebsitePreviewProvider>,
+            mountNode
+          )
+        : null}
     </>
   );
 }
@@ -291,6 +379,8 @@ export interface PreviewViewportProps {
   readonly dir?: 'ltr' | 'rtl';
   /** Language of the website being previewed, for the iframe's `<html lang>`. */
   readonly lang?: string;
+  /** A section to scroll the page to (the section editor's preview). */
+  readonly focusSectionId?: string;
   readonly children: React.ReactNode;
 }
 
@@ -299,6 +389,7 @@ export function PreviewViewport({
   onBreakpointChange,
   dir = 'ltr',
   lang = 'en',
+  focusSectionId,
   children,
 }: PreviewViewportProps): JSX.Element {
   const { t } = useTranslation();
@@ -322,7 +413,10 @@ export function PreviewViewport({
       );
     };
     measure();
-    if (typeof ResizeObserver === 'undefined') return undefined;
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', measure);
+      return () => window.removeEventListener('resize', measure);
+    }
     const observer = new ResizeObserver(measure);
     observer.observe(stage);
     return () => observer.disconnect();
@@ -379,8 +473,12 @@ export function PreviewViewport({
       </div>
       <div
         ref={stageRef}
+        // `contain: inline-size`: the column's width never comes from the
+        // device inside it (whose size is derived from that width) — in an
+        // auto-sized column, such as the section editor's on a phone, it
+        // would otherwise hold the column at the device's width.
         className={cn(
-          'rounded-lg border border-border bg-muted p-4',
+          'rounded-lg border border-border bg-muted p-4 [contain:inline-size]',
           zoom === 'actual' && 'overflow-x-auto'
         )}
       >
@@ -416,6 +514,7 @@ export function PreviewViewport({
               dir={dir}
               lang={lang}
               title={t('website:preview.frameTitle')}
+              focusSectionId={focusSectionId}
             >
               {children}
             </IframeViewport>

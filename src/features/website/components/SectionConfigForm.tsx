@@ -24,7 +24,7 @@
  * cover what the API refused on the last page save (`serverIssues`), in
  * case the server found something this check did not.
  */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowDown, ArrowUp, BadgeCheck, Plus, Trash2, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -52,6 +52,7 @@ import {
 import { PublicWebsiteLocaleProvider } from '../renderer/PublicWebsiteLocaleContext';
 import {
   PUBLIC_WEBSITE_LOCALES,
+  PUBLIC_WEBSITE_LOCALE_DIRECTION,
   PUBLIC_WEBSITE_LOCALE_LABELS,
   resolveDefaultLocale,
   type PublicWebsiteLocale,
@@ -78,6 +79,11 @@ import { getWebsiteTheme } from '../themes/website-theme.registry';
 import { EMPTY_LOCALIZED_TEXT } from '../utils/localized-text.utils';
 import { WebsiteThemeScope } from '../renderer/WebsiteThemeScope';
 import { SectionRenderer } from '../sections/SectionRenderer';
+import {
+  PreviewViewport,
+  initialPreviewBreakpoint,
+  type PreviewBreakpoint,
+} from './PreviewViewport';
 import type {
   SectionFieldDescriptor,
   SectionFieldSchema,
@@ -117,6 +123,21 @@ export interface SectionConfigFormProps<TType extends SectionType> {
   readonly isSaving: boolean;
   /** What the API refused in this section on the last page save (config-relative paths); shown until the section is edited. */
   readonly serverIssues?: readonly SectionContentIssue[];
+  /**
+   * The whole page with this section's in-progress config in its place,
+   * as `WebsiteRenderer` draws it (the page editor supplies it). With it,
+   * the live preview is the real page in the device frame
+   * (`PreviewViewport`), scrolled to this section — so it is laid out at a
+   * real device width, with the site's chrome, identity, background, the
+   * page's one `<h1>` and the spacing its neighbours give it, exactly as
+   * on the site. Without it, the section is previewed on its own.
+   */
+  readonly renderPagePreview?: (
+    config: SectionConfigMap[TType],
+    locale: PublicWebsiteLocale
+  ) => ReactNode;
+  /** The section's id on the page, for scrolling `renderPagePreview`'s page to it. */
+  readonly previewSectionId?: string;
 }
 
 /**
@@ -1051,6 +1072,8 @@ export function SectionConfigForm<TType extends SectionType>({
   onCancel,
   isSaving,
   serverIssues,
+  renderPagePreview,
+  previewSectionId,
 }: SectionConfigFormProps<TType>): JSX.Element {
   const { t, i18n } = useTranslation();
   // B0-WEB-02 — Arabic is the required language on an Arabic-default site.
@@ -1161,6 +1184,9 @@ export function SectionConfigForm<TType extends SectionType>({
   // Opens in the site's main language (B0-WEB-02).
   const [previewLocale, setPreviewLocale] =
     useState<PublicWebsiteLocale>(requiredLocale);
+  const [previewBreakpoint, setPreviewBreakpoint] = useState<PreviewBreakpoint>(
+    initialPreviewBreakpoint
+  );
 
   // Phase 6 — live inline preview. Reactive to every keystroke (`draft`),
   // scoped to just this one section instance, rendered through the exact
@@ -1463,22 +1489,37 @@ export function SectionConfigForm<TType extends SectionType>({
               ))}
             </div>
           </div>
-          <div className="max-h-[70vh] overflow-y-auto rounded-lg border border-border">
-            <div className="pointer-events-none">
-              <WebsiteThemeScope
-                theme={previewTheme}
-                brand={configuration.brand}
-              >
-                <PublicWebsiteLocaleProvider locale={previewLocale}>
-                  <SectionRenderer
-                    instance={previewInstance}
-                    academyId={academyId}
-                    pages={pages}
-                  />
-                </PublicWebsiteLocaleProvider>
-              </WebsiteThemeScope>
+          {renderPagePreview ? (
+            <PreviewViewport
+              breakpoint={previewBreakpoint}
+              onBreakpointChange={setPreviewBreakpoint}
+              dir={PUBLIC_WEBSITE_LOCALE_DIRECTION[previewLocale]}
+              lang={previewLocale}
+              focusSectionId={previewSectionId}
+            >
+              {renderPagePreview(
+                draft as unknown as SectionConfigMap[TType],
+                previewLocale
+              )}
+            </PreviewViewport>
+          ) : (
+            <div className="max-h-[70vh] overflow-y-auto rounded-lg border border-border">
+              <div className="pointer-events-none">
+                <WebsiteThemeScope
+                  theme={previewTheme}
+                  brand={configuration.brand}
+                >
+                  <PublicWebsiteLocaleProvider locale={previewLocale}>
+                    <SectionRenderer
+                      instance={previewInstance}
+                      academyId={academyId}
+                      pages={pages}
+                    />
+                  </PublicWebsiteLocaleProvider>
+                </WebsiteThemeScope>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </WebsiteImageThemeContext.Provider>

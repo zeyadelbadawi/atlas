@@ -174,7 +174,15 @@ a.t1-footer-social:hover {
 }
 /* Two sections of the same tone in a row share one gap, not two. */
 .t1-section[data-tone='default'] + .t1-section[data-tone='default'],
-.t1-section[data-tone='soft'] + .t1-section[data-tone='soft'] {
+.t1-section[data-tone='soft'] + .t1-section[data-tone='soft'],
+/* The same pair in the dashboard preview, where each section sits in a
+   box-less anchor (`WebsitePreviewContext`). */
+[data-preview-section]:has(> .t1-section[data-tone='default'])
+  + [data-preview-section]
+  > .t1-section[data-tone='default'],
+[data-preview-section]:has(> .t1-section[data-tone='soft'])
+  + [data-preview-section]
+  > .t1-section[data-tone='soft'] {
   padding-block-start: 0;
 }
 

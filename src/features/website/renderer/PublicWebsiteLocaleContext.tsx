@@ -17,7 +17,11 @@
  * is actually demonstrating, without prop-drilling `locale` through every
  * intermediate component.
  */
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { I18nextProvider, useTranslation } from 'react-i18next';
+import type { i18n as I18nInstance } from 'i18next';
+import { ensureLanguageLoaded } from '@localization';
+import { useIsWebsitePreview } from './WebsitePreviewContext';
 import {
   DEFAULT_PUBLIC_WEBSITE_LOCALE,
   PUBLIC_WEBSITE_LOCALE_DIRECTION,
@@ -74,13 +78,57 @@ export function PublicWebsiteLocaleProvider({
     () => ({ locale, direction: PUBLIC_WEBSITE_LOCALE_DIRECTION[locale] }),
     [locale]
   );
-  return (
+  const translator = usePreviewTranslator(locale);
+  const content = (
     <PublicWebsiteLocaleContext.Provider value={value}>
       <div dir={value.direction} lang={locale} className={className}>
         {children}
       </div>
     </PublicWebsiteLocaleContext.Provider>
   );
+  return translator ? (
+    <I18nextProvider i18n={translator}>{content}</I18nextProvider>
+  ) : (
+    content
+  );
+}
+
+/**
+ * THE WEBSITE'S OWN WORDS IN THE PREVIEWED LANGUAGE. Content follows
+ * `locale`, but the renderer's interface strings (`t()`: buttons, filters,
+ * empty states, footer labels) come from i18next, which in the dashboard is
+ * the ADMIN's language — so an English dashboard previewing the Arabic site
+ * showed Arabic content with English buttons. On the public site the two
+ * always agree (`usePublicWebsiteDocumentDirection` switches i18next to the
+ * URL's language), so this applies only inside the dashboard's device
+ * preview: a translator fixed to `locale`, sharing the app's loaded
+ * translations, without touching the dashboard's own language.
+ */
+function usePreviewTranslator(
+  locale: PublicWebsiteLocale
+): I18nInstance | null {
+  const isPreview = useIsWebsitePreview();
+  const { i18n } = useTranslation();
+  const differs =
+    isPreview && (i18n.resolvedLanguage ?? i18n.language) !== locale;
+  const translator = useMemo(
+    () => (differs ? i18n.cloneInstance({ lng: locale }) : null),
+    [differs, i18n, locale]
+  );
+  // The other language may not be loaded yet in this dashboard session;
+  // its strings appear as soon as it is (the instances share one store).
+  const [, setLoaded] = useState(0);
+  useEffect(() => {
+    if (!translator) return undefined;
+    let active = true;
+    void ensureLanguageLoaded(i18n, locale).then(() => {
+      if (active) setLoaded((n) => n + 1);
+    });
+    return () => {
+      active = false;
+    };
+  }, [translator, i18n, locale]);
+  return translator;
 }
 
 export function usePublicWebsiteLocale(): PublicWebsiteLocaleValue {

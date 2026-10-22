@@ -18,6 +18,10 @@ import { sectionVisibilityClass } from './section-visibility.utils';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 import { resolveSectionRenderer } from '../theme-packs/theme-pack.registry';
 import { useThemePack } from '../theme-packs/ThemePackContext';
+import {
+  PREVIEW_SECTION_ATTRIBUTE,
+  useIsWebsitePreview,
+} from '../renderer/WebsitePreviewContext';
 import type { SectionRenderProps } from '../theme-packs/theme-pack.types';
 
 export interface SectionRendererProps {
@@ -41,6 +45,7 @@ export function SectionRenderer({
   linkRenderer,
 }: SectionRendererProps): JSX.Element | null {
   const pack = useThemePack();
+  const isPreview = useIsWebsitePreview();
   if (!instance.enabled) return null;
 
   // Keyed by `instance.type`, so the renderer and `instance.config` always
@@ -67,11 +72,20 @@ export function SectionRenderer({
   const visibilityClass = sectionVisibilityClass(visibility);
   // Wrapped only when something is hidden; `display: contents` keeps the
   // section's own box in its parent's layout.
-  return visibilityClass ? (
+  const placed = visibilityClass ? (
     <div className={visibilityClass} data-section-visibility="">
       {rendered}
     </div>
   ) : (
     rendered
+  );
+  // In the dashboard's device preview only: a box-less anchor naming the
+  // section, so the editor can find it in the frame (`WebsitePreviewContext`).
+  return isPreview ? (
+    <div className="contents" {...{ [PREVIEW_SECTION_ATTRIBUTE]: instance.id }}>
+      {placed}
+    </div>
+  ) : (
+    placed
   );
 }

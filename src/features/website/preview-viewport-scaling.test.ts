@@ -84,6 +84,26 @@ describe('mirrorStylesheets', () => {
     expect(target.head.children).toHaveLength(1);
   });
 
+  it('follows a link re-pointed or re-scoped in place', () => {
+    const source = frameDocument();
+    source.head.innerHTML = '<link rel="stylesheet" href="/a.css">';
+    const target = frameDocument();
+    const copies = new Map<Element, Element>();
+    mirrorStylesheets(source, target, copies);
+
+    const link = source.head.firstElementChild!;
+    link.setAttribute('href', '/b.css');
+    link.setAttribute('media', 'print');
+    mirrorStylesheets(source, target, copies);
+    const copy = target.head.firstElementChild!;
+    expect(copy.getAttribute('href')).toBe('/b.css');
+    expect(copy.getAttribute('media')).toBe('print');
+
+    link.removeAttribute('media');
+    mirrorStylesheets(source, target, copies);
+    expect(copy.hasAttribute('media')).toBe(false);
+  });
+
   it('follows a style whose text changed, and drops one that was removed', () => {
     const source = frameDocument();
     source.head.innerHTML = '<style>a{}</style><style>b{}</style>';
