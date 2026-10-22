@@ -826,6 +826,18 @@
     },
     "courseSpotlight": {
       "label": "دورة في الواجهة"
+    },
+    "whatsappBar": {
+      "label": "شريط تواصل معنا"
+    },
+    "video": {
+      "label": "فيديو"
+    },
+    "pricing": {
+      "label": "الباقات والأسعار"
+    },
+    "countdown": {
+      "label": "عدّ تنازلي"
     }
   },
   "fields": {
@@ -924,7 +936,12 @@
     "linkTypeWhatsapp": "محادثة واتساب",
     "linkTypePhone": "مكالمة هاتفية",
     "linkTypeSignUp": "صفحة إنشاء الحساب",
-    "linkTypeSignIn": "صفحة تسجيل الدخول"
+    "linkTypeSignIn": "صفحة تسجيل الدخول",
+    "videoLink": "رابط يوتيوب",
+    "videoPoster": "صورة الغلاف (اختياري)",
+    "deadline": "موعد الإغلاق",
+    "endedMessage": "الرسالة بعد انتهاء الموعد",
+    "pricingPlans": "الباقات"
   },
   "buttons": {
     "button": "زر",
@@ -1122,6 +1139,54 @@
       "moreSections_few": "و{{count}} أقسام أخرى",
       "moreSections_many": "و{{count}} قسمًا آخر",
       "moreSections_other": "و{{count}} قسم آخر"
+    },
+    "video": {
+      "play": "تشغيل الفيديو: {{title}}",
+      "playUntitled": "تشغيل الفيديو",
+      "frameTitle": "فيديو: {{title}}",
+      "frameUntitled": "فيديو من يوتيوب",
+      "previewMissing": "أضف رابطًا من يوتيوب لعرض الفيديو هنا. لا يرى الزوار هذا القسم حتى تضيفه."
+    },
+    "pricing": {
+      "popular": "الأكثر طلبًا",
+      "included": "مشمولة",
+      "notIncluded": "غير مشمولة",
+      "featuresLabel": "ما تتضمنه باقة {{plan}}"
+    },
+    "countdown": {
+      "units": {
+        "days": "أيام",
+        "hours": "ساعات",
+        "minutes": "دقائق",
+        "seconds": "ثوانٍ"
+      },
+      "closes": "يُغلق {{date}}، الساعة {{time}} ({{zone}})",
+      "timeLeft": "الوقت المتبقي: {{days}} و{{hours}} و{{minutes}}.",
+      "timeLeftShort": "الوقت المتبقي: {{hours}} و{{minutes}}.",
+      "lessThanMinute": "تبقّى أقل من دقيقة.",
+      "dayCount_zero": "{{value}} يوم",
+      "dayCount_one": "يوم واحد",
+      "dayCount_two": "يومان",
+      "dayCount_few": "{{value}} أيام",
+      "dayCount_many": "{{value}} يومًا",
+      "dayCount_other": "{{value}} يوم",
+      "hourCount_zero": "{{value}} ساعة",
+      "hourCount_one": "ساعة واحدة",
+      "hourCount_two": "ساعتان",
+      "hourCount_few": "{{value}} ساعات",
+      "hourCount_many": "{{value}} ساعة",
+      "hourCount_other": "{{value}} ساعة",
+      "minuteCount_zero": "{{value}} دقيقة",
+      "minuteCount_one": "دقيقة واحدة",
+      "minuteCount_two": "دقيقتان",
+      "minuteCount_few": "{{value}} دقائق",
+      "minuteCount_many": "{{value}} دقيقة",
+      "minuteCount_other": "{{value}} دقيقة",
+      "ended": "انتهى هذا الموعد.",
+      "previewMissing": "اختر تاريخ الإغلاق ووقته. لا يرى الزوار هذا القسم حتى تختارهما."
+    },
+    "whatsappBar": {
+      "previewNoButtons": "أضف إلى أحد الأزرار رقم واتساب أو رقم هاتف أو صفحة. لا يرى الزوار هذا الشريط حتى يعمل أحد أزراره."
     }
   },
   "common": {
@@ -2124,7 +2189,11 @@
         "faq": "إجابات الأسئلة الأكثر شيوعًا لدى الزوار.",
         "gallery": "مجموعة صور لأكاديميتك أو حصصك.",
         "contact": "نموذج يراسلك الزوار من خلاله.",
-        "cta": "شريط ختامي يدعو الزوار لاتخاذ خطوة."
+        "cta": "شريط ختامي يدعو الزوار لاتخاذ خطوة.",
+        "whatsappBar": "شريط قصير بأزرار واتساب أو اتصال أو صفحة.",
+        "video": "فيديو من يوتيوب لا يُحمَّل إلا عندما يضغط الزائر على زر التشغيل.",
+        "pricing": "باقاتك أو اشتراكاتك وأسعارها وما تتضمنه كل منها.",
+        "countdown": "عدّ تنازلي مباشر حتى موعد إغلاق التسجيل."
       }
     },
     "settings": {
@@ -2197,6 +2266,55 @@
       "seoHint": "كيف تظهر «{{page}}» في جوجل وعند مشاركتها.",
       "publishHint": "تصل تغييرات الثيم والقائمة والهيدر والفوتر إلى الزوار عند نشر الموقع. زر «نشر» في هذه الصفحة ينشر هذه الصفحة فقط.",
       "themeSaveError": "تعذّر تغيير الثيم. حاول مرة أخرى."
+    }
+  },
+  "sectionEditors": {
+    "video": {
+      "hint": "الصق الرابط من زر «مشاركة» في يوتيوب. يرى الزائر صورة الغلاف أولًا، ولا يُحمَّل الفيديو إلا عند الضغط على التشغيل.",
+      "found": "تم العثور على الفيديو",
+      "thumbnailAlt": "الصورة المصغّرة للفيديو المختار",
+      "empty": "لا يوجد فيديو بعد، ويبقى هذا القسم مخفيًا في موقعك حتى تضيف فيديو."
+    },
+    "deadline": {
+      "hint": "بالمنطقة الزمنية لأكاديميتك ({{zone}}). يرى الزائر الوقت المتبقي يتناقص كل ثانية.",
+      "empty": "لم يُحدَّد موعد بعد، ويبقى هذا القسم مخفيًا في موقعك حتى تختار موعدًا.",
+      "past": "انقضى هذا الموعد، لذا يرى الزائر رسالة ما بعد انتهاء الموعد.",
+      "preview": "سيرى الزائر: {{date}}، {{time}} ({{zone}})"
+    },
+    "plans": {
+      "plan": "الباقة",
+      "count": "{{count}} من {{max}}",
+      "add": "إضافة باقة",
+      "full": "الحد الأقصى للقسم {{max}} باقات",
+      "minimum": "يحتفظ قسم الأسعار بباقة واحدة على الأقل.",
+      "untitled": "الباقة {{number}}",
+      "moveUp": "نقل «{{name}}» لأعلى",
+      "moveDown": "نقل «{{name}}» لأسفل",
+      "remove": "حذف «{{name}}»",
+      "needsAttention": "يحتاج إلى تصحيح",
+      "popularTag": "الأكثر طلبًا",
+      "name": "اسم الباقة",
+      "price": "السعر",
+      "priceHint": "اكتبه كما ينبغي أن يقرأه الزائر، مثل 450 ج.م أو مجانًا.",
+      "period": "المدة (اختياري)",
+      "periodHint": "مثل شهريًا أو لكل ترم.",
+      "description": "وصف قصير (اختياري)",
+      "features": "ما تتضمنه الباقة",
+      "featuresCount": "{{count}} من {{max}}",
+      "feature": "الميزة {{number}}",
+      "featureIncluded": "مشمولة في هذه الباقة",
+      "featureIncludedHint": "ألغِ التحديد لعرض الميزة على أنها غير مشمولة (✗).",
+      "addFeature": "إضافة ميزة",
+      "featuresFull": "الحد الأقصى للباقة {{max}} ميزات",
+      "removeFeature": "حذف الميزة {{number}}",
+      "highlighted": "تمييزها كالأكثر طلبًا",
+      "highlightedHint": "يمكن تمييز باقة واحدة فقط، واختيار هذه الباقة يلغي تمييز غيرها.",
+      "badge": "نص الشارة (اختياري)",
+      "badgeHint": "اتركه فارغًا لعرض «الأكثر طلبًا».",
+      "button": "الزر",
+      "addButton": "إضافة زر",
+      "removeButton": "حذف الزر",
+      "featureLabel": "الميزة"
     }
   }
 }

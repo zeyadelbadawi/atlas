@@ -794,6 +794,18 @@
     },
     "courseSpotlight": {
       "label": "Course in focus"
+    },
+    "whatsappBar": {
+      "label": "Talk to us bar"
+    },
+    "video": {
+      "label": "Video"
+    },
+    "pricing": {
+      "label": "Pricing plans"
+    },
+    "countdown": {
+      "label": "Countdown"
     }
   },
   "fields": {
@@ -892,7 +904,12 @@
     "linkTypeWhatsapp": "WhatsApp chat",
     "linkTypePhone": "Phone call",
     "linkTypeSignUp": "Sign-up page",
-    "linkTypeSignIn": "Sign-in page"
+    "linkTypeSignIn": "Sign-in page",
+    "videoLink": "YouTube link",
+    "videoPoster": "Poster image (optional)",
+    "deadline": "Closes on",
+    "endedMessage": "Message after it ends",
+    "pricingPlans": "Plans"
   },
   "buttons": {
     "button": "Button",
@@ -1058,6 +1075,42 @@
       "priceLabel": "Price",
       "moreSections_one": "and {{count}} more section",
       "moreSections_other": "and {{count}} more sections"
+    },
+    "video": {
+      "play": "Play video: {{title}}",
+      "playUntitled": "Play video",
+      "frameTitle": "Video: {{title}}",
+      "frameUntitled": "YouTube video",
+      "previewMissing": "Add a YouTube link to show your video here. Visitors don’t see this section until then."
+    },
+    "pricing": {
+      "popular": "Most popular",
+      "included": "Included",
+      "notIncluded": "Not included",
+      "featuresLabel": "What’s included in {{plan}}"
+    },
+    "countdown": {
+      "units": {
+        "days": "Days",
+        "hours": "Hours",
+        "minutes": "Minutes",
+        "seconds": "Seconds"
+      },
+      "closes": "Closes {{date}}, {{time}} ({{zone}})",
+      "timeLeft": "Time left: {{days}}, {{hours}} and {{minutes}}.",
+      "timeLeftShort": "Time left: {{hours}} and {{minutes}}.",
+      "lessThanMinute": "Less than a minute left.",
+      "dayCount_one": "{{value}} day",
+      "dayCount_other": "{{value}} days",
+      "hourCount_one": "{{value}} hour",
+      "hourCount_other": "{{value}} hours",
+      "minuteCount_one": "{{value}} minute",
+      "minuteCount_other": "{{value}} minutes",
+      "ended": "This deadline has passed.",
+      "previewMissing": "Choose the date and time it closes. Visitors don’t see this section until then."
+    },
+    "whatsappBar": {
+      "previewNoButtons": "Give a button a WhatsApp number, a phone number or a page. Visitors don’t see this bar until one of its buttons works."
     }
   },
   "common": {
@@ -1960,7 +2013,11 @@
         "faq": "Answers to the questions visitors ask most.",
         "gallery": "A set of photos of your academy or classes.",
         "contact": "A form visitors can use to message you.",
-        "cta": "A closing band that asks visitors to act."
+        "cta": "A closing band that asks visitors to act.",
+        "whatsappBar": "A short strip with WhatsApp, call or page buttons.",
+        "video": "A YouTube video that loads only when visitors press play.",
+        "pricing": "Your plans or packages, with prices and what each includes.",
+        "countdown": "A live countdown to a registration deadline."
       }
     },
     "settings": {
@@ -2029,6 +2086,55 @@
       "seoHint": "How “{{page}}” appears in Google and when shared.",
       "publishHint": "Theme, menu, header and footer changes reach visitors when you publish the website. This page’s Publish button publishes this page only.",
       "themeSaveError": "Couldn’t change the theme. Try again."
+    }
+  },
+  "sectionEditors": {
+    "video": {
+      "hint": "Paste the link from YouTube’s Share button. Visitors see a poster first; the video loads only when they press play.",
+      "found": "Video found",
+      "thumbnailAlt": "Thumbnail of the chosen video",
+      "empty": "No video yet. This section stays hidden on your site until you add one."
+    },
+    "deadline": {
+      "hint": "In your academy’s time zone ({{zone}}). Visitors see the time left, counting down every second.",
+      "empty": "No date yet. This section stays hidden on your site until you choose one.",
+      "past": "This date has passed, so visitors see your “after it ends” message.",
+      "preview": "Visitors see: {{date}}, {{time}} ({{zone}})"
+    },
+    "plans": {
+      "plan": "Plan",
+      "count": "{{count}} of {{max}}",
+      "add": "Add a plan",
+      "full": "{{max}} plans is the most a section can show",
+      "minimum": "A pricing section keeps at least one plan.",
+      "untitled": "Plan {{number}}",
+      "moveUp": "Move “{{name}}” up",
+      "moveDown": "Move “{{name}}” down",
+      "remove": "Remove “{{name}}”",
+      "needsAttention": "Needs a fix",
+      "popularTag": "Most popular",
+      "name": "Plan name",
+      "price": "Price",
+      "priceHint": "Type it as visitors should read it, such as 450 EGP or Free.",
+      "period": "Period (optional)",
+      "periodHint": "Such as per month or per term.",
+      "description": "Short description (optional)",
+      "features": "What’s included",
+      "featuresCount": "{{count}} of {{max}}",
+      "feature": "Feature {{number}}",
+      "featureIncluded": "Included in this plan",
+      "featureIncludedHint": "Untick it to show the feature as not included (✗).",
+      "addFeature": "Add a feature",
+      "featuresFull": "{{max}} features is the most a plan can list",
+      "removeFeature": "Remove feature {{number}}",
+      "highlighted": "Mark as most popular",
+      "highlightedHint": "Only one plan can be the most popular. Choosing this one clears the others.",
+      "badge": "Badge text (optional)",
+      "badgeHint": "Leave empty to show “Most popular”.",
+      "button": "Button",
+      "addButton": "Add a button",
+      "removeButton": "Remove the button",
+      "featureLabel": "Feature"
     }
   }
 }

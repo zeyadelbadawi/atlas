@@ -1,0 +1,159 @@
+/*
+ * Riwaq — the CMS phase 3d sections (`sections/riwaq-engage-sections.tsx`):
+ * the "Talk to us" cell, the video window, the plans ledger and the
+ * countdown. Square corners, 1px rules and the registration tick; colours
+ * only through each ground's `--rw-env-*` values.
+ */
+
+/* The bar: title and line, then the actions at the reading end. */
+[data-theme-pack='riwaq'] .rwx-bar {
+  display: grid;
+  gap: 1.5rem;
+}
+@media (min-width: 900px) {
+  [data-theme-pack='riwaq'] .rwx-bar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 3rem;
+  }
+}
+
+/* The video: a square window with the action colour's play block. */
+[data-theme-pack='riwaq'] .rwx-video {
+  margin: 0;
+}
+@media (min-width: 1024px) {
+  [data-theme-pack='riwaq'] .rwx-video {
+    margin-inline-start: calc(25% + var(--rw-gap) / 4);
+  }
+}
+[data-theme-pack='riwaq'] .rwx-video-frame {
+  border: 1px solid var(--rw-env-rule);
+}
+[data-theme-pack='riwaq'] .rwx-video-play {
+  inline-size: 4.5rem;
+  block-size: 4.5rem;
+  background: var(--rw-env-action);
+  color: var(--rw-env-action-text);
+  transition: background-color var(--rw-fast) var(--rw-ease);
+}
+[data-theme-pack='riwaq'] [data-video-play]:hover .rwx-video-play {
+  background: var(--rw-env-action-hover);
+}
+[data-theme-pack='riwaq'] .rwx-video-frame [data-video-play]:focus-visible {
+  outline: 3px solid var(--rw-env-focus);
+  outline-offset: -3px;
+}
+[data-theme-pack='riwaq'] .rwx-caption {
+  margin-block-start: 1rem;
+}
+
+/* The plans ledger: cells share their rules; the most popular is ticked. */
+[data-theme-pack='riwaq'] .rwx-plans[data-count='1'] {
+  max-inline-size: 30rem;
+}
+@media (min-width: 1280px) {
+  [data-theme-pack='riwaq'] .rwx-plans[data-count='4'] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+[data-theme-pack='riwaq'] .rwx-plan {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+[data-theme-pack='riwaq'] .rwx-plan[data-highlighted] {
+  box-shadow: inset 0 3px 0 var(--rw-env-marker);
+}
+[data-theme-pack='riwaq'] .rwx-plan[data-highlighted]::after {
+  content: '';
+  position: absolute;
+  inset-block-start: -1px;
+  inset-inline-start: -1px;
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  border-block-start: 2px solid var(--rw-env-marker);
+  border-inline-start: 2px solid var(--rw-env-marker);
+  pointer-events: none;
+}
+[data-theme-pack='riwaq'] .rwx-plan-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+}
+[data-theme-pack='riwaq'] .rwx-price {
+  font-size: clamp(2rem, 1.5rem + 1.8vw, 3.25rem);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--rw-env-heading);
+  font-variant-numeric: tabular-nums lining-nums;
+  overflow-wrap: anywhere;
+}
+[lang='ar'] .rwx-price {
+  letter-spacing: 0;
+  font-weight: 400;
+}
+[data-theme-pack='riwaq'] .rwx-plan-features {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-block-start: 1px solid var(--rw-env-rule);
+}
+[data-theme-pack='riwaq'] .rwx-plan-features > li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding-block: 0.625rem;
+  border-block-end: 1px solid var(--rw-env-rule);
+  overflow-wrap: anywhere;
+}
+[data-theme-pack='riwaq'] .rwx-plan-features > li:not([data-included]) {
+  color: var(--rw-env-muted);
+}
+[data-theme-pack='riwaq'] .rwx-mark {
+  flex: none;
+  inline-size: 1rem;
+  block-size: 1rem;
+  margin-block-start: 0.25rem;
+  color: var(--rw-env-heading);
+}
+[data-theme-pack='riwaq']
+  .rwx-plan-features
+  > li:not([data-included])
+  .rwx-mark {
+  color: var(--rw-env-muted);
+}
+[data-theme-pack='riwaq'] .rwx-plan-action > .rw-btn {
+  inline-size: 100%;
+}
+
+/* The countdown: on the page grid, after the head's rail. */
+[data-theme-pack='riwaq'] .rwx-countdown {
+  display: grid;
+  gap: 1.75rem;
+}
+@media (min-width: 1024px) {
+  [data-theme-pack='riwaq'] .rwx-countdown {
+    margin-inline-start: calc(25% + var(--rw-gap) / 4);
+  }
+}
+[data-theme-pack='riwaq'] .rwx-timer {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 640px) {
+  [data-theme-pack='riwaq'] .rwx-timer {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+[data-theme-pack='riwaq'] .rwx-timer-unit {
+  display: grid;
+  gap: 0.75rem;
+}
+[data-theme-pack='riwaq'] .rwx-timer-value {
+  font-size: clamp(2.75rem, 1.6rem + 4.2vw, 5.5rem);
+}

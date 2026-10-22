@@ -27,14 +27,14 @@ export const SECTION_LIBRARY_GROUPS: readonly {
   { key: 'intro', types: ['hero', 'pageHeader', 'about', 'featureSplit'] },
   {
     key: 'courses',
-    types: ['featuredCourses', 'courseCatalog', 'courseSpotlight'],
+    types: ['featuredCourses', 'courseCatalog', 'courseSpotlight', 'pricing'],
   },
   {
     key: 'trust',
     types: ['testimonials', 'statistics', 'instructors', 'gallery'],
   },
-  { key: 'info', types: ['features', 'steps', 'faq'] },
-  { key: 'action', types: ['cta', 'contact'] },
+  { key: 'info', types: ['features', 'steps', 'video', 'faq'] },
+  { key: 'action', types: ['cta', 'whatsappBar', 'countdown', 'contact'] },
 ];
 
 export interface SectionLibraryProps {

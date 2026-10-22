@@ -21,6 +21,12 @@ import {
 } from './atelier-live-sections';
 import { AtelierTestimonials } from './AtelierTestimonials';
 import { AtelierFaq } from './AtelierFaq';
+import {
+  AtelierCountdown,
+  AtelierPricing,
+  AtelierVideo,
+  AtelierWhatsappBar,
+} from './atelier-engage-sections';
 
 export {
   AtelierAbout,
@@ -52,4 +58,9 @@ export const ATELIER_SECTION_RENDERERS: Partial<SectionRenderers> = {
   faq: AtelierFaq,
   cta: AtelierCta,
   gallery: AtelierGallery,
+  // CMS phase 3d (batch A).
+  whatsappBar: AtelierWhatsappBar,
+  video: AtelierVideo,
+  pricing: AtelierPricing,
+  countdown: AtelierCountdown,
 };

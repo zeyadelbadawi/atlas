@@ -25,7 +25,11 @@ import {
   LibraryBig,
   MessageSquareQuote,
   Megaphone,
+  MessageCircle,
+  PlayCircle,
   Sparkles,
+  Tags,
+  Timer,
   Users,
   type LucideIcon,
 } from 'lucide-react';
@@ -127,6 +131,26 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadataEntry> = {
     labelKey: 'website:sections.courseSpotlight.label',
     icon: BookOpenCheck,
   },
+  whatsappBar: {
+    type: 'whatsappBar',
+    labelKey: 'website:sections.whatsappBar.label',
+    icon: MessageCircle,
+  },
+  video: {
+    type: 'video',
+    labelKey: 'website:sections.video.label',
+    icon: PlayCircle,
+  },
+  pricing: {
+    type: 'pricing',
+    labelKey: 'website:sections.pricing.label',
+    icon: Tags,
+  },
+  countdown: {
+    type: 'countdown',
+    labelKey: 'website:sections.countdown.label',
+    icon: Timer,
+  },
 };
 
 /** Every registered section type's metadata, in the Page Composer's "Add section" display order. */
@@ -184,7 +208,118 @@ export function getDefaultSectionConfig<TType extends SectionType>(
       showSyllabus: true,
       maxModules: DEFAULT_SPOTLIGHT_MODULES,
     },
+    ...phase3dStarterConfigs(),
   };
 
   return defaults[type] as SectionConfigMap[TType];
+}
+
+/**
+ * CMS phase 3d (batch A) — starter content in both languages, so a new
+ * section arrives looking like itself. What only the Owner can know is left
+ * empty, and the public site leaves it out until it is filled: the WhatsApp
+ * and call numbers (the buttons stay hidden), the video (the section stays
+ * hidden) and the deadline (the section stays hidden). Ids are fresh per
+ * section, like an added item's.
+ */
+function phase3dStarterConfigs(): Pick<
+  SectionConfigMap,
+  'whatsappBar' | 'video' | 'pricing' | 'countdown'
+> {
+  const id = () => crypto.randomUUID();
+  const feature = (en: string, ar: string, included: boolean) => ({
+    id: id(),
+    text: { en, ar },
+    included,
+  });
+  return {
+    whatsappBar: {
+      title: { en: 'Questions? Talk to us', ar: 'لديك سؤال؟ تحدّث إلينا' },
+      description: {
+        en: 'Ask us about courses, schedules and prices.',
+        ar: 'اسألنا عن الدورات والمواعيد والأسعار.',
+      },
+      cta: {
+        label: { en: 'Chat on WhatsApp', ar: 'راسلنا على واتساب' },
+        whatsapp: '',
+      },
+      secondaryCta: { label: { en: 'Call us', ar: 'اتصل بنا' }, phone: '' },
+    },
+    video: {
+      title: { en: 'See a lesson in action', ar: 'شاهد درسًا من دروسنا' },
+      description: {
+        en: 'A short look at how we teach.',
+        ar: 'نظرة قصيرة على طريقة تدريسنا.',
+      },
+      videoId: '',
+    },
+    pricing: {
+      title: { en: 'Plans and prices', ar: 'الباقات والأسعار' },
+      description: {
+        en: 'Choose the plan that suits you.',
+        ar: 'اختر الباقة التي تناسبك.',
+      },
+      plans: [
+        {
+          id: id(),
+          name: { en: 'Monthly', ar: 'الباقة الشهرية' },
+          price: { en: '450 EGP', ar: '450 ج.م' },
+          period: { en: 'per month', ar: 'شهريًا' },
+          description: {
+            en: 'One subject, paid month by month.',
+            ar: 'مادة واحدة تدفع اشتراكها شهرًا بشهر.',
+          },
+          features: [
+            feature('A weekly live class', 'حصة مباشرة كل أسبوع', true),
+            feature('Recorded lessons', 'دروس مسجّلة', true),
+            feature('Printed notes', 'مذكرات مطبوعة', false),
+          ],
+          cta: {
+            label: { en: 'Choose monthly', ar: 'اختر الشهرية' },
+            authAction: 'signUp',
+          },
+        },
+        {
+          id: id(),
+          name: { en: 'Full term', ar: 'باقة الترم' },
+          price: { en: '1,200 EGP', ar: '1200 ج.م' },
+          period: { en: 'per term', ar: 'للترم' },
+          description: {
+            en: 'Every lesson of the term, for less.',
+            ar: 'كل دروس الترم بسعر أقل.',
+          },
+          features: [
+            feature('A weekly live class', 'حصة مباشرة كل أسبوع', true),
+            feature('Recorded lessons', 'دروس مسجّلة', true),
+            feature('Printed notes', 'مذكرات مطبوعة', true),
+          ],
+          highlighted: true,
+          badge: { en: 'Best value', ar: 'الأوفر' },
+          cta: {
+            label: { en: 'Choose the term', ar: 'اختر باقة الترم' },
+            authAction: 'signUp',
+          },
+        },
+      ],
+    },
+    countdown: {
+      title: {
+        en: 'Registration for the new term closes soon',
+        ar: 'التسجيل في الترم الجديد يُغلق قريبًا',
+      },
+      description: {
+        en: 'Book your seat before the deadline.',
+        ar: 'احجز مقعدك قبل انتهاء الموعد.',
+      },
+      deadline: '',
+      endedMessage: {
+        en: 'Registration has closed. Message us to join the waiting list.',
+        ar: 'أُغلق التسجيل. راسلنا للانضمام إلى قائمة الانتظار.',
+      },
+      cta: {
+        label: { en: 'Book your seat', ar: 'احجز مقعدك' },
+        authAction: 'signUp',
+      },
+    },
+  };
 }

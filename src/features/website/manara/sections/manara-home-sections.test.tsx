@@ -175,7 +175,7 @@ afterEach(() => {
 });
 
 describe('MANARA_SECTION_RENDERERS', () => {
-  it('draws the thirteen Home section types', () => {
+  it('draws the thirteen Home section types and the four CMS phase 3d ones', () => {
     expect(Object.keys(MANARA_SECTION_RENDERERS).sort()).toEqual(
       [
         'about',
@@ -191,6 +191,11 @@ describe('MANARA_SECTION_RENDERERS', () => {
         'statistics',
         'steps',
         'testimonials',
+        // CMS phase 3d (batch A).
+        'whatsappBar',
+        'video',
+        'pricing',
+        'countdown',
       ].sort()
     );
   });

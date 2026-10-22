@@ -56,5 +56,7 @@
   "commonPassword": "This password is too common and easy to guess. Choose a different one.",
   "unsupportedCurrency": "Choose a supported currency (EGP).",
   "invalidWhatsappNumber": "Enter a WhatsApp mobile number for the chosen country, such as 0100 123 4567 for Egypt.",
-  "invalidCallNumber": "Enter a phone number for the chosen country, or a short hotline such as 19999."
+  "invalidCallNumber": "Enter a phone number for the chosen country, or a short hotline such as 19999.",
+  "invalidYouTubeVideo": "Paste a YouTube video link, such as https://youtu.be/… or https://www.youtube.com/watch?v=…",
+  "invalidDeadline": "Choose a complete date and time."
 }

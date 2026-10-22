@@ -62,6 +62,11 @@ export const SECTION_TYPE_ORDER: readonly SectionType[] = [
   'gallery',
   'contact',
   'cta',
+  // CMS phase 3d (batch A).
+  'whatsappBar',
+  'video',
+  'pricing',
+  'countdown',
 ];
 
 /** The bounded icon names a Feature item may reference — a curated subset of `lucide-react`, never an arbitrary asset. */
@@ -107,6 +112,39 @@ export const MIN_SPOTLIGHT_MODULES = 1;
 export const MAX_SPOTLIGHT_MODULES = 12;
 /** The backend generator's default (`SECTION_BASE_DEFAULTS.courseSpotlight`). */
 export const DEFAULT_SPOTLIGHT_MODULES = 6;
+/*
+ * CMS phase 3d (batch A) — the "Talk to us" bar, the click-to-play video,
+ * pricing plans and the registration countdown. Characters per language;
+ * mirrors the backend's `website.constants.ts` exactly (the parity cases
+ * prove both schemas agree at every boundary).
+ */
+export const MAX_WHATSAPP_BAR_TITLE_LENGTH = 80;
+export const MAX_WHATSAPP_BAR_DESCRIPTION_LENGTH = 200;
+export const MAX_VIDEO_DESCRIPTION_LENGTH = 280;
+export const MAX_VIDEO_CAPTION_LENGTH = 200;
+/** A YouTube video id: exactly 11 characters of YouTube's own alphabet. */
+export const YOUTUBE_VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
+export const MIN_PRICING_PLANS = 1;
+export const MAX_PRICING_PLANS = 4;
+export const MAX_PRICING_FEATURES = 10;
+export const MAX_PRICING_DESCRIPTION_LENGTH = 280;
+export const MAX_PRICING_PLAN_NAME_LENGTH = 40;
+/** Free text, e.g. "450 ج.م" or "Free". */
+export const MAX_PRICING_PRICE_LENGTH = 24;
+export const MAX_PRICING_PERIOD_LENGTH = 30;
+export const MAX_PRICING_PLAN_DESCRIPTION_LENGTH = 160;
+export const MAX_PRICING_FEATURE_LENGTH = 80;
+export const MAX_PRICING_BADGE_LENGTH = 24;
+export const MAX_COUNTDOWN_TITLE_LENGTH = 80;
+export const MAX_COUNTDOWN_DESCRIPTION_LENGTH = 240;
+export const MAX_COUNTDOWN_ENDED_MESSAGE_LENGTH = 160;
+/** An ISO 8601 date and time WITH its offset (`2026-11-05T23:59:00+02:00`). */
+export const COUNTDOWN_DEADLINE_PATTERN =
+  /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d{1,3})?)?(Z|[+-](\d{2}):(\d{2}))$/;
+/** An IANA time zone name (`Africa/Cairo`, `UTC`) — the academy's, for showing the deadline. */
+export const TIME_ZONE_PATTERN =
+  /^[A-Za-z][A-Za-z0-9_+-]*(?:\/[A-Za-z0-9_+-]+){0,2}$/;
+export const MAX_TIME_ZONE_LENGTH = 64;
 export const MAX_HERO_HIGHLIGHTS = 4;
 export const MAX_CHIP_TEXT = 40;
 export const MIN_COURSE_CATEGORIES = 2;

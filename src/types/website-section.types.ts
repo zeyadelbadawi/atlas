@@ -46,6 +46,11 @@ export const SECTION_TYPES = [
   'featureSplit',
   // Theme 4 plan §6 (Reports/THEME_4_RIWAQ_PLAN.md) — shared by every theme, with a base renderer.
   'courseSpotlight',
+  // CMS phase 3d (batch A) — shared by every theme, each with a base renderer.
+  'whatsappBar',
+  'video',
+  'pricing',
+  'countdown',
 ] as const;
 
 export type SectionType = (typeof SECTION_TYPES)[number];
@@ -427,6 +432,77 @@ export interface CourseSpotlightSectionConfig {
   readonly cta?: WebsiteCta;
 }
 
+/**
+ * CMS phase 3d — a "Talk to us" strip: a short line and up to three buttons
+ * (WhatsApp, a call, a page). It always keeps its first button.
+ */
+export interface WhatsappBarSectionConfig extends SectionButtons {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly cta: WebsiteCta;
+}
+
+/**
+ * CMS phase 3d — a YouTube video that loads only when the visitor presses
+ * play. `videoId` is the 11-character id (a pasted link is reduced to it on
+ * save); empty means no video chosen yet, and the public site leaves the
+ * section out until there is one.
+ */
+export interface VideoSectionConfig {
+  readonly title?: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly videoId: string;
+  /** An uploaded poster; absent → YouTube's own thumbnail. */
+  readonly poster?: string;
+  readonly caption?: LocalizedText;
+}
+
+export interface PricingPlanFeature {
+  readonly id: string;
+  readonly text: LocalizedText;
+  /** ✓ included, ✗ not included. */
+  readonly included: boolean;
+}
+
+export interface PricingPlan {
+  readonly id: string;
+  readonly name: LocalizedText;
+  /** Free text per language ("450 ج.م", "Free"), never a number the site formats. */
+  readonly price: LocalizedText;
+  /** "per month", "per term". */
+  readonly period?: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly features: readonly PricingPlanFeature[];
+  /** The "most popular" plan (the editor keeps it to one). */
+  readonly highlighted?: boolean;
+  /** The highlighted plan's badge; empty → "Most popular". */
+  readonly badge?: LocalizedText;
+  readonly cta?: WebsiteCta;
+}
+
+/** CMS phase 3d — plans or packages (monthly, per term): one to four. */
+export interface PricingSectionConfig {
+  readonly title?: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly plans: readonly PricingPlan[];
+}
+
+/**
+ * CMS phase 3d — a countdown to a registration deadline. `deadline` is an
+ * ISO date and time with its offset (`2026-11-05T23:59:00+02:00`), empty
+ * until one is chosen (the public site leaves the section out until then);
+ * `timeZone` is the academy's IANA zone it was chosen in, which the site
+ * names the deadline in.
+ */
+export interface CountdownSectionConfig extends SectionButtons {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly deadline: string;
+  readonly timeZone?: string;
+  /** Shown instead of the countdown once the deadline has passed. */
+  readonly endedMessage?: LocalizedText;
+}
+
 /** Every section's config, keyed by its `SectionType`. */
 export interface SectionConfigMap {
   readonly hero: HeroSectionConfig;
@@ -446,6 +522,10 @@ export interface SectionConfigMap {
   readonly steps: StepsSectionConfig;
   readonly featureSplit: FeatureSplitSectionConfig;
   readonly courseSpotlight: CourseSpotlightSectionConfig;
+  readonly whatsappBar: WhatsappBarSectionConfig;
+  readonly video: VideoSectionConfig;
+  readonly pricing: PricingSectionConfig;
+  readonly countdown: CountdownSectionConfig;
 }
 
 /**
