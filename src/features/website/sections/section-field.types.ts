@@ -37,13 +37,19 @@ export type SectionFieldKind =
   | 'select'
   | 'image'
   | 'cta'
-  | 'buttons';
+  | 'buttons'
+  | 'time'
+  | 'url';
 
 interface FieldDescriptorBase {
   readonly key: string;
   readonly labelKey: string;
   /** Offered only when the website's theme is one of these; absent = every theme. */
   readonly themes?: readonly WebsiteThemeKey[];
+  /** Persistent helper text under the control (what to type, what empty means). */
+  readonly hintKey?: string;
+  /** What a newly added repeatable item starts with (e.g. a schedule row's day). */
+  readonly defaultValue?: string | boolean;
 }
 
 export interface TextFieldDescriptor extends FieldDescriptorBase {
@@ -78,6 +84,16 @@ export interface SelectFieldDescriptor extends FieldDescriptorBase {
 }
 
 /**
+ * CMS phase 3d — a plain, non-localized value with its own input type:
+ * `time` is a 24-hour `HH:MM` clock time (`<input type="time">`), `url` a
+ * web address. Both say what is wrong only once the author leaves the
+ * field (`section-field-inputs.tsx`).
+ */
+export interface PlainInputFieldDescriptor extends FieldDescriptorBase {
+  readonly kind: 'time' | 'url';
+}
+
+/**
  * CMS phase 3 — a section's buttons (up to three), edited as one list and
  * stored in the `cta` / `secondaryCta` / `tertiaryCta` slots
  * (`SECTION_BUTTON_SLOTS`). Its `key` names the field, not a config key.
@@ -94,7 +110,8 @@ export type SectionFieldDescriptor =
   | BooleanFieldDescriptor
   | NumberFieldDescriptor
   | SelectFieldDescriptor
-  | ButtonsFieldDescriptor;
+  | ButtonsFieldDescriptor
+  | PlainInputFieldDescriptor;
 
 export interface RepeatableFieldGroup {
   readonly key: string;

@@ -4,6 +4,12 @@
  * absent here falls back to its base renderer.
  */
 import type { SectionRenderers } from '@/features/website/theme-packs/theme-pack.types';
+import {
+  RiwaqLogos,
+  RiwaqMap,
+  RiwaqResults,
+  RiwaqSchedule,
+} from './riwaq-trust-visit-sections';
 import { RiwaqHero } from './RiwaqHero';
 import {
   RiwaqAbout,
@@ -55,4 +61,9 @@ export const RIWAQ_SECTION_RENDERERS: Partial<SectionRenderers> = {
   faq: RiwaqFaq,
   cta: RiwaqCta,
   gallery: RiwaqGallery,
+  // CMS phase 3d.
+  logos: RiwaqLogos,
+  map: RiwaqMap,
+  schedule: RiwaqSchedule,
+  results: RiwaqResults,
 };

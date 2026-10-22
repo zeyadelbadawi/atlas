@@ -46,6 +46,7 @@ import {
 } from './WebsiteImageField';
 import { resolveSectionImagePurpose } from '../constants/image-recommendations.constants';
 import { LocalizedTextField } from './LocalizedTextField';
+import { PlainInputField } from './section-field-inputs';
 import {
   CtaFieldEditor,
   SectionButtonsEditor,
@@ -166,6 +167,28 @@ function isOfferedFor(
  * Which field an issue path belongs to — the label a person reads in the
  * summary and the limit an over-length message names.
  */
+/**
+ * The "this is a sample" copy for each section whose items may be samples
+ * (`SAMPLE_ITEM_SECTION_TYPES`): the help line and the button that makes
+ * one item real.
+ */
+const SAMPLE_ITEM_COPY: Partial<
+  Record<SectionType, { readonly help: string; readonly markReal: string }>
+> = {
+  testimonials: {
+    help: 'website:editor.sampleHelp',
+    markReal: 'website:editor.markTestimonialReal',
+  },
+  results: {
+    help: 'website:editor.sampleHelpResults',
+    markReal: 'website:editor.markResultReal',
+  },
+  schedule: {
+    help: 'website:editor.sampleHelpSchedule',
+    markReal: 'website:editor.markScheduleRowReal',
+  },
+};
+
 /** The part of a button an issue path names, for the summary. */
 const BUTTON_PART_LABELS: Readonly<Record<string, string>> = {
   label: 'website:fields.ctaLabelPlaceholder',
@@ -697,6 +720,7 @@ function ScalarField({
   onChange,
   academyId,
   sectionType,
+  revealErrors = false,
 }: {
   readonly descriptor: SectionFieldDescriptor;
   /** Where the value lives in the section config, e.g. `title` or `items.2.title`. */
@@ -707,8 +731,24 @@ function ScalarField({
   readonly academyId: string;
   /** Which section this field belongs to — decides the image recommendation. */
   readonly sectionType: SectionType;
+  /** After a refused Apply: fields that wait for blur show their problem at once. */
+  readonly revealErrors?: boolean;
 }): JSX.Element {
+  const { t } = useTranslation();
   const id = `section-field-${path.replace(/\./g, '-')}`;
+
+  if (descriptor.kind === 'time' || descriptor.kind === 'url') {
+    return (
+      <PlainInputField
+        descriptor={descriptor}
+        id={id}
+        value={value}
+        onChange={onChange}
+        error={errorFor(path, descriptor.labelKey)}
+        revealError={revealErrors}
+      />
+    );
+  }
 
   if (
     (descriptor.kind === 'text' || descriptor.kind === 'longText') &&
@@ -734,6 +774,11 @@ function ScalarField({
 
   const error = errorFor(path, descriptor.labelKey);
   const errorId = `${id}-message`;
+  const hintId = `${id}-hint`;
+  const describedBy =
+    [descriptor.hintKey ? hintId : undefined, error ? errorId : undefined]
+      .filter(Boolean)
+      .join(' ') || undefined;
   return (
     <div className="space-y-1">
       <ScalarControl
@@ -743,16 +788,16 @@ function ScalarField({
         onChange={onChange}
         academyId={academyId}
         sectionType={sectionType}
-        invalidProps={
-          error
-            ? {
-                'aria-invalid': true,
-                'aria-describedby': errorId,
-                'data-field-error': true,
-              }
-            : {}
-        }
+        invalidProps={{
+          ...(error ? { 'aria-invalid': true, 'data-field-error': true } : {}),
+          ...(describedBy ? { 'aria-describedby': describedBy } : {}),
+        }}
       />
+      {descriptor.hintKey ? (
+        <p id={hintId} className="text-xs text-muted-foreground">
+          {t(descriptor.hintKey)}
+        </p>
+      ) : null}
       {error ? (
         <p id={errorId} className="text-xs text-destructive">
           {error}
@@ -842,9 +887,9 @@ function ScalarControl({
       )?.hintKey;
       return (
         <div className="space-y-1.5">
-          <Label>{t(descriptor.labelKey)}</Label>
+          <Label htmlFor={id}>{t(descriptor.labelKey)}</Label>
           <Select value={(value as string) ?? ''} onValueChange={onChange}>
-            <SelectTrigger {...invalidProps}>
+            <SelectTrigger id={id} {...invalidProps}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -951,6 +996,9 @@ export function SectionConfigForm<TType extends SectionType>({
    */
   // In the panel there is no Apply: problems show as soon as they exist.
   const [attempted, setAttempted] = useState(isPanel);
+  // The panel has no Apply, so "attempted" is always on there; fields that
+  // wait for blur reveal early only after a refused Apply in the dialog.
+  const revealErrors = attempted && !isPanel;
   const [focusRequest, setFocusRequest] = useState(0);
   const formRef = useRef<HTMLDivElement>(null);
   const summaryRef = useRef<HTMLDivElement>(null);
@@ -1074,11 +1122,12 @@ export function SectionConfigForm<TType extends SectionType>({
       const isLocalized =
         (field.kind === 'text' || field.kind === 'longText') && field.localized;
       blank[field.key] =
-        field.kind === 'boolean'
+        field.defaultValue ??
+        (field.kind === 'boolean'
           ? false
           : isLocalized
             ? { en: '', ar: '' }
-            : '';
+            : '');
     }
     setField(schema.repeatable.key, [...items, blank]);
   };
@@ -1109,6 +1158,7 @@ export function SectionConfigForm<TType extends SectionType>({
     );
   };
   const hasSampleItems = items.some((item) => item.sample === true);
+  const sampleCopy = SAMPLE_ITEM_COPY[type] ?? SAMPLE_ITEM_COPY.testimonials!;
 
   const removeItem = (index: number) => {
     if (!schema.repeatable) return;
@@ -1197,6 +1247,7 @@ export function SectionConfigForm<TType extends SectionType>({
                 onChange={(value) => setField(field.key, value)}
                 academyId={academyId}
                 sectionType={type}
+                revealErrors={revealErrors}
               />
             )
           )}
@@ -1223,7 +1274,7 @@ export function SectionConfigForm<TType extends SectionType>({
               </div>
               {hasSampleItems ? (
                 <p className="text-xs text-muted-foreground">
-                  {t('website:editor.sampleHelp')}
+                  {t(sampleCopy.help)}
                 </p>
               ) : null}
               {items.map((item, index) => (
@@ -1252,7 +1303,7 @@ export function SectionConfigForm<TType extends SectionType>({
                             onClick={() => confirmItemReal(index)}
                           >
                             <BadgeCheck className="size-3.5" aria-hidden />
-                            {t('website:editor.markTestimonialReal')}
+                            {t(sampleCopy.markReal)}
                           </Button>
                         </>
                       ) : null}
@@ -1277,6 +1328,7 @@ export function SectionConfigForm<TType extends SectionType>({
                       onChange={(value) => updateItem(index, field.key, value)}
                       academyId={academyId}
                       sectionType={type}
+                      revealErrors={revealErrors}
                     />
                   ))}
                 </div>

@@ -21,6 +21,12 @@ import {
 } from './atelier-live-sections';
 import { AtelierTestimonials } from './AtelierTestimonials';
 import { AtelierFaq } from './AtelierFaq';
+import {
+  AtelierLogos,
+  AtelierMap,
+  AtelierResults,
+  AtelierSchedule,
+} from './atelier-trust-visit-sections';
 
 export {
   AtelierAbout,
@@ -52,4 +58,9 @@ export const ATELIER_SECTION_RENDERERS: Partial<SectionRenderers> = {
   faq: AtelierFaq,
   cta: AtelierCta,
   gallery: AtelierGallery,
+  // CMS phase 3d.
+  logos: AtelierLogos,
+  map: AtelierMap,
+  schedule: AtelierSchedule,
+  results: AtelierResults,
 };

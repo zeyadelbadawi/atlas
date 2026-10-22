@@ -4,6 +4,12 @@
  * absent here falls back to its base renderer.
  */
 import type { SectionRenderers } from '@/features/website/theme-packs/theme-pack.types';
+import {
+  ManaraLogos,
+  ManaraMap,
+  ManaraResults,
+  ManaraSchedule,
+} from './manara-trust-visit-sections';
 import { ManaraHero } from './ManaraHero';
 import {
   ManaraAbout,
@@ -57,4 +63,9 @@ export const MANARA_SECTION_RENDERERS: Partial<SectionRenderers> = {
   faq: ManaraFaq,
   cta: ManaraCta,
   gallery: ManaraGallery,
+  // CMS phase 3d.
+  logos: ManaraLogos,
+  map: ManaraMap,
+  schedule: ManaraSchedule,
+  results: ManaraResults,
 };

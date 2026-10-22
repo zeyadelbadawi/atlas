@@ -33,7 +33,16 @@ import {
   MAX_HERO_HIGHLIGHTS,
   MAX_HERO_SUBTITLE_LENGTH,
   MAX_HERO_TITLE_LENGTH,
+  MAX_LOGOS,
   MAX_LONG_TEXT,
+  MAX_MAP_ADDRESS_LENGTH,
+  MAX_MAP_NOTE_LENGTH,
+  MAX_MAP_QUERY_LENGTH,
+  MAX_RESULT_VALUE_LENGTH,
+  MAX_RESULTS,
+  MAX_SCHEDULE_ROW_DETAIL_LENGTH,
+  MAX_SCHEDULE_ROW_TITLE_LENGTH,
+  MAX_SCHEDULE_ROWS,
   MAX_SECTION_ITEMS,
   MAX_SECTION_STEPS,
   MAX_SHORT_TEXT,
@@ -46,11 +55,13 @@ import {
   MAX_STEPS_TITLE_LENGTH,
   MIN_COURSE_CATALOG_PAGE_SIZE,
   MIN_COURSE_CATEGORIES,
+  SCHEDULE_TIME_PATTERN,
 } from '../constants/website.constants';
 import { isAllowedImageValue } from '../utils/image-value.utils';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import {
   COURSE_CATALOG_SORT_VALUES,
+  SCHEDULE_DAYS,
   type PublicWebsiteLocale,
   type SectionType,
 } from '@types';
@@ -407,6 +418,88 @@ export const courseSpotlightSectionSchema = z.object({
   cta: websiteCtaSchema.optional(),
 });
 
+/** A tenant-typed web address (a logo's link) — exactly the section button's `url` rule. */
+const optionalSafeUrlSchema = z
+  .string()
+  .url('validation:invalidUrl')
+  .refine(isSafeExternalUrl, { message: 'validation:invalidUrl' })
+  .optional()
+  .or(z.literal(''));
+
+const logoItemSchema = z.object({
+  id: z.string(),
+  image: imageValueSchema.pipe(z.string().min(1, 'validation:required')),
+  alt: localizedRequired(MAX_SHORT_TEXT),
+  url: optionalSafeUrlSchema,
+});
+
+/** CMS phase 3d — mirrors the backend `logosSectionSchema` field for field. */
+export const logosSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  items: z.array(logoItemSchema).max(MAX_LOGOS),
+});
+
+/** CMS phase 3d — mirrors the backend `mapSectionSchema`. `query` is encoded into a fixed Google Maps URL, never used as an `href`. */
+export const mapSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  address: localizedRequired(MAX_MAP_ADDRESS_LENGTH),
+  note: localizedOptional(MAX_MAP_NOTE_LENGTH).optional(),
+  query: z
+    .string()
+    .max(MAX_MAP_QUERY_LENGTH, 'validation:maxLength')
+    .optional(),
+});
+
+const scheduleTimeSchema = z
+  .string()
+  .regex(SCHEDULE_TIME_PATTERN, 'validation:invalidTime');
+
+const scheduleRowSchema = z
+  .object({
+    id: z.string(),
+    day: z.enum(SCHEDULE_DAYS),
+    start: scheduleTimeSchema,
+    end: scheduleTimeSchema,
+    title: localizedRequired(MAX_SCHEDULE_ROW_TITLE_LENGTH),
+    teacher: localizedOptional(MAX_SCHEDULE_ROW_DETAIL_LENGTH).optional(),
+    location: localizedOptional(MAX_SCHEDULE_ROW_DETAIL_LENGTH).optional(),
+    sample: z.boolean().optional(),
+  })
+  // `HH:MM` compares correctly as text.
+  .refine((row) => row.end > row.start, {
+    message: 'validation:endAfterStart',
+    path: ['end'],
+  });
+
+/** CMS phase 3d — mirrors the backend `scheduleSectionSchema`. */
+export const scheduleSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  items: z.array(scheduleRowSchema).max(MAX_SCHEDULE_ROWS),
+});
+
+const resultItemSchema = z.object({
+  id: z.string(),
+  studentName: z
+    .string()
+    .min(1, 'validation:required')
+    .max(MAX_SHORT_TEXT, 'validation:maxLength'),
+  result: localizedRequired(MAX_RESULT_VALUE_LENGTH),
+  detail: localizedOptional(MAX_SHORT_TEXT).optional(),
+  photo: imageValueSchema.optional(),
+  photoAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
+  top: z.boolean().optional(),
+  sample: z.boolean().optional(),
+});
+
+/** CMS phase 3d — mirrors the backend `resultsSectionSchema`. */
+export const resultsSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  items: z.array(resultItemSchema).max(MAX_RESULTS),
+});
+
 const SECTION_SCHEMAS = {
   hero: heroSectionSchema,
   about: aboutSectionSchema,
@@ -425,6 +518,10 @@ const SECTION_SCHEMAS = {
   steps: stepsSectionSchema,
   featureSplit: featureSplitSectionSchema,
   courseSpotlight: courseSpotlightSectionSchema,
+  logos: logosSectionSchema,
+  map: mapSectionSchema,
+  schedule: scheduleSectionSchema,
+  results: resultsSectionSchema,
 } satisfies Record<SectionType, z.ZodTypeAny>;
 
 /** Resolves the right Zod schema for a section type. The Section Editor's ONE dynamic-form entry point — no section's validation is ever hand-rolled inline in a component. */
