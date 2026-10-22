@@ -729,7 +729,12 @@
       "tablet": "الجهاز اللوحي",
       "mobile": "الجوال"
     },
-    "localeLabel": "اللغة"
+    "localeLabel": "اللغة",
+    "zoom": {
+      "fit": "ملاءمة · {{percent}}٪",
+      "actual": "100٪"
+    },
+    "frameTitle": "معاينة الموقع"
   },
   "publish": {
     "action": "نشر",

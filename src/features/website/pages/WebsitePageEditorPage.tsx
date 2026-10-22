@@ -60,6 +60,7 @@ import { SectionConfigForm } from '../components/SectionConfigForm';
 import { WebsitePageSeoDialog } from '../components/WebsitePageSeoDialog';
 import {
   PreviewViewport,
+  initialPreviewBreakpoint,
   type PreviewBreakpoint,
 } from '../components/PreviewViewport';
 import { WebsiteRenderer } from '../renderer';
@@ -71,7 +72,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import {
-  DEFAULT_PUBLIC_WEBSITE_LOCALE,
   PUBLIC_WEBSITE_LOCALES,
   PUBLIC_WEBSITE_LOCALE_DIRECTION,
   PUBLIC_WEBSITE_LOCALE_LABELS,
@@ -164,10 +164,15 @@ function WebsitePageEditor(): JSX.Element {
   // which is exactly the RTL-preview defect. `WebsitePreviewPage` already
   // had this selector; the editor, where admins actually spend their
   // time, did not.
-  const [previewLocale, setPreviewLocale] = useState<PublicWebsiteLocale>(
-    DEFAULT_PUBLIC_WEBSITE_LOCALE
+  //
+  // It opens in the site's main language (`chosenLocale` null until the
+  // admin picks one), as the section editor's own preview does.
+  const [chosenLocale, setPreviewLocale] = useState<PublicWebsiteLocale | null>(
+    null
   );
-  const [breakpoint, setBreakpoint] = useState<PreviewBreakpoint>('desktop');
+  const [breakpoint, setBreakpoint] = useState<PreviewBreakpoint>(
+    initialPreviewBreakpoint
+  );
   const seoDialog = useDisclosure();
 
   /*
@@ -379,6 +384,35 @@ function WebsitePageEditor(): JSX.Element {
   const configuration = configQuery.data;
   const pages = pagesQuery.data.items;
   const page = pageQuery.data;
+  const previewLocale =
+    chosenLocale ?? resolveDefaultLocale(configuration.defaultLocale);
+  // The site's navigation and links are built from the pages a visitor
+  // can reach; a hidden page is not among them. (The section editor's
+  // link pickers still offer every page.)
+  const previewPages = pages.filter((candidate) => candidate.visible);
+  const sectionPagePreview = (
+    sectionId: string,
+    config: SectionInstance['config'],
+    locale: PublicWebsiteLocale
+  ) => (
+    <WebsiteRenderer
+      academyId={academyId}
+      academyName={academy.name}
+      academyLogo={academy.logo}
+      configuration={configuration}
+      pages={previewPages}
+      page={{
+        ...page,
+        sections: draftSections.map((section) =>
+          section.id === sectionId
+            ? ({ ...section, config } as SectionInstance)
+            : section
+        ),
+      }}
+      locale={locale}
+      onNavigate={() => undefined}
+    />
+  );
   const selectedSection = draftSections.find(
     (section) => section.id === selectedId
   );
@@ -576,7 +610,7 @@ function WebsitePageEditor(): JSX.Element {
           breadcrumbs={breadcrumbs}
           actions={
             canManage ? (
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <Select
                   value={previewLocale}
                   onValueChange={(value) =>
@@ -812,7 +846,7 @@ function WebsitePageEditor(): JSX.Element {
               academyName={academy.name}
               academyLogo={academy.logo}
               configuration={configuration}
-              pages={pages}
+              pages={previewPages}
               page={previewPage}
               locale={previewLocale}
               onNavigate={() => undefined}
@@ -825,7 +859,7 @@ function WebsitePageEditor(): JSX.Element {
         open={!!selectedSection}
         onOpenChange={(open) => !open && setSelectedId(undefined)}
       >
-        <DialogContent className="max-h-[85vh] max-w-4xl overflow-y-auto">
+        <DialogContent className="max-h-[90vh] max-w-6xl overflow-y-auto">
           {selectedSection ? (
             <>
               <DialogHeader>
@@ -843,6 +877,10 @@ function WebsitePageEditor(): JSX.Element {
                 onSave={handleSaveSectionConfig}
                 onCancel={() => setSelectedId(undefined)}
                 serverIssues={serverIssuesById[selectedSection.id]}
+                renderPagePreview={(config, locale) =>
+                  sectionPagePreview(selectedSection.id, config, locale)
+                }
+                previewSectionId={selectedSection.id}
               />
             </>
           ) : null}

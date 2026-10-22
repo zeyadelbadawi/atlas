@@ -15,7 +15,7 @@
  * the default Sign in / Sign up pair; without `linkRenderer` (dashboard
  * previews) nothing navigates. Only the presentation is Theme 1's.
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe, Menu } from 'lucide-react';
 import { cn } from '@utils';
@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/sheet';
 import { useDisclosure } from '@hooks';
 import { useWebsiteContainerClass } from '../renderer/renderer-style.utils';
+import { windowOf } from '../utils/frame-window.utils';
 import {
   WebsiteAccountMenu,
   WebsiteAccountSheetLinks,
@@ -51,24 +52,33 @@ import type { WebsiteNavigationItem, WebsitePage } from '@types';
 /** Scroll distance at which the header turns solid (§G). */
 const SOLID_AFTER_PX = 24;
 
-function useScrolledPast(threshold: number): boolean {
+/**
+ * Whether the page the header is shown in has scrolled past `threshold`.
+ * The header's own window, not the global one: in the dashboard preview
+ * the site scrolls inside the preview frame (`windowOf`).
+ */
+function useScrolledPast(
+  ref: RefObject<HTMLElement>,
+  threshold: number
+): boolean {
   const [past, setPast] = useState(false);
   useEffect(() => {
+    const view = windowOf(ref.current);
     let frame = 0;
     const update = () => {
       frame = 0;
-      setPast(window.scrollY > threshold);
+      setPast(view.scrollY > threshold);
     };
     const onScroll = () => {
-      if (!frame) frame = window.requestAnimationFrame(update);
+      if (!frame) frame = view.requestAnimationFrame(update);
     };
     update();
-    window.addEventListener('scroll', onScroll, { passive: true });
+    view.addEventListener('scroll', onScroll, { passive: true });
     return () => {
-      window.removeEventListener('scroll', onScroll);
-      if (frame) window.cancelAnimationFrame(frame);
+      view.removeEventListener('scroll', onScroll);
+      if (frame) view.cancelAnimationFrame(frame);
     };
-  }, [threshold]);
+  }, [ref, threshold]);
   return past;
 }
 
@@ -100,7 +110,8 @@ export function ModernEducationHeader({
   const { t } = useTranslation();
   const container = useWebsiteContainerClass();
   const menu = useDisclosure();
-  const solid = useScrolledPast(SOLID_AFTER_PX);
+  const headerRef = useRef<HTMLElement>(null);
+  const solid = useScrolledPast(headerRef, SOLID_AFTER_PX);
   const direction = PUBLIC_WEBSITE_LOCALE_DIRECTION[locale];
   const items = [...navigation].sort((a, b) => a.order - b.order);
 
@@ -328,6 +339,7 @@ export function ModernEducationHeader({
 
   return (
     <header
+      ref={headerRef}
       data-solid={solid ? 'true' : 'false'}
       className="t1-header sticky top-0 z-40"
     >

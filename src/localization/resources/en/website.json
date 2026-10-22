@@ -705,7 +705,12 @@
       "tablet": "Tablet",
       "mobile": "Mobile"
     },
-    "localeLabel": "Language"
+    "localeLabel": "Language",
+    "zoom": {
+      "fit": "Fit · {{percent}}%",
+      "actual": "100%"
+    },
+    "frameTitle": "Website preview"
   },
   "publish": {
     "action": "Publish",

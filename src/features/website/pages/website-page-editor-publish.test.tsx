@@ -122,6 +122,7 @@ vi.mock('@app/providers', async (importOriginal) => ({
 vi.mock('../renderer', () => ({ WebsiteRenderer: () => null }));
 vi.mock('../components/PreviewViewport', () => ({
   PreviewViewport: () => null,
+  initialPreviewBreakpoint: () => 'desktop',
 }));
 vi.mock('../components/WebsitePageSeoDialog', () => ({
   WebsitePageSeoDialog: () => null,
