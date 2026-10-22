@@ -69,8 +69,7 @@ function logoPng([r, g, b]: readonly [number, number, number]): Buffer {
 const PURPLE: readonly [number, number, number] = [124, 58, 237];
 
 /** The hue (0–360) of a computed CSS colour such as `rgb(37, 99, 235)`. */
-function hueOf(color: string): number {
-  const [r, g, b] = (color.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+function hueOf([r, g, b]: readonly number[]): number {
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   const d = max - min;
@@ -187,14 +186,36 @@ async function academyIdFor(page: Page, requestId: string): Promise<string> {
   return (await response.json()).academyId as string;
 }
 
+/**
+ * The hue the public site's first call-to-action is painted in. The computed
+ * colour is read back through a 1×1 canvas, so any syntax Chrome reports
+ * (`rgb()`, `color(srgb …)`, `oklch(…)`) arrives as sRGB 0–255 — parsing the
+ * string read NaN on the nightly run's Chrome. Polled until the button is
+ * actually painted (opaque), so a palette applied a moment after the first
+ * paint is what gets measured.
+ */
 async function publicCtaHue(page: Page, slug: string): Promise<number> {
   await page.goto(`/?${ACADEMY_PREVIEW_PARAM}=${slug}`);
   await declineCookies(page);
   const cta = page.locator('.t1-cta').first();
   await expect(cta).toBeVisible();
-  return hueOf(
-    await cta.evaluate((element) => getComputedStyle(element).backgroundColor)
-  );
+  let rgba: number[] = [];
+  await expect
+    .poll(async () => {
+      rgba = await cta.evaluate((element) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 1;
+        canvas.height = 1;
+        const context = canvas.getContext('2d');
+        if (!context) return [];
+        context.fillStyle = getComputedStyle(element).backgroundColor;
+        context.fillRect(0, 0, 1, 1);
+        return Array.from(context.getImageData(0, 0, 1, 1).data);
+      });
+      return rgba[3] ?? 0;
+    })
+    .toBe(255);
+  return hueOf(rgba);
 }
 
 const SAMPLE_QUOTES = [
