@@ -138,6 +138,16 @@ export interface SectionConfigFormProps<TType extends SectionType> {
   ) => ReactNode;
   /** The section's id on the page, for scrolling `renderPagePreview`'s page to it. */
   readonly previewSectionId?: string;
+  /**
+   * `'panel'`: the visual editor's settings panel. Only the fields — no
+   * preview of its own (the editor's canvas is the preview) and no
+   * Apply/Cancel: every change goes to `onDraftChange` as it is made, and
+   * problems show as they appear rather than after an Apply. Defaults to
+   * `'dialog'`, the page editor's section dialog.
+   */
+  readonly variant?: 'dialog' | 'panel';
+  /** The section's config as currently typed, on every change (`'panel'`). */
+  readonly onDraftChange?: (config: SectionConfigMap[TType]) => void;
 }
 
 /**
@@ -1074,13 +1084,27 @@ export function SectionConfigForm<TType extends SectionType>({
   serverIssues,
   renderPagePreview,
   previewSectionId,
+  variant = 'dialog',
+  onDraftChange,
 }: SectionConfigFormProps<TType>): JSX.Element {
+  const isPanel = variant === 'panel';
   const { t, i18n } = useTranslation();
   // B0-WEB-02 — Arabic is the required language on an Arabic-default site.
   const requiredLocale = resolveDefaultLocale(configuration.defaultLocale);
   const schema = SECTION_FIELD_SCHEMAS[type];
   const initialDraft = initialConfig as unknown as DraftValue;
   const [draft, setDraft] = useState<DraftValue>(initialDraft);
+  // Reported only when the author changed something — not when the
+  // section's stored copy is replaced underneath (a save adopting the
+  // server's copy), which would read as a new edit.
+  const onDraftChangeRef = useRef(onDraftChange);
+  onDraftChangeRef.current = onDraftChange;
+  const reportedDraftRef = useRef(draft);
+  useEffect(() => {
+    if (draft === reportedDraftRef.current) return;
+    reportedDraftRef.current = draft;
+    onDraftChangeRef.current?.(draft as unknown as SectionConfigMap[TType]);
+  }, [draft]);
   const fields = schema.fields.filter((field) =>
     isOfferedFor(field, configuration.themeKey)
   );
@@ -1097,7 +1121,8 @@ export function SectionConfigForm<TType extends SectionType>({
    * API's issues from the last refused page save stay until the section
    * is edited.
    */
-  const [attempted, setAttempted] = useState(false);
+  // In the panel there is no Apply: problems show as soon as they exist.
+  const [attempted, setAttempted] = useState(isPanel);
   const [focusRequest, setFocusRequest] = useState(0);
   const formRef = useRef<HTMLDivElement>(null);
   const summaryRef = useRef<HTMLDivElement>(null);
@@ -1281,13 +1306,14 @@ export function SectionConfigForm<TType extends SectionType>({
     // Starter photographs in image fields preview as this site's theme
     // draws them (`useImagePreview`).
     <WebsiteImageThemeContext.Provider value={configuration.themeKey}>
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className={isPanel ? 'space-y-5' : 'grid gap-6 lg:grid-cols-2'}>
         <div ref={formRef} className="space-y-5">
           {summary.length > 0 ? (
             <div
               ref={summaryRef}
               tabIndex={-1}
-              role={attempted ? 'alert' : 'status'}
+              // Live in the panel: a status, not an alert on every keystroke.
+              role={attempted && !isPanel ? 'alert' : 'status'}
               data-testid="section-form-issues"
               className="space-y-1 rounded-md border border-destructive/50 bg-destructive/5 p-3 text-sm"
             >
@@ -1450,14 +1476,16 @@ export function SectionConfigForm<TType extends SectionType>({
             />
           ) : null}
 
-          <div className="flex justify-end gap-2 border-t border-border pt-4">
-            <Button type="button" variant="outline" onClick={onCancel}>
-              {t('common:actions.cancel')}
-            </Button>
-            <Button type="button" onClick={handleSave} disabled={isSaving}>
-              {t('website:editor.applyChanges')}
-            </Button>
-          </div>
+          {isPanel ? null : (
+            <div className="flex justify-end gap-2 border-t border-border pt-4">
+              <Button type="button" variant="outline" onClick={onCancel}>
+                {t('common:actions.cancel')}
+              </Button>
+              <Button type="button" onClick={handleSave} disabled={isSaving}>
+                {t('website:editor.applyChanges')}
+              </Button>
+            </div>
+          )}
         </div>
 
         {/*
@@ -1467,60 +1495,62 @@ export function SectionConfigForm<TType extends SectionType>({
         whole-page preview's own established convention — see
         `WebsitePageEditorPage`'s doc comment on `linkRenderer`).
       */}
-        <div className="space-y-2 lg:sticky lg:top-0 lg:self-start">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              {t('website:editor.livePreview')}
-            </p>
-            <div className="flex overflow-hidden rounded-md border border-border text-xs">
-              {PUBLIC_WEBSITE_LOCALES.map((candidate) => (
-                <button
-                  key={candidate}
-                  type="button"
-                  onClick={() => setPreviewLocale(candidate)}
-                  className={
-                    candidate === previewLocale
-                      ? 'bg-primary px-2.5 py-1 font-medium text-primary-foreground'
-                      : 'px-2.5 py-1 text-muted-foreground hover:text-foreground'
-                  }
-                >
-                  {PUBLIC_WEBSITE_LOCALE_LABELS[candidate]}
-                </button>
-              ))}
-            </div>
-          </div>
-          {renderPagePreview ? (
-            <PreviewViewport
-              breakpoint={previewBreakpoint}
-              onBreakpointChange={setPreviewBreakpoint}
-              dir={PUBLIC_WEBSITE_LOCALE_DIRECTION[previewLocale]}
-              lang={previewLocale}
-              focusSectionId={previewSectionId}
-            >
-              {renderPagePreview(
-                draft as unknown as SectionConfigMap[TType],
-                previewLocale
-              )}
-            </PreviewViewport>
-          ) : (
-            <div className="max-h-[70vh] overflow-y-auto rounded-lg border border-border">
-              <div className="pointer-events-none">
-                <WebsiteThemeScope
-                  theme={previewTheme}
-                  brand={configuration.brand}
-                >
-                  <PublicWebsiteLocaleProvider locale={previewLocale}>
-                    <SectionRenderer
-                      instance={previewInstance}
-                      academyId={academyId}
-                      pages={pages}
-                    />
-                  </PublicWebsiteLocaleProvider>
-                </WebsiteThemeScope>
+        {isPanel ? null : (
+          <div className="space-y-2 lg:sticky lg:top-0 lg:self-start">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                {t('website:editor.livePreview')}
+              </p>
+              <div className="flex overflow-hidden rounded-md border border-border text-xs">
+                {PUBLIC_WEBSITE_LOCALES.map((candidate) => (
+                  <button
+                    key={candidate}
+                    type="button"
+                    onClick={() => setPreviewLocale(candidate)}
+                    className={
+                      candidate === previewLocale
+                        ? 'bg-primary px-2.5 py-1 font-medium text-primary-foreground'
+                        : 'px-2.5 py-1 text-muted-foreground hover:text-foreground'
+                    }
+                  >
+                    {PUBLIC_WEBSITE_LOCALE_LABELS[candidate]}
+                  </button>
+                ))}
               </div>
             </div>
-          )}
-        </div>
+            {renderPagePreview ? (
+              <PreviewViewport
+                breakpoint={previewBreakpoint}
+                onBreakpointChange={setPreviewBreakpoint}
+                dir={PUBLIC_WEBSITE_LOCALE_DIRECTION[previewLocale]}
+                lang={previewLocale}
+                focusSectionId={previewSectionId}
+              >
+                {renderPagePreview(
+                  draft as unknown as SectionConfigMap[TType],
+                  previewLocale
+                )}
+              </PreviewViewport>
+            ) : (
+              <div className="max-h-[70vh] overflow-y-auto rounded-lg border border-border">
+                <div className="pointer-events-none">
+                  <WebsiteThemeScope
+                    theme={previewTheme}
+                    brand={configuration.brand}
+                  >
+                    <PublicWebsiteLocaleProvider locale={previewLocale}>
+                      <SectionRenderer
+                        instance={previewInstance}
+                        academyId={academyId}
+                        pages={pages}
+                      />
+                    </PublicWebsiteLocaleProvider>
+                  </WebsiteThemeScope>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </WebsiteImageThemeContext.Provider>
   );

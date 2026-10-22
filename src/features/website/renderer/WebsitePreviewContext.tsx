@@ -27,3 +27,15 @@ export function useIsWebsitePreview(): boolean {
 
 /** The attribute on each section's anchor in a preview: `[data-preview-section="<id>"]`. */
 export const PREVIEW_SECTION_ATTRIBUTE = 'data-preview-section';
+
+/** Marks the anchor of the section selected in the visual editor. */
+export const PREVIEW_SELECTED_ATTRIBUTE = 'data-preview-selected';
+
+const PreviewSelectionContext = createContext<string | undefined>(undefined);
+
+/** The section selected in the visual editor's canvas, if any. */
+export const PreviewSelectionProvider = PreviewSelectionContext.Provider;
+
+export function usePreviewSelection(): string | undefined {
+  return useContext(PreviewSelectionContext);
+}

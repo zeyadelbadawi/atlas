@@ -22,7 +22,8 @@ import {
 } from '@features/academy';
 import { AcademyScopeRoute } from '@app/routes/AcademyScopeRoute';
 import { ErrorBoundary } from '@app/providers/error/ErrorBoundary';
-import { useLocation } from 'react-router-dom';
+import { matchPath, useLocation } from 'react-router-dom';
+import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { DashboardSidebar } from './DashboardSidebar';
 import { DashboardTopbar } from './DashboardTopbar';
 import { useSmartBack } from './useSmartBack';
@@ -62,6 +63,20 @@ function DashboardShell(): JSX.Element {
   // A remembered academy this account cannot reach is replaced or cleared
   // before any academy-scoped link is built (authorization audit, 22 Sep 2026).
   useActiveAcademyReconciliation();
+
+  // The website's visual editor is a full-screen workspace of its own (its
+  // own top bar, a way back): the dashboard's navigation would only take
+  // room from the page being edited. Same academy scope, guard and error
+  // boundary as every other screen.
+  if (matchPath(DASHBOARD_ROUTES.websiteVisualEditor, location.pathname)) {
+    return (
+      <div id={MAIN_CONTENT_ID} className="h-dvh bg-background">
+        <ErrorBoundary resetKey={location.pathname}>
+          <AcademyScopeRoute />
+        </ErrorBoundary>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-dvh bg-surface">

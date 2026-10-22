@@ -1,0 +1,181 @@
+/**
+ * J51 — the website's visual editor, Chromium against the real stack.
+ *
+ * The seeded Owner opens Home of Web Development Academy in the visual
+ * editor (full screen, no dashboard navigation) and:
+ *   1. selects a section by clicking it ON THE PAGE — its settings open;
+ *   2. types into one of its fields — the page shows the text as it is
+ *      typed, and the draft saves by itself ("All changes saved"): the API's
+ *      draft holds the text;
+ *   3. undoes (Ctrl+Z) — the field and the page are back, and that is
+ *      saved too;
+ *   4. adds an FAQ from the section library right after the first section
+ *      — it is selected, on the page, and saved; undo removes it again.
+ * Nothing is published. The page's sections are restored afterwards.
+ */
+import { test, expect, type APIRequestContext } from '@playwright/test';
+import {
+  apiGet,
+  apiPatch,
+  requireSeed,
+  seedCookieDecision,
+  signInThroughDashboard,
+  SEED,
+  type Session,
+} from './support/atlas';
+
+test.describe.configure({ mode: 'serial' });
+
+let academyId: string;
+let owner: Session;
+let homeId: string;
+let originalSections: unknown;
+
+interface PageResponse {
+  readonly id: string;
+  readonly version: number;
+  readonly coreType?: string;
+  readonly sections: { id: string; type: string; config: unknown }[];
+}
+
+async function home(request: APIRequestContext): Promise<PageResponse> {
+  const response = await apiGet(
+    request,
+    owner,
+    `/academies/${academyId}/website/pages/${homeId}`
+  );
+  expect(response.ok()).toBeTruthy();
+  return response.json();
+}
+
+test.beforeAll(async ({ request }) => {
+  ({ academyId, owner } = await requireSeed(request));
+  const list = await apiGet(
+    request,
+    owner,
+    `/academies/${academyId}/website/pages?pageSize=50`
+  );
+  expect(list.ok()).toBeTruthy();
+  const pages = (await list.json()).items as PageResponse[];
+  homeId = pages.find((page) => page.coreType === 'home')!.id;
+  originalSections = (await home(request)).sections;
+});
+
+test.afterAll(async ({ request }) => {
+  const current = await home(request);
+  await apiPatch(
+    request,
+    owner,
+    `/academies/${academyId}/website/pages/${homeId}`,
+    { sections: originalSections, expectedVersion: current.version }
+  );
+});
+
+test.describe('J51 — visual editor @critical', () => {
+  test('select on the page, edit live, autosave, undo, add from the library', async ({
+    page,
+    request,
+  }) => {
+    test.setTimeout(180_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await seedCookieDecision(page);
+    await signInThroughDashboard(page, SEED.owner, SEED.password);
+    await page.waitForURL(/\/dashboard/);
+    await page.goto(
+      `/dashboard/academy/${academyId}/website/pages/${homeId}/visual`
+    );
+    const editor = page.getByTestId('visual-editor');
+    await expect(editor).toBeVisible({ timeout: 30_000 });
+    // Full screen: the dashboard's top bar (notifications) is not there.
+    await expect(
+      page.getByRole('button', { name: /notification/i })
+    ).toHaveCount(0);
+
+    const frameElement = page.locator('iframe[title="Website preview"]');
+    const frame = page.frameLocator('iframe[title="Website preview"]');
+    await expect(frame.locator('[data-preview-section]').first()).toBeAttached({
+      timeout: 30_000,
+    });
+    const status = page.getByTestId('save-status').locator('[data-state]');
+    const saved = () =>
+      expect(status).toHaveAttribute('data-state', 'ok', { timeout: 20_000 });
+
+    // 1. Click the second section on the page.
+    const sections = (await home(request)).sections;
+    const target = sections[1];
+    const box = await frameElement.evaluate((iframe, id) => {
+      const doc = (iframe as HTMLIFrameElement).contentDocument!;
+      const anchor = doc.querySelector(`[data-preview-section="${id}"]`)!;
+      const first = Array.from(anchor.querySelectorAll('*')).find(
+        (element) => element.getBoundingClientRect().height > 0
+      )!;
+      first.scrollIntoView({ block: 'center' });
+      return true;
+    }, target.id);
+    expect(box).toBe(true);
+    await frame
+      .locator(`[data-preview-section="${target.id}"] > *`)
+      .first()
+      .click({ position: { x: 20, y: 20 } });
+    const panel = page.getByTestId('settings-panel');
+    await expect(panel).toBeVisible();
+    await expect(
+      frame.locator(
+        `[data-preview-section="${target.id}"][data-preview-selected]`
+      )
+    ).toBeAttached();
+
+    // 2. Type into the first filled-in text field.
+    const fields = panel.locator('input[type="text"], textarea');
+    let field = fields.first();
+    for (let index = 0; index < (await fields.count()); index += 1) {
+      if ((await fields.nth(index).inputValue()).trim().length > 3) {
+        field = fields.nth(index);
+        break;
+      }
+    }
+    const before = await field.inputValue();
+    const typed = `${before} J51`;
+    await field.fill(typed);
+    await expect(frame.getByText(typed).first()).toBeVisible();
+    await saved();
+    await expect
+      .poll(async () => JSON.stringify((await home(request)).sections))
+      .toContain('J51');
+
+    // 3. Undo puts it back, on the page and in the draft.
+    await page.locator('body').click({ position: { x: 5, y: 450 } });
+    await page.keyboard.press('Control+z');
+    await expect(field).toHaveValue(before);
+    await expect(frame.getByText(typed)).toHaveCount(0);
+    await saved();
+    await expect
+      .poll(async () => JSON.stringify((await home(request)).sections))
+      .not.toContain('J51');
+
+    // 4. Add an FAQ right after the first section ("+" under its row).
+    await page
+      .getByRole('button', { name: /^Add a section after/ })
+      .first()
+      .click({ force: true });
+    const library = page.getByTestId('section-library');
+    await expect(library).toBeVisible();
+    await library.locator('[data-section-type="faq"]').click();
+    await expect(library).toBeHidden();
+    await expect(panel.getByRole('heading', { name: 'FAQ' })).toBeVisible();
+    await saved();
+    await expect
+      .poll(async () => (await home(request)).sections.map((s) => s.type)[1])
+      .toBe('faq');
+
+    await page.keyboard.press('Control+z');
+    await saved();
+    await expect
+      .poll(async () => (await home(request)).sections.length)
+      .toBe(sections.length);
+
+    await page.screenshot({
+      path: test.info().outputPath('visual-editor.png'),
+    });
+  });
+});

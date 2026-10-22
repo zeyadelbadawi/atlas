@@ -534,6 +534,9 @@ const WebsitePagesPage = lazy(
 const WebsitePageEditorPage = lazy(
   () => import('@features/website/pages/WebsitePageEditorPage')
 );
+const VisualEditorPage = lazy(
+  () => import('@features/website/visual-editor/VisualEditorPage')
+);
 const WebsitePreviewPage = lazy(
   () => import('@features/website/pages/WebsitePreviewPage')
 );
@@ -2637,6 +2640,19 @@ export default function AtlasAppRoutes(): JSX.Element {
                   requiresEntitlement
                 >
                   <WebsitePageEditorPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.websiteVisualEditor}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredPermissions={['academy.website.view']}
+                  requiresEntitlement
+                >
+                  <VisualEditorPage />
                 </RouteGuard>
               }
             />

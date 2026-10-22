@@ -1872,5 +1872,109 @@
         "description": "Courses and details will be published here soon."
       }
     }
+  },
+  "visualEditor": {
+    "open": "Visual editor",
+    "openHint": "Edit this page on the page itself",
+    "title": "Visual editor",
+    "classicEditor": "Classic editor",
+    "backToPages": "Back to pages",
+    "pageLabel": "Page",
+    "languageLabel": "Preview language",
+    "canvasLabel": "Your page",
+    "structure": {
+      "title": "Sections",
+      "hint": "Click a section on your page, or here, to edit it.",
+      "empty": "This page has no sections yet.",
+      "emptyHint": "Add your first section to start building the page."
+    },
+    "add": {
+      "button": "Add section",
+      "here": "Add a section here",
+      "after": "Add a section after “{{section}}”",
+      "atStart": "Add a section at the top"
+    },
+    "library": {
+      "title": "Add a section",
+      "subtitle": "Pick a section. It arrives with ready content you can change.",
+      "search": "Search sections",
+      "empty": "No section matches “{{query}}”.",
+      "categories": {
+        "intro": "Introduce your academy",
+        "courses": "Courses",
+        "trust": "Build trust",
+        "info": "Explain and answer",
+        "action": "Get in touch"
+      },
+      "descriptions": {
+        "hero": "The first thing visitors see: a big title, a short pitch and a button.",
+        "pageHeader": "A simple title band for the top of an inner page.",
+        "about": "Tell visitors who you are and what you teach.",
+        "featuredCourses": "Show the courses you want to put forward.",
+        "courseCatalog": "Your full course list, with search and filters.",
+        "statistics": "Numbers that show your results, like students or courses.",
+        "features": "The reasons to learn with you, with an icon each.",
+        "featureSplit": "A photo beside a list of benefits.",
+        "courseSpotlight": "One course in detail, with what it covers.",
+        "steps": "How joining works, step by step.",
+        "testimonials": "What your students say about you.",
+        "instructors": "Introduce the people who teach.",
+        "faq": "Answers to the questions visitors ask most.",
+        "gallery": "A set of photos of your academy or classes.",
+        "contact": "A form visitors can use to message you.",
+        "cta": "A closing band that asks visitors to act."
+      }
+    },
+    "settings": {
+      "emptyTitle": "Select a section to edit it",
+      "emptyHint": "Click any part of your page, or pick a section from the list.",
+      "close": "Close settings",
+      "expand": "Show more of the settings",
+      "collapse": "Show more of the page",
+      "content": "Content",
+      "display": "Display",
+      "showOn": "Show on",
+      "shown": "Shown",
+      "hidden": "Hidden"
+    },
+    "actions": {
+      "more": "More actions for “{{section}}”",
+      "drag": "Drag to move “{{section}}”",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "duplicate": "Duplicate",
+      "delete": "Delete",
+      "hide": "Hide on the page",
+      "show": "Show on the page",
+      "undo": "Undo",
+      "redo": "Redo"
+    },
+    "status": {
+      "saving": "Saving…",
+      "saved": "All changes saved",
+      "pending": "Unsaved changes",
+      "error": "Couldn’t save your changes",
+      "retry": "Try again",
+      "invalid_one": "{{count}} section needs your attention before it can be saved",
+      "invalid_other": "{{count}} sections need your attention before they can be saved",
+      "tooLong": "Some text is too long. Shorten it to save.",
+      "readOnly": "You can view this page but not change it."
+    },
+    "badges": {
+      "hidden": "Hidden",
+      "attention": "Needs attention",
+      "sample": "Sample"
+    },
+    "publish": {
+      "button": "Publish",
+      "upToDate": "Live and up to date",
+      "siteNotLive": "Your website isn’t published yet. Publish it from the Website page."
+    },
+    "announce": {
+      "selected": "{{section}} selected",
+      "added": "{{section}} added",
+      "deleted": "{{section}} deleted",
+      "moved": "{{section}} moved to position {{position}}"
+    }
   }
 }
