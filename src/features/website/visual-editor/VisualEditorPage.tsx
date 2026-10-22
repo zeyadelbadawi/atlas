@@ -301,8 +301,10 @@ function VisualEditor(): JSX.Element {
     clearServerIssues(id);
     record(replaceSectionConfig(draftSections, id, config), `config:${id}`);
   };
+  // Each design choice is a click of its own, so each is its own undo step
+  // (no group: typed content coalesces, choices do not).
   const handleDesignChange = (id: string, design: SectionInstance['design']) =>
-    record(replaceSectionDesign(draftSections, id, design), `design:${id}`);
+    record(replaceSectionDesign(draftSections, id, design));
   const handleToggleEnabled = (id: string) =>
     record(toggleSectionEnabled(draftSections, id));
   const handleToggleVisibility = (
