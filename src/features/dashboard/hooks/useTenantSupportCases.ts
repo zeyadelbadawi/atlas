@@ -6,6 +6,7 @@
  * authenticated requester), so it is safe to show in full; nothing is
  * filtered client-side.
  */
+import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation, useApiQuery } from '@/shared/hooks';
 import { LIVE_LIST_QUERY_OPTIONS } from '@config';
@@ -34,21 +35,46 @@ export const tenantSupportCaseKeys = {
         : sharedTenantSupportCaseKeys.none(),
 };
 
+function listMine(
+  scope: DashboardScopeSelection
+): Promise<PaginatedResult<SupportCaseSummary>> {
+  return scope.kind === 'organization'
+    ? tenantSupportCaseService.listMineForOrganization(scope.organizationId)
+    : tenantSupportCaseService.listMineForAcademy(
+        (scope as { academyId: string }).academyId
+      );
+}
+
 export function useMySupportCases() {
   const scope = useDashboardScope();
 
   return useApiQuery<PaginatedResult<SupportCaseSummary>, ApiError>({
     queryKey: tenantSupportCaseKeys.mine(scope),
-    queryFn: () =>
-      scope.kind === 'organization'
-        ? tenantSupportCaseService.listMineForOrganization(scope.organizationId)
-        : tenantSupportCaseService.listMineForAcademy(
-            (scope as { academyId: string }).academyId
-          ),
+    queryFn: () => listMine(scope),
     enabled: scope.kind !== 'none',
     // Support replies and status changes come from someone else.
     ...LIVE_LIST_QUERY_OPTIONS,
   });
+}
+
+/**
+ * Starts the "my tickets" read before its list mounts: the overview shows
+ * the list only once its own data has arrived, and waiting for that would
+ * cost a second round trip. Same key and fetcher as `useMySupportCases`;
+ * a prefetch is not an observer, so it adds no second poll, and it skips
+ * when fresh data is already cached.
+ */
+export function usePrefetchMySupportCases(): void {
+  const scope = useDashboardScope();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (scope.kind === 'none') return;
+    void queryClient.prefetchQuery({
+      queryKey: tenantSupportCaseKeys.mine(scope),
+      queryFn: () => listMine(scope),
+    });
+  }, [queryClient, scope]);
 }
 
 export function useSubmitSupportCase() {
