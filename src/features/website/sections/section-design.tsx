@@ -87,6 +87,10 @@ export const SECTION_DESIGN_SUPPORT: Record<SectionType, SectionDesignSupport> =
     results: FULL,
     schedule: NO_ALIGN,
     map: NO_ALIGN,
+    whatsappBar: FULL,
+    video: FULL,
+    pricing: FULL,
+    countdown: FULL,
   };
 
 /**

@@ -28,6 +28,12 @@ import {
 import { RiwaqSpotlight } from './RiwaqSpotlight';
 import { RiwaqTestimonials } from './RiwaqTestimonials';
 import { RiwaqFaq } from './RiwaqFaq';
+import {
+  RiwaqCountdown,
+  RiwaqPricing,
+  RiwaqVideo,
+  RiwaqWhatsappBar,
+} from './riwaq-engage-sections';
 
 export {
   RiwaqAbout,
@@ -61,6 +67,11 @@ export const RIWAQ_SECTION_RENDERERS: Partial<SectionRenderers> = {
   faq: RiwaqFaq,
   cta: RiwaqCta,
   gallery: RiwaqGallery,
+  // CMS phase 3d (batch A).
+  whatsappBar: RiwaqWhatsappBar,
+  video: RiwaqVideo,
+  pricing: RiwaqPricing,
+  countdown: RiwaqCountdown,
   // CMS phase 3d.
   logos: RiwaqLogos,
   map: RiwaqMap,

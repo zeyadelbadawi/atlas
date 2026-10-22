@@ -53,6 +53,11 @@ import {
   localizedErrors,
   type FieldErrorLookup,
 } from './SectionButtonsEditor';
+import {
+  CustomSectionField,
+  isCustomField,
+  resolveCustomFieldIssue,
+} from './section-field-editors';
 import { PublicWebsiteLocaleProvider } from '../renderer/PublicWebsiteLocaleContext';
 import {
   PUBLIC_WEBSITE_LOCALES,
@@ -240,6 +245,9 @@ function resolveIssueField(
 
   const field = schema.fields.find((candidate) => candidate.key === head);
   if (field) {
+    if (isCustomField(field)) {
+      return { ...resolveCustomFieldIssue(field, parts.slice(1)), language };
+    }
     if (field.kind === 'cta') {
       return {
         labelKeys:
@@ -1225,6 +1233,16 @@ export function SectionConfigForm<TType extends SectionType>({
                 onChange={(slots) =>
                   setDraft((prev) => ({ ...prev, ...slots }))
                 }
+              />
+            ) : isCustomField(field) ? (
+              <CustomSectionField
+                key={field.key}
+                descriptor={field}
+                draft={draft}
+                onPatch={(patch) => setDraft((prev) => ({ ...prev, ...patch }))}
+                errorFor={errorFor}
+                pages={pages}
+                academyId={academyId}
               />
             ) : field.kind === 'cta' ? (
               <CtaFieldEditor

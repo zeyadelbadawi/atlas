@@ -48,6 +48,12 @@ import {
   T1Schedule,
 } from './t1-trust-visit-sections';
 import { T1CourseDetails } from './T1CourseDetails';
+import {
+  T1Countdown,
+  T1Pricing,
+  T1Video,
+  T1WhatsappBar,
+} from './t1-engage-sections';
 import { T1ComingSoon, T1NotFound } from './T1SystemPages';
 import { MODERN_EDUCATION_ASSETS } from '../theme-assets/manifests/modern-education.manifest';
 
@@ -70,6 +76,11 @@ export const MODERN_EDUCATION_PACK: ThemePack = {
     courseCatalog: T1CourseCatalog,
     contact: T1Contact,
     gallery: T1Gallery,
+    // CMS phase 3d (batch A).
+    whatsappBar: T1WhatsappBar,
+    video: T1Video,
+    pricing: T1Pricing,
+    countdown: T1Countdown,
     // CMS phase 3d.
     logos: T1Logos,
     map: T1Map,

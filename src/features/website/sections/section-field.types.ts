@@ -39,7 +39,10 @@ export type SectionFieldKind =
   | 'cta'
   | 'buttons'
   | 'time'
-  | 'url';
+  | 'url'
+  | 'youtube'
+  | 'deadline'
+  | 'plans';
 
 interface FieldDescriptorBase {
   readonly key: string;
@@ -104,6 +107,18 @@ export interface ButtonsFieldDescriptor extends FieldDescriptorBase {
   readonly minButtons?: number;
 }
 
+/**
+ * CMS phase 3d — a field with an editor of its own
+ * (`components/section-field-editors.tsx`):
+ * - `youtube`: a YouTube link, stored as the video id under `key`;
+ * - `deadline`: a date and time in the academy's time zone, stored as an
+ *   ISO deadline under `key` and the zone under `timeZone`;
+ * - `plans`: a pricing section's plans, each with its features and button.
+ */
+export interface CustomFieldDescriptor extends FieldDescriptorBase {
+  readonly kind: 'youtube' | 'deadline' | 'plans';
+}
+
 /** A fully discriminated union on `kind` — `select` is the only variant that carries `options`, so `descriptor.options` narrows correctly without a cast. */
 export type SectionFieldDescriptor =
   | TextFieldDescriptor
@@ -111,7 +126,8 @@ export type SectionFieldDescriptor =
   | NumberFieldDescriptor
   | SelectFieldDescriptor
   | ButtonsFieldDescriptor
-  | PlainInputFieldDescriptor;
+  | PlainInputFieldDescriptor
+  | CustomFieldDescriptor;
 
 export interface RepeatableFieldGroup {
   readonly key: string;

@@ -22,6 +22,12 @@ import {
 import { AtelierTestimonials } from './AtelierTestimonials';
 import { AtelierFaq } from './AtelierFaq';
 import {
+  AtelierCountdown,
+  AtelierPricing,
+  AtelierVideo,
+  AtelierWhatsappBar,
+} from './atelier-engage-sections';
+import {
   AtelierLogos,
   AtelierMap,
   AtelierResults,
@@ -52,6 +58,11 @@ export const ATELIER_SECTION_RENDERERS: Partial<SectionRenderers> = {
   steps: AtelierSteps,
   courseCategories: AtelierCourseCategories,
   featuredCourses: AtelierFeaturedCourses,
+  // CMS phase 3d (batch A).
+  whatsappBar: AtelierWhatsappBar,
+  video: AtelierVideo,
+  pricing: AtelierPricing,
+  countdown: AtelierCountdown,
   instructors: AtelierInstructors,
   statistics: AtelierStatistics,
   testimonials: AtelierTestimonials,

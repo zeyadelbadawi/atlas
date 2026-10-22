@@ -196,6 +196,10 @@ describe('ATELIER_SECTION_RENDERERS', () => {
         'map',
         'schedule',
         'results',
+        'whatsappBar',
+        'video',
+        'pricing',
+        'countdown',
       ].sort()
     );
   });

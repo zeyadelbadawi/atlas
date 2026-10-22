@@ -25,6 +25,10 @@ import { CourseCategoriesSection } from '../sections/CourseCategoriesSection';
 import { StepsSection } from '../sections/StepsSection';
 import { FeatureSplitSection } from '../sections/FeatureSplitSection';
 import { CourseSpotlightSection } from '../sections/CourseSpotlightSection';
+import { WhatsappBarSection } from '../sections/WhatsappBarSection';
+import { VideoSection } from '../sections/VideoSection';
+import { PricingSection } from '../sections/PricingSection';
+import { CountdownSection } from '../sections/CountdownSection';
 import { LogosSection } from '../sections/LogosSection';
 import { MapSection } from '../sections/MapSection';
 import { ScheduleSection } from '../sections/ScheduleSection';
@@ -163,5 +167,35 @@ export const BASE_RENDERERS: SectionRenderers = {
   },
   results: function BaseResults({ config, linkRenderer }) {
     return <ResultsSection config={config} isPublic={!!linkRenderer} />;
+  },
+  whatsappBar: function BaseWhatsappBar({ config, pages, linkRenderer }) {
+    return (
+      <WhatsappBarSection
+        config={config}
+        pages={pages}
+        linkRenderer={linkRenderer}
+      />
+    );
+  },
+  video: function BaseVideo({ config, linkRenderer }) {
+    return <VideoSection config={config} interactive={!!linkRenderer} />;
+  },
+  pricing: function BasePricing({ config, pages, linkRenderer }) {
+    return (
+      <PricingSection
+        config={config}
+        pages={pages}
+        linkRenderer={linkRenderer}
+      />
+    );
+  },
+  countdown: function BaseCountdown({ config, pages, linkRenderer }) {
+    return (
+      <CountdownSection
+        config={config}
+        pages={pages}
+        linkRenderer={linkRenderer}
+      />
+    );
   },
 };

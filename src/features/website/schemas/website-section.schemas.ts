@@ -56,9 +56,33 @@ import {
   MIN_COURSE_CATALOG_PAGE_SIZE,
   MIN_COURSE_CATEGORIES,
   SCHEDULE_TIME_PATTERN,
+  MAX_COUNTDOWN_DESCRIPTION_LENGTH,
+  MAX_COUNTDOWN_ENDED_MESSAGE_LENGTH,
+  MAX_COUNTDOWN_TITLE_LENGTH,
+  MAX_PRICING_BADGE_LENGTH,
+  MAX_PRICING_DESCRIPTION_LENGTH,
+  MAX_PRICING_FEATURE_LENGTH,
+  MAX_PRICING_FEATURES,
+  MAX_PRICING_PERIOD_LENGTH,
+  MAX_PRICING_PLAN_DESCRIPTION_LENGTH,
+  MAX_PRICING_PLAN_NAME_LENGTH,
+  MAX_PRICING_PLANS,
+  MAX_PRICING_PRICE_LENGTH,
+  MAX_TIME_ZONE_LENGTH,
+  MAX_VIDEO_CAPTION_LENGTH,
+  MAX_VIDEO_DESCRIPTION_LENGTH,
+  MAX_WHATSAPP_BAR_DESCRIPTION_LENGTH,
+  MAX_WHATSAPP_BAR_TITLE_LENGTH,
+  MIN_PRICING_PLANS,
+  TIME_ZONE_PATTERN,
 } from '../constants/website.constants';
 import { isAllowedImageValue } from '../utils/image-value.utils';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
+import {
+  isCountdownDeadlineOrEmpty,
+  isYouTubeVideoIdOrEmpty,
+  normalizeYouTubeVideoInput,
+} from '../utils/section-media-values.utils';
 import {
   COURSE_CATALOG_SORT_VALUES,
   SCHEDULE_DAYS,
@@ -500,6 +524,89 @@ export const resultsSectionSchema = z.object({
   items: z.array(resultItemSchema).max(MAX_RESULTS),
 });
 
+/*
+ * CMS phase 3d (batch A) — mirror the backend's identically named schemas
+ * field for field (the parity cases prove it).
+ */
+
+/** A "Talk to us" strip: a short line and up to three buttons; the first is required. */
+export const whatsappBarSectionSchema = z.object({
+  title: localizedRequired(MAX_WHATSAPP_BAR_TITLE_LENGTH),
+  description: localizedOptional(
+    MAX_WHATSAPP_BAR_DESCRIPTION_LENGTH
+  ).optional(),
+  cta: websiteCtaSchema,
+  secondaryCta: websiteCtaSchema.optional(),
+  tertiaryCta: websiteCtaSchema.optional(),
+});
+
+/**
+ * A pasted YouTube link in any common form becomes its 11-character id;
+ * only the id is stored. Empty is a video not chosen yet (it saves; the
+ * public site leaves the section out).
+ */
+export const videoSectionSchema = z.object({
+  title: localizedOptional(MAX_SHORT_TEXT).optional(),
+  description: localizedOptional(MAX_VIDEO_DESCRIPTION_LENGTH).optional(),
+  videoId: z.preprocess(
+    normalizeYouTubeVideoInput,
+    z.string().refine(isYouTubeVideoIdOrEmpty, {
+      message: 'validation:invalidYouTubeVideo',
+    })
+  ),
+  poster: imageValueSchema.optional(),
+  caption: localizedOptional(MAX_VIDEO_CAPTION_LENGTH).optional(),
+});
+
+const pricingFeatureSchema = z.object({
+  id: z.string(),
+  text: localizedRequired(MAX_PRICING_FEATURE_LENGTH),
+  included: z.boolean(),
+});
+
+const pricingPlanSchema = z.object({
+  id: z.string(),
+  name: localizedRequired(MAX_PRICING_PLAN_NAME_LENGTH),
+  price: localizedRequired(MAX_PRICING_PRICE_LENGTH),
+  period: localizedOptional(MAX_PRICING_PERIOD_LENGTH).optional(),
+  description: localizedOptional(
+    MAX_PRICING_PLAN_DESCRIPTION_LENGTH
+  ).optional(),
+  features: z.array(pricingFeatureSchema).max(MAX_PRICING_FEATURES),
+  highlighted: z.boolean().optional(),
+  badge: localizedOptional(MAX_PRICING_BADGE_LENGTH).optional(),
+  cta: websiteCtaSchema.optional(),
+});
+
+export const pricingSectionSchema = z.object({
+  title: localizedOptional(MAX_SHORT_TEXT).optional(),
+  description: localizedOptional(MAX_PRICING_DESCRIPTION_LENGTH).optional(),
+  plans: z
+    .array(pricingPlanSchema)
+    .min(MIN_PRICING_PLANS)
+    .max(MAX_PRICING_PLANS),
+});
+
+/** `deadline`: an ISO date and time with its offset, or empty until chosen. */
+export const countdownSectionSchema = z.object({
+  title: localizedRequired(MAX_COUNTDOWN_TITLE_LENGTH),
+  description: localizedOptional(MAX_COUNTDOWN_DESCRIPTION_LENGTH).optional(),
+  deadline: z.string().refine(isCountdownDeadlineOrEmpty, {
+    message: 'validation:invalidDeadline',
+  }),
+  timeZone: z
+    .string()
+    .max(MAX_TIME_ZONE_LENGTH, 'validation:maxLength')
+    .regex(TIME_ZONE_PATTERN, 'validation:invalid')
+    .optional(),
+  endedMessage: localizedOptional(
+    MAX_COUNTDOWN_ENDED_MESSAGE_LENGTH
+  ).optional(),
+  cta: websiteCtaSchema.optional(),
+  secondaryCta: websiteCtaSchema.optional(),
+  tertiaryCta: websiteCtaSchema.optional(),
+});
+
 const SECTION_SCHEMAS = {
   hero: heroSectionSchema,
   about: aboutSectionSchema,
@@ -518,6 +625,10 @@ const SECTION_SCHEMAS = {
   steps: stepsSectionSchema,
   featureSplit: featureSplitSectionSchema,
   courseSpotlight: courseSpotlightSectionSchema,
+  whatsappBar: whatsappBarSectionSchema,
+  video: videoSectionSchema,
+  pricing: pricingSectionSchema,
+  countdown: countdownSectionSchema,
   logos: logosSectionSchema,
   map: mapSectionSchema,
   schedule: scheduleSectionSchema,

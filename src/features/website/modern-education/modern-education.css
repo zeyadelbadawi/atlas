@@ -871,3 +871,112 @@ a.t1-footer-social:hover {
 [data-theme-pack='modern-education'] :is(.t1-lead):lang(ar) {
   line-height: 1.85;
 }
+
+/* ------------------------------------------------------------------ */
+/* CMS phase 3d: the "Talk to us" bar, video, pricing and countdown.    */
+/* ------------------------------------------------------------------ */
+
+/* The bar: a card with the CTA colour on its reading-start edge. */
+.t1-bar {
+  border-inline-start: 4px solid var(--website-cta);
+}
+
+/* The video: the media frame, with the play mark in the CTA colour. */
+.t1-video-frame {
+  box-shadow: var(--t1-shadow-lift);
+}
+.t1-video-play {
+  inline-size: 4.5rem;
+  block-size: 4.5rem;
+  border-radius: 999px;
+  background-color: var(--website-cta);
+  color: var(--website-cta-foreground);
+  box-shadow: 0 10px 30px -10px hsl(220 30% 12% / 0.55);
+  transition: transform var(--t1-duration) var(--t1-ease);
+}
+[data-video-play]:hover .t1-video-play {
+  transform: scale(1.06);
+}
+.t1-video-frame [data-video-play]:focus-visible {
+  outline: 3px solid var(--website-focus);
+  outline-offset: -3px;
+  border-radius: var(--t1-radius-card);
+}
+@media (prefers-reduced-motion: reduce) {
+  .t1-video-play {
+    transition: none;
+  }
+  [data-video-play]:hover .t1-video-play {
+    transform: none;
+  }
+}
+
+/* Pricing: cards; the most popular one is ringed in the link colour. */
+.t1-plan[data-highlighted] {
+  border-color: var(--website-link);
+  box-shadow:
+    0 0 0 1px var(--website-link),
+    var(--t1-shadow-lift);
+}
+.t1-plan-badge {
+  align-self: flex-start;
+  margin-block-end: 1rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--t1-radius-pill);
+  background-color: var(--website-chip-bg);
+  color: var(--website-chip-fg);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.t1-plan-price {
+  font-family: var(--font-display, inherit);
+  font-size: clamp(1.875rem, 1.6rem + 0.9vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--website-foreground);
+  overflow-wrap: anywhere;
+}
+[dir='rtl'] .t1-plan-price {
+  letter-spacing: 0;
+}
+.t1-plan-mark {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.375rem;
+  block-size: 1.375rem;
+  margin-block-start: 0.125rem;
+  border-radius: 999px;
+  background-color: var(--website-icon-tile);
+  color: var(--website-icon-fg);
+}
+.t1-plan-mark-off {
+  background-color: var(--website-surface-muted);
+  color: var(--website-foreground-muted);
+}
+
+/* Countdown: tabular digits in frosted cells on the ink band. */
+.t1-countdown-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.875rem 0.25rem 0.75rem;
+  border-radius: var(--t1-radius-control);
+  border: 1px solid hsl(0 0% 100% / 0.16);
+  background-color: hsl(0 0% 100% / 0.08);
+}
+.t1-countdown-value {
+  font-size: clamp(1.75rem, 1.1rem + 2.6vw, 3rem);
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--website-ink-foreground);
+}
+.t1-countdown-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--website-ink-muted);
+}

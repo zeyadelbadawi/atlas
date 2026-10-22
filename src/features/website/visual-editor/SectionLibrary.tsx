@@ -27,7 +27,7 @@ export const SECTION_LIBRARY_GROUPS: readonly {
   { key: 'intro', types: ['hero', 'pageHeader', 'about', 'featureSplit'] },
   {
     key: 'courses',
-    types: ['featuredCourses', 'courseCatalog', 'courseSpotlight'],
+    types: ['featuredCourses', 'courseCatalog', 'courseSpotlight', 'pricing'],
   },
   {
     key: 'trust',
@@ -40,8 +40,11 @@ export const SECTION_LIBRARY_GROUPS: readonly {
       'gallery',
     ],
   },
-  { key: 'info', types: ['features', 'steps', 'schedule', 'faq'] },
-  { key: 'action', types: ['cta', 'contact', 'map'] },
+  { key: 'info', types: ['features', 'steps', 'video', 'schedule', 'faq'] },
+  {
+    key: 'action',
+    types: ['cta', 'whatsappBar', 'countdown', 'contact', 'map'],
+  },
 ];
 
 export interface SectionLibraryProps {

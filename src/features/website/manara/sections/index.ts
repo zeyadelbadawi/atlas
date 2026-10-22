@@ -27,6 +27,12 @@ import {
 } from './manara-live-sections';
 import { ManaraTestimonials } from './ManaraTestimonials';
 import { ManaraFaq } from './ManaraFaq';
+import {
+  ManaraCountdown,
+  ManaraPricing,
+  ManaraVideo,
+  ManaraWhatsappBar,
+} from './manara-engage-sections';
 
 export {
   ManaraAbout,
@@ -63,6 +69,11 @@ export const MANARA_SECTION_RENDERERS: Partial<SectionRenderers> = {
   faq: ManaraFaq,
   cta: ManaraCta,
   gallery: ManaraGallery,
+  // CMS phase 3d (batch A).
+  whatsappBar: ManaraWhatsappBar,
+  video: ManaraVideo,
+  pricing: ManaraPricing,
+  countdown: ManaraCountdown,
   // CMS phase 3d.
   logos: ManaraLogos,
   map: ManaraMap,

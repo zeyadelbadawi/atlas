@@ -82,6 +82,11 @@ describe('theme packs', () => {
       'courseCatalog',
       'contact',
       'gallery',
+      // CMS phase 3d (batch A).
+      'whatsappBar',
+      'video',
+      'pricing',
+      'countdown',
       // CMS phase 3d.
       'logos',
       'map',

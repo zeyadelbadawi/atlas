@@ -28,6 +28,7 @@ export type WebsiteImagePurpose =
   | 'gallery'
   | 'avatar'
   | 'cardThumbnail'
+  | 'videoPoster'
   | 'ogImage'
   | 'logo'
   | 'darkLogo'
@@ -111,8 +112,18 @@ export const WEBSITE_IMAGE_RECOMMENDATIONS: Record<
     formats: ['JPG', 'WebP'],
     transparency: false,
     derivation:
-      'FeaturedCoursesSection renders aspect-video card images at ~400 CSS px ' +
+      'FeaturedCoursesSection renders aspect-[16/9] card images at ~400 CSS px ' +
       'wide in a multi-column grid, doubled.',
+  },
+  videoPoster: {
+    width: 1280,
+    height: 720,
+    ratio: '16:9',
+    formats: ['JPG', 'WebP'],
+    transparency: false,
+    derivation:
+      'The video section draws its poster in a 16:9 frame up to ~640 CSS px ' +
+      'wide (the player YouTube opens in the same frame), doubled.',
   },
   ogImage: {
     width: 1200,
@@ -178,5 +189,6 @@ export function resolveSectionImagePurpose(
   if (sectionType === 'hero') return 'hero';
   if (sectionType === 'gallery') return 'gallery';
   if (sectionType === 'featuredCourses') return 'cardThumbnail';
+  if (sectionType === 'video') return 'videoPoster';
   return 'sectionImage';
 }
