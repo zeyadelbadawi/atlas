@@ -850,7 +850,9 @@ function VisualEditor(): JSX.Element {
             </section>
           ) : (
             <nav
-              className="grid shrink-0 auto-cols-fr grid-flow-col gap-2 border-t border-border bg-background p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
+              // Wraps onto two rows rather than squeezing a label when the
+              // text is large (200% zoom on a small phone).
+              className="flex shrink-0 flex-wrap gap-2 border-t border-border bg-background p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] [&>*]:min-w-[7.5rem] [&>*]:flex-1"
               aria-label={t('website:visualEditor.title')}
             >
               <Button

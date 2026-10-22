@@ -18,6 +18,8 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 import { Check, ExternalLink, Search, X } from 'lucide-react';
 import {
@@ -47,6 +49,10 @@ import type {
   WebsiteThemeDefinition,
 } from '@types';
 import { useUpdateWebsiteConfiguration } from '../hooks';
+import { UPDATE_WEBSITE_CONFIGURATION_MUTATION_KEY } from '../hooks/useUpdateWebsiteConfiguration';
+
+/** How long publishing waits for settings still being saved. */
+const SETTINGS_SAVE_WAIT_MS = 15_000;
 import {
   getWebsiteTheme,
   listWebsiteThemes,
@@ -99,7 +105,38 @@ export function SiteSettingsPanel({
   ].filter(Boolean);
 
   const selectTheme = (theme: WebsiteThemeDefinition) =>
-    updateConfig.mutate({ academyId, payload: { themeKey: theme.key } });
+    updateConfig.mutate(
+      { academyId, payload: { themeKey: theme.key } },
+      {
+        onError: () =>
+          toast({
+            title: t('website:visualEditor.site.themeSaveError'),
+            variant: 'destructive',
+          }),
+      }
+    );
+
+  /*
+    PUBLISH WHAT IS ON SCREEN. Publishing promotes the saved draft, and a
+    theme or menu change is saved as it is made — so a publish clicked
+    while one is still on its way would publish the copy before it (a
+    field's change is saved when it loses focus, which is the publish
+    click itself). Wait for every settings save in flight, then save this
+    page's edits, then publish.
+  */
+  const queryClient = useQueryClient();
+  const publishWhenSaved = async (): Promise<boolean> => {
+    const started = Date.now();
+    while (
+      queryClient.isMutating({
+        mutationKey: UPDATE_WEBSITE_CONFIGURATION_MUTATION_KEY,
+      }) > 0
+    ) {
+      if (Date.now() - started > SETTINGS_SAVE_WAIT_MS) return false;
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    return onBeforePublish();
+  };
 
   return (
     <div className="flex h-full min-h-0 flex-col" data-testid="site-settings">
@@ -282,7 +319,7 @@ export function SiteSettingsPanel({
             lastPublishedAt={configuration.publishedAt}
             unpublishedChanges={configuration.unpublishedChanges}
             pendingLocalEdits={pendingLocalEdits}
-            onBeforePublish={onBeforePublish}
+            onBeforePublish={publishWhenSaved}
           />
         </div>
       </div>

@@ -1989,7 +1989,8 @@
       "navigation": "Menu, header and footer",
       "seo": "Search engines",
       "seoHint": "How “{{page}}” appears in Google and when shared.",
-      "publishHint": "Theme, menu, header and footer changes reach visitors when you publish the website. This page’s Publish button publishes this page only."
+      "publishHint": "Theme, menu, header and footer changes reach visitors when you publish the website. This page’s Publish button publishes this page only.",
+      "themeSaveError": "Couldn’t change the theme. Try again."
     }
   }
 }
