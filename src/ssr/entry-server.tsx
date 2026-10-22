@@ -149,6 +149,17 @@ export type SsrResult =
       readonly outcome: SsrOutcome;
       readonly cache: 'hit' | 'miss' | 'bypass';
       readonly cacheKey?: string;
+      /** The Academy the page belongs to (its edge cache tag). */
+      readonly academyId: string;
+      /**
+       * Whether this exact HTML is what every visitor of this URL gets, so
+       * a shared cache (Cloudflare) may keep it: the request carried no
+       * Atlas session and no cookie decision (the page then has the cookie
+       * banner and no session-dependent behaviour), and is not the
+       * development preview. The edge's Cache Rule skips requests carrying
+       * either cookie, so the other variants are never served from it.
+       */
+      readonly sharedCacheable: boolean;
     }
   | { readonly kind: 'redirect'; readonly location: string }
   | { readonly kind: 'pass'; readonly reason: string };
@@ -325,6 +336,10 @@ export async function renderPublicWebsitePage(
   let locale = publicWebsiteLocaleForPath(url.pathname);
   let localeChanged = false;
   const consentDecided = hasConsentDecidedCookie(request.cookieHeader);
+  const sharedCacheable =
+    !consentDecided &&
+    !isDevOverride &&
+    !SESSION_COOKIE.test(request.cookieHeader ?? '');
   const renderYear = new Date().getUTCFullYear();
 
   const origin = `${request.protocol}://${request.host}`;
@@ -524,6 +539,8 @@ export async function renderPublicWebsitePage(
             outcome: state.status,
             cache: 'hit',
             cacheKey,
+            academyId: state.academy.academyId,
+            sharedCacheable,
           };
         }
       }
@@ -602,6 +619,8 @@ export async function renderPublicWebsitePage(
         outcome: state.status,
         cache: cacheKey && options.cache ? 'miss' : 'bypass',
         cacheKey,
+        academyId: state.academy.academyId,
+        sharedCacheable,
       };
     }
     return pass('too many render passes');

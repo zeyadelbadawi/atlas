@@ -78,6 +78,37 @@ export const DEFAULT_MAX_HTML_BYTES = 1024 * 1024;
  */
 export const DEFAULT_CACHE_MAX_BYTES = 64 * 1024 * 1024;
 
+/**
+ * How long Cloudflare may keep a rendered page that is the same for every
+ * visitor (`sharedCacheable`: no session, no cookie decision). The origin is
+ * ~0.4 s from the edge on every uncached request, so for those visitors the
+ * page then starts arriving at once.
+ *
+ * Five minutes is the most a change NOT purged can stay visible: the
+ * backend purges the page's tags (`EdgeCachePurgeService`) on a publish, a
+ * content-library edit, a branding, domain or course change, an archive and
+ * a payment that brings the site back. Browsers revalidate every load
+ * (`max-age=0`), at the edge.
+ */
+export const EDGE_CACHE_SECONDS = 300;
+
+/** A host safe to put in a `Cache-Tag` (a DNS name, no port). */
+const TAGGABLE_HOST = /^[a-z0-9](?:[a-z0-9.-]{0,251}[a-z0-9])?$/;
+
+/** The shared-cache headers of a page every visitor of its URL gets. */
+export function edgeCacheHeaders(academyId, host) {
+  const hostname = String(host ?? '')
+    .toLowerCase()
+    .replace(/:\d+$/, '')
+    .replace(/\.$/, '');
+  const tags = [`atlas-academy-${academyId}`];
+  if (TAGGABLE_HOST.test(hostname)) tags.push(`atlas-host-${hostname}`);
+  return {
+    'Cache-Control': `public, max-age=0, s-maxage=${EDGE_CACHE_SECONDS}`,
+    'Cache-Tag': tags.join(','),
+  };
+}
+
 const byteLength = (html) => Buffer.byteLength(html, 'utf8');
 /** Worst-case V8 heap size of a string: two bytes per UTF-16 code unit. */
 const heapSize = (html) => html.length * 2;
@@ -342,8 +373,12 @@ export async function createSsrHandler({
         status: 200,
         headers: {
           'Content-Type': 'text/html; charset=utf-8',
-          // Tenant HTML is never stored by a shared cache (Cloudflare).
-          'Cache-Control': 'private, no-cache',
+          // A page that is the same for every visitor of its URL may be kept
+          // by Cloudflare (tagged, purged by the backend on a change); any
+          // other variant is never stored by a shared cache.
+          ...(result.sharedCacheable && result.academyId
+            ? edgeCacheHeaders(result.academyId, request.host)
+            : { 'Cache-Control': 'private, no-cache' }),
           'X-Atlas-SSR': result.cache === 'hit' ? 'hit' : 'render',
           // B0-WEB-06 — Coming Soon (unpublished or lapsed) is never indexed;
           // the page's own robots meta says the same.
