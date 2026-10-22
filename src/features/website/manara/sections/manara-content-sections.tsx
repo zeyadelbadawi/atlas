@@ -41,7 +41,10 @@ export function ManaraAbout({
   const hasImage = !!config.image;
   return (
     <ManaraBlock labelledBy={headingId}>
-      <div className="grid gap-10 lg:grid-cols-12 lg:gap-10">
+      <div
+        data-ws-columns=""
+        className="grid gap-10 lg:grid-cols-12 lg:gap-10"
+      >
         <div
           className={cn(
             'mnh-about min-w-0',
@@ -193,7 +196,10 @@ export function ManaraFeatureSplit({
   return (
     <ManaraBlock labelledBy={headingId}>
       {hasImage ? (
-        <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-10">
+        <div
+          data-ws-columns=""
+          className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-10"
+        >
           <ManaraMedia
             value={config.image}
             alt={resolveLocalizedText(config.imageAlt, locale)}

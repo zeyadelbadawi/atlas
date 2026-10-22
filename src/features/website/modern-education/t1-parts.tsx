@@ -24,6 +24,10 @@ import {
 } from '../utils/link-resolution.utils';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { WebsiteCta, WebsiteCtaStyle, WebsitePage } from '@types';
+import {
+  sectionDesignAttributes,
+  useSectionDesign,
+} from '../sections/section-design';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 
 /* ------------------------------------------------------------------ */
@@ -47,13 +51,17 @@ export function T1Section({
   readonly children: ReactNode;
 }): JSX.Element {
   const container = useWebsiteContainerClass();
+  // An Owner's chosen ground (CMS phase 3) replaces the section's own.
+  const { design, ground } = useSectionDesign();
+  const shown = (ground as T1Tone | undefined) ?? tone;
   return (
     <section
       aria-labelledby={labelledBy}
-      data-tone={tone}
+      data-tone={shown}
+      {...sectionDesignAttributes(design)}
       className={cn(
         't1-section',
-        tone === 'ink' ? 't1-ink' : 'text-[var(--website-foreground)]',
+        shown === 'ink' ? 't1-ink' : 'text-[var(--website-foreground)]',
         className
       )}
     >

@@ -54,7 +54,10 @@ export function AtelierAbout({
   return (
     <AtelierChapter labelledBy={headingId} numbered>
       <AtelierChapterMark />
-      <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
+      <div
+        data-ws-columns=""
+        className="grid gap-12 lg:grid-cols-12 lg:gap-10"
+      >
         <div className="min-w-0 space-y-8 lg:col-span-8">
           <AtelierHeading id={headingId}>
             {resolveLocalizedText(config.title, locale)}
@@ -187,7 +190,10 @@ export function AtelierFeatureSplit({
     <AtelierChapter labelledBy={headingId} numbered>
       <AtelierChapterMark label={eyebrow || undefined} />
       {hasImage ? (
-        <div className="grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-10">
+        <div
+          data-ws-columns=""
+          className="grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-10"
+        >
           {/* The plate bleeds to its page edge (logical start or end, so
               it mirrors in Arabic) with a caption line under it. */}
           <figure

@@ -167,7 +167,8 @@ a.t1-footer-social:hover {
 /* ------------------------------------------------------------------ */
 
 .t1-section {
-  padding-block: var(--t1-rhythm);
+  /* `--ws-space`: an Owner's spacing choice (sections/section-design.css). */
+  padding-block: calc(var(--t1-rhythm) * var(--ws-space, 1));
 }
 .t1-section[data-tone='soft'] {
   background-color: var(--website-surface);

@@ -44,7 +44,7 @@ export function RiwaqAbout({
   const hasImage = !!config.image;
   return (
     <RiwaqBand labelledBy={title ? headingId : undefined}>
-      <div className="rw-grid rws-split" data-image={hasImage ? 'end' : undefined}>
+      <div className="rw-grid rws-split" data-ws-columns="" data-image={hasImage ? 'end' : undefined}>
         <div className="rws-split-copy">
           {title ? <RiwaqHeading id={headingId}>{title}</RiwaqHeading> : null}
           {paragraphs.length > 0 ? (
@@ -243,6 +243,7 @@ export function RiwaqFeatureSplit({
     <RiwaqBand labelledBy={headingId}>
       <div
         className="rw-grid rws-split"
+        data-ws-columns=""
         data-image={hasImage ? (config.imagePosition === 'end' ? 'end' : 'start') : undefined}
       >
         {hasImage ? (

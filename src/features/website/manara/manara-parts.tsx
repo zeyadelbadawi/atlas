@@ -24,6 +24,10 @@ import {
 } from '../utils/link-resolution.utils';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { WebsiteCta, WebsitePage, WebsiteCtaStyle } from '@types';
+import {
+  sectionDesignAttributes,
+  useSectionDesign,
+} from '../sections/section-design';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 
 /* ------------------------------------------------------------------ */
@@ -73,11 +77,14 @@ export function ManaraBlock({
   readonly children: ReactNode;
   readonly as?: 'section' | 'div' | 'header' | 'footer';
 }): JSX.Element {
+  // An Owner's chosen ground (CMS phase 3) replaces the block's own.
+  const { design, ground } = useSectionDesign();
   return (
     <Tag
       aria-labelledby={Tag === 'section' ? labelledBy : undefined}
       aria-label={Tag === 'section' && !labelledBy ? label : undefined}
-      data-env={env}
+      data-env={(ground as ManaraEnv | undefined) ?? env}
+      {...(Tag === 'section' ? sectionDesignAttributes(design) : {})}
       data-seam-top={seamTop ? '' : undefined}
       data-seam-bottom={seamBottom ? '' : undefined}
       data-tight={tight ? '' : undefined}

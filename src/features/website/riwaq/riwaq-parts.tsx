@@ -26,6 +26,7 @@ import {
 } from '../utils/link-resolution.utils';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { WebsiteCta, WebsitePage, WebsiteCtaStyle } from '@types';
+import { sectionDesignAttributes, useSectionDesign } from '../sections/section-design';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 
 /* ------------------------------------------------------------------ */
@@ -64,11 +65,14 @@ export function RiwaqBand({
   readonly children: ReactNode;
 }): JSX.Element {
   const landmark = Tag === 'section';
+  // An Owner's chosen ground (CMS phase 3) replaces the band's own.
+  const design = useSectionDesign();
   return (
     <Tag
       aria-labelledby={landmark ? labelledBy : undefined}
       aria-label={landmark && !labelledBy ? label : undefined}
-      data-ground={ground}
+      data-ground={(design.ground as RiwaqGround | undefined) ?? ground}
+      {...(landmark ? sectionDesignAttributes(design.design) : {})}
       data-tight={tight ? '' : undefined}
       data-colonnade={colonnade ? undefined : 'off'}
       className={cn('rw-band', className)}

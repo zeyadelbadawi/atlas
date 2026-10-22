@@ -23,6 +23,10 @@ import {
 } from '../utils/link-resolution.utils';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { WebsiteCta, WebsitePage, WebsiteCtaStyle } from '@types';
+import {
+  sectionDesignAttributes,
+  useSectionDesign,
+} from '../sections/section-design';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 
 /* ------------------------------------------------------------------ */
@@ -75,13 +79,17 @@ export function AtelierChapter({
   readonly children: ReactNode;
   readonly as?: 'section' | 'div' | 'header';
 }): JSX.Element {
+  // An Owner's chosen ground (CMS phase 3) replaces the chapter's own.
+  const { design, ground } = useSectionDesign();
+  const shown = (ground as AtelierEnv | undefined) ?? env;
   return (
     <Tag
       aria-labelledby={Tag === 'section' ? labelledBy : undefined}
       aria-label={Tag === 'section' && !labelledBy ? label : undefined}
-      data-env={env}
+      data-env={shown}
+      {...(Tag === 'section' ? sectionDesignAttributes(design) : {})}
       data-numbered={numbered ? '' : undefined}
-      data-unveil={unveil && env === 'ink' ? '' : undefined}
+      data-unveil={unveil && shown === 'ink' ? '' : undefined}
       data-flush-top={flushTop ? '' : undefined}
       className={cn('at-chapter', className)}
       style={style}

@@ -218,7 +218,10 @@ export function T1FeatureSplit({
 
   return (
     <T1Section labelledBy={headingId}>
-      <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+      <div
+        data-ws-columns=""
+        className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20"
+      >
         <div
           className={cn(
             'relative mx-auto w-full max-w-2xl pb-5 lg:max-w-none',
@@ -436,6 +439,7 @@ export function T1About({
   return (
     <T1Section labelledBy={headingId}>
       <div
+        data-ws-columns=""
         className={cn(
           'grid items-center gap-12',
           hasImage ? 'lg:grid-cols-2 lg:gap-20' : 'max-w-3xl'

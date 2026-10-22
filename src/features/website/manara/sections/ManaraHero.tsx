@@ -146,6 +146,7 @@ export function ManaraHero({
       className="mnh-hero"
     >
       <div
+        data-ws-columns=""
         className={cn(
           'grid gap-10 lg:grid-cols-12 lg:gap-x-10',
           hasImage && 'lg:items-center'

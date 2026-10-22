@@ -448,6 +448,26 @@ export interface SectionConfigMap {
   readonly courseSpotlight: CourseSpotlightSectionConfig;
 }
 
+/** CMS phase 3 — the ground a section sits on (see `SECTION_BACKGROUNDS`). */
+export type SectionBackground = 'light' | 'soft' | 'brand' | 'dark';
+export type SectionSpacing = 'compact' | 'default' | 'spacious';
+
+/**
+ * CMS phase 3 — a section's design: named choices only, drawn by each
+ * theme with its own grounds and rhythm. Every key is optional; absent is
+ * the theme's own choice for that section.
+ */
+export interface SectionDesign {
+  readonly background?: SectionBackground;
+  readonly spacing?: SectionSpacing;
+  /** Phones only; absent = the same as `spacing`. */
+  readonly spacingMobile?: SectionSpacing;
+  readonly align?: 'start' | 'center';
+  readonly width?: 'default' | 'wide';
+  /** Phones only: a two-column section stacks its second column first. */
+  readonly reverseOnMobile?: boolean;
+}
+
 /**
  * One section placed on a page. A discriminated union on `type` — `config`
  * is always the exact shape that `type` promises, so the Section Editor
@@ -460,6 +480,7 @@ export type SectionInstance = {
     readonly enabled: boolean;
     readonly visibility: ResponsiveVisibility;
     readonly config: SectionConfigMap[TType];
+    readonly design?: SectionDesign;
   };
 }[SectionType];
 

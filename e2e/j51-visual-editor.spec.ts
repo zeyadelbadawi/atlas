@@ -13,7 +13,9 @@
  *      — it is selected, on the page, and saved; undo removes it again;
  *   5. gives the hero a WhatsApp button: a half-typed number is flagged
  *      only once its field is left, and the button is saved with the
- *      number in international form.
+ *      number in international form;
+ *   6. gives a section a compact, centred design: on its own root on the
+ *      page, and saved as named choices.
  * Nothing is published. The page's sections are restored afterwards.
  */
 import { test, expect, type APIRequestContext } from '@playwright/test';
@@ -257,6 +259,64 @@ test.describe('J51 — visual editor @critical', () => {
         )?.whatsapp;
       })
       .toBe('+201001234567');
+  });
+
+  test('Design: a section’s spacing and alignment show on the page and save as named choices', async ({
+    page,
+    request,
+  }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await seedCookieDecision(page);
+    await signInThroughDashboard(page, SEED.owner, SEED.password);
+    await page.waitForURL(/\/dashboard/);
+    await page.goto(
+      `/dashboard/academy/${academyId}/website/pages/${homeId}/visual`
+    );
+    await expect(page.getByTestId('visual-editor')).toBeVisible({
+      timeout: 30_000,
+    });
+    const frame = page.frameLocator('iframe[title="Website preview"]');
+    const target = (await home(request)).sections.find(
+      (s) => s.type === 'features'
+    );
+    test.skip(!target, 'the seeded Home has no features section');
+    await expect(
+      frame.locator(`[data-preview-section="${target!.id}"]`)
+    ).toBeAttached({ timeout: 30_000 });
+    await page
+      .getByTestId(`structure-row-${target!.id}`)
+      .getByRole('button')
+      .filter({ hasText: 'Features' })
+      .first()
+      .click();
+    await page.getByTestId('settings-tab-design').click();
+    const design = page.getByTestId('section-design');
+    await design
+      .getByTestId('design-spacing')
+      .getByRole('radio', { name: 'Compact' })
+      .click();
+    await design
+      .getByTestId('design-align')
+      .getByRole('radio', { name: 'Center' })
+      .click();
+    // On the section's own root: no wrapper is added to the page.
+    const root = frame.locator(
+      `[data-preview-section="${target!.id}"] > section`
+    );
+    await expect(root).toHaveAttribute('data-ws-space', 'compact');
+    await expect(root).toHaveAttribute('data-ws-align', 'center');
+    await expect(
+      page.getByTestId('save-status').locator('[data-state]')
+    ).toHaveAttribute('data-state', 'ok', { timeout: 20_000 });
+    await expect
+      .poll(async () => {
+        const saved = (await home(request)).sections.find(
+          (s) => s.id === target!.id
+        ) as { design?: unknown } | undefined;
+        return saved?.design;
+      })
+      .toEqual({ spacing: 'compact', align: 'center' });
   });
 
   test('Site: switching the theme redraws the page in it, as a draft', async ({

@@ -223,6 +223,7 @@ export function AtelierHero({
         className="ath-hero"
       >
         <div
+          data-ws-columns=""
           className={cn(
             'grid gap-12 lg:grid-cols-12 lg:gap-x-10',
             hasImage && 'lg:items-end'
