@@ -385,8 +385,10 @@ function VisualEditor(): JSX.Element {
     });
     if (!confirmed) return;
     setSaveState('saving');
-    await draft.publishThisPage();
-    setSaveState(draft.updatePage.error ? 'error' : 'saved');
+    // The outcome itself: `draft` is this render's, so its mutation state
+    // is from before the publish started.
+    const published = await draft.publishThisPage();
+    setSaveState(published ? 'saved' : 'error');
   };
 
   const handleReload = async () => {

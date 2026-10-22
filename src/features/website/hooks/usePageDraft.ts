@@ -223,15 +223,18 @@ export function usePageDraft({
    * pinned to the version just saved — or, with nothing to save, to the
    * version on screen. If anyone saved the page in between, the publish is
    * refused and the conflict dialog says who; nothing unseen goes live.
+   * Resolves whether the page was published.
    */
-  const publishThisPage = async (overrideVersion?: number) => {
-    if (!academyId || !pageId || busyRef.current) return;
+  const publishThisPage = async (
+    overrideVersion?: number
+  ): Promise<boolean> => {
+    if (!academyId || !pageId || busyRef.current) return false;
     busyRef.current = true;
     try {
       let version = baseRef.current?.version;
       if (isDirty || overrideVersion !== undefined) {
         const saved = await saveSections('publish', overrideVersion);
-        if (!saved) return;
+        if (!saved) return false;
         version = saved.version;
       }
       try {
@@ -240,6 +243,7 @@ export function usePageDraft({
           pageId,
           expectedVersion: version,
         });
+        return true;
       } catch (error) {
         const stale = readSaveConflict(error as ApiError);
         // A colleague's save landed after the copy being published: there
@@ -247,6 +251,7 @@ export function usePageDraft({
         // honest choice is to look at their version first.
         if (stale)
           setConflict({ value: stale, intent: 'publish', canKeepMine: false });
+        return false;
       }
     } finally {
       busyRef.current = false;
