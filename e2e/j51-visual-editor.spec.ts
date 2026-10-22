@@ -18,7 +18,12 @@
  *      page, and saved as named choices.
  * Nothing is published. The page's sections are restored afterwards.
  */
-import { test, expect, type APIRequestContext } from '@playwright/test';
+import {
+  test,
+  expect,
+  type APIRequestContext,
+  type Page,
+} from '@playwright/test';
 import {
   apiGet,
   apiPatch,
@@ -28,6 +33,7 @@ import {
   SEED,
   type Session,
 } from './support/atlas';
+import { clearAuthRateLimits } from './support/global-setup';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -52,6 +58,14 @@ async function home(request: APIRequestContext): Promise<PageResponse> {
   );
   expect(response.ok()).toBeTruthy();
   return response.json();
+}
+
+/** Each test signs in afresh: clear the sign-in limiter first, as the other journeys do, or the fourth sign-in in a row is refused. */
+async function signIn(page: Page): Promise<void> {
+  await clearAuthRateLimits();
+  await seedCookieDecision(page);
+  await signInThroughDashboard(page, SEED.owner, SEED.password);
+  await page.waitForURL(/\/dashboard/);
 }
 
 test.beforeAll(async ({ request }) => {
@@ -96,9 +110,7 @@ test.describe('J51 — visual editor @critical', () => {
   }) => {
     test.setTimeout(180_000);
     await page.setViewportSize({ width: 1440, height: 900 });
-    await seedCookieDecision(page);
-    await signInThroughDashboard(page, SEED.owner, SEED.password);
-    await page.waitForURL(/\/dashboard/);
+    await signIn(page);
     await page.goto(
       `/dashboard/academy/${academyId}/website/pages/${homeId}/visual`
     );
@@ -203,9 +215,7 @@ test.describe('J51 — visual editor @critical', () => {
   }) => {
     test.setTimeout(120_000);
     await page.setViewportSize({ width: 1440, height: 900 });
-    await seedCookieDecision(page);
-    await signInThroughDashboard(page, SEED.owner, SEED.password);
-    await page.waitForURL(/\/dashboard/);
+    await signIn(page);
     await page.goto(
       `/dashboard/academy/${academyId}/website/pages/${homeId}/visual`
     );
@@ -267,9 +277,7 @@ test.describe('J51 — visual editor @critical', () => {
   }) => {
     test.setTimeout(120_000);
     await page.setViewportSize({ width: 1440, height: 900 });
-    await seedCookieDecision(page);
-    await signInThroughDashboard(page, SEED.owner, SEED.password);
-    await page.waitForURL(/\/dashboard/);
+    await signIn(page);
     await page.goto(
       `/dashboard/academy/${academyId}/website/pages/${homeId}/visual`
     );
@@ -325,9 +333,7 @@ test.describe('J51 — visual editor @critical', () => {
   }) => {
     test.setTimeout(120_000);
     await page.setViewportSize({ width: 1440, height: 900 });
-    await seedCookieDecision(page);
-    await signInThroughDashboard(page, SEED.owner, SEED.password);
-    await page.waitForURL(/\/dashboard/);
+    await signIn(page);
     await page.goto(
       `/dashboard/academy/${academyId}/website/pages/${homeId}/visual`
     );
