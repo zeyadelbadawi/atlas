@@ -28,6 +28,9 @@
  * - Add a section anywhere, from a library that says what each one is for.
  * - Publish is still a separate, confirmed step: nothing reaches visitors
  *   because it was saved.
+ * - "Site" opens the whole website's settings in the same pane
+ *   (`SiteSettingsPanel`): theme, menu, header, footer, this page's
+ *   search-engine text, and publishing the website.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -43,6 +46,7 @@ import {
   Check,
   CloudOff,
   Layers,
+  Palette,
   Loader2,
   PanelBottomClose,
   PanelBottomOpen,
@@ -118,6 +122,7 @@ import { invalidSectionIds, parsedSections } from './section-validation';
 import { StructurePanel } from './StructurePanel';
 import { SettingsPanel } from './SettingsPanel';
 import { SectionLibrary } from './SectionLibrary';
+import { SiteSettingsPanel } from './SiteSettingsPanel';
 
 /** How long after the last change the draft is saved. */
 export const AUTOSAVE_DELAY_MS = 1500;
@@ -215,7 +220,11 @@ function VisualEditor(): JSX.Element {
     id: searchParams.get('section') ?? undefined,
     request: 0,
   }));
+  // The whole website's settings, in the settings pane instead of a
+  // section's (`SiteSettingsPanel`).
+  const [siteOpen, setSiteOpen] = useState(false);
   const selectAndReveal = useCallback((id: string) => {
+    setSiteOpen(false);
     setSelectedId(id);
     setFocus((previous) => ({ id, request: previous.request + 1 }));
   }, []);
@@ -510,6 +519,28 @@ function VisualEditor(): JSX.Element {
     />
   );
 
+  const siteSettings = (
+    <SiteSettingsPanel
+      academyId={academyId}
+      academyName={academy.name}
+      academyLogo={academy.logo}
+      configuration={configuration}
+      pages={pages}
+      page={page}
+      canManage={canManage}
+      pendingLocalEdits={isDirty}
+      onBeforePublish={async () =>
+        !isDirty || (await draft.saveSections('save')) !== null
+      }
+      onClose={() => setSiteOpen(false)}
+    />
+  );
+  const sidePanel = siteOpen ? siteSettings : settings;
+  const toggleSite = () => {
+    setSelectedId(undefined);
+    setSiteOpen((open) => !open);
+  };
+
   const canvas = (
     <PreviewViewport
       breakpoint={breakpoint}
@@ -520,6 +551,7 @@ function VisualEditor(): JSX.Element {
       focusRequest={focus.request}
       selectedSectionId={selectedId}
       onSectionSelect={(id) => {
+        setSiteOpen(false);
         setSelectedId(id);
         const section = draftSections.find((candidate) => candidate.id === id);
         if (section) {
@@ -661,6 +693,21 @@ function VisualEditor(): JSX.Element {
             </div>
           ) : null}
           <Button
+            type="button"
+            variant={siteOpen ? 'secondary' : 'ghost'}
+            size="sm"
+            className="h-9"
+            onClick={toggleSite}
+            aria-pressed={siteOpen}
+            title={t('website:visualEditor.site.buttonHint')}
+            data-testid="visual-editor-site"
+          >
+            <Palette className="size-4" aria-hidden />
+            <span className="hidden md:inline">
+              {t('website:visualEditor.site.button')}
+            </span>
+          </Button>
+          <Button
             asChild
             variant="ghost"
             size="sm"
@@ -756,9 +803,13 @@ function VisualEditor(): JSX.Element {
           </main>
           <aside
             className="flex w-[22rem] shrink-0 flex-col border-s border-border xl:w-96"
-            aria-label={t('website:visualEditor.settings.content')}
+            aria-label={
+              siteOpen
+                ? t('website:visualEditor.site.title')
+                : t('website:visualEditor.settings.content')
+            }
           >
-            {settings}
+            {sidePanel}
           </aside>
         </div>
       ) : (
@@ -769,7 +820,7 @@ function VisualEditor(): JSX.Element {
           >
             {canvas}
           </main>
-          {selected ? (
+          {selected || siteOpen ? (
             <section
               className={cn(
                 'flex shrink-0 flex-col border-t border-border bg-background shadow-[0_-8px_24px_-12px_rgb(0_0_0/0.25)] transition-[height] duration-200 motion-reduce:transition-none',
@@ -795,11 +846,11 @@ function VisualEditor(): JSX.Element {
                   <PanelBottomOpen className="size-4" aria-hidden />
                 )}
               </button>
-              <div className="min-h-0 flex-1">{settings}</div>
+              <div className="min-h-0 flex-1">{sidePanel}</div>
             </section>
           ) : (
             <nav
-              className="grid shrink-0 grid-cols-2 gap-2 border-t border-border bg-background p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
+              className="grid shrink-0 auto-cols-fr grid-flow-col gap-2 border-t border-border bg-background p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
               aria-label={t('website:visualEditor.title')}
             >
               <Button
@@ -821,6 +872,15 @@ function VisualEditor(): JSX.Element {
                   {t('website:visualEditor.add.button')}
                 </Button>
               ) : null}
+              <Button
+                type="button"
+                variant="outline"
+                className="h-12"
+                onClick={toggleSite}
+              >
+                <Palette className="size-5" aria-hidden />
+                {t('website:visualEditor.site.button')}
+              </Button>
             </nav>
           )}
           <Sheet open={structureOpen} onOpenChange={setStructureOpen}>

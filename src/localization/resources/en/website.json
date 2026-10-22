@@ -1975,6 +1975,21 @@
       "added": "{{section}} added",
       "deleted": "{{section}} deleted",
       "moved": "{{section}} moved to position {{position}}"
+    },
+    "site": {
+      "button": "Site",
+      "buttonHint": "Theme, menu, header, footer and publishing the website",
+      "title": "Website settings",
+      "hint": "These apply to every page of your website.",
+      "theme": "Theme",
+      "current": "Current",
+      "brand": "Logo and colours",
+      "brandHint": "Your logo and colours are edited in Visual identity. Changes there show on your live website as soon as you save them.",
+      "editBrand": "Edit logo and colours",
+      "navigation": "Menu, header and footer",
+      "seo": "Search engines",
+      "seoHint": "How “{{page}}” appears in Google and when shared.",
+      "publishHint": "Theme, menu, header and footer changes reach visitors when you publish the website. This page’s Publish button publishes this page only."
     }
   }
 }
