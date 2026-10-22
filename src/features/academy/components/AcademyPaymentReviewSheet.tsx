@@ -380,7 +380,11 @@ export function AcademyPaymentReviewSheet({
                   {t(`${K}.noProof`)}
                 </p>
               ) : proof.isLoading ? (
+                // A name needs a role: on a bare div axe refuses
+                // `aria-label` (aria-prohibited-attr), and screen readers
+                // skip it. A status is announced politely.
                 <Skeleton
+                  role="status"
                   className="h-48 w-full"
                   aria-label={t(`${K}.proofLoading`)}
                 />
