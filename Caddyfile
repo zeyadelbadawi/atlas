@@ -150,6 +150,29 @@
 	header @app_shell ?Cache-Control "no-cache"
 }
 
+# Edge cache for documents that are the SAME for every visitor (22 Oct
+# 2026). The origin is far from Cloudflare's edge (~0.4 s per uncached
+# request, measured by the backend's Performance check workflow), and every
+# page load paid it for an HTML file that only changes on a deploy.
+#
+# Applied ONLY to the static marketing pages and root files (apex), the help
+# center (docs.) and the dashboard's app shell (dashboard.): prerendered or
+# built files with no per-user or per-academy content and no cookie. Never
+# to `/api/*`, academy websites (published content changes without a deploy)
+# or hashed assets (already immutable for a year).
+#   s-maxage=86400  Cloudflare may keep it for a day...
+#   Cache-Tag       ...and the deploy workflow purges this tag right after
+#                   every rollout, so a deploy is live at once.
+#   max-age=0       browsers still revalidate on every load (at the edge).
+# Cloudflare caches HTML only where a Cache Rule makes it eligible; that
+# rule (hosts above, `/api/*` excluded, Edge TTL "use cache-control header
+# if present, bypass cache if not", Browser TTL "respect origin") is set in
+# the dashboard. Without it these headers change nothing.
+(edge_html) {
+	header {args[0]} Cache-Control "public, max-age=0, s-maxage=86400"
+	header {args[0]} Cache-Tag "atlas-html"
+}
+
 # B0-WEB-08 — the service worker script must be revalidated on every
 # load so a deploy (or the VITE_OFFLINE_SHELL=off kill switch) reaches
 # browsers promptly. Set explicitly rather than relying on the
@@ -427,6 +450,7 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 			path /robots.txt /sitemap.xml /sitemaps/* /llms.txt /llms-full.txt /pricing.md /marketing-assets/*
 		}
 		handle @marketing_root_file {
+			import edge_html *
 			root * /srv-marketing
 			header /pricing.md Content-Type "text/markdown; charset=utf-8"
 			header /llms.txt Content-Type "text/plain; charset=utf-8"
@@ -482,6 +506,7 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 			}
 		}
 		handle @marketing_page {
+			import edge_html *
 			root * /srv-marketing
 			rewrite * {file_match.relative}
 			file_server
@@ -501,6 +526,7 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 			}
 		}
 		handle @marketing_gone_ar {
+			import edge_html *
 			root * /srv-marketing
 			rewrite * /ar/404.html
 			file_server {
@@ -517,6 +543,7 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 			}
 		}
 		handle @marketing_gone {
+			import edge_html *
 			root * /srv-marketing
 			rewrite * /404.html
 			file_server {
@@ -587,6 +614,7 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 			not file
 		}
 		handle @apex_no_app {
+			import edge_html *
 			root * /srv-marketing
 			rewrite * /404.html
 			file_server {
@@ -660,6 +688,10 @@ dashboard.atlass.dpdns.org {
 			respond 404
 		}
 		handle {
+			# The app shell (any route that is not a real file); real files
+			# such as /sw.js keep their own Cache-Control.
+			@dashboard_shell not file
+			import edge_html @dashboard_shell
 			try_files {path} /index.html
 			file_server
 		}
@@ -755,18 +787,22 @@ docs.atlass.dpdns.org, doc.atlass.dpdns.org, help.atlass.dpdns.org {
 			}
 		}
 		handle @docs_found {
+			@docs_document not path /assets/* /media/*
+			import edge_html @docs_document
 			rewrite * {file_match.relative}
 			file_server
 		}
 
 		# Anything else is a real 404 with the branded page in its language.
 		handle /ar/* {
+			import edge_html *
 			rewrite * /ar/404.html
 			file_server {
 				status 404
 			}
 		}
 		handle {
+			import edge_html *
 			rewrite * /404.html
 			file_server {
 				status 404

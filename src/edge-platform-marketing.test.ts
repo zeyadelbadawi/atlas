@@ -87,7 +87,7 @@ describe('static marketing site (Caddyfile)', () => {
       /file \{\s*root \/srv-marketing\s*try_files \{path\}\/index\.html\s*\}/
     );
     expect(platform).toMatch(
-      /handle @marketing_page \{\s*root \* \/srv-marketing\s*rewrite \* \{file_match\.relative\}\s*file_server\s*\}/
+      /handle @marketing_page \{\s*(?:import edge_html \*\s*)?root \* \/srv-marketing\s*rewrite \* \{file_match\.relative\}\s*file_server\s*\}/
     );
   });
 
@@ -135,10 +135,10 @@ describe('static marketing site (Caddyfile)', () => {
     expect(gone).toContain('/features/content-protection');
     expect(gone).toContain('try_files /404.html');
     expect(platform).toMatch(
-      /handle @marketing_gone_ar \{\s*root \* \/srv-marketing\s*rewrite \* \/ar\/404\.html\s*file_server \{\s*status 404\s*\}\s*\}/
+      /handle @marketing_gone_ar \{\s*(?:import edge_html \*\s*)?root \* \/srv-marketing\s*rewrite \* \/ar\/404\.html\s*file_server \{\s*status 404\s*\}\s*\}/
     );
     expect(platform).toMatch(
-      /handle @marketing_gone \{\s*root \* \/srv-marketing\s*rewrite \* \/404\.html\s*file_server \{\s*status 404\s*\}\s*\}/
+      /handle @marketing_gone \{\s*(?:import edge_html \*\s*)?root \* \/srv-marketing\s*rewrite \* \/404\.html\s*file_server \{\s*status 404\s*\}\s*\}/
     );
   });
 

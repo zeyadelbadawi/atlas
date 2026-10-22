@@ -134,3 +134,37 @@ jobs:
           ssh -o StrictHostKeyChecking=accept-new -i ~/.ssh/deploy_key \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
             'bash /opt/atlas/deploy.sh --frontend-only'
+
+      # 22 Oct 2026 — the documents Cloudflare keeps at the edge (Caddyfile
+      # `edge_html`: marketing pages, help center, the dashboard shell) carry
+      # the `atlas-html` cache tag. Purging that tag right after the rollout
+      # makes a deploy live at once, while hashed assets stay cached. The
+      # token can do nothing but purge this zone's cache. A failed purge
+      # fails the run (the rollout itself is already done); the documents
+      # would otherwise expire on their own within a day.
+      - name: Purge the edge-cached documents
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ZONE: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+        run: |
+          set -uo pipefail
+          if [ -z "$CF_TOKEN" ] || [ -z "$CF_ZONE" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN or CLOUDFLARE_ZONE_ID is not set"
+            exit 1
+          fi
+          # Free-plan purge rate limit is a few requests a minute: retry.
+          for attempt in 1 2 3; do
+            response="$(curl -sS --max-time 30 -X POST \
+              "https://api.cloudflare.com/client/v4/zones/${CF_ZONE}/purge_cache" \
+              -H "Authorization: Bearer ${CF_TOKEN}" \
+              -H 'Content-Type: application/json' \
+              --data '{"tags":["atlas-html"]}')" || response=''
+            if [ "$(printf '%s' "$response" | jq -r '.success // false' 2>/dev/null)" = "true" ]; then
+              echo "purged cache tag atlas-html"
+              exit 0
+            fi
+            echo "purge attempt ${attempt} failed: $(printf '%s' "$response" | jq -c '.errors // empty' 2>/dev/null)"
+            sleep 20
+          done
+          echo "::error::Cloudflare purge failed"
+          exit 1

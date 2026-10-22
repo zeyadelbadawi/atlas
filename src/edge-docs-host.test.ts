@@ -78,7 +78,7 @@ describe('help center host (Caddyfile)', () => {
   });
 
   it('answers unknown paths with the branded 404 in their language', () => {
-    expect(docs).toMatch(/handle \/ar\/\* \{\s*rewrite \* \/ar\/404\.html\s*file_server \{\s*status 404/);
+    expect(docs).toMatch(/handle \/ar\/\* \{\s*(?:import edge_html \*\s*)?rewrite \* \/ar\/404\.html\s*file_server \{\s*status 404/);
     expect(docs).toMatch(/rewrite \* \/404\.html\s*file_server \{\s*status 404/);
   });
 
