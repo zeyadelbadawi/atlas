@@ -15,9 +15,11 @@ export { refinePhone, PHONE_ERROR_KEYS } from './phone-schema';
 export {
   PHONE_INPUT_MAX_LENGTH,
   FALLBACK_PHONE_COUNTRY,
+  callingCodeOf,
   checkPhone,
   defaultPhoneCountry,
   formatInternational,
+  impliedCountry,
   isPhoneCountry,
   phoneCountryOptions,
   toAsciiDigits,

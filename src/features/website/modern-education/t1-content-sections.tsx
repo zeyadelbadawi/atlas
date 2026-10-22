@@ -9,6 +9,8 @@ import { cn } from '@utils';
 import { resolveFeatureIcon } from '../utils/feature-icons';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
+import { hasSectionButtons } from '../utils/link-resolution.utils';
+import { SECTION_BUTTON_SLOTS } from '@types';
 import { Reveal } from '../primitives';
 import type { SectionRenderProps } from '../theme-packs/theme-pack.types';
 import {
@@ -19,6 +21,7 @@ import {
   T1Section,
   T1SectionHeader,
   formatT1Number,
+  T1_INK_LOOKS,
 } from './t1-parts';
 
 /** §G: a group rises with a 50ms stagger, capped at 400ms in total. */
@@ -192,13 +195,20 @@ export function T1FeatureSplit({
           ))}
         </ol>
       ) : null}
-      <T1Action
-        cta={config.cta}
-        pages={pages}
-        linkRenderer={linkRenderer}
-        variant="link"
-        arrow
-      />
+      {hasSectionButtons(config) ? (
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          {SECTION_BUTTON_SLOTS.map((slot) => (
+            <T1Action
+              key={slot}
+              cta={config[slot]}
+              pages={pages}
+              linkRenderer={linkRenderer}
+              variant="link"
+              arrow
+            />
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 
@@ -334,6 +344,7 @@ export function T1Cta({
         pages={pages}
         linkRenderer={linkRenderer}
         variant="ink"
+        looks={T1_INK_LOOKS}
         arrow
       />
       <T1Action
@@ -341,6 +352,14 @@ export function T1Cta({
         pages={pages}
         linkRenderer={linkRenderer}
         variant="inkSecondary"
+        looks={T1_INK_LOOKS}
+      />
+      <T1Action
+        cta={config.tertiaryCta}
+        pages={pages}
+        linkRenderer={linkRenderer}
+        variant="inkLink"
+        looks={T1_INK_LOOKS}
       />
     </div>
   );
@@ -406,7 +425,11 @@ export function T1Cta({
 /* About (the v1 text block on existing Homes)                           */
 /* ------------------------------------------------------------------ */
 
-export function T1About({ config }: SectionRenderProps<'about'>): JSX.Element {
+export function T1About({
+  config,
+  pages,
+  linkRenderer,
+}: SectionRenderProps<'about'>): JSX.Element {
   const { locale } = usePublicWebsiteLocale();
   const headingId = useId();
   const hasImage = !!config.image;
@@ -425,6 +448,28 @@ export function T1About({ config }: SectionRenderProps<'about'>): JSX.Element {
           <p className="t1-lead whitespace-pre-line">
             {resolveLocalizedText(config.body, locale)}
           </p>
+          {hasSectionButtons(config) ? (
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <T1Action
+                cta={config.cta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                arrow
+              />
+              <T1Action
+                cta={config.secondaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="secondary"
+              />
+              <T1Action
+                cta={config.tertiaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="link"
+              />
+            </div>
+          ) : null}
         </div>
         {hasImage ? (
           <T1Media

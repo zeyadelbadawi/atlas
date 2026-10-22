@@ -22,6 +22,7 @@ import { usePageOpeningHeading } from '@/features/website/renderer/PageHeadingCo
 import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '@/features/website/utils/localized-text.utils';
 import { resolveCatalogHref } from '@/features/website/utils/catalog-url.utils';
+import { hasSectionButtons } from '@/features/website/utils/link-resolution.utils';
 import { useT1Navigate } from '@/features/website/modern-education/t1-navigation';
 import { MAX_HERO_HIGHLIGHTS } from '@/features/website/constants/website.constants';
 import type { SectionRenderProps } from '@/features/website/theme-packs/theme-pack.types';
@@ -123,7 +124,7 @@ export function ManaraHero({
     }))
     .filter((item) => item.label)
     .slice(0, MAX_HERO_HIGHLIGHTS);
-  const hasActions = !!config.cta || !!config.secondaryCta;
+  const hasActions = hasSectionButtons(config);
   const showSearch = !!config.showSearch && !!resolveCatalogHref(pages);
   const hasImage = !!config.image;
 
@@ -214,6 +215,13 @@ export function ManaraHero({
                 variant="outline"
                 large
                 arrow={false}
+              />
+              <ManaraAction
+                cta={config.tertiaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="link"
+                large
               />
             </div>
           ) : null}

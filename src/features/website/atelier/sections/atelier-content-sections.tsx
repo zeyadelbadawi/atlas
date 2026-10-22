@@ -10,6 +10,8 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@utils';
 import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '@/features/website/utils/localized-text.utils';
+import { hasSectionButtons } from '@/features/website/utils/link-resolution.utils';
+import { SECTION_BUTTON_SLOTS } from '@types';
 import { Reveal } from '@/features/website/primitives';
 import type { SectionRenderProps } from '@/features/website/theme-packs/theme-pack.types';
 import {
@@ -20,6 +22,7 @@ import {
   AtelierMedia,
   AtelierSectionHeader,
   formatAtelierIndex,
+  ATELIER_INK_LOOKS,
 } from '../atelier-parts';
 import { AtelierScene } from '../cinematic/AtelierScene';
 import { isCinematicRuntime } from '../cinematic/cinematic-runtime';
@@ -41,6 +44,8 @@ function toParagraphs(text: string): string[] {
 
 export function AtelierAbout({
   config,
+  pages,
+  linkRenderer,
 }: SectionRenderProps<'about'>): JSX.Element {
   const { locale } = usePublicWebsiteLocale();
   const headingId = useId();
@@ -67,6 +72,28 @@ export function AtelierAbout({
                   {paragraph}
                 </p>
               ))}
+            </div>
+          ) : null}
+          {hasSectionButtons(config) ? (
+            <div className="flex flex-wrap items-center gap-3">
+              <AtelierAction
+                cta={config.cta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+              />
+              <AtelierAction
+                cta={config.secondaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="ghost"
+                arrow={false}
+              />
+              <AtelierAction
+                cta={config.tertiaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="link"
+              />
             </div>
           ) : null}
         </div>
@@ -140,12 +167,19 @@ export function AtelierFeatureSplit({
           ))}
         </ol>
       ) : null}
-      <AtelierAction
-        cta={config.cta}
-        pages={pages}
-        linkRenderer={linkRenderer}
-        variant="link"
-      />
+      {hasSectionButtons(config) ? (
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          {SECTION_BUTTON_SLOTS.map((slot) => (
+            <AtelierAction
+              key={slot}
+              cta={config[slot]}
+              pages={pages}
+              linkRenderer={linkRenderer}
+              variant="link"
+            />
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 
@@ -437,6 +471,7 @@ export function AtelierCta({
                   pages={pages}
                   linkRenderer={linkRenderer}
                   variant="ink"
+                  looks={ATELIER_INK_LOOKS}
                   large
                 />
                 <AtelierAction
@@ -444,8 +479,16 @@ export function AtelierCta({
                   pages={pages}
                   linkRenderer={linkRenderer}
                   variant="inkGhost"
+                  looks={ATELIER_INK_LOOKS}
                   large
                   arrow={false}
+                />
+                <AtelierAction
+                  cta={config.tertiaryCta}
+                  pages={pages}
+                  linkRenderer={linkRenderer}
+                  variant="link"
+                  looks={ATELIER_INK_LOOKS}
                 />
               </div>
             </div>

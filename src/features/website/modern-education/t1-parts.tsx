@@ -23,7 +23,7 @@ import {
   resolveWebsiteCtaHref,
 } from '../utils/link-resolution.utils';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
-import type { WebsiteCta, WebsitePage } from '@types';
+import type { WebsiteCta, WebsiteCtaStyle, WebsitePage } from '@types';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
 
 /* ------------------------------------------------------------------ */
@@ -225,7 +225,7 @@ export function T1Media({
 /* ------------------------------------------------------------------ */
 
 export type T1ActionVariant =
-  'primary' | 'secondary' | 'link' | 'ink' | 'inkSecondary';
+  'primary' | 'secondary' | 'link' | 'ink' | 'inkSecondary' | 'inkLink';
 
 const ACTION_CLASSES: Record<T1ActionVariant, string> = {
   primary: 't1-cta',
@@ -233,6 +233,20 @@ const ACTION_CLASSES: Record<T1ActionVariant, string> = {
   link: 't1-link',
   ink: 't1-ink-cta',
   inkSecondary: 't1-ink-secondary',
+  inkLink: 't1-link t1-ink-link',
+};
+
+/** What an Owner's button look (`WebsiteCta.style`) draws as, by ground. */
+export const T1_LOOKS: Record<WebsiteCtaStyle, T1ActionVariant> = {
+  primary: 'primary',
+  secondary: 'secondary',
+  link: 'link',
+};
+
+export const T1_INK_LOOKS: Record<WebsiteCtaStyle, T1ActionVariant> = {
+  primary: 'ink',
+  secondary: 'inkSecondary',
+  link: 'inkLink',
 };
 
 /**
@@ -267,12 +281,17 @@ export function T1Link({
   );
 }
 
-/** A `WebsiteCta` as a Theme 1 action (nothing when it has no label). */
+/**
+ * A `WebsiteCta` as a Theme 1 action (nothing when it has no label).
+ * `variant` is the look for the button's position; an Owner's own choice
+ * (`cta.style`) wins, drawn by `looks` for the ground it sits on.
+ */
 export function T1Action({
   cta,
   pages,
   linkRenderer,
   variant = 'primary',
+  looks = T1_LOOKS,
   large = false,
   arrow = false,
   className,
@@ -281,6 +300,7 @@ export function T1Action({
   readonly pages: readonly WebsitePage[];
   readonly linkRenderer?: WebsiteLinkRenderer;
   readonly variant?: T1ActionVariant;
+  readonly looks?: Record<WebsiteCtaStyle, T1ActionVariant>;
   readonly large?: boolean;
   readonly arrow?: boolean;
   readonly className?: string;
@@ -289,11 +309,19 @@ export function T1Action({
   if (!cta) return null;
   const label = resolveLocalizedText(cta.label, locale);
   if (!label) return null;
+  const look = cta.style ? looks[cta.style] : variant;
+  const isLink = look === 'link' || look === 'inkLink';
   return (
     <T1Link
-      href={linkRenderer ? resolveWebsiteCtaHref(cta, pages) : undefined}
+      href={
+        linkRenderer ? resolveWebsiteCtaHref(cta, pages, locale) : undefined
+      }
       linkRenderer={linkRenderer}
-      className={cn(ACTION_CLASSES[variant], large && 't1-btn-lg', className)}
+      className={cn(
+        ACTION_CLASSES[look],
+        large && !isLink && 't1-btn-lg',
+        className
+      )}
     >
       {label}
       {arrow ? <T1Arrow /> : null}

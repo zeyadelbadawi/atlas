@@ -10,7 +10,10 @@
  *   3. undoes (Ctrl+Z) — the field and the page are back, and that is
  *      saved too;
  *   4. adds an FAQ from the section library right after the first section
- *      — it is selected, on the page, and saved; undo removes it again.
+ *      — it is selected, on the page, and saved; undo removes it again;
+ *   5. gives the hero a WhatsApp button: a half-typed number is flagged
+ *      only once its field is left, and the button is saved with the
+ *      number in international form.
  * Nothing is published. The page's sections are restored afterwards.
  */
 import { test, expect, type APIRequestContext } from '@playwright/test';
@@ -190,6 +193,70 @@ test.describe('J51 — visual editor @critical', () => {
     await page.screenshot({
       path: test.info().outputPath('visual-editor.png'),
     });
+  });
+
+  test('Buttons: a WhatsApp button on the hero, checked on leaving the number, saved as a number', async ({
+    page,
+    request,
+  }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await seedCookieDecision(page);
+    await signInThroughDashboard(page, SEED.owner, SEED.password);
+    await page.waitForURL(/\/dashboard/);
+    await page.goto(
+      `/dashboard/academy/${academyId}/website/pages/${homeId}/visual`
+    );
+    await expect(page.getByTestId('visual-editor')).toBeVisible({
+      timeout: 30_000,
+    });
+    const frame = page.frameLocator('iframe[title="Website preview"]');
+    const hero = (await home(request)).sections.find((s) => s.type === 'hero')!;
+    await expect(
+      frame.locator(`[data-preview-section="${hero.id}"]`)
+    ).toBeAttached({ timeout: 30_000 });
+    await page
+      .getByTestId(`structure-row-${hero.id}`)
+      .getByRole('button')
+      .filter({ hasText: 'Hero' })
+      .first()
+      .click();
+    const buttons = page.getByTestId('section-buttons');
+    await expect(buttons).toBeVisible();
+    const before = await buttons.getByRole('listitem').count();
+    test.skip(before >= 3, 'the seeded hero already has three buttons');
+
+    await page.getByTestId('section-buttons-add').click();
+    const row = buttons.getByRole('listitem').last();
+    await row.getByRole('textbox').first().fill('J51 WhatsApp');
+    await row.getByTestId('cta-link-type').click();
+    await page.getByRole('option', { name: /WhatsApp chat/ }).click();
+    const number = row.locator('input[type="tel"]');
+    // Half a number: no complaint while typing, a fix on leaving the field.
+    await number.fill('0100');
+    await expect(row.getByRole('alert')).toHaveCount(0);
+    await number.blur();
+    await expect(row.getByRole('alert')).toBeVisible();
+    await number.fill('01001234567');
+    await number.blur();
+    await expect(row.getByRole('alert')).toHaveCount(0);
+
+    await expect(
+      frame.locator('a, button').filter({ hasText: 'J51 WhatsApp' })
+    ).toBeVisible();
+    await expect(
+      page.getByTestId('save-status').locator('[data-state]')
+    ).toHaveAttribute('data-state', 'ok', { timeout: 20_000 });
+    await expect
+      .poll(async () => {
+        const saved = (await home(request)).sections.find(
+          (s) => s.id === hero.id
+        )!.config as Record<string, { whatsapp?: string } | undefined>;
+        return [saved.cta, saved.secondaryCta, saved.tertiaryCta].find(
+          (cta) => cta?.whatsapp
+        )?.whatsapp;
+      })
+      .toBe('+201001234567');
   });
 
   test('Site: switching the theme redraws the page in it, as a draft', async ({

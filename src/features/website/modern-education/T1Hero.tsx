@@ -23,6 +23,7 @@ import { usePublicWebsiteStatistics } from '@hooks';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import { resolveCatalogHref } from '../utils/catalog-url.utils';
+import { hasSectionButtons } from '../utils/link-resolution.utils';
 import type { SectionRenderProps } from '../theme-packs/theme-pack.types';
 import type { WebsitePage } from '@types';
 import {
@@ -164,7 +165,7 @@ export function T1Hero({
     }))
     .filter((item) => item.label)
     .slice(0, 4);
-  const hasActions = !!config.cta || !!config.secondaryCta;
+  const hasActions = hasSectionButtons(config);
   const showSearch = !!config.showSearch && !!resolveCatalogHref(pages);
   const hasImage = !!config.image;
 
@@ -239,6 +240,13 @@ export function T1Hero({
                 pages={pages}
                 linkRenderer={linkRenderer}
                 variant="secondary"
+                large
+              />
+              <T1Action
+                cta={config.tertiaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="link"
                 large
               />
             </div>

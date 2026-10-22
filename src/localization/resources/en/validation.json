@@ -54,5 +54,7 @@
   "invalidPhoneCountry": "Choose a supported country",
   "phoneTaken": "This phone number is already used by another account. If it's your number, contact support to reclaim it, or enter a different number.",
   "commonPassword": "This password is too common and easy to guess. Choose a different one.",
-  "unsupportedCurrency": "Choose a supported currency (EGP)."
+  "unsupportedCurrency": "Choose a supported currency (EGP).",
+  "invalidWhatsappNumber": "Enter a WhatsApp mobile number for the chosen country, such as 0100 123 4567 for Egypt.",
+  "invalidCallNumber": "Enter a phone number for the chosen country, or a short hotline such as 19999."
 }

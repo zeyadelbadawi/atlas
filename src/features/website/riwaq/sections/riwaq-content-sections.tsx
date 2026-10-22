@@ -11,6 +11,7 @@ import { cn } from '@utils';
 import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
 import { useWebsiteIdentity } from '@/features/website/renderer/WebsiteIdentityContext';
 import { resolveLocalizedText } from '@/features/website/utils/localized-text.utils';
+import { hasSectionButtons } from '@/features/website/utils/link-resolution.utils';
 import { resolveFeatureIcon } from '@/features/website/utils/feature-icons';
 import { Reveal } from '@/features/website/primitives';
 import type { SectionRenderProps } from '@/features/website/theme-packs/theme-pack.types';
@@ -33,6 +34,8 @@ import '../riwaq-sections.css';
 
 export function RiwaqAbout({
   config,
+  pages,
+  linkRenderer,
 }: SectionRenderProps<'about'>): JSX.Element {
   const { locale } = usePublicWebsiteLocale();
   const headingId = useId();
@@ -57,6 +60,24 @@ export function RiwaqAbout({
                   {paragraph}
                 </p>
               ))}
+            </div>
+          ) : null}
+          {hasSectionButtons(config) ? (
+            <div className="rws-actions">
+              <RiwaqAction cta={config.cta} pages={pages} linkRenderer={linkRenderer} />
+              <RiwaqAction
+                cta={config.secondaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="line"
+                arrow={false}
+              />
+              <RiwaqAction
+                cta={config.tertiaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="link"
+              />
             </div>
           ) : null}
         </div>
@@ -261,7 +282,24 @@ export function RiwaqFeatureSplit({
               ))}
             </ol>
           ) : null}
-          <RiwaqAction cta={config.cta} pages={pages} linkRenderer={linkRenderer} />
+          {hasSectionButtons(config) ? (
+            <div className="rws-actions">
+              <RiwaqAction cta={config.cta} pages={pages} linkRenderer={linkRenderer} />
+              <RiwaqAction
+                cta={config.secondaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="line"
+                arrow={false}
+              />
+              <RiwaqAction
+                cta={config.tertiaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="link"
+              />
+            </div>
+          ) : null}
         </div>
       </div>
     </RiwaqBand>
@@ -357,6 +395,12 @@ export function RiwaqCta({
               variant="line"
               large
               arrow={false}
+            />
+            <RiwaqAction
+              cta={config.tertiaryCta}
+              pages={pages}
+              linkRenderer={linkRenderer}
+              variant="link"
             />
           </div>
         </div>

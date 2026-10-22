@@ -82,7 +82,7 @@ export function CourseSpotlightSection({
     ? resolveLocalizedText(config.cta.label, locale)
     : t('website:renderer.courseSpotlight.viewCourse');
   const ctaHref = config.cta
-    ? resolveWebsiteCtaHref(config.cta, pages)
+    ? resolveWebsiteCtaHref(config.cta, pages, locale)
     : courseHref;
   const remaining = totalSections - sections.length;
   // B0-WEB-11 — on the public site a CTA whose target is gone (a deleted

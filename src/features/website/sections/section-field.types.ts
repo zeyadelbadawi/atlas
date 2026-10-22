@@ -30,7 +30,14 @@
 import type { SectionType, WebsiteThemeKey } from '@types';
 
 export type SectionFieldKind =
-  'text' | 'longText' | 'boolean' | 'number' | 'select' | 'image' | 'cta';
+  | 'text'
+  | 'longText'
+  | 'boolean'
+  | 'number'
+  | 'select'
+  | 'image'
+  | 'cta'
+  | 'buttons';
 
 interface FieldDescriptorBase {
   readonly key: string;
@@ -70,12 +77,24 @@ export interface SelectFieldDescriptor extends FieldDescriptorBase {
   }[];
 }
 
+/**
+ * CMS phase 3 — a section's buttons (up to three), edited as one list and
+ * stored in the `cta` / `secondaryCta` / `tertiaryCta` slots
+ * (`SECTION_BUTTON_SLOTS`). Its `key` names the field, not a config key.
+ */
+export interface ButtonsFieldDescriptor extends FieldDescriptorBase {
+  readonly kind: 'buttons';
+  /** How many buttons the section needs (a CTA band needs one). */
+  readonly minButtons?: number;
+}
+
 /** A fully discriminated union on `kind` — `select` is the only variant that carries `options`, so `descriptor.options` narrows correctly without a cast. */
 export type SectionFieldDescriptor =
   | TextFieldDescriptor
   | BooleanFieldDescriptor
   | NumberFieldDescriptor
-  | SelectFieldDescriptor;
+  | SelectFieldDescriptor
+  | ButtonsFieldDescriptor;
 
 export interface RepeatableFieldGroup {
   readonly key: string;

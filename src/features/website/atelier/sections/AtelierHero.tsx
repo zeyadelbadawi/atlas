@@ -30,9 +30,10 @@ import { usePageOpeningHeading } from '@/features/website/renderer/PageHeadingCo
 import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '@/features/website/utils/localized-text.utils';
 import { resolveCatalogHref } from '@/features/website/utils/catalog-url.utils';
+import { hasSectionButtons } from '@/features/website/utils/link-resolution.utils';
 import { useT1Navigate } from '@/features/website/modern-education/t1-navigation';
 import type { SectionRenderProps } from '@/features/website/theme-packs/theme-pack.types';
-import type { WebsitePage } from '@types';
+import { SECTION_BUTTON_SLOTS, type WebsitePage } from '@types';
 import {
   AtelierAction,
   AtelierArrow,
@@ -177,7 +178,7 @@ export function AtelierHero({
     }))
     .filter((item) => item.label)
     .slice(0, 4);
-  const hasActions = !!config.cta || !!config.secondaryCta;
+  const hasActions = hasSectionButtons(config);
   const showSearch = !!config.showSearch && !!resolveCatalogHref(pages);
   const title = resolveLocalizedText(config.title, locale);
   const hasImage = !!config.image;
@@ -195,7 +196,7 @@ export function AtelierHero({
         subtitle,
         description,
         highlights: highlights.map((item) => item.label),
-        actions: [config.cta, config.secondaryCta].map((cta) =>
+        actions: SECTION_BUTTON_SLOTS.map((slot) => config[slot]).map((cta) =>
           cta ? resolveLocalizedText(cta.label, locale) : ''
         ),
         search: showSearch,
@@ -317,6 +318,12 @@ export function AtelierHero({
                   variant="ghost"
                   large
                   arrow={false}
+                />
+                <AtelierAction
+                  cta={config.tertiaryCta}
+                  pages={pages}
+                  linkRenderer={linkRenderer}
+                  variant="link"
                 />
               </div>
             ) : null}

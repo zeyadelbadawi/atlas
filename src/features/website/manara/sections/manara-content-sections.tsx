@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@utils';
 import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '@/features/website/utils/localized-text.utils';
+import { hasSectionButtons } from '@/features/website/utils/link-resolution.utils';
 import { resolveFeatureIcon } from '@/features/website/utils/feature-icons';
 import { Reveal } from '@/features/website/primitives';
 import type { SectionRenderProps } from '@/features/website/theme-packs/theme-pack.types';
@@ -31,6 +32,8 @@ import '../manara-sections.css';
 
 export function ManaraAbout({
   config,
+  pages,
+  linkRenderer,
 }: SectionRenderProps<'about'>): JSX.Element {
   const { locale } = usePublicWebsiteLocale();
   const headingId = useId();
@@ -61,6 +64,28 @@ export function ManaraAbout({
                   {paragraph}
                 </p>
               ))}
+            </div>
+          ) : null}
+          {hasSectionButtons(config) ? (
+            <div className="flex flex-wrap items-center gap-3">
+              <ManaraAction
+                cta={config.cta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+              />
+              <ManaraAction
+                cta={config.secondaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="outline"
+                arrow={false}
+              />
+              <ManaraAction
+                cta={config.tertiaryCta}
+                pages={pages}
+                linkRenderer={linkRenderer}
+                variant="link"
+              />
             </div>
           ) : null}
         </div>
@@ -139,12 +164,29 @@ export function ManaraFeatureSplit({
           ))}
         </ol>
       ) : null}
-      <ManaraAction
-        cta={config.cta}
-        pages={pages}
-        linkRenderer={linkRenderer}
-        variant="block"
-      />
+      {hasSectionButtons(config) ? (
+        <div className="flex flex-wrap items-center gap-3">
+          <ManaraAction
+            cta={config.cta}
+            pages={pages}
+            linkRenderer={linkRenderer}
+            variant="block"
+          />
+          <ManaraAction
+            cta={config.secondaryCta}
+            pages={pages}
+            linkRenderer={linkRenderer}
+            variant="outline"
+            arrow={false}
+          />
+          <ManaraAction
+            cta={config.tertiaryCta}
+            pages={pages}
+            linkRenderer={linkRenderer}
+            variant="link"
+          />
+        </div>
+      ) : null}
     </div>
   );
 
@@ -389,6 +431,12 @@ export function ManaraCta({
               variant="outline"
               large
               arrow={false}
+            />
+            <ManaraAction
+              cta={config.tertiaryCta}
+              pages={pages}
+              linkRenderer={linkRenderer}
+              variant="link"
             />
           </div>
         </div>

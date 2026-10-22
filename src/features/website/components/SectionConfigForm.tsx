@@ -45,10 +45,13 @@ import {
   WebsiteImageThemeContext,
 } from './WebsiteImageField';
 import { resolveSectionImagePurpose } from '../constants/image-recommendations.constants';
+import { LocalizedTextField } from './LocalizedTextField';
 import {
-  LocalizedTextField,
-  type LocalizedFieldErrors,
-} from './LocalizedTextField';
+  CtaFieldEditor,
+  SectionButtonsEditor,
+  localizedErrors,
+  type FieldErrorLookup,
+} from './SectionButtonsEditor';
 import { PublicWebsiteLocaleProvider } from '../renderer/PublicWebsiteLocaleContext';
 import {
   PUBLIC_WEBSITE_LOCALES,
@@ -70,6 +73,7 @@ import {
 } from '../schemas/section-content-issues';
 import {
   MAX_CTA_LABEL_LENGTH,
+  MAX_CTA_WHATSAPP_MESSAGE_LENGTH,
   MAX_SECTION_ITEMS,
   MAX_SELECTED_COURSES,
 } from '../constants/website.constants';
@@ -88,7 +92,7 @@ import type {
   SectionFieldDescriptor,
   SectionFieldSchema,
 } from '../sections/section-field.types';
-import { DEFAULT_RESPONSIVE_VISIBILITY } from '@types';
+import { DEFAULT_RESPONSIVE_VISIBILITY, SECTION_BUTTON_SLOTS } from '@types';
 import type {
   LanguageCode,
   LocalizedText,
@@ -150,30 +154,6 @@ export interface SectionConfigFormProps<TType extends SectionType> {
   readonly onDraftChange?: (config: SectionConfigMap[TType]) => void;
 }
 
-/**
- * The translated message for one field path, or `undefined` when it has
- * none. `maxLength` is the field's own limit: a field that has one reports
- * its over-limit text itself (live counter), so that issue is skipped here.
- */
-type FieldErrorLookup = (
-  path: string,
-  labelKey: string,
-  maxLength?: number
-) => string | undefined;
-
-/** Both languages' messages for a localized field at `path`. */
-function localizedErrors(
-  errorFor: FieldErrorLookup,
-  path: string,
-  labelKey: string,
-  maxLength?: number
-): LocalizedFieldErrors {
-  return {
-    en: errorFor(`${path}.en`, labelKey, maxLength),
-    ar: errorFor(`${path}.ar`, labelKey, maxLength),
-  };
-}
-
 /** Whether a descriptor is offered under this theme (see `SectionFieldDescriptor.themes`). */
 function isOfferedFor(
   descriptor: SectionFieldDescriptor,
@@ -186,6 +166,15 @@ function isOfferedFor(
  * Which field an issue path belongs to — the label a person reads in the
  * summary and the limit an over-length message names.
  */
+/** The part of a button an issue path names, for the summary. */
+const BUTTON_PART_LABELS: Readonly<Record<string, string>> = {
+  label: 'website:fields.ctaLabelPlaceholder',
+  url: 'website:buttons.webAddress',
+  whatsapp: 'website:buttons.whatsappNumber',
+  whatsappMessage: 'website:buttons.whatsappMessage',
+  phone: 'website:buttons.callNumber',
+};
+
 function resolveIssueField(
   schema: SectionFieldSchema,
   path: string
@@ -201,6 +190,30 @@ function resolveIssueField(
     parts.length > 1 && (last === 'en' || last === 'ar') ? last : undefined;
   if (language) parts.pop();
   const [head, second, third] = parts;
+
+  // A section's buttons live in named slots under one "Buttons" field.
+  const buttonIndex = (SECTION_BUTTON_SLOTS as readonly string[]).indexOf(
+    head ?? ''
+  );
+  const buttonsField = schema.fields.find(
+    (candidate) => candidate.kind === 'buttons'
+  );
+  if (buttonsField && buttonIndex !== -1) {
+    const part = BUTTON_PART_LABELS[second ?? ''];
+    return {
+      labelKeys: part
+        ? ['website:buttons.button', part]
+        : ['website:buttons.button'],
+      itemNumber: buttonIndex + 1,
+      language,
+      maxLength:
+        second === 'label'
+          ? MAX_CTA_LABEL_LENGTH
+          : second === 'whatsappMessage'
+            ? MAX_CTA_WHATSAPP_MESSAGE_LENGTH
+            : undefined,
+    };
+  }
 
   const field = schema.fields.find((candidate) => candidate.key === head);
   if (field) {
@@ -671,191 +684,6 @@ function CourseSpotlightPicker({
         <p className="text-xs text-destructive" role="status">
           {t('website:editor.spotlightCourseUnavailable')}
         </p>
-      ) : null}
-    </div>
-  );
-}
-
-/** Which target kind a CTA currently points to — derived from which field is populated, never stored separately (see `WebsiteCta`'s doc comment). */
-type CtaLinkType = 'page' | 'external' | 'course';
-
-/**
- * Checked by KEY PRESENCE (`!== undefined`), never truthiness. `setLinkType`
- * below sets the newly-chosen field to `''` (a course/URL not yet picked
- * is still that link type, just incomplete) — a truthy check on an empty
- * string reports `false`, so the type this very function had just told the
- * Select to switch to would immediately be inferred as 'page' again on
- * the next render, snapping the dropdown straight back before a tenant
- * could type or pick anything.
- */
-function inferLinkType(value: Partial<WebsiteCta> | undefined): CtaLinkType {
-  if (value?.courseId !== undefined) return 'course';
-  if (value?.url !== undefined) return 'external';
-  return 'page';
-}
-
-/**
- * The one editor for every CTA in the Section Registry (Hero primary/
- * secondary, CTA banner). Exposes a Link Type selector so a tenant picks
- * an internal page, a real Course, or types an external URL — rather
- * than `url` being a silently unreachable field, as it was before Prompt
- * 11 (see `Reports/ARCHITECTURE.md`, Prompt 11, "CTA Editor Gap").
- */
-function CtaFieldEditor({
-  value,
-  onChange,
-  labelKey,
-  path,
-  errorFor,
-  pages,
-  academyId,
-}: {
-  readonly value: Partial<WebsiteCta> | undefined;
-  readonly onChange: (next: Partial<WebsiteCta> | undefined) => void;
-  readonly labelKey: string;
-  /** The CTA's key in the section config, e.g. `cta` or `secondaryCta`. */
-  readonly path: string;
-  readonly errorFor: FieldErrorLookup;
-  readonly pages: readonly WebsitePage[];
-  readonly academyId: string;
-}): JSX.Element {
-  const { t } = useTranslation();
-  const linkType = inferLinkType(value);
-  const urlValue = value?.url ?? '';
-  const urlError =
-    (urlValue && !isSafeExternalUrl(urlValue)) ||
-    Boolean(errorFor(`${path}.url`, labelKey));
-
-  const { data: coursesData } = useCourses(academyId, {
-    query: {
-      pagination: { page: 1, pageSize: 100 },
-      filters: { status: 'published' },
-    },
-  });
-  const courses = coursesData?.items ?? [];
-
-  const emptyLabel: LocalizedText = { en: '', ar: '' };
-
-  const setLinkType = (type: CtaLinkType) => {
-    // Switching target kind clears the other kinds' fields — a CTA
-    // never carries a stale pageId/url/courseId from a previous choice.
-    const base = { label: value?.label ?? emptyLabel };
-    if (type === 'page') onChange(base);
-    else if (type === 'external') onChange({ ...base, url: '' });
-    else onChange({ ...base, courseId: '' });
-  };
-
-  return (
-    <div className="space-y-3 rounded-md border border-border p-3">
-      <p className="text-sm font-medium text-foreground">{t(labelKey)}</p>
-      {/* Every section CTA shares one label limit (`websiteCtaSchema`). */}
-      <LocalizedTextField
-        id={`cta-label-${path}`}
-        labelKey="website:fields.ctaLabelPlaceholder"
-        value={value?.label as Partial<LocalizedText> | undefined}
-        onChange={(label) => onChange({ ...value, label })}
-        required
-        maxLength={MAX_CTA_LABEL_LENGTH}
-        errors={localizedErrors(
-          errorFor,
-          `${path}.label`,
-          'website:fields.ctaLabelPlaceholder',
-          MAX_CTA_LABEL_LENGTH
-        )}
-      />
-
-      <div className="space-y-1.5">
-        <Label>{t('website:fields.linkType')}</Label>
-        <Select
-          value={linkType}
-          onValueChange={(next) => setLinkType(next as CtaLinkType)}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="page">
-              {t('website:fields.linkTypePage')}
-            </SelectItem>
-            <SelectItem value="external">
-              {t('website:fields.linkTypeExternal')}
-            </SelectItem>
-            <SelectItem value="course">
-              {t('website:fields.linkTypeCourse')}
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      {linkType === 'page' ? (
-        <Select
-          value={value?.pageId}
-          onValueChange={(pageId) =>
-            onChange({ label: value?.label ?? emptyLabel, pageId })
-          }
-        >
-          <SelectTrigger>
-            <SelectValue
-              placeholder={t('website:fields.ctaTargetPlaceholder')}
-            />
-          </SelectTrigger>
-          <SelectContent>
-            {pages.map((page) => (
-              <SelectItem key={page.id} value={page.id}>
-                {page.title}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      ) : null}
-
-      {linkType === 'course' ? (
-        <Select
-          value={value?.courseId}
-          onValueChange={(courseId) =>
-            onChange({ label: value?.label ?? emptyLabel, courseId })
-          }
-        >
-          <SelectTrigger>
-            <SelectValue
-              placeholder={t('website:fields.ctaCoursePlaceholder')}
-            />
-          </SelectTrigger>
-          <SelectContent>
-            {courses.map((course) => (
-              <SelectItem key={course.id} value={course.id}>
-                {course.title}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      ) : null}
-
-      {linkType === 'external' ? (
-        <div className="space-y-1">
-          <Input
-            dir="ltr"
-            data-ltr-content
-            placeholder="https://example.com"
-            aria-invalid={urlError || undefined}
-            data-field-error={urlError || undefined}
-            value={urlValue}
-            onChange={(event) =>
-              onChange({
-                // `label` is `LocalizedText`, so the fallback must be one
-                // too — a bare `''` here produced legacy-shaped data that
-                // the bilingual label editor could not bind to.
-                label: value?.label ?? EMPTY_LOCALIZED_TEXT,
-                url: event.target.value,
-              })
-            }
-          />
-          {urlError ? (
-            <p className="text-xs text-destructive">
-              {t('validation:invalidUrl')}
-            </p>
-          ) : null}
-        </div>
       ) : null}
     </div>
   );
@@ -1335,7 +1163,20 @@ export function SectionConfigForm<TType extends SectionType>({
           ) : null}
 
           {fields.map((field) =>
-            field.kind === 'cta' ? (
+            field.kind === 'buttons' ? (
+              <SectionButtonsEditor
+                key={field.key}
+                labelKey={field.labelKey}
+                minButtons={field.minButtons}
+                errorFor={errorFor}
+                pages={pages}
+                academyId={academyId}
+                value={draft}
+                onChange={(slots) =>
+                  setDraft((prev) => ({ ...prev, ...slots }))
+                }
+              />
+            ) : field.kind === 'cta' ? (
               <CtaFieldEditor
                 key={field.key}
                 labelKey={field.labelKey}

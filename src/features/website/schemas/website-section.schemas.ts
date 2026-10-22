@@ -17,10 +17,14 @@
  */
 import { z } from 'zod';
 import {
+  CTA_PHONE_NUMBER_PATTERN,
+  CTA_STYLES,
+  CTA_WHATSAPP_NUMBER_PATTERN,
   FEATURE_ICON_OPTIONS,
   MAX_CHIP_TEXT,
   MAX_COURSE_CATALOG_PAGE_SIZE,
   MAX_CTA_LABEL_LENGTH,
+  MAX_CTA_WHATSAPP_MESSAGE_LENGTH,
   MAX_FEATURE_SPLIT_ITEMS,
   MAX_SPOTLIGHT_MODULES,
   MIN_SPOTLIGHT_MODULES,
@@ -117,7 +121,17 @@ export const localizedOptional = (maxLength: number) =>
     })
   );
 
-/** `url` is checked against `isSafeExternalUrl` (never `javascript:`/`data:`/etc.) in addition to being syntactically a URL — see that util's doc comment. The label cap applies to every section CTA (hero, FAQ, CTA banner, feature split). */
+/**
+ * One section button — matches the backend's `websiteCtaSchema` exactly.
+ * `url` is checked against `isSafeExternalUrl` (never `javascript:`/
+ * `data:`/etc.) in addition to being syntactically a URL — see that util's
+ * doc comment. `authAction` must be declared: zod strips keys a schema does
+ * not know, and the visual editor saves the parsed config, so a generated
+ * site's "Sign up" button would lose its target on the first save.
+ * `whatsapp`/`phone` are numbers; `resolveWebsiteCtaHref` builds the link.
+ * Empty is a button whose number is not typed yet (like an empty `url`):
+ * it saves, and the public site leaves it out until it has one.
+ */
 const websiteCtaSchema = z.object({
   label: localizedRequired(MAX_CTA_LABEL_LENGTH),
   pageId: z.string().optional(),
@@ -128,6 +142,21 @@ const websiteCtaSchema = z.object({
     .refine(isSafeExternalUrl, { message: 'validation:invalidUrl' })
     .optional()
     .or(z.literal('')),
+  authAction: z.enum(['signIn', 'signUp']).optional(),
+  whatsapp: z
+    .string()
+    .regex(CTA_WHATSAPP_NUMBER_PATTERN, 'validation:invalidWhatsappNumber')
+    .optional()
+    .or(z.literal('')),
+  whatsappMessage: localizedOptional(
+    MAX_CTA_WHATSAPP_MESSAGE_LENGTH
+  ).optional(),
+  phone: z
+    .string()
+    .regex(CTA_PHONE_NUMBER_PATTERN, 'validation:invalidCallNumber')
+    .optional()
+    .or(z.literal('')),
+  style: z.enum(CTA_STYLES).optional(),
 });
 
 /** Any image field — see `image-value.utils.ts`. */
@@ -150,6 +179,7 @@ export const heroSectionSchema = z.object({
   imageAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
   cta: websiteCtaSchema.optional(),
   secondaryCta: websiteCtaSchema.optional(),
+  tertiaryCta: websiteCtaSchema.optional(),
   highlight: localizedOptional(MAX_HERO_TITLE_LENGTH).optional(),
   highlights: z.array(heroHighlightSchema).max(MAX_HERO_HIGHLIGHTS).optional(),
   showSearch: z.boolean().optional(),
@@ -160,6 +190,9 @@ export const aboutSectionSchema = z.object({
   body: localizedRequired(MAX_LONG_TEXT),
   image: imageValueSchema.optional(),
   imageAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
+  cta: websiteCtaSchema.optional(),
+  secondaryCta: websiteCtaSchema.optional(),
+  tertiaryCta: websiteCtaSchema.optional(),
 });
 
 export const featuredCoursesSectionSchema = z.object({
@@ -256,6 +289,7 @@ export const ctaSectionSchema = z.object({
   description: localizedOptional(MAX_LONG_TEXT).optional(),
   cta: websiteCtaSchema,
   secondaryCta: websiteCtaSchema.optional(),
+  tertiaryCta: websiteCtaSchema.optional(),
   image: imageValueSchema.optional(),
   imageAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
 });
@@ -353,6 +387,8 @@ export const featureSplitSectionSchema = z.object({
   imagePosition: z.enum(['start', 'end']),
   items: z.array(featureSplitItemSchema).max(MAX_FEATURE_SPLIT_ITEMS),
   cta: websiteCtaSchema.optional(),
+  secondaryCta: websiteCtaSchema.optional(),
+  tertiaryCta: websiteCtaSchema.optional(),
 });
 
 /** Theme 4 plan §6 — mirrors the backend `courseSpotlightSectionSchema` field for field. */

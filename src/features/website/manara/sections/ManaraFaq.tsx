@@ -116,7 +116,7 @@ export function ManaraFaq({
     ? resolveLocalizedText(config.cta.label, locale)
     : '';
   const ctaHref = linkRenderer
-    ? resolveWebsiteCtaHref(config.cta, pages)
+    ? resolveWebsiteCtaHref(config.cta, pages, locale)
     : undefined;
   const more =
     config.cta && ctaLabel ? (
