@@ -191,6 +191,10 @@ test.describe('J51 — visual editor @critical', () => {
     const library = page.getByTestId('section-library');
     await expect(library).toBeVisible();
     await library.locator('[data-section-type="faq"]').click();
+    // The FAQ has ready looks (phase 3e): the library's second step offers
+    // them, and "Add section" adds the one chosen.
+    await expect(library.getByTestId('section-preset-picker')).toBeVisible();
+    await library.getByTestId('preset-add').click();
     await expect(library).toBeHidden();
     await expect(panel.getByRole('heading', { name: 'FAQ' })).toBeVisible();
     await saved();
