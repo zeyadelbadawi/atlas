@@ -40,6 +40,10 @@ const IDENTITY_MATRIX: Record<string, Seeds> = {
   },
   neonYellow: same('66 100% 50%'),
   pastelPink: same('340 80% 85%'),
+  // Light brands leave the CTA fill mid-tone, where neither white nor the
+  // body text reads (the CTA label once painted at 4.42:1 and 4.48:1).
+  lightCyan: same('185 90% 70%'),
+  lightGreen: same('120 60% 70%'),
   nearBlack: same('220 15% 10%'),
   monochrome: {
     primary: '0 0% 20%',

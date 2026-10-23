@@ -183,14 +183,17 @@ export function resolveAtelierTokens(
   const inputBorder = ensureContrast(roles.border, papers, 3, 'darker');
 
   // CTA: the palette's fill and label (already a 4.5:1 pair). The fill also
-  // needs 3:1 against paper so the button reads without a border.
+  // needs 3:1 against paper so the button reads without a border. When
+  // neither the label nor white reads on the darkened fill, the body text
+  // is darkened until it does: a light brand (cyan, green) leaves the fill
+  // mid-tone, where the body text alone painted at 4.42:1.
   const ctaFill = ensureContrast(roles.cta, papers, 3, 'darker');
   const ctaForeground =
     renderedContrast(roles.ctaForeground, ctaFill) >= 4.5
       ? roles.ctaForeground
       : renderedContrast('0 0% 100%', ctaFill) >= 4.5
         ? '0 0% 100%'
-        : text;
+        : ensureContrast(text, [ctaFill], 4.5, 'darker');
   const { ctaHover, ctaPressed } = deriveInteractionStates(
     ctaFill,
     ctaForeground
