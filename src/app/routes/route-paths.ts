@@ -349,6 +349,9 @@ export const DASHBOARD_ROUTES = {
   /** TASK 7 — enquiries sent through the Atlas marketing homepage's contact form. Platform Owner only. */
   platformContactSubmissions: '/dashboard/platform/contact-submissions',
 
+  /** B2 — Founding Academies (the first 20, annual price locked 24 months). Platform Owner only. */
+  platformFoundingAcademies: '/dashboard/platform/founding-academies',
+
   /**
    * Customer Requests — custom services (logo, domain, theme, section,
    * feature) academies ask the Atlas team for. Platform Owner only. The

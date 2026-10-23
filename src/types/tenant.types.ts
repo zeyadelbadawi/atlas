@@ -173,6 +173,26 @@ export interface TenantSubscription {
    * Prices are display amounts, not minor units.
    */
   readonly priceChangeNotice?: PriceChangeNotice;
+  /**
+   * B2 — present while this organization is a Founding Academy (seat held;
+   * `ended` once the 24-month lock is over). Billing owners only. Prices
+   * are display amounts. `nextRenewal` is what the server would charge for
+   * the next yearly renewal of the locked plan.
+   */
+  readonly founding?: TenantFounding;
+}
+
+export interface TenantFounding {
+  readonly status: 'active' | 'ended';
+  readonly seatNumber: number;
+  readonly planId: string;
+  readonly lockedPrice: PriceChangeNoticePrice;
+  readonly lockStartsAt: string;
+  readonly lockEndsAt: string;
+  readonly nextRenewal?: PriceChangeNoticePrice & {
+    readonly locked: boolean;
+    readonly periodStartsAt: string;
+  };
 }
 
 export interface PriceChangeNoticePrice {

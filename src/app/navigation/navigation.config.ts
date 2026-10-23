@@ -1055,6 +1055,17 @@ export function getDashboardNavigation(
           requiredRoles: ['platform_owner'],
         },
         {
+          // B2 — Founding Academies, next to the enquiries they come from.
+          // `PlatformFoundingAcademiesController` (PlatformOwnerGuard + RLS)
+          // is the server-side boundary; this entry only decides visibility.
+          id: 'platform-founding-academies',
+          labelKey: 'navigation:items.platformFoundingAcademies',
+          path: DASHBOARD_ROUTES.platformFoundingAcademies,
+          icon: Award,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+        },
+        {
           // Customer Requests — custom-service requests from academies, and
           // their email routing. `PlatformCustomerRequestsController`
           // (PlatformOwnerGuard + RLS) is the server-side boundary.

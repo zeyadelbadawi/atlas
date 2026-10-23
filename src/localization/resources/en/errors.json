@@ -107,6 +107,21 @@
     "subdomainReserved": "This address is reserved and can't be used. Please choose another one.",
     "subscriptionRequired": "An active subscription or trial is needed to set up an academy."
   },
+  "founding": {
+    "notFound": "This founding membership no longer exists.",
+    "organizationNotFound": "That academy was not found.",
+    "planNotEligible": "Choose one of the self-serve plans with a yearly price.",
+    "alreadyMember": "This academy is already a founding academy.",
+    "seatsFull": "All 20 founding seats are taken.",
+    "stale": "Someone changed this membership. Reopen it and try again.",
+    "revoked": "This membership is revoked and can no longer be changed.",
+    "notActive": "Only an active membership can move to another plan.",
+    "lockStartOutOfRange": "The lock start must be within a year of today.",
+    "contactNotFound": "That founding request was not found.",
+    "emailIncomplete": "Write the subject and message in both languages.",
+    "recipientCountChanged": "The list of recipients changed. Review the message again before sending.",
+    "recipientsInvalid": "Choose active founding academies only."
+  },
   "checkout": {
     "annualPlanChangeViaSupport": "You can’t switch to a different plan from checkout while more than 30 days of your annual plan remain. Contact Atlas support to change plans, or renew your current plan.",
     "expired": "This checkout has expired. Please start again.",

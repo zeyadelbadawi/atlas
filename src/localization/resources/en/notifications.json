@@ -330,6 +330,14 @@
       "title": "Your cancellation is scheduled",
       "message": "Your subscription ends {{effectiveAtDate}}. Everything keeps working until then."
     },
+    "lifecycleFoundingRenewalPriceNotice": {
+      "title": "Your next renewal is at the catalog price",
+      "message": "Your Founding Academy price lock does not cover your next renewal of {{planName}}. It renews at the current yearly price."
+    },
+    "platformFoundingMessage": {
+      "title": "A message from the Atlas team",
+      "message": "We emailed you about your Founding Academy membership."
+    },
     "lifecycleSubscriptionPriceChangeNotice": {
       "title": "Your plan changes at renewal",
       "message": "The {{planName}} plan's price or limits change from your next renewal. Nothing changes before then."
