@@ -26,7 +26,6 @@ import {
 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
-import { SectionTabs } from '@components/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -76,7 +75,6 @@ import { AcademyInvitesCard } from '../components/AcademyInvitesCard';
 import { ContentProtectionCard } from '../components/ContentProtectionCard';
 import { VideoTierCard } from '../components/VideoTierCard';
 import { DevicePolicyCard } from '../components/DevicePolicyCard';
-import { getAcademyAdminTabs } from '../utils/academy-navigation.utils';
 import {
   updateAcademySettingsSchema,
   type UpdateAcademySettingsFormData,
@@ -308,8 +306,6 @@ export default function AcademySettingsPage(): JSX.Element {
         descriptionKey="academy:settings.subtitle"
         breadcrumbs={breadcrumbs}
       />
-
-      <SectionTabs items={getAcademyAdminTabs(academyId ?? '')} />
 
       <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start lg:gap-8">
         <nav
