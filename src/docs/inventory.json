@@ -311,7 +311,7 @@
   "slug": "page-editor",
   "type": "step-by-step",
   "priority": "P0",
-  "titleEn": "Edit a page with sections",
+  "titleEn": "Edit a page in the classic editor",
   "audience": "Owner; Manager"
  },
  {
@@ -402,6 +402,69 @@
   "type": "feature-explanation",
   "priority": "P1",
   "titleEn": "Course catalogue and course pages on your site",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-015",
+  "category": "website",
+  "slug": "visual-editor",
+  "type": "step-by-step",
+  "priority": "P0",
+  "titleEn": "Edit your website in the visual editor",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-016",
+  "category": "website",
+  "slug": "section-looks-and-templates",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Section looks and page templates",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-017",
+  "category": "website",
+  "slug": "custom-section",
+  "type": "step-by-step",
+  "priority": "P2",
+  "titleEn": "Build your own layout with the custom section",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-018",
+  "category": "website",
+  "slug": "section-design",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Section design options",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-019",
+  "category": "website",
+  "slug": "page-history",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Page history: go back to an earlier version",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-020",
+  "category": "website",
+  "slug": "publish-check",
+  "type": "step-by-step",
+  "priority": "P1",
+  "titleEn": "Check a page before you publish it",
+  "audience": "Owner; Manager"
+ },
+ {
+  "id": "DOC-WEB-021",
+  "category": "website",
+  "slug": "lock-header-footer",
+  "type": "step-by-step",
+  "priority": "P2",
+  "titleEn": "Lock the header, menu and footer",
   "audience": "Owner; Manager"
  },
  {

@@ -10,11 +10,11 @@ summary: >
   main-language text.
 type: setup-config
 audience: [owner, manager]
-order: 6
+order: 16
 priority: P0
 related: [DOC-WEB-004, DOC-WEB-009, DOC-WEB-012, DOC-TRB-016, DOC-REF-004]
 keywords: [arabic website, bilingual, rtl, main language, /ar, موقع عربي, الموقع بالعربي, عربي وانجليزي, لغة الموقع]
-updated: 2026-10-20
+updated: 2026-10-23
 ---
 
 The academy owner and managers set up the languages of the site. Every text a visitor reads, in sections, menus and SEO fields, has two boxes: one for the main language and one for the other language.
@@ -37,21 +37,21 @@ The academy owner and managers set up the languages of the site. Every text a vi
 
    ![The Save changes button on the Language tab](shot:website/settings-language-save)
 
-3. In the page editor, open each section and fill the box for the other language. It shows **Not translated yet** until you fill it, then **Complete**.
+3. In the visual editor (or the classic editor), open each section and fill the box for the other language. It shows **Not translated yet** until you fill it, then **Complete**.
 
    ![The section dialog for the Hero section, with English and optional Arabic boxes](shot:website/editor-section-dialog)
 
-4. On the **Navigation** tab of **Settings**, fill both languages for your menu labels, the header button and the copyright text.
+4. On the **Menu, header & footer** tab of **Settings**, fill both languages for your menu labels, the header button and the copyright text.
 
-   ![The Navigation tab of the website settings](shot:website/settings-navigation)
+   ![The Menu, header & footer tab of the website settings](shot:website/settings-navigation)
 
 5. On the **SEO** tab, fill both languages for **Site title**, **Meta title** and **Meta description**.
 
    ![The SEO tab with the title and description fields](shot:website/settings-seo)
 
-6. Open the **Preview** tab, choose the other language from the language list, and check each page.
+6. On the **Website** overview, choose **Preview draft**, choose the other language from the language list, and check each page. In the visual editor, the **Preview language** list does the same for the page you're editing.
 
-   ![The Preview tab with the language list highlighted](shot:website/preview-language)
+   ![The draft preview with the language list highlighted](shot:website/preview-language)
 
 7. On the **Website** overview, choose **Publish changes** and confirm. Then open your site and its other-language address to check both versions.
 
@@ -75,7 +75,7 @@ If a box looks like it holds the wrong language (for example English text in the
 
 ## Related
 
-- [Edit a page with sections](doc:DOC-WEB-004)
+- [Edit your website in the visual editor](doc:DOC-WEB-015)
 - [Academy site URLs](doc:DOC-REF-004)
 - [Language, currency and time zone](doc:DOC-ACD-003)
 - [Arabic text appears in English on my site](doc:DOC-TRB-016)

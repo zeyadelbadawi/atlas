@@ -250,7 +250,7 @@
   surface: dashboard
   path: /dashboard/academy/{academyId}/website/pages
   waitFor: { text: website:pages.subtitle }
-  highlight: { role: switch, name: website:pages.visibilityToggle, nth: 1 }
+  highlight: { role: switch, nth: 1 }
 
 - key: website/pages-auth-dialog
   as: manager
@@ -263,13 +263,6 @@
   clip: dialog
 
 # ---- Page editor ------------------------------------------------------------------
-
-- key: website/editor
-  as: manager
-  surface: dashboard
-  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
-  waitFor: { text: website:editor.compositionTitle }
-  highlight: { role: button, name: website:editor.addSection }
 
 - key: website/editor-add-section
   as: manager
@@ -360,16 +353,8 @@
     - click: { role: button, name: website:sections.contact.label, nth: 0 }
     - scroll: { text: website:fields.showForm }
   highlight: { text: website:fields.showForm }
-  clip: dialog
 
 # ---- Preview ------------------------------------------------------------------------
-
-- key: website/preview
-  as: owner
-  surface: dashboard
-  path: /dashboard/academy/{academyId}/website/preview
-  waitFor: { text: website:preview.subtitle }
-  highlight: { selector: '[role="combobox"].w-56' }
 
 - key: website/preview-mobile
   as: owner
@@ -500,3 +485,265 @@
   path: /courses/{courseSlug}
   waitFor: { text: website:renderer.courseDetails.signInToEnrollAction }
   highlight: { text: website:renderer.courseDetails.signInToEnrollAction, nth: 0 }
+
+# ---- CMS phases 2–4: the website area, the visual editor, history, checks -------
+# The visual editor saves by itself a moment after a change, so these shots
+# only select, open panels and dialogs: nothing is typed, added or moved on
+# its page. Edits that need an unsaved page (the pre-publish check, a new
+# section's settings) use the classic editor, which never saves on its own.
+
+- key: website/overview-edit
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website
+  waitFor: { text: website:overview.start.title }
+  highlight: { testId: website-edit }
+
+- key: website/overview-preview-draft
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website
+  waitFor: { text: website:overview.start.title }
+  highlight: { role: link, name: website:overview.previewDraft }
+
+- key: website/overview-where
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website
+  waitFor: { text: website:overview.start.title }
+  actions:
+    - scroll: { testId: website-overview-homes }
+  highlight: { testId: website-overview-homes }
+
+- key: website/pages-more-menu
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages
+  waitFor: { text: website:pages.subtitle }
+  actions:
+    - click: { testId: website-page-more, nth: 0 }
+  highlight: { role: menuitem, name: website:pages.classicEditor }
+
+- key: website/pages-templates
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages
+  waitFor: { text: website:pages.subtitle }
+  actions:
+    - click: { role: button, name: website:pages.createAction }
+    - click: { selector: 'label:has(input[data-template="courseLanding"])' }
+    - wait: 1500
+  highlight: { selector: 'label:has(input[data-template="courseLanding"])' }
+  clip: dialog
+
+- key: website/ve-editor
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}/visual
+  waitFor: { text: website:visualEditor.structure.hint }
+  actions:
+    - wait: 1500
+
+- key: website/ve-select-section
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}/visual
+  waitFor: { text: website:visualEditor.structure.hint }
+  actions:
+    - click: { selector: '[data-testid^="structure-row-"] button.flex-1', nth: 0 }
+    - wait: 1500
+  highlight: { selector: '[data-testid^="structure-row-"][data-selected]' }
+
+- key: website/ve-inline-hint
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}/visual
+  waitFor: { text: website:visualEditor.structure.hint }
+  actions:
+    - click: { selector: '[data-testid^="structure-row-"] button.flex-1', nth: 0 }
+    - wait: 1500
+  highlight: { text: website:visualEditor.inline.hint }
+
+- key: website/ve-design-tab
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}/visual
+  waitFor: { text: website:visualEditor.structure.hint }
+  actions:
+    - click: { selector: '[data-testid^="structure-row-"] button.flex-1', nth: -1 }
+    - click: { role: tab, name: website:visualEditor.design.title }
+    - wait: 1000
+  highlight: { role: tab, name: website:visualEditor.design.title }
+
+- key: website/ve-undo-status
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}/visual
+  waitFor: { text: website:visualEditor.structure.hint }
+  highlight:
+    - { role: button, name: website:visualEditor.actions.undo }
+    - { role: button, name: website:visualEditor.actions.redo }
+    - { testId: save-status }
+
+- key: website/ve-devices
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}/visual
+  waitFor: { text: website:visualEditor.structure.hint }
+  actions:
+    - click: { role: button, name: website:preview.breakpoint.mobile }
+    - wait: 1500
+  highlight:
+    - { role: button, name: website:preview.breakpoint.mobile }
+    - { role: combobox, name: website:visualEditor.languageLabel }
+
+- key: website/ve-library
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}/visual
+  waitFor: { text: website:visualEditor.structure.hint }
+  actions:
+    - click: { role: button, name: website:visualEditor.add.button, nth: 0 }
+    - wait: 1000
+  highlight: { role: searchbox, name: website:visualEditor.library.search }
+
+- key: website/ve-looks
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}/visual
+  waitFor: { text: website:visualEditor.structure.hint }
+  actions:
+    - click: { role: button, name: website:visualEditor.add.button, nth: 0 }
+    - click: { selector: '[data-section-type="hero"]' }
+    - wait: 2000
+  highlight: { testId: preset-add }
+
+- key: website/ve-site-panel
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}/visual
+  waitFor: { text: website:visualEditor.structure.hint }
+  actions:
+    - click: { testId: visual-editor-site }
+    - wait: 1500
+  highlight: { testId: visual-editor-site }
+
+- key: website/ve-publish
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}/visual
+  waitFor: { text: website:visualEditor.structure.hint }
+  highlight: { testId: visual-editor-publish }
+
+- key: website/history-button
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}/visual
+  waitFor: { text: website:visualEditor.structure.hint }
+  highlight: { testId: visual-editor-history }
+
+- key: website/history-list
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}/visual
+  waitFor: { text: website:visualEditor.structure.hint }
+  actions:
+    - click: { testId: visual-editor-history }
+    - wait: 1500
+  highlight: { testId: page-history-list }
+  clip: dialog
+
+- key: website/history-version
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}/visual
+  waitFor: { text: website:visualEditor.structure.hint }
+  actions:
+    - click: { testId: visual-editor-history }
+    - wait: 1000
+    - click: { selector: '[data-testid="page-history-list"] li button', nth: 0 }
+    - wait: 2000
+  highlight: { testId: page-history-restore }
+  clip: dialog
+
+- key: website/history-confirm
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}/visual
+  waitFor: { text: website:visualEditor.structure.hint }
+  actions:
+    - click: { testId: visual-editor-history }
+    - wait: 1000
+    - click: { selector: '[data-testid="page-history-list"] li button', nth: 0 }
+    - wait: 1500
+    - click: { testId: page-history-restore }
+    - wait: 500
+  highlight: { testId: page-history-confirm-restore }
+  clip: { testId: page-history-confirm }
+
+- key: website/publish-check
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  actions:
+    - click: { role: button, name: website:editor.visibility.mobile, nth: 0 }
+    - click: { testId: website-publish-page }
+    - wait: 1000
+  highlight: { testId: pre-publish-anyway }
+  clip: dialog
+
+- key: website/settings-lock
+  as: owner
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/settings?tab=navigation
+  waitFor: { text: website:navigation.primaryNavTitle }
+  highlight: { role: switch, name: website:chromeLock.switchLabel }
+
+- key: website/editor-buttons
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  actions:
+    - click: { role: button, name: website:sections.hero.label, nth: 0 }
+    - scroll: { role: button, name: website:buttons.add }
+  highlight: { role: button, name: website:buttons.add }
+  clip: dialog
+
+- key: website/editor-custom-section
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  actions:
+    - click: { role: button, name: website:editor.addSection }
+    - click: { role: menuitem, name: website:sections.custom.label }
+    - wait: 1500
+  highlight: { text: website:sectionEditors.custom.layout, nth: 0 }
+  clip: dialog
+
+- key: website/editor-custom-elements
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}
+  waitFor: { text: website:editor.compositionTitle }
+  actions:
+    - click: { role: button, name: website:editor.addSection }
+    - click: { role: menuitem, name: website:sections.custom.label }
+    - wait: 1500
+    - scroll: { text: website:sectionEditors.custom.add, nth: 0 }
+    - click: { text: website:sectionEditors.custom.add, nth: 0 }
+    - wait: 500
+  highlight: { role: menu }
+
+- key: website/ve-design-phones
+  as: manager
+  surface: dashboard
+  path: /dashboard/academy/{academyId}/website/pages/{homePageId}/visual
+  waitFor: { text: website:visualEditor.structure.hint }
+  actions:
+    - click: { selector: '[data-testid^="structure-row-"] button.flex-1', nth: -1 }
+    - click: { role: tab, name: website:visualEditor.design.title }
+    - wait: 1000
+  highlight: { text: website:visualEditor.design.spacingMobile }

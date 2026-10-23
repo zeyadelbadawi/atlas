@@ -10,11 +10,11 @@ summary: >
   you have permission to use.
 type: step-by-step
 audience: [owner, manager]
-order: 10
+order: 18
 priority: P1
 related: [DOC-WEB-004, DOC-WEB-005, DOC-WEB-007, DOC-LRN-023, DOC-MSG-004]
 keywords: [faq, testimonials, content library, questions, الاسئلة الشائعة, آراء الطلاب, مكتبة المحتوى, اسئلة وأجوبة]
-updated: 2026-10-20
+updated: 2026-10-23
 ---
 
 The academy owner and managers can manage the content library. A library entry is written once and can appear in sections on several pages; edit it in one place and every page that uses it shows the change.
@@ -41,11 +41,11 @@ The academy owner and managers can manage the content library. A library entry i
 
    ![The Create testimonial dialog with its empty fields](shot:website/content-testimonial-dialog)
 
-6. To show entries on a page, open the page in the page editor, open its **FAQ** or **Testimonials** section, and add entries under **From your content library**. Set their order there, then choose **Apply changes** and **Save draft**.
+6. To show entries on a page, open the page and its **FAQ** or **Testimonials** section (in the visual editor, select the section; in the classic editor, open it), and add entries under **From your content library**. Set their order there. The visual editor saves by itself; in the classic editor, choose **Apply changes** and **Save draft**.
 
    ![The FAQ section dialog with the From your content library area](shot:website/editor-faq-library)
 
-7. Choose **Publish page** (or publish the whole site) so the section shows your entries.
+7. Choose **Publish** in the visual editor or **Publish page** in the classic editor (or publish the whole site) so the section shows your entries.
 
    ![The Publish page button next to Save draft](shot:website/editor-publish-page)
 
@@ -82,6 +82,6 @@ The third tab on the **Content** page, **Announcements**, opens your announcemen
 
 ## Related
 
-- [Edit a page with sections](doc:DOC-WEB-004)
+- [Edit your website in the visual editor](doc:DOC-WEB-015)
 - [Section types reference](doc:DOC-WEB-005)
 - [Replace sample content before you launch](doc:DOC-WEB-007)

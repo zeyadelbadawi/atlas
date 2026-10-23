@@ -40,7 +40,7 @@ visitors see a Coming Soon page. See [Website builder overview](doc:DOC-WEB-001)
 3. **Replace sample content and edit your pages.** Open **Pages** to edit each page and
    its sections. If you started with a ready-made website, replace every sample item
    with your own before you publish. See [Replace sample content](doc:DOC-WEB-007) and
-   [Edit a page with sections](doc:DOC-WEB-004).
+   [Edit your website in the visual editor](doc:DOC-WEB-015).
 
    ![The Pages list of the website](shot:tasks/website-pages)
 

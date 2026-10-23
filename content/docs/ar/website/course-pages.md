@@ -9,7 +9,7 @@ summary: >
   بداية، أو متابعة.
 type: feature-explanation
 audience: [owner, manager]
-order: 14
+order: 21
 priority: P1
 related: [DOC-LRN-004, DOC-LRN-011, DOC-LRN-023, DOC-WEB-005, DOC-COM-010]
 keywords: [الدورة مش ظاهرة, صفحة الكورس, قائمة الكورسات, كتالوج الدورات, الكورس مش باين في الموقع, course page, catalog]

@@ -4,27 +4,27 @@ title: Preview, publish and unpublish your site
 description: Preview your draft on each screen size, publish the whole site or one page, take it offline, and learn why visitors may still see Coming soon.
 summary: >
   Atlas keeps a working copy you edit and a published copy visitors see.
-  Check your draft in the Preview tab, then choose Publish (or Publish changes
-  once the site is live) and confirm. Unpublish takes the site offline and
-  visitors see a Coming soon page until you publish again.
+  Check your draft with Preview draft, then choose Publish (or Publish changes
+  once the site is live) and confirm. You can also publish one page from its
+  editor. Unpublish takes the site offline until you publish again.
 type: step-by-step
 audience: [owner, manager]
-order: 8
+order: 11
 priority: P0
-related: [DOC-WEB-004, DOC-WEB-007, DOC-ACD-009, DOC-BIL-007, DOC-TRB-005]
+related: [DOC-WEB-015, DOC-WEB-020, DOC-WEB-019, DOC-ACD-009, DOC-TRB-005]
 keywords: [publish website, unpublish, go live, coming soon, preview, نشر الموقع, الغاء النشر, الموقع مكتوب قريبا, معاينة الموقع]
-updated: 2026-10-20
+updated: 2026-10-23
 ---
 
 The academy owner and managers can preview and publish the site.
 
 ## Draft and live: two copies of your site
 
-- Everything you save, pages and site settings, goes into your **working copy**.
+- Everything you save, pages and site settings, goes into your **working copy**. The visual editor saves it by itself as you work.
 - Visitors see the **published copy**. It changes only when you publish.
 - Saved changes that aren't published can't be reached by visitors, even by guessing an address.
 
-The publish bar at the top of the **Website** overview, **Settings** and the page editor shows the status (**Draft** or **Published**) and what's waiting:
+The publish bar on the **Website** overview, on **Settings**, in the visual editor's **Site** panel and in the classic editor shows the status (**Draft** or **Published**) and what's waiting:
 
 - **Your website is not published yet. Visitors see a Coming Soon page.**
 - **This website is live and shows everything you have saved.**
@@ -32,11 +32,11 @@ The publish bar at the top of the **Website** overview, **Settings** and the pag
 
 ## Preview and publish
 
-1. Open **Website**, then the **Preview** tab, and choose a page from the page list.
+1. On the **Website** overview, choose **Preview draft**, then choose a page from the page list. (To preview one page, open **More actions** on its row under **Pages** and choose **Preview this page**.)
 
-   ![The Preview tab with the page list highlighted](shot:website/preview)
+   ![The Preview draft button on the Website overview](shot:website/overview-preview-draft)
 
-2. Choose **Desktop**, **Tablet** or **Mobile** to see the page at that width. Use the language list to check the other language.
+2. Choose a page, then **Desktop**, **Tablet** or **Mobile** to see it at that width. Use the language list to check the other language.
 
    ![The Preview tab showing the draft site at Mobile width](shot:website/preview-mobile)
 
@@ -58,7 +58,13 @@ The publish bar at the top of the **Website** overview, **Settings** and the pag
 
 ## Publish only one page
 
-While your site is live, the page editor has **Publish page**. It saves your changes to that page and makes only that page live; other pages and the site settings stay as they are published. See [Edit a page with sections](doc:DOC-WEB-004).
+While your site is live, each page can go live on its own: choose **Publish** in the visual editor, or **Publish page** in the classic editor. Your changes to that page are saved and only that page goes live; other pages and the site settings stay as they are published. Atlas checks the page first and lists anything worth a look: see [Check a page before you publish it](doc:DOC-WEB-020).
+
+Theme, menu, header and footer changes are site settings: they go live when you publish the whole site, for example from the publish bar in the visual editor's **Site** panel.
+
+## Go back to an earlier version
+
+Atlas keeps earlier versions of each page, including every published one. To go back, open the page's **History**, restore the version to your draft, then publish the page. See [Page history: go back to an earlier version](doc:DOC-WEB-019).
 
 ## What goes live without publishing
 
@@ -79,6 +85,6 @@ Step-by-step checks are in [My website shows "Coming soon"](doc:DOC-TRB-005). Th
 
 ## Related
 
-- [Edit a page with sections](doc:DOC-WEB-004)
+- [Edit your website in the visual editor](doc:DOC-WEB-015)
 - [Launch your academy website](doc:DOC-TASK-001)
 - [Launch checklist: from a new academy to your first learner](doc:DOC-START-005)

@@ -6,15 +6,15 @@ summary: >
   In Website, then Settings, the SEO tab holds your site title, meta title,
   meta description and social share image, plus switches for search engine
   indexing and the sitemap. Each page can override these from Edit SEO in the
-  page editor. Empty page fields fall back to the site settings. Changes go
+  visual editor's Site panel. Empty page fields fall back to the site settings. Changes go
   live when you publish.
 type: setup-config
 audience: [owner, manager]
-order: 12
+order: 19
 priority: P1
 related: [DOC-WEB-003, DOC-WEB-006, DOC-WEB-008, DOC-ACD-006, DOC-WEB-014]
 keywords: [seo, google, meta description, share image, sitemap, noindex, الظهور في جوجل, صورة المشاركة على واتساب, سيو, وصف الموقع]
-updated: 2026-10-20
+updated: 2026-10-23
 ---
 
 The academy owner and managers can edit SEO settings. They control how your site appears in search results and in link previews when someone shares it, for example on WhatsApp or Facebook.
@@ -41,7 +41,7 @@ The academy owner and managers can edit SEO settings. They control how your site
 
    ![The Save changes button at the bottom of the SEO tab](shot:website/seo-save)
 
-6. For one page, open it in the page editor and choose **Edit SEO**. In **Page SEO**, fill **Meta title**, **Meta description**, **Social share title**, **Social share description** and **Social share image**. To keep this page out of search results, untick **Allow search engines to index this page**. Then choose **Save changes**.
+6. For one page, open it in the visual editor, choose **Site**, then **Edit SEO** under **Search engines** (in the classic editor, **Edit SEO** is at the top). In **Page SEO**, fill **Meta title**, **Meta description**, **Social share title**, **Social share description** and **Social share image**. To keep this page out of search results, untick **Allow search engines to index this page**. Then choose **Save changes**.
 
    ![The Page SEO dialog with the page indexing checkbox](shot:website/page-seo-dialog)
 
