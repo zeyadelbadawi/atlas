@@ -228,7 +228,12 @@ describe('B2 — the email logo is a static marketing file', () => {
     // The backend's email layout points at exactly this path on the apex
     // (`PLATFORM_LOGO_PATH`); the root-file handler above serves it with
     // the edge cache headers and no cookies.
-    const png = readFileSync(resolve(__dirname, '../public/marketing-assets/brand/atlas-mark-email-2x.png'));
+    const png = readFileSync(
+      resolve(
+        __dirname,
+        '../public/marketing-assets/brand/atlas-mark-email-2x.png'
+      )
+    );
     expect(png.subarray(1, 4).toString('latin1')).toBe('PNG');
     expect(png.readUInt32BE(16)).toBe(96);
     expect(png.readUInt32BE(20)).toBe(96);
