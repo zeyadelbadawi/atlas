@@ -13,7 +13,7 @@
  *   and after a refused Apply the first element with a problem opens so the
  *   field to fix is on screen. The form's summary lists every problem.
  */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type {
   CustomColumn,
@@ -112,9 +112,18 @@ export function CustomSectionEditor({
     // `hasIssue` reads `errorFor`, which changes with every issue list.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revealErrors, columns, errorFor]);
+  // Once per refused Apply: as the author fixes the open element, the first
+  // problem moves on, and following it would close what they are editing.
+  const openedForReveal = useRef(false);
   useEffect(() => {
-    if (firstIssueId) setOpenId(firstIssueId);
-  }, [firstIssueId]);
+    if (!revealErrors) {
+      openedForReveal.current = false;
+      return;
+    }
+    if (openedForReveal.current || !firstIssueId) return;
+    openedForReveal.current = true;
+    setOpenId(firstIssueId);
+  }, [revealErrors, firstIssueId]);
 
   const writeColumns = (next: CustomColumn[]) => onPatch({ columns: next });
   const writeColumn = (columnIndex: number, elements: CustomElement[]) =>

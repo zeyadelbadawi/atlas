@@ -155,7 +155,9 @@ function CreatePageDialog({
       chosen
         ? buildTemplateSections(
             chosen,
-            presetContextOf({ configuration, pages })
+            // Buttons link only to pages visitors can reach; the slug
+            // above stays unique across hidden pages too.
+            presetContextOf({ configuration, pages: visiblePages })
           )
         : []
     );
@@ -240,7 +242,12 @@ function CreatePageDialog({
             )}
           >
             <div className={cn(template && 'lg:[grid-area:options]')}>
-              <PageTemplateOptions value={choice} onChange={choose} />
+              <PageTemplateOptions
+                value={choice}
+                onChange={choose}
+                // Once the page exists, its sections are the ones to retry.
+                disabled={!!unsaved}
+              />
             </div>
             {template ? (
               <div className="min-w-0 lg:[grid-area:preview]">

@@ -394,12 +394,8 @@ function ChecklistFields({
               <div className="min-w-0 flex-1" data-field-path={path}>
                 <LocalizedTextField
                   id={`${fieldId}-item-${index}`}
-                  labelKey={t(
-                    'website:sectionEditors.custom.fields.itemNumber',
-                    {
-                      number,
-                    }
-                  )}
+                  labelKey="website:sectionEditors.custom.fields.itemNumber"
+                  labelValues={{ number }}
                   value={item.text}
                   onChange={(next) =>
                     setItems(

@@ -41,12 +41,14 @@ export const BLANK_PAGE = 'blank';
 export interface PageTemplateOptionsProps {
   readonly value: string;
   readonly onChange: (value: string) => void;
+  readonly disabled?: boolean;
 }
 
 /** The choices, as a native radio group. */
 export function PageTemplateOptions({
   value,
   onChange,
+  disabled,
 }: PageTemplateOptionsProps): JSX.Element {
   const { t } = useTranslation();
   const options = [
@@ -85,6 +87,7 @@ export function PageTemplateOptions({
               name="page-template"
               value={option.key}
               checked={checked}
+              disabled={disabled}
               onChange={() => onChange(option.key)}
               className="peer sr-only"
               aria-labelledby={`${id}-name`}
@@ -95,6 +98,7 @@ export function PageTemplateOptions({
               className={cn(
                 'flex min-h-[3.5rem] items-start gap-3 rounded-lg border-2 bg-card p-3 transition-colors motion-reduce:transition-none',
                 'peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background',
+                'peer-disabled:cursor-not-allowed peer-disabled:opacity-60',
                 checked
                   ? 'border-primary'
                   : 'border-border hover:border-primary/50'

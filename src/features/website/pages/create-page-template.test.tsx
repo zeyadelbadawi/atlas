@@ -260,6 +260,11 @@ describe('new page — start from a template', () => {
     expect(alert.textContent).toContain(
       'The page was created, but its sections could not be saved.'
     );
+    // The page exists: another template can no longer be chosen, so the
+    // sections retried are the ones previewed.
+    for (const radio of within(dialog).getAllByRole('radio')) {
+      expect((radio as HTMLInputElement).disabled).toBe(true);
+    }
     fireEvent.click(
       within(alert).getByRole('button', {
         name: 'Try saving the sections again',
