@@ -2408,6 +2408,18 @@
       "reverseOnMobile": "Swap the order on phones",
       "reverseOnMobileHint": "On phones the two columns stack; this shows the second one first (for example the picture before the text).",
       "reset": "Back to the theme's design"
+    },
+    "inline": {
+      "hint": "Tip: double-click text on the page to edit it there. Press Enter to save, Esc to cancel.",
+      "badge": "Editing text · Enter saves · Esc cancels",
+      "editing": "Editing {{field}} on the page. Press Enter to save or Escape to cancel.",
+      "editingMultiline": "Editing {{field}} on the page. Press Enter to save, Shift+Enter for a new line, or Escape to cancel.",
+      "saved": "{{field}} updated.",
+      "cancelled": "Change to {{field}} cancelled.",
+      "limit": "{{field}} can be at most {{count}} characters.",
+      "inPanel": "{{field}} is edited in the panel.",
+      "ambiguous": "This text appears in more than one field. Edit it in the panel.",
+      "notText": "This part of the section is edited in the panel."
     }
   },
   "days": {

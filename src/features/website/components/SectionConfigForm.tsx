@@ -163,6 +163,13 @@ export interface SectionConfigFormProps<TType extends SectionType> {
   readonly variant?: 'dialog' | 'panel';
   /** The section's config as currently typed, on every change (`'panel'`). */
   readonly onDraftChange?: (config: SectionConfigMap[TType]) => void;
+  /**
+   * The panel only: the section's config as changed somewhere else — the
+   * visual editor's inline text editing on the canvas. Taken in as the
+   * form's own values (not reported back as an edit), so the field and its
+   * character count show what is being typed on the page.
+   */
+  readonly externalConfig?: SectionConfigMap[TType];
 }
 
 /** Whether a descriptor is offered under this theme (see `SectionFieldDescriptor.themes`). */
@@ -1011,6 +1018,7 @@ export function SectionConfigForm<TType extends SectionType>({
   previewSectionId,
   variant = 'dialog',
   onDraftChange,
+  externalConfig,
 }: SectionConfigFormProps<TType>): JSX.Element {
   const isPanel = variant === 'panel';
   const { t, i18n } = useTranslation();
@@ -1030,6 +1038,13 @@ export function SectionConfigForm<TType extends SectionType>({
     reportedDraftRef.current = draft;
     onDraftChangeRef.current?.(draft as unknown as SectionConfigMap[TType]);
   }, [draft]);
+  useEffect(() => {
+    if (!externalConfig) return;
+    const next = externalConfig as unknown as DraftValue;
+    if (next === reportedDraftRef.current) return;
+    reportedDraftRef.current = next;
+    setDraft(next);
+  }, [externalConfig]);
   const fields = schema.fields.filter((field) =>
     isOfferedFor(field, configuration.themeKey)
   );

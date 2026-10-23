@@ -30,7 +30,12 @@
  *   because it was saved.
  * - "Site" opens the whole website's settings in the same pane
  *   (`SiteSettingsPanel`): theme, menu, header, footer, this page's
- *   search-engine text, and publishing the website.
+ *   search-engine text, and publishing the website. `?panel=site` opens
+ *   the editor on it (the Website settings page links there).
+ * - Inline text editing (CMS phase 4, `useInlineTextEditing`): double-click
+ *   text in the selected section (or Tab to it and press Enter) to type
+ *   on the page itself; the panel field follows, and the edit is one undo
+ *   step.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -52,6 +57,7 @@ import {
   PanelBottomOpen,
   Plus,
   Redo2,
+  TextCursorInput,
   Undo2,
   UploadCloud,
 } from 'lucide-react';
@@ -76,6 +82,7 @@ import { useMediaQuery, usePermissions, useUnsavedChanges } from '@hooks';
 import { useAcademy } from '@features/academy';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { cn } from '@utils';
+import { DEFAULT_WEBSITE_THEME_KEY } from '@types';
 import type {
   ResponsiveVisibility,
   SectionInstance,
@@ -125,6 +132,8 @@ import { SettingsPanel } from './SettingsPanel';
 import { SectionLibrary } from './SectionLibrary';
 import type { SectionStart } from '../presets/section-presets.types';
 import { SiteSettingsPanel } from './SiteSettingsPanel';
+import type { PanelFieldRequest } from './SettingsPanel';
+import { INLINE_TEXT_CSS, useInlineTextEditing } from './useInlineTextEditing';
 
 /** How long after the last change the draft is saved. */
 export const AUTOSAVE_DELAY_MS = 1500;
@@ -224,7 +233,9 @@ function VisualEditor(): JSX.Element {
   }));
   // The whole website's settings, in the settings pane instead of a
   // section's (`SiteSettingsPanel`).
-  const [siteOpen, setSiteOpen] = useState(false);
+  const [siteOpen, setSiteOpen] = useState(
+    () => searchParams.get('panel') === 'site' && !searchParams.get('section')
+  );
   const selectAndReveal = useCallback((id: string) => {
     setSiteOpen(false);
     setSelectedId(id);
@@ -244,6 +255,14 @@ function VisualEditor(): JSX.Element {
   const [structureOpen, setStructureOpen] = useState(false);
   const [panelExpanded, setPanelExpanded] = useState(false);
   const [announcement, setAnnouncement] = useState('');
+  // Inline text editing: the canvas frame's document, the config typed on
+  // the canvas (for the panel's fields), and a panel field to show.
+  const [canvasDoc, setCanvasDoc] = useState<Document | null>(null);
+  const [inlineConfig, setInlineConfig] = useState<{
+    readonly id: string;
+    readonly config: SectionInstance['config'];
+  } | null>(null);
+  const [fieldRequest, setFieldRequest] = useState<PanelFieldRequest>();
 
   const labelOf = useCallback(
     (section: SectionInstance) => t(SECTION_METADATA[section.type].labelKey),
@@ -396,6 +415,44 @@ function VisualEditor(): JSX.Element {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [canManage, undo, redo]);
 
+  // ----- Inline text editing on the canvas -------------------------------
+  const previewLocale = chosenLocale ?? requiredLocale;
+  const selectedSection = draftSections.find(
+    (section) => section.id === selectedId
+  );
+  const draftSectionsRef = useRef(draftSections);
+  draftSectionsRef.current = draftSections;
+  const inline = useInlineTextEditing({
+    doc: canvasDoc,
+    enabled: canManage && !!configQuery.data,
+    section: selectedSection,
+    themeKey: configQuery.data?.themeKey ?? DEFAULT_WEBSITE_THEME_KEY,
+    locale: previewLocale,
+    contentKey: draftKey,
+    onChange: (id, config, group) => {
+      clearServerIssues(id);
+      setInlineConfig({ id, config });
+      record(
+        replaceSectionConfig(draftSectionsRef.current, id, config),
+        group,
+        {
+          sticky: true,
+        }
+      );
+    },
+    onRevealField: (candidate, focusField) => {
+      if (focusField && !isWide) setPanelExpanded(true);
+      setFieldRequest((previous) => ({
+        fieldId: candidate.fieldId,
+        focus: focusField,
+        n: (previous?.n ?? 0) + 1,
+      }));
+    },
+    onAnnounce: announce,
+    onUndo: undo,
+    onRedo: redo,
+  });
+
   // ----- Publish --------------------------------------------------------
   const handlePublish = async () => {
     if (draft.isWorking()) return;
@@ -472,7 +529,6 @@ function VisualEditor(): JSX.Element {
   const configuration = configQuery.data;
   const pages = pagesQuery.data.items;
   const page = pageQuery.data;
-  const previewLocale = chosenLocale ?? requiredLocale;
   const previewPages = pages.filter((candidate) => candidate.visible);
   const selectedIndex = draftSections.findIndex(
     (section) => section.id === selectedId
@@ -517,6 +573,17 @@ function VisualEditor(): JSX.Element {
       canManage={canManage}
       revision={history.revision}
       serverIssues={selected ? serverIssuesById[selected.id] : undefined}
+      externalConfig={
+        // Only while the section still holds what was typed on the canvas
+        // (an undo or a reload replaces it, and the fields re-read that).
+        inlineConfig &&
+        selected &&
+        inlineConfig.id === selected.id &&
+        inlineConfig.config === selected.config
+          ? inlineConfig.config
+          : undefined
+      }
+      fieldRequest={fieldRequest}
       onConfigChange={(config) =>
         selected && handleConfigChange(selected.id, config)
       }
@@ -565,7 +632,11 @@ function VisualEditor(): JSX.Element {
       focusSectionId={focus.id}
       focusRequest={focus.request}
       selectedSectionId={selectedId}
+      canvasCss={canManage ? INLINE_TEXT_CSS : undefined}
+      onCanvasDocument={setCanvasDoc}
       onSectionSelect={(id) => {
+        // A click while typing on the page moves the caret, nothing else.
+        if (inline.isEditing() && id === selectedId) return;
         setSiteOpen(false);
         setSelectedId(id);
         const section = draftSections.find((candidate) => candidate.id === id);
@@ -666,6 +737,15 @@ function VisualEditor(): JSX.Element {
         </div>
 
         <div className="ms-auto flex items-center gap-1 sm:gap-2">
+          {inline.editing ? (
+            <span
+              className="hidden items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary lg:inline-flex"
+              data-testid="inline-editing-badge"
+            >
+              <TextCursorInput className="size-3.5" aria-hidden />
+              {t('website:visualEditor.inline.badge')}
+            </span>
+          ) : null}
           <SaveStatus
             state={saveState}
             canManage={canManage}
