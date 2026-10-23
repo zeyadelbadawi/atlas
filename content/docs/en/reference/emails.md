@@ -14,7 +14,7 @@ order: 6
 priority: P2
 related: [DOC-MSG-001, DOC-MSG-002, DOC-COM-006, DOC-BIL-009, DOC-TRB-009]
 keywords: [email, emails, notification email, receipt email, sign-in code, otp, verification email, unsubscribe, spam]
-updated: 2026-10-20
+updated: 2026-10-24
 ---
 
 Emails are written in the language each person chooses under **Email language** in their email preferences. Many events also appear in the in-app notifications.
@@ -62,6 +62,25 @@ Announcements appear in the learner's notifications, not by email.
 | A reply on your support ticket | Yes |
 | Learners waiting for approval, new course reviews, website contact messages | Sent as a daily digest |
 | Updates on your Atlas service requests | Some can be turned off |
+
+## Reminders about your plan (organization owners)
+
+Atlas reminds the organization owner before anything changes with their plan, so a slow bank transfer never takes the site offline by surprise. A reminder that would arrive too late to be true is not sent.
+
+| When | Email | Can it be turned off? |
+|---|---|---|
+| Trial, 3 days before it ends (trials of 7 days or more) | Your trial ends in 3 days | No |
+| Trial, 1 day before it ends | Your trial ends tomorrow | No |
+| When the trial ends | Your trial has ended | No |
+| 3, 14 and 45 days after the trial ended | Your site is still offline, Your courses are waiting, Still here whenever you're ready | Yes (**Account and courses**) |
+| Yearly plan, 30 days before the period ends | Your yearly plan renews in 30 days | No |
+| 7 days, then 1 day, before the period ends | Your plan renews soon; Your plan renews tomorrow | No |
+| Payment late: grace period starts, and 1 day before it ends | Payment is late — your site is still online; Your site goes offline tomorrow | No |
+| When the subscription expires or ends | Your subscription has expired; Your subscription has ended | No |
+| 7 and 30 days after it expired | Your site is still offline; Your academy is still here | Yes (**Account and courses**) |
+| Before a renewal at a new price | Your plan changes at renewal; for Founding Academies, Your next renewal is at the catalog price | No |
+
+**Setup tips.** In the first days after you sign up, Atlas sends a few short tips: if you haven't created your academy after a day, if your site isn't published after two days, and if payments or your first course aren't set up after four days. You also get one when your first payment proof arrives. These follow your **Account and courses** preference.
 
 ## Which emails you can turn off
 

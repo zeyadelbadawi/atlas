@@ -25,9 +25,7 @@ export function FoundingMembershipNotice({
     i18n.language?.startsWith('ar') ? 'ar' : 'en'
   ) as LanguageCode;
   const money = (value: { amount: number; currency: string }) =>
-    formatCurrency(value.amount, language, value.currency, {
-      maximumFractionDigits: 0,
-    });
+    formatCurrency(value.amount, language, value.currency);
   const lockOver = founding.status === 'ended';
   return (
     <Alert data-testid="subscription-founding">

@@ -79,7 +79,7 @@ A learner whose registration you rejected shows **Rejected**. You can approve th
 
 The registration policy decides how new learners get in: **Open**, **Approval required** or **Invite only**. "Only the account owner can change the registration policy."
 
-1. Open **Academy Settings** and find **Registration policy**.
+1. Open **Academy Settings**, choose the **Student registration** section and find **Registration policy**.
 
    ![Academy Settings with the Registration policy card highlighted](shot:troubleshooting/registration-policy)
 

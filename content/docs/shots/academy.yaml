@@ -74,6 +74,10 @@
   surface: dashboard
   path: /dashboard/academy/{academyId}/settings
   waitFor: { text: academy:settings.localization }
+  # The save bar appears only once something changed (B2).
+  actions:
+    - click: { label: academy:create.timezoneLabel }
+    - click: { role: option, name: UTC, exact: true }
   highlight: { role: button, name: academy:settings.saveButton }
 
 # --- Visual identity (DOC-ACD-004) ------------------------------------------

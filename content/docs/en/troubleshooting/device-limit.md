@@ -59,7 +59,7 @@ Lessons play on one device at a time. If you open a lesson on a second device, y
 
 ## For owners: the limit itself
 
-The organization owner sets the limit in **Academy Settings**, under **Learner devices** (**Devices per learner**). The academy can set a limit up to the maximum the platform allows. Lowering it applies to devices learners have already registered: a learner over the new limit is refused on their most recently added devices until they remove one.
+The organization owner sets the limit in **Academy Settings**, in the **Student devices** section (**Devices per learner**). The academy can set a limit up to the maximum the platform allows. Lowering it applies to devices learners have already registered: a learner over the new limit is refused on their most recently added devices until they remove one.
 
 ![Academy Settings with the Devices per learner setting highlighted](shot:troubleshooting/owner-device-policy)
 

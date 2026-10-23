@@ -3,7 +3,7 @@ id: DOC-START-004
 title: Create your academy
 description: Name your academy, choose its Atlas address, theme and starting content, and optionally add your logo and payment methods.
 summary: >
-  The organization owner creates an academy from the setup steps or from New Academy
+  The organization owner creates an academy from the setup steps or from Create an academy
   in the sidebar. You give it a name and an Atlas address, pick a theme, choose a
   ready-made or blank website, and can add your logo and payment methods now or later.
   Atlas then sets up the academy and its website while you keep the page open.
@@ -29,7 +29,7 @@ plan, and your plan must allow one more academy.
 
 ## Fill in the academy form
 
-1. In the sidebar, open **New Academy**.
+1. In the sidebar, open **Create an academy**.
 
    ![The New Academy page with the academy form](shot:getting-started/new-academy-page)
 

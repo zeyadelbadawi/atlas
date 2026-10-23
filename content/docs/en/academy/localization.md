@@ -33,7 +33,7 @@ A person who has chosen their own **Email language** in their email preferences 
 
 ## Change the settings
 
-1. In the sidebar, open **Academy Settings** and find the **Localization** card.
+1. In the sidebar, open **Academy Settings**. The **Academy details** section opens first; find the **Localization** card in it.
 
    ![The Localization card on the Academy Settings page](shot:academy/settings-localization)
 
@@ -49,9 +49,9 @@ A person who has chosen their own **Email language** in their email preferences 
 
    ![The Currency list highlighted](shot:academy/settings-currency)
 
-5. Select **Save Settings**. You see "Settings updated successfully".
+5. As soon as you change something, a bar saying "You have unsaved changes" appears at the bottom of the page. Select **Save Settings** in it (or **Discard** to undo your changes). You see "Settings updated successfully".
 
-   ![The Save Settings button at the bottom of the page](shot:academy/settings-save)
+   ![The unsaved-changes bar with its Save Settings button highlighted](shot:academy/settings-save)
 
 ## Your website's language is a separate setting
 

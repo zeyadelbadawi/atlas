@@ -23,11 +23,11 @@ Everything about your academy itself (its name, contact details, look and web ad
 
 | Screen | How to open it | What it holds | Who can change it |
 |---|---|---|---|
-| **Academy Profile** | **Academy Overview** in the sidebar, then **View Profile** | Name, description, contact email and phone, website link, address and country, language, time zone and currency | Owner and manager |
-| **Academy Settings** | **Academy Settings** in the sidebar | General details, **Localization**, **Contact**, **Registration**, **Communication**, **Content protection** and deleting the academy | Owner and manager (some sections owner only) |
-| **Visual Identity** | **Visual Identity** in the sidebar | Academy name, logo, colours, favicon and the logo for dark backgrounds | Owner and manager |
+| **Academy Profile** | **Academy home** in the sidebar, then **View Profile** | Name, description, contact email and phone, website link, address and country, language, time zone and currency | Owner and manager |
+| **Academy Settings** | **Academy Settings** in the sidebar | One section at a time, chosen from the list beside the page: **Academy details** (general details, **Localization** and **Contact**), **Student registration**, **Emails to students**, **Content protection**, **Video**, **Student devices** and **Delete academy** | Owner and manager (some sections owner only) |
+| **Visual Identity** | **Visual identity** in the sidebar, under **Website & brand** | Academy name, logo, colours, favicon and the logo for dark backgrounds | Owner and manager |
 | **Domain** tab | **Website**, then **Settings**, then the **Domain** tab | Your Atlas address and your own custom domain | Owner and manager |
-| **New Academy** | **New Academy** in the sidebar | Creating another academy and following its setup | Organization owner |
+| **New Academy** | **Create an academy** in the sidebar | Creating another academy and following its setup | Organization owner |
 
 The academy overview shows one status: whether your **Website** is **Draft** or **Published**. There is no separate academy status for you to set. To take your site offline for a while, unpublish it instead of deleting the academy.
 
@@ -36,7 +36,7 @@ The academy overview shows one status: whether your **Website** is **Draft** or 
 - Change the **Academy Slug** in Academy Settings. Others see "Only the organization owner can change the web address." It can change once every 60 days. Changing it moves your website to the new address, and the old address keeps working and sends visitors there: see [Your academy web address](doc:DOC-ACD-005).
 - Change the registration policy and the content protection settings.
 - Create another academy, and delete one.
-- Send academy **Messages** and use **Atlas service requests**.
+- Send academy **Messages** and use **Ask Atlas for help**.
 
 The **Communication** card (**Email & sign-in codes**) is read-only for everyone: it shows the settings Atlas applies, which can't be changed per academy yet.
 

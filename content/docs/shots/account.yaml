@@ -130,7 +130,7 @@
 - key: account/academy-code-setting
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=communication
   waitFor: { text: academy:communication.sectionTitle }
   actions:
     - scroll: { text: academy:communication.readOnlyNotice }

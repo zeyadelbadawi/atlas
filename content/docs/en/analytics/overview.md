@@ -58,9 +58,9 @@ For each order and payment one by one, the owner uses **Course orders**. See [Tr
 
 **Recent activity** lists the latest changes, such as courses created or published, lessons added and team changes, with who made them. A manager sees their own academy's changes only.
 
-## The Academy Overview page
+## The Academy home page
 
-**Academy Overview** in the sidebar opens one academy's page. Its cards show:
+**Academy home**, at the top of the academy sidebar, opens one academy's page. Its cards show:
 
 - **Total Members**: people on the academy's team, including the owner. Learners aren't counted here.
 - **Active Staff**: active members of the academy's team, whatever their role: the owner, managers and instructors. Team members you removed aren't counted.

@@ -438,7 +438,8 @@
   surface: dashboard
   path: /dashboard/academy/{academyId}/website/messages
   waitFor: { text: website:messages.subtitle }
-  highlight: { role: link, name: navigation:items.academyWebsiteMessages }
+  # B2: no sidebar entry any more; the inbox is the Messages tab of Website.
+  highlight: { selector: 'a[href$="/website/messages"]' }
 
 - key: website/messages-filters
   as: manager

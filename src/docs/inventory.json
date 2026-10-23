@@ -954,6 +954,15 @@
   "audience": "Owner"
  },
  {
+  "id": "DOC-BIL-010",
+  "category": "billing",
+  "slug": "founding-price-lock",
+  "type": "feature-explanation",
+  "priority": "P1",
+  "titleEn": "Founding Academy price lock",
+  "audience": "Owner"
+ },
+ {
   "id": "DOC-ORG-001",
   "category": "team",
   "slug": "overview",

@@ -27,7 +27,8 @@ import {
 } from '../services/PlatformContactSubmissionService';
 
 export function usePlatformContactSubmissions(
-  query?: PlatformContactSubmissionListQuery
+  query?: PlatformContactSubmissionListQuery,
+  enabled = true
 ) {
   return useApiQuery<PaginatedResult<PlatformContactSubmission>, ApiError>({
     queryKey: platformContactSubmissionKeys.list(query),
@@ -35,6 +36,7 @@ export function usePlatformContactSubmissions(
     // Typing in search or flipping a filter keeps the previous rows on
     // screen instead of collapsing the table to a skeleton.
     placeholderData: keepPreviousData,
+    enabled,
     ...LIVE_LIST_QUERY_OPTIONS,
   });
 }

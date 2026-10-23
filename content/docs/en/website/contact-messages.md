@@ -1,11 +1,11 @@
 ---
 id: DOC-WEB-013
 title: Contact form and website messages
-description: Add a contact form to your site, find visitor messages in Website Messages, and mark, archive or restore them. Atlas notifies owners and managers.
+description: Add a contact form to your site, find visitor messages in the Messages tab of Website, and mark, archive or restore them. Atlas notifies owners and managers.
 summary: >
   A Contact section with Show contact form on lets visitors send you their
-  name, email and message. Messages arrive in Website Messages, under Website
-  in the sidebar, for the academy owner and managers, who also get a
+  name, email and message. Messages arrive in the Messages tab of Website (in
+  the sidebar, under Website & brand), for the academy owner and managers, who also get a
   notification. Open a message to read it, reply from your own email, and mark
   it read, unread or archived.
 type: step-by-step
@@ -29,9 +29,9 @@ The academy owner and managers can read website messages. Visitors and learners 
 
    ![The publish bar on the Website overview with Publish changes highlighted](shot:website/overview-publish)
 
-3. To read messages, open **Website Messages** in the sidebar (or the **Messages** tab in **Website**).
+3. To read messages, open **Website** in the sidebar (under **Website & brand**) and choose the **Messages** tab. On the **Website** overview, **Messages from visitors** links there too.
 
-   ![The Website Messages page listing visitor messages](shot:website/messages)
+   ![The Messages tab of Website listing visitor messages](shot:website/messages)
 
 4. Filter by status: **All**, **New**, **Read** or **Archived**. You can also search by name, email or message, filter by **Received date** and change **Sort by**.
 
@@ -39,7 +39,7 @@ The academy owner and managers can read website messages. Visitors and learners 
 
 5. Choose a message to open it. Opening a new message marks it as read.
 
-   ![A message row in the Website Messages list](shot:website/messages-row)
+   ![A message row in the website messages list](shot:website/messages-row)
 
 ## Messages from Register your interest forms
 

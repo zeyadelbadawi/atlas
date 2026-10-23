@@ -22,7 +22,7 @@ adding a student account yourself are for the owner only.
 
 ## Stages
 
-1. **Choose who can join.** Open **Academy Settings** and, under **Registration**, pick
+1. **Choose who can join.** Open **Academy Settings**, choose the **Student registration** section and pick
    the **Registration policy**: **Open** (anyone can sign up and start), **Approval
    required** (each sign-up waits until you approve it) or **Invite only** (only someone
    with a valid invite link can register). Choose **Save policy**. Owner only. See

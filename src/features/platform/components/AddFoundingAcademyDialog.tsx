@@ -101,7 +101,8 @@ export function AddFoundingAcademyDialog({
     }),
     []
   );
-  const requests = usePlatformContactSubmissions(requestsQuery);
+  // Only while the dialog is open: it stays mounted with the page.
+  const requests = usePlatformContactSubmissions(requestsQuery, open);
   const openRequests = (requests.data?.items ?? []).filter(
     (item) => item.status !== 'archived'
   );

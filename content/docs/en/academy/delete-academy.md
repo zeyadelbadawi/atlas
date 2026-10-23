@@ -3,8 +3,8 @@ id: DOC-ACD-010
 title: Delete an academy (what is permanent)
 description: Deleting an academy cannot be undone. The website goes offline, everyone loses access, and its name and address can never be used again.
 summary: >
-  The organization owner deletes an academy from the bottom of Academy
-  Settings, by typing the academy's name to confirm. It cannot be undone: the
+  The organization owner deletes an academy from the Delete academy
+  section of Academy Settings, by typing the academy's name to confirm. It cannot be undone: the
   website stops at once, the team and learners lose access, and the academy's
   name and address can never be used again. Billing and payment records are
   kept.
@@ -39,7 +39,7 @@ When you delete an academy:
 
 ## Delete the academy
 
-1. Open the academy you want to delete with the academy switcher, open **Academy Settings** and scroll to **Delete this academy** at the bottom.
+1. Open the academy you want to delete with the academy switcher, open **Academy Settings** and choose **Delete academy**, the last item in the list of sections.
 
    ![The Delete this academy card with its list of consequences](shot:academy/delete-card)
 

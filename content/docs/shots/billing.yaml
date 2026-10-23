@@ -135,3 +135,22 @@
   path: /dashboard/tenant/billing
   waitFor: { text: payments:overview.needsAttentionTitle }
   highlight: { text: payments:overview.paymentHistoryLink }
+
+# --- DOC-BIL-010 Founding Academy price lock ---------------------------
+# Captured with the demo membership ON (`node scripts/docs/seed/founding.mjs
+# on`), then turned off again; every other billing shot is taken with it off.
+- key: billing/founding-notice
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/subscription
+  waitFor: { selector: '[data-testid="subscription-founding"]' }
+  highlight: { testId: subscription-founding }
+
+- key: billing/founding-checkout
+  as: owner
+  surface: dashboard
+  path: /dashboard/tenant/billing/checkout/plan_subscription/enterprise
+  waitFor: { text: payments:checkout.reviewTitle }
+  actions:
+    - click: { selector: '#cycle-yearly' }
+  highlight: { testId: checkout-founding-preview }

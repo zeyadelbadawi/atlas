@@ -54,7 +54,7 @@ The **Category** filter groups changes, for example **Courses**, **Quizzes & ass
 > [!LIMITATION]
 > The activity log isn't a complete security audit trail, and it can't be exported.
 
-The owner also sees the latest few changes on the **Academy Overview** page, under **Recent Activity**, with a link to **View full activity log**. See [Dashboards overview](doc:DOC-ANL-001).
+The owner also sees the latest few changes on the **Academy home** page, under **Recent Activity**, with a link to **View full activity log**. See [Dashboards overview](doc:DOC-ANL-001).
 
 ## Related articles
 
