@@ -20,6 +20,8 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
+import { useInvalidate } from '@/shared/hooks';
+import { websiteKeys } from '@services/query';
 import { useUpdateWebsiteConfiguration } from '../hooks';
 import { ChromeLockControl, chromeLockErrorMessage } from './ChromeLockControl';
 import { LocalizedTextField } from './LocalizedTextField';
@@ -48,6 +50,7 @@ export function AuthPageCopyDialog({
 }: AuthPageCopyDialogProps): JSX.Element {
   const { t } = useTranslation();
   const updateConfig = useUpdateWebsiteConfiguration();
+  const { invalidate } = useInvalidate();
 
   const copy = configuration.header.authPages?.[page];
   const titleKey =
@@ -77,13 +80,16 @@ export function AuthPageCopyDialog({
         },
       },
       {
-        onError: (error) =>
+        onError: (error) => {
+          const lockMessage = chromeLockErrorMessage(error, t);
           toast({
-            title:
-              chromeLockErrorMessage(error, t) ??
-              t('website:navigation.saveError'),
+            title: lockMessage ?? t('website:navigation.saveError'),
             variant: 'destructive',
-          }),
+          });
+          // Locked meanwhile: reload so the fields turn read-only.
+          if (lockMessage)
+            void invalidate(websiteKeys.configuration(academyId));
+        },
       }
     );
   };
