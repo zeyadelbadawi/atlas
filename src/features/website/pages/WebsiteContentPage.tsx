@@ -13,7 +13,7 @@ import { usePermissions } from '@hooks';
 import { PageContainer, PageHeader } from '@components/layout';
 import { SectionTabs } from '@components/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
+import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { WebsiteFaqContentTab } from '../components/WebsiteFaqContentTab';
 import { WebsiteTestimonialContentTab } from '../components/WebsiteTestimonialContentTab';
 import { WebsiteBlogContentTab } from '../components/WebsiteBlogContentTab';
@@ -37,6 +37,10 @@ export default function WebsiteContentPage(): JSX.Element {
     {
       labelKey: 'navigation:items.academyOverview',
       path: DASHBOARD_ROUTES.academy,
+    },
+    {
+      labelKey: 'website:overview.title',
+      path: buildPath(DASHBOARD_ROUTES.websiteOverview, { academyId }),
     },
     { labelKey: 'website:content.title' },
   ];

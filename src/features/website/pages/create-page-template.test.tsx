@@ -125,6 +125,10 @@ function renderPage() {
           />
           <Route
             path="/dashboard/academy/:academyId/website/pages/:pageId"
+            element={<p>Classic editor of the new page</p>}
+          />
+          <Route
+            path="/dashboard/academy/:academyId/website/pages/:pageId/visual"
             element={<p>Editor of the new page</p>}
           />
         </Routes>

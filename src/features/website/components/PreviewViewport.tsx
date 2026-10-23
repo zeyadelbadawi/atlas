@@ -257,6 +257,8 @@ export function IframeViewport({
   focusRequest,
   selectedSectionId,
   onSectionSelect,
+  canvasCss,
+  onCanvasDocument,
   children,
 }: {
   readonly width: number;
@@ -268,6 +270,10 @@ export function IframeViewport({
   readonly focusRequest?: number;
   readonly selectedSectionId?: string;
   readonly onSectionSelect?: (sectionId: string) => void;
+  /** More editor-only styles for the frame (`PreviewViewportProps.canvasCss`). */
+  readonly canvasCss?: string;
+  /** Told the frame's document once the site is drawn in it, and `null` when it goes. */
+  readonly onCanvasDocument?: (doc: Document | null) => void;
   readonly children: ReactNode;
 }): JSX.Element {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -409,6 +415,16 @@ export function IframeViewport({
     return () => doc.removeEventListener('click', onClick, true);
   }, [mountNode, selectable]);
 
+  // The frame's document, for an editor that works on the drawn page
+  // (the visual editor's inline text editing).
+  const onDocumentRef = useRef(onCanvasDocument);
+  onDocumentRef.current = onCanvasDocument;
+  useEffect(() => {
+    if (!mountNode) return undefined;
+    onDocumentRef.current?.(mountNode.ownerDocument);
+    return () => onDocumentRef.current?.(null);
+  }, [mountNode]);
+
   return (
     <>
       <iframe
@@ -422,6 +438,7 @@ export function IframeViewport({
             <WebsitePreviewProvider value>
               <PreviewSelectionProvider value={selectedSectionId}>
                 {selectable ? <style>{SELECTION_CSS}</style> : null}
+                {canvasCss ? <style>{canvasCss}</style> : null}
                 {children}
               </PreviewSelectionProvider>
             </WebsitePreviewProvider>,
@@ -453,6 +470,14 @@ export interface PreviewViewportProps {
   readonly selectedSectionId?: string;
   /** Makes sections selectable by clicking them on the canvas. */
   readonly onSectionSelect?: (sectionId: string) => void;
+  /**
+   * Editor-only styles drawn into the frame after the selection outlines
+   * (the visual editor's inline text editing affordances). Never part of
+   * the public site: only the editor passes it.
+   */
+  readonly canvasCss?: string;
+  /** Told the frame's document once the site is drawn in it, and `null` when it goes. */
+  readonly onCanvasDocument?: (doc: Document | null) => void;
   /** Extra controls at the end of the device toolbar. */
   readonly toolbarEnd?: ReactNode;
   /**
@@ -476,6 +501,8 @@ export function PreviewViewport({
   focusRequest,
   selectedSectionId,
   onSectionSelect,
+  canvasCss,
+  onCanvasDocument,
   toolbarEnd,
   fill,
   children,
@@ -624,6 +651,8 @@ export function PreviewViewport({
               focusRequest={focusRequest}
               selectedSectionId={selectedSectionId}
               onSectionSelect={onSectionSelect}
+              canvasCss={canvasCss}
+              onCanvasDocument={onCanvasDocument}
             >
               {children}
             </IframeViewport>

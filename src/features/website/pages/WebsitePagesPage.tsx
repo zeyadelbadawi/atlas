@@ -5,13 +5,28 @@
  * state — never authorization; a hidden page's content is preserved, only
  * navigation/visibility changes, see `Reports/ARCHITECTURE.md`, Prompt 9,
  * "Page Visibility Is Not Security"), and manages custom pages.
+ *
+ * CMS phase 4 — one primary path: a page opens in the visual editor (its
+ * row, and its "Edit" button; a new page too). The classic editor and the
+ * page's draft preview are in each row's "More" menu, with Delete. Course
+ * details, which the visual editor cannot open, still edits in the classic
+ * editor.
  */
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, Lock, MousePointerClick, Plus, Trash2 } from 'lucide-react';
+import {
+  Eye,
+  FileCode2,
+  Loader2,
+  Lock,
+  MoreHorizontal,
+  Pencil,
+  Plus,
+  Trash2,
+} from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
@@ -20,6 +35,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Dialog,
   DialogContent,
@@ -53,7 +75,12 @@ import {
   createWebsitePageSchema,
   type CreateWebsitePageFormData,
 } from '../schemas/website.schemas';
-import { getWebsiteTabs } from '../utils/website-navigation.utils';
+import {
+  getWebsiteTabs,
+  opensInVisualEditor,
+  pageEditPath,
+  websitePreviewPath,
+} from '../utils/website-navigation.utils';
 import { isContentValidationFailure } from '../utils/save-validation.utils';
 import { AuthPageCopyDialog } from '../components/AuthPageCopyDialog';
 import type { AuthPageKey } from '../utils/auth-page-copy.utils';
@@ -166,14 +193,10 @@ function CreatePageDialog({
     setSections([]);
     createPage.reset();
   };
+  // A new page opens where pages are edited: the visual editor.
   const openEditor = (page: WebsitePage) => {
     close();
-    navigate(
-      buildPath(DASHBOARD_ROUTES.websitePageEditor, {
-        academyId,
-        pageId: page.id,
-      })
-    );
+    navigate(pageEditPath(academyId, page));
   };
   const onSubmit = (data: CreateWebsitePageFormData) => {
     createPage.mutate(
@@ -313,7 +336,6 @@ function CreatePageDialog({
 
 export default function WebsitePagesPage(): JSX.Element {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { academyId } = useParams<{ academyId: string }>();
   const { confirm } = useConfirmDialog();
   const { hasPermission } = usePermissions();
@@ -370,6 +392,10 @@ export default function WebsitePagesPage(): JSX.Element {
       labelKey: 'navigation:items.academyOverview',
       path: DASHBOARD_ROUTES.academy,
     },
+    {
+      labelKey: 'website:overview.title',
+      path: buildPath(DASHBOARD_ROUTES.websiteOverview, { academyId }),
+    },
     { labelKey: 'website:pages.title' },
   ];
 
@@ -405,12 +431,24 @@ export default function WebsitePagesPage(): JSX.Element {
         descriptionKey="website:pages.subtitle"
         breadcrumbs={breadcrumbs}
         actions={
-          canManage ? (
-            <Button type="button" onClick={createDialog.open}>
-              <Plus className="size-4" strokeWidth={2} aria-hidden />
-              {t('website:pages.createAction')}
+          <div className="flex flex-wrap items-center gap-2">
+            <Button asChild variant="outline" className="h-11 sm:h-10">
+              <Link to={websitePreviewPath(academyId)}>
+                <Eye className="size-4" strokeWidth={2} aria-hidden />
+                {t('website:pages.previewAction')}
+              </Link>
             </Button>
-          ) : undefined
+            {canManage ? (
+              <Button
+                type="button"
+                className="h-11 sm:h-10"
+                onClick={createDialog.open}
+              >
+                <Plus className="size-4" strokeWidth={2} aria-hidden />
+                {t('website:pages.createAction')}
+              </Button>
+            ) : null}
+          </div>
         }
       />
 
@@ -418,77 +456,140 @@ export default function WebsitePagesPage(): JSX.Element {
 
       <Card>
         <CardContent className="divide-y divide-border p-0">
-          {pages.map((page) => (
-            <div
-              key={page.id}
-              className="flex items-center justify-between gap-3 p-4"
-            >
-              <button
-                type="button"
-                className="flex-1 text-start"
-                onClick={() =>
-                  navigate(
-                    buildPath(DASHBOARD_ROUTES.websitePageEditor, {
-                      academyId,
-                      pageId: page.id,
-                    })
-                  )
-                }
+          {pages.map((page) => {
+            const editPath = pageEditPath(academyId, page);
+            const visual = opensInVisualEditor(page);
+            return (
+              <div
+                key={page.id}
+                className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+                data-testid="website-page-row"
               >
-                <p className="font-medium text-foreground">{page.title}</p>
-                <p className="text-sm text-muted-foreground">/{page.slug}</p>
-              </button>
+                {/* The whole title area opens the page; the Edit button is
+                    its one stop for the keyboard. */}
+                <Link
+                  to={editPath}
+                  tabIndex={-1}
+                  className="flex min-h-11 min-w-0 flex-1 flex-col justify-center text-start"
+                >
+                  <span className="truncate font-medium text-foreground">
+                    {page.title}
+                  </span>
+                  <span className="truncate text-sm text-muted-foreground">
+                    <bdi dir="ltr">/{page.slug}</bdi>
+                  </span>
+                </Link>
 
-              <div className="flex items-center gap-3">
-                {page.coreType !== 'courseDetails' ? (
-                  <Button asChild variant="outline" size="sm" className="h-9">
-                    <Link
-                      to={buildPath(DASHBOARD_ROUTES.websiteVisualEditor, {
-                        academyId,
-                        pageId: page.id,
-                      })}
-                      aria-label={`${t('website:visualEditor.open')}: ${page.title}`}
+                <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-3">
+                  {page.pageType === 'core' ? (
+                    <StatusBadge
+                      labelKey="website:pages.coreBadge"
+                      tone="neutral"
+                    />
+                  ) : null}
+                  {page.coreType === 'courseDetails' ? (
+                    <span
+                      className="flex size-11 items-center justify-center text-muted-foreground"
+                      title={t('website:pages.alwaysVisible')}
                     >
-                      <MousePointerClick className="size-4" aria-hidden />
-                      <span className="hidden sm:inline">
-                        {t('website:visualEditor.open')}
+                      <Lock className="size-4" aria-hidden />
+                      <span className="sr-only">
+                        {t('website:pages.alwaysVisible')}
                       </span>
-                    </Link>
-                  </Button>
-                ) : null}
-                {page.pageType === 'core' ? (
-                  <StatusBadge
-                    labelKey="website:pages.coreBadge"
-                    tone="neutral"
-                  />
-                ) : null}
-                {page.coreType === 'courseDetails' ? (
-                  <Lock className="size-4 text-muted-foreground" aria-hidden />
-                ) : (
-                  <Switch
-                    checked={page.visible}
-                    disabled={
-                      !canManage ||
-                      (updatePage.isPending && pendingId === page.id)
-                    }
-                    onCheckedChange={() => toggleVisibility(page)}
-                    aria-label={t('website:pages.visibilityToggle')}
-                  />
-                )}
-                {page.pageType === 'custom' && canManage ? (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(page)}
-                    aria-label={t('website:pages.deleteAction')}
-                  >
-                    <Trash2 className="size-4" aria-hidden />
-                  </Button>
-                ) : null}
+                    </span>
+                  ) : (
+                    <label className="flex min-h-11 cursor-pointer items-center gap-2">
+                      <Switch
+                        checked={page.visible}
+                        disabled={
+                          !canManage ||
+                          (updatePage.isPending && pendingId === page.id)
+                        }
+                        onCheckedChange={() => toggleVisibility(page)}
+                        aria-label={`${t('website:pages.visibilityToggle')}: ${page.title}`}
+                      />
+                      <span className="hidden w-14 text-xs text-muted-foreground sm:inline">
+                        {page.visible
+                          ? t('website:pages.visibleState')
+                          : t('website:pages.hiddenState')}
+                      </span>
+                    </label>
+                  )}
+                  <div className="ms-auto flex items-center gap-2 sm:ms-0">
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="sm"
+                      className="h-11 px-4 sm:h-9"
+                    >
+                      <Link
+                        to={editPath}
+                        aria-label={t(
+                          visual
+                            ? 'website:pages.editAria'
+                            : 'website:pages.editClassicAria',
+                          { title: page.title }
+                        )}
+                        data-testid="website-page-edit"
+                      >
+                        <Pencil className="size-4" aria-hidden />
+                        {t('website:pages.editAction')}
+                      </Link>
+                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="size-11 sm:size-9"
+                          aria-label={t('website:pages.moreActions', {
+                            title: page.title,
+                          })}
+                          data-testid="website-page-more"
+                        >
+                          <MoreHorizontal className="size-4" aria-hidden />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="min-w-52">
+                        {visual ? (
+                          <DropdownMenuItem asChild className="min-h-11 gap-2">
+                            <Link
+                              to={buildPath(
+                                DASHBOARD_ROUTES.websitePageEditor,
+                                { academyId, pageId: page.id }
+                              )}
+                            >
+                              <FileCode2 className="size-4" aria-hidden />
+                              {t('website:pages.classicEditor')}
+                            </Link>
+                          </DropdownMenuItem>
+                        ) : null}
+                        <DropdownMenuItem asChild className="min-h-11 gap-2">
+                          <Link to={websitePreviewPath(academyId, page.id)}>
+                            <Eye className="size-4" aria-hidden />
+                            {t('website:pages.previewPage')}
+                          </Link>
+                        </DropdownMenuItem>
+                        {page.pageType === 'custom' && canManage ? (
+                          <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="min-h-11 gap-2 text-destructive focus:text-destructive"
+                              onSelect={() => void handleDelete(page)}
+                            >
+                              <Trash2 className="size-4" aria-hidden />
+                              {t('website:pages.deleteAction')}
+                            </DropdownMenuItem>
+                          </>
+                        ) : null}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {/*
             Sign In/Sign Up are fixed, dedicated pages — not `WebsitePage`
@@ -507,7 +608,7 @@ export default function WebsitePagesPage(): JSX.Element {
             >
               <button
                 type="button"
-                className="flex-1 text-start"
+                className="flex min-h-11 flex-1 flex-col justify-center rounded-md text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onClick={() => setOpenAuthPage(page)}
               >
                 <p className="font-medium text-foreground">
@@ -518,7 +619,9 @@ export default function WebsitePagesPage(): JSX.Element {
                   )}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  /{page === 'signIn' ? 'sign-in' : 'sign-up'}
+                  <bdi dir="ltr">
+                    /{page === 'signIn' ? 'sign-in' : 'sign-up'}
+                  </bdi>
                 </p>
               </button>
 

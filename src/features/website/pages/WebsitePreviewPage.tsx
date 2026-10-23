@@ -14,10 +14,17 @@
  * it proves the exact same renderer that will eventually serve the real
  * public site, without pretending that public site already exists (see
  * `Reports/ARCHITECTURE.md`, Prompt 9, "Public Website Routing Boundary").
+ *
+ * CMS phase 4 — no longer one of the Website tabs (it shows what the
+ * editors show, read-only): it is opened from "Preview" on Overview, Pages
+ * and each page's menu (`?page=<id>` opens that page), and offers "Edit in
+ * visual editor" for the page shown.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { MousePointerClick } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { usePermissions } from '@hooks';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
@@ -31,7 +38,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAcademy } from '@features/academy';
-import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
+import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useWebsiteConfiguration, useWebsitePages } from '../hooks';
 import {
   PreviewViewport,
@@ -39,7 +46,11 @@ import {
   type PreviewBreakpoint,
 } from '../components/PreviewViewport';
 import { WebsiteRenderer } from '../renderer';
-import { getWebsiteTabs } from '../utils/website-navigation.utils';
+import {
+  getWebsiteTabs,
+  opensInVisualEditor,
+  pageEditPath,
+} from '../utils/website-navigation.utils';
 import {
   PUBLIC_WEBSITE_LOCALES,
   PUBLIC_WEBSITE_LOCALE_DIRECTION,
@@ -63,7 +74,10 @@ export default function WebsitePreviewPage(): JSX.Element {
   const [breakpoint, setBreakpoint] = useState<PreviewBreakpoint>(
     initialPreviewBreakpoint
   );
-  const [selectedPageId, setSelectedPageId] = useState<string>();
+  const [searchParams] = useSearchParams();
+  const [selectedPageId, setSelectedPageId] = useState<string | undefined>(
+    () => searchParams.get('page') ?? undefined
+  );
   // Phase 6 — the site is bilingual by default; the review surface should
   // let the Owner check both real, rendered languages before they ever
   // publish, not just trust the site "is" bilingual.
@@ -127,8 +141,16 @@ export default function WebsitePreviewPage(): JSX.Element {
       label: academy.name,
       path: DASHBOARD_ROUTES.academy,
     },
+    {
+      labelKey: 'website:overview.title',
+      path: buildPath(DASHBOARD_ROUTES.websiteOverview, { academyId }),
+    },
     { labelKey: 'website:preview.title' },
   ];
+  const canEdit =
+    hasPermission('academy.website.manage') &&
+    activePage !== undefined &&
+    opensInVisualEditor(activePage);
 
   return (
     <PageContainer fullWidth>
@@ -138,14 +160,29 @@ export default function WebsitePreviewPage(): JSX.Element {
           descriptionKey="website:preview.subtitle"
           breadcrumbs={breadcrumbs}
           actions={
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              {canEdit && activePage ? (
+                <Button asChild className="h-11 sm:h-10">
+                  <Link to={pageEditPath(academyId, activePage)}>
+                    <MousePointerClick
+                      className="size-4"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                    {t('website:visualEditor.editIn')}
+                  </Link>
+                </Button>
+              ) : null}
               <Select
                 value={previewLocale}
                 onValueChange={(value) =>
                   setPreviewLocale(value as PublicWebsiteLocale)
                 }
               >
-                <SelectTrigger className="w-32">
+                <SelectTrigger
+                  className="h-11 w-32 sm:h-10"
+                  aria-label={t('website:preview.localeLabel')}
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -157,7 +194,10 @@ export default function WebsitePreviewPage(): JSX.Element {
                 </SelectContent>
               </Select>
               <Select value={activePage?.id} onValueChange={setSelectedPageId}>
-                <SelectTrigger className="w-56">
+                <SelectTrigger
+                  className="h-11 w-56 max-w-full sm:h-10"
+                  aria-label={t('website:preview.pageSelectPlaceholder')}
+                >
                   <SelectValue
                     placeholder={t('website:preview.pageSelectPlaceholder')}
                   />

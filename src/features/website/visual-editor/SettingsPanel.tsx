@@ -8,6 +8,7 @@
  *   - Design (CMS phase 3): its background, spacing, alignment, width and
  *     phone order (`SectionDesignPanel`), as the theme draws them.
  */
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowDown,
@@ -16,6 +17,7 @@ import {
   Laptop,
   MousePointerClick,
   Smartphone,
+  TextCursorInput,
   Tablet,
   Trash2,
   X,
@@ -44,6 +46,13 @@ const DEVICES: readonly {
   { key: 'mobile', icon: Smartphone },
 ];
 
+/** Bring one of the panel's fields into view (and focus it) — `n` makes each request new. */
+export interface PanelFieldRequest {
+  readonly fieldId: string;
+  readonly focus: boolean;
+  readonly n: number;
+}
+
 export interface SettingsPanelProps {
   readonly academyId: string;
   readonly section: SectionInstance | undefined;
@@ -58,6 +67,10 @@ export interface SettingsPanelProps {
   /** Changes on undo/redo, so the fields re-read the restored content. */
   readonly revision: number;
   readonly serverIssues?: readonly SectionContentIssue[];
+  /** The section's config as typed on the canvas (inline editing), for the fields to show. */
+  readonly externalConfig?: SectionInstance['config'];
+  /** A field to show: the one being typed into on the canvas, or one the canvas could not edit. */
+  readonly fieldRequest?: PanelFieldRequest;
   readonly onConfigChange: (config: SectionInstance['config']) => void;
   readonly onDesignChange: (design: SectionInstance['design']) => void;
   readonly onToggleVisibility: (breakpoint: keyof ResponsiveVisibility) => void;
@@ -78,6 +91,8 @@ export function SettingsPanel({
   canManage,
   revision,
   serverIssues,
+  externalConfig,
+  fieldRequest,
   onConfigChange,
   onDesignChange,
   onToggleVisibility,
@@ -88,6 +103,29 @@ export function SettingsPanel({
   onClose,
 }: SettingsPanelProps): JSX.Element {
   const { t } = useTranslation();
+  const [tab, setTab] = useState('content');
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Show the field asked for: on the Content tab, scrolled into view, and
+  // focused when the canvas could not edit the text itself. A button's
+  // label may be folded away: its Buttons group is shown instead.
+  useEffect(() => {
+    if (!fieldRequest) return undefined;
+    setTab('content');
+    const frame = window.requestAnimationFrame(() => {
+      const root = contentRef.current;
+      if (!root) return;
+      const field =
+        root.querySelector<HTMLElement>(`[id="${fieldRequest.fieldId}"]`) ??
+        (fieldRequest.fieldId.startsWith('cta-label-')
+          ? root.querySelector<HTMLElement>('[data-testid="section-buttons"]')
+          : null);
+      if (!field) return;
+      field.scrollIntoView?.({ block: 'nearest' });
+      if (fieldRequest.focus) field.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [fieldRequest]);
 
   if (!section) {
     return (
@@ -159,7 +197,11 @@ export function SettingsPanel({
         </IconAction>
       </div>
 
-      <Tabs defaultValue="content" className="flex min-h-0 flex-1 flex-col">
+      <Tabs
+        value={tab}
+        onValueChange={setTab}
+        className="flex min-h-0 flex-1 flex-col"
+      >
         <TabsList className="mx-4 mt-3 grid h-11 grid-cols-2">
           <TabsTrigger
             value="content"
@@ -195,9 +237,22 @@ export function SettingsPanel({
           />
         </TabsContent>
         <TabsContent
+          ref={contentRef}
           value="content"
           className="mt-0 min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-4"
         >
+          {canManage ? (
+            <p
+              className="flex items-start gap-2 text-xs text-muted-foreground"
+              data-testid="inline-edit-hint"
+            >
+              <TextCursorInput
+                className="mt-px size-4 shrink-0 text-primary"
+                aria-hidden
+              />
+              {t('website:visualEditor.inline.hint')}
+            </p>
+          ) : null}
           <fieldset
             className="space-y-3 rounded-lg border border-border p-3"
             disabled={!canManage}
@@ -268,6 +323,7 @@ export function SettingsPanel({
               onSave={() => undefined}
               onCancel={onClose}
               serverIssues={serverIssues}
+              externalConfig={externalConfig}
               onDraftChange={(config) =>
                 onConfigChange(config as SectionInstance['config'])
               }
