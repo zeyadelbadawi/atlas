@@ -190,7 +190,10 @@
     "testimonialEntryNotFound": "That testimonial no longer exists.",
     "insufficientRole": "You don't have permission to change this academy's website.",
     "publishedSlugTaken": "Another live page still uses this page's address. Publish that page first, or publish the whole site.",
-    "pageChangedDuringPublish": "This page was saved again while it was being published. Reload it and publish again."
+    "pageChangedDuringPublish": "This page was saved again while it was being published. Reload it and publish again.",
+    "chromeLocked": "The header, menu and footer are locked. An owner or administrator has to unlock them first.",
+    "chromeLockForbidden": "Only the academy owner or an administrator can lock or unlock the header, menu and footer.",
+    "versionNoLongerValid": "This version can't be restored as it is: parts of it no longer pass today's checks."
   },
   "media": {
     "unsupportedFileType": "That file type isn't supported. Upload a JPG, PNG, GIF, WebP or PDF.",

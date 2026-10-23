@@ -95,6 +95,9 @@ export function useEditHistory(
     future.current = [];
     last.current = { at: 0 };
     changed();
+    // The sections were replaced from outside (a reload, a restored
+    // version): forms re-read them, as after an undo.
+    setRevision((n) => n + 1);
   }, []);
 
   return {

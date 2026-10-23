@@ -21,6 +21,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { useUpdateWebsiteConfiguration } from '../hooks';
+import { ChromeLockControl, chromeLockErrorMessage } from './ChromeLockControl';
 import { LocalizedTextField } from './LocalizedTextField';
 import {
   buildAuthPageCopyHeaderPatch,
@@ -76,9 +77,11 @@ export function AuthPageCopyDialog({
         },
       },
       {
-        onError: () =>
+        onError: (error) =>
           toast({
-            title: t('website:navigation.saveError'),
+            title:
+              chromeLockErrorMessage(error, t) ??
+              t('website:navigation.saveError'),
             variant: 'destructive',
           }),
       }
@@ -94,7 +97,16 @@ export function AuthPageCopyDialog({
         <p className="text-sm text-muted-foreground">
           {t('website:navigation.authPagesDescription')}
         </p>
-        <div className="space-y-4">
+        {/* CMS phase 4 — this copy is part of the header: read-only while
+            the header/footer lock is on. */}
+        <ChromeLockControl
+          academyId={academyId}
+          configuration={configuration}
+        />
+        <fieldset
+          className="min-w-0 space-y-4"
+          disabled={configuration.chromeLocked === true}
+        >
           <LocalizedTextField
             id={`auth-page-${page}-title`}
             labelKey="website:navigation.authPageHeading"
@@ -109,7 +121,7 @@ export function AuthPageCopyDialog({
             value={copy?.subtitle ?? EMPTY_LOCALIZED}
             onBlur={(value) => save('subtitle', value)}
           />
-        </div>
+        </fieldset>
         <DialogFooter>
           <Button type="button" onClick={() => onOpenChange(false)}>
             {t('common:actions.close')}

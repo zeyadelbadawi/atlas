@@ -31,6 +31,11 @@
  * - "Site" opens the whole website's settings in the same pane
  *   (`SiteSettingsPanel`): theme, menu, header, footer, this page's
  *   search-engine text, and publishing the website.
+ * - CMS phase 4: "History" lists the page's kept versions, previews one
+ *   and restores it to the draft (`PageHistoryDialog`; the undo steps start
+ *   over from the restored copy). Publish first runs the pre-publish page
+ *   check: its warnings replace the plain confirmation, each one a way to
+ *   that section and field, with "Publish anyway".
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -45,6 +50,7 @@ import {
   ArrowLeft,
   Check,
   CloudOff,
+  History,
   Layers,
   Palette,
   Loader2,
@@ -125,6 +131,14 @@ import { SettingsPanel } from './SettingsPanel';
 import { SectionLibrary } from './SectionLibrary';
 import type { SectionStart } from '../presets/section-presets.types';
 import { SiteSettingsPanel } from './SiteSettingsPanel';
+import { toast } from '@/hooks/use-toast';
+import { PageHistoryDialog } from '../components/PageHistoryDialog';
+import { PrePublishCheckDialog } from '../components/PrePublishCheckDialog';
+import {
+  collectPagePublishIssues,
+  type PublishCheckIssue,
+} from '../utils/page-publish-check.utils';
+import { focusSectionField } from '../utils/focus-section-field';
 
 /** How long after the last change the draft is saved. */
 export const AUTOSAVE_DELAY_MS = 1500;
@@ -242,6 +256,11 @@ function VisualEditor(): JSX.Element {
     at: 0,
   });
   const [structureOpen, setStructureOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  // CMS phase 4 — the pre-publish check's warnings, while they are shown.
+  const [checkIssues, setCheckIssues] = useState<
+    readonly PublishCheckIssue[] | null
+  >(null);
   const [panelExpanded, setPanelExpanded] = useState(false);
   const [announcement, setAnnouncement] = useState('');
 
@@ -397,19 +416,38 @@ function VisualEditor(): JSX.Element {
   }, [canManage, undo, redo]);
 
   // ----- Publish --------------------------------------------------------
+  const publishNow = async () => {
+    setSaveState('saving');
+    // The outcome itself: `draft` is this render's, so its mutation state
+    // is from before the publish started.
+    const published = await draft.publishThisPage();
+    setSaveState(published ? 'saved' : 'error');
+  };
   const handlePublish = async () => {
     if (draft.isWorking()) return;
+    // Warnings first (never a block): they replace the plain confirmation.
+    const issues = collectPagePublishIssues(draftSections, {
+      pages: pagesQuery.data?.items ?? [],
+      themeKey: configQuery.data?.themeKey ?? '',
+      requiredLocale,
+    });
+    if (issues.length > 0) {
+      setCheckIssues(issues);
+      return;
+    }
     const confirmed = await confirm({
       titleKey: 'website:editor.publishPageConfirmTitle',
       descriptionKey: 'website:editor.publishPageConfirmDescription',
       confirmLabelKey: 'website:editor.publishPageAction',
     });
     if (!confirmed) return;
-    setSaveState('saving');
-    // The outcome itself: `draft` is this render's, so its mutation state
-    // is from before the publish started.
-    const published = await draft.publishThisPage();
-    setSaveState(published ? 'saved' : 'error');
+    await publishNow();
+  };
+  const handleJumpToIssue = (issue: PublishCheckIssue) => {
+    setCheckIssues(null);
+    setStructureOpen(false);
+    selectAndReveal(issue.sectionId);
+    focusSectionField(issue.fieldPath, issue.locale);
   };
 
   const handleReload = async () => {
@@ -707,6 +745,23 @@ function VisualEditor(): JSX.Element {
               </Button>
             </div>
           ) : null}
+          {canManage ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-10 min-w-10 px-2 md:px-3"
+              onClick={() => setHistoryOpen(true)}
+              aria-label={t('website:history.button')}
+              title={t('website:history.buttonHint')}
+              data-testid="visual-editor-history"
+            >
+              <History className="size-4" aria-hidden />
+              <span className="hidden md:inline" aria-hidden>
+                {t('website:history.button')}
+              </span>
+            </Button>
+          ) : null}
           <Button
             type="button"
             variant={siteOpen ? 'secondary' : 'ghost'}
@@ -927,6 +982,48 @@ function VisualEditor(): JSX.Element {
           configuration,
           pages: previewPages,
           locale: previewLocale,
+        }}
+      />
+      {/* Mounted while open only: its queries run when it is looked at. */}
+      {canManage && historyOpen ? (
+        <PageHistoryDialog
+          academyId={academyId}
+          page={page}
+          academyName={academy.name}
+          academyLogo={academy.logo}
+          configuration={configuration}
+          previewPages={previewPages}
+          initialLocale={previewLocale}
+          open={historyOpen}
+          onOpenChange={setHistoryOpen}
+          canRestore={canManage}
+          localEdits={
+            isDirty ? (attentionIds.size > 0 ? 'discard' : 'save') : 'none'
+          }
+          onSaveLocalEdits={() => draft.saveDraft()}
+          onRestored={(restored) => {
+            draft.adoptPage(restored);
+            history.reset();
+            setSaveState('idle');
+            if (
+              selectedId &&
+              !restored.sections.some((section) => section.id === selectedId)
+            ) {
+              setSelectedId(undefined);
+            }
+            toast({ title: t('website:history.restored') });
+            announce(t('website:history.restored'));
+          }}
+          onPageChanged={() => void pageQuery.refetch()}
+        />
+      ) : null}
+      <PrePublishCheckDialog
+        issues={checkIssues}
+        onCancel={() => setCheckIssues(null)}
+        onJump={handleJumpToIssue}
+        onPublishAnyway={() => {
+          setCheckIssues(null);
+          void publishNow();
         }}
       />
       <SaveConflictDialog

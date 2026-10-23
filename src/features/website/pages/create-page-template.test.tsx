@@ -3,10 +3,12 @@
  *
  * Choosing a template suggests a title and a free address (never over the
  * Owner's own), previews the template's sections, and creating the page
- * saves those sections through the pages API in one save, then opens the
- * editor. A blank page is created exactly as before. If the sections'
- * save fails, the page exists: the dialog says so and offers to try the
- * save again or to open the empty page.
+ * sends those sections WITH the create request (CMS phase 4: one call, one
+ * transaction — no second save, so no half-created empty page), then opens
+ * the editor. A blank page is created exactly as before. If the API
+ * refuses the template's sections, nothing was created: the dialog says
+ * so, offers no retry of the same refused sections, and lets the Owner
+ * choose again.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -25,14 +27,17 @@ import WebsitePagesPage from './WebsitePagesPage';
 import { findPageTemplate } from '../presets/page-templates.registry';
 
 const createMutate = vi.fn();
+const createReset = vi.fn();
 const updateMutate = vi.fn();
+let createError: unknown = null;
 let existingPages: WebsitePage[] = [];
 
 vi.mock('../hooks', () => ({
   useCreateWebsitePage: () => ({
     mutate: createMutate,
+    reset: createReset,
     isPending: false,
-    error: null,
+    error: createError,
   }),
   useUpdateWebsitePage: () => ({ mutate: updateMutate, isPending: false }),
   useDeleteWebsitePage: () => ({ mutate: vi.fn(), isPending: false }),
@@ -140,7 +145,9 @@ beforeEach(() => {
     corePage('contact', 'contact'),
   ];
   createMutate.mockReset();
+  createReset.mockReset();
   updateMutate.mockReset();
+  createError = null;
 });
 afterEach(cleanup);
 
@@ -183,7 +190,7 @@ describe('new page — start from a template', () => {
     });
   });
 
-  it('previews a template, suggests its title and a free address, and saves its sections in one go', async () => {
+  it('previews a template, suggests its title and a free address, and creates the page with its sections in one call', async () => {
     existingPages = [
       ...existingPages,
       {
@@ -208,23 +215,22 @@ describe('new page — start from a template', () => {
 
     fireEvent.click(within(dialog).getByTestId('create-page-submit'));
     await waitFor(() => expect(createMutate).toHaveBeenCalledTimes(1));
-    expect(createMutate.mock.calls[0][0]).toEqual({
-      academyId: 'a1',
-      payload: { title: 'Course', slug: 'course-2' },
-    });
-    createMutate.mock.calls[0][1].onSuccess(created);
-
-    expect(updateMutate).toHaveBeenCalledTimes(1);
-    const [variables, callbacks] = updateMutate.mock.calls[0];
-    expect(variables.pageId).toBe('new-page');
-    expect(variables.payload.expectedVersion).toBe(1);
+    const [variables, callbacks] = createMutate.mock.calls[0];
+    expect(variables.academyId).toBe('a1');
+    expect(variables.payload.title).toBe('Course');
+    expect(variables.payload.slug).toBe('course-2');
+    // What was previewed is what is created — in the same request.
     expect(
       variables.payload.sections.map(
         (section: { type: string }) => section.type
       )
     ).toEqual(rendered);
-    // What was previewed is what is saved.
-    callbacks.onSuccess({ ...created, version: 2 });
+    expect(
+      new Set(variables.payload.sections.map((s: { id: string }) => s.id)).size
+    ).toBe(template.sections.length);
+    callbacks.onSuccess({ ...created, sections: variables.payload.sections });
+    // No second save of the sections.
+    expect(updateMutate).not.toHaveBeenCalled();
     expect(await screen.findByText('Editor of the new page')).toBeTruthy();
   });
 
@@ -245,36 +251,44 @@ describe('new page — start from a template', () => {
     expect(field(dialog, 'URL slug').value).toBe('offers');
   });
 
-  it('says so when the sections could not be saved, and tries again', async () => {
+  it('says so, without a retry, when the API refuses the template sections — nothing was created', async () => {
+    createError = {
+      kind: 'validation',
+      messageKey: 'errors.validation.failed',
+      status: 400,
+      violations: [
+        { field: '2.config.items', messageKey: 'validation:tooMany' },
+      ],
+    };
     const dialog = renderPage();
     fireEvent.click(
       within(dialog).getByRole('radio', { name: 'About the academy' })
     );
-    fireEvent.click(within(dialog).getByTestId('create-page-submit'));
-    await waitFor(() => expect(createMutate).toHaveBeenCalledTimes(1));
-    createMutate.mock.calls[0][1].onSuccess(created);
-    updateMutate.mock.calls[0][1].onError(new Error('offline'));
-
-    const alert = await within(dialog).findByTestId('template-sections-failed');
+    const alert = within(dialog).getByTestId('template-sections-rejected');
     expect(alert.getAttribute('role')).toBe('alert');
-    expect(alert.textContent).toContain(
-      'The page was created, but its sections could not be saved.'
+    expect(alert.textContent).toContain('The page was not created');
+    // Sending the same refused sections again cannot succeed: no retry.
+    expect(within(dialog).queryByRole('button', { name: /try again/i })).toBe(
+      null
     );
-    // The page exists: another template can no longer be chosen, so the
-    // sections retried are the ones previewed.
+    // The Owner can choose again; choosing clears the refusal.
     for (const radio of within(dialog).getAllByRole('radio')) {
-      expect((radio as HTMLInputElement).disabled).toBe(true);
+      expect((radio as HTMLInputElement).disabled).toBe(false);
     }
+    fireEvent.click(within(dialog).getByRole('radio', { name: 'Blank page' }));
+    expect(createReset).toHaveBeenCalled();
+    expect(updateMutate).not.toHaveBeenCalled();
+  });
+
+  it('keeps the ordinary retry for a failure that is not about the sections', () => {
+    createError = { kind: 'network', messageKey: 'errors.network', status: 0 };
+    const dialog = renderPage();
     fireEvent.click(
-      within(alert).getByRole('button', {
-        name: 'Try saving the sections again',
-      })
+      within(dialog).getByRole('radio', { name: 'About the academy' })
     );
-    expect(updateMutate).toHaveBeenCalledTimes(2);
-    expect(updateMutate.mock.calls[1][0].payload.sections).toEqual(
-      updateMutate.mock.calls[0][0].payload.sections
+    expect(within(dialog).queryByTestId('template-sections-rejected')).toBe(
+      null
     );
-    // Creating it a second time is no longer offered.
-    expect(within(dialog).queryByTestId('create-page-submit')).toBeNull();
+    expect(within(dialog).getByRole('alert')).toBeTruthy();
   });
 });

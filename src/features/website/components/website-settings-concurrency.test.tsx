@@ -65,6 +65,8 @@ vi.mock('@app/providers', async (importOriginal) => ({
   useConfirmDialog: () => ({ confirm }),
 }));
 vi.mock('@features/academy', () => ({
+  // The header/footer lock's switch is for owners and administrators only.
+  useAcademyScope: () => ({ membership: undefined }),
   useAcademy: () => ({
     data: { id: 'a1', name: 'Academy', slug: 'academy' },
     isLoading: false,

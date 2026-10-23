@@ -329,6 +329,8 @@
     "errors.watermark.lookupRateLimited",
     "errors.watermark.lookupUnavailable",
     "errors.watermark.notFound",
+    "errors.website.chromeLockForbidden",
+    "errors.website.chromeLocked",
     "errors.website.contentArchived",
     "errors.website.corePageNotDeletable",
     "errors.website.courseDetailsNotToggleable",
@@ -344,6 +346,7 @@
     "errors.website.slugReserved",
     "errors.website.slugTaken",
     "errors.website.testimonialEntryNotFound",
+    "errors.website.versionNoLongerValid",
     "errors.website.versionRequired"
   ],
   "notDisplayable": {

@@ -266,6 +266,18 @@ export function usePageDraft({
     return refreshed.data;
   };
 
+  /**
+   * CMS phase 4 — shows a page the server just wrote outside this draft (a
+   * restored version) as the draft, based on its version. Whatever was
+   * local is replaced: the restore flow saved it first, or said it would
+   * be discarded.
+   */
+  const adoptPage = (data: WebsitePage) => {
+    setConflict(null);
+    setServerIssuesById({});
+    adoptServerPage(data);
+  };
+
   /** Re-applies this editor's work ON TOP of the newer version — never over it. */
   const keepMine = () => {
     if (!conflict?.canKeepMine) return;
@@ -289,6 +301,7 @@ export function usePageDraft({
     saveDraft,
     publishThisPage,
     reloadLatest,
+    adoptPage,
     keepMine,
     /** Whether a save or publish is in flight (one at a time). */
     isWorking: () => busyRef.current,

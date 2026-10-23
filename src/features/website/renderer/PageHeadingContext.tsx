@@ -8,6 +8,17 @@
  */
 import { createContext, useContext } from 'react';
 
+/**
+ * The sections that open a page with its main title (a hero, a page
+ * header): the renderer gives the page's one `<h1>` to one of them. Shared
+ * with the editor's pre-publish check, which warns when a page has more
+ * than one (only one can be the page's main heading).
+ */
+export const PAGE_OPENING_TYPES: ReadonlySet<string> = new Set([
+  'hero',
+  'pageHeader',
+]);
+
 const PageHeadingContext = createContext<'h1' | 'h2'>('h1');
 
 export const PageHeadingProvider = PageHeadingContext.Provider;

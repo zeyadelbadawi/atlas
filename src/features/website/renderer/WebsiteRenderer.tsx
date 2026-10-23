@@ -16,7 +16,7 @@ import type { WebsiteHeaderAuthState } from './WebsiteHeader';
 import { SectionRenderer } from '../sections';
 import { CourseDetailsTemplate } from './CourseDetailsTemplate';
 import { useThemePack } from '../theme-packs/ThemePackContext';
-import { PageHeadingProvider } from './PageHeadingContext';
+import { PAGE_OPENING_TYPES, PageHeadingProvider } from './PageHeadingContext';
 import { adoptThemeAssets } from '../theme-assets/adopt-theme-assets';
 import type {
   ThemeCourseDetailsProps,
@@ -134,8 +134,7 @@ function CourseDetailsSlot(props: ThemeCourseDetailsProps): JSX.Element {
   );
 }
 
-/** Heroes that open a page; a page starting with one needs no intro. */
-const PAGE_OPENING_TYPES = new Set(['hero', 'pageHeader']);
+/* Heroes that open a page (`PAGE_OPENING_TYPES`); a page starting with one needs no intro. */
 
 /**
  * The page's sections, with its one `<h1>`: a page that opens with a hero

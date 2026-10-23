@@ -700,7 +700,9 @@
     "sampleHelpSchedule": "Sample rows are placeholders to show the design. They're never shown on your live website. Enter your real days and times, then mark each row as real.",
     "markScheduleRowReal": "This row is real",
     "sampleHelpVideoReviews": "Sample reviews are placeholders to show the design. They’re never shown on your live website. Replace them with real reviews from your students and parents (with their permission), then mark each one as real.",
-    "markVideoReviewReal": "This is a real review"
+    "markVideoReviewReal": "This is a real review",
+    "fieldInLanguage": "{{field}} — {{language}}",
+    "fieldInOptionalLanguage": "{{field}} — {{language}} (optional)"
   },
   "preview": {
     "title": "Preview",
@@ -2851,8 +2853,80 @@
     "sectionsCount_other": "{{count}} sections",
     "placeholderHint": "Text in [brackets] is a placeholder for your own details. Sample testimonials and results never appear on your public site.",
     "createFromTemplate": "Create page",
-    "sectionsFailed": "The page was created, but its sections could not be saved.",
-    "retrySections": "Try saving the sections again",
-    "openEmpty": "Open the empty page"
+    "sectionsRejected": "The page was not created: some of this template's sections do not pass this site's checks (for example a text limit or a link to a page that no longer exists). Choose a blank page or another template, or try again later."
+  },
+  "chromeLock": {
+    "switchLabel": "Lock the header, menu and footer",
+    "description": "Keeps them exactly as they are: nobody can change them until an owner or administrator unlocks them. Pages, theme, brand and search settings still save as usual.",
+    "lockedTitle": "The header, menu and footer are locked",
+    "lockedReadOnly": "An academy owner or administrator locked them, so they can't be changed here. Ask one of them to unlock them if something needs updating.",
+    "lockedCanUnlock": "Locked: the fields below are read-only for everyone. Turn the lock off to edit them.",
+    "lockedError": "The header, menu and footer are locked, so this change wasn't saved. An owner or administrator has to unlock them first.",
+    "forbiddenError": "Only the academy owner or an administrator can lock or unlock the header, menu and footer.",
+    "saveError": "The lock couldn't be changed. Please try again.",
+    "lockedToast": "Header, menu and footer locked",
+    "unlockedToast": "Header, menu and footer unlocked"
+  },
+  "history": {
+    "button": "History",
+    "buttonHint": "Earlier versions of this page, and restoring one",
+    "title": "Page history",
+    "description": "Earlier copies of this page, newest first. Restoring one replaces the draft only — visitors keep seeing the live page until you publish.",
+    "listLabel": "Versions of this page",
+    "kind": {
+      "published": "Published",
+      "draft_snapshot": "Auto-saved draft",
+      "restore_backup": "Before restore"
+    },
+    "by": "by {{name}}",
+    "unknownAuthor": "someone no longer on the team",
+    "empty": "No earlier versions yet. A copy is kept every time this page is published, and about once per editing session.",
+    "chooseHint": "Choose a version to preview it.",
+    "backToList": "All versions",
+    "previewHeading": "{{kind}} version",
+    "hidden": "hidden from visitors",
+    "restoreAction": "Restore to draft",
+    "confirmTitle": "Restore this version to the draft?",
+    "confirmReplaces": "The page's current draft — title, address, visibility, search-engine text and sections — will be replaced by the {{kind}} version from {{when}}.",
+    "confirmNotLive": "The live site doesn't change: visitors see this version only after you publish the page.",
+    "confirmBackup": "Your current draft isn't lost: it's kept in this history as “Before restore”, so you can switch back.",
+    "confirmSavesFirst": "Your unsaved changes will be saved first, so they're part of the draft that's kept.",
+    "confirmDiscards": "Your unsaved changes can't be saved (a section needs attention), so they'll be discarded.",
+    "saveFirstFailed": "Your unsaved changes couldn't be saved, so nothing was restored. Fix or save them, then try again.",
+    "restored": "Version restored to the draft. Publish the page when you're ready for visitors to see it.",
+    "stale": "This page was saved by someone else since you opened it, so nothing was restored. The page and this list have been refreshed — check the version and restore it again.",
+    "staleBy": "{{name}} saved this page since you opened it, so nothing was restored. The page and this list have been refreshed — check the version and restore it again.",
+    "invalid": "This version can't be restored as it is, because these parts no longer pass today's checks:",
+    "invalidNothingChanged": "Nothing was changed. You can still look at it here and copy what you need into the page by hand.",
+    "invalidPart": {
+      "section": "Section {{position}}: {{section}}",
+      "title": "The page title",
+      "slug": "The page address",
+      "visible": "The page's visibility",
+      "seo": "The search-engine text",
+      "other": "Other page settings"
+    },
+    "slugTaken": "This version's address (/{{slug}}) now belongs to another page, so it can't be restored. Nothing was changed.",
+    "slugReserved": "This version's address (/{{slug}}) is now reserved by the website, so it can't be restored. Nothing was changed.",
+    "notFound": "That version is no longer kept (only the 30 most recent are). The list has been refreshed."
+  },
+  "publishCheck": {
+    "title": "Check this page before publishing",
+    "description_one": "One thing is worth a look first. It doesn't stop you publishing — choose it to go straight there.",
+    "description_other": "{{count}} things are worth a look first. None of them stop you publishing — choose one to go straight there.",
+    "sectionHeading": "{{position}}. {{section}}",
+    "goTo": "(go to it)",
+    "review": "Review first",
+    "publishAnyway": "Publish anyway",
+    "rules": {
+      "imageAlt": "An image has no description (alt text) in {{language}}, so screen readers and search engines get nothing for it.",
+      "buttonNoLink": "A button doesn't link anywhere yet.",
+      "buttonMissingPage": "A button links to a page that no longer exists.",
+      "buttonHiddenPage": "A button links to “{{page}}”, which is hidden from visitors.",
+      "multipleH1": "Another main title (hero or page title) on this page. Only the first is the page's main heading; this one shows as a sub-heading.",
+      "placeholder": "Placeholder text {{text}} is still here ({{language}}).",
+      "sample_one": "{{count}} sample item is still here. Samples never appear on the public site.",
+      "sample_other": "{{count}} sample items are still here. Samples never appear on the public site."
+    }
   }
 }

@@ -54,6 +54,7 @@ import {
   type CreateWebsitePageFormData,
 } from '../schemas/website.schemas';
 import { getWebsiteTabs } from '../utils/website-navigation.utils';
+import { isContentValidationFailure } from '../utils/save-validation.utils';
 import { AuthPageCopyDialog } from '../components/AuthPageCopyDialog';
 import type { AuthPageKey } from '../utils/auth-page-copy.utils';
 import { resolveDefaultLocale } from '../constants/locale.constants';
@@ -82,9 +83,10 @@ import type {
 /**
  * "New page": a title and an address, and — CMS phase 3e — how to start:
  * a blank page or a page template («صفحات جاهزة»), previewed as the site
- * draws it. A template's sections are saved through the pages API right
- * after the page is created, in one save; if that save fails, the page
- * exists (empty) and the dialog offers to try the save again or to open it.
+ * draws it. CMS phase 4: a template's sections go WITH the create request
+ * — the API creates the page and its sections in one transaction, so a
+ * template page is either created whole or not at all (never an empty
+ * page left behind by a failed second save).
  */
 function CreatePageDialog({
   academyId,
@@ -102,15 +104,8 @@ function CreatePageDialog({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const createPage = useCreateWebsitePage();
-  const updatePage = useUpdateWebsitePage();
   const academy = useAcademy(academyId).data;
   const [choice, setChoice] = useState<string>(BLANK_PAGE);
-  // A page created from a template whose sections are not saved yet.
-  const [unsaved, setUnsaved] = useState<{
-    readonly page: WebsitePage;
-    readonly sections: readonly SectionInstance[];
-  } | null>(null);
-  const [sectionsFailed, setSectionsFailed] = useState(false);
 
   const form = useForm<CreateWebsitePageFormData>({
     resolver: zodResolver(createWebsitePageSchema),
@@ -169,8 +164,7 @@ function CreatePageDialog({
     form.reset();
     setChoice(BLANK_PAGE);
     setSections([]);
-    setUnsaved(null);
-    setSectionsFailed(false);
+    createPage.reset();
   };
   const openEditor = (page: WebsitePage) => {
     close();
@@ -181,41 +175,31 @@ function CreatePageDialog({
       })
     );
   };
-  const saveSections = (
-    page: WebsitePage,
-    pageSections: readonly SectionInstance[]
-  ) => {
-    setSectionsFailed(false);
-    updatePage.mutate(
+  const onSubmit = (data: CreateWebsitePageFormData) => {
+    createPage.mutate(
       {
         academyId,
-        pageId: page.id,
-        payload: { sections: pageSections, expectedVersion: page.version },
+        // The sections previewed are the sections created — a blank page
+        // sends none, exactly as before.
+        payload: sections.length > 0 ? { ...data, sections } : data,
       },
-      {
-        onSuccess: (saved) => openEditor(saved),
-        onError: () => {
-          setUnsaved({ page, sections: pageSections });
-          setSectionsFailed(true);
-        },
-      }
+      { onSuccess: openEditor }
     );
   };
 
-  const onSubmit = (data: CreateWebsitePageFormData) => {
-    const pageSections = sections;
-    createPage.mutate(
-      { academyId, payload: data },
-      {
-        onSuccess: (page) => {
-          if (pageSections.length === 0) openEditor(page);
-          else saveSections(page, pageSections);
-        },
-      }
+  const isBusy = createPage.isPending;
+  // The API refused the template's sections (they are checked with the
+  // page-save rules: a section limit, the site's language, a page a button
+  // links to). Nothing was created, and sending the same sections again
+  // would fail the same way, so there is no retry — the Owner can pick a
+  // blank page or another template.
+  const sectionsRejected =
+    sections.length > 0 &&
+    createPage.error !== null &&
+    isContentValidationFailure(createPage.error) &&
+    (createPage.error?.violations ?? []).some((violation) =>
+      /^\d/.test(violation.field)
     );
-  };
-
-  const isBusy = createPage.isPending || updatePage.isPending;
 
   return (
     <Dialog
@@ -244,9 +228,11 @@ function CreatePageDialog({
             <div className={cn(template && 'lg:[grid-area:options]')}>
               <PageTemplateOptions
                 value={choice}
-                onChange={choose}
-                // Once the page exists, its sections are the ones to retry.
-                disabled={!!unsaved}
+                onChange={(key) => {
+                  createPage.reset();
+                  choose(key);
+                }}
+                disabled={isBusy}
               />
             </div>
             {template ? (
@@ -272,7 +258,7 @@ function CreatePageDialog({
                   <FormItem>
                     <FormLabel>{t('website:pages.titleLabel')}</FormLabel>
                     <FormControl>
-                      <Input {...field} disabled={!!unsaved} />
+                      <Input {...field} disabled={isBusy} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -285,65 +271,38 @@ function CreatePageDialog({
                   <FormItem>
                     <FormLabel>{t('website:pages.slugLabel')}</FormLabel>
                     <FormControl>
-                      <Input {...field} disabled={!!unsaved} dir="ltr" />
+                      <Input {...field} disabled={isBusy} dir="ltr" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {createPage.error ? (
-                <ErrorState onRetry={form.handleSubmit(onSubmit)} />
-              ) : null}
-              {sectionsFailed && unsaved ? (
+              {sectionsRejected ? (
                 <div
                   role="alert"
-                  className="space-y-3 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm"
-                  data-testid="template-sections-failed"
+                  className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-foreground"
+                  data-testid="template-sections-rejected"
                 >
-                  <p className="text-foreground">
-                    {t('website:pageTemplates.sectionsFailed')}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      type="button"
-                      size="sm"
-                      className="h-10"
-                      disabled={updatePage.isPending}
-                      onClick={() =>
-                        saveSections(unsaved.page, unsaved.sections)
-                      }
-                    >
-                      {t('website:pageTemplates.retrySections')}
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      className="h-10"
-                      onClick={() => openEditor(unsaved.page)}
-                    >
-                      {t('website:pageTemplates.openEmpty')}
-                    </Button>
-                  </div>
+                  {t('website:pageTemplates.sectionsRejected')}
                 </div>
+              ) : createPage.error ? (
+                <ErrorState onRetry={form.handleSubmit(onSubmit)} />
               ) : null}
-              {unsaved ? null : (
-                <DialogFooter>
-                  <Button
-                    type="submit"
-                    disabled={isBusy}
-                    className="h-11"
-                    data-testid="create-page-submit"
-                  >
-                    {isBusy ? (
-                      <Loader2 className="size-4 animate-spin" aria-hidden />
-                    ) : null}
-                    {template
-                      ? t('website:pageTemplates.createFromTemplate')
-                      : t('website:pages.createAction')}
-                  </Button>
-                </DialogFooter>
-              )}
+              <DialogFooter>
+                <Button
+                  type="submit"
+                  disabled={isBusy}
+                  className="h-11"
+                  data-testid="create-page-submit"
+                >
+                  {isBusy ? (
+                    <Loader2 className="size-4 animate-spin" aria-hidden />
+                  ) : null}
+                  {template
+                    ? t('website:pageTemplates.createFromTemplate')
+                    : t('website:pages.createAction')}
+                </Button>
+              </DialogFooter>
             </div>
           </form>
         </Form>

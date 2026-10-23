@@ -977,6 +977,22 @@ export const websiteKeys = {
     [...websiteKeys.all, 'page', academyId] as const,
   page: (academyId: string | undefined, pageId: string) =>
     [...websiteKeys.all, 'page', academyId, pageId] as const,
+  /** CMS phase 4 — a page's kept versions (its history), newest first. */
+  pageVersions: (academyId: string | undefined, pageId: string) =>
+    [...websiteKeys.all, 'page-versions', academyId, pageId] as const,
+  /** One kept version in full (title, SEO, sections), for its preview. */
+  pageVersion: (
+    academyId: string | undefined,
+    pageId: string,
+    versionId: string
+  ) =>
+    [
+      ...websiteKeys.all,
+      'page-versions',
+      academyId,
+      pageId,
+      versionId,
+    ] as const,
   /** CMS content (Prompt 10) — same academy-scoping technique as `configuration`/`pages` above. */
   faqEntries: (academyId: string | undefined, query?: CollectionQuery) =>
     [...websiteKeys.all, 'faq-entries', academyId, query] as const,

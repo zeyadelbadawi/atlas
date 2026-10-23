@@ -127,6 +127,11 @@ vi.mock('../components/PreviewViewport', () => ({
 vi.mock('../components/WebsitePageSeoDialog', () => ({
   WebsitePageSeoDialog: () => null,
 }));
+vi.mock('../components/SectionConfigForm', () => ({
+  SectionConfigForm: ({ type }: { type: string }) => (
+    <p data-testid="section-form">{type}</p>
+  ),
+}));
 vi.mock('../components/SectionTree', () => ({
   SectionTree: ({
     onToggleEnabled,
@@ -406,5 +411,66 @@ describe('stableJsonKey', () => {
       stableJsonKey({ b: { d: 3, c: 2 }, a: 1, e: undefined })
     );
     expect(stableJsonKey([1, 2])).not.toBe(stableJsonKey([2, 1]));
+  });
+});
+
+describe('page editor — the pre-publish page check (CMS phase 4)', () => {
+  const withIssues = () =>
+    makePage({
+      hasUnpublishedChanges: true,
+      sections: [
+        {
+          id: 'c1',
+          type: 'cta',
+          enabled: true,
+          visibility: { mobile: true, tablet: true, desktop: true },
+          config: {
+            title: { en: 'Join [Course name]', ar: 'انضم' },
+            cta: { label: { en: 'Join', ar: 'انضم' } },
+          },
+        } as unknown as SectionInstance,
+      ],
+    });
+
+  it('shows its warnings instead of the plain confirmation; Publish anyway publishes', async () => {
+    page = withIssues();
+    publishPageMutateAsync.mockResolvedValue(page);
+    renderEditor();
+    await act(async () =>
+      fireEvent.click(screen.getByTestId('website-publish-page'))
+    );
+    const check = await screen.findByTestId('pre-publish-check');
+    expect(confirm).not.toHaveBeenCalled();
+    const rules = [...check.querySelectorAll('[data-rule]')].map((row) =>
+      row.getAttribute('data-rule')
+    );
+    expect(rules).toEqual(['placeholder', 'buttonNoLink']);
+    expect(check.textContent).toContain('[Course name]');
+    expect(publishPageMutateAsync).not.toHaveBeenCalled();
+    await act(async () =>
+      fireEvent.click(screen.getByTestId('pre-publish-anyway'))
+    );
+    await waitFor(() =>
+      expect(publishPageMutateAsync).toHaveBeenCalledWith({
+        academyId: 'a1',
+        pageId: 'p1',
+        expectedVersion: 4,
+      })
+    );
+  });
+
+  it('a warning takes the author to its section, publishing nothing', async () => {
+    page = withIssues();
+    renderEditor();
+    await act(async () =>
+      fireEvent.click(screen.getByTestId('website-publish-page'))
+    );
+    const check = await screen.findByTestId('pre-publish-check');
+    await act(async () =>
+      fireEvent.click(check.querySelector('[data-rule="buttonNoLink"]')!)
+    );
+    expect(await screen.findByTestId('section-form')).toBeTruthy();
+    expect(screen.queryByTestId('pre-publish-check')).toBeNull();
+    expect(publishPageMutateAsync).not.toHaveBeenCalled();
   });
 });
