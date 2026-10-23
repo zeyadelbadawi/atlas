@@ -48,6 +48,10 @@ import { resolveSectionImagePurpose } from '../constants/image-recommendations.c
 import { LocalizedTextField } from './LocalizedTextField';
 import { PlainInputField } from './section-field-inputs';
 import {
+  ItemEditorField,
+  isItemEditorField,
+} from './section-item-field-editors';
+import {
   CtaFieldEditor,
   SectionButtonsEditor,
   localizedErrors,
@@ -192,6 +196,10 @@ const SAMPLE_ITEM_COPY: Partial<
   schedule: {
     help: 'website:editor.sampleHelpSchedule',
     markReal: 'website:editor.markScheduleRowReal',
+  },
+  videoTestimonials: {
+    help: 'website:editor.sampleHelpVideoReviews',
+    markReal: 'website:editor.markVideoReviewReal',
   },
 };
 
@@ -753,6 +761,20 @@ function ScalarField({
   const { t } = useTranslation();
   const id = `section-field-${path.replace(/\./g, '-')}`;
 
+  if (isItemEditorField(descriptor)) {
+    return (
+      <ItemEditorField
+        descriptor={descriptor}
+        id={id}
+        value={value}
+        onChange={onChange}
+        academyId={academyId}
+        error={errorFor(path, descriptor.labelKey)}
+        revealError={revealErrors}
+      />
+    );
+  }
+
   if (descriptor.kind === 'time' || descriptor.kind === 'url') {
     return (
       <PlainInputField
@@ -822,6 +844,9 @@ function ScalarField({
     </div>
   );
 }
+
+/** A select's "none" choice (`SelectFieldDescriptor.noneLabelKey`); stored as ''. */
+const SELECT_NONE = '__none__';
 
 /** What marks a plain control invalid — spread onto the focusable element. */
 interface InvalidControlProps {
@@ -901,14 +926,24 @@ function ScalarControl({
       const selectedHintKey = descriptor.options.find(
         (option) => option.value === value
       )?.hintKey;
+      // An unset value is the "none" choice (stored as '').
+      const noneValue = descriptor.noneLabelKey ? SELECT_NONE : undefined;
       return (
         <div className="space-y-1.5">
           <Label htmlFor={id}>{t(descriptor.labelKey)}</Label>
-          <Select value={(value as string) ?? ''} onValueChange={onChange}>
+          <Select
+            value={((value as string) || noneValue) ?? ''}
+            onValueChange={(next) => onChange(next === SELECT_NONE ? '' : next)}
+          >
             <SelectTrigger id={id} {...invalidProps}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
+              {descriptor.noneLabelKey ? (
+                <SelectItem value={SELECT_NONE}>
+                  {t(descriptor.noneLabelKey)}
+                </SelectItem>
+              ) : null}
               {descriptor.options.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
                   {t(option.labelKey)}

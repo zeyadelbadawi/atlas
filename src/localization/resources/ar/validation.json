@@ -60,5 +60,7 @@
   "invalidTime": "أدخل وقتًا مثل 16:30.",
   "endAfterStart": "يجب أن يكون وقت الانتهاء بعد وقت البدء. اختر وقت انتهاء لاحقًا.",
   "invalidYouTubeVideo": "الصق رابط فيديو من يوتيوب، مثل https://youtu.be/… أو https://www.youtube.com/watch?v=…",
-  "invalidDeadline": "اختر تاريخًا ووقتًا كاملين."
+  "invalidDeadline": "اختر تاريخًا ووقتًا كاملين.",
+  "invalidDownloadLink": "الصق عنوان ويب يبدأ بـ https://، أو اختر ملفًا من مكتبة الوسائط.",
+  "invalidYear": "أدخل سنة من أربعة أرقام، مثل 2025."
 }

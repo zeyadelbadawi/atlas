@@ -43,7 +43,8 @@ export type SectionFieldKind =
   | 'youtube'
   | 'deadline'
   | 'plans'
-  | 'comparison';
+  | 'comparison'
+  | 'fileLink';
 
 interface FieldDescriptorBase {
   readonly key: string;
@@ -85,6 +86,12 @@ export interface SelectFieldDescriptor extends FieldDescriptorBase {
     /** Shown under the select while this option is chosen (e.g. what choosing it makes public). */
     readonly hintKey?: string;
   }[];
+  /**
+   * CMS phase 3d (batch D) — the field may be left unset: the select offers
+   * this "none" choice first, stored as an empty string (a milestone with no
+   * icon shows its number).
+   */
+  readonly noneLabelKey?: string;
 }
 
 /**
@@ -125,6 +132,16 @@ export interface CustomFieldDescriptor extends FieldDescriptorBase {
   readonly kind: 'youtube' | 'deadline' | 'plans' | 'comparison';
 }
 
+/**
+ * CMS phase 3d (batch D) — a download's link (`components/FileLinkField.tsx`):
+ * a web address, or a file (a PDF) picked from or uploaded to the academy's
+ * media library. A repeatable item may also hold a `youtube` field (a video
+ * review's link); both are routed by `section-item-field-editors.tsx`.
+ */
+export interface FileLinkFieldDescriptor extends FieldDescriptorBase {
+  readonly kind: 'fileLink';
+}
+
 /** A fully discriminated union on `kind` — `select` is the only variant that carries `options`, so `descriptor.options` narrows correctly without a cast. */
 export type SectionFieldDescriptor =
   | TextFieldDescriptor
@@ -133,7 +150,8 @@ export type SectionFieldDescriptor =
   | SelectFieldDescriptor
   | ButtonsFieldDescriptor
   | PlainInputFieldDescriptor
-  | CustomFieldDescriptor;
+  | CustomFieldDescriptor
+  | FileLinkFieldDescriptor;
 
 export interface RepeatableFieldGroup {
   readonly key: string;

@@ -200,6 +200,11 @@ describe('ATELIER_SECTION_RENDERERS', () => {
         'video',
         'pricing',
         'countdown',
+        // CMS phase 3d (batch D).
+        'timeline',
+        'videoTestimonials',
+        'downloads',
+        'certificates',
         // CMS phase 3d (batch C).
         'interestForm',
         'announcementBar',

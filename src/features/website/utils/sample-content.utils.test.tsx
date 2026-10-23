@@ -81,3 +81,43 @@ describe('sample content — results and timetable rows', () => {
     ).toBeTruthy();
   });
 });
+
+describe('sample content — video reviews (CMS phase 3d, batch D)', () => {
+  const reviews = {
+    id: 'p2',
+    title: 'About',
+    sections: [
+      section('vt', 'videoTestimonials', [
+        { id: 'a', sample: true },
+        { id: 'b', sample: true },
+        { id: 'c' },
+      ]),
+    ],
+  } as unknown as WebsitePage;
+
+  it('counts sample video reviews and names them', () => {
+    const entries = collectSampleContent([reviews]);
+    expect(entries).toEqual([
+      {
+        pageId: 'p2',
+        pageTitle: 'About',
+        sectionId: 'vt',
+        sectionType: 'videoTestimonials',
+        sampleItems: 2,
+      },
+    ]);
+    render(
+      <I18nextProvider i18n={createI18nInstance('en')}>
+        <MemoryRouter>
+          <SampleContentList academyId="a1" entries={entries} />
+        </MemoryRouter>
+      </I18nextProvider>
+    );
+    expect(screen.getByText('2 sample video reviews')).toBeTruthy();
+    expect(
+      screen.getByRole('link', {
+        name: 'Review the sample video reviews on About',
+      })
+    ).toBeTruthy();
+  });
+});

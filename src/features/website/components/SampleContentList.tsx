@@ -1,6 +1,6 @@
 /**
  * Sample social proof (Theme 1 plan §D.4): the list of sections that still
- * hold sample items (testimonials, results, timetable rows) — one row per section, naming the page, the
+ * hold sample items (testimonials, results, timetable rows, video reviews) — one row per section, naming the page, the
  * section and how many samples it holds, with a "Review" link straight to
  * that section in the Page Editor. Shared by the publish warning and the
  * overview's launch checklist, so both always say the same thing.
@@ -14,14 +14,21 @@ import type { SampleContentEntry, SectionType } from '@types';
 
 /**
  * What a row says about its samples, per section type: testimonials keep
- * their original copy; results and timetable rows (CMS phase 3d) say what
- * they are.
+ * their original copy; results, timetable rows and video reviews (CMS
+ * phase 3d) say what they are.
  */
+const OWN_SAMPLE_COPY: ReadonlySet<string> = new Set([
+  'results',
+  'schedule',
+  // CMS phase 3d (batch D).
+  'videoTestimonials',
+]);
+
 function sampleCopyKeys(sectionType: string): {
   readonly count: string;
   readonly reviewLabel: string;
 } {
-  return sectionType === 'results' || sectionType === 'schedule'
+  return OWN_SAMPLE_COPY.has(sectionType)
     ? {
         count: `website:sampleContent.${sectionType}.count`,
         reviewLabel: `website:sampleContent.${sectionType}.reviewLabel`,

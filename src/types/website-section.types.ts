@@ -60,6 +60,11 @@ export const SECTION_TYPES = [
   'map',
   'schedule',
   'results',
+  // CMS phase 3d (batch D) — shared by every theme, each with a renderer.
+  'timeline',
+  'videoTestimonials',
+  'downloads',
+  'certificates',
 ] as const;
 
 export type SectionType = (typeof SECTION_TYPES)[number];
@@ -682,6 +687,83 @@ export interface ComparisonSectionConfig {
   readonly rows: readonly ComparisonRow[];
 }
 
+/** CMS phase 3d (batch D) — one stage of a learning path. */
+export interface TimelineMilestone {
+  readonly id: string;
+  readonly title: LocalizedText;
+  /** "Sept–Oct", "Term 1" — a label, never parsed as a date. */
+  readonly period?: LocalizedText;
+  readonly description?: LocalizedText;
+  /** One of `FEATURE_ICON_OPTIONS`; empty/absent → the milestone's number. */
+  readonly icon?: string;
+}
+
+/** CMS phase 3d (batch D) — a learning path ("Term 1 → Term 2 → Final revision"), ≤ 12 milestones, drawn as an ordered list. */
+export interface TimelineSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly items: readonly TimelineMilestone[];
+}
+
+export interface VideoTestimonialItem {
+  readonly id: string;
+  /** The 11-character YouTube id (a pasted link is reduced to it on save); empty until chosen. */
+  readonly videoId: string;
+  /** A proper name — not translated (like `TestimonialItem.authorName`). */
+  readonly name: string;
+  /** "Parent of a Grade 12 student". */
+  readonly role: LocalizedText;
+  /** A short pull quote under the video. */
+  readonly quote?: LocalizedText;
+  /** An uploaded poster; absent → YouTube's own thumbnail. */
+  readonly poster?: string;
+  /** Starter review for preview only — exactly `TestimonialItem.sample`. */
+  readonly sample?: boolean;
+}
+
+/** CMS phase 3d (batch D) — student/parent video reviews (≤ 9), click to play, one at a time. */
+export interface VideoTestimonialsSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly items: readonly VideoTestimonialItem[];
+}
+
+export interface DownloadItem {
+  readonly id: string;
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  /** A media-library file (`/api/v1/public/media/…`) or an http(s) address; empty until added. */
+  readonly url: string;
+  /** "PDF"; empty → read from the link's file extension. */
+  readonly fileType?: string;
+  /** "2.4 MB". */
+  readonly fileSize?: string;
+}
+
+/** CMS phase 3d (batch D) — downloadable resources (PDF notes, revision sheets), ≤ 20. */
+export interface DownloadsSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly items: readonly DownloadItem[];
+}
+
+export interface CertificateItem {
+  readonly id: string;
+  /** Required — any image value (`WebsiteImageField`, media library). */
+  readonly image: string;
+  readonly title: LocalizedText;
+  readonly issuer?: LocalizedText;
+  /** Four digits ("2025"), or empty. */
+  readonly year?: string;
+}
+
+/** CMS phase 3d (batch D) — certificates and accreditations as framed images with captions, ≤ 12. */
+export interface CertificatesSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly items: readonly CertificateItem[];
+}
+
 /** Every section's config, keyed by its `SectionType`. */
 export interface SectionConfigMap {
   readonly hero: HeroSectionConfig;
@@ -713,6 +795,11 @@ export interface SectionConfigMap {
   readonly map: MapSectionConfig;
   readonly schedule: ScheduleSectionConfig;
   readonly results: ResultsSectionConfig;
+  // CMS phase 3d (batch D).
+  readonly timeline: TimelineSectionConfig;
+  readonly videoTestimonials: VideoTestimonialsSectionConfig;
+  readonly downloads: DownloadsSectionConfig;
+  readonly certificates: CertificatesSectionConfig;
 }
 
 /** CMS phase 3 — the ground a section sits on (see `SECTION_BACKGROUNDS`). */

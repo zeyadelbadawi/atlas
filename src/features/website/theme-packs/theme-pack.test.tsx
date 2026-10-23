@@ -96,6 +96,11 @@ describe('theme packs', () => {
       'map',
       'schedule',
       'results',
+      // CMS phase 3d (batch D).
+      'timeline',
+      'videoTestimonials',
+      'downloads',
+      'certificates',
     ] as const;
     expect(Object.keys(pack.renderers).sort()).toEqual([...home].sort());
     // Page-level slots: the fallback page hero, Course Details, 404 and

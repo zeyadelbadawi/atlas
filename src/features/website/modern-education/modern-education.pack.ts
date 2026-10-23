@@ -55,6 +55,12 @@ import {
   T1WhatsappBar,
 } from './t1-engage-sections';
 import {
+  T1Certificates,
+  T1Downloads,
+  T1Timeline,
+  T1VideoTestimonials,
+} from './t1-journey-proof-sections';
+import {
   T1AnnouncementBar,
   T1Comparison,
   T1InterestForm,
@@ -95,6 +101,11 @@ export const MODERN_EDUCATION_PACK: ThemePack = {
     map: T1Map,
     schedule: T1Schedule,
     results: T1Results,
+    // CMS phase 3d (batch D).
+    timeline: T1Timeline,
+    videoTestimonials: T1VideoTestimonials,
+    downloads: T1Downloads,
+    certificates: T1Certificates,
   },
   pages: {
     PageIntro: T1PageIntro,

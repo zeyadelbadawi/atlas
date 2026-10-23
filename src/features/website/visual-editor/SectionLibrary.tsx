@@ -36,16 +36,27 @@ export const SECTION_LIBRARY_GROUPS: readonly {
     key: 'trust',
     types: [
       'testimonials',
+      'videoTestimonials',
       'results',
       'statistics',
       'logos',
+      'certificates',
       'instructors',
       'gallery',
     ],
   },
   {
     key: 'info',
-    types: ['features', 'steps', 'comparison', 'video', 'schedule', 'faq'],
+    types: [
+      'features',
+      'steps',
+      'timeline',
+      'comparison',
+      'video',
+      'schedule',
+      'downloads',
+      'faq',
+    ],
   },
   {
     key: 'action',

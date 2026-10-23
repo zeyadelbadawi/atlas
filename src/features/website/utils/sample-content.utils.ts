@@ -1,7 +1,7 @@
 /**
  * Sample social proof (Theme 1 plan §D.4) — the frontend mirror of the
  * backend's `collectSampleContent`: which saved pages/sections still hold
- * `sample: true` items (testimonials, results, schedule rows), so the publish dialog can warn before
+ * `sample: true` items (testimonials, results, schedule rows, video reviews), so the publish dialog can warn before
  * publishing (a warning, never a block). The publish response carries the
  * server's own list too.
  */
@@ -22,6 +22,8 @@ export const SAMPLE_ITEM_SECTION_TYPES: ReadonlySet<SectionType> = new Set([
   'testimonials',
   'results',
   'schedule',
+  // CMS phase 3d (batch D) — a starter video review is an invented one.
+  'videoTestimonials',
 ]);
 
 export function countSampleItems(
