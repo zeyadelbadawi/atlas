@@ -316,18 +316,13 @@ export default defineConfig(({ command, mode, isSsrBuild }) => {
             },
       },
       modulePreload: {
-        // A theme pack's section groups (`section-groups.tsx`) import
-        // almost only what the pack has already loaded. Listing every
-        // dependency of each group for preloading would write some 60 file
-        // names into each pack (about 3 kB) for nothing; a group's few
-        // other imports load with it.
-        resolveDependencies: (filename, deps, { hostId }) =>
-          /\.pack-[\w-]+\.js$/.test(hostId) &&
-          /(?:trust-visit|engage|enrol|journey-proof)-sections-[\w-]+\.js$/.test(
-            filename
-          )
-            ? []
-            : deps,
+        // A theme pack's dynamic imports are its section groups
+        // (`section-groups.tsx`), which import almost only what the pack
+        // has already loaded. Listing every dependency of each group for
+        // preloading would write some 60 file names into each pack (about
+        // 3 kB) for nothing; a group's few other imports load with it.
+        resolveDependencies: (_filename, deps, { hostId }) =>
+          /\.pack-[\w-]+\.js$/.test(hostId) ? [] : deps,
       },
       chunkSizeWarningLimit: 1000,
     },

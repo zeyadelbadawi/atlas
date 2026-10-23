@@ -39,7 +39,10 @@ beforeAll(async () => {
   registerThemePack(MANARA_PACK);
   registerThemePack(RIWAQ_PACK);
   // The phase 3d sections' own chunks, as the public site loads a page's
-  // before hydrating it (`section-groups.tsx`).
+  // before hydrating it (`section-groups.tsx`). The base renderers register
+  // their own group (the custom section's), as the public router's code
+  // does in the app.
+  await import('@/features/website/theme-packs/base-renderers');
   await loadAllSectionGroups();
   // The first import of the packs in a worker can take a while under a
   // loaded full run; it is module loading, not a hanging test.
