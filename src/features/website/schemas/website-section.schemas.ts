@@ -75,11 +75,27 @@ import {
   MAX_WHATSAPP_BAR_TITLE_LENGTH,
   MIN_PRICING_PLANS,
   TIME_ZONE_PATTERN,
+  CERTIFICATE_YEAR_PATTERN,
+  MAX_CERTIFICATES,
+  MAX_DOWNLOAD_DESCRIPTION_LENGTH,
+  MAX_DOWNLOAD_FILE_SIZE_LENGTH,
+  MAX_DOWNLOAD_FILE_TYPE_LENGTH,
+  MAX_DOWNLOAD_TITLE_LENGTH,
+  MAX_DOWNLOAD_URL_LENGTH,
+  MAX_DOWNLOADS,
+  MAX_TIMELINE_MILESTONE_DESCRIPTION_LENGTH,
+  MAX_TIMELINE_MILESTONE_TITLE_LENGTH,
+  MAX_TIMELINE_MILESTONES,
+  MAX_TIMELINE_PERIOD_LENGTH,
+  MAX_VIDEO_TESTIMONIAL_QUOTE_LENGTH,
+  MAX_VIDEO_TESTIMONIAL_ROLE_LENGTH,
+  MAX_VIDEO_TESTIMONIALS,
 } from '../constants/website.constants';
 import { isAllowedImageValue } from '../utils/image-value.utils';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import {
   isCountdownDeadlineOrEmpty,
+  isDownloadLinkOrEmpty,
   isYouTubeVideoIdOrEmpty,
   normalizeYouTubeVideoInput,
 } from '../utils/section-media-values.utils';
@@ -607,6 +623,103 @@ export const countdownSectionSchema = z.object({
   tertiaryCta: websiteCtaSchema.optional(),
 });
 
+/*
+ * CMS phase 3d (batch D) — mirror the backend's identically named schemas
+ * field for field (the parity cases prove it).
+ */
+
+/** A YouTube link in any common form, stored as its 11-character id; empty is a video not chosen yet. */
+const youTubeVideoIdSchema = z.preprocess(
+  normalizeYouTubeVideoInput,
+  z.string().refine(isYouTubeVideoIdOrEmpty, {
+    message: 'validation:invalidYouTubeVideo',
+  })
+);
+
+const timelineMilestoneSchema = z.object({
+  id: z.string(),
+  title: localizedRequired(MAX_TIMELINE_MILESTONE_TITLE_LENGTH),
+  period: localizedOptional(MAX_TIMELINE_PERIOD_LENGTH).optional(),
+  description: localizedOptional(
+    MAX_TIMELINE_MILESTONE_DESCRIPTION_LENGTH
+  ).optional(),
+  /** One of the features' curated icons, or empty (the number is shown). */
+  icon: z
+    .enum(FEATURE_ICON_OPTIONS as [string, ...string[]])
+    .optional()
+    .or(z.literal('')),
+});
+
+export const timelineSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  items: z.array(timelineMilestoneSchema).max(MAX_TIMELINE_MILESTONES),
+});
+
+const videoTestimonialItemSchema = z.object({
+  id: z.string(),
+  videoId: youTubeVideoIdSchema,
+  name: z
+    .string()
+    .min(1, 'validation:required')
+    .max(MAX_SHORT_TEXT, 'validation:maxLength'),
+  role: localizedRequired(MAX_VIDEO_TESTIMONIAL_ROLE_LENGTH),
+  quote: localizedOptional(MAX_VIDEO_TESTIMONIAL_QUOTE_LENGTH).optional(),
+  poster: imageValueSchema.optional(),
+  sample: z.boolean().optional(),
+});
+
+export const videoTestimonialsSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  items: z.array(videoTestimonialItemSchema).max(MAX_VIDEO_TESTIMONIALS),
+});
+
+const downloadItemSchema = z.object({
+  id: z.string(),
+  title: localizedRequired(MAX_DOWNLOAD_TITLE_LENGTH),
+  description: localizedOptional(MAX_DOWNLOAD_DESCRIPTION_LENGTH).optional(),
+  /** A media-library file or an http(s) address (`isDownloadLinkOrEmpty`); empty until added. */
+  url: z
+    .string()
+    .max(MAX_DOWNLOAD_URL_LENGTH, 'validation:maxLength')
+    .refine(isDownloadLinkOrEmpty, {
+      message: 'validation:invalidDownloadLink',
+    }),
+  fileType: z
+    .string()
+    .max(MAX_DOWNLOAD_FILE_TYPE_LENGTH, 'validation:maxLength')
+    .optional(),
+  fileSize: z
+    .string()
+    .max(MAX_DOWNLOAD_FILE_SIZE_LENGTH, 'validation:maxLength')
+    .optional(),
+});
+
+export const downloadsSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  items: z.array(downloadItemSchema).max(MAX_DOWNLOADS),
+});
+
+const certificateItemSchema = z.object({
+  id: z.string(),
+  image: imageValueSchema.pipe(z.string().min(1, 'validation:required')),
+  title: localizedRequired(MAX_SHORT_TEXT),
+  issuer: localizedOptional(MAX_SHORT_TEXT).optional(),
+  year: z
+    .string()
+    .regex(CERTIFICATE_YEAR_PATTERN, 'validation:invalidYear')
+    .optional()
+    .or(z.literal('')),
+});
+
+export const certificatesSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  items: z.array(certificateItemSchema).max(MAX_CERTIFICATES),
+});
+
 const SECTION_SCHEMAS = {
   hero: heroSectionSchema,
   about: aboutSectionSchema,
@@ -633,6 +746,11 @@ const SECTION_SCHEMAS = {
   map: mapSectionSchema,
   schedule: scheduleSectionSchema,
   results: resultsSectionSchema,
+  // CMS phase 3d (batch D).
+  timeline: timelineSectionSchema,
+  videoTestimonials: videoTestimonialsSectionSchema,
+  downloads: downloadsSectionSchema,
+  certificates: certificatesSectionSchema,
 } satisfies Record<SectionType, z.ZodTypeAny>;
 
 /** Resolves the right Zod schema for a section type. The Section Editor's ONE dynamic-form entry point — no section's validation is ever hand-rolled inline in a component. */

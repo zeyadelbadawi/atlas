@@ -71,6 +71,11 @@ export const SECTION_TYPE_ORDER: readonly SectionType[] = [
   'video',
   'pricing',
   'countdown',
+  // CMS phase 3d (batch D).
+  'timeline',
+  'videoTestimonials',
+  'downloads',
+  'certificates',
 ];
 
 /** The bounded icon names a Feature item may reference — a curated subset of `lucide-react`, never an arbitrary asset. */
@@ -257,6 +262,34 @@ export const MAX_RESULTS = 24;
 export const MAX_RESULT_VALUE_LENGTH = 40;
 /** A 24-hour clock time, `HH:MM` (what `<input type="time">` gives). */
 export const SCHEDULE_TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
+
+/*
+ * CMS phase 3d (batch D) — the learning path, video reviews, downloads and
+ * certificates. Characters per language; the backend's `website.constants.ts`
+ * exactly (the parity cases prove both schemas agree at each boundary).
+ */
+export const MAX_TIMELINE_MILESTONES = 12;
+export const MAX_TIMELINE_MILESTONE_TITLE_LENGTH = 80;
+/** "Sept–Oct", "Term 1". */
+export const MAX_TIMELINE_PERIOD_LENGTH = 40;
+export const MAX_TIMELINE_MILESTONE_DESCRIPTION_LENGTH = 240;
+export const MAX_VIDEO_TESTIMONIALS = 9;
+/** "Parent of a Grade 12 student". */
+export const MAX_VIDEO_TESTIMONIAL_ROLE_LENGTH = 80;
+export const MAX_VIDEO_TESTIMONIAL_QUOTE_LENGTH = 200;
+export const MAX_DOWNLOADS = 20;
+export const MAX_DOWNLOAD_TITLE_LENGTH = 100;
+export const MAX_DOWNLOAD_DESCRIPTION_LENGTH = 200;
+export const MAX_DOWNLOAD_URL_LENGTH = 2048;
+/** "PDF", "DOCX". */
+export const MAX_DOWNLOAD_FILE_TYPE_LENGTH = 12;
+/** "2.4 MB". */
+export const MAX_DOWNLOAD_FILE_SIZE_LENGTH = 16;
+export const MAX_CERTIFICATES = 12;
+/** A four-digit year from 1900 to 2099 ("2025"). */
+export const CERTIFICATE_YEAR_PATTERN = /^(?:19|20)\d{2}$/;
+/** What a download's library picker offers to upload (the media pipeline sniffs PDFs; images are allowed too). */
+export const DOWNLOAD_FILE_ACCEPT = 'application/pdf';
 
 /** The public Contact form's field limits — the backend's `SubmitContactMessageDto` bounds exactly. */
 export const CONTACT_NAME_MAX_LENGTH = 200;

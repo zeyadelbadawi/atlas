@@ -190,5 +190,7 @@ export function resolveSectionImagePurpose(
   if (sectionType === 'gallery') return 'gallery';
   if (sectionType === 'featuredCourses') return 'cardThumbnail';
   if (sectionType === 'video') return 'videoPoster';
+  // CMS phase 3d (batch D) — a review's poster fills a 16:9 frame.
+  if (sectionType === 'videoTestimonials') return 'videoPoster';
   return 'sectionImage';
 }

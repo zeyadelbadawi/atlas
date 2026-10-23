@@ -51,6 +51,17 @@ import {
   MAX_SCHEDULE_ROW_DETAIL_LENGTH,
   MAX_SCHEDULE_ROW_TITLE_LENGTH,
   MAX_SCHEDULE_ROWS,
+  MAX_CERTIFICATES,
+  MAX_DOWNLOAD_DESCRIPTION_LENGTH,
+  MAX_DOWNLOAD_TITLE_LENGTH,
+  MAX_DOWNLOADS,
+  MAX_TIMELINE_MILESTONE_DESCRIPTION_LENGTH,
+  MAX_TIMELINE_MILESTONE_TITLE_LENGTH,
+  MAX_TIMELINE_MILESTONES,
+  MAX_TIMELINE_PERIOD_LENGTH,
+  MAX_VIDEO_TESTIMONIAL_QUOTE_LENGTH,
+  MAX_VIDEO_TESTIMONIAL_ROLE_LENGTH,
+  MAX_VIDEO_TESTIMONIALS,
 } from '../constants/website.constants';
 import type { SectionFieldSchema } from './section-field.types';
 import { SCHEDULE_DAYS } from '@types';
@@ -1084,5 +1095,229 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
       },
       { key: 'buttons', kind: 'buttons', labelKey: 'website:fields.buttons' },
     ],
+  },
+  // CMS phase 3d (batch D).
+  timeline: {
+    type: 'timeline',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_LONG_TEXT,
+      },
+    ],
+    repeatable: {
+      key: 'items',
+      maxItems: MAX_TIMELINE_MILESTONES,
+      labelKey: 'website:fields.timelineItems',
+      itemLabelKey: 'website:fields.timelineItem',
+      itemFields: [
+        {
+          key: 'title',
+          kind: 'text',
+          labelKey: 'website:fields.title',
+          localized: true,
+          maxLength: MAX_TIMELINE_MILESTONE_TITLE_LENGTH,
+        },
+        {
+          key: 'period',
+          kind: 'text',
+          labelKey: 'website:fields.timelinePeriod',
+          hintKey: 'website:fields.timelinePeriodHint',
+          localized: true,
+          maxLength: MAX_TIMELINE_PERIOD_LENGTH,
+        },
+        {
+          key: 'description',
+          kind: 'longText',
+          labelKey: 'website:fields.description',
+          localized: true,
+          maxLength: MAX_TIMELINE_MILESTONE_DESCRIPTION_LENGTH,
+        },
+        {
+          key: 'icon',
+          kind: 'select',
+          labelKey: 'website:fields.icon',
+          options: iconOptions,
+          noneLabelKey: 'website:fields.timelineIconNone',
+        },
+      ],
+    },
+  },
+  videoTestimonials: {
+    type: 'videoTestimonials',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_LONG_TEXT,
+      },
+    ],
+    repeatable: {
+      key: 'items',
+      maxItems: MAX_VIDEO_TESTIMONIALS,
+      labelKey: 'website:fields.videoReviewItems',
+      itemLabelKey: 'website:fields.videoReviewItem',
+      itemFields: [
+        {
+          key: 'videoId',
+          kind: 'youtube',
+          labelKey: 'website:fields.videoLink',
+        },
+        {
+          key: 'name',
+          kind: 'text',
+          labelKey: 'website:fields.reviewerName',
+        },
+        {
+          key: 'role',
+          kind: 'text',
+          labelKey: 'website:fields.reviewerRole',
+          hintKey: 'website:fields.reviewerRoleHint',
+          localized: true,
+          maxLength: MAX_VIDEO_TESTIMONIAL_ROLE_LENGTH,
+        },
+        {
+          key: 'quote',
+          kind: 'longText',
+          labelKey: 'website:fields.reviewQuote',
+          localized: true,
+          maxLength: MAX_VIDEO_TESTIMONIAL_QUOTE_LENGTH,
+        },
+        {
+          key: 'poster',
+          kind: 'image',
+          labelKey: 'website:fields.videoPoster',
+        },
+      ],
+    },
+  },
+  downloads: {
+    type: 'downloads',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_LONG_TEXT,
+      },
+    ],
+    repeatable: {
+      key: 'items',
+      maxItems: MAX_DOWNLOADS,
+      labelKey: 'website:fields.downloadItems',
+      itemLabelKey: 'website:fields.downloadItem',
+      itemFields: [
+        {
+          key: 'title',
+          kind: 'text',
+          labelKey: 'website:fields.title',
+          localized: true,
+          maxLength: MAX_DOWNLOAD_TITLE_LENGTH,
+        },
+        {
+          key: 'description',
+          kind: 'longText',
+          labelKey: 'website:fields.description',
+          localized: true,
+          maxLength: MAX_DOWNLOAD_DESCRIPTION_LENGTH,
+        },
+        {
+          key: 'url',
+          kind: 'fileLink',
+          labelKey: 'website:fields.downloadLink',
+        },
+        {
+          key: 'fileType',
+          kind: 'text',
+          labelKey: 'website:fields.downloadFileType',
+          hintKey: 'website:fields.downloadFileTypeHint',
+        },
+        {
+          key: 'fileSize',
+          kind: 'text',
+          labelKey: 'website:fields.downloadFileSize',
+          hintKey: 'website:fields.downloadFileSizeHint',
+        },
+      ],
+    },
+  },
+  certificates: {
+    type: 'certificates',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_LONG_TEXT,
+      },
+    ],
+    repeatable: {
+      key: 'items',
+      maxItems: MAX_CERTIFICATES,
+      labelKey: 'website:fields.certificateItems',
+      itemLabelKey: 'website:fields.certificateItem',
+      itemFields: [
+        {
+          key: 'image',
+          kind: 'image',
+          labelKey: 'website:fields.certificateImage',
+        },
+        {
+          key: 'title',
+          kind: 'text',
+          labelKey: 'website:fields.title',
+          localized: true,
+          maxLength: MAX_SHORT_TEXT,
+        },
+        {
+          key: 'issuer',
+          kind: 'text',
+          labelKey: 'website:fields.certificateIssuer',
+          localized: true,
+          maxLength: MAX_SHORT_TEXT,
+        },
+        {
+          key: 'year',
+          kind: 'text',
+          labelKey: 'website:fields.certificateYear',
+          hintKey: 'website:fields.certificateYearHint',
+        },
+      ],
+    },
   },
 };

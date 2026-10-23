@@ -91,6 +91,11 @@ export const SECTION_DESIGN_SUPPORT: Record<SectionType, SectionDesignSupport> =
     video: FULL,
     pricing: FULL,
     countdown: FULL,
+    // CMS phase 3d (batch D): the path and the files read down the page.
+    timeline: NO_ALIGN,
+    videoTestimonials: FULL,
+    downloads: NO_ALIGN,
+    certificates: FULL,
   };
 
 /**

@@ -1,6 +1,7 @@
 /**
  * CMS phase 3d (batch A) — the two section values that are not plain text:
- * a `video` section's YouTube video id and a `countdown` section's deadline.
+ * a `video` section's YouTube video id and a `countdown` section's deadline
+ * (batch D adds a `downloads` item's link).
  *
  * Mirrors the backend's `section-media-values.util.ts` exactly; the shared
  * parity cases (`schemas/__parity__`) prove both accept and refuse the same
@@ -10,8 +11,10 @@
  */
 import {
   COUNTDOWN_DEADLINE_PATTERN,
+  MEDIA_ASSET_PATH_PATTERN,
   YOUTUBE_VIDEO_ID_PATTERN,
 } from '../constants/website.constants';
+import { isSafeExternalUrl } from './url-safety.utils';
 
 /** The hosts a YouTube link may use (after `www.` / `m.` / `music.`). */
 const YOUTUBE_HOSTS: ReadonlySet<string> = new Set([
@@ -124,4 +127,27 @@ export function isCountdownDeadline(value: string): boolean {
 /** Empty (no deadline chosen yet) or a valid deadline. */
 export function isCountdownDeadlineOrEmpty(value: string): boolean {
   return value === '' || isCountdownDeadline(value);
+}
+
+/** A media-library file (`/api/v1/public/media/…`, served from this site's own origin). */
+export function isMediaLibraryLink(value: string): boolean {
+  return MEDIA_ASSET_PATH_PATTERN.test(value);
+}
+
+/**
+ * CMS phase 3d (batch D) — a `downloads` item's link: a media-library file
+ * (PDFs included) or an http(s) address `isSafeExternalUrl` allows (e.g.
+ * Google Drive). Not `mailto:`/`tel:`: those are not downloads. Empty is a
+ * link not added yet (it saves; the public site leaves the item out).
+ */
+export function isDownloadLinkOrEmpty(value: string): boolean {
+  if (value === '') return true;
+  if (isMediaLibraryLink(value)) return true;
+  if (!isSafeExternalUrl(value)) return false;
+  try {
+    const { protocol } = new URL(value);
+    return protocol === 'https:' || protocol === 'http:';
+  } catch {
+    return false;
+  }
 }

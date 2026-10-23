@@ -14,6 +14,10 @@
  *
  * In dashboard previews (`interactive` false) the poster is a picture, not
  * a control: section previews never navigate or play, like their buttons.
+ *
+ * A grid of videos (the video reviews, CMS phase 3d batch D) controls it
+ * with `playing`/`onPlay`, so starting one returns the others to their
+ * posters — their players are removed, which stops them.
  */
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -55,6 +59,10 @@ export interface VideoFacadeProps {
   readonly playClassName?: string;
   /** The poster's rendered width, for choosing an uploaded poster's file. */
   readonly sizes?: string;
+  /** Controlled: whether this video's player is in place (a grid plays one at a time). */
+  readonly playing?: boolean;
+  /** Controlled: the visitor pressed play. */
+  readonly onPlay?: () => void;
 }
 
 export function VideoFacade({
@@ -65,18 +73,25 @@ export function VideoFacade({
   frameClassName,
   playClassName,
   sizes = '(min-width: 1024px) 60vw, 100vw',
+  playing: controlledPlaying,
+  onPlay,
 }: VideoFacadeProps): JSX.Element {
   const { t } = useTranslation();
-  const [playing, setPlaying] = useState(false);
+  const [ownPlaying, setOwnPlaying] = useState(false);
+  const playing = controlledPlaying ?? ownPlaying;
   const playerRef = useRef<HTMLIFrameElement>(null);
   const embedUrl = youTubeAutoplayEmbedUrl(videoId);
+  const play = () => {
+    if (controlledPlaying === undefined) setOwnPlaying(true);
+    onPlay?.();
+  };
 
   useEffect(() => {
     if (playing) playerRef.current?.focus();
   }, [playing]);
 
   // A different video (the Owner editing) starts from its poster again.
-  useEffect(() => setPlaying(false), [videoId]);
+  useEffect(() => setOwnPlaying(false), [videoId]);
 
   const playLabel = title
     ? t('website:renderer.video.play', { title })
@@ -143,7 +158,7 @@ export function VideoFacade({
         <button
           type="button"
           aria-label={playLabel}
-          onClick={() => setPlaying(true)}
+          onClick={play}
           onPointerEnter={warmPlayerConnection}
           onFocus={warmPlayerConnection}
           className="group absolute inset-0 size-full cursor-pointer"

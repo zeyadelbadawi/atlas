@@ -33,6 +33,10 @@ import { LogosSection } from '../sections/LogosSection';
 import { MapSection } from '../sections/MapSection';
 import { ScheduleSection } from '../sections/ScheduleSection';
 import { ResultsSection } from '../sections/ResultsSection';
+import { TimelineSection } from '../sections/TimelineSection';
+import { VideoTestimonialsSection } from '../sections/VideoTestimonialsSection';
+import { DownloadsSection } from '../sections/DownloadsSection';
+import { CertificatesSection } from '../sections/CertificatesSection';
 import type { SectionRenderers } from './theme-pack.types';
 
 export const BASE_RENDERERS: SectionRenderers = {
@@ -197,5 +201,21 @@ export const BASE_RENDERERS: SectionRenderers = {
         linkRenderer={linkRenderer}
       />
     );
+  },
+  // CMS phase 3d (batch D) — the public site (`linkRenderer`) plays, links
+  // and leaves samples out; previews show everything inert.
+  timeline: function BaseTimeline({ config, linkRenderer }) {
+    return <TimelineSection config={config} isPublic={!!linkRenderer} />;
+  },
+  videoTestimonials: function BaseVideoTestimonials({ config, linkRenderer }) {
+    return (
+      <VideoTestimonialsSection config={config} isPublic={!!linkRenderer} />
+    );
+  },
+  downloads: function BaseDownloads({ config, linkRenderer }) {
+    return <DownloadsSection config={config} isPublic={!!linkRenderer} />;
+  },
+  certificates: function BaseCertificates({ config, linkRenderer }) {
+    return <CertificatesSection config={config} isPublic={!!linkRenderer} />;
   },
 };

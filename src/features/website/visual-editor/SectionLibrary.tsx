@@ -33,14 +33,27 @@ export const SECTION_LIBRARY_GROUPS: readonly {
     key: 'trust',
     types: [
       'testimonials',
+      'videoTestimonials',
       'results',
       'statistics',
       'logos',
+      'certificates',
       'instructors',
       'gallery',
     ],
   },
-  { key: 'info', types: ['features', 'steps', 'video', 'schedule', 'faq'] },
+  {
+    key: 'info',
+    types: [
+      'features',
+      'steps',
+      'timeline',
+      'video',
+      'schedule',
+      'downloads',
+      'faq',
+    ],
+  },
   {
     key: 'action',
     types: ['cta', 'whatsappBar', 'countdown', 'contact', 'map'],

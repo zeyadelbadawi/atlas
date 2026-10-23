@@ -60,5 +60,7 @@
   "invalidTime": "Enter a time such as 16:30.",
   "endAfterStart": "End time must be after the start time. Choose a later end time.",
   "invalidYouTubeVideo": "Paste a YouTube video link, such as https://youtu.be/… or https://www.youtube.com/watch?v=…",
-  "invalidDeadline": "Choose a complete date and time."
+  "invalidDeadline": "Choose a complete date and time.",
+  "invalidDownloadLink": "Paste a web address that starts with https://, or choose a file from your media library.",
+  "invalidYear": "Enter a four-digit year, such as 2025."
 }

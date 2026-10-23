@@ -28,6 +28,12 @@ import {
   AtelierWhatsappBar,
 } from './atelier-engage-sections';
 import {
+  AtelierCertificates,
+  AtelierDownloads,
+  AtelierTimeline,
+  AtelierVideoTestimonials,
+} from './atelier-journey-proof-sections';
+import {
   AtelierLogos,
   AtelierMap,
   AtelierResults,
@@ -74,4 +80,9 @@ export const ATELIER_SECTION_RENDERERS: Partial<SectionRenderers> = {
   map: AtelierMap,
   schedule: AtelierSchedule,
   results: AtelierResults,
+  // CMS phase 3d (batch D).
+  timeline: AtelierTimeline,
+  videoTestimonials: AtelierVideoTestimonials,
+  downloads: AtelierDownloads,
+  certificates: AtelierCertificates,
 };

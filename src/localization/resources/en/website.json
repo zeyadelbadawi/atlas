@@ -698,7 +698,9 @@
     "sampleHelpResults": "Sample results are placeholders to show the design. They're never shown on your live website. Replace them with your students' real results, then mark each one as real.",
     "markResultReal": "This is a real result",
     "sampleHelpSchedule": "Sample rows are placeholders to show the design. They're never shown on your live website. Enter your real days and times, then mark each row as real.",
-    "markScheduleRowReal": "This row is real"
+    "markScheduleRowReal": "This row is real",
+    "sampleHelpVideoReviews": "Sample reviews are placeholders to show the design. They’re never shown on your live website. Replace them with real reviews from your students and parents (with their permission), then mark each one as real.",
+    "markVideoReviewReal": "This is a real review"
   },
   "preview": {
     "title": "Preview",
@@ -822,6 +824,18 @@
     },
     "countdown": {
       "label": "Countdown"
+    },
+    "timeline": {
+      "label": "Learning path"
+    },
+    "videoTestimonials": {
+      "label": "Video reviews"
+    },
+    "downloads": {
+      "label": "Downloads"
+    },
+    "certificates": {
+      "label": "Certificates"
     }
   },
   "fields": {
@@ -952,7 +966,31 @@
     "videoPoster": "Poster image (optional)",
     "deadline": "Closes on",
     "endedMessage": "Message after it ends",
-    "pricingPlans": "Plans"
+    "pricingPlans": "Plans",
+    "timelineItems": "Milestones",
+    "timelineItem": "Milestone",
+    "timelinePeriod": "Period",
+    "timelinePeriodHint": "Optional. When this stage happens, such as “Sept – Oct” or “Term 1”.",
+    "timelineIconNone": "No icon (show the number)",
+    "videoReviewItems": "Video reviews",
+    "videoReviewItem": "Review",
+    "reviewerName": "Name",
+    "reviewerRole": "Who they are",
+    "reviewerRoleHint": "Such as “Parent of a Grade 12 student”.",
+    "reviewQuote": "Short quote (optional)",
+    "downloadItems": "Files",
+    "downloadItem": "File",
+    "downloadLink": "Link or file",
+    "downloadFileType": "File type (optional)",
+    "downloadFileTypeHint": "Such as PDF. Left empty, it is read from the link when the link ends in .pdf, .docx and so on.",
+    "downloadFileSize": "File size (optional)",
+    "downloadFileSizeHint": "Such as 2.4 MB.",
+    "certificateItems": "Certificates",
+    "certificateItem": "Certificate",
+    "certificateImage": "Certificate image",
+    "certificateIssuer": "Issued by (optional)",
+    "certificateYear": "Year (optional)",
+    "certificateYearHint": "Four digits, such as 2025."
   },
   "buttons": {
     "button": "Button",
@@ -1179,6 +1217,35 @@
     },
     "whatsappBar": {
       "previewNoButtons": "Give a button a WhatsApp number, a phone number or a page. Visitors don’t see this bar until one of its buttons works."
+    },
+    "timeline": {
+      "previewEmpty": "Add the stages of your learning path in this section’s settings. Visitors don’t see the section until it has one."
+    },
+    "videoTestimonials": {
+      "videoTitle": "{{name}}’s review",
+      "previewNoVideo": "Add this review’s YouTube link",
+      "previewEmpty": "Add video reviews in this section’s settings. Visitors don’t see the section until it has a real review with a video."
+    },
+    "downloads": {
+      "name": "{{title}} — {{type}}",
+      "nameWithSize": "{{title}} — {{type}}, {{size}}",
+      "downloads": "(download)",
+      "previewNoLink": "No link yet: visitors don’t see this file until you add one.",
+      "previewEmpty": "Add files in this section’s settings. Visitors don’t see the section until a file has a link.",
+      "kinds": {
+        "pdf": "PDF file",
+        "document": "Document",
+        "sheet": "Spreadsheet",
+        "slides": "Presentation",
+        "image": "Image",
+        "archive": "Compressed file",
+        "file": "File"
+      }
+    },
+    "certificates": {
+      "viewFull": "View {{title}} full size",
+      "previewEmpty": "Add certificate images in this section’s settings. Visitors don’t see the section until it has one.",
+      "separator": " · "
     }
   },
   "common": {
@@ -1471,6 +1538,11 @@
       "count_one": "{{count}} sample timetable row",
       "count_other": "{{count}} sample timetable rows",
       "reviewLabel": "Review the sample timetable rows on {{page}}"
+    },
+    "videoTestimonials": {
+      "count_one": "{{count}} sample video review",
+      "count_other": "{{count}} sample video reviews",
+      "reviewLabel": "Review the sample video reviews on {{page}}"
     }
   },
   "launchChecklist": {
@@ -2099,7 +2171,11 @@
         "whatsappBar": "A short strip with WhatsApp, call or page buttons.",
         "video": "A YouTube video that loads only when visitors press play.",
         "pricing": "Your plans or packages, with prices and what each includes.",
-        "countdown": "A live countdown to a registration deadline."
+        "countdown": "A live countdown to a registration deadline.",
+        "timeline": "Your learning path, stage by stage, from the first term to the final exam.",
+        "videoTestimonials": "Short video reviews from students and parents, played on request.",
+        "downloads": "Notes, revision sheets and other files visitors can download.",
+        "certificates": "Images of your certificates, awards and accreditations."
       }
     },
     "settings": {
@@ -2264,6 +2340,15 @@
       "addButton": "Add a button",
       "removeButton": "Remove the button",
       "featureLabel": "Feature"
+    },
+    "fileLink": {
+      "choose": "Choose from library",
+      "replace": "Choose another file",
+      "remove": "Remove {{name}}",
+      "fromLibrary": "From your media library",
+      "hint": "Paste a link (such as Google Drive), or choose a PDF from your media library or upload one there.",
+      "empty": "No link yet: this file stays hidden on your site until you add one.",
+      "libraryFile": "{{type}} file"
     }
   }
 }

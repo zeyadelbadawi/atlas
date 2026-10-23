@@ -54,6 +54,12 @@ export {
   ManaraPreviewNote,
   ManaraPreviewSample,
 } from './manara-section-utils';
+import {
+  ManaraCertificates,
+  ManaraDownloads,
+  ManaraTimeline,
+  ManaraVideoTestimonials,
+} from './manara-journey-proof-sections';
 
 export const MANARA_SECTION_RENDERERS: Partial<SectionRenderers> = {
   hero: ManaraHero,
@@ -79,4 +85,9 @@ export const MANARA_SECTION_RENDERERS: Partial<SectionRenderers> = {
   map: ManaraMap,
   schedule: ManaraSchedule,
   results: ManaraResults,
+  // CMS phase 3d (batch D).
+  timeline: ManaraTimeline,
+  videoTestimonials: ManaraVideoTestimonials,
+  downloads: ManaraDownloads,
+  certificates: ManaraCertificates,
 };

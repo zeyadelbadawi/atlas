@@ -12,7 +12,11 @@
  */
 import {
   Award,
+  BadgeCheck,
   BookOpenCheck,
+  Clapperboard,
+  FileDown,
+  Route,
   CalendarClock,
   Handshake,
   MapPin,
@@ -170,6 +174,27 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadataEntry> = {
     type: 'countdown',
     labelKey: 'website:sections.countdown.label',
     icon: Timer,
+  },
+  // CMS phase 3d (batch D).
+  timeline: {
+    type: 'timeline',
+    labelKey: 'website:sections.timeline.label',
+    icon: Route,
+  },
+  videoTestimonials: {
+    type: 'videoTestimonials',
+    labelKey: 'website:sections.videoTestimonials.label',
+    icon: Clapperboard,
+  },
+  downloads: {
+    type: 'downloads',
+    labelKey: 'website:sections.downloads.label',
+    icon: FileDown,
+  },
+  certificates: {
+    type: 'certificates',
+    labelKey: 'website:sections.certificates.label',
+    icon: BadgeCheck,
   },
 };
 
@@ -334,6 +359,7 @@ export function getDefaultSectionConfig<TType extends SectionType>(
       items: SAMPLE_RESULTS,
     },
     ...phase3dStarterConfigs(),
+    ...batchDStarterConfigs(),
   };
 
   return defaults[type] as SectionConfigMap[TType];
@@ -445,6 +471,148 @@ function phase3dStarterConfigs(): Pick<
         label: { en: 'Book your seat', ar: 'احجز مقعدك' },
         authAction: 'signUp',
       },
+    },
+  };
+}
+
+/**
+ * CMS phase 3d (batch D) — starter content in both languages. The learning
+ * path is a generic year an Owner edits; the video reviews are samples
+ * (`sample: true`: labelled in previews, never public — a starter review is
+ * an invented one) without videos; the downloads have no links yet, so the
+ * public site leaves them out until the Owner adds the files; certificates
+ * start empty, since only the Owner has the images.
+ */
+function batchDStarterConfigs(): Pick<
+  SectionConfigMap,
+  'timeline' | 'videoTestimonials' | 'downloads' | 'certificates'
+> {
+  const id = () => crypto.randomUUID();
+  return {
+    timeline: {
+      title: { en: 'Your path through the year', ar: 'رحلتك خلال العام' },
+      description: {
+        en: 'What we cover, stage by stage, until the final exam.',
+        ar: 'ما ندرسه مرحلةً بمرحلة حتى الامتحان النهائي.',
+      },
+      items: [
+        {
+          id: id(),
+          title: {
+            en: 'Term 1: the foundations',
+            ar: 'الترم الأول: الأساسيات',
+          },
+          period: { en: 'Sept – Dec', ar: 'سبتمبر – ديسمبر' },
+          description: {
+            en: 'Every unit of the first term, with a weekly quiz.',
+            ar: 'كل وحدات الترم الأول مع اختبار أسبوعي.',
+          },
+          icon: 'BookOpen',
+        },
+        {
+          id: id(),
+          title: { en: 'Term 2: going further', ar: 'الترم الثاني: التعمّق' },
+          period: { en: 'Feb – Apr', ar: 'فبراير – أبريل' },
+          description: {
+            en: 'The second term’s units and a monthly mock exam.',
+            ar: 'وحدات الترم الثاني وامتحان تجريبي كل شهر.',
+          },
+          icon: 'GraduationCap',
+        },
+        {
+          id: id(),
+          title: { en: 'Final revision', ar: 'المراجعة النهائية' },
+          period: { en: 'May – June', ar: 'مايو – يونيو' },
+          description: {
+            en: 'Past papers, summaries and a full final rehearsal.',
+            ar: 'امتحانات سابقة وملخصات وبروفة نهائية كاملة.',
+          },
+          icon: 'Award',
+        },
+      ],
+    },
+    videoTestimonials: {
+      title: {
+        en: 'Hear it from our students and parents',
+        ar: 'اسمعها من طلابنا وأولياء الأمور',
+      },
+      description: {
+        en: 'Short videos from the families who study with us.',
+        ar: 'فيديوهات قصيرة من الأسر التي تدرس معنا.',
+      },
+      items: [
+        {
+          id: id(),
+          sample: true,
+          videoId: '',
+          name: 'Mona H.',
+          role: {
+            en: 'Parent of a Grade 12 student',
+            ar: 'وليّة أمر طالب في الصف الثالث الثانوي',
+          },
+          quote: {
+            en: 'He finally enjoys physics, and his marks show it.',
+            ar: 'أصبح يحب الفيزياء أخيرًا، ودرجاته تشهد بذلك.',
+          },
+        },
+        {
+          id: id(),
+          sample: true,
+          videoId: '',
+          name: 'Karim S.',
+          role: { en: 'Grade 12 student', ar: 'طالب في الصف الثالث الثانوي' },
+          quote: {
+            en: 'The revision sessions made the final exam feel easy.',
+            ar: 'حصص المراجعة جعلت الامتحان النهائي سهلًا.',
+          },
+        },
+        {
+          id: id(),
+          sample: true,
+          videoId: '',
+          name: 'Nour A.',
+          role: { en: 'Grade 9 student', ar: 'طالبة في الصف الثالث الإعدادي' },
+        },
+      ],
+    },
+    downloads: {
+      title: {
+        en: 'Notes and revision sheets',
+        ar: 'المذكرات وملخصات المراجعة',
+      },
+      description: {
+        en: 'Free to download for every student.',
+        ar: 'متاحة للتحميل مجانًا لكل الطلاب.',
+      },
+      items: [
+        {
+          id: id(),
+          title: { en: 'Term 1 revision sheet', ar: 'ملخص مراجعة الترم الأول' },
+          description: {
+            en: 'Every rule of the term on two pages.',
+            ar: 'كل قواعد الترم في صفحتين.',
+          },
+          url: '',
+          fileType: 'PDF',
+        },
+        {
+          id: id(),
+          title: { en: 'Past exam papers', ar: 'امتحانات الأعوام السابقة' },
+          url: '',
+          fileType: 'PDF',
+        },
+      ],
+    },
+    certificates: {
+      title: {
+        en: 'Certificates and accreditations',
+        ar: 'الشهادات والاعتمادات',
+      },
+      description: {
+        en: 'The certificates and awards the academy holds.',
+        ar: 'الشهادات والجوائز التي حصلت عليها الأكاديمية.',
+      },
+      items: [],
     },
   };
 }

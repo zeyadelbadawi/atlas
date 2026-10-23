@@ -34,6 +34,12 @@ import {
   RiwaqVideo,
   RiwaqWhatsappBar,
 } from './riwaq-engage-sections';
+import {
+  RiwaqCertificates,
+  RiwaqDownloads,
+  RiwaqTimeline,
+  RiwaqVideoTestimonials,
+} from './riwaq-journey-proof-sections';
 
 export {
   RiwaqAbout,
@@ -77,4 +83,9 @@ export const RIWAQ_SECTION_RENDERERS: Partial<SectionRenderers> = {
   map: RiwaqMap,
   schedule: RiwaqSchedule,
   results: RiwaqResults,
+  // CMS phase 3d (batch D).
+  timeline: RiwaqTimeline,
+  videoTestimonials: RiwaqVideoTestimonials,
+  downloads: RiwaqDownloads,
+  certificates: RiwaqCertificates,
 };
