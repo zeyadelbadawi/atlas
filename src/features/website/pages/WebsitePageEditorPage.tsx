@@ -100,6 +100,9 @@ import {
   rejectedSections,
 } from '../utils/save-validation.utils';
 import { isOverLimitIssue } from '../schemas/section-content-issues';
+import { SectionPresetDialog } from '../presets/SectionPresetDialog';
+import { hasPresets } from '../presets/section-presets.registry';
+import type { SectionStart } from '../presets/section-presets.types';
 import type {
   ResponsiveVisibility,
   SectionInstance,
@@ -163,6 +166,8 @@ function WebsitePageEditor(): JSX.Element {
   const [breakpoint, setBreakpoint] = useState<PreviewBreakpoint>(
     initialPreviewBreakpoint
   );
+  // CMS phase 3e — the section whose looks are being chosen, if any.
+  const [looksOf, setLooksOf] = useState<SectionType | null>(null);
   const seoDialog = useDisclosure();
 
   /*
@@ -342,9 +347,24 @@ function WebsitePageEditor(): JSX.Element {
     setDraftSections((prev) => removeSection(prev, id));
   };
 
+  // A section with presets first offers its looks (CMS phase 3e).
   const handleAdd = (type: SectionType) => {
-    const added = insertSection(draftSections, type);
+    if (hasPresets(type)) {
+      setLooksOf(type);
+      return;
+    }
+    addSection(type);
+  };
+  const addSection = (type: SectionType, start?: SectionStart) => {
+    const added = insertSection(
+      draftSections,
+      type,
+      undefined,
+      undefined,
+      start
+    );
     setDraftSections(added.sections);
+    setLooksOf(null);
     setSelectedId(added.id);
   };
 
@@ -701,6 +721,21 @@ function WebsitePageEditor(): JSX.Element {
           page={page}
           open={seoDialog.isOpen}
           onOpenChange={seoDialog.setOpen}
+        />
+      ) : null}
+      {canManage ? (
+        <SectionPresetDialog
+          type={looksOf}
+          source={{
+            academyId,
+            academyName: academy.name,
+            academyLogo: academy.logo,
+            configuration,
+            pages: previewPages,
+            locale: previewLocale,
+          }}
+          onClose={() => setLooksOf(null)}
+          onAdd={addSection}
         />
       ) : null}
       <SaveConflictDialog

@@ -123,6 +123,7 @@ import { invalidSectionIds, parsedSections } from './section-validation';
 import { StructurePanel } from './StructurePanel';
 import { SettingsPanel } from './SettingsPanel';
 import { SectionLibrary } from './SectionLibrary';
+import type { SectionStart } from '../presets/section-presets.types';
 import { SiteSettingsPanel } from './SiteSettingsPanel';
 
 /** How long after the last change the draft is saved. */
@@ -354,8 +355,14 @@ function VisualEditor(): JSX.Element {
       );
     }
   };
-  const handleAdd = (type: SectionType) => {
-    const result = insertSection(draftSections, type, library.at);
+  const handleAdd = (type: SectionType, start?: SectionStart) => {
+    const result = insertSection(
+      draftSections,
+      type,
+      library.at,
+      undefined,
+      start
+    );
     record(result.sections);
     setLibrary({ open: false, at: 0 });
     setStructureOpen(false);
@@ -913,6 +920,14 @@ function VisualEditor(): JSX.Element {
         open={library.open}
         onOpenChange={(open) => setLibrary((value) => ({ ...value, open }))}
         onPick={handleAdd}
+        previewSource={{
+          academyId,
+          academyName: academy.name,
+          academyLogo: academy.logo,
+          configuration,
+          pages: previewPages,
+          locale: previewLocale,
+        }}
       />
       <SaveConflictDialog
         conflict={conflict?.value ?? null}

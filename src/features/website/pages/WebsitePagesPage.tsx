@@ -6,7 +6,7 @@
  * navigation/visibility changes, see `Reports/ARCHITECTURE.md`, Prompt 9,
  * "Page Visibility Is Not Security"), and manages custom pages.
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -40,6 +40,8 @@ import { useConfirmDialog } from '@app/providers';
 import { useDisclosure, usePermissions } from '@hooks';
 import { useServerValidation } from '@forms';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
+import { useAcademy } from '@features/academy';
+import { cn } from '@utils';
 import {
   useCreateWebsitePage,
   useDeleteWebsitePage,
@@ -54,20 +56,61 @@ import {
 import { getWebsiteTabs } from '../utils/website-navigation.utils';
 import { AuthPageCopyDialog } from '../components/AuthPageCopyDialog';
 import type { AuthPageKey } from '../utils/auth-page-copy.utils';
-import type { BreadcrumbItem, WebsitePage } from '@types';
+import { resolveDefaultLocale } from '../constants/locale.constants';
+import {
+  BLANK_PAGE,
+  PageTemplateOptions,
+  PageTemplatePreview,
+} from '../presets/PageTemplatePicker';
+import {
+  availableTemplateSlug,
+  buildTemplateSections,
+  findPageTemplate,
+  pageTemplateLabelKeys,
+} from '../presets/page-templates.registry';
+import {
+  presetContextOf,
+  type PresetPreviewSource,
+} from '../presets/preset-preview-source';
+import type {
+  BreadcrumbItem,
+  SectionInstance,
+  WebsiteConfiguration,
+  WebsitePage,
+} from '@types';
 
+/**
+ * "New page": a title and an address, and — CMS phase 3e — how to start:
+ * a blank page or a page template («صفحات جاهزة»), previewed as the site
+ * draws it. A template's sections are saved through the pages API right
+ * after the page is created, in one save; if that save fails, the page
+ * exists (empty) and the dialog offers to try the save again or to open it.
+ */
 function CreatePageDialog({
   academyId,
   open,
   onOpenChange,
+  pages,
+  configuration,
 }: {
   readonly academyId: string;
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
+  readonly pages: readonly WebsitePage[];
+  readonly configuration: WebsiteConfiguration;
 }): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const createPage = useCreateWebsitePage();
+  const updatePage = useUpdateWebsitePage();
+  const academy = useAcademy(academyId).data;
+  const [choice, setChoice] = useState<string>(BLANK_PAGE);
+  // A page created from a template whose sections are not saved yet.
+  const [unsaved, setUnsaved] = useState<{
+    readonly page: WebsitePage;
+    readonly sections: readonly SectionInstance[];
+  } | null>(null);
+  const [sectionsFailed, setSectionsFailed] = useState(false);
 
   const form = useForm<CreateWebsitePageFormData>({
     resolver: zodResolver(createWebsitePageSchema),
@@ -75,69 +118,226 @@ function CreatePageDialog({
   });
   useServerValidation(form, createPage.error);
 
-  const onSubmit = (data: CreateWebsitePageFormData) => {
-    createPage.mutate(
-      { academyId, payload: data },
+  const visiblePages = useMemo(
+    () => pages.filter((candidate) => candidate.visible),
+    [pages]
+  );
+  const source: PresetPreviewSource = {
+    academyId,
+    academyName: academy?.name ?? '',
+    academyLogo: academy?.logo,
+    configuration,
+    pages: visiblePages,
+    locale: resolveDefaultLocale(configuration.defaultLocale),
+  };
+  const template = choice === BLANK_PAGE ? undefined : findPageTemplate(choice);
+  // Built once per choice: the sections previewed are the sections saved.
+  const [sections, setSections] = useState<readonly SectionInstance[]>([]);
+
+  // A template suggests a title and an address, unless the Owner typed their own.
+  const suggestion = (key: string) => {
+    const next = key === BLANK_PAGE ? undefined : findPageTemplate(key);
+    return next
+      ? {
+          title: t(pageTemplateLabelKeys(next).pageTitle),
+          slug: availableTemplateSlug(next, pages),
+        }
+      : { title: '', slug: '' };
+  };
+  const choose = (key: string) => {
+    const previous = suggestion(choice);
+    const next = suggestion(key);
+    const { title, slug } = form.getValues();
+    if (title === previous.title) form.setValue('title', next.title);
+    if (slug === previous.slug) form.setValue('slug', next.slug);
+    const chosen = key === BLANK_PAGE ? undefined : findPageTemplate(key);
+    setSections(
+      chosen
+        ? buildTemplateSections(
+            chosen,
+            presetContextOf({ configuration, pages })
+          )
+        : []
+    );
+    setChoice(key);
+  };
+
+  const close = () => {
+    onOpenChange(false);
+    form.reset();
+    setChoice(BLANK_PAGE);
+    setSections([]);
+    setUnsaved(null);
+    setSectionsFailed(false);
+  };
+  const openEditor = (page: WebsitePage) => {
+    close();
+    navigate(
+      buildPath(DASHBOARD_ROUTES.websitePageEditor, {
+        academyId,
+        pageId: page.id,
+      })
+    );
+  };
+  const saveSections = (
+    page: WebsitePage,
+    pageSections: readonly SectionInstance[]
+  ) => {
+    setSectionsFailed(false);
+    updatePage.mutate(
       {
-        onSuccess: (page) => {
-          onOpenChange(false);
-          form.reset();
-          navigate(
-            buildPath(DASHBOARD_ROUTES.websitePageEditor, {
-              academyId,
-              pageId: page.id,
-            })
-          );
+        academyId,
+        pageId: page.id,
+        payload: { sections: pageSections, expectedVersion: page.version },
+      },
+      {
+        onSuccess: (saved) => openEditor(saved),
+        onError: () => {
+          setUnsaved({ page, sections: pageSections });
+          setSectionsFailed(true);
         },
       }
     );
   };
 
+  const onSubmit = (data: CreateWebsitePageFormData) => {
+    const pageSections = sections;
+    createPage.mutate(
+      { academyId, payload: data },
+      {
+        onSuccess: (page) => {
+          if (pageSections.length === 0) openEditor(page);
+          else saveSections(page, pageSections);
+        },
+      }
+    );
+  };
+
+  const isBusy = createPage.isPending || updatePage.isPending;
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) close();
+        else onOpenChange(next);
+      }}
+    >
+      <DialogContent
+        className={cn('max-h-[92dvh] overflow-y-auto', template && 'max-w-5xl')}
+        data-testid="create-page-dialog"
+      >
         <DialogHeader>
           <DialogTitle>{t('website:pages.createTitle')}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('website:pages.titleLabel')}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="slug"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('website:pages.slugLabel')}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {createPage.error ? (
-              <ErrorState onRetry={form.handleSubmit(onSubmit)} />
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className={cn(
+              'grid gap-6',
+              template &&
+                'lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:[grid-template-areas:"options_preview""options_fields"] lg:grid-rows-[auto_1fr]'
+            )}
+          >
+            <div className={cn(template && 'lg:[grid-area:options]')}>
+              <PageTemplateOptions value={choice} onChange={choose} />
+            </div>
+            {template ? (
+              <div className="min-w-0 lg:[grid-area:preview]">
+                <PageTemplatePreview
+                  source={source}
+                  title={
+                    form.watch('title') ||
+                    t(pageTemplateLabelKeys(template).pageTitle)
+                  }
+                  slug={form.watch('slug') || template.slug}
+                  sections={sections}
+                />
+              </div>
             ) : null}
-            <DialogFooter>
-              <Button type="submit" disabled={createPage.isPending}>
-                {createPage.isPending ? (
-                  <Loader2 className="size-4 animate-spin" aria-hidden />
-                ) : null}
-                {t('website:pages.createAction')}
-              </Button>
-            </DialogFooter>
+            <div
+              className={cn('space-y-4', template && 'lg:[grid-area:fields]')}
+            >
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('website:pages.titleLabel')}</FormLabel>
+                    <FormControl>
+                      <Input {...field} disabled={!!unsaved} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="slug"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('website:pages.slugLabel')}</FormLabel>
+                    <FormControl>
+                      <Input {...field} disabled={!!unsaved} dir="ltr" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {createPage.error ? (
+                <ErrorState onRetry={form.handleSubmit(onSubmit)} />
+              ) : null}
+              {sectionsFailed && unsaved ? (
+                <div
+                  role="alert"
+                  className="space-y-3 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm"
+                  data-testid="template-sections-failed"
+                >
+                  <p className="text-foreground">
+                    {t('website:pageTemplates.sectionsFailed')}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="h-10"
+                      disabled={updatePage.isPending}
+                      onClick={() =>
+                        saveSections(unsaved.page, unsaved.sections)
+                      }
+                    >
+                      {t('website:pageTemplates.retrySections')}
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      className="h-10"
+                      onClick={() => openEditor(unsaved.page)}
+                    >
+                      {t('website:pageTemplates.openEmpty')}
+                    </Button>
+                  </div>
+                </div>
+              ) : null}
+              {unsaved ? null : (
+                <DialogFooter>
+                  <Button
+                    type="submit"
+                    disabled={isBusy}
+                    className="h-11"
+                    data-testid="create-page-submit"
+                  >
+                    {isBusy ? (
+                      <Loader2 className="size-4 animate-spin" aria-hidden />
+                    ) : null}
+                    {template
+                      ? t('website:pageTemplates.createFromTemplate')
+                      : t('website:pages.createAction')}
+                  </Button>
+                </DialogFooter>
+              )}
+            </div>
           </form>
         </Form>
       </DialogContent>
@@ -373,6 +573,8 @@ export default function WebsitePagesPage(): JSX.Element {
           academyId={academyId}
           open={createDialog.isOpen}
           onOpenChange={createDialog.setOpen}
+          pages={pages}
+          configuration={configuration}
         />
       ) : null}
 

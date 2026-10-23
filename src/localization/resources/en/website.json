@@ -2496,5 +2496,250 @@
       "empty": "No link yet: this file stays hidden on your site until you add one.",
       "libraryFile": "{{type}} file"
     }
+  },
+  "presets": {
+    "hero": {
+      "imageBeside": {
+        "name": "Image beside text",
+        "description": "A title, a short pitch, two buttons and a photograph beside them."
+      },
+      "centered": {
+        "name": "Centred, no image",
+        "description": "A short centred title and two buttons, without a photograph."
+      },
+      "whatsapp": {
+        "name": "With a WhatsApp button",
+        "description": "Invites visitors to message you on WhatsApp first."
+      },
+      "search": {
+        "name": "With course search",
+        "description": "A search box that takes visitors straight to your courses."
+      }
+    },
+    "about": {
+      "story": {
+        "name": "Your story with a photo",
+        "description": "Who you are, beside a photograph, with a button to contact you."
+      },
+      "mission": {
+        "name": "Mission, centred",
+        "description": "A short centred statement of what you aim for."
+      },
+      "approach": {
+        "name": "How you teach",
+        "description": "Your teaching approach on a soft background, with a photo."
+      }
+    },
+    "featureSplit": {
+      "imageStart": {
+        "name": "Photo first, three benefits",
+        "description": "A photograph beside three numbered benefits and a button."
+      },
+      "imageEnd": {
+        "name": "For parents, photo after",
+        "description": "What parents receive, with the photograph on the other side."
+      }
+    },
+    "announcementBar": {
+      "registration": {
+        "name": "Registration is open",
+        "description": "A brand-coloured strip with a register button."
+      },
+      "offer": {
+        "name": "Limited offer",
+        "description": "A dark strip for an offer, with a WhatsApp button."
+      },
+      "notice": {
+        "name": "Short notice",
+        "description": "A quiet strip for a holiday or a schedule change, without a button."
+      }
+    },
+    "features": {
+      "cards": {
+        "name": "Three reasons",
+        "description": "Three cards, each with an icon, a title and a sentence."
+      },
+      "strip": {
+        "name": "Compact highlights band",
+        "description": "Four short highlights in one compact row."
+      },
+      "six": {
+        "name": "Six points on a soft background",
+        "description": "Six things studying with you includes."
+      }
+    },
+    "steps": {
+      "register": {
+        "name": "How to join, three steps",
+        "description": "From creating an account to the first lesson."
+      },
+      "placement": {
+        "name": "The first week, four steps",
+        "description": "How a new student starts with you."
+      }
+    },
+    "timeline": {
+      "year": {
+        "name": "The school year",
+        "description": "Term 1, term 2 and the final revision."
+      },
+      "course": {
+        "name": "A course in stages",
+        "description": "The stages of one course, week by week."
+      }
+    },
+    "faq": {
+      "registration": {
+        "name": "Registration and payment",
+        "description": "How to register, prices, payment and changing groups."
+      },
+      "online": {
+        "name": "Studying online",
+        "description": "Phones, course access and asking questions."
+      },
+      "teaser": {
+        "name": "Three questions and a link",
+        "description": "The first three answers, with a link to all of them."
+      }
+    },
+    "statistics": {
+      "live": {
+        "name": "Live numbers, three",
+        "description": "Courses, students and teachers, counted from your academy."
+      },
+      "compact": {
+        "name": "Live numbers, compact",
+        "description": "Courses and teachers in a compact band."
+      }
+    },
+    "testimonials": {
+      "parents": {
+        "name": "Parents, centred",
+        "description": "Three sample quotes from parents on a soft background."
+      },
+      "students": {
+        "name": "Students, with ratings",
+        "description": "Three sample quotes from students, with stars."
+      }
+    },
+    "cta": {
+      "register": {
+        "name": "Register",
+        "description": "Asks visitors to create an account, or to browse courses."
+      },
+      "whatsapp": {
+        "name": "WhatsApp and a call",
+        "description": "For visitors who want to ask before they register."
+      },
+      "photo": {
+        "name": "With a photo",
+        "description": "A band with a photograph and one button."
+      }
+    },
+    "pricing": {
+      "monthlyTerm": {
+        "name": "Monthly or per term",
+        "description": "Two plans, the term plan highlighted."
+      },
+      "subjects": {
+        "name": "By number of subjects",
+        "description": "One subject, two subjects or the full grade."
+      },
+      "single": {
+        "name": "One course fee",
+        "description": "A single plan for one course."
+      }
+    },
+    "countdown": {
+      "registration": {
+        "name": "Registration deadline",
+        "description": "Counts down to the day registration closes."
+      },
+      "offer": {
+        "name": "Offer ends",
+        "description": "A compact countdown for an offer, with a WhatsApp button."
+      }
+    },
+    "interestForm": {
+      "grades": {
+        "name": "By grade",
+        "description": "Name, phone and the student’s grade."
+      },
+      "courses": {
+        "name": "Reserve a course",
+        "description": "Visitors choose one of your courses."
+      },
+      "callback": {
+        "name": "Call me back",
+        "description": "Just a name, a phone and an optional question."
+      }
+    },
+    "whatsappBar": {
+      "chat": {
+        "name": "WhatsApp and a call",
+        "description": "Two ways to reach you straight away."
+      },
+      "register": {
+        "name": "Register or ask",
+        "description": "A register button, with WhatsApp beside it."
+      }
+    },
+    "contact": {
+      "form": {
+        "name": "With a message form",
+        "description": "Your contact details and a form visitors can send."
+      },
+      "details": {
+        "name": "Details only",
+        "description": "Your phone, email and address, without a form."
+      }
+    }
+  },
+  "templates": {
+    "courseLanding": {
+      "name": "Course landing page",
+      "description": "One course: what it covers, its fee, its deadline and a register button.",
+      "pageTitle": "Course"
+    },
+    "teacherProfile": {
+      "name": "Teacher profile",
+      "description": "One teacher: introduction, class times, results and courses.",
+      "pageTitle": "Teacher"
+    },
+    "offers": {
+      "name": "Offers and registration",
+      "description": "Your offer, plans, a deadline and a registration form.",
+      "pageTitle": "Offers"
+    },
+    "aboutAcademy": {
+      "name": "About the academy",
+      "description": "Your story, live numbers, teachers and what parents say.",
+      "pageTitle": "About the academy"
+    }
+  },
+  "presetPicker": {
+    "title": "{{section}}: choose a look",
+    "subtitle": "Each look arrives with ready content in both languages that you can change. Previews use your current theme.",
+    "back": "Back to all sections",
+    "add": "Add section",
+    "blankName": "Default",
+    "blankDescription": "The section with its standard starting content.",
+    "looks": "Looks for this section",
+    "placeholderHint": "Text in [brackets] is a placeholder: replace it with your own details. Sample testimonials and results never appear on your public site.",
+    "looksCount_one": "{{count}} look",
+    "looksCount_other": "{{count}} looks"
+  },
+  "pageTemplates": {
+    "heading": "How do you want to start?",
+    "blankName": "Blank page",
+    "blankDescription": "Start with no sections and add them yourself.",
+    "previewHeading": "Preview",
+    "sectionsCount_one": "{{count}} section",
+    "sectionsCount_other": "{{count}} sections",
+    "placeholderHint": "Text in [brackets] is a placeholder for your own details. Sample testimonials and results never appear on your public site.",
+    "createFromTemplate": "Create page",
+    "sectionsFailed": "The page was created, but its sections could not be saved.",
+    "retrySections": "Try saving the sections again",
+    "openEmpty": "Open the empty page"
   }
 }

@@ -106,6 +106,10 @@ import {
   MAX_VIDEO_TESTIMONIAL_QUOTE_LENGTH,
   MAX_VIDEO_TESTIMONIAL_ROLE_LENGTH,
   MAX_VIDEO_TESTIMONIALS,
+  SECTION_ALIGNMENTS,
+  SECTION_BACKGROUNDS,
+  SECTION_SPACINGS,
+  SECTION_WIDTHS,
 } from '../constants/website.constants';
 import { isAllowedImageValue } from '../utils/image-value.utils';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
@@ -869,3 +873,19 @@ const SECTION_SCHEMAS = {
 export function getSectionConfigSchema(type: SectionType): z.ZodTypeAny {
   return SECTION_SCHEMAS[type];
 }
+
+/**
+ * CMS phase 3 — a section's design (`SectionInstance.design`): named
+ * choices only. Mirrors the backend's `sectionDesignSchema` key for key;
+ * every key is optional and absent means the theme's own choice.
+ */
+export const sectionDesignSchema = z.object({
+  background: z.enum(SECTION_BACKGROUNDS).optional(),
+  spacing: z.enum(SECTION_SPACINGS).optional(),
+  /** Phones only; absent = the same as `spacing`. */
+  spacingMobile: z.enum(SECTION_SPACINGS).optional(),
+  align: z.enum(SECTION_ALIGNMENTS).optional(),
+  width: z.enum(SECTION_WIDTHS).optional(),
+  /** Phones only: a two-column section stacks its second column first. */
+  reverseOnMobile: z.boolean().optional(),
+});
