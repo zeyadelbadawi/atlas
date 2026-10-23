@@ -62,5 +62,6 @@
   "invalidYouTubeVideo": "Paste a YouTube video link, such as https://youtu.be/… or https://www.youtube.com/watch?v=…",
   "invalidDeadline": "Choose a complete date and time.",
   "invalidDownloadLink": "Paste a web address that starts with https://, or choose a file from your media library.",
-  "invalidYear": "Enter a four-digit year, such as 2025."
+  "invalidYear": "Enter a four-digit year, such as 2025.",
+  "customColumnCount": "Choose the layout again: its number of columns does not match."
 }

@@ -1,7 +1,8 @@
 /**
- * Section groups (`section-groups.tsx`): every phase 3d renderer a pack
- * names is a real export of its own theme's group, and a page records the
- * groups it draws, so the browser can load them before hydrating.
+ * Section groups (`section-groups.tsx`): every phase 3d (and phase 3c
+ * custom) renderer a pack names is a real export of its own theme's group,
+ * and a page records the groups it draws, so the browser can load them
+ * before hydrating.
  */
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -9,6 +10,7 @@ import { MODERN_EDUCATION_PACK } from '../modern-education/modern-education.pack
 import { ATELIER_PACK } from '../atelier/atelier.pack';
 import { MANARA_PACK } from '../manara/manara.pack';
 import { RIWAQ_PACK } from '../riwaq/riwaq.pack';
+import { BASE_RENDERERS } from './base-renderers';
 import {
   deferredSectionTarget,
   isSectionGroupKey,
@@ -34,6 +36,8 @@ const PHASE_3D_TYPES = [
   'videoTestimonials',
   'downloads',
   'certificates',
+  // CMS phase 3c.
+  'custom',
 ] as const;
 
 const PACKS = [MODERN_EDUCATION_PACK, ATELIER_PACK, MANARA_PACK, RIWAQ_PACK];
@@ -68,6 +72,23 @@ describe('section groups', () => {
       </SectionGroupUsageContext.Provider>
     );
     expect([...usage]).toEqual(['riwaq:enrol']);
+  });
+
+  it('the base renderer defers the custom section to a group of its own', async () => {
+    await loadAllSectionGroups();
+    const target = deferredSectionTarget(BASE_RENDERERS.custom);
+    expect(target).toEqual({
+      group: 'base:custom',
+      exportName: 'CustomSection',
+    });
+    expect(typeof loadedSectionGroup('base:custom')?.CustomSection).toBe(
+      'function'
+    );
+    for (const pack of PACKS) {
+      expect(deferredSectionTarget(pack.renderers.custom)?.group).toBe(
+        `${pack.key}:custom`
+      );
+    }
   });
 
   it('only knows the groups this build has', () => {

@@ -1466,4 +1466,31 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
       ],
     },
   },
+  // CMS phase 3c — the section an Owner builds: an optional title and lead,
+  // then the layout and its columns of elements (one editor of its own).
+  custom: {
+    type: 'custom',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:sectionEditors.custom.titleLabel',
+        hintKey: 'website:sectionEditors.custom.titleHint',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:sectionEditors.custom.descriptionLabel',
+        localized: true,
+        maxLength: MAX_LONG_TEXT,
+      },
+      {
+        key: 'columns',
+        kind: 'customLayout',
+        labelKey: 'website:sectionEditors.custom.layout',
+      },
+    ],
+  },
 };

@@ -62,5 +62,6 @@
   "invalidYouTubeVideo": "الصق رابط فيديو من يوتيوب، مثل https://youtu.be/… أو https://www.youtube.com/watch?v=…",
   "invalidDeadline": "اختر تاريخًا ووقتًا كاملين.",
   "invalidDownloadLink": "الصق عنوان ويب يبدأ بـ https://، أو اختر ملفًا من مكتبة الوسائط.",
-  "invalidYear": "أدخل سنة من أربعة أرقام، مثل 2025."
+  "invalidYear": "أدخل سنة من أربعة أرقام، مثل 2025.",
+  "customColumnCount": "اختر التخطيط مرة أخرى، فعدد أعمدته لا يطابق الأعمدة الموجودة."
 }

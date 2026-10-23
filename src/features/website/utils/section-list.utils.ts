@@ -8,6 +8,7 @@ import { DEFAULT_RESPONSIVE_VISIBILITY } from '@types';
 import type {
   ResponsiveVisibility,
   SectionConfigMap,
+  SectionDesign,
   SectionInstance,
   SectionType,
 } from '@types';
@@ -96,19 +97,28 @@ export function removeSection(
   return sections.filter((section) => section.id !== id);
 }
 
-/** A new section of `type` with its default content, at `index` (the end by default). */
+/**
+ * A new section of `type` at `index` (the end by default): with its default
+ * content, or with a section preset's content and design (`start`, CMS
+ * phase 3e).
+ */
 export function insertSection(
   sections: Sections,
   type: SectionType,
   index: number = sections.length,
-  newId: string = crypto.randomUUID()
+  newId: string = crypto.randomUUID(),
+  start?: {
+    readonly config: SectionInstance['config'];
+    readonly design?: SectionDesign;
+  }
 ): { readonly sections: SectionInstance[]; readonly id: string } {
   const instance = {
     id: newId,
     type,
     enabled: true,
     visibility: DEFAULT_RESPONSIVE_VISIBILITY,
-    config: getDefaultSectionConfig(type),
+    config: start ? start.config : getDefaultSectionConfig(type),
+    ...(start?.design ? { design: start.design } : {}),
   } as SectionInstance;
   const next = [...sections];
   next.splice(Math.max(0, Math.min(index, next.length)), 0, instance);

@@ -41,6 +41,13 @@ import { InterestFormSection } from '../sections/InterestFormSection';
 import { AnnouncementBarSection } from '../sections/AnnouncementBarSection';
 import { ComparisonSection } from '../sections/ComparisonSection';
 import type { SectionRenderers } from './theme-pack.types';
+import { sectionGroup } from './section-groups';
+
+// CMS phase 3c: the base custom section, a group of its own.
+const custom = sectionGroup(
+  'base:custom',
+  () => import('../sections/CustomSection')
+);
 
 export const BASE_RENDERERS: SectionRenderers = {
   hero: function BaseHero({ config, pages, linkRenderer }) {
@@ -253,4 +260,6 @@ export const BASE_RENDERERS: SectionRenderers = {
   certificates: function BaseCertificates({ config, linkRenderer }) {
     return <CertificatesSection config={config} isPublic={!!linkRenderer} />;
   },
+  // CMS phase 3c — a group of its own: only pages that use it download it.
+  custom: custom('CustomSection'),
 };

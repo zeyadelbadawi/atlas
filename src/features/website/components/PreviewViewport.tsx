@@ -244,9 +244,10 @@ const SELECTION_CSS = `
 /**
  * Mounts an `<iframe>` of the device's real size, keeps the host
  * document's stylesheets mirrored into it, then portals `children` into
- * its `<body>`.
+ * its `<body>`. Also the frame of the section presets' and page templates'
+ * miniature previews (`presets/PresetPreview.tsx`).
  */
-function IframeViewport({
+export function IframeViewport({
   width,
   height,
   dir,

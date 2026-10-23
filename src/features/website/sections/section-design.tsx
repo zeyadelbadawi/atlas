@@ -101,6 +101,9 @@ export const SECTION_DESIGN_SUPPORT: Record<SectionType, SectionDesignSupport> =
     interestForm: NO_ALIGN,
     announcementBar: FULL,
     comparison: NO_ALIGN,
+    // CMS phase 3c: columns, so the stacking order on phones is the
+    // Owner's (`data-ws-columns` on the columns' grid).
+    custom: SPLIT,
   };
 
 /**
@@ -143,22 +146,52 @@ const except = (...types: SectionType[]) =>
   GROUNDED_TYPES.filter((type) => !types.includes(type));
 
 /**
+ * The phase 3d types that read correctly on every ground, through the same
+ * axe colour-contrast pass (all four themes, every ground, EN). The notice
+ * strip is not among them in any theme: it has its own tone choice (brand,
+ * soft, dark), which a section background would contradict.
+ */
+const GROUNDED_3D_TYPES: readonly SectionType[] = [
+  'logos',
+  'results',
+  'videoTestimonials',
+  'certificates',
+  'schedule',
+  'timeline',
+  'comparison',
+  'video',
+  'downloads',
+  'whatsappBar',
+  'countdown',
+  'interestForm',
+  'map',
+  'pricing',
+];
+const except3d = (...types: SectionType[]) =>
+  GROUNDED_3D_TYPES.filter((type) => !types.includes(type));
+
+/**
  * Per theme, the section types a background may be chosen for — the ones
  * that read correctly on every ground the theme offers. Checked by an axe
  * colour-contrast pass and a visual review of every section on every
  * ground in all four themes (CMS phase 3). Manara and Riwaq colour text,
  * links and buttons from the ground itself, so every section moves
- * freely. Theme 1 and Atelier draw their dark bands (the CTA band; Atelier
+ * freely, except Riwaq's interest form and comparison, whose light cards
+ * keep the ground's text colour and vanish on its deep ground. Theme 1 and
+ * Atelier draw their dark bands (the CTA band and the countdown; Atelier
  * also its figures and testimonials) with colours fixed for that band,
  * which would vanish on a light ground: those keep their own.
  */
 export const SECTION_BACKGROUND_SUPPORT: Partial<
   Record<WebsiteThemeKey, readonly SectionType[]>
 > = {
-  'modern-education': except('cta'),
-  atelier: except('cta', 'statistics', 'testimonials'),
-  manara: GROUNDED_TYPES,
-  riwaq: GROUNDED_TYPES,
+  'modern-education': [...except('cta'), ...except3d('countdown')],
+  atelier: [
+    ...except('cta', 'statistics', 'testimonials'),
+    ...except3d('countdown'),
+  ],
+  manara: [...GROUNDED_TYPES, ...GROUNDED_3D_TYPES],
+  riwaq: [...GROUNDED_TYPES, ...except3d('interestForm', 'comparison')],
 };
 
 /** Themes whose container is narrower than "wide" (88rem); the others already are that wide. */

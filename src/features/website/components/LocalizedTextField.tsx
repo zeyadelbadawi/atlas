@@ -55,6 +55,8 @@ export type LocalizedFieldErrors = Partial<Record<keyof LocalizedText, string>>;
 export interface LocalizedTextFieldProps {
   readonly id: string;
   readonly labelKey: string;
+  /** Interpolation values for the label (e.g. an item's number). */
+  readonly labelValues?: Record<string, string | number>;
   readonly value?: Partial<LocalizedText>;
   readonly onChange?: (value: LocalizedText) => void;
   readonly onBlur?: (value: LocalizedText) => void;
@@ -76,6 +78,7 @@ function characterCount(text: string): number {
 export function LocalizedTextField({
   id,
   labelKey,
+  labelValues,
   value,
   onChange,
   onBlur,
@@ -233,7 +236,7 @@ export function LocalizedTextField({
   return (
     <div className="space-y-2 rounded-md border border-border p-3">
       <p className="text-sm font-medium text-foreground">
-        {t(labelKey)}
+        {t(labelKey, labelValues)}
         {required ? <span className="text-destructive"> *</span> : null}
       </p>
 

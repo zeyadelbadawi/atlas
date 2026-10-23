@@ -42,7 +42,10 @@ import type {
 type GroupModule = Readonly<Record<string, unknown>>;
 type GroupLoader = () => Promise<GroupModule>;
 
-/** Every group this build has: a theme's file of phase 3d sections. */
+/**
+ * Every group this build has: a theme's file of phase 3d sections, and (CMS
+ * phase 3c) each theme's custom section and the base renderer's.
+ */
 const SECTION_GROUP_KEYS = [
   'modern-education:trust-visit',
   'modern-education:engage',
@@ -60,6 +63,12 @@ const SECTION_GROUP_KEYS = [
   'riwaq:engage',
   'riwaq:enrol',
   'riwaq:journey-proof',
+  // CMS phase 3c: the custom section, one group per theme and the base.
+  'modern-education:custom',
+  'atelier:custom',
+  'manara:custom',
+  'riwaq:custom',
+  'base:custom',
 ] as const;
 
 export type SectionGroupKey = (typeof SECTION_GROUP_KEYS)[number];

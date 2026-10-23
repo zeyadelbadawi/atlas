@@ -16,13 +16,19 @@ import {
   ComparisonGridEditor,
   resolveComparisonIssue,
 } from './ComparisonGridEditor';
+import { CustomSectionEditor } from './custom-section/CustomSectionEditor';
+import { resolveCustomLayoutIssue } from './custom-section/custom-elements';
 
 const CUSTOM_KINDS: ReadonlySet<string> = new Set([
   'youtube',
   'deadline',
   'plans',
   'comparison',
+  'customLayout',
 ]);
+
+/** The config keys the custom section's layout editor writes. */
+const CUSTOM_LAYOUT_KEYS = ['layout', 'ratio', 'verticalAlign', 'columns'];
 
 /**
  * The config keys a custom field edits, when more than its own `key`: the
@@ -32,6 +38,7 @@ const CUSTOM_KINDS: ReadonlySet<string> = new Set([
 export function customFieldKeys(
   descriptor: CustomFieldDescriptor
 ): readonly string[] {
+  if (descriptor.kind === 'customLayout') return CUSTOM_LAYOUT_KEYS;
   return descriptor.kind === 'comparison'
     ? ['columns', 'rows']
     : [descriptor.key];
@@ -47,7 +54,9 @@ export function isCustomField(
 export function resolveCustomFieldIssue(
   descriptor: CustomFieldDescriptor,
   rest: readonly string[],
-  head: string = descriptor.key
+  head: string = descriptor.key,
+  /** The section's config as typed (the custom section names an element by its kind). */
+  draft?: Readonly<Record<string, unknown>>
 ): {
   readonly labelKeys: readonly string[];
   readonly itemNumber?: number;
@@ -59,6 +68,9 @@ export function resolveCustomFieldIssue(
   if (descriptor.kind === 'comparison') {
     return resolveComparisonIssue(head, rest);
   }
+  if (descriptor.kind === 'customLayout') {
+    return resolveCustomLayoutIssue(head, rest, draft);
+  }
   return { labelKeys: [descriptor.labelKey] };
 }
 
@@ -69,6 +81,7 @@ export function CustomSectionField({
   errorFor,
   pages,
   academyId,
+  revealErrors = false,
 }: {
   readonly descriptor: CustomFieldDescriptor;
   /** The section's config as typed. */
@@ -78,6 +91,8 @@ export function CustomSectionField({
   readonly errorFor: FieldErrorLookup;
   readonly pages: readonly WebsitePage[];
   readonly academyId: string;
+  /** After a refused Apply: fields that wait for blur show their problem now. */
+  readonly revealErrors?: boolean;
 }): JSX.Element {
   const { key, labelKey } = descriptor;
   const id = `section-field-${key}`;
@@ -124,6 +139,17 @@ export function CustomSectionField({
           }
           onChange={onPatch}
           errorFor={errorFor}
+        />
+      );
+    case 'customLayout':
+      return (
+        <CustomSectionEditor
+          draft={draft}
+          onPatch={onPatch}
+          errorFor={errorFor}
+          revealErrors={revealErrors}
+          pages={pages}
+          academyId={academyId}
         />
       );
     case 'plans':

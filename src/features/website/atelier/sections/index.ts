@@ -41,6 +41,11 @@ const journeyProof = sectionGroup(
   'atelier:journey-proof',
   () => import('./atelier-journey-proof-sections')
 );
+// CMS phase 3c: the custom section, a group of its own.
+const custom = sectionGroup(
+  'atelier:custom',
+  () => import('./atelier-custom-section')
+);
 
 export {
   AtelierAbout,
@@ -91,4 +96,6 @@ export const ATELIER_SECTION_RENDERERS: Partial<SectionRenderers> = {
   videoTestimonials: journeyProof('AtelierVideoTestimonials'),
   downloads: journeyProof('AtelierDownloads'),
   certificates: journeyProof('AtelierCertificates'),
+  // CMS phase 3c.
+  custom: custom('AtelierCustom'),
 };

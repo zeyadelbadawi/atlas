@@ -44,7 +44,8 @@ export type SectionFieldKind =
   | 'deadline'
   | 'plans'
   | 'comparison'
-  | 'fileLink';
+  | 'fileLink'
+  | 'customLayout';
 
 interface FieldDescriptorBase {
   readonly key: string;
@@ -126,10 +127,14 @@ export interface ButtonsFieldDescriptor extends FieldDescriptorBase {
  * - `plans`: a pricing section's plans, each with its features and button;
  * - `comparison`: a comparison table's columns and rows (`columns` and
  *   `rows`), each row's cell per column ✓ / ✗ / short text
- *   (`ComparisonGridEditor`).
+ *   (`ComparisonGridEditor`);
+ * - `customLayout` (CMS phase 3c): the custom section's layout and its
+ *   columns of elements (`layout`, `ratio`, `verticalAlign`, `columns`),
+ *   edited by `custom-section/CustomSectionEditor`.
  */
 export interface CustomFieldDescriptor extends FieldDescriptorBase {
-  readonly kind: 'youtube' | 'deadline' | 'plans' | 'comparison';
+  readonly kind:
+    'youtube' | 'deadline' | 'plans' | 'comparison' | 'customLayout';
 }
 
 /**

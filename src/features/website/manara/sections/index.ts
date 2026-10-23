@@ -41,6 +41,11 @@ const journeyProof = sectionGroup(
   'manara:journey-proof',
   () => import('./manara-journey-proof-sections')
 );
+// CMS phase 3c: the custom section, a group of its own.
+const custom = sectionGroup(
+  'manara:custom',
+  () => import('./manara-custom-section')
+);
 
 export {
   ManaraAbout,
@@ -96,4 +101,6 @@ export const MANARA_SECTION_RENDERERS: Partial<SectionRenderers> = {
   videoTestimonials: journeyProof('ManaraVideoTestimonials'),
   downloads: journeyProof('ManaraDownloads'),
   certificates: journeyProof('ManaraCertificates'),
+  // CMS phase 3c.
+  custom: custom('ManaraCustom'),
 };

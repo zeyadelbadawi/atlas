@@ -35,6 +35,24 @@ describe('section design — what a theme offers', () => {
     expect(backgroundsFor('manara', 'hero')).toEqual([]);
   });
 
+  it('offers grounds to the phase 3d sections that passed the contrast pass', () => {
+    // The notice strip keeps its own tone in every theme.
+    for (const theme of Object.keys(SECTION_BACKGROUND_SUPPORT)) {
+      expect(backgroundsFor(theme as never, 'announcementBar')).toEqual([]);
+    }
+    // Theme 1 and Atelier draw the countdown as a dark band of their own.
+    expect(backgroundsFor('modern-education', 'countdown')).toEqual([]);
+    expect(backgroundsFor('atelier', 'countdown')).toEqual([]);
+    expect(backgroundsFor('manara', 'countdown').length).toBeGreaterThan(0);
+    // Riwaq's light form and comparison cards vanish on its deep ground.
+    expect(backgroundsFor('riwaq', 'interestForm')).toEqual([]);
+    expect(backgroundsFor('riwaq', 'comparison')).toEqual([]);
+    expect(backgroundsFor('riwaq', 'logos').length).toBeGreaterThan(0);
+    expect(
+      backgroundsFor('modern-education', 'pricing').length
+    ).toBeGreaterThan(0);
+  });
+
   it('offers "wide" only where the container is narrower than wide', () => {
     expect(designControlsFor('modern-education', 'features').width).toBe(true);
     expect(designControlsFor('riwaq', 'features').width).toBe(false);

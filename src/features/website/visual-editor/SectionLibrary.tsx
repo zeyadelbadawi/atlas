@@ -3,8 +3,13 @@
  * add, grouped by what it is for, each with one line saying what it shows,
  * and a search box. Picking one adds it — with ready content — where the
  * author asked (`insertAt`), and the editor selects it.
+ *
+ * CMS phase 3e — a section with presets («أشكال جاهزة») opens a second
+ * step in the same dialog: its looks, each previewed by the active theme,
+ * and its default content (`SectionPresetPicker`); "Back" returns to the
+ * list as it was left.
  */
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react';
 import {
@@ -18,10 +23,14 @@ import { Input } from '@/components/ui/input';
 import type { SectionType } from '@types';
 import { SECTION_METADATA } from '../sections/section-metadata.registry';
 import { SECTION_TYPE_ORDER } from '../constants/website.constants';
+import { SectionPresetPicker } from '../presets/SectionPresetPicker';
+import { presetsFor } from '../presets/section-presets.registry';
+import type { SectionStart } from '../presets/section-presets.types';
+import type { PresetPreviewSource } from '../presets/preset-preview-source';
 
 /** What each offered section is for, in the order the groups are shown. */
 export const SECTION_LIBRARY_GROUPS: readonly {
-  readonly key: 'intro' | 'courses' | 'trust' | 'info' | 'action';
+  readonly key: 'intro' | 'courses' | 'trust' | 'info' | 'action' | 'build';
   readonly types: readonly SectionType[];
 }[] = [
   {
@@ -69,21 +78,30 @@ export const SECTION_LIBRARY_GROUPS: readonly {
       'map',
     ],
   },
+  // CMS phase 3c — the section an Owner builds from elements.
+  { key: 'build', types: ['custom'] },
 ];
 
 export interface SectionLibraryProps {
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
-  readonly onPick: (type: SectionType) => void;
+  /** Adds a section of `type`: from a preset's start, or (absent) with its default content. */
+  readonly onPick: (type: SectionType, start?: SectionStart) => void;
+  /** The site as the editor previews it — the presets' miniatures are drawn with it. */
+  readonly previewSource: PresetPreviewSource;
 }
 
 export function SectionLibrary({
   open,
   onOpenChange,
   onPick,
+  previewSource,
 }: SectionLibraryProps): JSX.Element {
   const { t } = useTranslation();
   const [query, setQuery] = useState('');
+  // The section whose looks are shown (the second step), if any.
+  const [looksOf, setLooksOf] = useState<SectionType | null>(null);
+  const stepHeadingId = useId();
   const offered = useMemo(() => new Set(SECTION_TYPE_ORDER), []);
   const needle = query.trim().toLocaleLowerCase();
 
@@ -104,89 +122,142 @@ export function SectionLibrary({
     <Dialog
       open={open}
       onOpenChange={(next) => {
-        if (!next) setQuery('');
+        if (!next) {
+          setQuery('');
+          setLooksOf(null);
+        }
         onOpenChange(next);
       }}
     >
       <DialogContent
-        className="flex max-h-[90dvh] max-w-3xl flex-col gap-4 p-0 sm:max-h-[85vh]"
+        className={
+          looksOf
+            ? 'flex max-h-[92dvh] max-w-4xl flex-col gap-0 p-0 sm:max-h-[88vh]'
+            : 'flex max-h-[90dvh] max-w-3xl flex-col gap-4 p-0 sm:max-h-[85vh]'
+        }
         data-testid="section-library"
       >
-        <DialogHeader className="space-y-1 px-6 pt-6 text-start">
-          <DialogTitle>{t('website:visualEditor.library.title')}</DialogTitle>
-          <DialogDescription>
-            {t('website:visualEditor.library.subtitle')}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="px-6">
-          <div className="relative">
-            <Search
-              className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-              aria-hidden
+        {looksOf ? (
+          <>
+            {/* Radix needs a title for the dialog; the step's heading is the visible one. */}
+            <DialogTitle className="sr-only">
+              {t('website:visualEditor.library.title')}
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              {t('website:presetPicker.subtitle')}
+            </DialogDescription>
+            <SectionPresetPicker
+              key={looksOf}
+              type={looksOf}
+              source={previewSource}
+              headingId={stepHeadingId}
+              onBack={() => setLooksOf(null)}
+              onAdd={(start) => {
+                const type = looksOf;
+                setQuery('');
+                setLooksOf(null);
+                onPick(type, start);
+              }}
             />
-            <Input
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder={t('website:visualEditor.library.search')}
-              aria-label={t('website:visualEditor.library.search')}
-              className="ps-9"
-            />
-          </div>
-        </div>
-        <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-6 pb-6">
-          {groups.length === 0 ? (
-            <p
-              className="py-8 text-center text-sm text-muted-foreground"
-              role="status"
-            >
-              {t('website:visualEditor.library.empty', { query })}
-            </p>
-          ) : (
-            groups.map((group) => (
-              <section key={group.key} aria-labelledby={`library-${group.key}`}>
-                <h3
-                  id={`library-${group.key}`}
-                  className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+          </>
+        ) : (
+          <>
+            <DialogHeader className="space-y-1 px-6 pt-6 text-start">
+              <DialogTitle>
+                {t('website:visualEditor.library.title')}
+              </DialogTitle>
+              <DialogDescription>
+                {t('website:visualEditor.library.subtitle')}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="px-6">
+              <div className="relative">
+                <Search
+                  className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+                  aria-hidden
+                />
+                <Input
+                  type="search"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder={t('website:visualEditor.library.search')}
+                  aria-label={t('website:visualEditor.library.search')}
+                  className="ps-9"
+                />
+              </div>
+            </div>
+            <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-6 pb-6">
+              {groups.length === 0 ? (
+                <p
+                  className="py-8 text-center text-sm text-muted-foreground"
+                  role="status"
                 >
-                  {t(`website:visualEditor.library.categories.${group.key}`)}
-                </h3>
-                <ul className="grid gap-2 sm:grid-cols-2">
-                  {group.types.map((type) => {
-                    const { icon: Icon, labelKey } = SECTION_METADATA[type];
-                    return (
-                      <li key={type}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setQuery('');
-                            onPick(type);
-                          }}
-                          data-section-type={type}
-                          className="group flex min-h-[4.5rem] w-full items-start gap-3 rounded-lg border border-border bg-card p-3 text-start transition-colors hover:border-primary/60 hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none"
-                        >
-                          <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
-                            <Icon className="size-5" aria-hidden />
-                          </span>
-                          <span className="min-w-0 space-y-0.5">
-                            <span className="block text-sm font-medium text-foreground">
-                              {t(labelKey)}
-                            </span>
-                            <span className="block text-xs leading-relaxed text-muted-foreground">
-                              {t(
-                                `website:visualEditor.library.descriptions.${type}`
-                              )}
-                            </span>
-                          </span>
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </section>
-            ))
-          )}
-        </div>
+                  {t('website:visualEditor.library.empty', { query })}
+                </p>
+              ) : (
+                groups.map((group) => (
+                  <section
+                    key={group.key}
+                    aria-labelledby={`library-${group.key}`}
+                  >
+                    <h3
+                      id={`library-${group.key}`}
+                      className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                    >
+                      {t(
+                        `website:visualEditor.library.categories.${group.key}`
+                      )}
+                    </h3>
+                    <ul className="grid gap-2 sm:grid-cols-2">
+                      {group.types.map((type) => {
+                        const { icon: Icon, labelKey } = SECTION_METADATA[type];
+                        const looks = presetsFor(type).length;
+                        return (
+                          <li key={type}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (looks > 0) {
+                                  setLooksOf(type);
+                                  return;
+                                }
+                                setQuery('');
+                                onPick(type);
+                              }}
+                              data-section-type={type}
+                              className="group flex min-h-[4.5rem] w-full items-start gap-3 rounded-lg border border-border bg-card p-3 text-start transition-colors hover:border-primary/60 hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none"
+                            >
+                              <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+                                <Icon className="size-5" aria-hidden />
+                              </span>
+                              <span className="min-w-0 space-y-0.5">
+                                <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium text-foreground">
+                                  {t(labelKey)}
+                                  {looks > 0 ? (
+                                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                                      {t('website:presetPicker.looksCount', {
+                                        count: looks,
+                                      })}
+                                    </span>
+                                  ) : null}
+                                </span>
+                                <span className="block text-xs leading-relaxed text-muted-foreground">
+                                  {t(
+                                    `website:visualEditor.library.descriptions.${type}`
+                                  )}
+                                </span>
+                              </span>
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </section>
+                ))
+              )}
+            </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

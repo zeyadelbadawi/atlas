@@ -42,6 +42,7 @@ import {
   Tags,
   Timer,
   Users,
+  LayoutTemplate,
   type LucideIcon,
 } from 'lucide-react';
 import type { SectionConfigMap, SectionType } from '@types';
@@ -215,6 +216,11 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadataEntry> = {
     labelKey: 'website:sections.certificates.label',
     icon: BadgeCheck,
   },
+  custom: {
+    type: 'custom',
+    labelKey: 'website:sections.custom.label',
+    icon: LayoutTemplate,
+  },
 };
 
 /**
@@ -380,6 +386,7 @@ export function getDefaultSectionConfig<TType extends SectionType>(
     ...phase3dStarterConfigs(),
     ...batchDStarterConfigs(),
     ...phase3dBatchCStarterConfigs(),
+    custom: customStarterConfig(),
   };
 
   return defaults[type] as SectionConfigMap[TType];
@@ -738,5 +745,69 @@ function batchDStarterConfigs(): Pick<
       },
       items: [],
     },
+  };
+}
+
+/**
+ * CMS phase 3c — the custom section arrives as a bilingual two-column
+ * example: a heading, a short text and a sign-up button beside an image the
+ * Owner adds (until then the preview shows its frame and the public site
+ * leaves the image out). The button opens the academy's own sign-up page,
+ * so it works the moment the section is published.
+ */
+function customStarterConfig(): SectionConfigMap['custom'] {
+  const id = () => crypto.randomUUID();
+  return {
+    layout: 'two',
+    verticalAlign: 'center',
+    columns: [
+      {
+        id: id(),
+        elements: [
+          {
+            id: id(),
+            kind: 'heading',
+            level: 'h2',
+            text: {
+              en: 'Learn at your own pace, with teachers who care',
+              ar: 'تعلّم بالسرعة التي تناسبك مع معلمين يهتمون بك',
+            },
+          },
+          {
+            id: id(),
+            kind: 'text',
+            text: {
+              en: 'Small groups, clear explanations and weekly follow-up.\n\nJoin a free trial lesson and see how we teach.',
+              ar: 'مجموعات صغيرة وشرح واضح ومتابعة أسبوعية.\n\nاحضر حصة تجريبية مجانية وتعرّف على طريقتنا في التدريس.',
+            },
+          },
+          {
+            id: id(),
+            kind: 'button',
+            cta: {
+              label: {
+                en: 'Create your free account',
+                ar: 'أنشئ حسابك مجانًا',
+              },
+              authAction: 'signUp',
+            },
+          },
+        ],
+      },
+      {
+        id: id(),
+        elements: [
+          {
+            id: id(),
+            kind: 'image',
+            ratio: 'landscape',
+            imageAlt: {
+              en: 'Students in a lesson',
+              ar: 'طلاب أثناء الحصة',
+            },
+          },
+        ],
+      },
+    ],
   };
 }
