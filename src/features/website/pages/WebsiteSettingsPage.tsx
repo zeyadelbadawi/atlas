@@ -1,19 +1,29 @@
 /**
  * Website Settings Page.
  *
- * Theme / Brand / SEO / Navigation, as tabs of one settings surface —
- * each tab is its own component (`WebsiteThemeTab`, etc.), composed here,
- * never one enormous page component.
+ * Theme / Menu, header & footer / SEO / Language / Domain, as tabs of one
+ * settings surface — each tab is its own component (`WebsiteThemeTab`,
+ * etc.), composed here, never one enormous page component.
+ *
+ * CMS phase 4 — the theme and the menu, header and footer are also in the
+ * visual editor's Site panel, beside the page they change; their tabs say
+ * so and link there (`?panel=site`), so both places are one feature, not
+ * two. Logo and colours live in Brand Studio, linked from the Theme tab.
+ * The open tab is in the address (`?tab=`), so it can be linked to and
+ * survives a reload.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom';
+import { Brush, MousePointerClick } from 'lucide-react';
 import { usePermissions } from '@hooks';
 import { useConfirmDialog } from '@app/providers';
 import { useUnsavedChangesRegistry } from '@features/unsaved-changes';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { SectionTabs } from '@components/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAcademy } from '@features/academy';
@@ -27,13 +37,18 @@ import { WebsiteNavigationTab } from '../components/WebsiteNavigationTab';
 import { WebsiteLanguageTab } from '../components/WebsiteLanguageTab';
 import { WebsiteContentLocaleProvider } from '../components/website-content-locale';
 import { resolveDefaultLocale } from '../constants/locale.constants';
-import { getWebsiteTabs } from '../utils/website-navigation.utils';
-import type { BreadcrumbItem } from '@types';
+import { WebsiteSitemapPreviewCard } from '../components/WebsiteSitemapPreviewCard';
+import {
+  getWebsiteTabs,
+  visualEditorHomePath,
+} from '../utils/website-navigation.utils';
+import type { BreadcrumbItem, WebsitePage } from '@types';
 
+/** Look and layout first (also in the visual editor), then site details. */
 const SETTINGS_TABS = [
   'theme',
-  'seo',
   'navigation',
+  'seo',
   'language',
   'domain',
 ] as const;
@@ -61,7 +76,7 @@ function WebsiteSettings(): JSX.Element {
   const { academyId } = useParams<{ academyId: string }>();
   const { hasPermission } = usePermissions();
   // `?tab=brand` (etc.) opens that tab — the launch checklist links here.
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const requestedTab = searchParams.get('tab');
   const initialTab = SETTINGS_TABS.includes(requestedTab as SettingsTab)
     ? (requestedTab as SettingsTab)
@@ -89,6 +104,14 @@ function WebsiteSettings(): JSX.Element {
       if (!leave) return;
     }
     setTab(next as SettingsTab);
+    setSearchParams(
+      (params) => {
+        const updated = new URLSearchParams(params);
+        updated.set('tab', next);
+        return updated;
+      },
+      { replace: true }
+    );
   };
 
   const academyQuery = useAcademy(academyId ?? '');
@@ -154,6 +177,10 @@ function WebsiteSettings(): JSX.Element {
       label: academy.name,
       path: DASHBOARD_ROUTES.academy,
     },
+    {
+      labelKey: 'website:overview.title',
+      path: buildPath(DASHBOARD_ROUTES.websiteOverview, { academyId }),
+    },
     { labelKey: 'website:settings.title' },
   ];
 
@@ -180,25 +207,27 @@ function WebsiteSettings(): JSX.Element {
         />
 
         <Tabs value={tab} onValueChange={(next) => void handleTabChange(next)}>
-          <TabsList>
-            <TabsTrigger value="theme">
+          <TabsList className="h-auto max-w-full flex-wrap justify-start">
+            <TabsTrigger value="theme" className="min-h-9">
               {t('website:settings.tabs.theme')}
             </TabsTrigger>
-            <TabsTrigger value="seo">
-              {t('website:settings.tabs.seo')}
-            </TabsTrigger>
-            <TabsTrigger value="navigation">
+            <TabsTrigger value="navigation" className="min-h-9">
               {t('website:settings.tabs.navigation')}
             </TabsTrigger>
-            <TabsTrigger value="language">
+            <TabsTrigger value="seo" className="min-h-9">
+              {t('website:settings.tabs.seo')}
+            </TabsTrigger>
+            <TabsTrigger value="language" className="min-h-9">
               {t('website:settings.tabs.language')}
             </TabsTrigger>
-            <TabsTrigger value="domain">
+            <TabsTrigger value="domain" className="min-h-9">
               {t('website:settings.tabs.domain')}
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="theme" className="pt-4">
+          <TabsContent value="theme" className="space-y-6 pt-4">
+            <AlsoInVisualEditor academyId={academyId} pages={pages} />
+            <BrandStudioLink academyId={academyId} />
             <WebsiteThemeTab
               academyId={academyId}
               academyName={academy.name}
@@ -208,14 +237,19 @@ function WebsiteSettings(): JSX.Element {
             />
           </TabsContent>
 
-          <TabsContent value="seo" className="pt-4">
+          <TabsContent value="seo" className="space-y-6 pt-4">
             <WebsiteSeoTab
               academyId={academyId}
               configuration={configuration}
             />
+            <WebsiteSitemapPreviewCard
+              configuration={configuration}
+              pages={pages}
+            />
           </TabsContent>
 
-          <TabsContent value="navigation" className="pt-4">
+          <TabsContent value="navigation" className="space-y-6 pt-4">
+            <AlsoInVisualEditor academyId={academyId} pages={pages} />
             <WebsiteNavigationTab
               academyId={academyId}
               configuration={configuration}
@@ -239,5 +273,81 @@ function WebsiteSettings(): JSX.Element {
         </Tabs>
       </div>
     </PageContainer>
+  );
+}
+
+/**
+ * The theme and the menu, header and footer are also edited in the visual
+ * editor's Site panel: said here, with the way there.
+ */
+function AlsoInVisualEditor({
+  academyId,
+  pages,
+}: {
+  readonly academyId: string;
+  readonly pages: readonly WebsitePage[];
+}): JSX.Element {
+  const { t } = useTranslation();
+  return (
+    <div
+      className="flex flex-col gap-3 rounded-lg border border-primary/20 bg-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between"
+      data-testid="settings-also-in-editor"
+    >
+      <div className="flex items-start gap-3">
+        <MousePointerClick
+          className="mt-0.5 size-5 shrink-0 text-primary"
+          aria-hidden
+        />
+        <div className="space-y-0.5">
+          <p className="text-sm font-medium text-foreground">
+            {t('website:settings.alsoInEditor.title')}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {t('website:settings.alsoInEditor.description')}
+          </p>
+        </div>
+      </div>
+      <Button asChild variant="outline" className="h-11 shrink-0 sm:h-10">
+        <Link to={visualEditorHomePath(academyId, pages, { site: true })}>
+          {t('website:settings.alsoInEditor.action')}
+        </Link>
+      </Button>
+    </div>
+  );
+}
+
+/** Logo and colours have one home, Brand Studio: the way there from Theme. */
+function BrandStudioLink({
+  academyId,
+}: {
+  readonly academyId: string;
+}): JSX.Element | null {
+  const { t } = useTranslation();
+  const { hasPermission } = usePermissions();
+  if (!hasPermission('academy.branding.update')) return null;
+  return (
+    <Card data-testid="settings-brand-link">
+      <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <Brush
+            className="mt-0.5 size-5 shrink-0 text-muted-foreground"
+            aria-hidden
+          />
+          <div className="space-y-0.5">
+            <p className="text-sm font-medium text-foreground">
+              {t('website:settings.brandLink.title')}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {t('website:settings.brandLink.description')}
+            </p>
+          </div>
+        </div>
+        <Button asChild variant="outline" className="h-11 shrink-0 sm:h-10">
+          <Link to={buildPath(DASHBOARD_ROUTES.academyBranding, { academyId })}>
+            {t('website:settings.brandLink.action')}
+          </Link>
+        </Button>
+      </CardContent>
+    </Card>
   );
 }

@@ -8,7 +8,9 @@
  *      typed, and the draft saves by itself ("All changes saved"): the API's
  *      draft holds the text;
  *   3. undoes (Ctrl+Z) — the field and the page are back, and that is
- *      saved too;
+ *      saved too; then edits text in place on the page (double-click,
+ *      type, Enter — CMS phase 4): the panel field follows, it saves, and
+ *      one Ctrl+Z (pressed in the page) takes the whole edit back;
  *   4. adds an FAQ from the section library right after the first section
  *      — it is selected, on the page, and saved; undo removes it again;
  *   5. gives the hero a WhatsApp button: a half-typed number is flagged
@@ -182,6 +184,49 @@ test.describe('J51 — visual editor @critical', () => {
     await expect
       .poll(async () => JSON.stringify((await home(request)).sections))
       .not.toContain('J51');
+
+    // 3b. Inline (CMS phase 4): double-click text of the selected section
+    // ON THE PAGE, type, Enter — the panel field follows, it saves, and
+    // one undo takes back the whole edit.
+    const editable = frame
+      .locator(`[data-preview-section="${target.id}"] [data-inline-text]`)
+      .first();
+    await expect(editable).toBeAttached();
+    const inlineBefore = (await editable.textContent()) ?? '';
+    // The canvas is a frame drawn scaled down, which Playwright's pointer
+    // cannot aim into reliably: the double-click is dispatched on the text.
+    await editable.evaluate((element) =>
+      element.scrollIntoView({ block: 'center' })
+    );
+    await editable.dispatchEvent('dblclick');
+    await expect(
+      frame.locator('[data-inline-editing][contenteditable]')
+    ).toHaveCount(1);
+    const typing = frame.locator('[data-inline-editing]');
+    await typing.pressSequentially(' J51i');
+    await expect
+      .poll(async () =>
+        panel
+          .locator('input[type="text"], textarea')
+          .evaluateAll((elements) =>
+            elements.some((element) =>
+              (element as HTMLInputElement).value.includes('J51i')
+            )
+          )
+      )
+      .toBe(true);
+    await typing.press('Enter');
+    await expect(frame.locator('[data-inline-editing]')).toHaveCount(0);
+    await saved();
+    await expect
+      .poll(async () => JSON.stringify((await home(request)).sections))
+      .toContain('J51i');
+    await page.keyboard.press('Control+z');
+    await expect(editable).toHaveText(inlineBefore);
+    await saved();
+    await expect
+      .poll(async () => JSON.stringify((await home(request)).sections))
+      .not.toContain('J51i');
 
     // 4. Add an FAQ right after the first section ("+" under its row).
     await page

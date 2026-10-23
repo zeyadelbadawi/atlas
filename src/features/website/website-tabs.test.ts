@@ -16,6 +16,8 @@ describe('getWebsiteTabs', () => {
     expect(messages?.labelKey).toBe('website:messages.title');
   });
 
+  // CMS phase 4: Preview is reached from Overview, Pages and each page's
+  // menu, no longer as a tab of its own.
   it('leaves it out otherwise, keeping every other tab', () => {
     const ids = getWebsiteTabs('academy-1').map((tab) => tab.id);
     expect(ids).not.toContain('website-tab-messages');
@@ -24,7 +26,6 @@ describe('getWebsiteTabs', () => {
       'website-tab-pages',
       'website-tab-content',
       'website-tab-settings',
-      'website-tab-preview',
     ]);
   });
 });

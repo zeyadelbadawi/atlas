@@ -433,7 +433,7 @@ function WebsitePageEditor(): JSX.Element {
                         strokeWidth={2}
                         aria-hidden
                       />
-                      {t('website:visualEditor.open')}
+                      {t('website:visualEditor.editIn')}
                     </Link>
                   </Button>
                 ) : null}

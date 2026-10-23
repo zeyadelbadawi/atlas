@@ -1,7 +1,7 @@
 {
   "overview": {
     "title": "Website",
-    "subtitle": "Manage your Academy's public website from one place.",
+    "subtitle": "Edit your pages, set up your website and publish it, all from here.",
     "visitWebsite": "Visit website",
     "publicUrl": {
       "label": "Your website address",
@@ -17,7 +17,7 @@
     },
     "settings": {
       "title": "Settings",
-      "description": "Theme, brand, SEO and navigation"
+      "description": "Theme, menu, SEO, language and domain"
     },
     "preview": {
       "title": "Preview",
@@ -27,6 +27,46 @@
       "title": "Sitemap preview",
       "help": "The pages your published website lists for search engines in its sitemap, at /sitemap.xml on your site: visible pages that allow indexing. This preview uses your saved pages, so publish to update the live sitemap. Your public courses are listed there too.",
       "empty": "Nothing appears in the sitemap yet. Publish your website, keep search engine indexing and the sitemap switched on in SEO, and make sure pages are visible and indexable."
+    },
+    "editWebsite": "Edit website",
+    "previewDraft": "Preview draft",
+    "start": {
+      "title": "Your website",
+      "description": "Edit any page on the page itself in the visual editor. Your changes stay a draft until you publish."
+    },
+    "where": {
+      "title": "Where to change what",
+      "help": "Each part of your website has one place to edit it.",
+      "pages": {
+        "title": "Page content and sections",
+        "description": "Edit any page on the page itself. The classic editor is in each page's menu under Pages.",
+        "action": "Visual editor"
+      },
+      "site": {
+        "title": "Theme, menu, header and footer",
+        "description": "Change them in the visual editor's Site panel, beside your page. Also under Settings.",
+        "action": "Visual editor · Site"
+      },
+      "brand": {
+        "title": "Logo and colours",
+        "description": "Set once in Visual Identity for your whole academy.",
+        "action": "Visual Identity"
+      },
+      "settings": {
+        "title": "Search engines, language and domain",
+        "description": "Settings for the whole website that are not part of a page.",
+        "action": "Settings"
+      },
+      "content": {
+        "title": "FAQs, testimonials and blog",
+        "description": "Reusable content your sections show.",
+        "action": "Content"
+      },
+      "messages": {
+        "title": "Messages from visitors",
+        "description": "What visitors send through your contact and interest forms.",
+        "action": "Messages"
+      }
     }
   },
   "content": {
@@ -443,15 +483,25 @@
     }
   },
   "settings": {
-    "title": "Website",
-    "subtitle": "Configure your Academy's public website — theme, branding, SEO and navigation.",
+    "title": "Website settings",
+    "subtitle": "Settings for your whole website: theme, menu, header and footer, search engines, language and domain.",
     "tabs": {
       "theme": "Theme",
       "brand": "Brand",
       "seo": "SEO",
-      "navigation": "Navigation",
+      "navigation": "Menu, header & footer",
       "language": "Language",
       "domain": "Domain"
+    },
+    "alsoInEditor": {
+      "title": "Also in the visual editor",
+      "description": "Change this beside your page in the visual editor's Site panel and see the result as you go.",
+      "action": "Open in visual editor"
+    },
+    "brandLink": {
+      "title": "Logo and colours",
+      "description": "Your logo and colours are set in Visual Identity and apply to your whole website.",
+      "action": "Open Visual Identity"
     }
   },
   "theme": {
@@ -590,7 +640,7 @@
   },
   "pages": {
     "title": "Pages",
-    "subtitle": "Your website's core and custom pages.",
+    "subtitle": "Open a page to edit it in the visual editor. Turn a page off to hide it from visitors.",
     "coreBadge": "Core",
     "visibilityToggle": "Visible",
     "createAction": "New page",
@@ -599,7 +649,17 @@
     "slugLabel": "URL slug",
     "deleteAction": "Delete page",
     "deleteConfirmTitle": "Delete this page?",
-    "deleteConfirmDescription": "\"{{title}}\" and its content will be permanently deleted. This cannot be undone."
+    "deleteConfirmDescription": "\"{{title}}\" and its content will be permanently deleted. This cannot be undone.",
+    "previewAction": "Preview",
+    "editAction": "Edit",
+    "editAria": "Edit {{title}} in the visual editor",
+    "editClassicAria": "Edit {{title}} in the classic editor",
+    "moreActions": "More actions for {{title}}",
+    "classicEditor": "Edit in classic editor",
+    "previewPage": "Preview this page",
+    "visibleState": "Visible",
+    "hiddenState": "Hidden",
+    "alwaysVisible": "Always available to visitors"
   },
   "editor": {
     "featuredCoursesTitle": "Courses to feature",
@@ -2420,7 +2480,8 @@
       "inPanel": "{{field}} is edited in the panel.",
       "ambiguous": "This text appears in more than one field. Edit it in the panel.",
       "notText": "This part of the section is edited in the panel."
-    }
+    },
+    "editIn": "Edit in visual editor"
   },
   "days": {
     "sat": "Saturday",

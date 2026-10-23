@@ -115,7 +115,7 @@ test('the Owner picks a platform (no typing) and publishes', async ({
   await signInThroughDashboard(page, SEED.owner, SEED.password);
   await page.waitForURL(/\/dashboard/);
   await page.goto(`/dashboard/academy/${academyId}/website/settings`);
-  await page.getByRole('tab', { name: 'Navigation' }).click();
+  await page.getByRole('tab', { name: 'Menu, header & footer' }).click();
 
   await page.getByRole('button', { name: 'Add link' }).click();
   const row = page.getByTestId('social-link-row').last();
@@ -167,7 +167,7 @@ test('the Owner picks a platform (no typing) and publishes', async ({
   expect(legacy.ok(), await legacy.text()).toBeTruthy();
 
   await page.reload();
-  await page.getByRole('tab', { name: 'Navigation' }).click();
+  await page.getByRole('tab', { name: 'Menu, header & footer' }).click();
   // The legacy row reads as Facebook in the CMS.
   await expect(page.getByTestId('social-platform-select').nth(1)).toContainText(
     'Facebook'
