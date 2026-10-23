@@ -37,13 +37,24 @@ export type SectionFieldKind =
   | 'select'
   | 'image'
   | 'cta'
-  | 'buttons';
+  | 'buttons'
+  | 'time'
+  | 'url'
+  | 'youtube'
+  | 'deadline'
+  | 'plans'
+  | 'comparison'
+  | 'fileLink';
 
 interface FieldDescriptorBase {
   readonly key: string;
   readonly labelKey: string;
   /** Offered only when the website's theme is one of these; absent = every theme. */
   readonly themes?: readonly WebsiteThemeKey[];
+  /** Persistent helper text under the control (what to type, what empty means). */
+  readonly hintKey?: string;
+  /** What a newly added repeatable item starts with (e.g. a schedule row's day). */
+  readonly defaultValue?: string | boolean;
 }
 
 export interface TextFieldDescriptor extends FieldDescriptorBase {
@@ -75,6 +86,22 @@ export interface SelectFieldDescriptor extends FieldDescriptorBase {
     /** Shown under the select while this option is chosen (e.g. what choosing it makes public). */
     readonly hintKey?: string;
   }[];
+  /**
+   * CMS phase 3d (batch D) — the field may be left unset: the select offers
+   * this "none" choice first, stored as an empty string (a milestone with no
+   * icon shows its number).
+   */
+  readonly noneLabelKey?: string;
+}
+
+/**
+ * CMS phase 3d — a plain, non-localized value with its own input type:
+ * `time` is a 24-hour `HH:MM` clock time (`<input type="time">`), `url` a
+ * web address. Both say what is wrong only once the author leaves the
+ * field (`section-field-inputs.tsx`).
+ */
+export interface PlainInputFieldDescriptor extends FieldDescriptorBase {
+  readonly kind: 'time' | 'url';
 }
 
 /**
@@ -86,6 +113,33 @@ export interface ButtonsFieldDescriptor extends FieldDescriptorBase {
   readonly kind: 'buttons';
   /** How many buttons the section needs (a CTA band needs one). */
   readonly minButtons?: number;
+  /** How many it may have when fewer than three (a notice strip has one, in `cta`). */
+  readonly maxButtons?: number;
+}
+
+/**
+ * CMS phase 3d — a field with an editor of its own
+ * (`components/section-field-editors.tsx`):
+ * - `youtube`: a YouTube link, stored as the video id under `key`;
+ * - `deadline`: a date and time in the academy's time zone, stored as an
+ *   ISO deadline under `key` and the zone under `timeZone`;
+ * - `plans`: a pricing section's plans, each with its features and button;
+ * - `comparison`: a comparison table's columns and rows (`columns` and
+ *   `rows`), each row's cell per column ✓ / ✗ / short text
+ *   (`ComparisonGridEditor`).
+ */
+export interface CustomFieldDescriptor extends FieldDescriptorBase {
+  readonly kind: 'youtube' | 'deadline' | 'plans' | 'comparison';
+}
+
+/**
+ * CMS phase 3d (batch D) — a download's link (`components/FileLinkField.tsx`):
+ * a web address, or a file (a PDF) picked from or uploaded to the academy's
+ * media library. A repeatable item may also hold a `youtube` field (a video
+ * review's link); both are routed by `section-item-field-editors.tsx`.
+ */
+export interface FileLinkFieldDescriptor extends FieldDescriptorBase {
+  readonly kind: 'fileLink';
 }
 
 /** A fully discriminated union on `kind` — `select` is the only variant that carries `options`, so `descriptor.options` narrows correctly without a cast. */
@@ -94,7 +148,10 @@ export type SectionFieldDescriptor =
   | BooleanFieldDescriptor
   | NumberFieldDescriptor
   | SelectFieldDescriptor
-  | ButtonsFieldDescriptor;
+  | ButtonsFieldDescriptor
+  | PlainInputFieldDescriptor
+  | CustomFieldDescriptor
+  | FileLinkFieldDescriptor;
 
 export interface RepeatableFieldGroup {
   readonly key: string;

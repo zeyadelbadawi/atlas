@@ -1,5 +1,7 @@
 /**
- * Website Messages Page — the Academy's Contact form inbox.
+ * Website Messages Page — the Academy's Contact form inbox, which also
+ * holds "register your interest" submissions (CMS phase 3d, batch C),
+ * tagged as such, with their phone and chosen option.
  *
  * Every message a visitor sends through the Academy's public website
  * Contact form (`ContactSection`) is persisted server-side as a
@@ -59,7 +61,9 @@ import {
   getContactSubmissionStatusLabelKey,
   getContactSubmissionStatusTone,
   getStatusChangeToastKey,
-  toMessageExcerpt,
+  isInterestSubmission,
+  toSubmissionContact,
+  toSubmissionExcerpt,
 } from '../utils/contact-submission.utils';
 
 const TABLE_COLUMN_COUNT = 5;
@@ -77,6 +81,7 @@ export default function WebsiteMessagesPage(): JSX.Element {
     hasFilters,
     setSearch,
     setStatus,
+    setKind,
     setFrom,
     setTo,
     setSort,
@@ -184,14 +189,17 @@ export default function WebsiteMessagesPage(): JSX.Element {
         header: t('website:messages.table.name'),
         enableSorting: false,
         cell: ({ row }) => (
-          <span
-            className={cn(
-              'block max-w-[14rem] truncate text-foreground',
-              row.original.status === 'new' && 'font-semibold'
-            )}
-            dir="auto"
-          >
-            {row.original.name}
+          <span className="flex max-w-[16rem] items-center gap-2">
+            <span
+              className={cn(
+                'min-w-0 truncate text-foreground',
+                row.original.status === 'new' && 'font-semibold'
+              )}
+              dir="auto"
+            >
+              {row.original.name}
+            </span>
+            {isInterestSubmission(row.original) ? <InterestTag /> : null}
           </span>
         ),
       },
@@ -209,7 +217,7 @@ export default function WebsiteMessagesPage(): JSX.Element {
             )}
             dir="auto"
           >
-            {row.original.email}
+            {toSubmissionContact(row.original)}
           </span>
         ),
       },
@@ -227,7 +235,7 @@ export default function WebsiteMessagesPage(): JSX.Element {
             )}
             dir="auto"
           >
-            {toMessageExcerpt(row.original.message)}
+            {toSubmissionExcerpt(row.original)}
           </span>
         ),
       },
@@ -369,11 +377,16 @@ export default function WebsiteMessagesPage(): JSX.Element {
                       className="shrink-0"
                     />
                   </span>
+                  {isInterestSubmission(submission) ? (
+                    <span className="block">
+                      <InterestTag />
+                    </span>
+                  ) : null}
                   <span
                     className="block truncate text-xs text-muted-foreground"
                     dir="auto"
                   >
-                    {submission.email}
+                    {toSubmissionContact(submission)}
                   </span>
                   <span
                     className={cn(
@@ -382,7 +395,7 @@ export default function WebsiteMessagesPage(): JSX.Element {
                     )}
                     dir="auto"
                   >
-                    {toMessageExcerpt(submission.message)}
+                    {toSubmissionExcerpt(submission)}
                   </span>
                   <time
                     dateTime={submission.createdAt}
@@ -442,6 +455,7 @@ export default function WebsiteMessagesPage(): JSX.Element {
           summary={summaryQuery.data}
           onSearchChange={setSearch}
           onStatusChange={setStatus}
+          onKindChange={setKind}
           onFromChange={setFrom}
           onToChange={setTo}
           onSortChange={setSort}
@@ -463,5 +477,18 @@ export default function WebsiteMessagesPage(): JSX.Element {
         pendingStatus={pendingStatus}
       />
     </PageContainer>
+  );
+}
+
+/**
+ * CMS phase 3d (batch C) — marks a "register your interest" submission in
+ * the list, in words (never colour alone).
+ */
+function InterestTag(): JSX.Element {
+  const { t } = useTranslation();
+  return (
+    <span className="inline-flex shrink-0 items-center rounded-full border border-border px-2 py-0.5 text-xs font-medium text-foreground">
+      {t('website:messages.kind.interestTag')}
+    </span>
   );
 }

@@ -71,6 +71,29 @@ export interface ContactMessagePayload {
 }
 
 /**
+ * CMS phase 3d (batch C) — a "register your interest" section's
+ * submission: the SAME endpoint, throttle, honeypot and inbox as the
+ * Contact form, marked `kind: 'interest'`. Empty optional fields are left
+ * out. The API checks it against the published section (`sectionId`):
+ * required fields, and that `choice` is one of its option ids.
+ */
+export interface InterestMessagePayload {
+  readonly kind: 'interest';
+  readonly sectionId: string;
+  readonly name: string;
+  /** As typed, with its ISO country; the API normalises it. */
+  readonly phoneNumber: string;
+  readonly phoneCountry: string;
+  readonly email?: string;
+  readonly message?: string;
+  /** The chosen option's id. */
+  readonly choice?: string;
+  /** The language the visitor read the form in. */
+  readonly locale: 'en' | 'ar';
+  readonly company?: string;
+}
+
+/**
  * Phase 6 — the ONE combined Academy Identity/Branding read
  * (`GET public/websites/:academyId/identity`), reused across the Public
  * Website, the Student LMS, and the Dashboard. Colors are HSL triplet

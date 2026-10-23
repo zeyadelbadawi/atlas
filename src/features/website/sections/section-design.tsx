@@ -82,6 +82,25 @@ export const SECTION_DESIGN_SUPPORT: Record<SectionType, SectionDesignSupport> =
     contact: NO_ALIGN,
     courseCatalog: NO_ALIGN,
     courseSpotlight: NO_ALIGN,
+    // CMS phase 3d.
+    logos: FULL,
+    results: FULL,
+    schedule: NO_ALIGN,
+    map: NO_ALIGN,
+    whatsappBar: FULL,
+    video: FULL,
+    pricing: FULL,
+    countdown: FULL,
+    // CMS phase 3d (batch D): the path and the files read down the page.
+    timeline: NO_ALIGN,
+    videoTestimonials: FULL,
+    downloads: NO_ALIGN,
+    certificates: FULL,
+    // CMS phase 3d (batch C): a form and a table read down the page; the
+    // notice strip's line and button may be centred.
+    interestForm: NO_ALIGN,
+    announcementBar: FULL,
+    comparison: NO_ALIGN,
   };
 
 /**
@@ -98,10 +117,28 @@ export const THEME_GROUNDS: Partial<
   riwaq: { light: 'porcelain', soft: 'stone', dark: 'deep' },
 };
 
-/** Every type but the openings (the hero and an inner page's title band keep their scene). */
-const GROUNDED_TYPES = (
-  Object.keys(SECTION_DESIGN_SUPPORT) as SectionType[]
-).filter((type) => type !== 'hero' && type !== 'pageHeader');
+/**
+ * The types the contrast pass has covered: every type but the openings
+ * (the hero and an inner page's title band keep their scene). A new section
+ * type joins only once it has been through the same pass.
+ */
+const GROUNDED_TYPES: readonly SectionType[] = [
+  'about',
+  'featuredCourses',
+  'statistics',
+  'features',
+  'testimonials',
+  'faq',
+  'cta',
+  'instructors',
+  'gallery',
+  'contact',
+  'courseCatalog',
+  'courseCategories',
+  'steps',
+  'featureSplit',
+  'courseSpotlight',
+];
 const except = (...types: SectionType[]) =>
   GROUNDED_TYPES.filter((type) => !types.includes(type));
 

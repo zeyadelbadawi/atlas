@@ -21,6 +21,26 @@ import {
 } from './atelier-live-sections';
 import { AtelierTestimonials } from './AtelierTestimonials';
 import { AtelierFaq } from './AtelierFaq';
+import { sectionGroup } from '@/features/website/theme-packs/section-groups';
+
+// This theme's phase 3d sections, a chunk per group, imported from the pack
+// itself (`section-groups.tsx`).
+const trustVisit = sectionGroup(
+  'atelier:trust-visit',
+  () => import('./atelier-trust-visit-sections')
+);
+const engage = sectionGroup(
+  'atelier:engage',
+  () => import('./atelier-engage-sections')
+);
+const enrol = sectionGroup(
+  'atelier:enrol',
+  () => import('./atelier-enrol-sections')
+);
+const journeyProof = sectionGroup(
+  'atelier:journey-proof',
+  () => import('./atelier-journey-proof-sections')
+);
 
 export {
   AtelierAbout,
@@ -46,10 +66,29 @@ export const ATELIER_SECTION_RENDERERS: Partial<SectionRenderers> = {
   steps: AtelierSteps,
   courseCategories: AtelierCourseCategories,
   featuredCourses: AtelierFeaturedCourses,
+  // CMS phase 3d (batch A).
+  whatsappBar: engage('AtelierWhatsappBar'),
+  video: engage('AtelierVideo'),
+  pricing: engage('AtelierPricing'),
+  countdown: engage('AtelierCountdown'),
+  // CMS phase 3d (batch C).
+  interestForm: enrol('AtelierInterestForm'),
+  announcementBar: enrol('AtelierAnnouncementBar'),
+  comparison: enrol('AtelierComparison'),
   instructors: AtelierInstructors,
   statistics: AtelierStatistics,
   testimonials: AtelierTestimonials,
   faq: AtelierFaq,
   cta: AtelierCta,
   gallery: AtelierGallery,
+  // CMS phase 3d.
+  logos: trustVisit('AtelierLogos'),
+  map: trustVisit('AtelierMap'),
+  schedule: trustVisit('AtelierSchedule'),
+  results: trustVisit('AtelierResults'),
+  // CMS phase 3d (batch D).
+  timeline: journeyProof('AtelierTimeline'),
+  videoTestimonials: journeyProof('AtelierVideoTestimonials'),
+  downloads: journeyProof('AtelierDownloads'),
+  certificates: journeyProof('AtelierCertificates'),
 };

@@ -82,6 +82,25 @@ describe('theme packs', () => {
       'courseCatalog',
       'contact',
       'gallery',
+      // CMS phase 3d (batch A).
+      'whatsappBar',
+      'video',
+      'pricing',
+      'countdown',
+      // CMS phase 3d (batch C).
+      'interestForm',
+      'announcementBar',
+      'comparison',
+      // CMS phase 3d.
+      'logos',
+      'map',
+      'schedule',
+      'results',
+      // CMS phase 3d (batch D).
+      'timeline',
+      'videoTestimonials',
+      'downloads',
+      'certificates',
     ] as const;
     expect(Object.keys(pack.renderers).sort()).toEqual([...home].sort());
     // Page-level slots: the fallback page hero, Course Details, 404 and

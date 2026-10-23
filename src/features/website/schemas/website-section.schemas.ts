@@ -33,7 +33,16 @@ import {
   MAX_HERO_HIGHLIGHTS,
   MAX_HERO_SUBTITLE_LENGTH,
   MAX_HERO_TITLE_LENGTH,
+  MAX_LOGOS,
   MAX_LONG_TEXT,
+  MAX_MAP_ADDRESS_LENGTH,
+  MAX_MAP_NOTE_LENGTH,
+  MAX_MAP_QUERY_LENGTH,
+  MAX_RESULT_VALUE_LENGTH,
+  MAX_RESULTS,
+  MAX_SCHEDULE_ROW_DETAIL_LENGTH,
+  MAX_SCHEDULE_ROW_TITLE_LENGTH,
+  MAX_SCHEDULE_ROWS,
   MAX_SECTION_ITEMS,
   MAX_SECTION_STEPS,
   MAX_SHORT_TEXT,
@@ -46,11 +55,69 @@ import {
   MAX_STEPS_TITLE_LENGTH,
   MIN_COURSE_CATALOG_PAGE_SIZE,
   MIN_COURSE_CATEGORIES,
+  SCHEDULE_TIME_PATTERN,
+  MAX_COUNTDOWN_DESCRIPTION_LENGTH,
+  MAX_COUNTDOWN_ENDED_MESSAGE_LENGTH,
+  MAX_COUNTDOWN_TITLE_LENGTH,
+  MAX_PRICING_BADGE_LENGTH,
+  MAX_PRICING_DESCRIPTION_LENGTH,
+  MAX_PRICING_FEATURE_LENGTH,
+  MAX_PRICING_FEATURES,
+  MAX_PRICING_PERIOD_LENGTH,
+  MAX_PRICING_PLAN_DESCRIPTION_LENGTH,
+  MAX_PRICING_PLAN_NAME_LENGTH,
+  MAX_PRICING_PLANS,
+  MAX_PRICING_PRICE_LENGTH,
+  MAX_TIME_ZONE_LENGTH,
+  MAX_VIDEO_CAPTION_LENGTH,
+  MAX_VIDEO_DESCRIPTION_LENGTH,
+  MAX_WHATSAPP_BAR_DESCRIPTION_LENGTH,
+  MAX_WHATSAPP_BAR_TITLE_LENGTH,
+  MIN_PRICING_PLANS,
+  TIME_ZONE_PATTERN,
+  ANNOUNCEMENT_TONES,
+  COMPARISON_CELL_VALUES,
+  INTEREST_FIELD_MODES,
+  MAX_ANNOUNCEMENT_TEXT_LENGTH,
+  MAX_COMPARISON_CELL_TEXT_LENGTH,
+  MAX_COMPARISON_COLUMN_LABEL_LENGTH,
+  MAX_COMPARISON_COLUMNS,
+  MAX_COMPARISON_DESCRIPTION_LENGTH,
+  MAX_COMPARISON_ROW_LABEL_LENGTH,
+  MAX_COMPARISON_ROWS,
+  MAX_INTEREST_CHOICE_LABEL_LENGTH,
+  MAX_INTEREST_FORM_DESCRIPTION_LENGTH,
+  MAX_INTEREST_OPTION_LENGTH,
+  MAX_INTEREST_OPTIONS,
+  MAX_INTEREST_SUCCESS_MESSAGE_LENGTH,
+  MIN_COMPARISON_COLUMNS,
+  CERTIFICATE_YEAR_PATTERN,
+  MAX_CERTIFICATES,
+  MAX_DOWNLOAD_DESCRIPTION_LENGTH,
+  MAX_DOWNLOAD_FILE_SIZE_LENGTH,
+  MAX_DOWNLOAD_FILE_TYPE_LENGTH,
+  MAX_DOWNLOAD_TITLE_LENGTH,
+  MAX_DOWNLOAD_URL_LENGTH,
+  MAX_DOWNLOADS,
+  MAX_TIMELINE_MILESTONE_DESCRIPTION_LENGTH,
+  MAX_TIMELINE_MILESTONE_TITLE_LENGTH,
+  MAX_TIMELINE_MILESTONES,
+  MAX_TIMELINE_PERIOD_LENGTH,
+  MAX_VIDEO_TESTIMONIAL_QUOTE_LENGTH,
+  MAX_VIDEO_TESTIMONIAL_ROLE_LENGTH,
+  MAX_VIDEO_TESTIMONIALS,
 } from '../constants/website.constants';
 import { isAllowedImageValue } from '../utils/image-value.utils';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import {
+  isCountdownDeadlineOrEmpty,
+  isDownloadLinkOrEmpty,
+  isYouTubeVideoIdOrEmpty,
+  normalizeYouTubeVideoInput,
+} from '../utils/section-media-values.utils';
+import {
   COURSE_CATALOG_SORT_VALUES,
+  SCHEDULE_DAYS,
   type PublicWebsiteLocale,
   type SectionType,
 } from '@types';
@@ -407,6 +474,360 @@ export const courseSpotlightSectionSchema = z.object({
   cta: websiteCtaSchema.optional(),
 });
 
+/** A tenant-typed web address (a logo's link) — exactly the section button's `url` rule. */
+const optionalSafeUrlSchema = z
+  .string()
+  .url('validation:invalidUrl')
+  .refine(isSafeExternalUrl, { message: 'validation:invalidUrl' })
+  .optional()
+  .or(z.literal(''));
+
+const logoItemSchema = z.object({
+  id: z.string(),
+  image: imageValueSchema.pipe(z.string().min(1, 'validation:required')),
+  alt: localizedRequired(MAX_SHORT_TEXT),
+  url: optionalSafeUrlSchema,
+});
+
+/** CMS phase 3d — mirrors the backend `logosSectionSchema` field for field. */
+export const logosSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  items: z.array(logoItemSchema).max(MAX_LOGOS),
+});
+
+/** CMS phase 3d — mirrors the backend `mapSectionSchema`. `query` is encoded into a fixed Google Maps URL, never used as an `href`. */
+export const mapSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  address: localizedRequired(MAX_MAP_ADDRESS_LENGTH),
+  note: localizedOptional(MAX_MAP_NOTE_LENGTH).optional(),
+  query: z
+    .string()
+    .max(MAX_MAP_QUERY_LENGTH, 'validation:maxLength')
+    .optional(),
+});
+
+const scheduleTimeSchema = z
+  .string()
+  .regex(SCHEDULE_TIME_PATTERN, 'validation:invalidTime');
+
+const scheduleRowSchema = z
+  .object({
+    id: z.string(),
+    day: z.enum(SCHEDULE_DAYS),
+    start: scheduleTimeSchema,
+    end: scheduleTimeSchema,
+    title: localizedRequired(MAX_SCHEDULE_ROW_TITLE_LENGTH),
+    teacher: localizedOptional(MAX_SCHEDULE_ROW_DETAIL_LENGTH).optional(),
+    location: localizedOptional(MAX_SCHEDULE_ROW_DETAIL_LENGTH).optional(),
+    sample: z.boolean().optional(),
+  })
+  // `HH:MM` compares correctly as text.
+  .refine((row) => row.end > row.start, {
+    message: 'validation:endAfterStart',
+    path: ['end'],
+  });
+
+/** CMS phase 3d — mirrors the backend `scheduleSectionSchema`. */
+export const scheduleSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  items: z.array(scheduleRowSchema).max(MAX_SCHEDULE_ROWS),
+});
+
+const resultItemSchema = z.object({
+  id: z.string(),
+  studentName: z
+    .string()
+    .min(1, 'validation:required')
+    .max(MAX_SHORT_TEXT, 'validation:maxLength'),
+  result: localizedRequired(MAX_RESULT_VALUE_LENGTH),
+  detail: localizedOptional(MAX_SHORT_TEXT).optional(),
+  photo: imageValueSchema.optional(),
+  photoAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
+  top: z.boolean().optional(),
+  sample: z.boolean().optional(),
+});
+
+/** CMS phase 3d — mirrors the backend `resultsSectionSchema`. */
+export const resultsSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  items: z.array(resultItemSchema).max(MAX_RESULTS),
+});
+
+/*
+ * CMS phase 3d (batch A) — mirror the backend's identically named schemas
+ * field for field (the parity cases prove it).
+ */
+
+/** A "Talk to us" strip: a short line and up to three buttons; the first is required. */
+export const whatsappBarSectionSchema = z.object({
+  title: localizedRequired(MAX_WHATSAPP_BAR_TITLE_LENGTH),
+  description: localizedOptional(
+    MAX_WHATSAPP_BAR_DESCRIPTION_LENGTH
+  ).optional(),
+  cta: websiteCtaSchema,
+  secondaryCta: websiteCtaSchema.optional(),
+  tertiaryCta: websiteCtaSchema.optional(),
+});
+
+/**
+ * A pasted YouTube link in any common form becomes its 11-character id;
+ * only the id is stored. Empty is a video not chosen yet (it saves; the
+ * public site leaves the section out).
+ */
+export const videoSectionSchema = z.object({
+  title: localizedOptional(MAX_SHORT_TEXT).optional(),
+  description: localizedOptional(MAX_VIDEO_DESCRIPTION_LENGTH).optional(),
+  videoId: z.preprocess(
+    normalizeYouTubeVideoInput,
+    z.string().refine(isYouTubeVideoIdOrEmpty, {
+      message: 'validation:invalidYouTubeVideo',
+    })
+  ),
+  poster: imageValueSchema.optional(),
+  caption: localizedOptional(MAX_VIDEO_CAPTION_LENGTH).optional(),
+});
+
+const pricingFeatureSchema = z.object({
+  id: z.string(),
+  text: localizedRequired(MAX_PRICING_FEATURE_LENGTH),
+  included: z.boolean(),
+});
+
+const pricingPlanSchema = z.object({
+  id: z.string(),
+  name: localizedRequired(MAX_PRICING_PLAN_NAME_LENGTH),
+  price: localizedRequired(MAX_PRICING_PRICE_LENGTH),
+  period: localizedOptional(MAX_PRICING_PERIOD_LENGTH).optional(),
+  description: localizedOptional(
+    MAX_PRICING_PLAN_DESCRIPTION_LENGTH
+  ).optional(),
+  features: z.array(pricingFeatureSchema).max(MAX_PRICING_FEATURES),
+  highlighted: z.boolean().optional(),
+  badge: localizedOptional(MAX_PRICING_BADGE_LENGTH).optional(),
+  cta: websiteCtaSchema.optional(),
+});
+
+export const pricingSectionSchema = z.object({
+  title: localizedOptional(MAX_SHORT_TEXT).optional(),
+  description: localizedOptional(MAX_PRICING_DESCRIPTION_LENGTH).optional(),
+  plans: z
+    .array(pricingPlanSchema)
+    .min(MIN_PRICING_PLANS)
+    .max(MAX_PRICING_PLANS),
+});
+
+/** `deadline`: an ISO date and time with its offset, or empty until chosen. */
+export const countdownSectionSchema = z.object({
+  title: localizedRequired(MAX_COUNTDOWN_TITLE_LENGTH),
+  description: localizedOptional(MAX_COUNTDOWN_DESCRIPTION_LENGTH).optional(),
+  deadline: z.string().refine(isCountdownDeadlineOrEmpty, {
+    message: 'validation:invalidDeadline',
+  }),
+  timeZone: z
+    .string()
+    .max(MAX_TIME_ZONE_LENGTH, 'validation:maxLength')
+    .regex(TIME_ZONE_PATTERN, 'validation:invalid')
+    .optional(),
+  endedMessage: localizedOptional(
+    MAX_COUNTDOWN_ENDED_MESSAGE_LENGTH
+  ).optional(),
+  cta: websiteCtaSchema.optional(),
+  secondaryCta: websiteCtaSchema.optional(),
+  tertiaryCta: websiteCtaSchema.optional(),
+});
+
+/*
+ * CMS phase 3d (batch C) — mirror the backend's identically named schemas
+ * field for field (the parity cases prove it).
+ */
+
+const interestOptionSchema = z.object({
+  id: z.string().min(1, 'validation:required'),
+  label: localizedRequired(MAX_INTEREST_OPTION_LENGTH),
+});
+
+/** "Register your interest": name and phone always; email, a choice and a message as the Owner sets. */
+export const interestFormSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(
+    MAX_INTEREST_FORM_DESCRIPTION_LENGTH
+  ).optional(),
+  emailField: z.enum(INTEREST_FIELD_MODES),
+  choiceField: z.enum(INTEREST_FIELD_MODES),
+  choiceLabel: localizedOptional(MAX_INTEREST_CHOICE_LABEL_LENGTH).optional(),
+  options: z.array(interestOptionSchema).max(MAX_INTEREST_OPTIONS),
+  messageField: z.enum(INTEREST_FIELD_MODES),
+  submitLabel: localizedOptional(MAX_CTA_LABEL_LENGTH).optional(),
+  successMessage: localizedOptional(
+    MAX_INTEREST_SUCCESS_MESSAGE_LENGTH
+  ).optional(),
+});
+
+/** A slim notice strip: a short line, one optional button and a named tone. */
+export const announcementBarSectionSchema = z.object({
+  text: localizedRequired(MAX_ANNOUNCEMENT_TEXT_LENGTH),
+  tone: z.enum(ANNOUNCEMENT_TONES),
+  cta: websiteCtaSchema.optional(),
+});
+
+const comparisonColumnSchema = z.object({
+  id: z.string().min(1, 'validation:required'),
+  label: localizedRequired(MAX_COMPARISON_COLUMN_LABEL_LENGTH),
+  highlighted: z.boolean().optional(),
+});
+
+const comparisonCellSchema = z.discriminatedUnion('value', [
+  z.object({
+    column: z.string().min(1),
+    value: z.literal(COMPARISON_CELL_VALUES[0]),
+  }),
+  z.object({
+    column: z.string().min(1),
+    value: z.literal(COMPARISON_CELL_VALUES[1]),
+  }),
+  z.object({
+    column: z.string().min(1),
+    value: z.literal(COMPARISON_CELL_VALUES[2]),
+    text: localizedRequired(MAX_COMPARISON_CELL_TEXT_LENGTH),
+  }),
+]);
+
+const comparisonRowSchema = z.object({
+  id: z.string().min(1, 'validation:required'),
+  label: localizedRequired(MAX_COMPARISON_ROW_LABEL_LENGTH),
+  cells: z.array(comparisonCellSchema).max(MAX_COMPARISON_COLUMNS),
+});
+
+/** A comparison table; every cell names one of the columns, once per row. */
+export const comparisonSectionSchema = z
+  .object({
+    title: localizedRequired(MAX_SHORT_TEXT),
+    description: localizedOptional(
+      MAX_COMPARISON_DESCRIPTION_LENGTH
+    ).optional(),
+    columns: z
+      .array(comparisonColumnSchema)
+      .min(MIN_COMPARISON_COLUMNS)
+      .max(MAX_COMPARISON_COLUMNS),
+    rows: z.array(comparisonRowSchema).max(MAX_COMPARISON_ROWS),
+  })
+  .superRefine((config, ctx) => {
+    const columnIds = new Set(config.columns.map((column) => column.id));
+    config.rows.forEach((row, rowIndex) => {
+      const seen = new Set<string>();
+      row.cells.forEach((cell, cellIndex) => {
+        if (!columnIds.has(cell.column) || seen.has(cell.column)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'validation:invalid',
+            path: ['rows', rowIndex, 'cells', cellIndex, 'column'],
+          });
+        }
+        seen.add(cell.column);
+      });
+    });
+  });
+
+/*
+ * CMS phase 3d (batch D) — mirror the backend's identically named schemas
+ * field for field (the parity cases prove it).
+ */
+
+/** A YouTube link in any common form, stored as its 11-character id; empty is a video not chosen yet. */
+const youTubeVideoIdSchema = z.preprocess(
+  normalizeYouTubeVideoInput,
+  z.string().refine(isYouTubeVideoIdOrEmpty, {
+    message: 'validation:invalidYouTubeVideo',
+  })
+);
+
+const timelineMilestoneSchema = z.object({
+  id: z.string(),
+  title: localizedRequired(MAX_TIMELINE_MILESTONE_TITLE_LENGTH),
+  period: localizedOptional(MAX_TIMELINE_PERIOD_LENGTH).optional(),
+  description: localizedOptional(
+    MAX_TIMELINE_MILESTONE_DESCRIPTION_LENGTH
+  ).optional(),
+  /** One of the features' curated icons, or empty (the number is shown). */
+  icon: z
+    .enum(FEATURE_ICON_OPTIONS as [string, ...string[]])
+    .optional()
+    .or(z.literal('')),
+});
+
+export const timelineSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  items: z.array(timelineMilestoneSchema).max(MAX_TIMELINE_MILESTONES),
+});
+
+const videoTestimonialItemSchema = z.object({
+  id: z.string(),
+  videoId: youTubeVideoIdSchema,
+  name: z
+    .string()
+    .min(1, 'validation:required')
+    .max(MAX_SHORT_TEXT, 'validation:maxLength'),
+  role: localizedRequired(MAX_VIDEO_TESTIMONIAL_ROLE_LENGTH),
+  quote: localizedOptional(MAX_VIDEO_TESTIMONIAL_QUOTE_LENGTH).optional(),
+  poster: imageValueSchema.optional(),
+  sample: z.boolean().optional(),
+});
+
+export const videoTestimonialsSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  items: z.array(videoTestimonialItemSchema).max(MAX_VIDEO_TESTIMONIALS),
+});
+
+const downloadItemSchema = z.object({
+  id: z.string(),
+  title: localizedRequired(MAX_DOWNLOAD_TITLE_LENGTH),
+  description: localizedOptional(MAX_DOWNLOAD_DESCRIPTION_LENGTH).optional(),
+  /** A media-library file or an http(s) address (`isDownloadLinkOrEmpty`); empty until added. */
+  url: z
+    .string()
+    .max(MAX_DOWNLOAD_URL_LENGTH, 'validation:maxLength')
+    .refine(isDownloadLinkOrEmpty, {
+      message: 'validation:invalidDownloadLink',
+    }),
+  fileType: z
+    .string()
+    .max(MAX_DOWNLOAD_FILE_TYPE_LENGTH, 'validation:maxLength')
+    .optional(),
+  fileSize: z
+    .string()
+    .max(MAX_DOWNLOAD_FILE_SIZE_LENGTH, 'validation:maxLength')
+    .optional(),
+});
+
+export const downloadsSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  items: z.array(downloadItemSchema).max(MAX_DOWNLOADS),
+});
+
+const certificateItemSchema = z.object({
+  id: z.string(),
+  image: imageValueSchema.pipe(z.string().min(1, 'validation:required')),
+  title: localizedRequired(MAX_SHORT_TEXT),
+  issuer: localizedOptional(MAX_SHORT_TEXT).optional(),
+  year: z
+    .string()
+    .regex(CERTIFICATE_YEAR_PATTERN, 'validation:invalidYear')
+    .optional()
+    .or(z.literal('')),
+});
+
+export const certificatesSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(MAX_LONG_TEXT).optional(),
+  items: z.array(certificateItemSchema).max(MAX_CERTIFICATES),
+});
+
 const SECTION_SCHEMAS = {
   hero: heroSectionSchema,
   about: aboutSectionSchema,
@@ -425,6 +846,23 @@ const SECTION_SCHEMAS = {
   steps: stepsSectionSchema,
   featureSplit: featureSplitSectionSchema,
   courseSpotlight: courseSpotlightSectionSchema,
+  whatsappBar: whatsappBarSectionSchema,
+  video: videoSectionSchema,
+  pricing: pricingSectionSchema,
+  countdown: countdownSectionSchema,
+  // CMS phase 3d (batch C).
+  interestForm: interestFormSectionSchema,
+  announcementBar: announcementBarSectionSchema,
+  comparison: comparisonSectionSchema,
+  logos: logosSectionSchema,
+  map: mapSectionSchema,
+  schedule: scheduleSectionSchema,
+  results: resultsSectionSchema,
+  // CMS phase 3d (batch D).
+  timeline: timelineSectionSchema,
+  videoTestimonials: videoTestimonialsSectionSchema,
+  downloads: downloadsSectionSchema,
+  certificates: certificatesSectionSchema,
 } satisfies Record<SectionType, z.ZodTypeAny>;
 
 /** Resolves the right Zod schema for a section type. The Section Editor's ONE dynamic-form entry point — no section's validation is ever hand-rolled inline in a component. */

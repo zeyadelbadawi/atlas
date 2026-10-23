@@ -34,16 +34,75 @@ import {
   MIN_COURSE_CATEGORIES,
   MAX_SPOTLIGHT_MODULES,
   MIN_SPOTLIGHT_MODULES,
+  MAX_COUNTDOWN_DESCRIPTION_LENGTH,
+  MAX_COUNTDOWN_ENDED_MESSAGE_LENGTH,
+  MAX_COUNTDOWN_TITLE_LENGTH,
+  MAX_PRICING_DESCRIPTION_LENGTH,
+  MAX_VIDEO_CAPTION_LENGTH,
+  MAX_VIDEO_DESCRIPTION_LENGTH,
+  MAX_WHATSAPP_BAR_DESCRIPTION_LENGTH,
+  MAX_WHATSAPP_BAR_TITLE_LENGTH,
+  MAX_LOGOS,
+  MAX_LONG_TEXT,
+  MAX_MAP_ADDRESS_LENGTH,
+  MAX_MAP_NOTE_LENGTH,
+  MAX_RESULT_VALUE_LENGTH,
+  MAX_RESULTS,
+  MAX_SCHEDULE_ROW_DETAIL_LENGTH,
+  MAX_SCHEDULE_ROW_TITLE_LENGTH,
+  MAX_SCHEDULE_ROWS,
+  MAX_CERTIFICATES,
+  MAX_DOWNLOAD_DESCRIPTION_LENGTH,
+  MAX_DOWNLOAD_TITLE_LENGTH,
+  MAX_DOWNLOADS,
+  MAX_TIMELINE_MILESTONE_DESCRIPTION_LENGTH,
+  MAX_TIMELINE_MILESTONE_TITLE_LENGTH,
+  MAX_TIMELINE_MILESTONES,
+  MAX_TIMELINE_PERIOD_LENGTH,
+  MAX_VIDEO_TESTIMONIAL_QUOTE_LENGTH,
+  MAX_VIDEO_TESTIMONIAL_ROLE_LENGTH,
+  MAX_VIDEO_TESTIMONIALS,
+  INTEREST_FIELD_MODES,
+  ANNOUNCEMENT_TONES,
+  MAX_ANNOUNCEMENT_TEXT_LENGTH,
+  MAX_COMPARISON_DESCRIPTION_LENGTH,
+  MAX_CTA_LABEL_LENGTH,
+  MAX_INTEREST_CHOICE_LABEL_LENGTH,
+  MAX_INTEREST_FORM_DESCRIPTION_LENGTH,
+  MAX_INTEREST_OPTION_LENGTH,
+  MAX_INTEREST_OPTIONS,
+  MAX_INTEREST_SUCCESS_MESSAGE_LENGTH,
 } from '../constants/website.constants';
 import type { SectionFieldSchema } from './section-field.types';
+import { SCHEDULE_DAYS } from '@types';
 import type { SectionType, WebsiteThemeKey } from '@types';
 
 /** Fields only Atelier draws — see `SectionFieldDescriptor.themes`. */
 const ATELIER_ONLY: readonly WebsiteThemeKey[] = ['atelier'];
 
+/** Saturday first — the order an Egyptian week runs. */
+const dayOptions = SCHEDULE_DAYS.map((day) => ({
+  value: day,
+  labelKey: `website:days.${day}`,
+}));
+
 const iconOptions = FEATURE_ICON_OPTIONS.map((icon) => ({
   value: icon,
   labelKey: `website:icons.${icon}`,
+}));
+
+/** CMS phase 3d (batch C) — how the interest form shows one optional field. */
+const interestFieldModeOptions = (field: 'email' | 'choice' | 'message') =>
+  INTEREST_FIELD_MODES.map((mode) => ({
+    value: mode,
+    labelKey: `website:fields.interestFieldModes.${mode}`,
+    hintKey: `website:fields.interestFieldHints.${field}.${mode}`,
+  }));
+
+const announcementToneOptions = ANNOUNCEMENT_TONES.map((tone) => ({
+  value: tone,
+  labelKey: `website:fields.announcementTones.${tone}`,
+  hintKey: `website:fields.announcementToneHints.${tone}`,
 }));
 
 export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
@@ -756,5 +815,655 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
       },
       { key: 'cta', kind: 'cta', labelKey: 'website:fields.primaryCta' },
     ],
+  },
+  logos: {
+    type: 'logos',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_LONG_TEXT,
+      },
+    ],
+    repeatable: {
+      key: 'items',
+      maxItems: MAX_LOGOS,
+      labelKey: 'website:fields.logoItems',
+      itemLabelKey: 'website:fields.logoItem',
+      itemFields: [
+        { key: 'image', kind: 'image', labelKey: 'website:fields.logoImage' },
+        {
+          key: 'alt',
+          kind: 'text',
+          labelKey: 'website:fields.logoAlt',
+          localized: true,
+          maxLength: MAX_SHORT_TEXT,
+        },
+        {
+          key: 'url',
+          kind: 'url',
+          labelKey: 'website:fields.logoUrl',
+          hintKey: 'website:fields.logoUrlHint',
+        },
+      ],
+    },
+  },
+  map: {
+    type: 'map',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'address',
+        kind: 'longText',
+        labelKey: 'website:fields.mapAddress',
+        localized: true,
+        maxLength: MAX_MAP_ADDRESS_LENGTH,
+      },
+      {
+        key: 'note',
+        kind: 'text',
+        labelKey: 'website:fields.mapNote',
+        localized: true,
+        maxLength: MAX_MAP_NOTE_LENGTH,
+      },
+      {
+        key: 'query',
+        kind: 'text',
+        labelKey: 'website:fields.mapQuery',
+        hintKey: 'website:fields.mapQueryHint',
+      },
+    ],
+  },
+  schedule: {
+    type: 'schedule',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_LONG_TEXT,
+      },
+    ],
+    repeatable: {
+      key: 'items',
+      maxItems: MAX_SCHEDULE_ROWS,
+      labelKey: 'website:fields.scheduleRows',
+      itemLabelKey: 'website:fields.scheduleRow',
+      itemFields: [
+        {
+          key: 'day',
+          kind: 'select',
+          labelKey: 'website:fields.scheduleDay',
+          options: dayOptions,
+          defaultValue: 'sat',
+        },
+        {
+          key: 'start',
+          kind: 'time',
+          labelKey: 'website:fields.scheduleStart',
+        },
+        {
+          key: 'end',
+          kind: 'time',
+          labelKey: 'website:fields.scheduleEnd',
+          hintKey: 'website:fields.scheduleEndHint',
+        },
+        {
+          key: 'title',
+          kind: 'text',
+          labelKey: 'website:fields.scheduleTitle',
+          localized: true,
+          maxLength: MAX_SCHEDULE_ROW_TITLE_LENGTH,
+        },
+        {
+          key: 'teacher',
+          kind: 'text',
+          labelKey: 'website:fields.scheduleTeacher',
+          localized: true,
+          maxLength: MAX_SCHEDULE_ROW_DETAIL_LENGTH,
+        },
+        {
+          key: 'location',
+          kind: 'text',
+          labelKey: 'website:fields.scheduleLocation',
+          localized: true,
+          maxLength: MAX_SCHEDULE_ROW_DETAIL_LENGTH,
+        },
+      ],
+    },
+  },
+  results: {
+    type: 'results',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_LONG_TEXT,
+      },
+    ],
+    repeatable: {
+      key: 'items',
+      maxItems: MAX_RESULTS,
+      labelKey: 'website:fields.resultItems',
+      itemLabelKey: 'website:fields.resultItem',
+      itemFields: [
+        {
+          key: 'studentName',
+          kind: 'text',
+          labelKey: 'website:fields.studentName',
+        },
+        {
+          key: 'result',
+          kind: 'text',
+          labelKey: 'website:fields.resultValue',
+          localized: true,
+          maxLength: MAX_RESULT_VALUE_LENGTH,
+        },
+        {
+          key: 'detail',
+          kind: 'text',
+          labelKey: 'website:fields.resultDetail',
+          localized: true,
+          maxLength: MAX_SHORT_TEXT,
+        },
+        {
+          key: 'photo',
+          kind: 'image',
+          labelKey: 'website:fields.studentPhoto',
+        },
+        {
+          key: 'photoAlt',
+          kind: 'text',
+          labelKey: 'website:fields.studentPhotoAlt',
+          localized: true,
+          maxLength: MAX_SHORT_TEXT,
+        },
+        { key: 'top', kind: 'boolean', labelKey: 'website:fields.resultTop' },
+      ],
+    },
+  },
+  // CMS phase 3d (batch A).
+  whatsappBar: {
+    type: 'whatsappBar',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_WHATSAPP_BAR_TITLE_LENGTH,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_WHATSAPP_BAR_DESCRIPTION_LENGTH,
+      },
+      {
+        key: 'buttons',
+        kind: 'buttons',
+        labelKey: 'website:fields.buttons',
+        minButtons: 1,
+      },
+    ],
+  },
+  video: {
+    type: 'video',
+    fields: [
+      { key: 'videoId', kind: 'youtube', labelKey: 'website:fields.videoLink' },
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_VIDEO_DESCRIPTION_LENGTH,
+      },
+      { key: 'poster', kind: 'image', labelKey: 'website:fields.videoPoster' },
+      {
+        key: 'caption',
+        kind: 'text',
+        labelKey: 'website:fields.caption',
+        localized: true,
+        maxLength: MAX_VIDEO_CAPTION_LENGTH,
+      },
+    ],
+  },
+  pricing: {
+    type: 'pricing',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_PRICING_DESCRIPTION_LENGTH,
+      },
+      { key: 'plans', kind: 'plans', labelKey: 'website:fields.pricingPlans' },
+    ],
+  },
+  countdown: {
+    type: 'countdown',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_COUNTDOWN_TITLE_LENGTH,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_COUNTDOWN_DESCRIPTION_LENGTH,
+      },
+      {
+        key: 'deadline',
+        kind: 'deadline',
+        labelKey: 'website:fields.deadline',
+      },
+      {
+        key: 'endedMessage',
+        kind: 'longText',
+        labelKey: 'website:fields.endedMessage',
+        localized: true,
+        maxLength: MAX_COUNTDOWN_ENDED_MESSAGE_LENGTH,
+      },
+      { key: 'buttons', kind: 'buttons', labelKey: 'website:fields.buttons' },
+    ],
+  },
+  // CMS phase 3d (batch C).
+  interestForm: {
+    type: 'interestForm',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_INTEREST_FORM_DESCRIPTION_LENGTH,
+      },
+      {
+        key: 'emailField',
+        kind: 'select',
+        labelKey: 'website:fields.interestEmailField',
+        options: interestFieldModeOptions('email'),
+      },
+      {
+        key: 'choiceField',
+        kind: 'select',
+        labelKey: 'website:fields.interestChoiceField',
+        options: interestFieldModeOptions('choice'),
+      },
+      {
+        key: 'choiceLabel',
+        kind: 'text',
+        labelKey: 'website:fields.interestChoiceLabel',
+        localized: true,
+        maxLength: MAX_INTEREST_CHOICE_LABEL_LENGTH,
+      },
+      {
+        key: 'messageField',
+        kind: 'select',
+        labelKey: 'website:fields.interestMessageField',
+        options: interestFieldModeOptions('message'),
+      },
+      {
+        key: 'submitLabel',
+        kind: 'text',
+        labelKey: 'website:fields.interestSubmitLabel',
+        localized: true,
+        maxLength: MAX_CTA_LABEL_LENGTH,
+      },
+      {
+        key: 'successMessage',
+        kind: 'longText',
+        labelKey: 'website:fields.interestSuccessMessage',
+        localized: true,
+        maxLength: MAX_INTEREST_SUCCESS_MESSAGE_LENGTH,
+      },
+    ],
+    repeatable: {
+      key: 'options',
+      maxItems: MAX_INTEREST_OPTIONS,
+      labelKey: 'website:fields.interestOptions',
+      itemLabelKey: 'website:fields.interestOption',
+      itemFields: [
+        {
+          key: 'label',
+          kind: 'text',
+          labelKey: 'website:fields.interestOptionLabel',
+          localized: true,
+          maxLength: MAX_INTEREST_OPTION_LENGTH,
+        },
+      ],
+    },
+  },
+  announcementBar: {
+    type: 'announcementBar',
+    fields: [
+      {
+        key: 'text',
+        kind: 'text',
+        labelKey: 'website:fields.announcementText',
+        localized: true,
+        maxLength: MAX_ANNOUNCEMENT_TEXT_LENGTH,
+      },
+      {
+        key: 'tone',
+        kind: 'select',
+        labelKey: 'website:fields.announcementTone',
+        options: announcementToneOptions,
+      },
+      {
+        key: 'buttons',
+        kind: 'buttons',
+        labelKey: 'website:fields.announcementButton',
+        maxButtons: 1,
+      },
+    ],
+  },
+  comparison: {
+    type: 'comparison',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_COMPARISON_DESCRIPTION_LENGTH,
+      },
+      {
+        key: 'columns',
+        kind: 'comparison',
+        labelKey: 'website:fields.comparisonTable',
+      },
+    ],
+  },
+  // CMS phase 3d (batch D).
+  timeline: {
+    type: 'timeline',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_LONG_TEXT,
+      },
+    ],
+    repeatable: {
+      key: 'items',
+      maxItems: MAX_TIMELINE_MILESTONES,
+      labelKey: 'website:fields.timelineItems',
+      itemLabelKey: 'website:fields.timelineItem',
+      itemFields: [
+        {
+          key: 'title',
+          kind: 'text',
+          labelKey: 'website:fields.title',
+          localized: true,
+          maxLength: MAX_TIMELINE_MILESTONE_TITLE_LENGTH,
+        },
+        {
+          key: 'period',
+          kind: 'text',
+          labelKey: 'website:fields.timelinePeriod',
+          hintKey: 'website:fields.timelinePeriodHint',
+          localized: true,
+          maxLength: MAX_TIMELINE_PERIOD_LENGTH,
+        },
+        {
+          key: 'description',
+          kind: 'longText',
+          labelKey: 'website:fields.description',
+          localized: true,
+          maxLength: MAX_TIMELINE_MILESTONE_DESCRIPTION_LENGTH,
+        },
+        {
+          key: 'icon',
+          kind: 'select',
+          labelKey: 'website:fields.icon',
+          options: iconOptions,
+          noneLabelKey: 'website:fields.timelineIconNone',
+        },
+      ],
+    },
+  },
+  videoTestimonials: {
+    type: 'videoTestimonials',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_LONG_TEXT,
+      },
+    ],
+    repeatable: {
+      key: 'items',
+      maxItems: MAX_VIDEO_TESTIMONIALS,
+      labelKey: 'website:fields.videoReviewItems',
+      itemLabelKey: 'website:fields.videoReviewItem',
+      itemFields: [
+        {
+          key: 'videoId',
+          kind: 'youtube',
+          labelKey: 'website:fields.videoLink',
+        },
+        {
+          key: 'name',
+          kind: 'text',
+          labelKey: 'website:fields.reviewerName',
+        },
+        {
+          key: 'role',
+          kind: 'text',
+          labelKey: 'website:fields.reviewerRole',
+          hintKey: 'website:fields.reviewerRoleHint',
+          localized: true,
+          maxLength: MAX_VIDEO_TESTIMONIAL_ROLE_LENGTH,
+        },
+        {
+          key: 'quote',
+          kind: 'longText',
+          labelKey: 'website:fields.reviewQuote',
+          localized: true,
+          maxLength: MAX_VIDEO_TESTIMONIAL_QUOTE_LENGTH,
+        },
+        {
+          key: 'poster',
+          kind: 'image',
+          labelKey: 'website:fields.videoPoster',
+        },
+      ],
+    },
+  },
+  downloads: {
+    type: 'downloads',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_LONG_TEXT,
+      },
+    ],
+    repeatable: {
+      key: 'items',
+      maxItems: MAX_DOWNLOADS,
+      labelKey: 'website:fields.downloadItems',
+      itemLabelKey: 'website:fields.downloadItem',
+      itemFields: [
+        {
+          key: 'title',
+          kind: 'text',
+          labelKey: 'website:fields.title',
+          localized: true,
+          maxLength: MAX_DOWNLOAD_TITLE_LENGTH,
+        },
+        {
+          key: 'description',
+          kind: 'longText',
+          labelKey: 'website:fields.description',
+          localized: true,
+          maxLength: MAX_DOWNLOAD_DESCRIPTION_LENGTH,
+        },
+        {
+          key: 'url',
+          kind: 'fileLink',
+          labelKey: 'website:fields.downloadLink',
+        },
+        {
+          key: 'fileType',
+          kind: 'text',
+          labelKey: 'website:fields.downloadFileType',
+          hintKey: 'website:fields.downloadFileTypeHint',
+        },
+        {
+          key: 'fileSize',
+          kind: 'text',
+          labelKey: 'website:fields.downloadFileSize',
+          hintKey: 'website:fields.downloadFileSizeHint',
+        },
+      ],
+    },
+  },
+  certificates: {
+    type: 'certificates',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_LONG_TEXT,
+      },
+    ],
+    repeatable: {
+      key: 'items',
+      maxItems: MAX_CERTIFICATES,
+      labelKey: 'website:fields.certificateItems',
+      itemLabelKey: 'website:fields.certificateItem',
+      itemFields: [
+        {
+          key: 'image',
+          kind: 'image',
+          labelKey: 'website:fields.certificateImage',
+        },
+        {
+          key: 'title',
+          kind: 'text',
+          labelKey: 'website:fields.title',
+          localized: true,
+          maxLength: MAX_SHORT_TEXT,
+        },
+        {
+          key: 'issuer',
+          kind: 'text',
+          labelKey: 'website:fields.certificateIssuer',
+          localized: true,
+          maxLength: MAX_SHORT_TEXT,
+        },
+        {
+          key: 'year',
+          kind: 'text',
+          labelKey: 'website:fields.certificateYear',
+          hintKey: 'website:fields.certificateYearHint',
+        },
+      ],
+    },
   },
 };

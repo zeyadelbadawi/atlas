@@ -740,6 +740,7 @@ export function SectionButtonsEditor({
   onChange,
   labelKey,
   minButtons = 0,
+  maxButtons = SECTION_BUTTON_SLOTS.length,
   errorFor,
   pages,
   academyId,
@@ -753,6 +754,8 @@ export function SectionButtonsEditor({
   readonly labelKey: string;
   /** A CTA band needs its first button. */
   readonly minButtons?: number;
+  /** Fewer than three slots (a notice strip has one, `cta`). */
+  readonly maxButtons?: number;
   readonly errorFor: FieldErrorLookup;
   readonly pages: readonly WebsitePage[];
   readonly academyId: string;
@@ -766,7 +769,7 @@ export function SectionButtonsEditor({
     buttons.length === 1 ? 0 : null
   );
   const destination = useDestination(academyId, pages);
-  const max = SECTION_BUTTON_SLOTS.length;
+  const max = Math.min(maxButtons, SECTION_BUTTON_SLOTS.length);
   const locale = i18n.language === 'ar' ? 'ar' : 'en';
   const issueAt = (index: number) =>
     BUTTON_ISSUE_PATHS.some(

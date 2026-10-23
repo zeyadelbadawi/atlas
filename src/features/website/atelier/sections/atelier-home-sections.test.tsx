@@ -175,7 +175,7 @@ afterEach(() => {
 });
 
 describe('ATELIER_SECTION_RENDERERS', () => {
-  it('draws the thirteen Home section types', () => {
+  it('draws the thirteen Home section types, plus the CMS phase 3d ones', () => {
     expect(Object.keys(ATELIER_SECTION_RENDERERS).sort()).toEqual(
       [
         'about',
@@ -191,6 +191,24 @@ describe('ATELIER_SECTION_RENDERERS', () => {
         'statistics',
         'steps',
         'testimonials',
+        // CMS phase 3d.
+        'logos',
+        'map',
+        'schedule',
+        'results',
+        'whatsappBar',
+        'video',
+        'pricing',
+        'countdown',
+        // CMS phase 3d (batch D).
+        'timeline',
+        'videoTestimonials',
+        'downloads',
+        'certificates',
+        // CMS phase 3d (batch C).
+        'interestForm',
+        'announcementBar',
+        'comparison',
       ].sort()
     );
   });

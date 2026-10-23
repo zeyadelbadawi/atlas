@@ -666,7 +666,7 @@
     "sampleBadge": "Sample",
     "markTestimonialReal": "This is a real testimonial",
     "sampleHelp": "Sample testimonials are placeholders to show the design. They're never shown on your live website. Replace the text with a real testimonial, then mark it as real.",
-    "sampleSectionHint": "Holds sample testimonials, which are hidden on your live website.",
+    "sampleSectionHint": "Holds sample content, which is hidden on your live website.",
     "publishPageAction": "Publish page",
     "publishPageConfirmTitle": "Publish this page?",
     "publishPageConfirmDescription": "Your changes to this page will be saved and replace what visitors see. Other pages and the site settings stay as they are published.",
@@ -694,7 +694,13 @@
     "spotlightCourseTitle": "Course",
     "spotlightCourseHelp": "Choose the course this section presents. Left on automatic, it shows your newest published course.",
     "spotlightCourseAutomatic": "Automatic: newest published course",
-    "spotlightCourseUnavailable": "The chosen course is no longer published and public, so this section is hidden on your website. Choose another course or switch to automatic."
+    "spotlightCourseUnavailable": "The chosen course is no longer published and public, so this section is hidden on your website. Choose another course or switch to automatic.",
+    "sampleHelpResults": "Sample results are placeholders to show the design. They're never shown on your live website. Replace them with your students' real results, then mark each one as real.",
+    "markResultReal": "This is a real result",
+    "sampleHelpSchedule": "Sample rows are placeholders to show the design. They're never shown on your live website. Enter your real days and times, then mark each row as real.",
+    "markScheduleRowReal": "This row is real",
+    "sampleHelpVideoReviews": "Sample reviews are placeholders to show the design. They’re never shown on your live website. Replace them with real reviews from your students and parents (with their permission), then mark each one as real.",
+    "markVideoReviewReal": "This is a real review"
   },
   "preview": {
     "title": "Preview",
@@ -728,8 +734,8 @@
     "unpublishConfirmDescription": "Visitors will no longer be able to reach your academy's public website. You can publish it again at any time.",
     "unpublishConfirmAction": "Unpublish",
     "unpublishedHint": "Your website is offline and not reachable by visitors.",
-    "sampleWarningTitle": "Publish with sample testimonials?",
-    "sampleWarningDescription": "Sample testimonials are never shown on your live website. Replace them with real ones, or mark them as real, to show them. You can publish now and review them later.",
+    "sampleWarningTitle": "Publish with sample content?",
+    "sampleWarningDescription": "Sample testimonials, results and timetable rows are never shown on your live website. Replace them with real ones, or mark them as real, to show them. You can publish now and review them later.",
     "sampleWarningAction": "Publish anyway",
     "upToDateHint": "This website is live and shows everything you have saved.",
     "publishChangesAction": "Publish changes",
@@ -794,6 +800,51 @@
     },
     "courseSpotlight": {
       "label": "Course in focus"
+    },
+    "logos": {
+      "label": "Logos and accreditations"
+    },
+    "map": {
+      "label": "Map and directions"
+    },
+    "schedule": {
+      "label": "Class schedule"
+    },
+    "results": {
+      "label": "Student results"
+    },
+    "whatsappBar": {
+      "label": "Talk to us bar"
+    },
+    "video": {
+      "label": "Video"
+    },
+    "pricing": {
+      "label": "Pricing plans"
+    },
+    "countdown": {
+      "label": "Countdown"
+    },
+    "interestForm": {
+      "label": "Register your interest"
+    },
+    "announcementBar": {
+      "label": "Notice strip"
+    },
+    "comparison": {
+      "label": "Comparison table"
+    },
+    "timeline": {
+      "label": "Learning path"
+    },
+    "videoTestimonials": {
+      "label": "Video reviews"
+    },
+    "downloads": {
+      "label": "Downloads"
+    },
+    "certificates": {
+      "label": "Certificates"
     }
   },
   "fields": {
@@ -892,7 +943,108 @@
     "linkTypeWhatsapp": "WhatsApp chat",
     "linkTypePhone": "Phone call",
     "linkTypeSignUp": "Sign-up page",
-    "linkTypeSignIn": "Sign-in page"
+    "linkTypeSignIn": "Sign-in page",
+    "logoItems": "Logos",
+    "logoItem": "Logo",
+    "logoImage": "Logo image",
+    "logoAlt": "Organisation name (read aloud by screen readers)",
+    "logoUrl": "Link",
+    "logoUrlHint": "Optional. A web address starting with https://. Leave it empty for no link.",
+    "mapAddress": "Address",
+    "mapNote": "Landmark note",
+    "mapQuery": "Map search",
+    "mapQueryHint": "Optional. An address or coordinates, such as 30.0444, 31.2357, for the map and directions. Leave it empty to use the address above.",
+    "scheduleRows": "Timetable rows",
+    "scheduleRow": "Row",
+    "scheduleDay": "Day",
+    "scheduleStart": "Start time",
+    "scheduleEnd": "End time",
+    "scheduleEndHint": "Must be later than the start time.",
+    "scheduleTitle": "Course or group",
+    "scheduleTeacher": "Teacher",
+    "scheduleLocation": "Place",
+    "resultItems": "Results",
+    "resultItem": "Result",
+    "studentName": "Student name",
+    "resultValue": "Result",
+    "resultDetail": "Grade, year or exam",
+    "studentPhoto": "Photo",
+    "studentPhotoAlt": "Photo description (read aloud by screen readers)",
+    "resultTop": "Top student",
+    "videoLink": "YouTube link",
+    "videoPoster": "Poster image (optional)",
+    "deadline": "Closes on",
+    "endedMessage": "Message after it ends",
+    "pricingPlans": "Plans",
+    "interestEmailField": "Email field",
+    "interestChoiceField": "Choice list",
+    "interestChoiceLabel": "Choice list label",
+    "interestMessageField": "Message field",
+    "interestSubmitLabel": "Button text (optional)",
+    "interestSuccessMessage": "Message after sending (optional)",
+    "interestOptions": "Choice list options",
+    "interestOption": "Option",
+    "interestOptionLabel": "Option text",
+    "interestFieldModes": {
+      "hidden": "Don’t ask",
+      "optional": "Ask, optional",
+      "required": "Ask, required"
+    },
+    "interestFieldHints": {
+      "email": {
+        "hidden": "Visitors give only their name and phone number.",
+        "optional": "Visitors may add an email address.",
+        "required": "Visitors must give an email address."
+      },
+      "choice": {
+        "hidden": "Visitors don’t choose a course or grade.",
+        "optional": "Visitors may choose one of the options below, such as a course or a grade.",
+        "required": "Visitors must choose one of the options below. With no options, the list isn’t shown."
+      },
+      "message": {
+        "hidden": "Visitors don’t write a message.",
+        "optional": "Visitors may add a message.",
+        "required": "Visitors must write a message."
+      }
+    },
+    "announcementText": "Notice",
+    "announcementTone": "Colour",
+    "announcementTones": {
+      "brand": "Brand",
+      "soft": "Soft",
+      "dark": "Dark"
+    },
+    "announcementToneHints": {
+      "brand": "Your brand colour, the boldest choice. Your theme keeps the text readable.",
+      "soft": "Your theme’s soft background, a quiet notice.",
+      "dark": "Your theme’s dark background, with light text."
+    },
+    "announcementButton": "Button (optional)",
+    "comparisonTable": "Columns and rows",
+    "timelineItems": "Milestones",
+    "timelineItem": "Milestone",
+    "timelinePeriod": "Period",
+    "timelinePeriodHint": "Optional. When this stage happens, such as “Sept – Oct” or “Term 1”.",
+    "timelineIconNone": "No icon (show the number)",
+    "videoReviewItems": "Video reviews",
+    "videoReviewItem": "Review",
+    "reviewerName": "Name",
+    "reviewerRole": "Who they are",
+    "reviewerRoleHint": "Such as “Parent of a Grade 12 student”.",
+    "reviewQuote": "Short quote (optional)",
+    "downloadItems": "Files",
+    "downloadItem": "File",
+    "downloadLink": "Link or file",
+    "downloadFileType": "File type (optional)",
+    "downloadFileTypeHint": "Such as PDF. Left empty, it is read from the link when the link ends in .pdf, .docx and so on.",
+    "downloadFileSize": "File size (optional)",
+    "downloadFileSizeHint": "Such as 2.4 MB.",
+    "certificateItems": "Certificates",
+    "certificateItem": "Certificate",
+    "certificateImage": "Certificate image",
+    "certificateIssuer": "Issued by (optional)",
+    "certificateYear": "Year (optional)",
+    "certificateYearHint": "Four digits, such as 2025."
   },
   "buttons": {
     "button": "Button",
@@ -1058,6 +1210,135 @@
       "priceLabel": "Price",
       "moreSections_one": "and {{count}} more section",
       "moreSections_other": "and {{count}} more sections"
+    },
+    "opensInNewTab": "(opens in a new tab)",
+    "logos": {
+      "previewEmpty": "Add logos in this section's settings. Visitors don't see the section until it has one."
+    },
+    "map": {
+      "directions": "Get directions",
+      "showMap": "Show map",
+      "mapNotice": "The map loads from Google Maps when you open it.",
+      "frameTitle": "Map: {{place}}",
+      "addressLabel": "Address",
+      "previewEmpty": "Add the address in this section's settings. Visitors don't see the section until it has one."
+    },
+    "schedule": {
+      "day": "Day",
+      "time": "Time",
+      "class": "Course or group",
+      "teacher": "Teacher",
+      "location": "Place",
+      "to": "to",
+      "previewEmpty": "Add a row with a day and time in this section's settings. Visitors don't see the section until it has one."
+    },
+    "results": {
+      "top": "Top student",
+      "previewEmpty": "Add your students' results in this section's settings. Visitors don't see the section until it has one."
+    },
+    "video": {
+      "play": "Play video: {{title}}",
+      "playUntitled": "Play video",
+      "frameTitle": "Video: {{title}}",
+      "frameUntitled": "YouTube video",
+      "previewMissing": "Add a YouTube link to show your video here. Visitors don’t see this section until then."
+    },
+    "pricing": {
+      "popular": "Most popular",
+      "included": "Included",
+      "notIncluded": "Not included",
+      "featuresLabel": "What’s included in {{plan}}"
+    },
+    "countdown": {
+      "units": {
+        "days": "Days",
+        "hours": "Hours",
+        "minutes": "Minutes",
+        "seconds": "Seconds"
+      },
+      "closes": "Closes {{date}}, {{time}} ({{zone}})",
+      "timeLeft": "Time left: {{days}}, {{hours}} and {{minutes}}.",
+      "timeLeftShort": "Time left: {{hours}} and {{minutes}}.",
+      "lessThanMinute": "Less than a minute left.",
+      "dayCount_one": "{{value}} day",
+      "dayCount_other": "{{value}} days",
+      "hourCount_one": "{{value}} hour",
+      "hourCount_other": "{{value}} hours",
+      "minuteCount_one": "{{value}} minute",
+      "minuteCount_other": "{{value}} minutes",
+      "ended": "This deadline has passed.",
+      "previewMissing": "Choose the date and time it closes. Visitors don’t see this section until then."
+    },
+    "whatsappBar": {
+      "previewNoButtons": "Give a button a WhatsApp number, a phone number or a page. Visitors don’t see this bar until one of its buttons works."
+    },
+    "interestForm": {
+      "name": "Your name",
+      "phone": "Phone number",
+      "email": "Email",
+      "message": "Message",
+      "optional": "(optional)",
+      "requiredNote": "Every field is required unless it says optional.",
+      "choiceDefault": "Your choice",
+      "choosePrompt": "Choose one",
+      "submit": "Send",
+      "sending": "Sending…",
+      "successTitle": "Thank you",
+      "successDefault": "We received your details and will contact you soon.",
+      "sendFailed": "We couldn’t send your details. Check your connection and try again.",
+      "rateLimited": "This form was sent several times from your connection. Please wait a few minutes, then try again.",
+      "unavailable": "This form is no longer available. Refresh the page and try again.",
+      "previewNote": "This is a preview, so nothing was sent. On your published site, this form sends to your Messages.",
+      "errors": {
+        "name": "Enter your name.",
+        "tooLong": "Shorten this to {{count}} characters or fewer.",
+        "emailRequired": "Enter your email address.",
+        "emailInvalid": "Enter an email address like name@example.com.",
+        "choice": "Choose an option for “{{label}}”.",
+        "message": "Write your message.",
+        "server": "Check this field and try again.",
+        "choiceGone": "This option is no longer offered. Refresh the page and choose again."
+      }
+    },
+    "announcement": {
+      "label": "Announcement"
+    },
+    "comparison": {
+      "yes": "Yes",
+      "no": "No",
+      "empty": "Not specified",
+      "criterion": "Feature",
+      "highlighted": "highlighted",
+      "previewEmpty": "Add at least two columns and one row. Visitors don’t see this table until then."
+    },
+    "timeline": {
+      "previewEmpty": "Add the stages of your learning path in this section’s settings. Visitors don’t see the section until it has one."
+    },
+    "videoTestimonials": {
+      "videoTitle": "{{name}}’s review",
+      "previewNoVideo": "Add this review’s YouTube link",
+      "previewEmpty": "Add video reviews in this section’s settings. Visitors don’t see the section until it has a real review with a video."
+    },
+    "downloads": {
+      "name": "{{title}} — {{type}}",
+      "nameWithSize": "{{title}} — {{type}}, {{size}}",
+      "downloads": "(download)",
+      "previewNoLink": "No link yet: visitors don’t see this file until you add one.",
+      "previewEmpty": "Add files in this section’s settings. Visitors don’t see the section until a file has a link.",
+      "kinds": {
+        "pdf": "PDF file",
+        "document": "Document",
+        "sheet": "Spreadsheet",
+        "slides": "Presentation",
+        "image": "Image",
+        "archive": "Compressed file",
+        "file": "File"
+      }
+    },
+    "certificates": {
+      "viewFull": "View {{title}} full size",
+      "previewEmpty": "Add certificate images in this section’s settings. Visitors don’t see the section until it has one.",
+      "separator": " · "
     }
   },
   "common": {
@@ -1340,7 +1621,22 @@
     "count_one": "{{count}} sample testimonial",
     "count_other": "{{count}} sample testimonials",
     "review": "Review",
-    "reviewLabel": "Review the sample testimonials on {{page}}"
+    "reviewLabel": "Review the sample testimonials on {{page}}",
+    "results": {
+      "count_one": "{{count}} sample result",
+      "count_other": "{{count}} sample results",
+      "reviewLabel": "Review the sample results on {{page}}"
+    },
+    "schedule": {
+      "count_one": "{{count}} sample timetable row",
+      "count_other": "{{count}} sample timetable rows",
+      "reviewLabel": "Review the sample timetable rows on {{page}}"
+    },
+    "videoTestimonials": {
+      "count_one": "{{count}} sample video review",
+      "count_other": "{{count}} sample video reviews",
+      "reviewLabel": "Review the sample video reviews on {{page}}"
+    }
   },
   "launchChecklist": {
     "title": "Launch checklist",
@@ -1354,10 +1650,10 @@
       "action": "Open Visual Identity"
     },
     "samples": {
-      "title": "Replace the sample testimonials",
-      "todo_one": "Your starter website has a sample testimonial. Samples appear only in previews: replace it with a real one, or mark it as real if it is.",
-      "todo_other": "Your starter website has sample testimonials. Samples appear only in previews: replace them with real ones, or mark them as real if they are.",
-      "done": "No sample testimonials left."
+      "title": "Replace the sample content",
+      "todo_one": "Your website has a sample item. Samples appear only in previews: replace it with a real one, or mark it as real if it is.",
+      "todo_other": "Your website has sample items, such as testimonials, results or timetable rows. Samples appear only in previews: replace them with real ones, or mark them as real if they are.",
+      "done": "No sample content left."
     },
     "publish": {
       "title": "Publish your website",
@@ -1367,10 +1663,10 @@
   },
   "messages": {
     "title": "Messages",
-    "subtitle": "Messages visitors send through your website's Contact form.",
+    "subtitle": "Messages visitors send through your website’s Contact form and its “register your interest” forms.",
     "newCount_one": "{{formatted}} new",
     "newCount_other": "{{formatted}} new",
-    "searchLabel": "Search by name, email or message",
+    "searchLabel": "Search by name, email, phone or message",
     "filters": {
       "label": "Filter messages",
       "status": "Filter by status",
@@ -1378,7 +1674,9 @@
       "dateRange": "Received date",
       "from": "Received from",
       "to": "Received to",
-      "clear": "Clear filters"
+      "clear": "Clear filters",
+      "kind": "Form",
+      "kindAll": "All forms"
     },
     "status": {
       "new": "New",
@@ -1396,7 +1694,7 @@
     "table": {
       "caption": "Website messages",
       "name": "Name",
-      "email": "Email",
+      "email": "Email or phone",
       "message": "Message",
       "status": "Status",
       "received": "Received"
@@ -1406,7 +1704,7 @@
     "openMessage": "Open message from {{name}}",
     "empty": {
       "title": "No messages yet",
-      "description": "When visitors send a message through your website's Contact form, it will appear here."
+      "description": "When visitors send a message through your website’s Contact form or a “register your interest” form, it will appear here."
     },
     "noResults": {
       "title": "No messages match these filters",
@@ -1421,7 +1719,16 @@
       "status": "Status",
       "message": "Message",
       "reply": "Reply by email",
-      "actions": "Message actions"
+      "actions": "Message actions",
+      "interestTitle": "Registration interest",
+      "interestDescription": "Sent through a “register your interest” form on your website.",
+      "form": "Form",
+      "phone": "Phone",
+      "choice": "Choice",
+      "noMessage": "No message was added.",
+      "call": "Call",
+      "whatsapp": "WhatsApp",
+      "opensInNewTab": "(opens in a new tab)"
     },
     "actions": {
       "markRead": "Mark as read",
@@ -1436,6 +1743,11 @@
       "restored": "Message restored",
       "undo": "Undo",
       "failed": "Couldn't update the message"
+    },
+    "kind": {
+      "contact": "Contact form",
+      "interest": "Register your interest",
+      "interestTag": "Interest"
     }
   },
   "visualIdentity": {
@@ -1960,7 +2272,22 @@
         "faq": "Answers to the questions visitors ask most.",
         "gallery": "A set of photos of your academy or classes.",
         "contact": "A form visitors can use to message you.",
-        "cta": "A closing band that asks visitors to act."
+        "cta": "A closing band that asks visitors to act.",
+        "logos": "Partner and accreditation logos in a calm grid.",
+        "map": "Your address, a directions link and a map visitors can open.",
+        "schedule": "Your weekly timetable, by day and time.",
+        "results": "Your top students and their results.",
+        "whatsappBar": "A short strip with WhatsApp, call or page buttons.",
+        "video": "A YouTube video that loads only when visitors press play.",
+        "pricing": "Your plans or packages, with prices and what each includes.",
+        "countdown": "A live countdown to a registration deadline.",
+        "interestForm": "A short form visitors fill in so you can call them back. It arrives in your Messages.",
+        "announcementBar": "A slim strip with one short notice, such as “Registration is open”.",
+        "comparison": "A table comparing your academy or your plans, with ✓, ✗ or short text.",
+        "timeline": "Your learning path, stage by stage, from the first term to the final exam.",
+        "videoTestimonials": "Short video reviews from students and parents, played on request.",
+        "downloads": "Notes, revision sheets and other files visitors can download.",
+        "certificates": "Images of your certificates, awards and accreditations."
       }
     },
     "settings": {
@@ -2067,6 +2394,107 @@
       "reverseOnMobile": "Swap the order on phones",
       "reverseOnMobileHint": "On phones the two columns stack; this shows the second one first (for example the picture before the text).",
       "reset": "Back to the theme's design"
+    }
+  },
+  "days": {
+    "sat": "Saturday",
+    "sun": "Sunday",
+    "mon": "Monday",
+    "tue": "Tuesday",
+    "wed": "Wednesday",
+    "thu": "Thursday",
+    "fri": "Friday"
+  },
+  "sectionEditors": {
+    "video": {
+      "hint": "Paste the link from YouTube’s Share button. Visitors see a poster first; the video loads only when they press play.",
+      "found": "Video found",
+      "thumbnailAlt": "Thumbnail of the chosen video",
+      "empty": "No video yet. This section stays hidden on your site until you add one."
+    },
+    "deadline": {
+      "hint": "In your academy’s time zone ({{zone}}). Visitors see the time left, counting down every second.",
+      "empty": "No date yet. This section stays hidden on your site until you choose one.",
+      "past": "This date has passed, so visitors see your “after it ends” message.",
+      "preview": "Visitors see: {{date}}, {{time}} ({{zone}})"
+    },
+    "plans": {
+      "plan": "Plan",
+      "count": "{{count}} of {{max}}",
+      "add": "Add a plan",
+      "full": "{{max}} plans is the most a section can show",
+      "minimum": "A pricing section keeps at least one plan.",
+      "untitled": "Plan {{number}}",
+      "moveUp": "Move “{{name}}” up",
+      "moveDown": "Move “{{name}}” down",
+      "remove": "Remove “{{name}}”",
+      "needsAttention": "Needs a fix",
+      "popularTag": "Most popular",
+      "name": "Plan name",
+      "price": "Price",
+      "priceHint": "Type it as visitors should read it, such as 450 EGP or Free.",
+      "period": "Period (optional)",
+      "periodHint": "Such as per month or per term.",
+      "description": "Short description (optional)",
+      "features": "What’s included",
+      "featuresCount": "{{count}} of {{max}}",
+      "feature": "Feature {{number}}",
+      "featureIncluded": "Included in this plan",
+      "featureIncludedHint": "Untick it to show the feature as not included (✗).",
+      "addFeature": "Add a feature",
+      "featuresFull": "{{max}} features is the most a plan can list",
+      "removeFeature": "Remove feature {{number}}",
+      "highlighted": "Mark as most popular",
+      "highlightedHint": "Only one plan can be the most popular. Choosing this one clears the others.",
+      "badge": "Badge text (optional)",
+      "badgeHint": "Leave empty to show “Most popular”.",
+      "button": "Button",
+      "addButton": "Add a button",
+      "removeButton": "Remove the button",
+      "featureLabel": "Feature"
+    },
+    "comparison": {
+      "columns": "Columns",
+      "rows": "Rows",
+      "column": "Column",
+      "row": "Row",
+      "columnLabel": "Column name",
+      "rowLabel": "Row name",
+      "cellText": "Text",
+      "columnsCount": "{{count}} of {{max}}",
+      "rowsCount": "{{count}} of {{max}}",
+      "untitledColumn": "Column {{number}}",
+      "untitledRow": "Row {{number}}",
+      "moveColumnUp": "Move column “{{name}}” earlier",
+      "moveColumnDown": "Move column “{{name}}” later",
+      "removeColumn": "Remove column “{{name}}”",
+      "highlight": "Highlight this column",
+      "columnsHint": "A table has {{min}} to {{max}} columns. Only one column can be highlighted; choosing one clears the others. Removing a column removes its values from every row.",
+      "addColumn": "Add a column",
+      "columnsFull": "{{max}} columns is the most a table can show",
+      "moveRowUp": "Move row “{{name}}” up",
+      "moveRowDown": "Move row “{{name}}” down",
+      "removeRow": "Remove row “{{name}}”",
+      "needsAttention": "Needs a fix",
+      "noRows": "No rows yet. Add a row for each thing you compare.",
+      "addRow": "Add a row",
+      "rowsFull": "{{max}} rows is the most a table can show",
+      "choices": {
+        "yes": "✓ Yes",
+        "no": "✗ No",
+        "text": "Text"
+      },
+      "cellUnset": "Not set yet: visitors see a dash.",
+      "clearCell": "Clear this value"
+    },
+    "fileLink": {
+      "choose": "Choose from library",
+      "replace": "Choose another file",
+      "remove": "Remove {{name}}",
+      "fromLibrary": "From your media library",
+      "hint": "Paste a link (such as Google Drive), or choose a PDF from your media library or upload one there.",
+      "empty": "No link yet: this file stays hidden on your site until you add one.",
+      "libraryFile": "{{type}} file"
     }
   }
 }

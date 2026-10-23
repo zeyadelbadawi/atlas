@@ -24,17 +24,51 @@ export const SECTION_LIBRARY_GROUPS: readonly {
   readonly key: 'intro' | 'courses' | 'trust' | 'info' | 'action';
   readonly types: readonly SectionType[];
 }[] = [
-  { key: 'intro', types: ['hero', 'pageHeader', 'about', 'featureSplit'] },
+  {
+    key: 'intro',
+    types: ['hero', 'pageHeader', 'announcementBar', 'about', 'featureSplit'],
+  },
   {
     key: 'courses',
-    types: ['featuredCourses', 'courseCatalog', 'courseSpotlight'],
+    types: ['featuredCourses', 'courseCatalog', 'courseSpotlight', 'pricing'],
   },
   {
     key: 'trust',
-    types: ['testimonials', 'statistics', 'instructors', 'gallery'],
+    types: [
+      'testimonials',
+      'videoTestimonials',
+      'results',
+      'statistics',
+      'logos',
+      'certificates',
+      'instructors',
+      'gallery',
+    ],
   },
-  { key: 'info', types: ['features', 'steps', 'faq'] },
-  { key: 'action', types: ['cta', 'contact'] },
+  {
+    key: 'info',
+    types: [
+      'features',
+      'steps',
+      'timeline',
+      'comparison',
+      'video',
+      'schedule',
+      'downloads',
+      'faq',
+    ],
+  },
+  {
+    key: 'action',
+    types: [
+      'cta',
+      'whatsappBar',
+      'countdown',
+      'interestForm',
+      'contact',
+      'map',
+    ],
+  },
 ];
 
 export interface SectionLibraryProps {

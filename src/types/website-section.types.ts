@@ -46,6 +46,25 @@ export const SECTION_TYPES = [
   'featureSplit',
   // Theme 4 plan §6 (Reports/THEME_4_RIWAQ_PLAN.md) — shared by every theme, with a base renderer.
   'courseSpotlight',
+  // CMS phase 3d (batch A) — shared by every theme, each with a base renderer.
+  'whatsappBar',
+  'video',
+  'pricing',
+  'countdown',
+  // CMS phase 3d (batch C) — shared by every theme, each with a renderer.
+  'interestForm',
+  'announcementBar',
+  'comparison',
+  // CMS phase 3d (batch B) — shared by every theme, each with a renderer.
+  'logos',
+  'map',
+  'schedule',
+  'results',
+  // CMS phase 3d (batch D) — shared by every theme, each with a renderer.
+  'timeline',
+  'videoTestimonials',
+  'downloads',
+  'certificates',
 ] as const;
 
 export type SectionType = (typeof SECTION_TYPES)[number];
@@ -427,6 +446,324 @@ export interface CourseSpotlightSectionConfig {
   readonly cta?: WebsiteCta;
 }
 
+/** CMS phase 3d — one partner / accreditation logo. */
+export interface LogoItem {
+  readonly id: string;
+  /** Required — any image value (`WebsiteImageField`, media library). */
+  readonly image: string;
+  /** The partner's name, announced by screen readers (the link's name when linked). */
+  readonly alt: LocalizedText;
+  /** Optional web address the logo links to (new tab). Empty = no link. */
+  readonly url?: string;
+}
+
+/** CMS phase 3d — up to 12 logos in a calm wrapping grid (never a marquee). */
+export interface LogosSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly items: readonly LogoItem[];
+}
+
+/**
+ * CMS phase 3d — where the academy is: the address card, a "Get directions"
+ * link and a map that loads only when the visitor asks for it.
+ */
+export interface MapSectionConfig {
+  readonly title: LocalizedText;
+  /** Multi-line; each line break is kept. */
+  readonly address: LocalizedText;
+  /** A landmark hint ("Next to Dokki metro"). */
+  readonly note?: LocalizedText;
+  /** An address or `lat,lng` for the map and directions; empty → the address. Never an `href` itself. */
+  readonly query?: string;
+}
+
+/** The days of a schedule row, in the order an Egyptian week runs (Saturday first). */
+export const SCHEDULE_DAYS = [
+  'sat',
+  'sun',
+  'mon',
+  'tue',
+  'wed',
+  'thu',
+  'fri',
+] as const;
+
+export type ScheduleDay = (typeof SCHEDULE_DAYS)[number];
+
+export interface ScheduleRow {
+  readonly id: string;
+  readonly day: ScheduleDay;
+  /** `HH:MM`, 24-hour; shown in the visitor's locale. */
+  readonly start: string;
+  readonly end: string;
+  /** The course or group meeting at that time. */
+  readonly title: LocalizedText;
+  readonly teacher?: LocalizedText;
+  readonly location?: LocalizedText;
+  /** Starter row for preview only — never public, labelled "Sample" in previews. */
+  readonly sample?: boolean;
+}
+
+/** CMS phase 3d — a weekly timetable (≤ 30 rows), shown by day. */
+export interface ScheduleSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly items: readonly ScheduleRow[];
+}
+
+export interface ResultItem {
+  readonly id: string;
+  /** A proper name — not translated (like `TestimonialItem.authorName`). */
+  readonly studentName: string;
+  /** The achievement ("98%", "الأول على الجمهورية"). */
+  readonly result: LocalizedText;
+  /** Grade, year or exam. */
+  readonly detail?: LocalizedText;
+  readonly photo?: string;
+  readonly photoAlt?: LocalizedText;
+  /** A top achiever: drawn with a labelled badge. */
+  readonly top?: boolean;
+  /**
+   * Starter content for preview only — exactly `TestimonialItem.sample`:
+   * never public (the API strips it, the renderer filters it), labelled
+   * "Sample" in previews, cleared only by the Owner's "This is a real result".
+   */
+  readonly sample?: boolean;
+}
+
+/** CMS phase 3d — student results and achievements ("أوائل"), ≤ 24. */
+export interface ResultsSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly items: readonly ResultItem[];
+}
+
+/**
+ * CMS phase 3d — a "Talk to us" strip: a short line and up to three buttons
+ * (WhatsApp, a call, a page). It always keeps its first button.
+ */
+export interface WhatsappBarSectionConfig extends SectionButtons {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly cta: WebsiteCta;
+}
+
+/**
+ * CMS phase 3d — a YouTube video that loads only when the visitor presses
+ * play. `videoId` is the 11-character id (a pasted link is reduced to it on
+ * save); empty means no video chosen yet, and the public site leaves the
+ * section out until there is one.
+ */
+export interface VideoSectionConfig {
+  readonly title?: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly videoId: string;
+  /** An uploaded poster; absent → YouTube's own thumbnail. */
+  readonly poster?: string;
+  readonly caption?: LocalizedText;
+}
+
+export interface PricingPlanFeature {
+  readonly id: string;
+  readonly text: LocalizedText;
+  /** ✓ included, ✗ not included. */
+  readonly included: boolean;
+}
+
+export interface PricingPlan {
+  readonly id: string;
+  readonly name: LocalizedText;
+  /** Free text per language ("450 ج.م", "Free"), never a number the site formats. */
+  readonly price: LocalizedText;
+  /** "per month", "per term". */
+  readonly period?: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly features: readonly PricingPlanFeature[];
+  /** The "most popular" plan (the editor keeps it to one). */
+  readonly highlighted?: boolean;
+  /** The highlighted plan's badge; empty → "Most popular". */
+  readonly badge?: LocalizedText;
+  readonly cta?: WebsiteCta;
+}
+
+/** CMS phase 3d — plans or packages (monthly, per term): one to four. */
+export interface PricingSectionConfig {
+  readonly title?: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly plans: readonly PricingPlan[];
+}
+
+/**
+ * CMS phase 3d — a countdown to a registration deadline. `deadline` is an
+ * ISO date and time with its offset (`2026-11-05T23:59:00+02:00`), empty
+ * until one is chosen (the public site leaves the section out until then);
+ * `timeZone` is the academy's IANA zone it was chosen in, which the site
+ * names the deadline in.
+ */
+export interface CountdownSectionConfig extends SectionButtons {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly deadline: string;
+  readonly timeZone?: string;
+  /** Shown instead of the countdown once the deadline has passed. */
+  readonly endedMessage?: LocalizedText;
+}
+
+/**
+ * CMS phase 3d (batch C) — how the interest form shows one of its optional
+ * fields (see `INTEREST_FIELD_MODES`). Name and phone are always asked.
+ */
+export type InterestFieldMode = 'hidden' | 'optional' | 'required';
+
+export interface InterestOption {
+  readonly id: string;
+  readonly label: LocalizedText;
+}
+
+/**
+ * CMS phase 3d — "register your interest": a lead form that reaches the
+ * academy's Messages through the Contact form's endpoint. A choice list
+ * with no options is not shown. The API checks every submission against
+ * the PUBLISHED section (required fields, the chosen option).
+ */
+export interface InterestFormSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly emailField: InterestFieldMode;
+  readonly choiceField: InterestFieldMode;
+  /** The choice list's label ("Course", "Grade"); empty → "Your choice". */
+  readonly choiceLabel?: LocalizedText;
+  readonly options: readonly InterestOption[];
+  readonly messageField: InterestFieldMode;
+  /** Empty → "Send". */
+  readonly submitLabel?: LocalizedText;
+  /** Shown and announced once the form is sent; empty → a standard thank-you. */
+  readonly successMessage?: LocalizedText;
+}
+
+/** CMS phase 3d — the notice strip's ground, drawn by each theme (see `ANNOUNCEMENT_TONES`). */
+export type AnnouncementTone = 'brand' | 'soft' | 'dark';
+
+/**
+ * CMS phase 3d — a slim notice strip: a short line and at most one button
+ * (the `cta` slot of the section button system). Never dismissible, never
+ * moving.
+ */
+export interface AnnouncementBarSectionConfig {
+  readonly text: LocalizedText;
+  readonly tone: AnnouncementTone;
+  readonly cta?: WebsiteCta;
+}
+
+export interface ComparisonColumn {
+  readonly id: string;
+  readonly label: LocalizedText;
+  /** The column to draw attention to (the editor keeps it to one; the site draws the first). */
+  readonly highlighted?: boolean;
+}
+
+/** One cell: ✓ (`yes`), ✗ (`no`) or a short text. `column` is its column's id. */
+export type ComparisonCell =
+  | { readonly column: string; readonly value: 'yes' | 'no' }
+  | {
+      readonly column: string;
+      readonly value: 'text';
+      readonly text: LocalizedText;
+    };
+
+export interface ComparisonRow {
+  readonly id: string;
+  readonly label: LocalizedText;
+  /** At most one per column; a column without one shows a dash. */
+  readonly cells: readonly ComparisonCell[];
+}
+
+/** CMS phase 3d — a comparison table: 2–4 columns, up to 15 rows. */
+export interface ComparisonSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly columns: readonly ComparisonColumn[];
+  readonly rows: readonly ComparisonRow[];
+}
+
+/** CMS phase 3d (batch D) — one stage of a learning path. */
+export interface TimelineMilestone {
+  readonly id: string;
+  readonly title: LocalizedText;
+  /** "Sept–Oct", "Term 1" — a label, never parsed as a date. */
+  readonly period?: LocalizedText;
+  readonly description?: LocalizedText;
+  /** One of `FEATURE_ICON_OPTIONS`; empty/absent → the milestone's number. */
+  readonly icon?: string;
+}
+
+/** CMS phase 3d (batch D) — a learning path ("Term 1 → Term 2 → Final revision"), ≤ 12 milestones, drawn as an ordered list. */
+export interface TimelineSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly items: readonly TimelineMilestone[];
+}
+
+export interface VideoTestimonialItem {
+  readonly id: string;
+  /** The 11-character YouTube id (a pasted link is reduced to it on save); empty until chosen. */
+  readonly videoId: string;
+  /** A proper name — not translated (like `TestimonialItem.authorName`). */
+  readonly name: string;
+  /** "Parent of a Grade 12 student". */
+  readonly role: LocalizedText;
+  /** A short pull quote under the video. */
+  readonly quote?: LocalizedText;
+  /** An uploaded poster; absent → YouTube's own thumbnail. */
+  readonly poster?: string;
+  /** Starter review for preview only — exactly `TestimonialItem.sample`. */
+  readonly sample?: boolean;
+}
+
+/** CMS phase 3d (batch D) — student/parent video reviews (≤ 9), click to play, one at a time. */
+export interface VideoTestimonialsSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly items: readonly VideoTestimonialItem[];
+}
+
+export interface DownloadItem {
+  readonly id: string;
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  /** A media-library file (`/api/v1/public/media/…`) or an http(s) address; empty until added. */
+  readonly url: string;
+  /** "PDF"; empty → read from the link's file extension. */
+  readonly fileType?: string;
+  /** "2.4 MB". */
+  readonly fileSize?: string;
+}
+
+/** CMS phase 3d (batch D) — downloadable resources (PDF notes, revision sheets), ≤ 20. */
+export interface DownloadsSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly items: readonly DownloadItem[];
+}
+
+export interface CertificateItem {
+  readonly id: string;
+  /** Required — any image value (`WebsiteImageField`, media library). */
+  readonly image: string;
+  readonly title: LocalizedText;
+  readonly issuer?: LocalizedText;
+  /** Four digits ("2025"), or empty. */
+  readonly year?: string;
+}
+
+/** CMS phase 3d (batch D) — certificates and accreditations as framed images with captions, ≤ 12. */
+export interface CertificatesSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly items: readonly CertificateItem[];
+}
+
 /** Every section's config, keyed by its `SectionType`. */
 export interface SectionConfigMap {
   readonly hero: HeroSectionConfig;
@@ -446,6 +783,23 @@ export interface SectionConfigMap {
   readonly steps: StepsSectionConfig;
   readonly featureSplit: FeatureSplitSectionConfig;
   readonly courseSpotlight: CourseSpotlightSectionConfig;
+  readonly whatsappBar: WhatsappBarSectionConfig;
+  readonly video: VideoSectionConfig;
+  readonly pricing: PricingSectionConfig;
+  readonly countdown: CountdownSectionConfig;
+  // CMS phase 3d (batch C).
+  readonly interestForm: InterestFormSectionConfig;
+  readonly announcementBar: AnnouncementBarSectionConfig;
+  readonly comparison: ComparisonSectionConfig;
+  readonly logos: LogosSectionConfig;
+  readonly map: MapSectionConfig;
+  readonly schedule: ScheduleSectionConfig;
+  readonly results: ResultsSectionConfig;
+  // CMS phase 3d (batch D).
+  readonly timeline: TimelineSectionConfig;
+  readonly videoTestimonials: VideoTestimonialsSectionConfig;
+  readonly downloads: DownloadsSectionConfig;
+  readonly certificates: CertificatesSectionConfig;
 }
 
 /** CMS phase 3 — the ground a section sits on (see `SECTION_BACKGROUNDS`). */

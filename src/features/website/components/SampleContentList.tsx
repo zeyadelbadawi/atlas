@@ -1,6 +1,6 @@
 /**
  * Sample social proof (Theme 1 plan §D.4): the list of sections that still
- * hold sample testimonials — one row per section, naming the page, the
+ * hold sample items (testimonials, results, timetable rows, video reviews) — one row per section, naming the page, the
  * section and how many samples it holds, with a "Review" link straight to
  * that section in the Page Editor. Shared by the publish warning and the
  * overview's launch checklist, so both always say the same thing.
@@ -11,6 +11,33 @@ import { MessageSquareQuote } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { SECTION_METADATA } from '../sections';
 import type { SampleContentEntry, SectionType } from '@types';
+
+/**
+ * What a row says about its samples, per section type: testimonials keep
+ * their original copy; results, timetable rows and video reviews (CMS
+ * phase 3d) say what they are.
+ */
+const OWN_SAMPLE_COPY: ReadonlySet<string> = new Set([
+  'results',
+  'schedule',
+  // CMS phase 3d (batch D).
+  'videoTestimonials',
+]);
+
+function sampleCopyKeys(sectionType: string): {
+  readonly count: string;
+  readonly reviewLabel: string;
+} {
+  return OWN_SAMPLE_COPY.has(sectionType)
+    ? {
+        count: `website:sampleContent.${sectionType}.count`,
+        reviewLabel: `website:sampleContent.${sectionType}.reviewLabel`,
+      }
+    : {
+        count: 'website:sampleContent.count',
+        reviewLabel: 'website:sampleContent.reviewLabel',
+      };
+}
 
 export function sampleReviewPath(
   academyId: string,
@@ -38,6 +65,7 @@ export function SampleContentList({
     <ul className="divide-y divide-border rounded-md border border-border">
       {entries.map((entry) => {
         const metadata = SECTION_METADATA[entry.sectionType as SectionType];
+        const copy = sampleCopyKeys(entry.sectionType);
         return (
           <li
             key={entry.sectionId}
@@ -57,7 +85,7 @@ export function SampleContentList({
                   </span>
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {t('website:sampleContent.count', {
+                  {t(copy.count, {
                     count: entry.sampleItems,
                   })}
                 </p>
@@ -67,7 +95,7 @@ export function SampleContentList({
               to={sampleReviewPath(academyId, entry)}
               onClick={onNavigate}
               className="inline-flex min-h-9 shrink-0 items-center rounded-md px-3 text-sm font-medium text-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              aria-label={t('website:sampleContent.reviewLabel', {
+              aria-label={t(copy.reviewLabel, {
                 page: entry.pageTitle,
               })}
             >

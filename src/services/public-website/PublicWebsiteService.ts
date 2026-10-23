@@ -25,6 +25,7 @@ import type { ReadOptions } from '@api';
 import type {
   AcademyIdentity,
   ContactMessagePayload,
+  InterestMessagePayload,
   CollectionQuery,
   Course,
   CourseListQuery,
@@ -288,10 +289,14 @@ export class PublicWebsiteService extends BaseService {
     }
   }
 
-  /** Phase 6 — the real backend destination for the public Contact section's form (previously an intentional no-op). */
+  /**
+   * Phase 6 — the real backend destination for the public Contact section's
+   * form (previously an intentional no-op). CMS phase 3d (batch C): the
+   * interest form posts here too (`kind: 'interest'`).
+   */
   async submitContactMessage(
     academyId: string,
-    payload: ContactMessagePayload
+    payload: ContactMessagePayload | InterestMessagePayload
   ): Promise<void> {
     await this.client.post(
       this.path('websites', academyId, 'contact'),

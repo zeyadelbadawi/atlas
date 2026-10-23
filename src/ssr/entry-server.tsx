@@ -54,8 +54,11 @@ import {
   type UseDocumentSeoOptions,
 } from '@features/public-website';
 import {
+  loadAllSectionGroups,
   loadAllThemePacks,
   resolveDefaultLocale,
+  SectionGroupUsageContext,
+  type SectionGroupKey,
   themeStylesheetLinksHtml,
   ThemePackUsageContext,
 } from '@features/website';
@@ -173,17 +176,24 @@ setServerRequestContextProvider(() => requestContext.getStore());
 const pass = (reason: string): SsrResult => ({ kind: 'pass', reason });
 
 /**
- * Every theme pack, loaded once per process: a page renders its theme
+ * Every theme pack and section group, loaded once per process: a page renders its theme
  * directly, never behind a Suspense boundary or a loading state, exactly
  * as the browser hydrates it (it loads the page's themes first). Static
  * code, so sharing it across requests shares no request data.
  */
 let themePacksLoaded: Promise<void> | undefined;
 function loadThemePacksOnce(): Promise<void> {
-  themePacksLoaded ??= loadAllThemePacks().catch((error: unknown) => {
-    themePacksLoaded = undefined;
-    throw error;
-  });
+  // Each pack registers its own section groups' loaders, so the groups
+  // load once the packs have.
+  themePacksLoaded ??= loadAllThemePacks()
+    .then(loadAllSectionGroups)
+    .then(
+      () => undefined,
+      (error: unknown) => {
+        themePacksLoaded = undefined;
+        throw error;
+      }
+    );
   return themePacksLoaded;
 }
 
@@ -390,19 +400,23 @@ export async function renderPublicWebsitePage(
   // collected afresh on every pass: their stylesheets go in the head and
   // their keys to the browser, which loads those packs before hydrating.
   const themePackUsage = new Set<WebsiteThemeKey>();
+  // Likewise the section groups it renders (`section-groups.tsx`).
+  const sectionGroupUsage = new Set<SectionGroupKey>();
 
   const buildElement = (language: PublicWebsiteLocale): JSX.Element => (
     <SeoHeadCollectorContext.Provider value={seoCollector}>
       <ThemePackUsageContext.Provider value={themePackUsage}>
-        <App
-          router={createMemoryRouter(appRoutes, {
-            initialEntries: [`${url.pathname}${url.search}`],
-          })}
-          requestLocation={{ hostname, origin, search: url.search }}
-          hydrationSnapshot={snapshot}
-          initialLanguage={language}
-          queryClient={queryClient}
-        />
+        <SectionGroupUsageContext.Provider value={sectionGroupUsage}>
+          <App
+            router={createMemoryRouter(appRoutes, {
+              initialEntries: [`${url.pathname}${url.search}`],
+            })}
+            requestLocation={{ hostname, origin, search: url.search }}
+            hydrationSnapshot={snapshot}
+            initialLanguage={language}
+            queryClient={queryClient}
+          />
+        </SectionGroupUsageContext.Provider>
       </ThemePackUsageContext.Provider>
     </SeoHeadCollectorContext.Provider>
   );
@@ -423,6 +437,7 @@ export async function renderPublicWebsitePage(
     for (let passIndex = 0; passIndex < maxPasses; passIndex += 1) {
       let appHtml: string;
       themePackUsage.clear();
+      sectionGroupUsage.clear();
       try {
         appHtml = await renderToHtml(element, 5_000);
       } catch (error) {
@@ -609,6 +624,7 @@ export async function renderPublicWebsitePage(
           renderYear,
           consentDecided,
           themePacks: [...themePackUsage],
+          sectionGroups: [...sectionGroupUsage],
           queries: dehydratePublicQueries(queryClient),
         }),
       });

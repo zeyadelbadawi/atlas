@@ -162,10 +162,8 @@ describe('launch checklist', () => {
       />
     );
     expect(screen.getByText('0 of 3 done')).toBeTruthy();
-    // The copy counts testimonials, not sections.
-    expect(
-      screen.getByText(/Your starter website has sample testimonials\./)
-    ).toBeTruthy();
+    // The copy counts sample items, not sections.
+    expect(screen.getByText(/Your website has sample items,/)).toBeTruthy();
     expect(step('brand').dataset.done).toBe('false');
     expect(
       within(step('brand'))

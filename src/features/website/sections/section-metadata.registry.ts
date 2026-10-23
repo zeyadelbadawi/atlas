@@ -12,7 +12,18 @@
  */
 import {
   Award,
+  BellRing,
+  BadgeCheck,
   BookOpenCheck,
+  Clapperboard,
+  FileDown,
+  Route,
+  ClipboardList,
+  Table2,
+  CalendarClock,
+  Handshake,
+  MapPin,
+  Trophy,
   Columns2,
   Heading1,
   ListOrdered,
@@ -25,7 +36,11 @@ import {
   LibraryBig,
   MessageSquareQuote,
   Megaphone,
+  MessageCircle,
+  PlayCircle,
   Sparkles,
+  Tags,
+  Timer,
   Users,
   type LucideIcon,
 } from 'lucide-react';
@@ -127,7 +142,157 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadataEntry> = {
     labelKey: 'website:sections.courseSpotlight.label',
     icon: BookOpenCheck,
   },
+  logos: {
+    type: 'logos',
+    labelKey: 'website:sections.logos.label',
+    icon: Handshake,
+  },
+  map: { type: 'map', labelKey: 'website:sections.map.label', icon: MapPin },
+  schedule: {
+    type: 'schedule',
+    labelKey: 'website:sections.schedule.label',
+    icon: CalendarClock,
+  },
+  results: {
+    type: 'results',
+    labelKey: 'website:sections.results.label',
+    icon: Trophy,
+  },
+  whatsappBar: {
+    type: 'whatsappBar',
+    labelKey: 'website:sections.whatsappBar.label',
+    icon: MessageCircle,
+  },
+  video: {
+    type: 'video',
+    labelKey: 'website:sections.video.label',
+    icon: PlayCircle,
+  },
+  pricing: {
+    type: 'pricing',
+    labelKey: 'website:sections.pricing.label',
+    icon: Tags,
+  },
+  countdown: {
+    type: 'countdown',
+    labelKey: 'website:sections.countdown.label',
+    icon: Timer,
+  },
+  // CMS phase 3d (batch C).
+  interestForm: {
+    type: 'interestForm',
+    labelKey: 'website:sections.interestForm.label',
+    icon: ClipboardList,
+  },
+  announcementBar: {
+    type: 'announcementBar',
+    labelKey: 'website:sections.announcementBar.label',
+    icon: BellRing,
+  },
+  comparison: {
+    type: 'comparison',
+    labelKey: 'website:sections.comparison.label',
+    icon: Table2,
+  },
+  // CMS phase 3d (batch D).
+  timeline: {
+    type: 'timeline',
+    labelKey: 'website:sections.timeline.label',
+    icon: Route,
+  },
+  videoTestimonials: {
+    type: 'videoTestimonials',
+    labelKey: 'website:sections.videoTestimonials.label',
+    icon: Clapperboard,
+  },
+  downloads: {
+    type: 'downloads',
+    labelKey: 'website:sections.downloads.label',
+    icon: FileDown,
+  },
+  certificates: {
+    type: 'certificates',
+    labelKey: 'website:sections.certificates.label',
+    icon: BadgeCheck,
+  },
 };
+
+/**
+ * CMS phase 3d — starter rows and results. They are samples (`sample:
+ * true`): shown labelled "Sample" in previews, never on the public site
+ * (the API strips them and the renderers filter them), until the Owner
+ * replaces them or marks each one real. A starter timetable or "top
+ * student" must never pass for a real one.
+ */
+const SAMPLE_SCHEDULE_ROWS: SectionConfigMap['schedule']['items'] = [
+  {
+    id: 'sample-row-1',
+    sample: true,
+    day: 'sat',
+    start: '16:00',
+    end: '17:30',
+    title: {
+      en: 'Mathematics — Grade 9',
+      ar: 'الرياضيات — الصف الثالث الإعدادي',
+    },
+    teacher: { en: 'Mr. Ahmed', ar: 'أ. أحمد' },
+    location: { en: 'Hall 1', ar: 'القاعة ١' },
+  },
+  {
+    id: 'sample-row-2',
+    sample: true,
+    day: 'mon',
+    start: '18:00',
+    end: '19:30',
+    title: {
+      en: 'Physics — Secondary 3',
+      ar: 'الفيزياء — الصف الثالث الثانوي',
+    },
+    teacher: { en: 'Ms. Salma', ar: 'أ. سلمى' },
+    location: { en: 'Online', ar: 'عبر الإنترنت' },
+  },
+  {
+    id: 'sample-row-3',
+    sample: true,
+    day: 'wed',
+    start: '16:00',
+    end: '17:00',
+    title: {
+      en: 'Arabic — Grade 6',
+      ar: 'اللغة العربية — الصف السادس الابتدائي',
+    },
+    teacher: { en: 'Mr. Ahmed', ar: 'أ. أحمد' },
+    location: { en: 'Hall 2', ar: 'القاعة ٢' },
+  },
+];
+
+const SAMPLE_RESULTS: SectionConfigMap['results']['items'] = [
+  {
+    id: 'sample-result-1',
+    sample: true,
+    top: true,
+    studentName: 'Mariam A.',
+    result: { en: '99.2%', ar: '٩٩٫٢٪' },
+    detail: {
+      en: 'Secondary school certificate, science',
+      ar: 'الثانوية العامة، شعبة علمي علوم',
+    },
+  },
+  {
+    id: 'sample-result-2',
+    sample: true,
+    studentName: 'Omar K.',
+    result: { en: 'First in the governorate', ar: 'الأول على المحافظة' },
+    detail: { en: 'Preparatory certificate', ar: 'الشهادة الإعدادية' },
+  },
+  {
+    id: 'sample-result-3',
+    sample: true,
+    studentName: 'Youssef H.',
+    result: { en: '98%', ar: '٩٨٪' },
+    detail: { en: 'Grade 6 final exams', ar: 'امتحانات الصف السادس الابتدائي' },
+  },
+];
 
 /** Every registered section type's metadata, in the Page Composer's "Add section" display order. */
 export function listSectionMetadata(
@@ -184,7 +349,394 @@ export function getDefaultSectionConfig<TType extends SectionType>(
       showSyllabus: true,
       maxModules: DEFAULT_SPOTLIGHT_MODULES,
     },
+    logos: {
+      title: { en: 'Accreditations and partners', ar: 'الاعتمادات والشركاء' },
+      description: {
+        en: 'The organisations that accredit us and work with us.',
+        ar: 'الجهات التي تعتمدنا ونتعاون معها.',
+      },
+      items: [],
+    },
+    map: {
+      title: { en: 'Visit us', ar: 'زورونا' },
+      address: EMPTY_LOCALIZED_TEXT,
+    },
+    schedule: {
+      title: { en: 'Weekly class schedule', ar: 'جدول الحصص الأسبوعي' },
+      description: {
+        en: 'Find your group’s day and time.',
+        ar: 'اعرف يوم مجموعتك وموعدها.',
+      },
+      items: SAMPLE_SCHEDULE_ROWS,
+    },
+    results: {
+      title: { en: 'Our top students', ar: 'أوائلنا' },
+      description: {
+        en: 'Results our students achieved this year.',
+        ar: 'نتائج حققها طلابنا هذا العام.',
+      },
+      items: SAMPLE_RESULTS,
+    },
+    ...phase3dStarterConfigs(),
+    ...batchDStarterConfigs(),
+    ...phase3dBatchCStarterConfigs(),
   };
 
   return defaults[type] as SectionConfigMap[TType];
+}
+
+/**
+ * CMS phase 3d (batch A) — starter content in both languages, so a new
+ * section arrives looking like itself. What only the Owner can know is left
+ * empty, and the public site leaves it out until it is filled: the WhatsApp
+ * and call numbers (the buttons stay hidden), the video (the section stays
+ * hidden) and the deadline (the section stays hidden). Ids are fresh per
+ * section, like an added item's.
+ */
+function phase3dStarterConfigs(): Pick<
+  SectionConfigMap,
+  'whatsappBar' | 'video' | 'pricing' | 'countdown'
+> {
+  const id = () => crypto.randomUUID();
+  const feature = (en: string, ar: string, included: boolean) => ({
+    id: id(),
+    text: { en, ar },
+    included,
+  });
+  return {
+    whatsappBar: {
+      title: { en: 'Questions? Talk to us', ar: 'لديك سؤال؟ تحدّث إلينا' },
+      description: {
+        en: 'Ask us about courses, schedules and prices.',
+        ar: 'اسألنا عن الدورات والمواعيد والأسعار.',
+      },
+      cta: {
+        label: { en: 'Chat on WhatsApp', ar: 'راسلنا على واتساب' },
+        whatsapp: '',
+      },
+      secondaryCta: { label: { en: 'Call us', ar: 'اتصل بنا' }, phone: '' },
+    },
+    video: {
+      title: { en: 'See a lesson in action', ar: 'شاهد درسًا من دروسنا' },
+      description: {
+        en: 'A short look at how we teach.',
+        ar: 'نظرة قصيرة على طريقة تدريسنا.',
+      },
+      videoId: '',
+    },
+    pricing: {
+      title: { en: 'Plans and prices', ar: 'الباقات والأسعار' },
+      description: {
+        en: 'Choose the plan that suits you.',
+        ar: 'اختر الباقة التي تناسبك.',
+      },
+      plans: [
+        {
+          id: id(),
+          name: { en: 'Monthly', ar: 'الباقة الشهرية' },
+          price: { en: '450 EGP', ar: '450 ج.م' },
+          period: { en: 'per month', ar: 'شهريًا' },
+          description: {
+            en: 'One subject, paid month by month.',
+            ar: 'مادة واحدة تدفع اشتراكها شهرًا بشهر.',
+          },
+          features: [
+            feature('A weekly live class', 'حصة مباشرة كل أسبوع', true),
+            feature('Recorded lessons', 'دروس مسجّلة', true),
+            feature('Printed notes', 'مذكرات مطبوعة', false),
+          ],
+          cta: {
+            label: { en: 'Choose monthly', ar: 'اختر الشهرية' },
+            authAction: 'signUp',
+          },
+        },
+        {
+          id: id(),
+          name: { en: 'Full term', ar: 'باقة الترم' },
+          price: { en: '1,200 EGP', ar: '1200 ج.م' },
+          period: { en: 'per term', ar: 'للترم' },
+          description: {
+            en: 'Every lesson of the term, for less.',
+            ar: 'كل دروس الترم بسعر أقل.',
+          },
+          features: [
+            feature('A weekly live class', 'حصة مباشرة كل أسبوع', true),
+            feature('Recorded lessons', 'دروس مسجّلة', true),
+            feature('Printed notes', 'مذكرات مطبوعة', true),
+          ],
+          highlighted: true,
+          badge: { en: 'Best value', ar: 'الأوفر' },
+          cta: {
+            label: { en: 'Choose the term', ar: 'اختر باقة الترم' },
+            authAction: 'signUp',
+          },
+        },
+      ],
+    },
+    countdown: {
+      title: {
+        en: 'Registration for the new term closes soon',
+        ar: 'التسجيل في الترم الجديد يُغلق قريبًا',
+      },
+      description: {
+        en: 'Book your seat before the deadline.',
+        ar: 'احجز مقعدك قبل انتهاء الموعد.',
+      },
+      deadline: '',
+      endedMessage: {
+        en: 'Registration has closed. Message us to join the waiting list.',
+        ar: 'أُغلق التسجيل. راسلنا للانضمام إلى قائمة الانتظار.',
+      },
+      cta: {
+        label: { en: 'Book your seat', ar: 'احجز مقعدك' },
+        authAction: 'signUp',
+      },
+    },
+  };
+}
+
+/**
+ * CMS phase 3d (batch C) — starter content in both languages. The interest
+ * form starts with the three secondary grades as its choice (Egypt's most
+ * common case; the Owner edits or hides the list), the notice strip with an
+ * open-registration line and a sign-up button, and the comparison with
+ * "Our academy" against "Studying alone". Ids are fresh per section.
+ */
+function phase3dBatchCStarterConfigs(): Pick<
+  SectionConfigMap,
+  'interestForm' | 'announcementBar' | 'comparison'
+> {
+  const id = () => crypto.randomUUID();
+  const us = id();
+  const alone = id();
+  const row = (
+    en: string,
+    ar: string,
+    cells: SectionConfigMap['comparison']['rows'][number]['cells']
+  ) => ({ id: id(), label: { en, ar }, cells });
+  return {
+    interestForm: {
+      title: { en: 'Register your interest', ar: 'سجّل اهتمامك' },
+      description: {
+        en: 'Leave your name and number and we will call you about the new term.',
+        ar: 'اترك اسمك ورقمك وسنتصل بك بخصوص الترم الجديد.',
+      },
+      emailField: 'optional',
+      choiceField: 'required',
+      choiceLabel: { en: 'Grade', ar: 'الصف الدراسي' },
+      options: [
+        {
+          id: id(),
+          label: { en: 'First secondary', ar: 'الصف الأول الثانوي' },
+        },
+        {
+          id: id(),
+          label: { en: 'Second secondary', ar: 'الصف الثاني الثانوي' },
+        },
+        {
+          id: id(),
+          label: { en: 'Third secondary', ar: 'الصف الثالث الثانوي' },
+        },
+      ],
+      messageField: 'hidden',
+      submitLabel: { en: 'Send', ar: 'أرسل' },
+      successMessage: {
+        en: 'Thank you! We will call you soon.',
+        ar: 'شكرًا لك! سنتصل بك قريبًا.',
+      },
+    },
+    announcementBar: {
+      text: {
+        en: 'Registration for 2026/2027 is open',
+        ar: 'التسجيل للعام الدراسي 2026/2027 مفتوح الآن',
+      },
+      tone: 'brand',
+      cta: {
+        label: { en: 'Register now', ar: 'سجّل الآن' },
+        authAction: 'signUp',
+      },
+    },
+    comparison: {
+      title: {
+        en: 'Our academy or studying alone?',
+        ar: 'أكاديميتنا أم المذاكرة وحدك؟',
+      },
+      description: {
+        en: 'What you get when you study with us.',
+        ar: 'ما تحصل عليه عندما تدرس معنا.',
+      },
+      columns: [
+        {
+          id: us,
+          label: { en: 'Our academy', ar: 'أكاديميتنا' },
+          highlighted: true,
+        },
+        { id: alone, label: { en: 'Studying alone', ar: 'المذاكرة وحدك' } },
+      ],
+      rows: [
+        row('Live classes with a teacher', 'حصص مباشرة مع مدرس', [
+          { column: us, value: 'yes' },
+          { column: alone, value: 'no' },
+        ]),
+        row('Answers to your questions', 'إجابات عن أسئلتك', [
+          {
+            column: us,
+            value: 'text',
+            text: { en: 'Same day', ar: 'في نفس اليوم' },
+          },
+          {
+            column: alone,
+            value: 'text',
+            text: { en: 'Search alone', ar: 'تبحث وحدك' },
+          },
+        ]),
+        row('Weekly tests and follow-up', 'اختبارات ومتابعة أسبوعية', [
+          { column: us, value: 'yes' },
+          { column: alone, value: 'no' },
+        ]),
+      ],
+    },
+  };
+}
+
+/**
+ * CMS phase 3d (batch D) — starter content in both languages. The learning
+ * path is a generic year an Owner edits; the video reviews are samples
+ * (`sample: true`: labelled in previews, never public — a starter review is
+ * an invented one) without videos; the downloads have no links yet, so the
+ * public site leaves them out until the Owner adds the files; certificates
+ * start empty, since only the Owner has the images.
+ */
+function batchDStarterConfigs(): Pick<
+  SectionConfigMap,
+  'timeline' | 'videoTestimonials' | 'downloads' | 'certificates'
+> {
+  const id = () => crypto.randomUUID();
+  return {
+    timeline: {
+      title: { en: 'Your path through the year', ar: 'رحلتك خلال العام' },
+      description: {
+        en: 'What we cover, stage by stage, until the final exam.',
+        ar: 'ما ندرسه مرحلةً بمرحلة حتى الامتحان النهائي.',
+      },
+      items: [
+        {
+          id: id(),
+          title: {
+            en: 'Term 1: the foundations',
+            ar: 'الترم الأول: الأساسيات',
+          },
+          period: { en: 'Sept – Dec', ar: 'سبتمبر – ديسمبر' },
+          description: {
+            en: 'Every unit of the first term, with a weekly quiz.',
+            ar: 'كل وحدات الترم الأول مع اختبار أسبوعي.',
+          },
+          icon: 'BookOpen',
+        },
+        {
+          id: id(),
+          title: { en: 'Term 2: going further', ar: 'الترم الثاني: التعمّق' },
+          period: { en: 'Feb – Apr', ar: 'فبراير – أبريل' },
+          description: {
+            en: 'The second term’s units and a monthly mock exam.',
+            ar: 'وحدات الترم الثاني وامتحان تجريبي كل شهر.',
+          },
+          icon: 'GraduationCap',
+        },
+        {
+          id: id(),
+          title: { en: 'Final revision', ar: 'المراجعة النهائية' },
+          period: { en: 'May – June', ar: 'مايو – يونيو' },
+          description: {
+            en: 'Past papers, summaries and a full final rehearsal.',
+            ar: 'امتحانات سابقة وملخصات وبروفة نهائية كاملة.',
+          },
+          icon: 'Award',
+        },
+      ],
+    },
+    videoTestimonials: {
+      title: {
+        en: 'Hear it from our students and parents',
+        ar: 'اسمعها من طلابنا وأولياء الأمور',
+      },
+      description: {
+        en: 'Short videos from the families who study with us.',
+        ar: 'فيديوهات قصيرة من الأسر التي تدرس معنا.',
+      },
+      items: [
+        {
+          id: id(),
+          sample: true,
+          videoId: '',
+          name: 'Mona H.',
+          role: {
+            en: 'Parent of a Grade 12 student',
+            ar: 'وليّة أمر طالب في الصف الثالث الثانوي',
+          },
+          quote: {
+            en: 'He finally enjoys physics, and his marks show it.',
+            ar: 'أصبح يحب الفيزياء أخيرًا، ودرجاته تشهد بذلك.',
+          },
+        },
+        {
+          id: id(),
+          sample: true,
+          videoId: '',
+          name: 'Karim S.',
+          role: { en: 'Grade 12 student', ar: 'طالب في الصف الثالث الثانوي' },
+          quote: {
+            en: 'The revision sessions made the final exam feel easy.',
+            ar: 'حصص المراجعة جعلت الامتحان النهائي سهلًا.',
+          },
+        },
+        {
+          id: id(),
+          sample: true,
+          videoId: '',
+          name: 'Nour A.',
+          role: { en: 'Grade 9 student', ar: 'طالبة في الصف الثالث الإعدادي' },
+        },
+      ],
+    },
+    downloads: {
+      title: {
+        en: 'Notes and revision sheets',
+        ar: 'المذكرات وملخصات المراجعة',
+      },
+      description: {
+        en: 'Free to download for every student.',
+        ar: 'متاحة للتحميل مجانًا لكل الطلاب.',
+      },
+      items: [
+        {
+          id: id(),
+          title: { en: 'Term 1 revision sheet', ar: 'ملخص مراجعة الترم الأول' },
+          description: {
+            en: 'Every rule of the term on two pages.',
+            ar: 'كل قواعد الترم في صفحتين.',
+          },
+          url: '',
+          fileType: 'PDF',
+        },
+        {
+          id: id(),
+          title: { en: 'Past exam papers', ar: 'امتحانات الأعوام السابقة' },
+          url: '',
+          fileType: 'PDF',
+        },
+      ],
+    },
+    certificates: {
+      title: {
+        en: 'Certificates and accreditations',
+        ar: 'الشهادات والاعتمادات',
+      },
+      description: {
+        en: 'The certificates and awards the academy holds.',
+        ar: 'الشهادات والجوائز التي حصلت عليها الأكاديمية.',
+      },
+      items: [],
+    },
+  };
 }

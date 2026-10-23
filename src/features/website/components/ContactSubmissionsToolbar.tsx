@@ -1,6 +1,7 @@
 /**
  * The website Messages toolbar: status tabs (with whole-academy counts
- * from the summary), search, received-date range, sort and Clear filters.
+ * from the summary), search, which form (CMS phase 3d), received-date
+ * range, sort and Clear filters.
  *
  * Purely presentational — every value comes from, and every change goes
  * to, the URL-backed state in `useContactSubmissionFilters`.
@@ -22,8 +23,13 @@ import {
 import { SearchInput } from '@components/data-display';
 import { useLanguage } from '@hooks';
 import { formatNumber } from '@utils';
-import type { ContactSubmissionStatus, ContactSubmissionSummary } from '@types';
+import type {
+  ContactSubmissionKind,
+  ContactSubmissionStatus,
+  ContactSubmissionSummary,
+} from '@types';
 import {
+  CONTACT_SUBMISSION_KINDS,
   CONTACT_SUBMISSION_SORT_OPTIONS,
   type ContactSubmissionFilterState,
   type ContactSubmissionSortOption,
@@ -41,6 +47,8 @@ export interface ContactSubmissionsToolbarProps {
   readonly onStatusChange: (
     status: ContactSubmissionStatus | undefined
   ) => void;
+  /** CMS phase 3d (batch C) — only one form's messages. */
+  readonly onKindChange?: (kind: ContactSubmissionKind | undefined) => void;
   readonly onFromChange: (from: string | undefined) => void;
   readonly onToChange: (to: string | undefined) => void;
   readonly onSortChange: (sort: ContactSubmissionSortOption) => void;
@@ -53,6 +61,7 @@ export function ContactSubmissionsToolbar({
   summary,
   onSearchChange,
   onStatusChange,
+  onKindChange,
   onFromChange,
   onToChange,
   onSortChange,
@@ -110,6 +119,43 @@ export function ContactSubmissionsToolbar({
           labelKey="website:messages.searchLabel"
           className="w-full lg:max-w-sm lg:flex-1"
         />
+
+        {onKindChange ? (
+          <div className="space-y-1">
+            <Label
+              htmlFor="contact-submissions-kind"
+              className="text-xs text-muted-foreground"
+            >
+              {t('website:messages.filters.kind')}
+            </Label>
+            <Select
+              value={filters.kind ?? 'all'}
+              onValueChange={(value) =>
+                onKindChange(
+                  value === 'all' ? undefined : (value as ContactSubmissionKind)
+                )
+              }
+            >
+              <SelectTrigger
+                id="contact-submissions-kind"
+                aria-label={t('website:messages.filters.kind')}
+                className="w-full sm:w-[200px]"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">
+                  {t('website:messages.filters.kindAll')}
+                </SelectItem>
+                {CONTACT_SUBMISSION_KINDS.map((kind) => (
+                  <SelectItem key={kind} value={kind}>
+                    {t(`website:messages.kind.${kind}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        ) : null}
 
         <fieldset className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <legend className="sr-only">

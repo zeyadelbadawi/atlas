@@ -1235,6 +1235,19 @@ describe('theme packs: each site gets only its own theme', () => {
   };
 
   /** The files these chunks load with them: themselves, their static imports, their CSS. */
+  /**
+   * A theme pack's manifest key: its source path or, when the bundler built
+   * the pack's chunk around more than its own module (its section groups
+   * import from it), the chunk named after it — as `handler.mjs` finds the
+   * public router's.
+   */
+  function packKey(m, theme) {
+    if (m[PACKS[theme]]) return PACKS[theme];
+    return Object.keys(m).find(
+      (key) => m[key].isDynamicEntry && m[key].name === `${theme}.pack`
+    );
+  }
+
   function staticClosure(m, keys) {
     const files = new Set();
     const seen = new Set();
@@ -1299,9 +1312,9 @@ describe('theme packs: each site gets only its own theme', () => {
       const loaded = staticClosure(m, [
         'index.html',
         findPublicRouterChunk(m),
-        PACKS[theme],
+        packKey(m, theme),
       ]);
-      const otherPack = m[PACKS[other]];
+      const otherPack = m[packKey(m, other)];
       assert.ok(otherPack, `${PACKS[other]} is a chunk of its own`);
       assert.ok(!loaded.has(otherPack.file), `${otherPack.file} is loaded`);
       const texts = [...loaded].map((file) => [
@@ -1340,7 +1353,7 @@ describe('theme packs: each site gets only its own theme', () => {
   it("Riwaq's pack, stylesheet and fonts stay within budget, and smaller than Themes 1–3's", () => {
     const m = manifest();
     const size = (file) => statSync(join(DIST, file)).size;
-    const pack = (theme) => m[PACKS[theme]];
+    const pack = (theme) => m[packKey(m, theme)];
     const riwaq = pack('riwaq');
     assert.ok(riwaq, 'the Riwaq pack is a chunk of its own');
     const packBytes = size(riwaq.file);
@@ -1423,6 +1436,40 @@ describe('theme packs: each site gets only its own theme', () => {
     assert.ok(riwaqArabic.length > 0);
     assert.ok(riwaqArabic.every((file) => /ibm-plex-sans-arabic/.test(file)));
     assert.deepEqual(fontPreloads((await get(on, ALPHA, '/')).body), []);
+  });
+
+  // CMS phase 3d — the new sections are chunks of their own (section
+  // groups): the server draws them in full and names the ones a page used,
+  // so the browser loads exactly those before hydrating.
+  it('a page names the section groups it drew, and only those', async () => {
+    const plain = await get(handler, ZETA, '/');
+    assert.deepEqual(payloadOf(plain.body).sectionGroups, []);
+
+    const zeta = state.academies[ZETA_ID];
+    zeta.pages = zeta.pages.map((page) =>
+      page.coreType === 'home'
+        ? {
+            ...page,
+            sections: [
+              {
+                id: 'notice-1',
+                type: 'announcementBar',
+                enabled: true,
+                visibility: { desktop: true, tablet: true, mobile: true },
+                config: {
+                  text: { en: 'Registration is open', ar: 'التسجيل مفتوح' },
+                  tone: 'brand',
+                },
+              },
+              ...page.sections,
+            ],
+          }
+        : page
+    );
+    const result = await get(handler, ZETA, '/');
+    assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
+    assert.match(result.body, /Registration is open/);
+    assert.deepEqual(payloadOf(result.body).sectionGroups, ['riwaq:enrol']);
   });
 
   it('Coming Soon on a theme that draws its own links that theme only', async () => {

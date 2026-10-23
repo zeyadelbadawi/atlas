@@ -871,3 +871,175 @@ a.t1-footer-social:hover {
 [data-theme-pack='modern-education'] :is(.t1-lead):lang(ar) {
   line-height: 1.85;
 }
+
+/* ------------------------------------------------------------------ */
+/* CMS phase 3d: the "Talk to us" bar, video, pricing and countdown.    */
+/* ------------------------------------------------------------------ */
+
+/* The bar: a card with the CTA colour on its reading-start edge. */
+.t1-bar {
+  border-inline-start: 4px solid var(--website-cta);
+}
+
+/* The video: the media frame, with the play mark in the CTA colour. */
+.t1-video-frame {
+  box-shadow: var(--t1-shadow-lift);
+}
+.t1-video-play {
+  inline-size: 4.5rem;
+  block-size: 4.5rem;
+  border-radius: 999px;
+  background-color: var(--website-cta);
+  color: var(--website-cta-foreground);
+  box-shadow: 0 10px 30px -10px hsl(220 30% 12% / 0.55);
+  transition: transform var(--t1-duration) var(--t1-ease);
+}
+[data-video-play]:hover .t1-video-play {
+  transform: scale(1.06);
+}
+.t1-video-frame [data-video-play]:focus-visible {
+  outline: 3px solid var(--website-focus);
+  outline-offset: -3px;
+  border-radius: var(--t1-radius-card);
+}
+@media (prefers-reduced-motion: reduce) {
+  .t1-video-play {
+    transition: none;
+  }
+  [data-video-play]:hover .t1-video-play {
+    transform: none;
+  }
+}
+
+/* Pricing: cards; the most popular one is ringed in the link colour. */
+.t1-plan[data-highlighted] {
+  border-color: var(--website-link);
+  box-shadow:
+    0 0 0 1px var(--website-link),
+    var(--t1-shadow-lift);
+}
+.t1-plan-badge {
+  align-self: flex-start;
+  margin-block-end: 1rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--t1-radius-pill);
+  background-color: var(--website-chip-bg);
+  color: var(--website-chip-fg);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.t1-plan-price {
+  font-family: var(--font-display, inherit);
+  font-size: clamp(1.875rem, 1.6rem + 0.9vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--website-foreground);
+  overflow-wrap: anywhere;
+}
+[dir='rtl'] .t1-plan-price {
+  letter-spacing: 0;
+}
+.t1-plan-mark {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.375rem;
+  block-size: 1.375rem;
+  margin-block-start: 0.125rem;
+  border-radius: 999px;
+  background-color: var(--website-icon-tile);
+  color: var(--website-icon-fg);
+}
+.t1-plan-mark-off {
+  background-color: var(--website-surface-muted);
+  color: var(--website-foreground-muted);
+}
+
+/* Countdown: tabular digits in frosted cells on the ink band. */
+.t1-countdown-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.875rem 0.25rem 0.75rem;
+  border-radius: var(--t1-radius-control);
+  border: 1px solid hsl(0 0% 100% / 0.16);
+  background-color: hsl(0 0% 100% / 0.08);
+}
+.t1-countdown-value {
+  font-size: clamp(1.75rem, 1.1rem + 2.6vw, 3rem);
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--website-ink-foreground);
+}
+.t1-countdown-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--website-ink-muted);
+}
+
+/* ------------------------------------------------------------------ */
+/* CMS phase 3d (batch C): the brand band and the notice strip.          */
+/* ------------------------------------------------------------------ */
+
+/* The brand band: the CTA fill and its foreground, a pair the brand
+   engine holds at 4.5:1 for every palette (§F.4.4). Only the notice strip
+   uses it. */
+.t1-brand {
+  background-color: var(--website-cta);
+  color: var(--website-cta-foreground);
+}
+/* Actions on it take the same pair, inverted or as a line, so their text
+   keeps that contrast; hover adds an underline rather than a new colour. */
+.t1-brand .t1-cta {
+  border-color: var(--website-cta-foreground);
+  background-color: var(--website-cta-foreground);
+  color: var(--website-cta);
+}
+.t1-brand .t1-cta:hover,
+.t1-brand .t1-cta:active {
+  background-color: var(--website-cta-foreground);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.t1-brand .t1-btn-secondary {
+  border-color: var(--website-cta-foreground);
+  background-color: transparent;
+  color: var(--website-cta-foreground);
+}
+.t1-brand .t1-btn-secondary:hover {
+  background-color: transparent;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.t1-brand .t1-link {
+  color: var(--website-cta-foreground);
+  text-decoration: underline;
+}
+.t1-brand :is(.t1-cta, .t1-btn-secondary, .t1-link):focus-visible {
+  outline: 2px solid var(--website-cta-foreground);
+  outline-offset: 3px;
+}
+
+/* The notice strip: a slim band at the theme's own spacing choice. It
+   keeps its own padding next to a band of the same tone, and gives the
+   section after it its full top padding back. */
+.t1-section.t1-announce {
+  padding-block: calc(0.875rem * var(--ws-space, 1)) !important;
+}
+.t1-section.t1-announce::before {
+  /* The ink band's glow is for the closing band, not a slim strip. */
+  display: none;
+}
+.t1-section.t1-announce[data-tone] + .t1-section[data-tone],
+[data-preview-section]:has(> .t1-section.t1-announce)
+  + [data-preview-section]
+  > .t1-section[data-tone] {
+  padding-block-start: calc(var(--t1-rhythm) * var(--ws-space, 1));
+}
+.t1-announce .t1-announce-action {
+  min-block-size: 2.75rem;
+}
