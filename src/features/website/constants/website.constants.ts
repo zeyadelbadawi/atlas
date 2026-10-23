@@ -80,6 +80,8 @@ export const SECTION_TYPE_ORDER: readonly SectionType[] = [
   'interestForm',
   'announcementBar',
   'comparison',
+  // CMS phase 3c.
+  'custom',
 ];
 
 /** The bounded icon names a Feature item may reference — a curated subset of `lucide-react`, never an arbitrary asset. */
@@ -316,6 +318,56 @@ export const MAX_DOWNLOAD_FILE_SIZE_LENGTH = 16;
 export const MAX_CERTIFICATES = 12;
 /** A four-digit year from 1900 to 2099 ("2025"). */
 export const CERTIFICATE_YEAR_PATTERN = /^(?:19|20)\d{2}$/;
+
+/*
+ * CMS phase 3c — the custom section's limits, mirrored exactly by the
+ * backend's `website.constants.ts` (see its table for why each one) and
+ * proven at the boundaries by the parity cases. Characters per language.
+ * 12 elements per column keeps a section one idea (36 at most across three
+ * columns), the page's stored JSON small, and the editor's list scannable.
+ */
+/** How many columns each layout has. */
+export const CUSTOM_SECTION_LAYOUT_COLUMNS = {
+  one: 1,
+  two: 2,
+  three: 3,
+} as const;
+export const CUSTOM_SECTION_LAYOUTS = ['one', 'two', 'three'] as const;
+export const CUSTOM_SECTION_RATIOS = [
+  'equal',
+  'wideNarrow',
+  'narrowWide',
+] as const;
+export const CUSTOM_SECTION_VERTICAL_ALIGNS = ['top', 'center'] as const;
+/** The element kinds, in the order the "Add element" menu offers them. */
+export const CUSTOM_ELEMENT_KINDS = [
+  'heading',
+  'text',
+  'button',
+  'image',
+  'video',
+  'checklist',
+  'iconText',
+  'spacer',
+  'divider',
+] as const;
+export const CUSTOM_HEADING_LEVELS = ['h2', 'h3'] as const;
+export const CUSTOM_SPACER_SIZES = ['small', 'medium', 'large'] as const;
+export const CUSTOM_IMAGE_RATIOS = [
+  'landscape',
+  'wide',
+  'square',
+  'portrait',
+] as const;
+export const MAX_CUSTOM_ELEMENTS_PER_COLUMN = 12;
+export const MAX_CUSTOM_HEADING_LENGTH = 120;
+export const MAX_CUSTOM_TEXT_LENGTH = 1500;
+export const MIN_CUSTOM_CHECKLIST_ITEMS = 1;
+export const MAX_CUSTOM_CHECKLIST_ITEMS = 10;
+export const MAX_CUSTOM_CHECKLIST_ITEM_LENGTH = 120;
+export const MAX_CUSTOM_ICON_TEXT_TITLE_LENGTH = 80;
+export const MAX_CUSTOM_ICON_TEXT_LENGTH = 240;
+export const MAX_CUSTOM_VIDEO_TITLE_LENGTH = 100;
 /** What a download's library picker offers to upload (the media pipeline sniffs PDFs; images are allowed too). */
 export const DOWNLOAD_FILE_ACCEPT = 'application/pdf';
 

@@ -209,6 +209,8 @@ describe('MANARA_SECTION_RENDERERS', () => {
         'interestForm',
         'announcementBar',
         'comparison',
+        // CMS phase 3c.
+        'custom',
       ].sort()
     );
   });

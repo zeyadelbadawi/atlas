@@ -65,6 +65,9 @@ export const SECTION_TYPES = [
   'videoTestimonials',
   'downloads',
   'certificates',
+  // CMS phase 3c — the section an Owner builds from elements (columns of
+  // headings, text, buttons, media, lists), with a renderer in every theme.
+  'custom',
 ] as const;
 
 export type SectionType = (typeof SECTION_TYPES)[number];
@@ -764,6 +767,120 @@ export interface CertificatesSectionConfig {
   readonly items: readonly CertificateItem[];
 }
 
+/*
+ * CMS phase 3c — the custom section: an Owner's own layout of one, two or
+ * three columns, each an ordered list of elements. Named choices only (no
+ * pixels, no positions); every element is data a theme draws with its own
+ * type, colours and actions. Matches the backend's `customSectionSchema`
+ * field for field.
+ */
+export type CustomSectionLayout = 'one' | 'two' | 'three';
+/** Two columns only: equal halves, or one about twice the other (logical: `wideNarrow` is the wide column first). */
+export type CustomSectionRatio = 'equal' | 'wideNarrow' | 'narrowWide';
+export type CustomSectionVerticalAlign = 'top' | 'center';
+
+interface CustomElementBase {
+  readonly id: string;
+}
+
+/** The section's title, when it has one, is the h2 above. */
+export interface CustomHeadingElement extends CustomElementBase {
+  readonly kind: 'heading';
+  readonly text: LocalizedText;
+  readonly level: 'h2' | 'h3';
+}
+
+/** Multi-line plain text (never markup): a blank line starts a new paragraph. */
+export interface CustomTextElement extends CustomElementBase {
+  readonly kind: 'text';
+  readonly text: LocalizedText;
+}
+
+/** One to three buttons in a row — the section buttons' contract and slots. */
+export interface CustomButtonElement extends CustomElementBase, SectionButtons {
+  readonly kind: 'button';
+  readonly cta: WebsiteCta;
+}
+
+/** The frame an image reserves: 4:3, 16:9, 1:1 or 4:5. Absent = `landscape`. */
+export type CustomImageRatio = 'landscape' | 'wide' | 'square' | 'portrait';
+
+/** Empty/absent `image` is a picture not chosen yet: the public site leaves it out. */
+export interface CustomImageElement extends CustomElementBase {
+  readonly kind: 'image';
+  readonly image?: string;
+  readonly imageAlt?: LocalizedText;
+  readonly ratio?: CustomImageRatio;
+}
+
+/** A click-to-play YouTube video; empty `videoId` is one not chosen yet. */
+export interface CustomVideoElement extends CustomElementBase {
+  readonly kind: 'video';
+  readonly videoId: string;
+  /** Names the play button and the player. */
+  readonly title?: LocalizedText;
+  readonly poster?: string;
+}
+
+export interface CustomChecklistItem {
+  readonly id: string;
+  readonly text: LocalizedText;
+}
+
+/** ✓ items (1–10). */
+export interface CustomChecklistElement extends CustomElementBase {
+  readonly kind: 'checklist';
+  readonly items: readonly CustomChecklistItem[];
+}
+
+export interface CustomSpacerElement extends CustomElementBase {
+  readonly kind: 'spacer';
+  readonly size: 'small' | 'medium' | 'large';
+}
+
+export interface CustomDividerElement extends CustomElementBase {
+  readonly kind: 'divider';
+}
+
+/** One of `FEATURE_ICON_OPTIONS` beside a short title and line. */
+export interface CustomIconTextElement extends CustomElementBase {
+  readonly kind: 'iconText';
+  readonly icon: string;
+  readonly title: LocalizedText;
+  readonly text?: LocalizedText;
+}
+
+export type CustomElement =
+  | CustomHeadingElement
+  | CustomTextElement
+  | CustomButtonElement
+  | CustomImageElement
+  | CustomVideoElement
+  | CustomChecklistElement
+  | CustomSpacerElement
+  | CustomDividerElement
+  | CustomIconTextElement;
+
+export type CustomElementKind = CustomElement['kind'];
+
+export interface CustomColumn {
+  readonly id: string;
+  readonly elements: readonly CustomElement[];
+}
+
+/** CMS phase 3c — an Owner's own section: columns of elements (≤ 12 each). */
+export interface CustomSectionConfig {
+  readonly title?: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly layout: CustomSectionLayout;
+  /** Two columns only; absent = equal. */
+  readonly ratio?: CustomSectionRatio;
+  /** Absent = top. */
+  readonly verticalAlign?: CustomSectionVerticalAlign;
+  /** Exactly as many as the layout names. */
+  readonly columns: readonly CustomColumn[];
+}
+
 /** Every section's config, keyed by its `SectionType`. */
 export interface SectionConfigMap {
   readonly hero: HeroSectionConfig;
@@ -800,6 +917,8 @@ export interface SectionConfigMap {
   readonly videoTestimonials: VideoTestimonialsSectionConfig;
   readonly downloads: DownloadsSectionConfig;
   readonly certificates: CertificatesSectionConfig;
+  // CMS phase 3c.
+  readonly custom: CustomSectionConfig;
 }
 
 /** CMS phase 3 — the ground a section sits on (see `SECTION_BACKGROUNDS`). */

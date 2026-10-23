@@ -101,6 +101,8 @@ describe('theme packs', () => {
       'videoTestimonials',
       'downloads',
       'certificates',
+      // CMS phase 3c.
+      'custom',
     ] as const;
     expect(Object.keys(pack.renderers).sort()).toEqual([...home].sort());
     // Page-level slots: the fallback page hero, Course Details, 404 and

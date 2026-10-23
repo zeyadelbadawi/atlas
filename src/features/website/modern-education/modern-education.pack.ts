@@ -64,6 +64,11 @@ const journeyProof = sectionGroup(
   'modern-education:journey-proof',
   () => import('./t1-journey-proof-sections')
 );
+// CMS phase 3c: the custom section, a group of its own.
+const custom = sectionGroup(
+  'modern-education:custom',
+  () => import('./t1-custom-section')
+);
 
 export const MODERN_EDUCATION_PACK: ThemePack = {
   key: 'modern-education',
@@ -103,6 +108,8 @@ export const MODERN_EDUCATION_PACK: ThemePack = {
     videoTestimonials: journeyProof('T1VideoTestimonials'),
     downloads: journeyProof('T1Downloads'),
     certificates: journeyProof('T1Certificates'),
+    // CMS phase 3c.
+    custom: custom('T1Custom'),
   },
   pages: {
     PageIntro: T1PageIntro,

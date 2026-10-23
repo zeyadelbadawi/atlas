@@ -214,7 +214,8 @@ const BUTTON_PART_LABELS: Readonly<Record<string, string>> = {
 
 function resolveIssueField(
   schema: SectionFieldSchema,
-  path: string
+  path: string,
+  draft?: Readonly<Record<string, unknown>>
 ): {
   readonly labelKeys: readonly string[];
   readonly itemNumber?: number;
@@ -260,7 +261,7 @@ function resolveIssueField(
   if (field) {
     if (isCustomField(field)) {
       return {
-        ...resolveCustomFieldIssue(field, parts.slice(1), head),
+        ...resolveCustomFieldIssue(field, parts.slice(1), head, draft),
         language,
       };
     }
@@ -1096,7 +1097,7 @@ export function SectionConfigForm<TType extends SectionType>({
   };
 
   const summary = issues.map((issue) => {
-    const field = resolveIssueField(schema, issue.path);
+    const field = resolveIssueField(schema, issue.path, draft);
     const [first, ...rest] = field.labelKeys.map((key) => t(key));
     const name = [
       field.itemNumber !== undefined ? `${first} ${field.itemNumber}` : first,
@@ -1287,6 +1288,7 @@ export function SectionConfigForm<TType extends SectionType>({
                 errorFor={errorFor}
                 pages={pages}
                 academyId={academyId}
+                revealErrors={revealErrors}
               />
             ) : field.kind === 'cta' ? (
               <CtaFieldEditor

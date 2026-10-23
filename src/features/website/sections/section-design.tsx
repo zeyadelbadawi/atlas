@@ -101,6 +101,9 @@ export const SECTION_DESIGN_SUPPORT: Record<SectionType, SectionDesignSupport> =
     interestForm: NO_ALIGN,
     announcementBar: FULL,
     comparison: NO_ALIGN,
+    // CMS phase 3c: columns, so the stacking order on phones is the
+    // Owner's (`data-ws-columns` on the columns' grid).
+    custom: SPLIT,
   };
 
 /**

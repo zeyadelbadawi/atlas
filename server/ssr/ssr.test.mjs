@@ -1472,6 +1472,75 @@ describe('theme packs: each site gets only its own theme', () => {
     assert.deepEqual(payloadOf(result.body).sectionGroups, ['riwaq:enrol']);
   });
 
+  // CMS phase 3c — the custom section is a group of its own per theme: the
+  // server draws its columns in full (headings at the level chosen, the
+  // button's real link, no YouTube player) and names the group.
+  it('draws a custom section on the server and names its group', async () => {
+    const zeta = state.academies[ZETA_ID];
+    zeta.pages = zeta.pages.map((page) =>
+      page.coreType === 'home'
+        ? {
+            ...page,
+            sections: [
+              {
+                id: 'custom-1',
+                type: 'custom',
+                enabled: true,
+                visibility: { desktop: true, tablet: true, mobile: true },
+                design: { reverseOnMobile: true },
+                config: {
+                  layout: 'two',
+                  columns: [
+                    {
+                      id: 'c1',
+                      elements: [
+                        {
+                          id: 'h',
+                          kind: 'heading',
+                          level: 'h2',
+                          text: {
+                            en: 'Built by the academy',
+                            ar: 'من تصميم الأكاديمية',
+                          },
+                        },
+                        {
+                          id: 'b',
+                          kind: 'button',
+                          cta: {
+                            label: {
+                              en: 'Create your account',
+                              ar: 'أنشئ حسابك',
+                            },
+                            authAction: 'signUp',
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      id: 'c2',
+                      elements: [
+                        { id: 'v', kind: 'video', videoId: 'dQw4w9WgXcQ' },
+                      ],
+                    },
+                  ],
+                },
+              },
+              ...page.sections.filter(
+                (section) => section.type !== 'announcementBar'
+              ),
+            ],
+          }
+        : page
+    );
+    const result = await get(handler, ZETA, '/');
+    assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
+    assert.match(result.body, /<h2[^>]*>Built by the academy<\/h2>/);
+    assert.match(result.body, /data-ws-columns/);
+    assert.match(result.body, /Create your account/);
+    assert.doesNotMatch(result.body, /<iframe/);
+    assert.deepEqual(payloadOf(result.body).sectionGroups, ['riwaq:custom']);
+  });
+
   it('Coming Soon on a theme that draws its own links that theme only', async () => {
     const result = await get(handler, GAMMA, '/');
     assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);

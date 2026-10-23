@@ -30,7 +30,7 @@ import type { PresetPreviewSource } from '../presets/preset-preview-source';
 
 /** What each offered section is for, in the order the groups are shown. */
 export const SECTION_LIBRARY_GROUPS: readonly {
-  readonly key: 'intro' | 'courses' | 'trust' | 'info' | 'action';
+  readonly key: 'intro' | 'courses' | 'trust' | 'info' | 'action' | 'build';
   readonly types: readonly SectionType[];
 }[] = [
   {
@@ -78,6 +78,8 @@ export const SECTION_LIBRARY_GROUPS: readonly {
       'map',
     ],
   },
+  // CMS phase 3c — the section an Owner builds from elements.
+  { key: 'build', types: ['custom'] },
 ];
 
 export interface SectionLibraryProps {

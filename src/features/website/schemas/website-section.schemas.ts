@@ -110,6 +110,22 @@ import {
   SECTION_BACKGROUNDS,
   SECTION_SPACINGS,
   SECTION_WIDTHS,
+  CUSTOM_HEADING_LEVELS,
+  CUSTOM_IMAGE_RATIOS,
+  CUSTOM_SECTION_LAYOUT_COLUMNS,
+  CUSTOM_SECTION_LAYOUTS,
+  CUSTOM_SECTION_RATIOS,
+  CUSTOM_SECTION_VERTICAL_ALIGNS,
+  CUSTOM_SPACER_SIZES,
+  MAX_CUSTOM_CHECKLIST_ITEM_LENGTH,
+  MAX_CUSTOM_CHECKLIST_ITEMS,
+  MAX_CUSTOM_ELEMENTS_PER_COLUMN,
+  MAX_CUSTOM_HEADING_LENGTH,
+  MAX_CUSTOM_ICON_TEXT_LENGTH,
+  MAX_CUSTOM_ICON_TEXT_TITLE_LENGTH,
+  MAX_CUSTOM_TEXT_LENGTH,
+  MAX_CUSTOM_VIDEO_TITLE_LENGTH,
+  MIN_CUSTOM_CHECKLIST_ITEMS,
 } from '../constants/website.constants';
 import { isAllowedImageValue } from '../utils/image-value.utils';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
@@ -832,6 +848,123 @@ export const certificatesSectionSchema = z.object({
   items: z.array(certificateItemSchema).max(MAX_CERTIFICATES),
 });
 
+/*
+ * CMS phase 3c — the custom section. Mirrors the backend's identically
+ * named schemas field for field (the parity cases prove it): each element is
+ * one branch of a discriminated union on `kind`, built from the contracts
+ * the ready-made sections already use (the section button, the image value,
+ * the YouTube id, the curated icons). Text is plain; line breaks are its
+ * only formatting.
+ */
+const customHeadingElementSchema = z.object({
+  id: z.string(),
+  kind: z.literal('heading'),
+  text: localizedRequired(MAX_CUSTOM_HEADING_LENGTH),
+  level: z.enum(CUSTOM_HEADING_LEVELS),
+});
+
+const customTextElementSchema = z.object({
+  id: z.string(),
+  kind: z.literal('text'),
+  text: localizedRequired(MAX_CUSTOM_TEXT_LENGTH),
+});
+
+const customButtonElementSchema = z.object({
+  id: z.string(),
+  kind: z.literal('button'),
+  cta: websiteCtaSchema,
+  secondaryCta: websiteCtaSchema.optional(),
+  tertiaryCta: websiteCtaSchema.optional(),
+});
+
+const customImageElementSchema = z.object({
+  id: z.string(),
+  kind: z.literal('image'),
+  image: imageValueSchema.optional(),
+  imageAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
+  ratio: z.enum(CUSTOM_IMAGE_RATIOS).optional(),
+});
+
+const customVideoElementSchema = z.object({
+  id: z.string(),
+  kind: z.literal('video'),
+  videoId: youTubeVideoIdSchema,
+  title: localizedOptional(MAX_CUSTOM_VIDEO_TITLE_LENGTH).optional(),
+  poster: imageValueSchema.optional(),
+});
+
+const customChecklistElementSchema = z.object({
+  id: z.string(),
+  kind: z.literal('checklist'),
+  items: z
+    .array(
+      z.object({
+        id: z.string(),
+        text: localizedRequired(MAX_CUSTOM_CHECKLIST_ITEM_LENGTH),
+      })
+    )
+    .min(MIN_CUSTOM_CHECKLIST_ITEMS)
+    .max(MAX_CUSTOM_CHECKLIST_ITEMS),
+});
+
+const customSpacerElementSchema = z.object({
+  id: z.string(),
+  kind: z.literal('spacer'),
+  size: z.enum(CUSTOM_SPACER_SIZES),
+});
+
+const customDividerElementSchema = z.object({
+  id: z.string(),
+  kind: z.literal('divider'),
+});
+
+const customIconTextElementSchema = z.object({
+  id: z.string(),
+  kind: z.literal('iconText'),
+  icon: z.enum(FEATURE_ICON_OPTIONS as [string, ...string[]]),
+  title: localizedRequired(MAX_CUSTOM_ICON_TEXT_TITLE_LENGTH),
+  text: localizedOptional(MAX_CUSTOM_ICON_TEXT_LENGTH).optional(),
+});
+
+const customElementSchema = z.discriminatedUnion('kind', [
+  customHeadingElementSchema,
+  customTextElementSchema,
+  customButtonElementSchema,
+  customImageElementSchema,
+  customVideoElementSchema,
+  customChecklistElementSchema,
+  customSpacerElementSchema,
+  customDividerElementSchema,
+  customIconTextElementSchema,
+]);
+
+const customColumnSchema = z.object({
+  id: z.string(),
+  elements: z.array(customElementSchema).max(MAX_CUSTOM_ELEMENTS_PER_COLUMN),
+});
+
+export const customSectionSchema = z
+  .object({
+    title: localizedOptional(MAX_SHORT_TEXT).optional(),
+    description: localizedOptional(MAX_LONG_TEXT).optional(),
+    layout: z.enum(CUSTOM_SECTION_LAYOUTS),
+    ratio: z.enum(CUSTOM_SECTION_RATIOS).optional(),
+    verticalAlign: z.enum(CUSTOM_SECTION_VERTICAL_ALIGNS).optional(),
+    columns: z.array(customColumnSchema).min(1).max(3),
+  })
+  .superRefine((config, ctx) => {
+    // The layout names how many columns there are: the two always agree.
+    if (
+      config.columns.length !== CUSTOM_SECTION_LAYOUT_COLUMNS[config.layout]
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'validation:customColumnCount',
+        path: ['columns'],
+      });
+    }
+  });
+
 const SECTION_SCHEMAS = {
   hero: heroSectionSchema,
   about: aboutSectionSchema,
@@ -867,6 +1000,8 @@ const SECTION_SCHEMAS = {
   videoTestimonials: videoTestimonialsSectionSchema,
   downloads: downloadsSectionSchema,
   certificates: certificatesSectionSchema,
+  // CMS phase 3c.
+  custom: customSectionSchema,
 } satisfies Record<SectionType, z.ZodTypeAny>;
 
 /** Resolves the right Zod schema for a section type. The Section Editor's ONE dynamic-form entry point — no section's validation is ever hand-rolled inline in a component. */

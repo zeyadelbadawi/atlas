@@ -845,6 +845,9 @@
     },
     "certificates": {
       "label": "Certificates"
+    },
+    "custom": {
+      "label": "Custom section"
     }
   },
   "fields": {
@@ -1339,6 +1342,15 @@
       "viewFull": "View {{title}} full size",
       "previewEmpty": "Add certificate images in this section’s settings. Visitors don’t see the section until it has one.",
       "separator": " · "
+    },
+    "custom": {
+      "emptyHeading": "Type this heading’s words. Visitors don’t see an empty heading.",
+      "emptyText": "Type this text. Visitors don’t see empty text.",
+      "emptyButton": "Give this button a label and a destination. Visitors don’t see it until then.",
+      "emptyVideo": "Add a YouTube link to show the video here. Visitors don’t see it until then.",
+      "emptyChecklist": "Type this checklist’s items. Visitors don’t see an empty list.",
+      "emptyIconTitle": "Type a title",
+      "emptyColumn": "Column {{number}} is empty. Visitors don’t see an empty column."
     }
   },
   "common": {
@@ -2254,7 +2266,8 @@
         "courses": "Courses",
         "trust": "Build trust",
         "info": "Explain and answer",
-        "action": "Get in touch"
+        "action": "Get in touch",
+        "build": "Build your own"
       },
       "descriptions": {
         "hero": "The first thing visitors see: a big title, a short pitch and a button.",
@@ -2287,7 +2300,8 @@
         "timeline": "Your learning path, stage by stage, from the first term to the final exam.",
         "videoTestimonials": "Short video reviews from students and parents, played on request.",
         "downloads": "Notes, revision sheets and other files visitors can download.",
-        "certificates": "Images of your certificates, awards and accreditations."
+        "certificates": "Images of your certificates, awards and accreditations.",
+        "custom": "Your own layout: one to three columns of headings, text, buttons, images, videos and lists."
       }
     },
     "settings": {
@@ -2495,6 +2509,105 @@
       "hint": "Paste a link (such as Google Drive), or choose a PDF from your media library or upload one there.",
       "empty": "No link yet: this file stays hidden on your site until you add one.",
       "libraryFile": "{{type}} file"
+    },
+    "custom": {
+      "titleLabel": "Section title (optional)",
+      "titleHint": "Shown above the columns as the section’s main heading (H2). Leave it empty to start with your own elements.",
+      "descriptionLabel": "Introduction (optional)",
+      "layout": "Layout",
+      "layoutHint": "On phones the columns always stack, one under the other. To show the last column first on phones, use “Swap the order on phones” in the section’s Design.",
+      "layouts": {
+        "one": "One column",
+        "two": "Two columns",
+        "three": "Three columns"
+      },
+      "ratio": "Column widths",
+      "ratioHint": "The first column is on the left in English and on the right in Arabic.",
+      "ratios": {
+        "equal": "Equal",
+        "wideNarrow": "First wider",
+        "narrowWide": "Second wider"
+      },
+      "verticalAlign": "Shorter columns",
+      "verticalAlignHint": "Where a shorter column sits beside a taller one on larger screens.",
+      "verticalAligns": {
+        "top": "Align to the top",
+        "center": "Centre them"
+      },
+      "movedOnLayout_one": "{{count}} element moved to column {{number}}, so nothing was lost.",
+      "movedOnLayout_other": "{{count}} elements moved to column {{number}}, so nothing was lost.",
+      "movedToColumn": "Moved to column {{number}}.",
+      "column": "Column",
+      "columnNumber": "Column {{number}}",
+      "elements": "Elements",
+      "element": "Element",
+      "count": "{{count}} of {{max}}",
+      "tooMany": "A column can hold up to {{max}} elements. Remove some, or move them to another column.",
+      "emptyColumn": "No elements yet. Add a heading, text, buttons, an image or a video.",
+      "needsAttention": "Needs a fix",
+      "moveUp": "Move “{{name}}” up",
+      "moveDown": "Move “{{name}}” down",
+      "more": "More actions for “{{name}}”",
+      "duplicate": "Duplicate",
+      "moveToColumn": "Move to column {{number}}",
+      "remove": "Remove",
+      "add": "Add element",
+      "addToColumn": "Add element to column {{number}}",
+      "full": "{{max}} elements is the most a column can hold",
+      "kinds": {
+        "heading": "Heading",
+        "text": "Text",
+        "button": "Buttons",
+        "image": "Image",
+        "video": "YouTube video",
+        "checklist": "Checklist",
+        "iconText": "Icon with text",
+        "spacer": "Space",
+        "divider": "Divider"
+      },
+      "levels": {
+        "h2": "Main heading (H2)",
+        "h3": "Subheading (H3)"
+      },
+      "sizes": {
+        "small": "Small",
+        "medium": "Medium",
+        "large": "Large"
+      },
+      "imageRatios": {
+        "landscape": "Landscape 4:3",
+        "wide": "Wide 16:9",
+        "square": "Square",
+        "portrait": "Portrait 4:5"
+      },
+      "fields": {
+        "headingText": "Heading",
+        "level": "Heading level",
+        "levelHint": "Use a main heading for the section’s main idea and subheadings under it. If the section has a title, use subheadings.",
+        "text": "Text",
+        "textHint": "Plain text. Leave an empty line to start a new paragraph.",
+        "buttons": "Buttons",
+        "image": "Image",
+        "imageHint": "Until you add an image, visitors don’t see this element.",
+        "imageAlt": "Image description (optional)",
+        "imageAltHint": "Describe the picture for visitors who can’t see it. Leave it empty if it is only decoration.",
+        "ratio": "Image shape",
+        "videoTitle": "Video title (optional)",
+        "videoTitleHint": "Screen readers announce it on the play button.",
+        "title": "Title",
+        "icon": "Icon",
+        "iconTitle": "Title",
+        "iconText": "Text (optional)",
+        "size": "Size",
+        "spacerHint": "Adds empty space between the elements above and below.",
+        "dividerHint": "A thin line between the elements above and below. It has nothing to fill in.",
+        "items": "Items",
+        "item": "Item",
+        "itemNumber": "Item {{number}}"
+      },
+      "removeItem": "Remove item {{number}}",
+      "addItem": "Add an item",
+      "itemsFull": "{{max}} items is the most a checklist can show"
     }
   },
   "presets": {

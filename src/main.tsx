@@ -148,9 +148,10 @@ async function initializeApp(): Promise<void> {
   // The theme pack(s) the server rendered the page with (code and
   // stylesheet), so hydration renders exactly what the server did.
   const themePacks = ssr
-    ? Promise.all((ssr.themePacks ?? []).map(loadThemePack))
-        // ...then the section groups it drew, whose loaders the packs
-        // register (`section-groups.tsx`).
+    ? Promise.all([routerChunk, ...(ssr.themePacks ?? []).map(loadThemePack)])
+        // ...then the section groups it drew, whose loaders the packs (and,
+        // for the base renderers' own, the router's code) register
+        // (`section-groups.tsx`).
         .then(() =>
           Promise.all(
             (ssr.sectionGroups ?? [])

@@ -42,6 +42,11 @@ const journeyProof = sectionGroup(
   'riwaq:journey-proof',
   () => import('./riwaq-journey-proof-sections')
 );
+// CMS phase 3c: the custom section, a group of its own.
+const custom = sectionGroup(
+  'riwaq:custom',
+  () => import('./riwaq-custom-section')
+);
 
 export {
   RiwaqAbout,
@@ -94,4 +99,6 @@ export const RIWAQ_SECTION_RENDERERS: Partial<SectionRenderers> = {
   videoTestimonials: journeyProof('RiwaqVideoTestimonials'),
   downloads: journeyProof('RiwaqDownloads'),
   certificates: journeyProof('RiwaqCertificates'),
+  // CMS phase 3c.
+  custom: custom('RiwaqCustom'),
 };
