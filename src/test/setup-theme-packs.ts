@@ -21,12 +21,14 @@ beforeAll(async () => {
   if (!THEMED_TESTS.test(expect.getState().testPath ?? '')) return;
   const [
     { registerThemePack },
+    { loadAllSectionGroups },
     { MODERN_EDUCATION_PACK },
     { ATELIER_PACK },
     { MANARA_PACK },
     { RIWAQ_PACK },
   ] = await Promise.all([
     import('@/features/website/theme-packs/theme-pack.loader'),
+    import('@/features/website/theme-packs/section-groups'),
     import('@/features/website/modern-education/modern-education.pack'),
     import('@/features/website/atelier/atelier.pack'),
     import('@/features/website/manara/manara.pack'),
@@ -36,6 +38,9 @@ beforeAll(async () => {
   registerThemePack(ATELIER_PACK);
   registerThemePack(MANARA_PACK);
   registerThemePack(RIWAQ_PACK);
+  // The phase 3d sections' own chunks, as the public site loads a page's
+  // before hydrating it (`section-groups.tsx`).
+  await loadAllSectionGroups();
   // The first import of the packs in a worker can take a while under a
   // loaded full run; it is module loading, not a hanging test.
 }, 120_000);

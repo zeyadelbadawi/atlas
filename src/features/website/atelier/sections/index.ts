@@ -21,29 +21,7 @@ import {
 } from './atelier-live-sections';
 import { AtelierTestimonials } from './AtelierTestimonials';
 import { AtelierFaq } from './AtelierFaq';
-import {
-  AtelierCountdown,
-  AtelierPricing,
-  AtelierVideo,
-  AtelierWhatsappBar,
-} from './atelier-engage-sections';
-import {
-  AtelierCertificates,
-  AtelierDownloads,
-  AtelierTimeline,
-  AtelierVideoTestimonials,
-} from './atelier-journey-proof-sections';
-import {
-  AtelierAnnouncementBar,
-  AtelierComparison,
-  AtelierInterestForm,
-} from './atelier-enrol-sections';
-import {
-  AtelierLogos,
-  AtelierMap,
-  AtelierResults,
-  AtelierSchedule,
-} from './atelier-trust-visit-sections';
+import { deferredSection } from '@/features/website/theme-packs/section-groups';
 
 export {
   AtelierAbout,
@@ -70,14 +48,14 @@ export const ATELIER_SECTION_RENDERERS: Partial<SectionRenderers> = {
   courseCategories: AtelierCourseCategories,
   featuredCourses: AtelierFeaturedCourses,
   // CMS phase 3d (batch A).
-  whatsappBar: AtelierWhatsappBar,
-  video: AtelierVideo,
-  pricing: AtelierPricing,
-  countdown: AtelierCountdown,
+  whatsappBar: deferredSection('atelier:engage', 'AtelierWhatsappBar'),
+  video: deferredSection('atelier:engage', 'AtelierVideo'),
+  pricing: deferredSection('atelier:engage', 'AtelierPricing'),
+  countdown: deferredSection('atelier:engage', 'AtelierCountdown'),
   // CMS phase 3d (batch C).
-  interestForm: AtelierInterestForm,
-  announcementBar: AtelierAnnouncementBar,
-  comparison: AtelierComparison,
+  interestForm: deferredSection('atelier:enrol', 'AtelierInterestForm'),
+  announcementBar: deferredSection('atelier:enrol', 'AtelierAnnouncementBar'),
+  comparison: deferredSection('atelier:enrol', 'AtelierComparison'),
   instructors: AtelierInstructors,
   statistics: AtelierStatistics,
   testimonials: AtelierTestimonials,
@@ -85,13 +63,16 @@ export const ATELIER_SECTION_RENDERERS: Partial<SectionRenderers> = {
   cta: AtelierCta,
   gallery: AtelierGallery,
   // CMS phase 3d.
-  logos: AtelierLogos,
-  map: AtelierMap,
-  schedule: AtelierSchedule,
-  results: AtelierResults,
+  logos: deferredSection('atelier:trust-visit', 'AtelierLogos'),
+  map: deferredSection('atelier:trust-visit', 'AtelierMap'),
+  schedule: deferredSection('atelier:trust-visit', 'AtelierSchedule'),
+  results: deferredSection('atelier:trust-visit', 'AtelierResults'),
   // CMS phase 3d (batch D).
-  timeline: AtelierTimeline,
-  videoTestimonials: AtelierVideoTestimonials,
-  downloads: AtelierDownloads,
-  certificates: AtelierCertificates,
+  timeline: deferredSection('atelier:journey-proof', 'AtelierTimeline'),
+  videoTestimonials: deferredSection(
+    'atelier:journey-proof',
+    'AtelierVideoTestimonials'
+  ),
+  downloads: deferredSection('atelier:journey-proof', 'AtelierDownloads'),
+  certificates: deferredSection('atelier:journey-proof', 'AtelierCertificates'),
 };

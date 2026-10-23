@@ -1425,6 +1425,40 @@ describe('theme packs: each site gets only its own theme', () => {
     assert.deepEqual(fontPreloads((await get(on, ALPHA, '/')).body), []);
   });
 
+  // CMS phase 3d — the new sections are chunks of their own (section
+  // groups): the server draws them in full and names the ones a page used,
+  // so the browser loads exactly those before hydrating.
+  it('a page names the section groups it drew, and only those', async () => {
+    const plain = await get(handler, ZETA, '/');
+    assert.deepEqual(payloadOf(plain.body).sectionGroups, []);
+
+    const zeta = state.academies[ZETA_ID];
+    zeta.pages = zeta.pages.map((page) =>
+      page.coreType === 'home'
+        ? {
+            ...page,
+            sections: [
+              {
+                id: 'notice-1',
+                type: 'announcementBar',
+                enabled: true,
+                visibility: { desktop: true, tablet: true, mobile: true },
+                config: {
+                  text: { en: 'Registration is open', ar: 'التسجيل مفتوح' },
+                  tone: 'brand',
+                },
+              },
+              ...page.sections,
+            ],
+          }
+        : page
+    );
+    const result = await get(handler, ZETA, '/');
+    assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
+    assert.match(result.body, /Registration is open/);
+    assert.deepEqual(payloadOf(result.body).sectionGroups, ['riwaq:enrol']);
+  });
+
   it('Coming Soon on a theme that draws its own links that theme only', async () => {
     const result = await get(handler, GAMMA, '/');
     assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);

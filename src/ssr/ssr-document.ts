@@ -24,6 +24,12 @@ export interface SsrPayload {
    * loads during hydration instead).
    */
   readonly themePacks?: readonly string[];
+  /**
+   * The section groups the page rendered (`SectionGroupUsageContext`): the
+   * browser loads them with the theme packs, before hydrating. Optional
+   * like `themePacks`.
+   */
+  readonly sectionGroups?: readonly string[];
   /** The dehydrated public-website queries (`@tanstack/react-query`). */
   readonly queries: unknown;
 }

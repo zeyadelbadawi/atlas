@@ -63,6 +63,16 @@ export {
   loadThemePack,
 } from './theme-packs/theme-pack.loader';
 export { ThemePackUsageContext } from './theme-packs/ThemePackGate';
+// The phase 3d sections are theme code of their own (`section-groups.tsx`),
+// loaded the same way: all of it on the server, a page's own before
+// hydrating it.
+export {
+  isSectionGroupKey,
+  loadAllSectionGroups,
+  loadSectionGroup,
+  SectionGroupUsageContext,
+  type SectionGroupKey,
+} from './theme-packs/section-groups';
 export { themeStylesheetLinksHtml } from './theme-packs/theme-stylesheets';
 
 // Phase P19 — `ProvisioningStartPage`'s theme-selection step needs the

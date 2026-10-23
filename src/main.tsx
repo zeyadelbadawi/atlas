@@ -29,7 +29,12 @@ import {
 } from './ssr/ssr-document';
 import { publicWebsiteLocaleForPath } from './ssr/ssr-paths';
 import { preloadPublicWebsiteRouter } from './app/routes/public-website-router-loader';
-import { isKnownThemeKey, loadThemePack } from '@features/website';
+import {
+  isKnownThemeKey,
+  isSectionGroupKey,
+  loadSectionGroup,
+  loadThemePack,
+} from '@features/website';
 import { resolveMovedHostRedirect } from './features/public-website/utils/canonical-redirect.utils';
 import { reloadOnceForNewVersion } from '@utils/lazy-with-retry.utils';
 import { captureLandingAttribution } from '@utils/landing-attribution.utils';
@@ -143,9 +148,13 @@ async function initializeApp(): Promise<void> {
   // The theme pack(s) the server rendered the page with (code and
   // stylesheet), so hydration renders exactly what the server did.
   const themePacks = ssr
-    ? Promise.all((ssr.themePacks ?? []).map(loadThemePack)).catch(
-        () => undefined
-      )
+    ? Promise.all([
+        ...(ssr.themePacks ?? []).map(loadThemePack),
+        // ...and the section groups it drew (`section-groups.tsx`).
+        ...(ssr.sectionGroups ?? [])
+          .filter(isSectionGroupKey)
+          .map(loadSectionGroup),
+      ]).catch(() => undefined)
     : undefined;
   if (isAcademyWebsite && !ssr) {
     startPublicWebsitePrefetch(publicWebsiteLookupKey(websiteContext), {

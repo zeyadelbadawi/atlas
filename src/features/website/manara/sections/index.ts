@@ -4,12 +4,6 @@
  * absent here falls back to its base renderer.
  */
 import type { SectionRenderers } from '@/features/website/theme-packs/theme-pack.types';
-import {
-  ManaraLogos,
-  ManaraMap,
-  ManaraResults,
-  ManaraSchedule,
-} from './manara-trust-visit-sections';
 import { ManaraHero } from './ManaraHero';
 import {
   ManaraAbout,
@@ -27,17 +21,7 @@ import {
 } from './manara-live-sections';
 import { ManaraTestimonials } from './ManaraTestimonials';
 import { ManaraFaq } from './ManaraFaq';
-import {
-  ManaraCountdown,
-  ManaraPricing,
-  ManaraVideo,
-  ManaraWhatsappBar,
-} from './manara-engage-sections';
-import {
-  ManaraAnnouncementBar,
-  ManaraComparison,
-  ManaraInterestForm,
-} from './manara-enrol-sections';
+import { deferredSection } from '@/features/website/theme-packs/section-groups';
 
 export {
   ManaraAbout,
@@ -59,12 +43,6 @@ export {
   ManaraPreviewNote,
   ManaraPreviewSample,
 } from './manara-section-utils';
-import {
-  ManaraCertificates,
-  ManaraDownloads,
-  ManaraTimeline,
-  ManaraVideoTestimonials,
-} from './manara-journey-proof-sections';
 
 export const MANARA_SECTION_RENDERERS: Partial<SectionRenderers> = {
   hero: ManaraHero,
@@ -81,22 +59,25 @@ export const MANARA_SECTION_RENDERERS: Partial<SectionRenderers> = {
   cta: ManaraCta,
   gallery: ManaraGallery,
   // CMS phase 3d (batch A).
-  whatsappBar: ManaraWhatsappBar,
-  video: ManaraVideo,
-  pricing: ManaraPricing,
-  countdown: ManaraCountdown,
+  whatsappBar: deferredSection('manara:engage', 'ManaraWhatsappBar'),
+  video: deferredSection('manara:engage', 'ManaraVideo'),
+  pricing: deferredSection('manara:engage', 'ManaraPricing'),
+  countdown: deferredSection('manara:engage', 'ManaraCountdown'),
   // CMS phase 3d (batch C).
-  interestForm: ManaraInterestForm,
-  announcementBar: ManaraAnnouncementBar,
-  comparison: ManaraComparison,
+  interestForm: deferredSection('manara:enrol', 'ManaraInterestForm'),
+  announcementBar: deferredSection('manara:enrol', 'ManaraAnnouncementBar'),
+  comparison: deferredSection('manara:enrol', 'ManaraComparison'),
   // CMS phase 3d.
-  logos: ManaraLogos,
-  map: ManaraMap,
-  schedule: ManaraSchedule,
-  results: ManaraResults,
+  logos: deferredSection('manara:trust-visit', 'ManaraLogos'),
+  map: deferredSection('manara:trust-visit', 'ManaraMap'),
+  schedule: deferredSection('manara:trust-visit', 'ManaraSchedule'),
+  results: deferredSection('manara:trust-visit', 'ManaraResults'),
   // CMS phase 3d (batch D).
-  timeline: ManaraTimeline,
-  videoTestimonials: ManaraVideoTestimonials,
-  downloads: ManaraDownloads,
-  certificates: ManaraCertificates,
+  timeline: deferredSection('manara:journey-proof', 'ManaraTimeline'),
+  videoTestimonials: deferredSection(
+    'manara:journey-proof',
+    'ManaraVideoTestimonials'
+  ),
+  downloads: deferredSection('manara:journey-proof', 'ManaraDownloads'),
+  certificates: deferredSection('manara:journey-proof', 'ManaraCertificates'),
 };
