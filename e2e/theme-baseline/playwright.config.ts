@@ -64,7 +64,18 @@ export default defineConfig({
     locale: 'en-US',
     timezoneId: 'UTC',
     launchOptions: executablePath ? { executablePath } : {},
-    trace: 'retain-on-failure',
+    // A failed test keeps its trace (actions, screenshots, console,
+    // network) but not DOM snapshots: recording them in every one of this
+    // suite's many short tests crashes the headless browser process
+    // (SIGSEGV), and the tests that follow in that browser fail with
+    // "browser has been closed". Measured on Riwaq's overflow tests: 17-22
+    // crashes in 98 with snapshots, none without (twice).
+    trace: {
+      mode: 'retain-on-failure',
+      snapshots: false,
+      screenshots: true,
+      sources: true,
+    },
     screenshot: 'only-on-failure',
     video: 'off',
   },
