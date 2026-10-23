@@ -1300,7 +1300,7 @@ export const en: MarketingContent = {
       items: [
         {
           title: 'You apply',
-          body: 'Send the form on the contact page, or message us on WhatsApp. Tell us about your academy and your students.',
+          body: 'Send the form on the contact page. Tell us about your academy and your students.',
         },
         {
           title: 'We talk',
@@ -1353,7 +1353,7 @@ export const en: MarketingContent = {
         {
           question: 'How many seats are left?',
           answer:
-            'There are 20 seats in total. Ask us through the form or on WhatsApp and we tell you where things stand.',
+            'There are 20 seats in total. Ask us through the form and we tell you where things stand.',
         },
       ],
     },

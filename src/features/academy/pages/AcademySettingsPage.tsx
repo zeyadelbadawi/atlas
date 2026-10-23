@@ -54,7 +54,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { saveViaForm, currencyOptions } from '@utils';
-import { useAuth, useUnsavedChanges } from '@hooks';
+import { useAuth, usePermissions, useUnsavedChanges } from '@hooks';
 import { cn } from '@utils';
 import { useConfirmDialog } from '@app/providers';
 import { useUnsavedChangesRegistry } from '@features/unsaved-changes';
@@ -231,10 +231,20 @@ export default function AcademySettingsPage(): JSX.Element {
     onSave: () => saveViaForm(form, save),
   });
 
+  // Deleting needs `academy.provisioning.create` (DeleteAcademyCard renders
+  // nothing without it), so the Delete section is offered only with it.
+  const { hasPermission } = usePermissions();
+  const canDelete = hasPermission('academy.provisioning.create');
+  const visibleSections = SETTINGS_SECTIONS.filter(
+    ({ id }) => id !== 'danger' || canDelete
+  );
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedSection = searchParams.get('section');
   const [section, setSection] = useState<SettingsSection>(
-    isSettingsSection(requestedSection) ? requestedSection : 'details'
+    isSettingsSection(requestedSection) &&
+      (requestedSection !== 'danger' || canDelete)
+      ? requestedSection
+      : 'details'
   );
   const { confirm } = useConfirmDialog();
   const unsaved = useUnsavedChangesRegistry();
@@ -313,7 +323,7 @@ export default function AcademySettingsPage(): JSX.Element {
           className="-mx-4 mb-6 overflow-x-auto px-4 lg:sticky lg:top-6 lg:mx-0 lg:mb-0 lg:overflow-visible lg:px-0"
         >
           <ul className="flex gap-2 lg:flex-col lg:gap-1">
-            {SETTINGS_SECTIONS.map(({ id, icon: Icon }) => {
+            {visibleSections.map(({ id, icon: Icon }) => {
               const active = id === section;
               return (
                 <li key={id} className="shrink-0">
