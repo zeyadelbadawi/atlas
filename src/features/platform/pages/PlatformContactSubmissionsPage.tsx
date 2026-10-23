@@ -64,6 +64,7 @@ import {
   contactStatusToastKey,
   contactStatusTone,
   contactTopicLabelKey,
+  isFoundingContactTopic,
   toContactExcerpt,
 } from '../utils/platform-contact-submission.utils';
 
@@ -250,11 +251,18 @@ export default function PlatformContactSubmissionsPage(): JSX.Element {
         accessorKey: 'topic',
         header: t(`${K}.table.topic`),
         enableSorting: false,
-        cell: ({ row }) => (
-          <span className="whitespace-nowrap text-muted-foreground">
-            {t(contactTopicLabelKey(row.original.topic))}
-          </span>
-        ),
+        cell: ({ row }) =>
+          isFoundingContactTopic(row.original.topic) ? (
+            <StatusBadge
+              labelKey={contactTopicLabelKey(row.original.topic)}
+              tone="success"
+              className="whitespace-nowrap"
+            />
+          ) : (
+            <span className="whitespace-nowrap text-muted-foreground">
+              {t(contactTopicLabelKey(row.original.topic))}
+            </span>
+          ),
       },
       {
         accessorKey: 'status',
@@ -403,7 +411,14 @@ export default function PlatformContactSubmissionsPage(): JSX.Element {
                     {toContactExcerpt(submission.message)}
                   </span>
                   <span className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
-                    <span>{t(contactTopicLabelKey(submission.topic))}</span>
+                    {isFoundingContactTopic(submission.topic) ? (
+                      <StatusBadge
+                        labelKey={contactTopicLabelKey(submission.topic)}
+                        tone="success"
+                      />
+                    ) : (
+                      <span>{t(contactTopicLabelKey(submission.topic))}</span>
+                    )}
                     <time dateTime={submission.createdAt}>
                       {fmt.date(submission.createdAt)}
                     </time>

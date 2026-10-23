@@ -47,14 +47,16 @@ vi.mock('react-i18next', () => ({
 
 import { MarketingContactSection } from './MarketingContactSection';
 
-function renderSection() {
+function renderSection(
+  props: Parameters<typeof MarketingContactSection>[0] = {}
+) {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   });
   return render(
     <QueryClientProvider client={client}>
       <MemoryRouter initialEntries={['/']}>
-        <MarketingContactSection />
+        <MarketingContactSection {...props} />
       </MemoryRouter>
     </QueryClientProvider>
   );
@@ -170,5 +172,38 @@ describe('MarketingContactSection — consent fields on', () => {
     expect(String(payload.phoneNumber).replace(/\D/g, '')).toBe('01001234567');
     expect(typeof payload.phoneCountry).toBe('string');
     expect(payload).not.toHaveProperty('requesterRole');
+  });
+
+  it('B2 — lists the founding topic only when preselected, with its hint and the qualification questions', async () => {
+    const user = userEvent.setup();
+    renderSection();
+    expect(
+      screen.queryByRole('option', { name: 'home:contact.topics.founding' })
+    ).toBeNull();
+    expect(screen.queryByTestId('marketing-contact-founding-hint')).toBeNull();
+    cleanup();
+
+    renderSection({ defaultTopic: 'founding' });
+    expect(field('home:contact.form.topic').value).toBe('founding');
+    const hint = screen.getByTestId('marketing-contact-founding-hint');
+    expect(hint.textContent).toBe('home:contact.foundingHint');
+    expect(screen.getByTestId('marketing-contact-qualification')).toBeTruthy();
+
+    await user.type(field('home:contact.form.name'), 'Visitor Example');
+    await user.type(field('home:contact.form.email'), 'visitor@example.test');
+    await user.type(
+      field('home:contact.form.message'),
+      'We would like to join as a founding academy.'
+    );
+    fireEvent.change(field('home:contact.qualification.studentBand'), {
+      target: { value: '50_200' },
+    });
+    await user.click(submitButton());
+
+    await waitFor(() => expect(mockSubmit).toHaveBeenCalledTimes(1));
+    expect(mockSubmit.mock.calls[0][0]).toMatchObject({
+      topic: 'founding',
+      studentBand: '50_200',
+    });
   });
 });

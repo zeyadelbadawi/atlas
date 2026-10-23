@@ -133,9 +133,33 @@ function initContactForm(): void {
   const params = new URLSearchParams(window.location.search);
   const topicSelect = form.elements.namedItem('topic') as HTMLSelectElement | null;
   const presetTopic = params.get('topic');
+  // B2 — a link-only topic (`?topic=founding`) is not in the public list:
+  // add its option only when the shared link asks for it.
+  if (
+    topicSelect &&
+    presetTopic &&
+    presetTopic === topicSelect.dataset.linkOnlyTopic &&
+    !Array.from(topicSelect.options).some((o) => o.value === presetTopic)
+  ) {
+    topicSelect.add(new Option(topicSelect.dataset.linkOnlyLabel ?? presetTopic, presetTopic));
+  }
   if (topicSelect && presetTopic && Array.from(topicSelect.options).some((o) => o.value === presetTopic)) {
     topicSelect.value = presetTopic;
   }
+  // The topic's own hint (founding), tied to the select while it applies.
+  const syncTopicHint = () => {
+    if (!topicSelect) return;
+    const errorId = 'contact-topic-error';
+    let hintId: string | undefined;
+    form.querySelectorAll<HTMLElement>('[data-topic-hint]').forEach((hint) => {
+      const on = hint.dataset.topicHint === topicSelect.value;
+      hint.hidden = !on;
+      if (on) hintId = hint.id;
+    });
+    topicSelect.setAttribute('aria-describedby', hintId ? `${hintId} ${errorId}` : errorId);
+  };
+  syncTopicHint();
+  topicSelect?.addEventListener('change', syncTopicHint);
   const messages = form.dataset;
   const summary = form.querySelector<HTMLElement>('[data-error-summary]');
   const status = form.querySelector<HTMLElement>('[data-form-status]');

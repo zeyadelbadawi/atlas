@@ -268,13 +268,26 @@ function ContactPage({ env }: { env: PageEnv }) {
                 <input id="contact-organizationName" name="organizationName" type="text" autoComplete="organization" maxLength={CONTACT_LIMITS.organizationMax} aria-describedby="contact-organizationName-error" className="mk-field" />
               </Field>
               <Field id="contact-topic" label={fill(c.form.topic, tokens)}>
-                <select id="contact-topic" name="topic" required defaultValue="sales" aria-describedby="contact-topic-error" className="mk-field">
+                <select
+                  id="contact-topic"
+                  name="topic"
+                  required
+                  defaultValue="sales"
+                  aria-describedby="contact-topic-error"
+                  className="mk-field"
+                  data-link-only-topic="founding"
+                  data-link-only-label={fill(c.topics.founding, tokens)}
+                >
                   {CONTACT_TOPICS.map((topic) => (
                     <option key={topic} value={topic}>
                       {fill(c.topics[topic], tokens)}
                     </option>
                   ))}
                 </select>
+                {/* B2 — `?topic=founding` only: client/main.ts adds the option and shows this. */}
+                <p id="contact-topic-founding-hint" data-topic-hint="founding" className="mt-1.5 text-sm text-muted-foreground" hidden>
+                  {fill(c.foundingHint, tokens)}
+                </p>
               </Field>
               <Field id="contact-message" label={fill(c.form.message, tokens)} hint={fill(c.form.messageHint, tokens)}>
                 <textarea id="contact-message" name="message" rows={6} required maxLength={CONTACT_LIMITS.messageMax} aria-describedby="contact-message-hint contact-message-error" className="mk-field" />

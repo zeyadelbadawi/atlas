@@ -21,6 +21,16 @@ export function contactTopicLabelKey(
   return `platform:contactSubmissions.topics.${topic}`;
 }
 
+/**
+ * B2 — a Founding Academies application is shown as a badge (words plus
+ * tone) so it stands out in the inbox; other topics stay plain text.
+ */
+export function isFoundingContactTopic(
+  topic: PlatformContactSubmissionTopic
+): boolean {
+  return topic === 'founding';
+}
+
 export function contactStatusTone(
   status: PlatformContactSubmissionStatus
 ): StatusTone {

@@ -31,7 +31,6 @@ import { ErrorState } from '@components/feedback';
 import { apiErrorKind } from '@api';
 import { StatusBadge } from '@components/data-display';
 import { DataTable } from '@components/table';
-import { SectionTabs } from '@components/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -63,7 +62,6 @@ import {
   getAcademyMemberRoleTone,
   getAcademyMemberStatusTone,
 } from '../utils/academy-status.utils';
-import { getAcademyAdminTabs } from '../utils/academy-navigation.utils';
 import { useAcademyScope } from '../scope/academy-scope.context';
 import type { AcademyMember, AcademyMemberRole, BreadcrumbItem } from '@types';
 
@@ -299,8 +297,6 @@ export default function AcademyMembersPage(): JSX.Element {
         descriptionKey="academy:members.subtitle"
         breadcrumbs={breadcrumbs}
       />
-
-      <SectionTabs items={getAcademyAdminTabs(academyId ?? '')} />
 
       <Tabs
         value={activeTab}

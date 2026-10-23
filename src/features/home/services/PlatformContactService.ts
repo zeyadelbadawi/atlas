@@ -16,7 +16,12 @@ import type { WriteOptions } from '@services';
 import type { LandingAttribution } from '@utils/landing-attribution.utils';
 
 export type PlatformContactTopic =
-  'sales' | 'support' | 'partnership' | 'other';
+  | 'sales'
+  | 'support'
+  | 'partnership'
+  | 'other'
+  /** B2 — a Founding Academies application (`/contact?topic=founding`). */
+  | 'founding';
 
 export interface PlatformContactPayload {
   readonly name: string;

@@ -136,6 +136,14 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
+describe('EmailOtpChallengeForm — spam hint', () => {
+  it('tells the person to check their spam folder before resending', () => {
+    renderForm();
+    const hint = screen.getByTestId('email-otp-spam-hint');
+    expect(hint.textContent).toMatch(/spam/i);
+  });
+});
+
 describe('EmailOtpChallengeForm — submitting', () => {
   it('names the masked address and submits six digits with rememberDevice on by default', () => {
     renderForm();
@@ -275,7 +283,9 @@ describe('EmailOtpChallengeForm — expired and destroyed challenges', () => {
       error: otpError('errors.auth.otpAttemptsExceeded', 429),
     });
 
-    expect(screen.getByRole('alert').textContent).toMatch(/too many wrong codes/i);
+    expect(screen.getByRole('alert').textContent).toMatch(
+      /too many wrong codes/i
+    );
     expect(screen.queryByLabelText(/verification code/i)).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: /back to sign in/i }));
     expect(onCancel).toHaveBeenCalledTimes(1);
@@ -286,7 +296,9 @@ describe('EmailOtpChallengeForm — expired and destroyed challenges', () => {
       error: otpError('errors.auth.otpSuppressedAddress', 422),
     });
 
-    expect(screen.getByRole('alert').textContent).toMatch(/can't deliver email/i);
+    expect(screen.getByRole('alert').textContent).toMatch(
+      /can't deliver email/i
+    );
     expect(
       screen
         .getByRole('link', { name: /reset your password/i })

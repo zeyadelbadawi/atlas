@@ -81,10 +81,11 @@ describe('Customer Requests routes', () => {
 
 describe('Customer Requests navigation', () => {
   it('adds an academy entry without an entitlement gate', () => {
-    const academy = getDashboardNavigation('a1').find(
-      (section) => section.id === 'academy'
-    );
-    const entry = academy?.items.find((item) => item.id === 'academy-requests');
+    // The academy entries are split across several `academy*` sections.
+    const entry = getDashboardNavigation('a1')
+      .filter((section) => section.id.startsWith('academy'))
+      .flatMap((section) => section.items)
+      .find((item) => item.id === 'academy-requests');
     expect(entry?.path).toBe('/dashboard/academy/a1/requests');
     expect(entry?.labelKey).toBe('navigation:items.academyRequests');
     expect(entry?.requiresEntitlement).toBeFalsy();

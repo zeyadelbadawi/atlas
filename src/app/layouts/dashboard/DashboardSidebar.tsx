@@ -116,17 +116,23 @@ export function DashboardSidebar({
         isCollapsed && !isMobile ? 'justify-center' : 'justify-between'
       )}
     >
-      {academyIdentity?.logoUrl && academyIdentity.name ? (
+      {/*
+        The collapsed rail is too narrow for a mark AND the expand button:
+        overlaying them hid the academy logo behind the icon. Collapsed, the
+        row holds only the expand button; the academy name stays in the top
+        bar's switcher.
+      */}
+      {isCollapsed && !isMobile ? null : academyIdentity?.logoUrl &&
+        academyIdentity.name ? (
         <AcademyBrandMark
           size="sm"
-          markOnly={isCollapsed && !isMobile}
           name={academyIdentity.name}
           logoUrl={academyIdentity.logoUrl}
         />
       ) : (
         // The Atlas mark (no Academy logo here) links to the Atlas website.
         <AtlasSiteLink>
-          <AcademyBrandMark size="sm" markOnly={isCollapsed && !isMobile} />
+          <AcademyBrandMark size="sm" />
         </AtlasSiteLink>
       )}
 
@@ -142,10 +148,7 @@ export function DashboardSidebar({
               : 'navigation:sidebar.collapse'
           )}
           aria-expanded={!isCollapsed}
-          className={cn(
-            'text-muted-foreground hover:text-foreground',
-            isCollapsed && 'absolute end-2 top-3.5'
-          )}
+          className="size-11 text-muted-foreground hover:text-foreground"
         >
           {isCollapsed ? (
             <PanelLeftOpen

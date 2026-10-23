@@ -64,6 +64,8 @@ import {
   MARKETING_CONTACT_ROLES,
   MARKETING_CONTACT_STUDENT_BANDS,
   MARKETING_CONTACT_SUBJECT_MAX,
+  MARKETING_CONTACT_LINK_ONLY_TOPICS,
+  MARKETING_CONTACT_QUALIFIED_TOPICS,
   MARKETING_CONTACT_TOPICS,
   marketingContactSchema,
   toSourcePath,
@@ -132,6 +134,7 @@ export function MarketingContactSection({
     control,
     handleSubmit,
     reset,
+    setValue,
     watch,
     formState: { errors, isSubmitting },
   } = useForm<MarketingContactValues, unknown, MarketingContactParsed>({
@@ -146,13 +149,31 @@ export function MarketingContactSection({
     if (isSent) successHeadingRef.current?.focus();
   }, [isSent]);
 
+  // `defaultValues` are read once: follow `?topic=` when the route changes
+  // without remounting (e.g. /contact?topic=founding → /contact), so a
+  // link-only topic never stays selected after its option is gone.
+  useEffect(() => {
+    setValue('topic', defaultTopic ?? EMPTY_VALUES.topic);
+  }, [defaultTopic, setValue]);
+
   const fieldId = (name: string) => `${formId}-${name}`;
   const errorId = (name: string) => `${formId}-${name}-error`;
   const isPending = submit.isPending;
   const messageLength = (watch('message') ?? '').length;
   // Read per render so a test (or a later runtime flag) can switch it.
   const consentFieldsOn = isFeatureEnabled('marketingContactConsent');
-  const isSalesTopic = watch('topic') === 'sales';
+  const currentTopic = watch('topic');
+  const isQualifiedTopic =
+    MARKETING_CONTACT_QUALIFIED_TOPICS.includes(currentTopic);
+  const isFoundingTopic = currentTopic === 'founding';
+  // B2 — a link-only topic (`?topic=founding`) is listed only while it is
+  // the preselected one; the public list stays the four ordinary topics.
+  const topicOptions: readonly PlatformContactTopic[] = [
+    ...MARKETING_CONTACT_TOPICS,
+    ...MARKETING_CONTACT_LINK_ONLY_TOPICS.filter(
+      (topic) => topic === defaultTopic
+    ),
+  ];
 
   const onSubmit = async (values: MarketingContactParsed) => {
     if (inFlight.current) return;
@@ -188,14 +209,20 @@ export function MarketingContactSection({
   /** B0-SUP-04 — the flag-gated fields, only what the visitor actually gave. */
   const leadFields = (values: MarketingContactParsed) => {
     const phoneNumber = values.phoneNumber.trim();
-    const sales = values.topic === 'sales';
+    const sales = MARKETING_CONTACT_QUALIFIED_TOPICS.includes(values.topic);
     return {
-      ...(phoneNumber ? { phoneNumber, phoneCountry: values.phoneCountry } : {}),
+      ...(phoneNumber
+        ? { phoneNumber, phoneCountry: values.phoneCountry }
+        : {}),
       contactConsent: values.contactConsent,
       marketingConsent: values.marketingConsent,
-      ...(sales && values.requesterRole ? { requesterRole: values.requesterRole } : {}),
+      ...(sales && values.requesterRole
+        ? { requesterRole: values.requesterRole }
+        : {}),
       ...(sales && values.subject ? { subject: values.subject } : {}),
-      ...(sales && values.studentBand ? { studentBand: values.studentBand } : {}),
+      ...(sales && values.studentBand
+        ? { studentBand: values.studentBand }
+        : {}),
       ...(sales && values.preferredChannel
         ? { preferredChannel: values.preferredChannel }
         : {}),
@@ -369,7 +396,12 @@ export function MarketingContactSection({
                           onBlur={field.onBlur}
                           aria-label={t('home:contact.form.topic')}
                           aria-invalid={!!errors.topic}
-                          aria-describedby={describedBy('topic')}
+                          aria-describedby={describedBy(
+                            'topic',
+                            isFoundingTopic
+                              ? fieldId('topic-founding-hint')
+                              : undefined
+                          )}
                           aria-required
                         >
                           <SelectValue
@@ -379,7 +411,7 @@ export function MarketingContactSection({
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          {MARKETING_CONTACT_TOPICS.map((topic) => (
+                          {topicOptions.map((topic) => (
                             <SelectItem key={topic} value={topic}>
                               {t(`home:contact.topics.${topic}`)}
                             </SelectItem>
@@ -389,6 +421,15 @@ export function MarketingContactSection({
                     )}
                   />
                   {fieldError('topic')}
+                  {isFoundingTopic ? (
+                    <p
+                      id={fieldId('topic-founding-hint')}
+                      className="text-sm text-muted-foreground"
+                      data-testid="marketing-contact-founding-hint"
+                    >
+                      {t('home:contact.foundingHint')}
+                    </p>
+                  ) : null}
                 </div>
               </div>
 
@@ -439,7 +480,7 @@ export function MarketingContactSection({
                     disabled={isPending}
                   />
 
-                  {isSalesTopic ? (
+                  {isQualifiedTopic ? (
                     <fieldset
                       className="grid gap-5 sm:grid-cols-2"
                       data-testid="marketing-contact-qualification"
@@ -450,8 +491,16 @@ export function MarketingContactSection({
                       {(
                         [
                           ['requesterRole', MARKETING_CONTACT_ROLES, 'roles'],
-                          ['studentBand', MARKETING_CONTACT_STUDENT_BANDS, 'bands'],
-                          ['preferredChannel', MARKETING_CONTACT_CHANNELS, 'channels'],
+                          [
+                            'studentBand',
+                            MARKETING_CONTACT_STUDENT_BANDS,
+                            'bands',
+                          ],
+                          [
+                            'preferredChannel',
+                            MARKETING_CONTACT_CHANNELS,
+                            'channels',
+                          ],
                         ] as const
                       ).map(([name, options, group]) => (
                         <div key={name} className="flex flex-col gap-2">
@@ -463,7 +512,9 @@ export function MarketingContactSection({
                             name={name}
                             render={({ field }) => (
                               <Select
-                                value={(field.value as string | undefined) ?? ''}
+                                value={
+                                  (field.value as string | undefined) ?? ''
+                                }
                                 onValueChange={(value) => field.onChange(value)}
                                 disabled={isPending}
                               >
@@ -471,16 +522,22 @@ export function MarketingContactSection({
                                   id={fieldId(name)}
                                   ref={field.ref}
                                   onBlur={field.onBlur}
-                                  aria-label={t(`home:contact.qualification.${name}`)}
+                                  aria-label={t(
+                                    `home:contact.qualification.${name}`
+                                  )}
                                 >
                                   <SelectValue
-                                    placeholder={t('home:contact.qualification.optional')}
+                                    placeholder={t(
+                                      'home:contact.qualification.optional'
+                                    )}
                                   />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {options.map((option) => (
                                     <SelectItem key={option} value={option}>
-                                      {t(`home:contact.qualification.${group}.${option}`)}
+                                      {t(
+                                        `home:contact.qualification.${group}.${option}`
+                                      )}
                                     </SelectItem>
                                   ))}
                                 </SelectContent>
@@ -509,28 +566,32 @@ export function MarketingContactSection({
                   {/* Two SEPARATE consents, both unticked by default. DRAFT
                       wording pending counsel (version
                       `CONTACT_CONSENT_WORDING_VERSION`). */}
-                  {(['contactConsent', 'marketingConsent'] as const).map((name) => (
-                    <div key={name} className="flex items-start gap-3">
-                      <Controller
-                        control={control}
-                        name={name}
-                        render={({ field }) => (
-                          <Checkbox
-                            id={fieldId(name)}
-                            checked={field.value === true}
-                            onCheckedChange={(checked) => field.onChange(checked === true)}
-                            disabled={isPending}
-                          />
-                        )}
-                      />
-                      <Label
-                        htmlFor={fieldId(name)}
-                        className="cursor-pointer text-sm font-normal leading-relaxed"
-                      >
-                        {t(`home:contact.consent.${name}`)}
-                      </Label>
-                    </div>
-                  ))}
+                  {(['contactConsent', 'marketingConsent'] as const).map(
+                    (name) => (
+                      <div key={name} className="flex items-start gap-3">
+                        <Controller
+                          control={control}
+                          name={name}
+                          render={({ field }) => (
+                            <Checkbox
+                              id={fieldId(name)}
+                              checked={field.value === true}
+                              onCheckedChange={(checked) =>
+                                field.onChange(checked === true)
+                              }
+                              disabled={isPending}
+                            />
+                          )}
+                        />
+                        <Label
+                          htmlFor={fieldId(name)}
+                          className="cursor-pointer text-sm font-normal leading-relaxed"
+                        >
+                          {t(`home:contact.consent.${name}`)}
+                        </Label>
+                      </div>
+                    )
+                  )}
                 </div>
               ) : null}
 

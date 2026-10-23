@@ -59,7 +59,7 @@ import type { NavigationItem, NavigationSection } from '@types';
  * once an academy is active — an unresolved `:academyId` is never rendered as
  * a link. The overview entry has no param and is always shown.
  */
-function buildAcademySection(activeAcademyId?: string): NavigationSection {
+function buildAcademySections(activeAcademyId?: string): NavigationSection[] {
   const items: NavigationItem[] = [
     {
       id: 'academy-overview',
@@ -75,7 +75,9 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
       icon: GraduationCap,
       requiresAuth: true,
       requiredPermissions: ['academy.view'],
-      matchNestedPaths: true,
+      // Inside an academy every page is nested under its home path, so a
+      // nested match would light this entry up next to the real one.
+      matchNestedPaths: !activeAcademyId,
     },
     {
       id: 'academy-provisioning',
@@ -312,33 +314,81 @@ function buildAcademySection(activeAcademyId?: string): NavigationSection {
         requiresAuth: true,
         requiredPermissions: ['academy.website.view'],
         matchNestedPaths: true,
-      },
-      {
-        // Messages visitors send through the website's Contact form.
-        // Placed right under Website, which it belongs to, as its own
-        // entry because an inbox is somewhere people go directly. Gated
-        // on `academy.website.manage` (Owner + Manager) — the backend
-        // serves contact submissions to that tier only. (A plain or
-        // `staff` member holds no website permission at all — B0-WEB-04.)
-        id: 'academy-website-messages',
-        requiresEntitlement: true,
-        labelKey: 'navigation:items.academyWebsiteMessages',
-        path: buildPath(DASHBOARD_ROUTES.websiteMessages, {
-          academyId: activeAcademyId,
-        }),
-        icon: Inbox,
-        requiresAuth: true,
-        requiredPermissions: ['academy.website.manage'],
       }
     );
   }
 
-  return {
-    id: 'academy',
-    labelKey: 'navigation:sections.academy',
-    items,
-    showDivider: true,
-  };
+  /*
+    One long list became short groups, in the order an owner works: the
+    academy and its content, people, money, the website, numbers, then
+    settings. Website Messages lives inside the Website area (its overview
+    links to it), so it is no longer a sidebar entry. Sections left empty
+    for a role are dropped by the sidebar.
+  */
+  const pick = (ids: readonly string[]): NavigationItem[] =>
+    ids
+      .map((id) => items.find((item) => item.id === id))
+      .filter((item): item is NavigationItem => item !== undefined);
+
+  return [
+    {
+      id: 'academy',
+      labelKey: 'navigation:sections.academy',
+      items: pick([
+        'academy-overview',
+        'academy-courses',
+        'academy-certificates',
+        'academy-media',
+      ]),
+      showDivider: true,
+    },
+    {
+      id: 'academy-people',
+      labelKey: 'navigation:sections.academyPeople',
+      items: pick([
+        'academy-members',
+        'academy-announcements',
+        'academy-messages',
+      ]),
+      showDivider: true,
+    },
+    {
+      id: 'academy-sales',
+      labelKey: 'navigation:sections.academySales',
+      items: pick([
+        'academy-payments',
+        'academy-orders',
+        'academy-payment-methods',
+      ]),
+      showDivider: true,
+    },
+    {
+      id: 'academy-site',
+      labelKey: 'navigation:sections.academySite',
+      items: pick(['academy-website', 'academy-branding']),
+      showDivider: true,
+    },
+    {
+      id: 'academy-insights',
+      labelKey: 'navigation:sections.academyInsights',
+      items: pick([
+        'student-analytics',
+        'academy-reports',
+        'academy-activity-log',
+      ]),
+      showDivider: true,
+    },
+    {
+      id: 'academy-admin',
+      labelKey: 'navigation:sections.academyAdmin',
+      items: pick([
+        'academy-settings',
+        'academy-requests',
+        'academy-provisioning',
+      ]),
+      showDivider: true,
+    },
+  ];
 }
 
 /**
@@ -390,7 +440,7 @@ export function getDashboardNavigation(
       ],
       showDivider: true,
     },
-    buildAcademySection(activeAcademyId),
+    ...buildAcademySections(activeAcademyId),
     {
       id: 'teaching',
       labelKey: 'navigation:sections.teaching',

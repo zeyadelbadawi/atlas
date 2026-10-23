@@ -28,8 +28,10 @@
       "sales": "Plans and pricing",
       "support": "Help with my account",
       "partnership": "Partnership",
-      "other": "Something else"
+      "other": "Something else",
+      "founding": "Founding Academies"
     },
+    "foundingHint": "Applying as a Founding Academy? Tell us your academy's name, roughly how many students you teach and when you would like to start. We set up to 5 academies a week, in the order requests arrive.",
     "errors": {
       "nameRequired": "Enter your name.",
       "nameTooShort": "Use at least {{nameMin}} characters.",

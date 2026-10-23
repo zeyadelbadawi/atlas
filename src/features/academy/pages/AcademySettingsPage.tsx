@@ -5,13 +5,27 @@
  * contact information. The internal lifecycle status is not edited here (Task 1): the website publish state is the client-facing status.
  */
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Globe2, Loader2, Mail, Save, SlidersHorizontal } from 'lucide-react';
+import {
+  Building2,
+  Globe2,
+  Loader2,
+  Mail,
+  MessageSquare,
+  Save,
+  ShieldCheck,
+  SlidersHorizontal,
+  Smartphone,
+  Trash2,
+  UserPlus,
+  Video,
+  type LucideIcon,
+} from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
-import { SectionTabs } from '@components/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -40,7 +54,10 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { saveViaForm, currencyOptions } from '@utils';
-import { useAuth, useUnsavedChanges } from '@hooks';
+import { useAuth, usePermissions, useUnsavedChanges } from '@hooks';
+import { cn } from '@utils';
+import { useConfirmDialog } from '@app/providers';
+import { useUnsavedChangesRegistry } from '@features/unsaved-changes';
 import { useAcademyDomain } from '@features/domain';
 import {
   nameConflictFromError,
@@ -58,16 +75,34 @@ import { AcademyInvitesCard } from '../components/AcademyInvitesCard';
 import { ContentProtectionCard } from '../components/ContentProtectionCard';
 import { VideoTierCard } from '../components/VideoTierCard';
 import { DevicePolicyCard } from '../components/DevicePolicyCard';
-import { getAcademyAdminTabs } from '../utils/academy-navigation.utils';
 import {
   updateAcademySettingsSchema,
   type UpdateAcademySettingsFormData,
 } from '../schemas/academy.schemas';
 import type { BreadcrumbItem, LanguageCode } from '@types';
 
+/*
+  The page is split into sections with their own view (a vertical list on
+  wide screens, a scrollable row on phones) so an owner sees one topic and
+  at most one save action at a time. `?section=` deep-links a section.
+*/
+const SETTINGS_SECTIONS = [
+  { id: 'details', icon: Building2 },
+  { id: 'registration', icon: UserPlus },
+  { id: 'communication', icon: MessageSquare },
+  { id: 'protection', icon: ShieldCheck },
+  { id: 'video', icon: Video },
+  { id: 'devices', icon: Smartphone },
+  { id: 'danger', icon: Trash2 },
+] as const satisfies readonly { id: string; icon: LucideIcon }[];
+
+type SettingsSection = (typeof SETTINGS_SECTIONS)[number]['id'];
+
+const isSettingsSection = (value: string | null): value is SettingsSection =>
+  SETTINGS_SECTIONS.some((section) => section.id === value);
+
 export default function AcademySettingsPage(): JSX.Element {
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
   const { academyId } = useParams<{ academyId: string }>();
   const { organization } = useAuth();
 
@@ -196,11 +231,47 @@ export default function AcademySettingsPage(): JSX.Element {
     onSave: () => saveViaForm(form, save),
   });
 
-  const handleCancel = () => {
-    navigate(
-      academyId
-        ? buildPath(DASHBOARD_ROUTES.academyOverview, { academyId })
-        : DASHBOARD_ROUTES.academy
+  // Deleting needs `academy.provisioning.create` (DeleteAcademyCard renders
+  // nothing without it), so the Delete section is offered only with it.
+  const { hasPermission } = usePermissions();
+  const canDelete = hasPermission('academy.provisioning.create');
+  const visibleSections = SETTINGS_SECTIONS.filter(
+    ({ id }) => id !== 'danger' || canDelete
+  );
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedSection = searchParams.get('section');
+  const [section, setSection] = useState<SettingsSection>(
+    isSettingsSection(requestedSection) &&
+      (requestedSection !== 'danger' || canDelete)
+      ? requestedSection
+      : 'details'
+  );
+  const { confirm } = useConfirmDialog();
+  const unsaved = useUnsavedChangesRegistry();
+
+  // Sections unmount when another opens, so unsaved edits would vanish
+  // without a navigation the route blocker could see: ask first.
+  const handleSectionChange = async (next: SettingsSection) => {
+    if (next === section) return;
+    if (unsaved?.isDirtyNow()) {
+      const leave = await confirm({
+        titleKey: 'common:unsavedChanges.title',
+        descriptionKey: 'common:unsavedChanges.description',
+        confirmLabelKey: 'common:unsavedChanges.leave',
+        cancelLabelKey: 'common:unsavedChanges.stay',
+        intent: 'destructive',
+      });
+      if (!leave) return;
+      form.reset();
+    }
+    setSection(next);
+    setSearchParams(
+      (params) => {
+        const updated = new URLSearchParams(params);
+        updated.set('section', next);
+        return updated;
+      },
+      { replace: true }
     );
   };
 
@@ -246,360 +317,431 @@ export default function AcademySettingsPage(): JSX.Element {
         breadcrumbs={breadcrumbs}
       />
 
-      <SectionTabs items={getAcademyAdminTabs(academyId ?? '')} />
+      <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start lg:gap-8">
+        <nav
+          aria-label={t('academy:settings.nav.label')}
+          className="-mx-4 mb-6 overflow-x-auto px-4 lg:sticky lg:top-6 lg:mx-0 lg:mb-0 lg:overflow-visible lg:px-0"
+        >
+          <ul className="flex gap-2 lg:flex-col lg:gap-1">
+            {visibleSections.map(({ id, icon: Icon }) => {
+              const active = id === section;
+              return (
+                <li key={id} className="shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => void handleSectionChange(id)}
+                    aria-current={active ? 'page' : undefined}
+                    className={cn(
+                      'flex min-h-11 w-full items-center gap-3 whitespace-nowrap rounded-md border px-3 py-2 text-start text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none lg:border-transparent',
+                      active
+                        ? 'border-primary/30 bg-primary/10 text-primary'
+                        : 'border-border text-muted-foreground hover:bg-muted hover:text-foreground',
+                      id === 'danger' &&
+                        !active &&
+                        'lg:mt-4 lg:text-destructive'
+                    )}
+                  >
+                    <Icon className="size-4 shrink-0" aria-hidden />
+                    {t(`academy:settings.nav.${id}`)}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* General Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <SlidersHorizontal
-                  className="size-4 text-muted-foreground"
-                  strokeWidth={1.75}
-                  aria-hidden
-                />
-                {t('academy:settings.general')}
-              </CardTitle>
-              <CardDescription>
-                {t('academy:settings.generalDescription')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('academy:create.nameLabel')}</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+        <section
+          aria-labelledby="academy-settings-section-title"
+          className="min-w-0 space-y-6"
+        >
+          <header className="space-y-1">
+            <h2
+              id="academy-settings-section-title"
+              className="text-lg font-semibold"
+            >
+              {t(`academy:settings.nav.${section}`)}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {t(`academy:settings.nav.${section}Description`)}
+            </p>
+          </header>
 
-              <FormField
-                control={form.control}
-                name="slug"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('academy:create.slugLabel')}</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        dir="ltr"
-                        data-ltr-content
-                        readOnly={!canChangeSlug || slugLocked}
-                        aria-readonly={!canChangeSlug || slugLocked || undefined}
+          {section === 'details' && (
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
+                {/* General Settings */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <SlidersHorizontal
+                        className="size-4 text-muted-foreground"
+                        strokeWidth={1.75}
+                        aria-hidden
                       />
-                    </FormControl>
-                    <AcademySlugDescription
-                      canChange={canChangeSlug}
-                      changing={!!academy && field.value !== academy.slug}
-                      nextChangeAt={academy?.nextSlugChangeAt}
+                      {t('academy:settings.general')}
+                    </CardTitle>
+                    <CardDescription>
+                      {t('academy:settings.generalDescription')}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('academy:create.nameLabel')}</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('academy:create.descriptionLabel')}
-                    </FormLabel>
-                    <FormControl>
-                      <Textarea rows={3} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
+                    <FormField
+                      control={form.control}
+                      name="slug"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('academy:create.slugLabel')}</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              dir="ltr"
+                              data-ltr-content
+                              readOnly={!canChangeSlug || slugLocked}
+                              aria-readonly={
+                                !canChangeSlug || slugLocked || undefined
+                              }
+                            />
+                          </FormControl>
+                          <AcademySlugDescription
+                            canChange={canChangeSlug}
+                            changing={!!academy && field.value !== academy.slug}
+                            nextChangeAt={academy?.nextSlugChangeAt}
+                          />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-          {/* Localization Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Globe2
-                  className="size-4 text-muted-foreground"
-                  strokeWidth={1.75}
-                  aria-hidden
-                />
-                {t('academy:settings.localization')}
-              </CardTitle>
-              <CardDescription>
-                {t('academy:settings.localizationDescription')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-3">
-                <FormField
-                  control={form.control}
-                  name="language"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('academy:create.languageLabel')}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="en">English</SelectItem>
-                          <SelectItem value="ar">العربية</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            {t('academy:create.descriptionLabel')}
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea rows={3} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
 
-                <FormField
-                  control={form.control}
-                  name="timezone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('academy:create.timezoneLabel')}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="Africa/Cairo">
-                            Africa/Cairo
-                          </SelectItem>
-                          <SelectItem value="UTC">UTC</SelectItem>
-                          <SelectItem value="America/New_York">
-                            America/New_York
-                          </SelectItem>
-                          <SelectItem value="Europe/London">
-                            Europe/London
-                          </SelectItem>
-                          <SelectItem value="Asia/Dubai">Asia/Dubai</SelectItem>
-                          <SelectItem value="Asia/Riyadh">
-                            Asia/Riyadh
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* Localization Settings */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Globe2
+                        className="size-4 text-muted-foreground"
+                        strokeWidth={1.75}
+                        aria-hidden
+                      />
+                      {t('academy:settings.localization')}
+                    </CardTitle>
+                    <CardDescription>
+                      {t('academy:settings.localizationDescription')}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid gap-4 sm:grid-cols-3">
+                      <FormField
+                        control={form.control}
+                        name="language"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {t('academy:create.languageLabel')}
+                            </FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="en">English</SelectItem>
+                                <SelectItem value="ar">العربية</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                <FormField
-                  control={form.control}
-                  name="currency"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('academy:create.currencyLabel')}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {/* From the academy as saved, not `field.value`:
+                      <FormField
+                        control={form.control}
+                        name="timezone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {t('academy:create.timezoneLabel')}
+                            </FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="Africa/Cairo">
+                                  Africa/Cairo
+                                </SelectItem>
+                                <SelectItem value="UTC">UTC</SelectItem>
+                                <SelectItem value="America/New_York">
+                                  America/New_York
+                                </SelectItem>
+                                <SelectItem value="Europe/London">
+                                  Europe/London
+                                </SelectItem>
+                                <SelectItem value="Asia/Dubai">
+                                  Asia/Dubai
+                                </SelectItem>
+                                <SelectItem value="Asia/Riyadh">
+                                  Asia/Riyadh
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="currency"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {t('academy:create.currencyLabel')}
+                            </FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {/* From the academy as saved, not `field.value`:
                               this form mounts a render before `values`
                               applies, and options without a legacy currency
                               make Radix's native select clear the field. */}
-                          {currencyOptions(academy.currency).map((code) => (
-                            <SelectItem key={code} value={code}>
-                              {code}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
+                                {currencyOptions(academy.currency).map(
+                                  (code) => (
+                                    <SelectItem key={code} value={code}>
+                                      {code}
+                                    </SelectItem>
+                                  )
+                                )}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
 
-          {/* Contact Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Mail
-                  className="size-4 text-muted-foreground"
-                  strokeWidth={1.75}
-                  aria-hidden
-                />
-                {t('academy:settings.contact')}
-              </CardTitle>
-              <CardDescription>
-                {t('academy:settings.contactDescription')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="contactEmail"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t('academy:create.contactEmailLabel')}
-                      </FormLabel>
-                      <FormControl>
-                        <Input type="email" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* Contact Settings */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Mail
+                        className="size-4 text-muted-foreground"
+                        strokeWidth={1.75}
+                        aria-hidden
+                      />
+                      {t('academy:settings.contact')}
+                    </CardTitle>
+                    <CardDescription>
+                      {t('academy:settings.contactDescription')}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <FormField
+                        control={form.control}
+                        name="contactEmail"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {t('academy:create.contactEmailLabel')}
+                            </FormLabel>
+                            <FormControl>
+                              <Input type="email" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                <FormField
-                  control={form.control}
-                  name="contactPhone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t('academy:create.contactPhoneLabel')}
-                      </FormLabel>
-                      <FormControl>
-                        <Input type="tel" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                      <FormField
+                        control={form.control}
+                        name="contactPhone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {t('academy:create.contactPhoneLabel')}
+                            </FormLabel>
+                            <FormControl>
+                              <Input type="tel" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
-              <FormField
-                control={form.control}
-                name="website"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('academy:create.websiteLabel')}</FormLabel>
-                    <FormControl>
-                      <Input type="url" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                    <FormField
+                      control={form.control}
+                      name="website"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            {t('academy:create.websiteLabel')}
+                          </FormLabel>
+                          <FormControl>
+                            <Input type="url" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
+
+                {/*
+                  One save for the whole section, shown only while there
+                  is something to save (a contextual save bar).
+                */}
+                {(form.formState.isDirty || isPending) && (
+                  <div
+                    role="region"
+                    aria-label={t('academy:settings.unsavedBar')}
+                    className="sticky bottom-4 z-10 flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-background/95 p-3 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/80"
+                  >
+                    <p className="text-sm font-medium" aria-live="polite">
+                      {t('academy:settings.unsavedBar')}
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="min-h-11"
+                        onClick={() => form.reset()}
+                        disabled={isPending}
+                      >
+                        {t('academy:settings.discardButton')}
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="min-h-11"
+                        disabled={isPending}
+                      >
+                        {isPending ? (
+                          <>
+                            <Loader2
+                              className="size-4 animate-spin"
+                              aria-hidden
+                            />
+                            {t('academy:settings.saving')}
+                          </>
+                        ) : (
+                          <>
+                            <Save
+                              className="size-4"
+                              strokeWidth={2}
+                              aria-hidden
+                            />
+                            {t('academy:settings.saveButton')}
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
                 )}
+              </form>
+            </Form>
+          )}
+
+          {/*
+            The other sections read and write their own endpoints and save
+            independently (Client Owner only for registration, communication
+            and protection — each card is told `canEdit` and the server stays
+            the authority), so they never share the details form's state.
+          */}
+          {section === 'registration' && (
+            <>
+              <RegistrationPolicyCard
+                academyId={academyId ?? ''}
+                canEdit={canManageRegistrationPolicy}
               />
-            </CardContent>
-          </Card>
+              <AcademyInvitesCard
+                academyId={academyId ?? ''}
+                academyHost={academyHost}
+              />
+            </>
+          )}
 
-          {/* Form Actions */}
-          <div className="flex items-center justify-end gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCancel}
-              disabled={isPending}
-            >
-              {t('academy:settings.cancelButton')}
-            </Button>
-            <Button type="submit" disabled={isPending}>
-              {isPending ? (
-                <>
-                  <Loader2 className="size-4 animate-spin" aria-hidden />
-                  {t('academy:settings.saving')}
-                </>
-              ) : (
-                <>
-                  <Save className="size-4" strokeWidth={2} aria-hidden />
-                  {t('academy:settings.saveButton')}
-                </>
-              )}
-            </Button>
-          </div>
-        </form>
-      </Form>
+          {section === 'communication' && (
+            <CommunicationSettingsCard
+              academyId={academyId ?? ''}
+              canEdit={canManageRegistrationPolicy}
+            />
+          )}
 
-      {/*
-        Outside the form, and last on the page: deleting is not a setting
-        being saved, and a destructive action belongs after everything it
-        would destroy rather than beside the Save button.
-      */}
-      {/*
-        Registration (P64 Phase 1) — how learners get ONTO the academy,
-        which is a property of the academy rather than a field of the
-        settings form: both cards read and write their own endpoints
-        (`registration-policy`, `invites`) and save independently, so they
-        sit outside the form and never share its dirty state or Save.
-      */}
-      <div className="mt-8 space-y-6">
-        <h2 className="text-lg font-semibold">
-          {t('academy:registration.sectionTitle')}
-        </h2>
-        <RegistrationPolicyCard
-          academyId={academyId ?? ''}
-          canEdit={canManageRegistrationPolicy}
-        />
-        <AcademyInvitesCard
-          academyId={academyId ?? ''}
-          academyHost={academyHost}
-        />
-      </div>
+          {section === 'protection' && (
+            <ContentProtectionCard
+              academyId={academyId ?? ''}
+              canEdit={canManageRegistrationPolicy}
+            />
+          )}
 
-      {/*
-        Communication (P66) — emailed sign-in codes, announcement email
-        and the learner digest default. Owner-only like the registration
-        policy, and its own endpoint, so it also lives outside the form.
-      */}
-      <div className="mt-8 space-y-6">
-        <h2 className="text-lg font-semibold">
-          {t('academy:communication.sectionTitle')}
-        </h2>
-        <CommunicationSettingsCard
-          academyId={academyId ?? ''}
-          canEdit={canManageRegistrationPolicy}
-        />
-      </div>
+          {section === 'video' && (
+            <VideoTierCard
+              academyId={academyId ?? ''}
+              canEdit={canManageRegistrationPolicy}
+            />
+          )}
 
-      {/*
-        Content protection (P64 Phase 2, D8/D10) — watermark, the default
-        video tier for new uploads, and the learner device limits. Three
-        endpoints, all Client Owner only for READING as well as writing
-        (`assertCanManageSecurityPolicy` runs on every GET), so each card
-        is told `canEdit` and a Manager sees why they are empty instead of
-        a request that can only 403. Not behind a frontend feature flag:
-        the server is the boundary, and a flag would only hide the truth.
-      */}
-      <div className="mt-8 space-y-6">
-        <h2 className="text-lg font-semibold">
-          {t('academy:protection.sectionTitle')}
-        </h2>
-        <ContentProtectionCard
-          academyId={academyId ?? ''}
-          canEdit={canManageRegistrationPolicy}
-        />
-        <VideoTierCard
-          academyId={academyId ?? ''}
-          canEdit={canManageRegistrationPolicy}
-        />
-        <DevicePolicyCard
-          academyId={academyId ?? ''}
-          canEdit={canManageRegistrationPolicy}
-        />
-      </div>
+          {section === 'devices' && (
+            <DevicePolicyCard
+              academyId={academyId ?? ''}
+              canEdit={canManageRegistrationPolicy}
+            />
+          )}
 
-      <div className="mt-8">
-        <DeleteAcademyCard academy={academy} />
+          {section === 'danger' && <DeleteAcademyCard academy={academy} />}
+        </section>
       </div>
     </PageContainer>
   );

@@ -24,14 +24,16 @@ describe('Client Owner sidebar', () => {
     expect(addOnEntries.map((item) => item.id)).toEqual(['tenant-add-ons']);
   });
 
-  it('lists Student Analytics with the academy items, with or without an active academy', () => {
+  it('lists Student Analytics under the academy Reports group, with or without an active academy', () => {
     for (const academyId of [undefined, 'academy-1']) {
       const all = getDashboardNavigation(academyId);
       const academyIds = all
-        .find((s) => s.id === 'academy')!
+        .find((s) => s.id === 'academy-insights')!
         .items.map((item) => item.id);
       expect(academyIds).toContain('student-analytics');
-      const saasIds = all.find((s) => s.id === 'saas')!.items.map((item) => item.id);
+      const saasIds = all
+        .find((s) => s.id === 'saas')!
+        .items.map((item) => item.id);
       expect(saasIds).not.toContain('student-analytics');
     }
     expect(section('academy')).toBeDefined();
