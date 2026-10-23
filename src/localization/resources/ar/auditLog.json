@@ -158,6 +158,7 @@
     "add_on": "إضافة",
     "observability": "المراقبة",
     "platform_contact_submission": "استفسار تواصل",
+    "founding_membership": "أكاديمية مؤسِّسة",
     "lesson": "درس",
     "communication_campaign": "رسالة",
     "forensic_watermark": "رمز علامة مائية",
@@ -726,6 +727,15 @@
       "contact_submission": {
         "status_changed": "{{actor}} غيّر حالة استفسار تواصل",
         "deleted": "{{actor}} حذف استفسار تواصل"
+      },
+      "founding": {
+        "created": "{{actor}} أضاف {{target}} كأكاديمية مؤسِّسة",
+        "updated": "{{actor}} غيّر ملاحظات أو ساعات تجهيز {{target}}",
+        "plan_changed": "{{actor}} ثبّت السعر المؤسِّس لـ {{target}} على باقة أخرى",
+        "revoked": "{{actor}} ألغى العضوية المؤسِّسة لـ {{target}}",
+        "ended": "انتهى تثبيت السعر المؤسِّس لـ {{target}}",
+        "emailed": "{{actor}} راسل {{target}} بخصوص عضويتها المؤسِّسة",
+        "renewal_price_notice_sent": "أُبلغت {{target}} أن تجديدها القادم بسعر الكتالوج"
       },
       "campaign": {
         "sent": "أرسل {{actor}} رسالة من المنصة",

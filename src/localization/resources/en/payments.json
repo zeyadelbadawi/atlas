@@ -39,6 +39,8 @@
     "startingCheckout": "Starting checkout…",
     "startCheckout": "Start checkout",
     "summaryTitle": "Order summary",
+    "foundingPreview": "Your Founding Academy price for this plan: {{price}} a year, locked until {{date}}.",
+    "foundingPrice": "Founding Academy price, locked until {{date}}.",
     "paymentMethodTitle": "Payment method",
     "methodUnavailable": "Not available yet",
     "creatingPayment": "Creating payment…",

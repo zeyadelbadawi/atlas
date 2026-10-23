@@ -867,5 +867,188 @@
       "untagged": "No source recorded"
     },
     "footnote": "Weeks start on Monday ({{timeZone}}). Internal test, demo and staff organizations are not counted."
+  },
+  "founding": {
+    "title": "Founding Academies",
+    "subtitle": "The first 20 paying academies: the standard annual price locked for 24 months, with setup included. Shared by link only.",
+    "searchLabel": "Search academy, owner or email",
+    "perYear": "a year",
+    "seatLabel": "Seat {{seat}}",
+    "hoursOf": "{{used}} of {{cap}} h",
+    "renewalLocked": "(founding price)",
+    "renewalCatalog": "(catalog price)",
+    "noSubscription": "No subscription yet",
+    "mobileLockEnds": "Price locked until {{date}}",
+    "resultRange": "{{from}}–{{to}} of {{total}}",
+    "cancel": "Cancel",
+    "status": {
+      "active": "Active",
+      "ended": "Lock ended",
+      "revoked": "Revoked"
+    },
+    "subscriptionStatus": {
+      "trialing": "On trial",
+      "active": "Active",
+      "grace_period": "Grace period",
+      "past_due": "Past due",
+      "paused": "Paused",
+      "cancelled": "Cancelled",
+      "expired": "Expired"
+    },
+    "meter": {
+      "seats": "Seats taken",
+      "thisWeek": "Started this week",
+      "ofTotal": "{{value}} of {{total}}",
+      "seatsLeft": "Seats left: {{formatted}}",
+      "seatsFull": "All seats are taken. Revoking a membership releases its seat.",
+      "weekHint": "We start up to 5 academies a week (Monday to Sunday, Cairo time).",
+      "weekFull": "This week's 5 are reached. New academies start next week."
+    },
+    "actions": {
+      "add": "Add founding academy",
+      "export": "Export CSV",
+      "email": "Email founders"
+    },
+    "filters": {
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "clear": "Clear filters"
+    },
+    "sort": {
+      "label": "Sort",
+      "seatNumber_asc": "Seat number",
+      "createdAt_desc": "Newest first",
+      "lockEndsAt_asc": "Lock ends soonest",
+      "organizationName_asc": "Academy A–Z"
+    },
+    "table": {
+      "caption": "Founding academies",
+      "selectAll": "Select all active academies on this page",
+      "selectRow": "Select {{name}}",
+      "academy": "Academy",
+      "plan": "Plan",
+      "lockedPrice": "Locked price",
+      "seat": "Seat",
+      "lockEnds": "Lock ends",
+      "periodEnds": "Period ends",
+      "status": "Status",
+      "hours": "Setup hours"
+    },
+    "bulk": {
+      "label": "Selected academies",
+      "selected": "Selected: {{formatted}}",
+      "email": "Email selected",
+      "clear": "Clear selection"
+    },
+    "empty": {
+      "title": "No founding academies yet",
+      "description": "Add an academy when its owner has applied and is ready to pay the annual plan."
+    },
+    "noResults": {
+      "title": "No matching academies",
+      "description": "Try another search or status."
+    },
+    "drawer": {
+      "title": "Founding academy",
+      "description": "Membership, price lock and history."
+    },
+    "fields": {
+      "owner": "Owner",
+      "email": "Email",
+      "phone": "WhatsApp",
+      "plan": "Plan",
+      "lockedPrice": "Locked price",
+      "lockStarts": "Lock starts",
+      "lockEnds": "Lock ends",
+      "subscription": "Subscription",
+      "periodEnds": "Period ends",
+      "nextRenewal": "Next renewal",
+      "concierge": "Setup hours",
+      "request": "Founding request",
+      "revoked": "Revoked"
+    },
+    "edit": {
+      "title": "Notes and setup hours",
+      "hours": "Setup hours used",
+      "hoursHint": "{{cap}} hours of setup are included. Track the real time; going over is allowed.",
+      "notes": "Notes (Platform Owners only)",
+      "save": "Save changes"
+    },
+    "changePlan": {
+      "title": "Change plan",
+      "description": "Moves the price lock to another plan at that plan's annual catalog price today. The lock end date stays the same. To move the subscription itself, use the plan change on the subscriptions page.",
+      "action": "Re-lock on this plan",
+      "confirmTitle": "Re-lock the price on another plan?",
+      "confirmDescription": "The locked price becomes {{price}} a year on {{plan}}, until {{date}}. This is recorded in the audit log.",
+      "confirm": "Re-lock price"
+    },
+    "revoke": {
+      "hint": "Revoking ends the price lock at the next renewal. The period already paid is not changed, and the seat is released.",
+      "action": "Revoke membership",
+      "title": "Revoke this founding membership?",
+      "description": "{{name}} keeps its current paid period. Its next renewal is at the catalog price, and its seat is released.",
+      "reason": "Reason (kept in the audit log)",
+      "confirm": "Revoke"
+    },
+    "timeline": {
+      "title": "History",
+      "empty": "No history yet.",
+      "actions": {
+        "created": "Added as a founding academy",
+        "updated": "Notes or setup hours changed",
+        "plan_changed": "Price re-locked on another plan",
+        "revoked": "Membership revoked",
+        "ended": "Price lock ended",
+        "emailed": "Emailed by the Atlas team",
+        "renewal_price_notice_sent": "Told the next renewal is at the catalog price"
+      }
+    },
+    "add": {
+      "title": "Add founding academy",
+      "description": "The plan's current annual catalog price is locked for 24 months. The seat and the price are confirmed by the server when you add it.",
+      "organization": "Academy",
+      "searchOrganization": "Search academy name, owner or email",
+      "noOrganizations": "No academy matches, or every match is already a founding academy.",
+      "choosePlan": "Choose a plan",
+      "request": "Founding request (optional)",
+      "noRequest": "No linked request",
+      "markHandled": "Mark the request as handled",
+      "notes": "Notes (optional)",
+      "quoting": "Checking the seat and price…",
+      "alreadyMember": "This academy is already a founding academy.",
+      "seatsFull": "All 20 seats are taken.",
+      "quoteTitle": "Seat {{seat}}",
+      "quoteBody": "{{price}} a year on {{plan}}, locked until about {{date}}.",
+      "submit": "Add founding academy"
+    },
+    "email": {
+      "title": "Email founders",
+      "reviewTitle": "Review before sending",
+      "description": "Programme messages only, such as setup sessions or the price lock. Each owner receives the version in their language. Every send is recorded.",
+      "audience": "Send to",
+      "selected": "Selected academies ({{formatted}})",
+      "allActive": "All active founding academies",
+      "english": "English",
+      "arabic": "Arabic",
+      "subject": "Subject",
+      "body": "Message",
+      "hint": "Plain text. Leave a blank line between paragraphs.",
+      "review": "Review",
+      "back": "Back",
+      "send": "Send ({{formatted}})",
+      "recipientCount": "Owners who will receive it: {{formatted}}",
+      "budget": "Email budget left today for this kind of message: {{remaining}} of {{limit}}.",
+      "overBudget": "Some emails will go out tomorrow, when the daily budget resets. None are dropped."
+    },
+    "toasts": {
+      "created": "{{name}} is now a founding academy",
+      "saved": "Changes saved",
+      "planChanged": "Price re-locked",
+      "revoked": "{{name}}'s membership was revoked",
+      "emailed": "Message queued ({{formatted}})",
+      "stale": "Someone changed this membership. Reopen it and try again.",
+      "failed": "That didn't work",
+      "exportFailed": "The export could not be downloaded"
+    }
   }
 }
