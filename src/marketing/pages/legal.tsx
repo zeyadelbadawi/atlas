@@ -146,7 +146,6 @@ function NotFoundPage({ env }: { env: PageEnv }) {
               {fill(n.title, tokens)}
             </h1>
             <p className="mt-5 max-w-[56ch] text-lg leading-relaxed text-muted-foreground">{fill(n.body, tokens)}</p>
-            <p className="mt-2 max-w-[56ch] text-muted-foreground">{fill(n.plannedHint, tokens)}</p>
             <ul className="mt-8 flex flex-wrap gap-3">
               {n.links.map((item, index) => {
                 const resolved = link(lang, item, tokens);

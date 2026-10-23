@@ -551,7 +551,7 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 		@marketing_gone {
 			host atlass.dpdns.org
 			expression `{env.ATLAS_MARKETING_STATIC} != "off"`
-			path /blog /blog/* /ar/blog /ar/blog/* /features/academy-website /features/payments /features/content-protection /features/teams-and-academies /features/quizzes-and-certificates /ar/features/academy-website /ar/features/payments /ar/features/content-protection /ar/features/teams-and-academies /ar/features/quizzes-and-certificates
+			path /blog /blog/* /ar/blog /ar/blog/*
 			file {
 				root /srv-marketing
 				try_files /404.html

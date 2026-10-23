@@ -9,6 +9,7 @@
  * the number («١٤ يومًا»). Not yet reviewed by a native reviewer (RV-14).
  */
 import type { MarketingContent } from './content.types';
+import { PRODUCT_AR } from './product.ar';
 
 const REGISTER = '/auth/register';
 // Signed-in stand-ins for the trial CTAs: the app resolves `?open=` to the
@@ -112,32 +113,36 @@ export const ar: MarketingContent = {
       menuClose: 'أغلق القائمة',
       menuLabel: 'قائمة الموقع',
     },
-    plannedBadge: 'قريبًا',
-    plannedPages: [
+    productPages: [
       {
         id: 'academy-website',
         label: 'موقع الأكاديمية',
-        description: 'التصميمات والصفحات والدومين الخاص بك.',
+        description: 'التصميمات والمحرّر المرئي وسجل الصفحات والدومين الخاص بك.',
+        moreLabel: 'إزاي موقع الأكاديمية بيشتغل',
       },
       {
         id: 'payments',
         label: 'الدفع',
         description: 'المحافظ وإنستاباي والتحويل البنكي، بموافقتك.',
+        moreLabel: 'إزاي طلابك بيدفعوا',
       },
       {
         id: 'content-protection',
         label: 'الدروس والأجهزة',
         description: 'كيف تُعرض الدروس، وما الأجهزة التي يمكنها فتحها.',
+        moreLabel: 'إزاي الدروس والأجهزة بتشتغل',
       },
       {
         id: 'teams-and-academies',
         label: 'الفريق والأكاديميات',
         description: 'أدوار لمساعديك، وأكثر من أكاديمية في حساب واحد.',
+        moreLabel: 'إزاي الفريق والأكاديميات المتعددة بيشتغلوا',
       },
       {
         id: 'quizzes-and-certificates',
         label: 'الامتحانات والشهادات',
         description: 'امتحانات وواجبات وشهادات يقدر أي حد يتأكد منها.',
+        moreLabel: 'إزاي الامتحانات والواجبات والشهادات بتشتغل',
       },
     ],
     languageSwitch: {
@@ -192,7 +197,7 @@ export const ar: MarketingContent = {
             { label: 'نظرة على المنتج', href: '/features' },
             { label: 'الأسعار', href: '/pricing' },
           ],
-          planned: true,
+          products: true,
         },
         {
           title: 'عن {brand}',
@@ -244,6 +249,41 @@ export const ar: MarketingContent = {
         'موقع لأكاديميتك على الدومين بتاعك، ودفع بالمحافظ وإنستاباي بموافقتك، وامتحانات وشهادات، وأدوار لمساعدينك.',
       ogTitle: 'اللي تقدر تشغّله على {brand} النهارده',
       ogImageAlt: 'نظرة على منتج {brand}',
+    },
+    'academy-website': {
+      title: 'موقع لأكاديميتك على الدومين بتاعك بالعربي والإنجليزي | {brand}',
+      description:
+        'موقع أكاديميتك على نطاق فرعي أو على دومينك، بتبنيه في محرّر مرئي من ٣٢ نوع قسم، مع سجل للصفحات، بالعربي والإنجليزي.',
+      ogTitle: 'موقع لأكاديميتك باسمك',
+      ogImageAlt: '{brand}: موقع الأكاديمية والمحرّر المرئي',
+    },
+    'payments': {
+      title: 'تحصيل فلوس الكورسات فودافون كاش وإنستاباي | {brand}',
+      description:
+        'الطالب يحوّلك بالمحفظة أو إنستاباي أو تحويل بنكي ويرفع الإيصال في أكاديميتك. توافق مرة واحدة فيتسجل في الكورس، ومن غير عمولة.',
+      ogTitle: 'دفع الطلاب بالمحفظة وإنستاباي والتحويل البنكي',
+      ogImageAlt: '{brand}: مدفوعات الطلاب بموافقتك',
+    },
+    'content-protection': {
+      title: 'الدروس وحدود الأجهزة للكورسات المدفوعة | {brand}',
+      description:
+        'دروس يوتيوب بتتعرض جوه أكاديميتك للطلاب المسجّلين بس، وحد للأجهزة أنت بتحدده، وشاشة واحدة في نفس الوقت، وكود الطالب على كل فيديو.',
+      ogTitle: 'الدروس والأجهزة على {brand}',
+      ogImageAlt: '{brand}: الدروس وحدود الأجهزة',
+    },
+    'teams-and-academies': {
+      title: 'ضيف مساعدينك وافتح أكتر من أكاديمية بحساب واحد | {brand}',
+      description:
+        'ضيف مساعدينك كمديرين أو مدرسين، وكل مدرس يشوف كورساته بس. وافتح أكاديميات تانية باسمها ودومينها وطلابها، حسب باقتك.',
+      ogTitle: 'الفريق والأكاديميات على {brand}',
+      ogImageAlt: '{brand}: أدوار لفريقك وأكتر من أكاديمية',
+    },
+    'quizzes-and-certificates': {
+      title: 'امتحانات وواجبات وشهادات يتأكد منها أي حد | {brand}',
+      description:
+        'امتحانات بخمس أنواع أسئلة وتصحيح، وواجبات بميعاد تسليم وتعليق، وشهادات أي حد يقدر يتأكد منها أونلاين.',
+      ogTitle: 'الامتحانات والواجبات والشهادات على {brand}',
+      ogImageAlt: '{brand}: الامتحانات والواجبات والشهادات',
     },
     pricing: {
       title: 'أسعار {brand}: باقات حسب عدد الطلاب والأكاديميات',
@@ -745,9 +785,9 @@ export const ar: MarketingContent = {
         claim: 'ORG-3.2, ANL-2, MSG-9',
       },
     ],
-    planned: {
-      title: 'صفحات تفصيلية عن المنتج',
-      lead: 'نكتب صفحة لكل جزء من المنتج، وستظهر هنا عندما تكون جاهزة.',
+    productPages: {
+      title: 'كل جزء بالتفصيل',
+      lead: 'صفحة لكل جزء من المنتج: بيعمل إيه النهارده، وبيشتغل إزاي، وفين بيقف.',
     },
     closing: {
       title: 'جرّبه بكورساتك وطلابك',
@@ -760,6 +800,9 @@ export const ar: MarketingContent = {
       secondaryCta: { label: 'جهّزها معانا', href: SALES },
     },
   },
+
+  // ─── Product pages (M1b) ──────────────────────────────────────────────────
+  product: PRODUCT_AR,
 
   // ─── Pricing ──────────────────────────────────────────────────────────────
   pricing: {
@@ -1410,7 +1453,6 @@ export const ar: MarketingContent = {
     eyebrow: 'خطأ ٤٠٤',
     title: 'الصفحة مش موجودة',
     body: 'الصفحة دي مش موجودة. روح للصفحة الرئيسية أو الأسعار أو كلّمنا.',
-    plannedHint: 'لو وصلت هنا من لينك لصفحة عن المنتج، فالصفحة دي جاية قريب.',
     links: [
       { label: 'الصفحة الرئيسية', href: '/' },
       { label: 'الأسعار', href: '/pricing' },
@@ -1429,6 +1471,11 @@ export const ar: MarketingContent = {
     pageNotes: {
       home: 'ما هو {brand}، وكيف يدفع الطلاب، ولمن يناسب.',
       features: 'ما تقدر أكاديميتك تعمله على {brand} اليوم، مع حدوده.',
+      'academy-website': 'موقع الأكاديمية: المحرّر المرئي و٣٢ نوع قسم والقوالب وسجل الصفحات واللغات والدومين.',
+      'payments': 'إزاي الطلاب بيدفعوا بالمحفظة أو إنستاباي أو التحويل البنكي، وإزاي صاحب الحساب بيوافق.',
+      'content-protection': 'إزاي الدروس بتتعرض، وحدود الأجهزة، وكود الطالب على الفيديو، وفين بيقف.',
+      'teams-and-academies': 'أدوار صاحب الحساب والمدير والمدرس، وتشغيل أكتر من أكاديمية.',
+      'quizzes-and-certificates': 'أنواع أسئلة الامتحانات، والواجبات، والشهادات اللي أي حد يتأكد منها.',
       pricing: 'الباقات حسب عدد الطلاب والأكاديميات، وشروط التجربة والحدود.',
       security: 'فصل بيانات الأكاديميات، وحماية تسجيل الدخول، وطلبات الخصوصية.',
       about: 'لماذا يوجد {brand}، ولمن هو.',

@@ -333,3 +333,105 @@ describe('trial CTAs for a signed-in visitor', () => {
     }
   });
 });
+
+describe('M1b product pages', () => {
+  const PRODUCT_IDS = [
+    'academy-website',
+    'payments',
+    'content-protection',
+    'teams-and-academies',
+    'quizzes-and-certificates',
+  ];
+  const product = rendered.filter((r) => PRODUCT_IDS.includes(r.page.id));
+
+  it('registers all five in both languages, under /features/<id>, in the sitemap', () => {
+    expect(product).toHaveLength(10);
+    for (const r of product) {
+      const expected = `${r.page.lang === 'ar' ? '/ar' : ''}/features/${r.page.id}`;
+      expect(r.page.path).toBe(expected);
+      expect(r.page.inSitemap).toBe(true);
+      expect(r.head.canonicalPath).toBe(expected);
+      expect(r.head.alternates).toEqual({ en: `/features/${r.page.id}`, ar: `/ar/features/${r.page.id}` });
+    }
+  });
+
+  it('gives every page a unique title (≤ 60) and description (≤ 155) per language', () => {
+    for (const lang of ['en', 'ar'] as const) {
+      const pages = rendered.filter((r) => r.page.lang === lang && r.page.id !== '404');
+      expect(new Set(pages.map((r) => r.head.title)).size).toBe(pages.length);
+      expect(new Set(pages.map((r) => r.head.description)).size).toBe(pages.length);
+    }
+    for (const r of product) {
+      expect([...r.head.title].length, r.page.path).toBeLessThanOrEqual(60);
+      expect([...r.head.description].length, r.page.path).toBeLessThanOrEqual(155);
+    }
+  });
+
+  it('carries BreadcrumbList (Home > Product > page) and WebPage JSON-LD, nothing forbidden', () => {
+    for (const r of product) {
+      const types = (r.head.jsonLd ?? []).map((node) => (node as { '@type': string })['@type']);
+      expect(types).toEqual(['WebPage', 'BreadcrumbList']);
+      const crumbs = (r.head.jsonLd![1] as { itemListElement: { item: string }[] }).itemListElement;
+      expect(crumbs.map((c) => c.item.replace('https://atlass.dpdns.org', ''))).toEqual([
+        r.page.lang === 'ar' ? '/ar' : '/',
+        r.page.lang === 'ar' ? '/ar/features' : '/features',
+        r.page.path,
+      ]);
+      expect(JSON.stringify(r.head.jsonLd)).not.toMatch(/Review|AggregateRating|HowTo|Offer/);
+    }
+  });
+
+  it('describes only shipped behaviour: no trace or lookup, no integrity, no plan-specific domain promise', () => {
+    for (const r of product) {
+      const visible = `${text(r.html)} ${r.head.title} ${r.head.description}`;
+      expect(visible, r.page.path).not.toMatch(/\btrac(e|es|ed|ing)\b|lookup|which account|يكشف|نكشف|نعرف مصدر/i);
+      expect(visible, r.page.path).not.toMatch(/integrity|anti-cheat|proctor|نزاهة|غش/i);
+      expect(visible, r.page.path).not.toMatch(/on every plan|كل الباقات/i);
+      expect(visible, r.page.path).not.toMatch(/automatic payment|instant enrol|coupon|bulk import|staff role|upload your videos/i);
+      expect(visible, r.page.path).not.toMatch(/\bfree\b|in minutes|\b100 ?%/i);
+    }
+  });
+
+  it('carries the required disclosures in both languages', () => {
+    for (const lang of ['en', 'ar'] as const) {
+      const payments = text(product.find((r) => r.page.id === 'payments' && r.page.lang === lang)!.html);
+      const lessons = text(product.find((r) => r.page.id === 'content-protection' && r.page.lang === lang)!.html);
+      if (lang === 'en') {
+        expect(payments).toContain('Approval is manual and done by the account owner. There is no card or Fawry checkout today.');
+        expect(lessons).toContain('A determined student can still copy the YouTube link itself.');
+      } else {
+        expect(payments).toContain('الموافقة يدوية، ويقوم بها صاحب الحساب. لا يوجد حاليًا دفع بالكارت أو عن طريق فوري.');
+        expect(lessons).toContain('الطالب اللي مصمم يقدر ينسخ لينك يوتيوب نفسه.');
+      }
+    }
+  });
+
+  it('is linked from the header menu and footer of every page, and from the home pillars', () => {
+    for (const r of rendered) {
+      const prefix = r.page.lang === 'ar' ? '/ar' : '';
+      for (const id of PRODUCT_IDS) {
+        expect(r.html.split(`href="${prefix}/features/${id}"`).length - 1, `${r.page.path} → ${id}`).toBeGreaterThanOrEqual(2);
+      }
+    }
+    for (const lang of ['en', 'ar'] as const) {
+      const home = rendered.find((r) => r.page.id === 'home' && r.page.lang === lang)!;
+      const prefix = lang === 'ar' ? '/ar' : '';
+      for (const id of ['payments', 'academy-website', 'teams-and-academies', 'quizzes-and-certificates']) {
+        expect(home.html.split(`href="${prefix}/features/${id}"`).length - 1, `home ${lang} → ${id}`).toBeGreaterThanOrEqual(3);
+      }
+    }
+  });
+
+  it('links the product overview to each page, and each page back to the overview and two siblings', () => {
+    for (const lang of ['en', 'ar'] as const) {
+      const prefix = lang === 'ar' ? '/ar' : '';
+      const hub = rendered.find((r) => r.page.id === 'features' && r.page.lang === lang)!;
+      for (const id of PRODUCT_IDS) expect(hub.html).toContain(`href="${prefix}/features/${id}"`);
+    }
+    for (const r of product) {
+      const prefix = r.page.lang === 'ar' ? '/ar' : '';
+      expect(r.html).toContain(`href="${prefix}/features"`);
+      expect((r.html.match(/data-mkt-help/g) ?? []).length, r.page.path).toBeGreaterThanOrEqual(2);
+    }
+  });
+});
