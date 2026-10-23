@@ -43,6 +43,7 @@ import {
   contactStatusLabelKey,
   contactStatusTone,
   contactTopicLabelKey,
+  isFoundingContactTopic,
 } from '../utils/platform-contact-submission.utils';
 
 export interface PlatformContactSubmissionSheetProps {
@@ -149,7 +150,16 @@ export function PlatformContactSubmissionSheet({
                 <dt className="text-muted-foreground">
                   {t(`${K}.drawer.topic`)}
                 </dt>
-                <dd>{t(contactTopicLabelKey(submission.topic))}</dd>
+                <dd>
+                  {isFoundingContactTopic(submission.topic) ? (
+                    <StatusBadge
+                      labelKey={contactTopicLabelKey(submission.topic)}
+                      tone="success"
+                    />
+                  ) : (
+                    t(contactTopicLabelKey(submission.topic))
+                  )}
+                </dd>
                 <dt className="text-muted-foreground">
                   {t(`${K}.drawer.received`)}
                 </dt>

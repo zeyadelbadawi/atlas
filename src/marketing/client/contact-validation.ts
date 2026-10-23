@@ -14,7 +14,17 @@ export const CONTACT_LIMITS = {
   messageMax: 5000,
 } as const;
 
+/** The topics the form lists to every visitor. */
 export const CONTACT_TOPICS = ['sales', 'support', 'partnership', 'other'] as const;
+
+/**
+ * B2 — topics the API accepts that the form lists only when a shared link
+ * preselects them (`/contact?topic=founding`); never advertised in the list.
+ */
+export const CONTACT_LINK_ONLY_TOPICS = ['founding'] as const;
+
+/** Every topic the API accepts (the backend's `PLATFORM_CONTACT_TOPICS`). */
+export const CONTACT_ALL_TOPICS = [...CONTACT_TOPICS, ...CONTACT_LINK_ONLY_TOPICS] as const;
 
 export type ContactField = 'name' | 'email' | 'organizationName' | 'topic' | 'message';
 
@@ -58,7 +68,7 @@ export function validateContact(input: ContactInput): Partial<Record<ContactFiel
   if ((input.organizationName ?? '').trim().length > L.organizationMax) {
     errors.organizationName = 'OrganizationTooLong';
   }
-  if (!(CONTACT_TOPICS as readonly string[]).includes(input.topic)) errors.topic = 'TopicInvalid';
+  if (!(CONTACT_ALL_TOPICS as readonly string[]).includes(input.topic)) errors.topic = 'TopicInvalid';
 
   const message = input.message.trim();
   if (!message) errors.message = 'MessageRequired';

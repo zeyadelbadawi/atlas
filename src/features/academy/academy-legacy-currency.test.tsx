@@ -14,6 +14,7 @@
  *
  * Native DOM assertions only — this repo does not ship jest-dom.
  */
+import { AtlasDialogProvider } from '@app/providers/dialog/DialogProvider';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -115,14 +116,16 @@ afterEach(() => {
 function renderLoadingThenLoaded(path: string, element: JSX.Element) {
   const tree = () => (
     <I18nextProvider i18n={createI18nInstance('en')}>
-      <MemoryRouter initialEntries={[`/dashboard/academy/aca-1/${path}`]}>
-        <Routes>
-          <Route
-            path={`/dashboard/academy/:academyId/${path}`}
-            element={element}
-          />
-        </Routes>
-      </MemoryRouter>
+      <AtlasDialogProvider>
+        <MemoryRouter initialEntries={[`/dashboard/academy/aca-1/${path}`]}>
+          <Routes>
+            <Route
+              path={`/dashboard/academy/:academyId/${path}`}
+              element={element}
+            />
+          </Routes>
+        </MemoryRouter>
+      </AtlasDialogProvider>
     </I18nextProvider>
   );
   const view = render(tree());
@@ -148,6 +151,8 @@ describe('a legacy academy currency survives the page load', () => {
     const user = renderLoadingThenLoaded('settings', <AcademySettingsPage />);
     const currency = await screen.findByRole('combobox', { name: 'Currency' });
     await waitFor(() => expect(currency.textContent).toContain('USD'));
+    // The save bar appears once something changes: edit an unrelated field.
+    await user.type(screen.getByLabelText('Academy Name'), ' 2');
     expect(await savedCurrency(user, /^save settings$/i)).toBe('USD');
   });
 

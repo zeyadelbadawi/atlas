@@ -8,8 +8,15 @@
  *
  * Native DOM assertions only — this repo does not ship jest-dom.
  */
+import { AtlasDialogProvider } from '@app/providers/dialog/DialogProvider';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import {
+  cleanup,
+  render,
+  screen,
+  within,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -116,14 +123,16 @@ const { default: AcademyDashboardPage } =
 function renderWithI18n(element: JSX.Element) {
   return render(
     <I18nextProvider i18n={createI18nInstance('en')}>
-      <MemoryRouter initialEntries={['/dashboard/academy/aca-1/settings']}>
-        <Routes>
-          <Route
-            path="/dashboard/academy/:academyId/settings"
-            element={element}
-          />
-        </Routes>
-      </MemoryRouter>
+      <AtlasDialogProvider>
+        <MemoryRouter initialEntries={['/dashboard/academy/aca-1/settings']}>
+          <Routes>
+            <Route
+              path="/dashboard/academy/:academyId/settings"
+              element={element}
+            />
+          </Routes>
+        </MemoryRouter>
+      </AtlasDialogProvider>
     </I18nextProvider>
   );
 }
@@ -153,6 +162,36 @@ describe('Academy Settings', () => {
     ];
     expect(call[0].payload.name).toBe('Horizon Academy 2');
     expect(call[0].payload).not.toHaveProperty('status');
+  });
+});
+
+describe('Academy Settings sections', () => {
+  it('lists every section and marks the open one', () => {
+    renderWithI18n(<AcademySettingsPage />);
+    const nav = screen.getByRole('navigation', { name: 'Settings sections' });
+    const items = within(nav).getAllByRole('button');
+    expect(items).toHaveLength(7);
+    expect(
+      within(nav)
+        .getByRole('button', { name: 'Academy details' })
+        .getAttribute('aria-current')
+    ).toBe('page');
+  });
+
+  it('shows one save bar only while there are changes, and Discard resets', async () => {
+    const user = userEvent.setup();
+    renderWithI18n(<AcademySettingsPage />);
+    expect(screen.queryByRole('button', { name: /save settings/i })).toBeNull();
+
+    const name = screen.getByLabelText('Academy Name');
+    await user.type(name, ' 2');
+    expect(
+      screen.getAllByRole('button', { name: /save settings/i })
+    ).toHaveLength(1);
+
+    await user.click(screen.getByRole('button', { name: 'Discard' }));
+    expect(screen.queryByRole('button', { name: /save settings/i })).toBeNull();
+    expect((name as HTMLInputElement).value).not.toContain(' 2');
   });
 });
 

@@ -58,13 +58,21 @@ export type MarketingPageId =
   | 'security'
   | 'about'
   | 'contact'
+  /** B2 — Founding Academies: noindex, out of nav/sitemap/llms, shared by link only. */
+  | 'founding'
   | 'notFound';
 
 /** Keys of the catalog plans the copy knows about (`GET /public/plans`). */
 export type MarketingPlanKey = 'starter' | 'growth' | 'enterprise';
 
-/** Contact topics accepted by `POST /api/v1/public/contact` in B1. */
+/** Contact topics the form lists to every visitor (`POST /api/v1/public/contact`). */
 export type MarketingContactTopic = 'sales' | 'support' | 'partnership' | 'other';
+
+/**
+ * B2 — topics the API also accepts but the form lists only when a shared
+ * link preselects them (`/contact?topic=founding`).
+ */
+export type MarketingLinkOnlyContactTopic = 'founding';
 
 /** The five product pages that are planned (DL-37). Never linked in B1. */
 export type MarketingPlannedPageId =
@@ -485,7 +493,9 @@ export interface MkContact {
     readonly requiredNote: string;
     readonly noScript: string;
   };
-  readonly topics: Readonly<Record<MarketingContactTopic, string>>;
+  readonly topics: Readonly<Record<MarketingContactTopic | MarketingLinkOnlyContactTopic, string>>;
+  /** B2 — shown under the topic only while `founding` is selected. */
+  readonly foundingHint: string;
   /** Two separate boxes, both unticked by default. */
   readonly consent: { readonly contact: string; readonly marketing: string };
   readonly errors: {
@@ -508,6 +518,43 @@ export interface MkContact {
   readonly failure: { readonly title: string; readonly body: string; readonly rateLimited: string };
 }
 
+/**
+ * B2 — the Founding Academies page (`/founding`). Honest offer only: the
+ * standard annual catalog price locked for 24 months, setup included, a
+ * labour-bound weekly pace, 20 seats. No countdowns, no refund promise.
+ */
+export interface MkFounding {
+  readonly hero: MkSectionHead;
+  /** What a founding academy gets; one card per term. */
+  readonly offer: MkSectionWithItems;
+  /** The annual catalog prices, rendered from the catalog (never typed here). */
+  readonly prices: MkSectionHead & {
+    /** `{yearlyPrice} / year` for one plan. */
+    readonly perYear: string;
+    /** Shown under the cards: the price lock in one line. */
+    readonly lockNote: string;
+    /** Shown instead of the cards when the catalog has no annual price. */
+    readonly unavailable: string;
+  };
+  readonly fit: {
+    readonly title: string;
+    readonly lead?: string;
+    readonly fitTitle: string;
+    readonly fit: readonly string[];
+    readonly notYetTitle: string;
+    readonly notYet: readonly string[];
+  };
+  /** What happens after applying, in order. */
+  readonly steps: MkSectionWithItems;
+  readonly faq: MkFaqSection;
+  readonly closing: MkClosing & {
+    /** WhatsApp button label; rendered only when the build has a platform number. */
+    readonly whatsapp: string;
+    /** The message the WhatsApp chat opens with. */
+    readonly whatsappMessage: string;
+  };
+}
+
 export interface MkNotFound {
   readonly eyebrow: string;
   readonly title: string;
@@ -528,7 +575,8 @@ export interface MkLlms {
   /** Factual paragraph (~150 words in EN). */
   readonly details: string;
   readonly pagesTitle: string;
-  readonly pageNotes: Readonly<Record<Exclude<MarketingPageId, 'notFound'>, string>>;
+  /** Indexed pages only (the founding page is noindex and never listed). */
+  readonly pageNotes: Readonly<Record<Exclude<MarketingPageId, 'notFound' | 'founding'>, string>>;
   readonly pricingFileNote: string;
   readonly crawlerPolicy: string;
 }
@@ -577,6 +625,7 @@ export interface MarketingContent {
   readonly security: MkSecurity;
   readonly about: MkAbout;
   readonly contact: MkContact;
+  readonly founding: MkFounding;
   readonly notFound: MkNotFound;
   readonly llms: MkLlms;
   readonly jsonLd: MkJsonLd;

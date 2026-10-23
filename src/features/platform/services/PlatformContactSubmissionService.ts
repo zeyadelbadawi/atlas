@@ -23,7 +23,12 @@ import type { PaginatedResult, SortDirection } from '@types';
 
 export type PlatformContactSubmissionStatus = 'new' | 'read' | 'archived';
 export type PlatformContactSubmissionTopic =
-  'sales' | 'support' | 'partnership' | 'other';
+  | 'sales'
+  | 'support'
+  | 'partnership'
+  | 'other'
+  /** B2 — a Founding Academies application (`/contact?topic=founding`). */
+  | 'founding';
 export type PlatformContactSubmissionSortField = 'createdAt' | 'name' | 'email';
 
 /** Matches `PlatformContactSubmissionResponse` (backend) field-for-field. */

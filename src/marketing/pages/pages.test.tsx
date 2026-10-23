@@ -184,6 +184,57 @@ describe('marketing pages', () => {
     expect(en.html).toContain('/auth/register?plan=starter"');
   });
 
+  describe('Founding Academies (B2, shared by link only)', () => {
+    const founding = rendered.filter((x) => x.page.id === 'founding');
+
+    it('exists in both languages, noindex and out of the sitemap', () => {
+      expect(founding.map((r) => r.page.path).sort()).toEqual(['/ar/founding', '/founding']);
+      for (const r of founding) {
+        expect(r.head.robots).toBe('noindex, follow');
+        expect(r.page.inSitemap).toBe(false);
+      }
+    });
+
+    it('is linked from no other page (not in nav, footer or /pricing)', () => {
+      for (const r of rendered.filter((x) => x.page.id !== 'founding')) {
+        expect(r.html, r.page.path).not.toMatch(/href="[^"]*\/founding[^"]*"/);
+      }
+    });
+
+    it('shows the annual catalog prices, refreshable like /pricing, and links to the founding contact topic', () => {
+      for (const r of founding) {
+        const visible = text(r.html);
+        for (const plan of plans) {
+          const { yearlyAmount, currency } = plan.pricing ?? {};
+          if (yearlyAmount === undefined || !currency) continue;
+          expect(visible).toContain(norm(formatPrice(r.page.lang, yearlyAmount, currency)));
+          expect(r.html).toContain(`data-plan="${plan.key}"`);
+        }
+        expect(r.html).toMatch(/data-price="yearly"/);
+        const contact = r.page.lang === 'ar' ? '/ar/contact?topic=founding' : '/contact?topic=founding';
+        expect(r.html).toContain(`href="${contact}"`);
+      }
+    });
+
+    it('promises no refund or money back and runs no countdown', () => {
+      for (const r of founding) {
+        const visible = text(r.html);
+        expect(visible).not.toMatch(/refund|money[- ]back|guarantee|استرداد|استرجاع|ضمان/i);
+        expect(visible).not.toMatch(/countdown|hurry|ends (today|soon)|عرض لفترة محدودة/i);
+      }
+      const ar = text(founding.find((r) => r.page.lang === 'ar')!.html);
+      expect(ar).toContain('التجهيز معانا مشمول');
+    });
+
+    it('keeps the founding topic out of the public contact topic list', () => {
+      for (const r of rendered.filter((x) => x.page.id === 'contact')) {
+        expect(r.html).not.toMatch(/<option[^>]*value="founding"/);
+        expect(r.html).toContain('data-link-only-topic="founding"');
+        expect(r.html).toMatch(/<p[^>]*data-topic-hint="founding"[^>]*hidden/);
+      }
+    });
+  });
+
   it('marks the 404 noindex without alternates', () => {
     for (const r of rendered.filter((x) => x.page.id === '404')) {
       expect(r.head.robots).toBe('noindex, follow');

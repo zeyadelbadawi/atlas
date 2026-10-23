@@ -104,7 +104,26 @@
     "slugOwnerOnly": "Only the organization owner can change the web address.",
     "slugMoveHelp": "Your academy's address on Atlas (lowercase letters, numbers and hyphens). Changing it moves your website to the new address. The old address keeps working: it sends visitors to the new one and stays reserved for you. You can change it once every 60 days.",
     "slugMoveNotice": "When you save, your website moves to this new address and links to the old address will open it. A custom domain you connected stays your main address.",
-    "slugChangeLocked": "You changed the address recently. You can change it again on {{date}}."
+    "slugChangeLocked": "You changed the address recently. You can change it again on {{date}}.",
+    "nav": {
+      "label": "Settings sections",
+      "details": "Academy details",
+      "detailsDescription": "Name, web address, language, currency and how students reach you.",
+      "registration": "Student registration",
+      "registrationDescription": "Who can join your academy and the invite links you share.",
+      "communication": "Emails to students",
+      "communicationDescription": "Sign-in codes, announcement emails and the learner digest.",
+      "protection": "Content protection",
+      "protectionDescription": "The watermark shown on your lessons.",
+      "video": "Video",
+      "videoDescription": "The default video type for new uploads.",
+      "devices": "Student devices",
+      "devicesDescription": "How many devices each student can use.",
+      "danger": "Delete academy",
+      "dangerDescription": "Permanently delete this academy and everything in it."
+    },
+    "discardButton": "Discard",
+    "unsavedBar": "You have unsaved changes"
   },
   "branding": {
     "title": "Academy Branding",
