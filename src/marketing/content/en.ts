@@ -1362,7 +1362,7 @@ export const en: MarketingContent = {
       lead: 'Tell us about your academy. We reply by email, or on WhatsApp if you prefer, and agree your start week with you.',
       primaryCta: { label: 'Apply through the contact form', href: FOUNDING },
       whatsapp: 'Message us on WhatsApp',
-      whatsappMessage: 'Hello, I would like to apply as a {brand} Founding Academy.',
+      whatsappMessage: 'Hello, I would like to apply for the {brand} Founding Academies programme.',
     },
   },
 
