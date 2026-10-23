@@ -22,7 +22,26 @@ import {
 import { RiwaqSpotlight } from './RiwaqSpotlight';
 import { RiwaqTestimonials } from './RiwaqTestimonials';
 import { RiwaqFaq } from './RiwaqFaq';
-import { deferredSection } from '@/features/website/theme-packs/section-groups';
+import { sectionGroup } from '@/features/website/theme-packs/section-groups';
+
+// This theme's phase 3d sections, a chunk per group, imported from the pack
+// itself (`section-groups.tsx`).
+const trustVisit = sectionGroup(
+  'riwaq:trust-visit',
+  () => import('./riwaq-trust-visit-sections')
+);
+const engage = sectionGroup(
+  'riwaq:engage',
+  () => import('./riwaq-engage-sections')
+);
+const enrol = sectionGroup(
+  'riwaq:enrol',
+  () => import('./riwaq-enrol-sections')
+);
+const journeyProof = sectionGroup(
+  'riwaq:journey-proof',
+  () => import('./riwaq-journey-proof-sections')
+);
 
 export {
   RiwaqAbout,
@@ -57,25 +76,22 @@ export const RIWAQ_SECTION_RENDERERS: Partial<SectionRenderers> = {
   cta: RiwaqCta,
   gallery: RiwaqGallery,
   // CMS phase 3d (batch A).
-  whatsappBar: deferredSection('riwaq:engage', 'RiwaqWhatsappBar'),
-  video: deferredSection('riwaq:engage', 'RiwaqVideo'),
-  pricing: deferredSection('riwaq:engage', 'RiwaqPricing'),
-  countdown: deferredSection('riwaq:engage', 'RiwaqCountdown'),
+  whatsappBar: engage('RiwaqWhatsappBar'),
+  video: engage('RiwaqVideo'),
+  pricing: engage('RiwaqPricing'),
+  countdown: engage('RiwaqCountdown'),
   // CMS phase 3d (batch C).
-  interestForm: deferredSection('riwaq:enrol', 'RiwaqInterestForm'),
-  announcementBar: deferredSection('riwaq:enrol', 'RiwaqAnnouncementBar'),
-  comparison: deferredSection('riwaq:enrol', 'RiwaqComparison'),
+  interestForm: enrol('RiwaqInterestForm'),
+  announcementBar: enrol('RiwaqAnnouncementBar'),
+  comparison: enrol('RiwaqComparison'),
   // CMS phase 3d.
-  logos: deferredSection('riwaq:trust-visit', 'RiwaqLogos'),
-  map: deferredSection('riwaq:trust-visit', 'RiwaqMap'),
-  schedule: deferredSection('riwaq:trust-visit', 'RiwaqSchedule'),
-  results: deferredSection('riwaq:trust-visit', 'RiwaqResults'),
+  logos: trustVisit('RiwaqLogos'),
+  map: trustVisit('RiwaqMap'),
+  schedule: trustVisit('RiwaqSchedule'),
+  results: trustVisit('RiwaqResults'),
   // CMS phase 3d (batch D).
-  timeline: deferredSection('riwaq:journey-proof', 'RiwaqTimeline'),
-  videoTestimonials: deferredSection(
-    'riwaq:journey-proof',
-    'RiwaqVideoTestimonials'
-  ),
-  downloads: deferredSection('riwaq:journey-proof', 'RiwaqDownloads'),
-  certificates: deferredSection('riwaq:journey-proof', 'RiwaqCertificates'),
+  timeline: journeyProof('RiwaqTimeline'),
+  videoTestimonials: journeyProof('RiwaqVideoTestimonials'),
+  downloads: journeyProof('RiwaqDownloads'),
+  certificates: journeyProof('RiwaqCertificates'),
 };

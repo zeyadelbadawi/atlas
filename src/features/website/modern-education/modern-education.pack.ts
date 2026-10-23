@@ -44,7 +44,26 @@ import { T1Contact, T1Gallery } from './t1-page-sections';
 import { T1CourseDetails } from './T1CourseDetails';
 import { T1ComingSoon, T1NotFound } from './T1SystemPages';
 import { MODERN_EDUCATION_ASSETS } from '../theme-assets/manifests/modern-education.manifest';
-import { deferredSection } from '../theme-packs/section-groups';
+import { sectionGroup } from '../theme-packs/section-groups';
+
+// This theme's phase 3d sections, a chunk per group, imported from the pack
+// itself (`section-groups.tsx`).
+const trustVisit = sectionGroup(
+  'modern-education:trust-visit',
+  () => import('./t1-trust-visit-sections')
+);
+const engage = sectionGroup(
+  'modern-education:engage',
+  () => import('./t1-engage-sections')
+);
+const enrol = sectionGroup(
+  'modern-education:enrol',
+  () => import('./t1-enrol-sections')
+);
+const journeyProof = sectionGroup(
+  'modern-education:journey-proof',
+  () => import('./t1-journey-proof-sections')
+);
 
 export const MODERN_EDUCATION_PACK: ThemePack = {
   key: 'modern-education',
@@ -66,33 +85,24 @@ export const MODERN_EDUCATION_PACK: ThemePack = {
     contact: T1Contact,
     gallery: T1Gallery,
     // CMS phase 3d (batch A).
-    whatsappBar: deferredSection('modern-education:engage', 'T1WhatsappBar'),
-    video: deferredSection('modern-education:engage', 'T1Video'),
-    pricing: deferredSection('modern-education:engage', 'T1Pricing'),
-    countdown: deferredSection('modern-education:engage', 'T1Countdown'),
+    whatsappBar: engage('T1WhatsappBar'),
+    video: engage('T1Video'),
+    pricing: engage('T1Pricing'),
+    countdown: engage('T1Countdown'),
     // CMS phase 3d (batch C).
-    interestForm: deferredSection('modern-education:enrol', 'T1InterestForm'),
-    announcementBar: deferredSection(
-      'modern-education:enrol',
-      'T1AnnouncementBar'
-    ),
-    comparison: deferredSection('modern-education:enrol', 'T1Comparison'),
+    interestForm: enrol('T1InterestForm'),
+    announcementBar: enrol('T1AnnouncementBar'),
+    comparison: enrol('T1Comparison'),
     // CMS phase 3d.
-    logos: deferredSection('modern-education:trust-visit', 'T1Logos'),
-    map: deferredSection('modern-education:trust-visit', 'T1Map'),
-    schedule: deferredSection('modern-education:trust-visit', 'T1Schedule'),
-    results: deferredSection('modern-education:trust-visit', 'T1Results'),
+    logos: trustVisit('T1Logos'),
+    map: trustVisit('T1Map'),
+    schedule: trustVisit('T1Schedule'),
+    results: trustVisit('T1Results'),
     // CMS phase 3d (batch D).
-    timeline: deferredSection('modern-education:journey-proof', 'T1Timeline'),
-    videoTestimonials: deferredSection(
-      'modern-education:journey-proof',
-      'T1VideoTestimonials'
-    ),
-    downloads: deferredSection('modern-education:journey-proof', 'T1Downloads'),
-    certificates: deferredSection(
-      'modern-education:journey-proof',
-      'T1Certificates'
-    ),
+    timeline: journeyProof('T1Timeline'),
+    videoTestimonials: journeyProof('T1VideoTestimonials'),
+    downloads: journeyProof('T1Downloads'),
+    certificates: journeyProof('T1Certificates'),
   },
   pages: {
     PageIntro: T1PageIntro,

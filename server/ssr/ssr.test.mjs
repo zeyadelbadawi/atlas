@@ -1235,6 +1235,19 @@ describe('theme packs: each site gets only its own theme', () => {
   };
 
   /** The files these chunks load with them: themselves, their static imports, their CSS. */
+  /**
+   * A theme pack's manifest key: its source path or, when the bundler built
+   * the pack's chunk around more than its own module (its section groups
+   * import from it), the chunk named after it — as `handler.mjs` finds the
+   * public router's.
+   */
+  function packKey(m, theme) {
+    if (m[PACKS[theme]]) return PACKS[theme];
+    return Object.keys(m).find(
+      (key) => m[key].isDynamicEntry && m[key].name === `${theme}.pack`
+    );
+  }
+
   function staticClosure(m, keys) {
     const files = new Set();
     const seen = new Set();
@@ -1299,9 +1312,9 @@ describe('theme packs: each site gets only its own theme', () => {
       const loaded = staticClosure(m, [
         'index.html',
         findPublicRouterChunk(m),
-        PACKS[theme],
+        packKey(m, theme),
       ]);
-      const otherPack = m[PACKS[other]];
+      const otherPack = m[packKey(m, other)];
       assert.ok(otherPack, `${PACKS[other]} is a chunk of its own`);
       assert.ok(!loaded.has(otherPack.file), `${otherPack.file} is loaded`);
       const texts = [...loaded].map((file) => [
@@ -1340,7 +1353,7 @@ describe('theme packs: each site gets only its own theme', () => {
   it("Riwaq's pack, stylesheet and fonts stay within budget, and smaller than Themes 1–3's", () => {
     const m = manifest();
     const size = (file) => statSync(join(DIST, file)).size;
-    const pack = (theme) => m[PACKS[theme]];
+    const pack = (theme) => m[packKey(m, theme)];
     const riwaq = pack('riwaq');
     assert.ok(riwaq, 'the Riwaq pack is a chunk of its own');
     const packBytes = size(riwaq.file);

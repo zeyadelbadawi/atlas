@@ -183,16 +183,17 @@ const pass = (reason: string): SsrResult => ({ kind: 'pass', reason });
  */
 let themePacksLoaded: Promise<void> | undefined;
 function loadThemePacksOnce(): Promise<void> {
-  themePacksLoaded ??= Promise.all([
-    loadAllThemePacks(),
-    loadAllSectionGroups(),
-  ]).then(
-    () => undefined,
-    (error: unknown) => {
-      themePacksLoaded = undefined;
-      throw error;
-    }
-  );
+  // Each pack registers its own section groups' loaders, so the groups
+  // load once the packs have.
+  themePacksLoaded ??= loadAllThemePacks()
+    .then(loadAllSectionGroups)
+    .then(
+      () => undefined,
+      (error: unknown) => {
+        themePacksLoaded = undefined;
+        throw error;
+      }
+    );
   return themePacksLoaded;
 }
 
