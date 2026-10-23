@@ -324,6 +324,20 @@ export function LearnMore({ lang, value, tokens }: { lang: MarketingLang; value:
   );
 }
 
+/** M1b — an in-site "read more" link (to a product page), arrow in reading direction. */
+export function MoreLink({ href, children, dir }: { href: string; children: ReactNode; dir: 'ltr' | 'rtl' }) {
+  const Arrow = dir === 'rtl' ? ArrowLeft : ArrowRight;
+  return (
+    <a
+      href={href}
+      className="mt-6 inline-flex min-h-11 items-center gap-2 font-semibold text-primary underline-offset-4 hover:underline"
+    >
+      {children}
+      <Arrow className="size-4 shrink-0" aria-hidden strokeWidth={1.75} />
+    </a>
+  );
+}
+
 export function dirOf(lang: MarketingLang): 'ltr' | 'rtl' {
   return lang === 'ar' ? 'rtl' : 'ltr';
 }

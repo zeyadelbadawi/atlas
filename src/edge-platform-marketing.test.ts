@@ -126,13 +126,13 @@ describe('static marketing site (Caddyfile)', () => {
     expect(body).not.toContain('index.html');
   });
 
-  it('answers /blog, the planned pages and unknown /ar paths with the branded 404', () => {
+  it('answers /blog and unknown /ar paths with the branded 404 (the product pages are published, M1b)', () => {
     const ar = matcher(platform, 'marketing_gone_ar');
     expect(ar).toContain('path /ar/*');
     expect(ar).toContain('try_files /ar/404.html');
     const gone = matcher(platform, 'marketing_gone');
     expect(gone).toMatch(/path \/blog \/blog\/\* /);
-    expect(gone).toContain('/features/content-protection');
+    expect(gone).not.toContain('/features/');
     expect(gone).toContain('try_files /404.html');
     expect(platform).toMatch(
       /handle @marketing_gone_ar \{\s*(?:import edge_html \*\s*)?root \* \/srv-marketing\s*rewrite \* \/ar\/404\.html\s*file_server \{\s*status 404\s*\}\s*\}/
@@ -220,5 +220,22 @@ describe('the image keeps marketing files out of /srv (Dockerfile)', () => {
       'COPY --from=build /app/dist-marketing /srv-marketing'
     );
     expect(dockerfile).not.toMatch(/MARKETING_PLANS_ALLOW_SNAPSHOT=1/);
+  });
+});
+
+describe('B2 — the email logo is a static marketing file', () => {
+  it('ships the Atlas mark as a 96 px PNG (Gmail renders no SVG) under /marketing-assets/brand/', () => {
+    // The backend's email layout points at exactly this path on the apex
+    // (`PLATFORM_LOGO_PATH`); the root-file handler above serves it with
+    // the edge cache headers and no cookies.
+    const png = readFileSync(
+      resolve(
+        __dirname,
+        '../public/marketing-assets/brand/atlas-mark-email-2x.png'
+      )
+    );
+    expect(png.subarray(1, 4).toString('latin1')).toBe('PNG');
+    expect(png.readUInt32BE(16)).toBe(96);
+    expect(png.readUInt32BE(20)).toBe(96);
   });
 });

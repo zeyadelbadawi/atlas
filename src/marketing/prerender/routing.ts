@@ -12,13 +12,17 @@
  *   2. a trailing slash on a page URL → one 301 to the slash-less URL
  *      (query kept);
  *   3. a page URL → its prerendered `index.html`;
- *   4. retired/planned URLs (`/blog*`, the planned feature pages) and any
- *      other `/ar/...` → the branded 404 page with status 404;
+ *   4. retired URLs (`/blog*`) and any other `/ar/...` → the branded 404
+ *      page with status 404;
  *   5. anything else → not ours (the single-page app answers).
  */
 
-/** Feature pages that are planned, not published: a genuine 404 (SPEC §B.1, F-12). */
-export const MARKETING_PLANNED_PATHS = [
+/**
+ * The five product pages (M1b, B2). Planned in B1 and answered with a
+ * genuine 404 then (SPEC §B.1, F-12); published now, so they are ordinary
+ * prerendered pages, in the sitemap and linked from the header and footer.
+ */
+export const MARKETING_PRODUCT_PATHS = [
   '/features/academy-website',
   '/features/payments',
   '/features/content-protection',
@@ -31,8 +35,7 @@ export function isMarketingGonePath(pathname: string): boolean {
   const path = pathname.replace(/\/+$/, '') || '/';
   const unprefixed =
     path === '/ar' ? '/' : path.startsWith('/ar/') ? path.slice(3) : path;
-  if (unprefixed === '/blog' || unprefixed.startsWith('/blog/')) return true;
-  return (MARKETING_PLANNED_PATHS as readonly string[]).includes(unprefixed);
+  return unprefixed === '/blog' || unprefixed.startsWith('/blog/');
 }
 
 /** Root files of the platform host, served from `dist/marketing/`. */

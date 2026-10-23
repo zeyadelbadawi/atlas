@@ -1,0 +1,40 @@
+name: Uptime
+
+# B0-OPS-09 — external uptime probe, zero cost: this repository is public,
+# so scheduled Actions minutes are free, and nothing third-party is used.
+# Every 10 minutes `scripts/uptime/probe.mjs` checks the marketing home,
+# the dashboard and help-center hosts, the public price list, the backend's
+# public health route and the demo academy from outside, with timeouts and
+# one retry, and reads each host's TLS certificate (< 14 days = warning).
+# On a problem it opens (or, only when the set of problems changes,
+# comments on) the open issue labelled `uptime` (GitHub notifies whoever
+# watches the repository, per their notification settings); on recovery
+# it comments and closes it. No secrets: the workflow's
+# own token, limited to issues. GitHub disables a schedule after 60 days
+# without repository activity; re-enable it from the Actions tab if so.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/10 * * * *'
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: uptime
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: scripts/uptime
+      - name: Probe and report
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/uptime/probe.mjs

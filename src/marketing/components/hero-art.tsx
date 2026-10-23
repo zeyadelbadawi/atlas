@@ -21,7 +21,13 @@ export type HeroArtName =
   | 'contact'
   | 'privacy'
   | 'terms'
-  | 'not-found';
+  | 'not-found'
+  // M1b product pages.
+  | 'academy-website'
+  | 'payments'
+  | 'content-protection'
+  | 'teams-and-academies'
+  | 'quizzes-and-certificates';
 
 const ROOT = '/marketing-assets/heroes/v1';
 export const HERO_ART_WIDTHS = [480, 768, 1080] as const;

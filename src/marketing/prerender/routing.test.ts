@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
-  MARKETING_PLANNED_PATHS,
+  MARKETING_PRODUCT_PATHS,
   MARKETING_ROOT_FILES,
   isMarketingGonePath,
   marketingFileForPath,
@@ -80,7 +80,7 @@ describe('resolveMarketingRequest', () => {
     });
   });
 
-  it('answers retired and planned URLs, and unknown /ar paths, with the branded 404', () => {
+  it('answers retired URLs and unknown /ar paths with the branded 404', () => {
     expect(route('/blog')).toEqual({
       kind: 'notFound',
       file: '404.html',
@@ -90,12 +90,10 @@ describe('resolveMarketingRequest', () => {
       file: '404.html',
       status: 404,
     });
-    for (const planned of MARKETING_PLANNED_PATHS) {
-      expect(route(planned)).toMatchObject({ file: '404.html', status: 404 });
-      expect(route(`/ar${planned}`)).toMatchObject({
-        file: 'ar/404.html',
-        status: 404,
-      });
+    // M1b — the product pages are published: no longer a planned 404.
+    for (const path of MARKETING_PRODUCT_PATHS) {
+      expect(isMarketingGonePath(path)).toBe(false);
+      expect(isMarketingGonePath(`/ar${path}`)).toBe(false);
     }
     expect(route('/ar/does-not-exist')).toMatchObject({
       file: 'ar/404.html',
@@ -165,11 +163,11 @@ describe('the Caddyfile mirrors these rules', () => {
     expect(paths).toContain(' /sitemaps/*');
   });
 
-  it('404s every planned page and its Arabic twin', () => {
+  it('404s the retired blog, and no longer the published product pages', () => {
     const paths = matcher('marketing_gone');
-    for (const planned of MARKETING_PLANNED_PATHS) {
-      expect(paths).toContain(` ${planned}`);
-      expect(paths).toContain(` /ar${planned}`);
+    for (const path of MARKETING_PRODUCT_PATHS) {
+      expect(paths).not.toContain(` ${path}`);
+      expect(paths).not.toContain(` /ar${path}`);
     }
     expect(paths).toMatch(/ \/blog \/blog\/\* /);
   });

@@ -16,7 +16,7 @@ import snapshot from '@/marketing/data/plans.snapshot.json';
 import type { Plan } from '@/types/plan.types';
 import { MARKETING_PAGES } from '@/marketing/registry';
 import { buildMarketingSite } from '@/marketing/prerender/site';
-import { MARKETING_PLANNED_PATHS } from '@/marketing/prerender/routing';
+import { MARKETING_PRODUCT_PATHS } from '@/marketing/prerender/routing';
 
 const ROOT = resolve(__dirname, '../../..');
 const read = (file: string) => readFileSync(resolve(ROOT, file), 'utf8');
@@ -72,6 +72,9 @@ describe('platform sitemap and robots.txt: one source (B1)', () => {
       '/contact',
       '/privacy-policy',
       '/terms',
+      // M1b — the five product pages, in both languages.
+      ...MARKETING_PRODUCT_PATHS,
+      ...MARKETING_PRODUCT_PATHS.map((p) => `/ar${p}`),
     ]) {
       expect(locs).toContain(path);
     }
@@ -81,7 +84,6 @@ describe('platform sitemap and robots.txt: one source (B1)', () => {
       '/index.html',
       '/dashboard',
       '/auth/register',
-      ...MARKETING_PLANNED_PATHS,
     ]) {
       expect(locs).not.toContain(path);
     }
