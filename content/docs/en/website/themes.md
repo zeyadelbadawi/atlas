@@ -3,17 +3,17 @@ id: DOC-WEB-002
 title: Choose or change your theme
 description: Compare the four website themes, switch your draft to a new one, check it in Preview and publish. Your sections and text stay as they are.
 summary: >
-  Open Website, then Settings: the Theme tab shows the four themes you can
-  choose, Modern Education, Atelier, Manara and Riwaq. Choose Select theme on
-  the one you want. The switch changes your draft only and keeps your
-  content; visitors see the new theme after you publish.
+  Open Website, then Settings: the Theme tab shows the four themes, Modern
+  Education, Atelier, Manara and Riwaq. Choose Select theme on the one you
+  want, or switch in the visual editor's Site panel. The switch changes your
+  draft only and keeps your content; visitors see it after you publish.
 type: step-by-step
 audience: [owner, manager]
-order: 2
+order: 12
 priority: P1
-related: [DOC-WEB-001, DOC-WEB-008, DOC-WEB-005, DOC-ACD-004]
+related: [DOC-WEB-001, DOC-WEB-015, DOC-WEB-008, DOC-WEB-018, DOC-ACD-004]
 keywords: [theme, template, design, change website look, قالب, تغيير شكل الموقع, ثيم, تصميم الموقع]
-updated: 2026-10-20
+updated: 2026-10-23
 ---
 
 The academy owner and managers can change the theme. A theme sets the fonts, layout and style of every page. Your sections, text and images stay the same when you switch.
@@ -43,19 +43,23 @@ Each theme uses your brand colours and logo from **Visual Identity**.
 
    ![The Select theme button on another theme's card](shot:website/theme-select)
 
-4. Open the **Preview** tab and check your pages at **Desktop**, **Tablet** and **Mobile** widths.
+4. Check your pages at **Desktop**, **Tablet** and **Mobile** widths: on the **Website** overview, choose **Preview draft**.
 
-   ![The Preview tab showing the draft site at Mobile width](shot:website/preview-mobile)
+   ![The draft preview showing the site at Mobile width](shot:website/preview-mobile)
 
 5. When you're happy with it, choose **Publish changes** in the publish bar and confirm.
 
    ![The publish bar on the Settings page with Publish changes highlighted](shot:website/settings-publish)
 
+## Change the theme in the visual editor
+
+In the visual editor, choose **Site**. Under **Theme**, choose another theme: Atlas saves it to your draft and your page redraws with it straight away. The theme your site uses is marked **Current**. See [Edit your website in the visual editor](doc:DOC-WEB-015).
+
 ## What changes and what stays
 
 - Switching changes the **draft only**. Your live site keeps its current theme until you publish.
-- Your sections, text and images are kept. Atlas doesn't rewrite or translate your content when you switch.
-- Some details are drawn differently by each theme, so a section can look different after a switch. Check every page in **Preview** before you publish.
+- Your sections, text and images are kept, and so are the choices you made on each section's **Design** tab. Atlas doesn't rewrite or translate your content when you switch.
+- Some details are drawn differently by each theme, so a section can look different after a switch. Check every page in the preview before you publish.
 - The starter content was written once, when your academy was created. A later switch doesn't add new starter content.
 
 > [!NOTE]

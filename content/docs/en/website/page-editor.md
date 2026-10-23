@@ -1,31 +1,30 @@
 ---
 id: DOC-WEB-004
-title: Edit a page with sections
-description: Add, reorder and hide sections, fill English and Arabic text, choose which devices show a section, then save a draft or publish one page.
+title: Edit a page in the classic editor
+description: Use the classic page editor to add, reorder and hide sections in a list, fill English and Arabic text in a dialog, then save a draft or publish one page.
 summary: >
-  Open a page from Website, then Pages. The page editor lists the page's
-  sections next to a live preview. Add a section with Add section, open one to
-  fill its fields, then choose Apply changes. Nothing is saved until you
-  choose Save draft, and nothing is public until you publish the page or the
-  site.
+  The classic editor lists a page's sections next to a live preview. Open it
+  from a page's More actions menu under Pages. Add a section with Add section,
+  open one to fill its fields, then choose Apply changes. Nothing is saved
+  until you choose Save draft, and nothing is public until you publish.
 type: step-by-step
 audience: [owner, manager]
-order: 4
+order: 8
 priority: P0
-related: [DOC-WEB-005, DOC-WEB-006, DOC-WEB-008, DOC-TRB-013, DOC-MED-007]
-keywords: [page editor, edit home page, sections, add section, تعديل الصفحة الرئيسية, محرر الصفحة, اقسام الموقع, تعديل الموقع]
-updated: 2026-10-20
+related: [DOC-WEB-015, DOC-WEB-005, DOC-WEB-006, DOC-WEB-019, DOC-TRB-013]
+keywords: [page editor, classic editor, edit home page, المحرر الكلاسيكي, sections, add section, تعديل الصفحة الرئيسية, محرر الصفحة, اقسام الموقع, تعديل الموقع]
+updated: 2026-10-23
 ---
 
-The academy owner and managers can edit pages. The **Page Editor** shows the page's sections under **Composition** on one side and a live preview of the page on the other.
+The academy owner and managers can edit pages. Most of the time you'll use the visual editor, which edits the page on the page itself: see [Edit your website in the visual editor](doc:DOC-WEB-015). The classic editor, titled **Page Editor**, is still there when you prefer a list of sections and a form for each. It shows the page's sections under **Composition** on one side and a live preview of the page on the other. The **Course Details** page always opens here.
 
 ## Edit a page
 
-1. In **Website**, open the **Pages** tab and choose the page you want to edit, for example Home.
+1. In **Website**, open the **Pages** tab. On the page's row, open **More actions** and choose **Edit in classic editor**. (On a wide screen, the visual editor also has **Classic editor** at the top.)
 
-   ![The Pages tab with the Home page row highlighted](shot:website/pages-open-row)
+   ![The More actions menu of the Home page with Edit in classic editor highlighted](shot:website/pages-more-menu)
 
-2. To add a section, choose **Add section** under the section list and pick a type. The new section is added at the end of the page, and its settings open.
+2. To add a section, choose **Add section** under the section list and pick a type. If the section has ready-made looks, choose one and then **Add section** (see [Section looks and page templates](doc:DOC-WEB-016)). The new section is added at the end of the page, and its settings open.
 
    ![The Add section menu listing the section types](shot:website/editor-add-section)
 
@@ -45,7 +44,7 @@ The academy owner and managers can edit pages. The **Page Editor** shows the pag
 
    ![The Save draft button at the top of the page editor](shot:website/editor-save)
 
-7. To put only this page live, choose **Publish page** and confirm. Other pages and your site settings stay as they are published.
+7. To put only this page live, choose **Publish page**. Atlas checks the page first, then asks you to confirm. Other pages and your site settings stay as they are published.
 
    ![The Publish page button next to Save draft](shot:website/editor-publish-page)
 
@@ -55,6 +54,8 @@ The academy owner and managers can edit pages. The **Page Editor** shows the pag
 - **Duplicate section** adds a copy right after it.
 - **Delete section** removes it after you confirm.
 - The **Enabled** switch hides a section on every screen size without deleting it.
+- A section's background, spacing and other design options are set in the visual editor's **Design** tab: see [Section design options](doc:DOC-WEB-018).
+- **History** at the top lists earlier versions of the page: see [Page history: go back to an earlier version](doc:DOC-WEB-019).
 
 ## Text in two languages
 
@@ -67,11 +68,11 @@ Text fields have character limits. A counter under the field shows how much you'
 ## Save draft or publish
 
 - **Save draft** (shown as **Save changes** while your site isn't published yet) saves the page to your working copy.
-- **Publish page** appears only while your site is live. It saves your changes and makes this one page live.
+- **Publish page** appears only while your site is live. It saves your changes and makes this one page live. Atlas first checks the page: see [Check a page before you publish it](doc:DOC-WEB-020).
 - **Publish changes** in the publish bar publishes every saved page and your site settings together. See [Preview, publish and unpublish your site](doc:DOC-WEB-008).
 
 > [!WARNING]
-> Changes are never saved automatically. If you try to leave the editor with unsaved changes, Atlas asks you first: **Stay on this page**, **Leave and discard**, or **Save and leave**.
+> In the classic editor, changes are never saved automatically (the visual editor saves by itself). If you try to leave the editor with unsaved changes, Atlas asks you first: **Stay on this page**, **Leave and discard**, or **Save and leave**.
 
 ## When someone else is editing
 
@@ -84,6 +85,7 @@ If a colleague has the same page open, a banner at the top names them. If they s
 
 ## Related
 
+- [Edit your website in the visual editor](doc:DOC-WEB-015)
 - [Section types reference](doc:DOC-WEB-005)
 - [Replace sample content before you launch](doc:DOC-WEB-007)
 - [Media library: upload and manage images and PDFs](doc:DOC-MED-007)

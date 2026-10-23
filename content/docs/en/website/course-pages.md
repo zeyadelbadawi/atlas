@@ -10,7 +10,7 @@ summary: >
   or continue.
 type: feature-explanation
 audience: [owner, manager]
-order: 14
+order: 21
 priority: P1
 related: [DOC-LRN-004, DOC-LRN-011, DOC-LRN-023, DOC-WEB-005, DOC-COM-010]
 keywords: [course catalog, course page, course not showing, courses page, الدورة مش ظاهرة, صفحة الكورس, قائمة الكورسات, كتالوج الدورات]
