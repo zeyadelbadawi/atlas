@@ -7769,8 +7769,8 @@
     "width": 1440
   },
   "website/contact-section-form": {
-    "capturedAt": "2026-10-20T18:57:34.475Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:20:20.057Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/contact-section-form-960.webp",
@@ -7781,13 +7781,13 @@
         "width": 1440
       }
     ],
-    "height": 813,
-    "spec": "a5e82af7ecd550690612907e146075e82e2cde30",
-    "width": 944
+    "height": 900,
+    "spec": "8ac248c110d00ab81fab4bd270b5c5a401a617b2",
+    "width": 1440
   },
   "website/content-faq-dialog": {
-    "capturedAt": "2026-10-20T20:07:14.249Z",
-    "commit": "cea34925637ef2e9bd8a38ddb7573296b49316de",
+    "capturedAt": "2026-10-23T15:21:15.061Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/content-faq-dialog-960.webp",
@@ -7803,8 +7803,8 @@
     "width": 560
   },
   "website/content-faq-new": {
-    "capturedAt": "2026-10-20T20:07:04.702Z",
-    "commit": "cea34925637ef2e9bd8a38ddb7573296b49316de",
+    "capturedAt": "2026-10-23T15:21:05.116Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/content-faq-new-960.webp",
@@ -7820,8 +7820,8 @@
     "width": 1440
   },
   "website/content-faqs": {
-    "capturedAt": "2026-10-20T20:06:57.686Z",
-    "commit": "cea34925637ef2e9bd8a38ddb7573296b49316de",
+    "capturedAt": "2026-10-23T15:20:57.917Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/content-faqs-960.webp",
@@ -7837,8 +7837,8 @@
     "width": 1440
   },
   "website/content-testimonial-dialog": {
-    "capturedAt": "2026-10-20T19:49:12.669Z",
-    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
+    "capturedAt": "2026-10-23T15:21:32.586Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/content-testimonial-dialog-960.webp",
@@ -7854,8 +7854,8 @@
     "width": 560
   },
   "website/content-testimonials": {
-    "capturedAt": "2026-10-20T19:49:04.744Z",
-    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
+    "capturedAt": "2026-10-23T15:21:23.763Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/content-testimonials-960.webp",
@@ -7870,26 +7870,9 @@
     "spec": "76672c6c8f187fed083aa0b8dff2620f1a3726b9",
     "width": 1440
   },
-  "website/editor": {
-    "capturedAt": "2026-10-20T18:55:44.433Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
-    "files": [
-      {
-        "src": "media/en/website/editor-960.webp",
-        "width": 960
-      },
-      {
-        "src": "media/en/website/editor-1440.webp",
-        "width": 1440
-      }
-    ],
-    "height": 900,
-    "spec": "54a3f918d33374bb4c35bc4173b96770ac6acea8",
-    "width": 1440
-  },
   "website/editor-add-section": {
-    "capturedAt": "2026-10-20T18:55:56.334Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:18:49.597Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/editor-add-section-960.webp",
@@ -7904,9 +7887,60 @@
     "spec": "93b55804a021ae04c56abf3bbddfb5819a5d23e2",
     "width": 1440
   },
+  "website/editor-buttons": {
+    "capturedAt": "2026-10-23T15:28:06.341Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/editor-buttons-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/editor-buttons-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 858,
+    "spec": "36562b2be014b2591b71eaf8ccc35e6a1e5d2f35",
+    "width": 1200
+  },
+  "website/editor-custom-elements": {
+    "capturedAt": "2026-10-23T15:43:11.824Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/editor-custom-elements-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/editor-custom-elements-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "d8a7f72a238f174bc68fa5039b206b0233e7293a",
+    "width": 1440
+  },
+  "website/editor-custom-section": {
+    "capturedAt": "2026-10-23T15:28:21.530Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/editor-custom-section-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/editor-custom-section-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 858,
+    "spec": "3e9b7b771cd21404f9e89a460bd88aa411b9c168",
+    "width": 1200
+  },
   "website/editor-faq-library": {
-    "capturedAt": "2026-10-20T20:06:50.334Z",
-    "commit": "cea34925637ef2e9bd8a38ddb7573296b49316de",
+    "capturedAt": "2026-10-23T15:20:08.282Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/editor-faq-library-960.webp",
@@ -7917,13 +7951,13 @@
         "width": 1440
       }
     ],
-    "height": 813,
+    "height": 858,
     "spec": "d86c71e9127000a464c85ba2dfb2553249883c8e",
-    "width": 944
+    "width": 1200
   },
   "website/editor-publish-page": {
-    "capturedAt": "2026-10-20T18:56:46.972Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:19:43.694Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/editor-publish-page-960.webp",
@@ -7939,8 +7973,8 @@
     "width": 1440
   },
   "website/editor-save": {
-    "capturedAt": "2026-10-20T18:56:37.341Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:19:33.308Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/editor-save-960.webp",
@@ -7956,8 +7990,8 @@
     "width": 1440
   },
   "website/editor-section-apply": {
-    "capturedAt": "2026-10-20T18:56:18.019Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:19:13.311Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/editor-section-apply-960.webp",
@@ -7968,13 +8002,13 @@
         "width": 1440
       }
     ],
-    "height": 813,
+    "height": 858,
     "spec": "65c98a266d9b22f1171fb512fae841cff4a520e5",
-    "width": 944
+    "width": 1200
   },
   "website/editor-section-dialog": {
-    "capturedAt": "2026-10-20T18:56:07.284Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:19:01.215Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/editor-section-dialog-960.webp",
@@ -7985,13 +8019,13 @@
         "width": 1440
       }
     ],
-    "height": 813,
+    "height": 858,
     "spec": "8d00a0111c4da25e5257e1983c0b18fad975bbed",
-    "width": 944
+    "width": 1200
   },
   "website/editor-visibility": {
-    "capturedAt": "2026-10-20T18:56:27.686Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:19:23.329Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/editor-visibility-960.webp",
@@ -8006,9 +8040,77 @@
     "spec": "2589ee189355bc5a4b5db480f597d57233513b06",
     "width": 1440
   },
+  "website/history-button": {
+    "capturedAt": "2026-10-23T15:26:24.205Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/history-button-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/history-button-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "be8b406a755e4abff140fb2e85a389bbeb0d3c06",
+    "width": 1440
+  },
+  "website/history-confirm": {
+    "capturedAt": "2026-10-23T15:27:29.594Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/history-confirm-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/history-confirm-1120.webp",
+        "width": 1120
+      }
+    ],
+    "height": 346,
+    "spec": "60963073245426bc77b14e2273d0029fae94e9ac",
+    "width": 560
+  },
+  "website/history-list": {
+    "capturedAt": "2026-10-23T15:26:36.861Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/history-list-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/history-list-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 876,
+    "spec": "3d0706fef5a09bb3b2436bad75f05137f5fc85ae",
+    "width": 1200
+  },
+  "website/history-version": {
+    "capturedAt": "2026-10-23T15:27:02.834Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/history-version-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/history-version-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 876,
+    "spec": "1f2c3c890a5ec22b69bbb205a4801b47d553f6f3",
+    "width": 1200
+  },
   "website/launch-checklist": {
-    "capturedAt": "2026-10-20T18:51:07.440Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:14:03.640Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/launch-checklist-960.webp",
@@ -8024,8 +8126,8 @@
     "width": 1440
   },
   "website/messages": {
-    "capturedAt": "2026-10-20T19:49:29.304Z",
-    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
+    "capturedAt": "2026-10-23T15:21:50.715Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/messages-960.webp",
@@ -8041,8 +8143,8 @@
     "width": 1440
   },
   "website/messages-filters": {
-    "capturedAt": "2026-10-20T19:49:36.520Z",
-    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
+    "capturedAt": "2026-10-23T15:21:59.121Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/messages-filters-960.webp",
@@ -8058,8 +8160,8 @@
     "width": 1440
   },
   "website/messages-row": {
-    "capturedAt": "2026-10-20T19:49:43.991Z",
-    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
+    "capturedAt": "2026-10-23T15:22:07.373Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/messages-row-960.webp",
@@ -8075,8 +8177,8 @@
     "width": 1440
   },
   "website/nav-footer": {
-    "capturedAt": "2026-10-20T18:54:29.235Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:17:16.586Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/nav-footer-960.webp",
@@ -8092,8 +8194,8 @@
     "width": 1440
   },
   "website/nav-header-cta": {
-    "capturedAt": "2026-10-20T18:54:19.509Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:17:08.248Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/nav-header-cta-960.webp",
@@ -8109,8 +8211,8 @@
     "width": 1440
   },
   "website/nav-menu-order": {
-    "capturedAt": "2026-10-20T18:54:10.328Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:17:00.255Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/nav-menu-order-960.webp",
@@ -8126,8 +8228,8 @@
     "width": 1440
   },
   "website/nav-menu-pages": {
-    "capturedAt": "2026-10-20T18:53:59.481Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:16:51.638Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/nav-menu-pages-960.webp",
@@ -8143,8 +8245,8 @@
     "width": 1440
   },
   "website/nav-social": {
-    "capturedAt": "2026-10-20T18:54:39.254Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:17:25.335Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/nav-social-960.webp",
@@ -8160,8 +8262,8 @@
     "width": 1440
   },
   "website/overview": {
-    "capturedAt": "2026-10-20T18:50:59.239Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:13:55.824Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/overview-960.webp",
@@ -8176,9 +8278,43 @@
     "spec": "0d879aba27cad9182c88b3b141d618401b146ecb",
     "width": 1440
   },
+  "website/overview-edit": {
+    "capturedAt": "2026-10-23T15:22:43.455Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/overview-edit-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/overview-edit-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "1bafc72c83aa19fdb5a92cd1c3a044ab7e8a0ea1",
+    "width": 1440
+  },
+  "website/overview-preview-draft": {
+    "capturedAt": "2026-10-23T15:22:51.613Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/overview-preview-draft-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/overview-preview-draft-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "0150d85ad10a8b97946ed27b99d57e3e13aa1c33",
+    "width": 1440
+  },
   "website/overview-publish": {
-    "capturedAt": "2026-10-20T18:51:22.923Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:14:19.582Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/overview-publish-960.webp",
@@ -8193,9 +8329,26 @@
     "spec": "29b3cb974d776617f85c271a6502ba835f9cd3c3",
     "width": 1440
   },
+  "website/overview-where": {
+    "capturedAt": "2026-10-23T15:23:00.765Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/overview-where-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/overview-where-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "0127364dfb7c25822526a6b48dcc3d415e001709",
+    "width": 1440
+  },
   "website/page-seo-dialog": {
-    "capturedAt": "2026-10-20T18:56:57.778Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:19:53.866Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/page-seo-dialog-960.webp",
@@ -8211,8 +8364,8 @@
     "width": 560
   },
   "website/pages-auth-dialog": {
-    "capturedAt": "2026-10-20T18:55:33.069Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:18:28.719Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/pages-auth-dialog-960.webp",
@@ -8228,8 +8381,8 @@
     "width": 560
   },
   "website/pages-create-dialog": {
-    "capturedAt": "2026-10-20T18:55:15.834Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:17:58.961Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/pages-create-dialog-960.webp",
@@ -8240,13 +8393,13 @@
         "width": 1120
       }
     ],
-    "height": 352,
+    "height": 835,
     "spec": "1001585c699f34f556f6862e07bf8ec90f34555f",
     "width": 560
   },
   "website/pages-list": {
-    "capturedAt": "2026-10-20T18:54:48.502Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:17:33.589Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/pages-list-960.webp",
@@ -8261,9 +8414,26 @@
     "spec": "ffa45eee5b63986c50870ff65f4d64ae36a5f9ce",
     "width": 1440
   },
+  "website/pages-more-menu": {
+    "capturedAt": "2026-10-23T15:23:09.901Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/pages-more-menu-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/pages-more-menu-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "77582e66e9d583947ffa6d6bae5d50f72b8d7dc7",
+    "width": 1440
+  },
   "website/pages-new": {
-    "capturedAt": "2026-10-20T18:55:06.238Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:17:49.460Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/pages-new-960.webp",
@@ -8279,8 +8449,8 @@
     "width": 1440
   },
   "website/pages-open-row": {
-    "capturedAt": "2026-10-20T18:54:57.833Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:17:41.510Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/pages-open-row-960.webp",
@@ -8295,9 +8465,26 @@
     "spec": "70ce087da212a407c534359e377668d6c1c1e97b",
     "width": 1440
   },
+  "website/pages-templates": {
+    "capturedAt": "2026-10-23T15:23:22.650Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/pages-templates-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/pages-templates-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 876,
+    "spec": "50eedb022ff0f968af71039028b45cbde8f6ed1d",
+    "width": 1072
+  },
   "website/pages-visibility": {
-    "capturedAt": "2026-10-20T18:55:23.537Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:42:55.944Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/pages-visibility-960.webp",
@@ -8309,29 +8496,12 @@
       }
     ],
     "height": 900,
-    "spec": "259c5f9c94912409d8230d58a7db452b397b97d5",
-    "width": 1440
-  },
-  "website/preview": {
-    "capturedAt": "2026-10-20T18:57:43.968Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
-    "files": [
-      {
-        "src": "media/en/website/preview-960.webp",
-        "width": 960
-      },
-      {
-        "src": "media/en/website/preview-1440.webp",
-        "width": 1440
-      }
-    ],
-    "height": 900,
-    "spec": "15875296599c0ec43d072dc21c0daee8cef84c64",
+    "spec": "440547fbd3de142dc30f11c33e0380a24743b1fa",
     "width": 1440
   },
   "website/preview-language": {
-    "capturedAt": "2026-10-20T18:58:03.680Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:20:50.473Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/preview-language-960.webp",
@@ -8347,8 +8517,8 @@
     "width": 1440
   },
   "website/preview-mobile": {
-    "capturedAt": "2026-10-20T18:57:55.201Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:20:41.212Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/preview-mobile-960.webp",
@@ -8364,8 +8534,8 @@
     "width": 1440
   },
   "website/public-catalog": {
-    "capturedAt": "2026-10-20T19:50:04.707Z",
-    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
+    "capturedAt": "2026-10-23T15:22:27.821Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/public-catalog-960.webp",
@@ -8381,8 +8551,8 @@
     "width": 1440
   },
   "website/public-contact-form": {
-    "capturedAt": "2026-10-20T19:49:57.479Z",
-    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
+    "capturedAt": "2026-10-23T15:22:20.646Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/public-contact-form-960.webp",
@@ -8398,8 +8568,8 @@
     "width": 1440
   },
   "website/public-course": {
-    "capturedAt": "2026-10-20T19:50:11.469Z",
-    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
+    "capturedAt": "2026-10-23T15:22:35.139Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/public-course-960.webp",
@@ -8415,8 +8585,8 @@
     "width": 1440
   },
   "website/public-home": {
-    "capturedAt": "2026-10-20T19:49:51.136Z",
-    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
+    "capturedAt": "2026-10-23T15:22:14.147Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/public-home-960.webp",
@@ -8432,8 +8602,8 @@
     "width": 1440
   },
   "website/publish-bar": {
-    "capturedAt": "2026-10-20T18:51:15.514Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:14:11.302Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/publish-bar-960.webp",
@@ -8448,9 +8618,26 @@
     "spec": "5aa0eb22e777cdd58d0924df62ffcaa4c8aa1295",
     "width": 1440
   },
+  "website/publish-check": {
+    "capturedAt": "2026-10-23T15:27:44.791Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/publish-check-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/publish-check-1248.webp",
+        "width": 1248
+      }
+    ],
+    "height": 522,
+    "spec": "e4ff838c6c12e0d6c4a20e504b44ee6b47d543e7",
+    "width": 624
+  },
   "website/seo-indexing": {
-    "capturedAt": "2026-10-20T18:53:19.420Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:16:18.019Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/seo-indexing-960.webp",
@@ -8466,8 +8653,8 @@
     "width": 1440
   },
   "website/seo-save": {
-    "capturedAt": "2026-10-20T18:53:28.377Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:16:26.619Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/seo-save-960.webp",
@@ -8483,8 +8670,8 @@
     "width": 1440
   },
   "website/seo-share-image": {
-    "capturedAt": "2026-10-20T18:53:09.318Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:16:09.640Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/seo-share-image-960.webp",
@@ -8500,8 +8687,8 @@
     "width": 1440
   },
   "website/seo-tab": {
-    "capturedAt": "2026-10-20T18:52:49.440Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:15:53.933Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/seo-tab-960.webp",
@@ -8517,8 +8704,8 @@
     "width": 1440
   },
   "website/settings-language": {
-    "capturedAt": "2026-10-20T18:52:33.013Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:15:37.902Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/settings-language-960.webp",
@@ -8534,8 +8721,8 @@
     "width": 1440
   },
   "website/settings-language-save": {
-    "capturedAt": "2026-10-20T18:52:41.141Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:15:45.589Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/settings-language-save-960.webp",
@@ -8550,9 +8737,26 @@
     "spec": "e58bf8ca42e51621e6e6c5ba36fd1143e139823d",
     "width": 1440
   },
+  "website/settings-lock": {
+    "capturedAt": "2026-10-23T15:27:53.588Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/settings-lock-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/settings-lock-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "b3ab98a1bee4e2fc79357c7a2c6c31f5f3778fc5",
+    "width": 1440
+  },
   "website/settings-navigation": {
-    "capturedAt": "2026-10-20T18:53:49.689Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:16:43.691Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/settings-navigation-960.webp",
@@ -8568,8 +8772,8 @@
     "width": 1440
   },
   "website/settings-publish": {
-    "capturedAt": "2026-10-20T18:52:08.626Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:15:11.962Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/settings-publish-960.webp",
@@ -8585,8 +8789,8 @@
     "width": 1440
   },
   "website/settings-seo": {
-    "capturedAt": "2026-10-20T18:52:59.199Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:16:01.660Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/settings-seo-960.webp",
@@ -8602,8 +8806,8 @@
     "width": 1440
   },
   "website/settings-tabs": {
-    "capturedAt": "2026-10-20T18:52:25.180Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:15:29.812Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/settings-tabs-960.webp",
@@ -8619,8 +8823,8 @@
     "width": 1440
   },
   "website/settings-unsaved-dialog": {
-    "capturedAt": "2026-10-20T18:53:38.320Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:16:35.368Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/settings-unsaved-dialog-960.webp",
@@ -8636,8 +8840,8 @@
     "width": 560
   },
   "website/theme-current": {
-    "capturedAt": "2026-10-20T18:51:49.486Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:14:51.125Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/theme-current-960.webp",
@@ -8653,8 +8857,8 @@
     "width": 1440
   },
   "website/theme-select": {
-    "capturedAt": "2026-10-20T18:51:59.102Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:15:01.489Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/theme-select-960.webp",
@@ -8670,8 +8874,8 @@
     "width": 1440
   },
   "website/theme-tab": {
-    "capturedAt": "2026-10-20T18:51:39.923Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:14:41.149Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/theme-tab-960.webp",
@@ -8687,8 +8891,8 @@
     "width": 1440
   },
   "website/unpublish-dialog": {
-    "capturedAt": "2026-10-20T18:51:30.374Z",
-    "commit": "46bc04ebe1bc88a0ca8a626d320b2faea257657b",
+    "capturedAt": "2026-10-23T15:14:28.885Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/unpublish-dialog-960.webp",
@@ -8703,9 +8907,196 @@
     "spec": "782174adf11ee2cda7a2f3e1ea2fa86620a2f54e",
     "width": 560
   },
+  "website/ve-design-phones": {
+    "capturedAt": "2026-10-23T15:43:23.822Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/ve-design-phones-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/ve-design-phones-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "cb5c7bdcbcdfce7577eff74b0a2683636a86a1db",
+    "width": 1440
+  },
+  "website/ve-design-tab": {
+    "capturedAt": "2026-10-23T15:25:08.940Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/ve-design-tab-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/ve-design-tab-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "c53222d4474bb8ea6e551c76b77ca0e4ef68f24f",
+    "width": 1440
+  },
+  "website/ve-devices": {
+    "capturedAt": "2026-10-23T15:25:30.208Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/ve-devices-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/ve-devices-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "cf2e1f2b46fac7ee12061d0f59545dac69ba172b",
+    "width": 1440
+  },
+  "website/ve-editor": {
+    "capturedAt": "2026-10-23T15:23:34.126Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/ve-editor-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/ve-editor-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f0b086e3a309dc3b503eb0c5c5fb2eb3a85147ff",
+    "width": 1440
+  },
+  "website/ve-inline-hint": {
+    "capturedAt": "2026-10-23T15:24:57.212Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/ve-inline-hint-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/ve-inline-hint-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "413fb865a402fa8e248ddfd6793432f66435a92d",
+    "width": 1440
+  },
+  "website/ve-library": {
+    "capturedAt": "2026-10-23T15:25:41.406Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/ve-library-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/ve-library-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "f7bc5a58a0f11896b376f7bff83834f9004511e2",
+    "width": 1440
+  },
+  "website/ve-looks": {
+    "capturedAt": "2026-10-23T15:25:54.362Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/ve-looks-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/ve-looks-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "ce63496c1dbfff8a9e7ee852fbceb968aa2bdc44",
+    "width": 1440
+  },
+  "website/ve-publish": {
+    "capturedAt": "2026-10-23T15:26:15.011Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/ve-publish-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/ve-publish-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "13559332c16eb91bdfc494f5bb6eeb44b117bd74",
+    "width": 1440
+  },
+  "website/ve-select-section": {
+    "capturedAt": "2026-10-23T15:24:44.380Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/ve-select-section-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/ve-select-section-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "04df62fe33dc0064d096cf1ac9f2781177d8211b",
+    "width": 1440
+  },
+  "website/ve-site-panel": {
+    "capturedAt": "2026-10-23T15:26:05.979Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/ve-site-panel-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/ve-site-panel-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "32e46ee1a354ca6c2acc75875177c87dc8426429",
+    "width": 1440
+  },
+  "website/ve-undo-status": {
+    "capturedAt": "2026-10-23T15:25:18.204Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
+    "files": [
+      {
+        "src": "media/en/website/ve-undo-status-960.webp",
+        "width": 960
+      },
+      {
+        "src": "media/en/website/ve-undo-status-1440.webp",
+        "width": 1440
+      }
+    ],
+    "height": 900,
+    "spec": "1f37edf926e6d40fcdd5809eb9eea280fd505cc6",
+    "width": 1440
+  },
   "website/visual-identity": {
-    "capturedAt": "2026-10-20T19:49:21.883Z",
-    "commit": "311c31812026c59d24965945b3c825c88fb3f264",
+    "capturedAt": "2026-10-23T15:21:43.149Z",
+    "commit": "203a619df3a359c0302b1fc708743373cb2d1bde",
     "files": [
       {
         "src": "media/en/website/visual-identity-960.webp",

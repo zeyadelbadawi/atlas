@@ -1,21 +1,35 @@
 /**
- * Website Overview Page (Prompt 10).
+ * Website Overview Page (Prompt 10; reorganised in CMS phase 4).
  *
- * The new landing surface for Website Management — quick links into
- * Pages, Content, Settings and Preview, plus the live publish status.
- * Reuses `WebsitePublishBar` unchanged (Prompt 9) — there is still only
- * ONE publish action in the whole feature.
+ * The landing surface for Website Management, built around one primary
+ * path: "Edit website" opens the home page in the visual editor (Preview
+ * and the live site beside it). Then the publish status (`WebsitePublishBar`
+ * — still the ONE publish action), the launch checklist, and "Where to
+ * change what": each part of the website and its one home — page content
+ * in the visual editor, theme/menu/header/footer in its Site panel, logo
+ * and colours in Brand Studio, search engines/language/domain in Settings,
+ * library content in Content, visitors' messages in Messages.
+ *
+ * The four link cards that repeated the tab bar are gone (the tabs are
+ * right above), and the sitemap preview moved to Settings ▸ SEO, beside
+ * the switches it depends on.
  */
 import { useTranslation } from 'react-i18next';
 import { useAcademyDomain } from '@features/domain';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { usePermissions } from '@hooks';
 import {
+  Brush,
+  ChevronRight,
   ExternalLink,
-  FileText,
+  Eye,
   Globe,
+  Inbox,
   MessageSquareQuote,
+  MousePointerClick,
+  Palette,
   Settings2,
+  type LucideIcon,
 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
@@ -29,15 +43,17 @@ import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useWebsiteConfiguration, useWebsitePages } from '../hooks';
 import { WebsitePublishBar } from '../components/WebsitePublishBar';
 import { WebsiteLaunchChecklist } from '../components/WebsiteLaunchChecklist';
-import { buildSitemapEntries } from '../utils/sitemap.utils';
 import { getAcademyPublicWebsiteUrl } from '../utils/public-website-link.utils';
-import { getWebsiteTabs } from '../utils/website-navigation.utils';
+import {
+  getWebsiteTabs,
+  visualEditorHomePath,
+  websitePreviewPath,
+} from '../utils/website-navigation.utils';
 import { CONTENT_LIST_PAGE_SIZE } from '../constants/website.constants';
-import type { BreadcrumbItem, WebsiteConfiguration, WebsitePage } from '@types';
+import type { BreadcrumbItem } from '@types';
 
 export default function WebsiteOverviewPage(): JSX.Element {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { academyId } = useParams<{ academyId: string }>();
   const { hasPermission } = usePermissions();
 
@@ -83,36 +99,60 @@ export default function WebsiteOverviewPage(): JSX.Element {
     );
   }
 
-  const links = [
+  const pages = pagesQuery.data?.items ?? [];
+  const canManage = hasPermission('academy.website.manage');
+  const websitePath = (route: string) => buildPath(route, { academyId });
+  const editPath = visualEditorHomePath(academyId, pages);
+
+  // Each part of the website, and its one home (CMS phase 4).
+  const homes: readonly WebsiteHome[] = [
     {
       id: 'pages',
-      icon: FileText,
-      titleKey: 'website:overview.pages.title',
-      descriptionKey: 'website:overview.pages.description',
-      path: buildPath(DASHBOARD_ROUTES.websitePages, { academyId }),
+      icon: MousePointerClick,
+      key: 'pages',
+      to: editPath,
+    },
+    {
+      id: 'site',
+      icon: Palette,
+      key: 'site',
+      to: visualEditorHomePath(academyId, pages, { site: true }),
+    },
+    // Brand Studio has its own permission; without it, the row would lead
+    // to a page that refuses.
+    ...(hasPermission('academy.branding.update')
+      ? [
+          {
+            id: 'brand',
+            icon: Brush,
+            key: 'brand',
+            to: websitePath(DASHBOARD_ROUTES.academyBranding),
+          },
+        ]
+      : []),
+    {
+      id: 'settings',
+      icon: Settings2,
+      key: 'settings',
+      to: `${websitePath(DASHBOARD_ROUTES.websiteSettings)}?tab=seo`,
     },
     {
       id: 'content',
       icon: MessageSquareQuote,
-      titleKey: 'website:overview.content.title',
-      descriptionKey: 'website:overview.content.description',
-      path: buildPath(DASHBOARD_ROUTES.websiteContent, { academyId }),
+      key: 'content',
+      to: websitePath(DASHBOARD_ROUTES.websiteContent),
     },
-    {
-      id: 'settings',
-      icon: Settings2,
-      titleKey: 'website:overview.settings.title',
-      descriptionKey: 'website:overview.settings.description',
-      path: buildPath(DASHBOARD_ROUTES.websiteSettings, { academyId }),
-    },
-    {
-      id: 'preview',
-      icon: Globe,
-      titleKey: 'website:overview.preview.title',
-      descriptionKey: 'website:overview.preview.description',
-      path: buildPath(DASHBOARD_ROUTES.websitePreview, { academyId }),
-    },
-  ] as const;
+    ...(canManage
+      ? [
+          {
+            id: 'messages',
+            icon: Inbox,
+            key: 'messages',
+            to: websitePath(DASHBOARD_ROUTES.websiteMessages),
+          },
+        ]
+      : []),
+  ];
 
   // P63 — the canonical host (a connected custom domain, otherwise the
   // Atlas subdomain) is what the server says the website is addressed by.
@@ -142,25 +182,79 @@ export default function WebsiteOverviewPage(): JSX.Element {
         titleKey="website:overview.title"
         descriptionKey="website:overview.subtitle"
         breadcrumbs={breadcrumbs}
-        actions={
-          publicUrl && isPublished ? (
-            <Button asChild variant="outline">
-              <a href={publicUrl} target="_blank" rel="noreferrer">
-                <ExternalLink className="size-4" strokeWidth={2} aria-hidden />
-                {t('website:overview.visitWebsite')}
-              </a>
-            </Button>
-          ) : undefined
-        }
       />
 
-      <SectionTabs
-        items={getWebsiteTabs(academyId, {
-          canManage: hasPermission('academy.website.manage'),
-        })}
-      />
+      <SectionTabs items={getWebsiteTabs(academyId, { canManage })} />
 
       <div className="space-y-6">
+        {/* The one primary path: edit the website in the visual editor.
+            Its address and the way to see it sit beside it — the only
+            "Visit website" on this page. */}
+        <Card data-testid="website-overview-start">
+          <CardContent className="flex flex-col gap-4 p-4 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex min-w-0 items-start gap-3">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Globe className="size-5" aria-hidden />
+              </span>
+              <div className="min-w-0 space-y-1">
+                <h2 className="text-base font-semibold text-foreground">
+                  {t('website:overview.start.title')}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {t('website:overview.start.description')}
+                </p>
+                {publicUrl ? (
+                  <p className="text-xs text-muted-foreground">
+                    <span>{t('website:overview.publicUrl.label')}: </span>
+                    <span
+                      className="break-all font-mono"
+                      dir="ltr"
+                      data-ltr-content
+                    >
+                      {publicUrl}
+                    </span>
+                    {isPublished ? null : (
+                      <span className="block">
+                        {t('website:overview.publicUrl.notPublishedYet')}
+                      </span>
+                    )}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2 lg:shrink-0 lg:justify-end">
+              <Button asChild className="h-11" data-testid="website-edit">
+                <Link to={editPath}>
+                  <MousePointerClick
+                    className="size-4"
+                    strokeWidth={2}
+                    aria-hidden
+                  />
+                  {t('website:overview.editWebsite')}
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="h-11">
+                <Link to={websitePreviewPath(academyId)}>
+                  <Eye className="size-4" strokeWidth={2} aria-hidden />
+                  {t('website:overview.previewDraft')}
+                </Link>
+              </Button>
+              {publicUrl && isPublished ? (
+                <Button asChild variant="outline" className="h-11">
+                  <a href={publicUrl} target="_blank" rel="noreferrer">
+                    <ExternalLink
+                      className="size-4"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                    {t('website:overview.visitWebsite')}
+                  </a>
+                </Button>
+              ) : null}
+            </div>
+          </CardContent>
+        </Card>
+
         <WebsitePublishBar
           academyId={academyId}
           status={configQuery.data.status}
@@ -171,141 +265,64 @@ export default function WebsiteOverviewPage(): JSX.Element {
         <WebsiteLaunchChecklist
           academyId={academyId}
           configuration={configQuery.data}
-          pages={pagesQuery.data?.items ?? []}
+          pages={pages}
         />
 
-        {/* A clear, obvious place to see and open the academy's public
-            website — previously missing entirely from this dashboard
-            (found during a real browser acceptance test: the only prior
-            surface, `WebsiteDomainTab`, showed the subdomain as
-            non-clickable text, and only once a platform base domain is
-            configured, which it never is in local dev). */}
-        {publicUrl ? (
-          <Card>
-            <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
-              <div className="flex items-center gap-3">
-                <Globe
-                  className="size-5 shrink-0 text-muted-foreground"
-                  aria-hidden
-                />
-                <div>
-                  <p className="text-sm font-medium text-foreground">
-                    {t('website:overview.publicUrl.label')}
-                  </p>
-                  <p
-                    className="font-mono text-xs text-muted-foreground"
-                    dir="ltr"
-                    data-ltr-content
+        <Card>
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-base">
+              {t('website:overview.where.title')}
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              {t('website:overview.where.help')}
+            </p>
+          </CardHeader>
+          <CardContent className="p-0 pb-2">
+            <ul
+              className="divide-y divide-border border-t border-border"
+              data-testid="website-overview-homes"
+            >
+              {homes.map((home) => (
+                <li key={home.id}>
+                  <Link
+                    to={home.to}
+                    className="group flex min-h-14 items-center gap-3 px-4 py-3 transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring motion-reduce:transition-none sm:px-6"
+                    data-testid={`website-home-${home.id}`}
                   >
-                    {publicUrl}
-                  </p>
-                </div>
-              </div>
-              {isPublished ? (
-                <Button asChild size="sm">
-                  <a href={publicUrl} target="_blank" rel="noreferrer">
-                    <ExternalLink
-                      className="size-4"
-                      strokeWidth={2}
+                    <home.icon
+                      className="size-5 shrink-0 text-muted-foreground"
                       aria-hidden
                     />
-                    {t('website:overview.visitWebsite')}
-                  </a>
-                </Button>
-              ) : (
-                <p className="text-xs text-muted-foreground">
-                  {t('website:overview.publicUrl.notPublishedYet')}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        ) : null}
-
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {links.map((link) => (
-            <Card
-              key={link.id}
-              role="button"
-              tabIndex={0}
-              className="cursor-pointer transition-colors hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              onClick={() => navigate(link.path)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ')
-                  navigate(link.path);
-              }}
-            >
-              <CardHeader className="flex flex-row items-center gap-3 space-y-0">
-                <link.icon
-                  className="size-5 text-muted-foreground"
-                  aria-hidden
-                />
-                <CardTitle className="text-base">{t(link.titleKey)}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  {t(link.descriptionKey)}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        <SitemapPreviewCard
-          configuration={configQuery.data}
-          pages={pagesQuery.data?.items ?? []}
-        />
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm font-medium text-foreground">
+                        {t(`website:overview.where.${home.key}.title`)}
+                      </span>
+                      <span className="block text-xs text-muted-foreground">
+                        {t(`website:overview.where.${home.key}.description`)}
+                      </span>
+                    </span>
+                    <span className="hidden shrink-0 text-xs font-medium text-primary sm:inline">
+                      {t(`website:overview.where.${home.key}.action`)}
+                    </span>
+                    <ChevronRight
+                      className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
+                      aria-hidden
+                    />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
       </div>
     </PageContainer>
   );
 }
 
-/**
- * A read-only preview of the pages this website's served `sitemap.xml`
- * lists — see `buildSitemapEntries`'s doc comment. Built from the saved
- * pages, so an unpublished edit shows here before it reaches the live
- * file; the served file also lists the academy's public courses.
- */
-function SitemapPreviewCard({
-  configuration,
-  pages,
-}: {
-  readonly configuration: WebsiteConfiguration;
-  readonly pages: readonly WebsitePage[];
-}): JSX.Element {
-  const { t } = useTranslation();
-  const entries = buildSitemapEntries({ configuration, pages });
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-base">
-          {t('website:overview.sitemapPreview.title')}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="mb-3 text-xs text-muted-foreground">
-          {t('website:overview.sitemapPreview.help')}
-        </p>
-        {entries.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            {t('website:overview.sitemapPreview.empty')}
-          </p>
-        ) : (
-          <ul className="space-y-1 text-sm" dir="ltr" data-ltr-content>
-            {entries.map((entry) => (
-              <li
-                key={entry.path}
-                className="flex items-center justify-between gap-4 font-mono text-xs"
-              >
-                <span className="text-foreground">{entry.path}</span>
-                <span className="text-muted-foreground">
-                  {entry.priority.toFixed(1)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </CardContent>
-    </Card>
-  );
+interface WebsiteHome {
+  readonly id: string;
+  readonly icon: LucideIcon;
+  /** `website:overview.where.<key>.{title,description,action}`. */
+  readonly key: string;
+  readonly to: string;
 }

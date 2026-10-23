@@ -10,20 +10,20 @@ summary: >
   it read, unread or archived.
 type: step-by-step
 audience: [owner, manager]
-order: 13
+order: 20
 priority: P1
 related: [DOC-WEB-005, DOC-WEB-008, DOC-SUP-003, DOC-ACD-002, DOC-MSG-001]
 keywords: [contact form, website messages, inbox, contact us, نموذج اتصل بنا, رسائل الموقع, رسايل الزوار, تواصل معنا]
-updated: 2026-10-20
+updated: 2026-10-23
 ---
 
 The academy owner and managers can read website messages. Visitors and learners can use your contact form to reach you, so check the inbox often.
 
 ## Add a contact form and read messages
 
-1. In the page editor, open the **Contact** section of your Contact page (or add one to any page) and make sure **Show contact form** is ticked. Then choose **Apply changes** and **Save draft**.
+1. Open your Contact page in the visual editor, select its **Contact** section (or add one to any page) and make sure **Show contact form** is ticked. The change saves to your draft by itself.
 
-   ![The Contact section dialog with Show contact form ticked](shot:website/contact-section-form)
+   ![The Contact section selected in the visual editor, with Show contact form highlighted](shot:website/contact-section-form)
 
 2. Publish your site: on the **Website** overview, choose **Publish changes** and confirm. The form works only on your published, live site.
 
@@ -40,6 +40,10 @@ The academy owner and managers can read website messages. Visitors and learners 
 5. Choose a message to open it. Opening a new message marks it as read.
 
    ![A message row in the Website Messages list](shot:website/messages-row)
+
+## Messages from Register your interest forms
+
+The **Register your interest** section adds a short form to any page, for example to collect names and phone numbers before registration opens. Its submissions arrive in the same inbox, marked **Interest**. Use the **Form** filter (**All forms**, **Contact form** or **Register your interest**) to see one kind. See the [Section types reference](doc:DOC-WEB-005).
 
 ## Manage a message
 

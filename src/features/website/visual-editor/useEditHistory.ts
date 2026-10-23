@@ -10,6 +10,12 @@
  *
  * A change that is not the author's (the server's copy adopted after a
  * save) does not go through `record`, so it is never an undo step.
+ *
+ * `{ sticky: true }` keeps a group one step however long the author takes
+ * between changes — an inline text edit on the canvas is one step from the
+ * moment it starts to the moment it is committed. A grouped change that
+ * brings the sections back to where its step began (an edit cancelled)
+ * removes that step instead of leaving an empty one.
  */
 import { useCallback, useRef, useState } from 'react';
 import type { SectionInstance } from '@types';
@@ -22,8 +28,17 @@ export const HISTORY_COALESCE_MS = 800;
 
 type Sections = SectionInstance[];
 
+export interface RecordOptions {
+  /** Coalesce with the same group regardless of the time between changes. */
+  readonly sticky?: boolean;
+}
+
 export interface EditHistory {
-  readonly record: (next: Sections, group?: string) => void;
+  readonly record: (
+    next: Sections,
+    group?: string,
+    options?: RecordOptions
+  ) => void;
   readonly undo: () => void;
   readonly redo: () => void;
   readonly canUndo: boolean;
@@ -48,22 +63,32 @@ export function useEditHistory(
   const changed = () => setVersion((n) => n + 1);
 
   const record = useCallback(
-    (next: Sections, group?: string) => {
+    (next: Sections, group?: string, options?: RecordOptions) => {
       // Nothing changed (a control set to the value it had): no step.
-      if (stableJsonKey(next) === stableJsonKey(currentRef.current)) return;
+      const nextKey = stableJsonKey(next);
+      if (nextKey === stableJsonKey(currentRef.current)) return;
       const at = now();
       const coalesce =
         group !== undefined &&
         last.current.group === group &&
-        at - last.current.at < HISTORY_COALESCE_MS &&
+        (options?.sticky || at - last.current.at < HISTORY_COALESCE_MS) &&
         past.current.length > 0;
+      let returnedToStart = false;
       if (!coalesce) {
         past.current = [...past.current, currentRef.current].slice(
           -HISTORY_LIMIT
         );
+      } else {
+        const start = past.current[past.current.length - 1];
+        // Back where this step began: the step is gone, not empty.
+        if (start && stableJsonKey(start) === nextKey) {
+          past.current = past.current.slice(0, -1);
+          returnedToStart = true;
+        }
       }
       future.current = [];
-      last.current = { group, at };
+      // A removed step has nothing left to join: the next change starts one.
+      last.current = returnedToStart ? { at: 0 } : { group, at };
       apply(next);
       changed();
     },
@@ -95,6 +120,9 @@ export function useEditHistory(
     future.current = [];
     last.current = { at: 0 };
     changed();
+    // The sections were replaced from outside (a reload, a restored
+    // version): forms re-read them, as after an undo.
+    setRevision((n) => n + 1);
   }, []);
 
   return {

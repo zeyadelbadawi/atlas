@@ -20,7 +20,10 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
+import { useInvalidate } from '@/shared/hooks';
+import { websiteKeys } from '@services/query';
 import { useUpdateWebsiteConfiguration } from '../hooks';
+import { ChromeLockControl, chromeLockErrorMessage } from './ChromeLockControl';
 import { LocalizedTextField } from './LocalizedTextField';
 import {
   buildAuthPageCopyHeaderPatch,
@@ -47,6 +50,7 @@ export function AuthPageCopyDialog({
 }: AuthPageCopyDialogProps): JSX.Element {
   const { t } = useTranslation();
   const updateConfig = useUpdateWebsiteConfiguration();
+  const { invalidate } = useInvalidate();
 
   const copy = configuration.header.authPages?.[page];
   const titleKey =
@@ -76,11 +80,16 @@ export function AuthPageCopyDialog({
         },
       },
       {
-        onError: () =>
+        onError: (error) => {
+          const lockMessage = chromeLockErrorMessage(error, t);
           toast({
-            title: t('website:navigation.saveError'),
+            title: lockMessage ?? t('website:navigation.saveError'),
             variant: 'destructive',
-          }),
+          });
+          // Locked meanwhile: reload so the fields turn read-only.
+          if (lockMessage)
+            void invalidate(websiteKeys.configuration(academyId));
+        },
       }
     );
   };
@@ -94,7 +103,16 @@ export function AuthPageCopyDialog({
         <p className="text-sm text-muted-foreground">
           {t('website:navigation.authPagesDescription')}
         </p>
-        <div className="space-y-4">
+        {/* CMS phase 4 — this copy is part of the header: read-only while
+            the header/footer lock is on. */}
+        <ChromeLockControl
+          academyId={academyId}
+          configuration={configuration}
+        />
+        <fieldset
+          className="min-w-0 space-y-4"
+          disabled={configuration.chromeLocked === true}
+        >
           <LocalizedTextField
             id={`auth-page-${page}-title`}
             labelKey="website:navigation.authPageHeading"
@@ -109,7 +127,7 @@ export function AuthPageCopyDialog({
             value={copy?.subtitle ?? EMPTY_LOCALIZED}
             onBlur={(value) => save('subtitle', value)}
           />
-        </div>
+        </fieldset>
         <DialogFooter>
           <Button type="button" onClick={() => onOpenChange(false)}>
             {t('common:actions.close')}

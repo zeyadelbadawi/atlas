@@ -431,7 +431,8 @@
       "updated": "{{actor}} عدّل صفحة الموقع «{{target}}»",
       "deleted": "{{actor}} حذف صفحة الموقع «{{target}}»",
       "published": "{{actor}} نشر صفحة الموقع «{{target}}»",
-      "sections_reordered": "{{actor}} أعاد ترتيب أقسام صفحة الموقع «{{target}}»"
+      "sections_reordered": "{{actor}} أعاد ترتيب أقسام صفحة الموقع «{{target}}»",
+      "restored": "{{actor}} استعاد نسخة سابقة من صفحة الموقع «{{target}}» إلى مسودتها"
     },
     "website_faq": {
       "created": "{{actor}} أضاف السؤال الشائع «{{target}}»",

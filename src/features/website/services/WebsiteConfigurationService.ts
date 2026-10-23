@@ -30,6 +30,8 @@ import type {
   UpdateWebsitePagePayload,
   WebsiteConfiguration,
   WebsitePage,
+  WebsitePageVersion,
+  WebsitePageVersionSummary,
 } from '@types';
 
 export class WebsiteConfigurationService extends BaseService {
@@ -184,6 +186,57 @@ export class WebsiteConfigurationService extends BaseService {
     return this.client.post<WebsitePage, { expectedVersion?: number }>(
       this.websitePath(academyId, 'pages', pageId, 'publish'),
       expectedVersion === undefined ? {} : { expectedVersion },
+      options
+    );
+  }
+
+  /** CMS phase 4 — a page's kept versions, newest first (no SEO or sections). */
+  async getPageVersions(
+    academyId: string,
+    pageId: string,
+    options?: ReadOptions
+  ): Promise<{ readonly items: readonly WebsitePageVersionSummary[] }> {
+    return this.client.get<{
+      readonly items: readonly WebsitePageVersionSummary[];
+    }>(this.websitePath(academyId, 'pages', pageId, 'versions'), options);
+  }
+
+  /** One kept version in full, for its preview. */
+  async getPageVersion(
+    academyId: string,
+    pageId: string,
+    versionId: string,
+    options?: ReadOptions
+  ): Promise<WebsitePageVersion> {
+    return this.client.get<WebsitePageVersion>(
+      this.websitePath(academyId, 'pages', pageId, 'versions', versionId),
+      options
+    );
+  }
+
+  /**
+   * Restores a kept version to the page's DRAFT (title, address,
+   * visibility, SEO and sections) — never what is live. The draft it
+   * replaces is kept as a `restore_backup` version. Pinned to
+   * `expectedVersion` like every page save (409 `stale_resource_version`).
+   */
+  async restorePageVersion(
+    academyId: string,
+    pageId: string,
+    versionId: string,
+    expectedVersion: number,
+    options?: WriteOptions
+  ): Promise<WebsitePage> {
+    return this.client.post<WebsitePage, { expectedVersion: number }>(
+      this.websitePath(
+        academyId,
+        'pages',
+        pageId,
+        'versions',
+        versionId,
+        'restore'
+      ),
+      { expectedVersion },
       options
     );
   }

@@ -346,7 +346,7 @@ export const en: MarketingContent = {
         },
         {
           title: 'Pages you edit yourself',
-          body: 'Build pages from ready-made sections, preview them on phone and desktop, then publish.',
+          body: 'Edit each page on the page itself, starting from ready-made sections or a page template. Preview it on phone and desktop, then publish.',
           claim: 'WEB-1.3.1, WEB-1.4',
         },
         {
@@ -635,7 +635,7 @@ export const en: MarketingContent = {
         points: [
           'Four designs to choose from',
           'A colour palette built from your logo, with readability checks',
-          'Ready-made sections, phone and desktop preview, publish when ready',
+          'Edit pages on the page itself, from ready-made sections; preview on phone and desktop, publish when ready',
           'Arabic and English versions of every page',
         ],
         claim: 'ACD-6.2, ACD-6.3, WEB-2.1, ACD-5, WEB-1.4, WEB-6.7',

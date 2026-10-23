@@ -127,6 +127,18 @@ export function LocalizedTextField({
     language === 'ar'
       ? t('website:editor.languageArabic')
       : t('website:editor.languageEnglish');
+  // Each input's accessible name carries the field AND the language
+  // ("Title — English"): the visible per-input label is only the language,
+  // and a screen reader moving between fields would otherwise hear
+  // "English, edit text" for every one of them.
+  const fieldLabel = t(labelKey, labelValues);
+  const accessibleName = (language: keyof LocalizedText): string =>
+    t(
+      language === secondary
+        ? 'website:editor.fieldInOptionalLanguage'
+        : 'website:editor.fieldInLanguage',
+      { field: fieldLabel, language: languageLabel(language) }
+    );
 
   const update = (patch: Partial<LocalizedText>) => {
     const next = { ...local, ...patch };
@@ -198,6 +210,7 @@ export function LocalizedTextField({
           {...(multiline ? { rows: 3 } : {})}
           dir={language === 'ar' ? 'rtl' : 'ltr'}
           lang={language}
+          aria-label={accessibleName(language)}
           placeholder={language === 'ar' ? placeholderAr : placeholderEn}
           value={text}
           onChange={(event) => update({ [language]: event.target.value })}
@@ -236,7 +249,7 @@ export function LocalizedTextField({
   return (
     <div className="space-y-2 rounded-md border border-border p-3">
       <p className="text-sm font-medium text-foreground">
-        {t(labelKey, labelValues)}
+        {fieldLabel}
         {required ? <span className="text-destructive"> *</span> : null}
       </p>
 

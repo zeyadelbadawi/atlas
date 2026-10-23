@@ -97,6 +97,7 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     'website_page.deleted': 'website',
     'website_page.published': 'website',
     'website_page.sections_reordered': 'website',
+    'website_page.restored': 'website',
     'website_faq.created': 'website',
     'website_faq.updated': 'website',
     'website_faq.published': 'website',

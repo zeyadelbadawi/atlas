@@ -14,6 +14,12 @@
  *     pages are unchanged — unless the caller opts into `loading`: then it
  *     also decodes off the main thread, and an eager (above-the-fold) image
  *     is fetched at high priority.
+ *   - CMS phase 4: an uploaded raster image (an Atlas media path ending in
+ *     .jpg/.jpeg/.png/.webp) is that same `<img>` inside a `<picture>`
+ *     whose AVIF and WebP sources list the API's 480/960/1600px variants
+ *     with the caller's `sizes` — the same `sizes` a theme asset in that
+ *     slot uses (`media-variants.ts`). The `<img>` keeps the original as
+ *     its `src`, for browsers that pick neither source.
  */
 import type { CSSProperties, ReactNode } from 'react';
 import {
@@ -21,6 +27,7 @@ import {
   resolveThemeAsset,
 } from './resolve-theme-asset';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
+import { mediaVariantSrcSet } from './media-variants';
 
 export interface ThemeImageProps {
   readonly value: string | undefined;
@@ -57,7 +64,7 @@ export function ThemeImage({
   const { locale } = usePublicWebsiteLocale();
   if (!value) return <>{fallback}</>;
   if (!isThemeAssetReference(value)) {
-    return loading ? (
+    const image = loading ? (
       <img
         src={value}
         alt={alt}
@@ -69,6 +76,19 @@ export function ThemeImage({
       />
     ) : (
       <img src={value} alt={alt} className={className} style={style} />
+    );
+    const avif = mediaVariantSrcSet(value, 'avif');
+    if (!avif) return image;
+    return (
+      <picture>
+        <source type="image/avif" srcSet={avif} sizes={sizes} />
+        <source
+          type="image/webp"
+          srcSet={mediaVariantSrcSet(value, 'webp')!}
+          sizes={sizes}
+        />
+        {image}
+      </picture>
     );
   }
 

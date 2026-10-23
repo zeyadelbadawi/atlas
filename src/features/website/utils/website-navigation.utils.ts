@@ -1,25 +1,31 @@
 /**
  * Website sibling navigation.
  *
- * Overview, Pages, Content, Settings, Preview and (for those who manage
- * the website) Messages are closely related pages for the same Academy
+ * Overview, Pages, Content, Settings and (for those who manage the
+ * website) Messages are closely related pages for the same Academy
  * website — reachable from the sidebar via the `academy-website` entry
  * (which lands on Overview; Messages also has its own entry, since an
  * inbox is somewhere people go directly). `getWebsiteTabs`
  * is the one place their `SectionTabs` entries are declared, reused by
  * every one of those pages, so a client editing Settings can jump straight
- * to Pages or Preview without detouring back through Overview each time.
+ * to Pages without detouring back through Overview each time.
+ *
+ * CMS phase 4 — Preview is no longer a tab: it is a read-only view of what
+ * the editors already show, so it is reached from the "Preview" actions on
+ * Overview, Pages and each page's menu (its route is unchanged). Each part
+ * of the website has one home, and the paths below are the one place the
+ * "edit" entry points are built (see the website UX audit in
+ * `WebsiteOverviewPage`'s doc comment).
  */
 import {
   FileText,
-  Globe,
   Inbox,
   LayoutDashboard,
   MessageSquareQuote,
   Settings2,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import type { NavigationItem } from '@types';
+import type { NavigationItem, WebsitePage } from '@types';
 
 export interface WebsiteTabsOptions {
   /**
@@ -61,12 +67,6 @@ export function getWebsiteTabs(
       path: buildPath(DASHBOARD_ROUTES.websiteSettings, { academyId }),
       icon: Settings2,
     },
-    {
-      id: 'website-tab-preview',
-      labelKey: 'website:overview.preview.title',
-      path: buildPath(DASHBOARD_ROUTES.websitePreview, { academyId }),
-      icon: Globe,
-    },
     ...(canManage
       ? [
           {
@@ -78,4 +78,52 @@ export function getWebsiteTabs(
         ]
       : []),
   ];
+}
+
+/**
+ * Whether the visual editor opens this page. Course details is drawn per
+ * course, so it stays in the classic editor.
+ */
+export function opensInVisualEditor(
+  page: Pick<WebsitePage, 'coreType'>
+): boolean {
+  return page.coreType !== 'courseDetails';
+}
+
+/** Where editing a page starts: the visual editor, or the classic editor when the visual editor cannot open it. */
+export function pageEditPath(
+  academyId: string,
+  page: Pick<WebsitePage, 'id' | 'coreType'>
+): string {
+  return buildPath(
+    opensInVisualEditor(page)
+      ? DASHBOARD_ROUTES.websiteVisualEditor
+      : DASHBOARD_ROUTES.websitePageEditor,
+    { academyId, pageId: page.id }
+  );
+}
+
+/**
+ * "Edit website": the home page in the visual editor — `site` opens its
+ * Site panel (theme, menu, header and footer). Without a home page, the
+ * Pages list, where any page can be opened.
+ */
+export function visualEditorHomePath(
+  academyId: string,
+  pages: readonly Pick<WebsitePage, 'id' | 'coreType'>[],
+  { site = false }: { readonly site?: boolean } = {}
+): string {
+  const home = pages.find((page) => page.coreType === 'home');
+  if (!home) return buildPath(DASHBOARD_ROUTES.websitePages, { academyId });
+  const path = buildPath(DASHBOARD_ROUTES.websiteVisualEditor, {
+    academyId,
+    pageId: home.id,
+  });
+  return site ? `${path}?panel=site` : path;
+}
+
+/** The read-only draft preview, opened on `pageId` when given. */
+export function websitePreviewPath(academyId: string, pageId?: string): string {
+  const path = buildPath(DASHBOARD_ROUTES.websitePreview, { academyId });
+  return pageId ? `${path}?page=${encodeURIComponent(pageId)}` : path;
 }

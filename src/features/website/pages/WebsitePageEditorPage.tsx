@@ -22,17 +22,25 @@
  * into each, and saving is held back until they are shortened. A refused
  * save's path-level violations reach the same messages: the tree marker
  * and the section editor's field errors.
+ *
+ * CMS PHASE 4. "History" lists the page's kept versions, previews one and
+ * restores it to the draft (`PageHistoryDialog`). "Publish page" first runs
+ * the pre-publish page check (`collectPagePublishIssues`): when it finds
+ * something, its warnings replace the plain confirmation, each one a way
+ * to that section and field, with "Publish anyway".
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import {
+  History,
   Loader2,
   MousePointerClick,
   Save,
   Search,
   UploadCloud,
 } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { Button } from '@/components/ui/button';
@@ -101,6 +109,13 @@ import {
 } from '../utils/save-validation.utils';
 import { isOverLimitIssue } from '../schemas/section-content-issues';
 import { SectionPresetDialog } from '../presets/SectionPresetDialog';
+import { PageHistoryDialog } from '../components/PageHistoryDialog';
+import { PrePublishCheckDialog } from '../components/PrePublishCheckDialog';
+import {
+  collectPagePublishIssues,
+  type PublishCheckIssue,
+} from '../utils/page-publish-check.utils';
+import { focusSectionField } from '../utils/focus-section-field';
 import { hasPresets } from '../presets/section-presets.registry';
 import type { SectionStart } from '../presets/section-presets.types';
 import type {
@@ -169,6 +184,11 @@ function WebsitePageEditor(): JSX.Element {
   // CMS phase 3e — the section whose looks are being chosen, if any.
   const [looksOf, setLooksOf] = useState<SectionType | null>(null);
   const seoDialog = useDisclosure();
+  const historyDialog = useDisclosure();
+  // CMS phase 4 — the pre-publish check's warnings, while they are shown.
+  const [checkIssues, setCheckIssues] = useState<
+    readonly PublishCheckIssue[] | null
+  >(null);
 
   /*
     CONCURRENT EDITING. Two things, doing different jobs:
@@ -201,6 +221,7 @@ function WebsitePageEditor(): JSX.Element {
     saveDraft,
     publishThisPage,
     reloadLatest,
+    adoptPage,
     keepMine,
     isWorking,
     updatePage,
@@ -384,6 +405,16 @@ function WebsitePageEditor(): JSX.Element {
 
   const handlePublishPage = async () => {
     if (isWorking()) return;
+    // Warnings first (never a block): they replace the plain confirmation.
+    const issues = collectPagePublishIssues(draftSections, {
+      pages,
+      themeKey: configuration.themeKey,
+      requiredLocale: resolveDefaultLocale(configuration.defaultLocale),
+    });
+    if (issues.length > 0) {
+      setCheckIssues(issues);
+      return;
+    }
     const confirmed = await confirm({
       titleKey: 'website:editor.publishPageConfirmTitle',
       descriptionKey: 'website:editor.publishPageConfirmDescription',
@@ -391,6 +422,12 @@ function WebsitePageEditor(): JSX.Element {
     });
     if (!confirmed) return;
     await publishThisPage();
+  };
+
+  const handleJumpToIssue = (issue: PublishCheckIssue) => {
+    setCheckIssues(null);
+    setSelectedId(issue.sectionId);
+    focusSectionField(issue.fieldPath, issue.locale);
   };
 
   /** Throws this editor's local work away and shows the server's copy. */
@@ -433,7 +470,7 @@ function WebsitePageEditor(): JSX.Element {
                         strokeWidth={2}
                         aria-hidden
                       />
-                      {t('website:visualEditor.open')}
+                      {t('website:visualEditor.editIn')}
                     </Link>
                   </Button>
                 ) : null}
@@ -464,6 +501,16 @@ function WebsitePageEditor(): JSX.Element {
                 >
                   <Search className="size-4" strokeWidth={2} aria-hidden />
                   {t('website:editor.seoAction')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={historyDialog.open}
+                  title={t('website:history.buttonHint')}
+                  data-testid="website-page-history"
+                >
+                  <History className="size-4" strokeWidth={2} aria-hidden />
+                  {t('website:history.button')}
                 </Button>
                 <Button
                   type="button"
@@ -738,6 +785,40 @@ function WebsitePageEditor(): JSX.Element {
           onAdd={addSection}
         />
       ) : null}
+      {/* Mounted while open only: its queries run when it is looked at. */}
+      {canManage && historyDialog.isOpen ? (
+        <PageHistoryDialog
+          academyId={academyId}
+          page={page}
+          academyName={academy.name}
+          academyLogo={academy.logo}
+          configuration={configuration}
+          previewPages={previewPages}
+          initialLocale={previewLocale}
+          open={historyDialog.isOpen}
+          onOpenChange={historyDialog.setOpen}
+          canRestore={canManage}
+          localEdits={
+            isDirty ? (isBlockedByLimits ? 'discard' : 'save') : 'none'
+          }
+          onSaveLocalEdits={() => saveDraft()}
+          onRestored={(restored) => {
+            adoptPage(restored);
+            setSelectedId(undefined);
+            toast({ title: t('website:history.restored') });
+          }}
+          onPageChanged={() => void pageQuery.refetch()}
+        />
+      ) : null}
+      <PrePublishCheckDialog
+        issues={checkIssues}
+        onCancel={() => setCheckIssues(null)}
+        onJump={handleJumpToIssue}
+        onPublishAnyway={() => {
+          setCheckIssues(null);
+          void publishThisPage();
+        }}
+      />
       <SaveConflictDialog
         conflict={conflict?.value ?? null}
         canKeepMine={conflict?.canKeepMine ?? true}

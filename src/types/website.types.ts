@@ -201,6 +201,12 @@ export interface WebsiteConfiguration {
    * and how many pages do. Visitors only ever see the published copy.
    */
   readonly unpublishedChanges?: WebsiteUnpublishedChanges;
+  /**
+   * CMS phase 4 — the header, footer and menu are locked: a save that would
+   * change them is refused (409 `errors.website.chromeLocked`) until an
+   * academy owner or administrator unlocks them. Absent means unlocked.
+   */
+  readonly chromeLocked?: boolean;
 }
 
 export interface WebsiteUnpublishedChanges {
@@ -217,6 +223,12 @@ export interface UpdateWebsiteConfigurationPayload {
   readonly footer?: WebsiteFooterConfig;
   /** B0-WEB-02 — the site's main language; live at the next publish. */
   readonly defaultLocale?: PublicWebsiteLocale;
+  /**
+   * CMS phase 4 — lock/unlock the header, footer and menu. Only an academy
+   * owner or administrator may change it (403
+   * `errors.website.chromeLockForbidden` otherwise).
+   */
+  readonly chromeLocked?: boolean;
   /**
    * The `updatedAt` of the copy this edit was based on. The save is refused
    * (409 `stale_resource_version`) if anyone has saved since — used where a
@@ -291,6 +303,34 @@ export interface WebsitePage {
   readonly hasUnpublishedChanges?: boolean;
 }
 
+/**
+ * CMS phase 4 — one kept copy of a page (its history). `published`: what
+ * went live at a publish; `draft_snapshot`: the draft as it was before an
+ * editing session replaced it (about one per session); `restore_backup`:
+ * the draft a restore replaced, so a restore can itself be undone.
+ */
+export type WebsitePageVersionKind =
+  'published' | 'draft_snapshot' | 'restore_backup';
+
+export interface WebsitePageVersionSummary {
+  readonly id: string;
+  readonly pageId: string;
+  readonly kind: WebsitePageVersionKind;
+  readonly title: string;
+  readonly slug: string;
+  readonly visible: boolean;
+  /** The page `version` this copy was taken from. */
+  readonly sourceVersion: number;
+  readonly createdAt: string;
+  readonly createdBy: { readonly id: string; readonly name: string } | null;
+}
+
+/** The full copy, for previewing it. */
+export interface WebsitePageVersion extends WebsitePageVersionSummary {
+  readonly seo: WebsitePageSeo;
+  readonly sections: readonly SectionInstance[];
+}
+
 /** Someone with this page's editor open right now. Advisory only — see `useEditingPresence`. */
 export interface EditingParticipant {
   readonly userId: string;
@@ -303,6 +343,12 @@ export interface EditingParticipant {
 export interface CreateWebsitePagePayload {
   readonly title: string;
   readonly slug: string;
+  /**
+   * CMS phase 4 — the page's starting sections (a page template), created
+   * with the page in one transaction and validated exactly as a page save
+   * is. Omitted for a blank page.
+   */
+  readonly sections?: readonly SectionInstance[];
 }
 
 export interface UpdateWebsitePagePayload {

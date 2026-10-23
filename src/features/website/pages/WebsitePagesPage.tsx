@@ -5,13 +5,28 @@
  * state — never authorization; a hidden page's content is preserved, only
  * navigation/visibility changes, see `Reports/ARCHITECTURE.md`, Prompt 9,
  * "Page Visibility Is Not Security"), and manages custom pages.
+ *
+ * CMS phase 4 — one primary path: a page opens in the visual editor (its
+ * row, and its "Edit" button; a new page too). The classic editor and the
+ * page's draft preview are in each row's "More" menu, with Delete. Course
+ * details, which the visual editor cannot open, still edits in the classic
+ * editor.
  */
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, Lock, MousePointerClick, Plus, Trash2 } from 'lucide-react';
+import {
+  Eye,
+  FileCode2,
+  Loader2,
+  Lock,
+  MoreHorizontal,
+  Pencil,
+  Plus,
+  Trash2,
+} from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
@@ -20,6 +35,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Dialog,
   DialogContent,
@@ -53,7 +75,13 @@ import {
   createWebsitePageSchema,
   type CreateWebsitePageFormData,
 } from '../schemas/website.schemas';
-import { getWebsiteTabs } from '../utils/website-navigation.utils';
+import {
+  getWebsiteTabs,
+  opensInVisualEditor,
+  pageEditPath,
+  websitePreviewPath,
+} from '../utils/website-navigation.utils';
+import { isContentValidationFailure } from '../utils/save-validation.utils';
 import { AuthPageCopyDialog } from '../components/AuthPageCopyDialog';
 import type { AuthPageKey } from '../utils/auth-page-copy.utils';
 import { resolveDefaultLocale } from '../constants/locale.constants';
@@ -82,9 +110,10 @@ import type {
 /**
  * "New page": a title and an address, and — CMS phase 3e — how to start:
  * a blank page or a page template («صفحات جاهزة»), previewed as the site
- * draws it. A template's sections are saved through the pages API right
- * after the page is created, in one save; if that save fails, the page
- * exists (empty) and the dialog offers to try the save again or to open it.
+ * draws it. CMS phase 4: a template's sections go WITH the create request
+ * — the API creates the page and its sections in one transaction, so a
+ * template page is either created whole or not at all (never an empty
+ * page left behind by a failed second save).
  */
 function CreatePageDialog({
   academyId,
@@ -102,15 +131,8 @@ function CreatePageDialog({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const createPage = useCreateWebsitePage();
-  const updatePage = useUpdateWebsitePage();
   const academy = useAcademy(academyId).data;
   const [choice, setChoice] = useState<string>(BLANK_PAGE);
-  // A page created from a template whose sections are not saved yet.
-  const [unsaved, setUnsaved] = useState<{
-    readonly page: WebsitePage;
-    readonly sections: readonly SectionInstance[];
-  } | null>(null);
-  const [sectionsFailed, setSectionsFailed] = useState(false);
 
   const form = useForm<CreateWebsitePageFormData>({
     resolver: zodResolver(createWebsitePageSchema),
@@ -169,53 +191,38 @@ function CreatePageDialog({
     form.reset();
     setChoice(BLANK_PAGE);
     setSections([]);
-    setUnsaved(null);
-    setSectionsFailed(false);
+    createPage.reset();
   };
+  // A new page opens where pages are edited: the visual editor.
   const openEditor = (page: WebsitePage) => {
     close();
-    navigate(
-      buildPath(DASHBOARD_ROUTES.websitePageEditor, {
-        academyId,
-        pageId: page.id,
-      })
-    );
+    navigate(pageEditPath(academyId, page));
   };
-  const saveSections = (
-    page: WebsitePage,
-    pageSections: readonly SectionInstance[]
-  ) => {
-    setSectionsFailed(false);
-    updatePage.mutate(
-      {
-        academyId,
-        pageId: page.id,
-        payload: { sections: pageSections, expectedVersion: page.version },
-      },
-      {
-        onSuccess: (saved) => openEditor(saved),
-        onError: () => {
-          setUnsaved({ page, sections: pageSections });
-          setSectionsFailed(true);
-        },
-      }
-    );
-  };
-
   const onSubmit = (data: CreateWebsitePageFormData) => {
-    const pageSections = sections;
     createPage.mutate(
-      { academyId, payload: data },
       {
-        onSuccess: (page) => {
-          if (pageSections.length === 0) openEditor(page);
-          else saveSections(page, pageSections);
-        },
-      }
+        academyId,
+        // The sections previewed are the sections created — a blank page
+        // sends none, exactly as before.
+        payload: sections.length > 0 ? { ...data, sections } : data,
+      },
+      { onSuccess: openEditor }
     );
   };
 
-  const isBusy = createPage.isPending || updatePage.isPending;
+  const isBusy = createPage.isPending;
+  // The API refused the template's sections (they are checked with the
+  // page-save rules: a section limit, the site's language, a page a button
+  // links to). Nothing was created, and sending the same sections again
+  // would fail the same way, so there is no retry — the Owner can pick a
+  // blank page or another template.
+  const sectionsRejected =
+    sections.length > 0 &&
+    createPage.error !== null &&
+    isContentValidationFailure(createPage.error) &&
+    (createPage.error?.violations ?? []).some((violation) =>
+      /^\d/.test(violation.field)
+    );
 
   return (
     <Dialog
@@ -244,9 +251,11 @@ function CreatePageDialog({
             <div className={cn(template && 'lg:[grid-area:options]')}>
               <PageTemplateOptions
                 value={choice}
-                onChange={choose}
-                // Once the page exists, its sections are the ones to retry.
-                disabled={!!unsaved}
+                onChange={(key) => {
+                  createPage.reset();
+                  choose(key);
+                }}
+                disabled={isBusy}
               />
             </div>
             {template ? (
@@ -272,7 +281,7 @@ function CreatePageDialog({
                   <FormItem>
                     <FormLabel>{t('website:pages.titleLabel')}</FormLabel>
                     <FormControl>
-                      <Input {...field} disabled={!!unsaved} />
+                      <Input {...field} disabled={isBusy} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -285,65 +294,38 @@ function CreatePageDialog({
                   <FormItem>
                     <FormLabel>{t('website:pages.slugLabel')}</FormLabel>
                     <FormControl>
-                      <Input {...field} disabled={!!unsaved} dir="ltr" />
+                      <Input {...field} disabled={isBusy} dir="ltr" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {createPage.error ? (
-                <ErrorState onRetry={form.handleSubmit(onSubmit)} />
-              ) : null}
-              {sectionsFailed && unsaved ? (
+              {sectionsRejected ? (
                 <div
                   role="alert"
-                  className="space-y-3 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm"
-                  data-testid="template-sections-failed"
+                  className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-foreground"
+                  data-testid="template-sections-rejected"
                 >
-                  <p className="text-foreground">
-                    {t('website:pageTemplates.sectionsFailed')}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      type="button"
-                      size="sm"
-                      className="h-10"
-                      disabled={updatePage.isPending}
-                      onClick={() =>
-                        saveSections(unsaved.page, unsaved.sections)
-                      }
-                    >
-                      {t('website:pageTemplates.retrySections')}
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      className="h-10"
-                      onClick={() => openEditor(unsaved.page)}
-                    >
-                      {t('website:pageTemplates.openEmpty')}
-                    </Button>
-                  </div>
+                  {t('website:pageTemplates.sectionsRejected')}
                 </div>
+              ) : createPage.error ? (
+                <ErrorState onRetry={form.handleSubmit(onSubmit)} />
               ) : null}
-              {unsaved ? null : (
-                <DialogFooter>
-                  <Button
-                    type="submit"
-                    disabled={isBusy}
-                    className="h-11"
-                    data-testid="create-page-submit"
-                  >
-                    {isBusy ? (
-                      <Loader2 className="size-4 animate-spin" aria-hidden />
-                    ) : null}
-                    {template
-                      ? t('website:pageTemplates.createFromTemplate')
-                      : t('website:pages.createAction')}
-                  </Button>
-                </DialogFooter>
-              )}
+              <DialogFooter>
+                <Button
+                  type="submit"
+                  disabled={isBusy}
+                  className="h-11"
+                  data-testid="create-page-submit"
+                >
+                  {isBusy ? (
+                    <Loader2 className="size-4 animate-spin" aria-hidden />
+                  ) : null}
+                  {template
+                    ? t('website:pageTemplates.createFromTemplate')
+                    : t('website:pages.createAction')}
+                </Button>
+              </DialogFooter>
             </div>
           </form>
         </Form>
@@ -354,7 +336,6 @@ function CreatePageDialog({
 
 export default function WebsitePagesPage(): JSX.Element {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { academyId } = useParams<{ academyId: string }>();
   const { confirm } = useConfirmDialog();
   const { hasPermission } = usePermissions();
@@ -411,6 +392,10 @@ export default function WebsitePagesPage(): JSX.Element {
       labelKey: 'navigation:items.academyOverview',
       path: DASHBOARD_ROUTES.academy,
     },
+    {
+      labelKey: 'website:overview.title',
+      path: buildPath(DASHBOARD_ROUTES.websiteOverview, { academyId }),
+    },
     { labelKey: 'website:pages.title' },
   ];
 
@@ -446,12 +431,24 @@ export default function WebsitePagesPage(): JSX.Element {
         descriptionKey="website:pages.subtitle"
         breadcrumbs={breadcrumbs}
         actions={
-          canManage ? (
-            <Button type="button" onClick={createDialog.open}>
-              <Plus className="size-4" strokeWidth={2} aria-hidden />
-              {t('website:pages.createAction')}
+          <div className="flex flex-wrap items-center gap-2">
+            <Button asChild variant="outline" className="h-11 sm:h-10">
+              <Link to={websitePreviewPath(academyId)}>
+                <Eye className="size-4" strokeWidth={2} aria-hidden />
+                {t('website:pages.previewAction')}
+              </Link>
             </Button>
-          ) : undefined
+            {canManage ? (
+              <Button
+                type="button"
+                className="h-11 sm:h-10"
+                onClick={createDialog.open}
+              >
+                <Plus className="size-4" strokeWidth={2} aria-hidden />
+                {t('website:pages.createAction')}
+              </Button>
+            ) : null}
+          </div>
         }
       />
 
@@ -459,77 +456,140 @@ export default function WebsitePagesPage(): JSX.Element {
 
       <Card>
         <CardContent className="divide-y divide-border p-0">
-          {pages.map((page) => (
-            <div
-              key={page.id}
-              className="flex items-center justify-between gap-3 p-4"
-            >
-              <button
-                type="button"
-                className="flex-1 text-start"
-                onClick={() =>
-                  navigate(
-                    buildPath(DASHBOARD_ROUTES.websitePageEditor, {
-                      academyId,
-                      pageId: page.id,
-                    })
-                  )
-                }
+          {pages.map((page) => {
+            const editPath = pageEditPath(academyId, page);
+            const visual = opensInVisualEditor(page);
+            return (
+              <div
+                key={page.id}
+                className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+                data-testid="website-page-row"
               >
-                <p className="font-medium text-foreground">{page.title}</p>
-                <p className="text-sm text-muted-foreground">/{page.slug}</p>
-              </button>
+                {/* The whole title area opens the page; the Edit button is
+                    its one stop for the keyboard. */}
+                <Link
+                  to={editPath}
+                  tabIndex={-1}
+                  className="flex min-h-11 min-w-0 flex-1 flex-col justify-center text-start"
+                >
+                  <span className="truncate font-medium text-foreground">
+                    {page.title}
+                  </span>
+                  <span className="truncate text-sm text-muted-foreground">
+                    <bdi dir="ltr">/{page.slug}</bdi>
+                  </span>
+                </Link>
 
-              <div className="flex items-center gap-3">
-                {page.coreType !== 'courseDetails' ? (
-                  <Button asChild variant="outline" size="sm" className="h-9">
-                    <Link
-                      to={buildPath(DASHBOARD_ROUTES.websiteVisualEditor, {
-                        academyId,
-                        pageId: page.id,
-                      })}
-                      aria-label={`${t('website:visualEditor.open')}: ${page.title}`}
+                <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-3">
+                  {page.pageType === 'core' ? (
+                    <StatusBadge
+                      labelKey="website:pages.coreBadge"
+                      tone="neutral"
+                    />
+                  ) : null}
+                  {page.coreType === 'courseDetails' ? (
+                    <span
+                      className="flex size-11 items-center justify-center text-muted-foreground"
+                      title={t('website:pages.alwaysVisible')}
                     >
-                      <MousePointerClick className="size-4" aria-hidden />
-                      <span className="hidden sm:inline">
-                        {t('website:visualEditor.open')}
+                      <Lock className="size-4" aria-hidden />
+                      <span className="sr-only">
+                        {t('website:pages.alwaysVisible')}
                       </span>
-                    </Link>
-                  </Button>
-                ) : null}
-                {page.pageType === 'core' ? (
-                  <StatusBadge
-                    labelKey="website:pages.coreBadge"
-                    tone="neutral"
-                  />
-                ) : null}
-                {page.coreType === 'courseDetails' ? (
-                  <Lock className="size-4 text-muted-foreground" aria-hidden />
-                ) : (
-                  <Switch
-                    checked={page.visible}
-                    disabled={
-                      !canManage ||
-                      (updatePage.isPending && pendingId === page.id)
-                    }
-                    onCheckedChange={() => toggleVisibility(page)}
-                    aria-label={t('website:pages.visibilityToggle')}
-                  />
-                )}
-                {page.pageType === 'custom' && canManage ? (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(page)}
-                    aria-label={t('website:pages.deleteAction')}
-                  >
-                    <Trash2 className="size-4" aria-hidden />
-                  </Button>
-                ) : null}
+                    </span>
+                  ) : (
+                    <label className="flex min-h-11 cursor-pointer items-center gap-2">
+                      <Switch
+                        checked={page.visible}
+                        disabled={
+                          !canManage ||
+                          (updatePage.isPending && pendingId === page.id)
+                        }
+                        onCheckedChange={() => toggleVisibility(page)}
+                        aria-label={`${t('website:pages.visibilityToggle')}: ${page.title}`}
+                      />
+                      <span className="hidden w-14 text-xs text-muted-foreground sm:inline">
+                        {page.visible
+                          ? t('website:pages.visibleState')
+                          : t('website:pages.hiddenState')}
+                      </span>
+                    </label>
+                  )}
+                  <div className="ms-auto flex items-center gap-2 sm:ms-0">
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="sm"
+                      className="h-11 px-4 sm:h-9"
+                    >
+                      <Link
+                        to={editPath}
+                        aria-label={t(
+                          visual
+                            ? 'website:pages.editAria'
+                            : 'website:pages.editClassicAria',
+                          { title: page.title }
+                        )}
+                        data-testid="website-page-edit"
+                      >
+                        <Pencil className="size-4" aria-hidden />
+                        {t('website:pages.editAction')}
+                      </Link>
+                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="size-11 sm:size-9"
+                          aria-label={t('website:pages.moreActions', {
+                            title: page.title,
+                          })}
+                          data-testid="website-page-more"
+                        >
+                          <MoreHorizontal className="size-4" aria-hidden />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="min-w-52">
+                        {visual ? (
+                          <DropdownMenuItem asChild className="min-h-11 gap-2">
+                            <Link
+                              to={buildPath(
+                                DASHBOARD_ROUTES.websitePageEditor,
+                                { academyId, pageId: page.id }
+                              )}
+                            >
+                              <FileCode2 className="size-4" aria-hidden />
+                              {t('website:pages.classicEditor')}
+                            </Link>
+                          </DropdownMenuItem>
+                        ) : null}
+                        <DropdownMenuItem asChild className="min-h-11 gap-2">
+                          <Link to={websitePreviewPath(academyId, page.id)}>
+                            <Eye className="size-4" aria-hidden />
+                            {t('website:pages.previewPage')}
+                          </Link>
+                        </DropdownMenuItem>
+                        {page.pageType === 'custom' && canManage ? (
+                          <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="min-h-11 gap-2 text-destructive focus:text-destructive"
+                              onSelect={() => void handleDelete(page)}
+                            >
+                              <Trash2 className="size-4" aria-hidden />
+                              {t('website:pages.deleteAction')}
+                            </DropdownMenuItem>
+                          </>
+                        ) : null}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {/*
             Sign In/Sign Up are fixed, dedicated pages — not `WebsitePage`
@@ -548,7 +608,7 @@ export default function WebsitePagesPage(): JSX.Element {
             >
               <button
                 type="button"
-                className="flex-1 text-start"
+                className="flex min-h-11 flex-1 flex-col justify-center rounded-md text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onClick={() => setOpenAuthPage(page)}
               >
                 <p className="font-medium text-foreground">
@@ -559,7 +619,9 @@ export default function WebsitePagesPage(): JSX.Element {
                   )}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  /{page === 'signIn' ? 'sign-in' : 'sign-up'}
+                  <bdi dir="ltr">
+                    /{page === 'signIn' ? 'sign-in' : 'sign-up'}
+                  </bdi>
                 </p>
               </button>
 

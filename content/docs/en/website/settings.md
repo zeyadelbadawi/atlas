@@ -3,29 +3,30 @@ id: DOC-WEB-011
 title: Website settings and the cookie banner
 description: What each website settings tab does, how saving and unsaved changes work, where your logo and favicon live, and what the cookie banner shows.
 summary: >
-  Website settings has five tabs: Theme, SEO, Navigation, Language and Domain.
-  Theme, SEO, Navigation and Language changes are drafts until you publish.
+  Website settings has five tabs: Theme, Menu, header & footer, SEO, Language
+  and Domain. Their changes are drafts until you publish; theme, menu, header
+  and footer can also be changed in the visual editor's Site panel.
   Your logo, favicon and colours live in Visual Identity and go live when you
   save. Every academy site shows a cookie banner with necessary and
   preference cookies only; it has no settings.
 type: setup-config
 audience: [owner, manager]
-order: 11
+order: 15
 priority: P1
-related: [DOC-WEB-002, DOC-WEB-009, DOC-WEB-012, DOC-ACD-004, DOC-SEC-004]
+related: [DOC-WEB-002, DOC-WEB-009, DOC-WEB-015, DOC-WEB-021, DOC-ACD-004]
 keywords: [website settings, cookie banner, cookies, favicon, logo, google analytics, اعدادات الموقع, الكوكيز, رسالة الكوكيز, اللوجو, الايقونة]
-updated: 2026-10-20
+updated: 2026-10-23
 ---
 
-The academy owner and managers can change the website settings.
+The academy owner and managers can change the website settings. The **Settings** page holds the settings for your whole website that aren't part of a page. The theme, menu, header and footer are also in the visual editor's **Site** panel, where you see each change on your page: the **Theme** and **Menu, header & footer** tabs show **Also in the visual editor** with **Open in visual editor**.
 
 ## The settings tabs at a glance
 
 | Tab | What it holds | How it saves | Guide |
 |---|---|---|---|
 | **Theme** | The look of your whole site | Right away, to your draft | [Choose or change your theme](doc:DOC-WEB-002) |
+| **Menu, header & footer** | Main menu, header button, footer and social links, and the lock that keeps them as they are | Each change, to your draft | [Navigation, header, footer and social links](doc:DOC-WEB-009), [Lock the header, menu and footer](doc:DOC-WEB-021) |
 | **SEO** | Site title, description, share image, indexing | **Save changes**, to your draft | [SEO settings for your academy site](doc:DOC-WEB-012) |
-| **Navigation** | Main menu, header button, footer and social links | Each change, to your draft | [Navigation, header, footer and social links](doc:DOC-WEB-009) |
 | **Language** | Your site's main language | **Save changes**, to your draft | [Build your site in Arabic and English](doc:DOC-WEB-006) |
 | **Domain** | Your Atlas address and your own domain | See the guide | [Connect your own domain](doc:DOC-ACD-006) |
 
@@ -33,7 +34,7 @@ The academy owner and managers can change the website settings.
 
 1. Open **Website**, then the **Settings** tab, and choose the tab you need.
 
-   ![The website settings with the Theme, SEO, Navigation, Language and Domain tabs](shot:website/settings-tabs)
+   ![The website settings with the Theme, Menu, header & footer, SEO, Language and Domain tabs](shot:website/settings-tabs)
 
 2. Make your change. On the **SEO** and **Language** tabs, choose **Save changes** when you're done.
 
@@ -76,5 +77,6 @@ No. The website builder has no field for scripts, analytics tags or tracking pix
 
 - [Preview, publish and unpublish your site](doc:DOC-WEB-008)
 - [Navigation, header, footer and social links](doc:DOC-WEB-009)
+- [Edit your website in the visual editor](doc:DOC-WEB-015)
 - [SEO settings for your academy site](doc:DOC-WEB-012)
 - [Arabic text appears in English on my site](doc:DOC-TRB-016)

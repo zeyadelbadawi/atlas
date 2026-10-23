@@ -6,6 +6,13 @@
  * explicit move-up/move-down controls — the same keyboard-accessible
  * pattern Course Builder's curriculum reordering already established
  * (Prompt 3C) — never drag-and-drop as the only way to reorder.
+ *
+ * CMS phase 4 — while the header/footer lock is on (`chromeLocked`),
+ * everything here is read-only (the tab is one `<fieldset>`) under the
+ * notice saying why (`ChromeLockControl`, also where owners and
+ * administrators toggle it — in the fieldset's `<legend>`, which a
+ * disabled fieldset leaves enabled), and a save the API refuses for the
+ * lock says so.
  */
 import { useTranslation } from 'react-i18next';
 import { cn } from '@utils';
@@ -34,6 +41,12 @@ import { websiteKeys } from '@services/query';
 import { useUpdateWebsiteConfiguration } from '../hooks';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import { LocalizedTextField } from './LocalizedTextField';
+import {
+  ChromeLockControl,
+  chromeLockErrorMessage,
+  isChromeLockedError,
+  useCanToggleChromeLock,
+} from './ChromeLockControl';
 import { SocialLinksEditor } from './SocialLinksEditor';
 import { useWebsiteContentLocale } from './website-content-locale';
 import {} from '../utils/auth-page-copy.utils';
@@ -81,6 +94,8 @@ export function WebsiteNavigationTab({
   const { invalidate } = useInvalidate();
   // B0-WEB-02 — the site's main language is the one a label must have.
   const primaryLocale = useWebsiteContentLocale();
+  const locked = configuration.chromeLocked === true;
+  const showLock = useCanToggleChromeLock(academyId) || locked;
 
   /**
    * Every change on this tab is a full replace of navigation, header or
@@ -90,6 +105,8 @@ export function WebsiteNavigationTab({
    * then loaded and the change can be made again on top of it.
    */
   const save = (payload: UpdateWebsiteConfigurationPayload) => {
+    // Locked: the fields are read-only, and the API would refuse it anyway.
+    if (configuration.chromeLocked === true) return;
     updateConfig.mutate(
       {
         academyId,
@@ -97,6 +114,16 @@ export function WebsiteNavigationTab({
       },
       {
         onError: (error) => {
+          // Locked meanwhile (by an owner or administrator elsewhere): say
+          // so, and load the saved state so the fields turn read-only.
+          if (isChromeLockedError(error)) {
+            toast({
+              title: chromeLockErrorMessage(error, t) ?? '',
+              variant: 'destructive',
+            });
+            void invalidate(websiteKeys.configuration(academyId));
+            return;
+          }
           if (error.kind === 'conflict') {
             toast({
               title: t('website:navigation.staleConflict'),
@@ -263,7 +290,19 @@ export function WebsiteNavigationTab({
   };
 
   return (
-    <div className="space-y-6">
+    <fieldset
+      disabled={locked}
+      className="min-w-0 space-y-6"
+      data-testid="chrome-fields"
+    >
+      {showLock ? (
+        <legend className="w-full">
+          <ChromeLockControl
+            academyId={academyId}
+            configuration={configuration}
+          />
+        </legend>
+      ) : null}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">
@@ -474,6 +513,6 @@ export function WebsiteNavigationTab({
           {t('website:common.saving')}
         </p>
       ) : null}
-    </div>
+    </fieldset>
   );
 }

@@ -6,15 +6,14 @@ summary: >
   Your new site starts with starter text and images written for your theme,
   plus sample learner quotes. Sample quotes never appear on your live site,
   but starter text and images are published as they are. Rewrite the Hero,
-  About, Features and other sections in the page editor, then save and
-  publish.
+  About, Features and other sections in the visual editor, then publish.
 type: step-by-step
 audience: [owner, manager]
-order: 7
+order: 17
 priority: P0
 related: [DOC-WEB-004, DOC-WEB-010, DOC-WEB-008, DOC-START-005, DOC-MED-007]
 keywords: [sample content, starter content, placeholder text, launch checklist, المحتوى التجريبي, النصوص المبدئية, قائمة الاطلاق, تعديل نص الموقع]
-updated: 2026-10-20
+updated: 2026-10-23
 ---
 
 The academy owner and managers can do this. When your academy is created, Atlas fills your site with starter content so it never looks empty: headlines and text that use your academy's name and description, theme photos, and a few sample learner quotes.
@@ -30,21 +29,21 @@ The academy owner and managers can do this. When your academy is created, Atlas 
 
    ![The Launch checklist on the Website overview](shot:website/launch-checklist)
 
-2. Open the **Pages** tab and choose the page to rewrite, starting with Home.
+2. Open the **Pages** tab and choose the page to rewrite, starting with Home. It opens in the visual editor.
 
    ![The Pages tab with the Home page row highlighted](shot:website/pages-open-row)
 
-3. Open the **Hero** section by choosing its name.
+3. Click the **Hero** section on the page, or its name in **Sections**.
 
-   ![The section dialog for the Hero section, with English and optional Arabic boxes](shot:website/editor-section-dialog)
+   ![The Hero section selected in the Sections list, with its settings open on the Content tab](shot:website/ve-select-section)
 
-4. Rewrite the text in your own words and in both languages, replace the image with your own from your media library, then choose **Apply changes**.
+4. Rewrite the text in your own words and in both languages, in the panel or by double-clicking it on the page, and replace the image with your own from your media library.
 
-   ![The Apply changes button at the bottom of the section dialog](shot:website/editor-section-apply)
+   ![The tip about double-clicking text at the top of the Content tab](shot:website/ve-inline-hint)
 
-5. Do the same for the other sections, such as **Features**, **Image with benefits**, **How it works** and **Call to Action**, then choose **Save draft**.
+5. Do the same for the other sections, such as **Features**, **Image with benefits**, **How it works** and **Call to Action**. Your changes save to your draft by themselves.
 
-   ![The Save draft button at the top of the page editor](shot:website/editor-save)
+   ![The Undo and Redo buttons and the All changes saved status](shot:website/ve-undo-status)
 
 6. Repeat for the About, Courses, FAQs and Contact pages. Then, on the **Website** overview, choose **Publish changes** and confirm.
 
@@ -62,6 +61,6 @@ To show real quotes, replace each sample with a quote you have permission to use
 
 ## Related
 
-- [Edit a page with sections](doc:DOC-WEB-004)
+- [Edit your website in the visual editor](doc:DOC-WEB-015)
 - [Preview, publish and unpublish your site](doc:DOC-WEB-008)
 - [Launch checklist: from a new academy to your first learner](doc:DOC-START-005)

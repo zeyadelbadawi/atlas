@@ -65,6 +65,8 @@ vi.mock('@app/providers', async (importOriginal) => ({
   useConfirmDialog: () => ({ confirm }),
 }));
 vi.mock('@features/academy', () => ({
+  // The header/footer lock's switch is for owners and administrators only.
+  useAcademyScope: () => ({ membership: undefined }),
   useAcademy: () => ({
     data: { id: 'a1', name: 'Academy', slug: 'academy' },
     isLoading: false,
@@ -190,7 +192,7 @@ describe('settings tabs — switching away from unsaved edits asks first', () =>
 
   it('with nothing unsaved, switches without asking', async () => {
     renderPage();
-    await openTab('Navigation');
+    await openTab('Menu, header & footer');
     expect(confirm).not.toHaveBeenCalled();
     expect(screen.queryByLabelText('seo-title')).toBeNull();
   });
@@ -201,7 +203,7 @@ describe('settings tabs — switching away from unsaved edits asks first', () =>
     fireEvent.change(screen.getByLabelText('seo-title'), {
       target: { value: 'draft' },
     });
-    await openTab('Navigation');
+    await openTab('Menu, header & footer');
     expect(confirm).toHaveBeenCalledTimes(1);
     expect((screen.getByLabelText('seo-title') as HTMLInputElement).value).toBe(
       'draft'
@@ -214,7 +216,7 @@ describe('settings tabs — switching away from unsaved edits asks first', () =>
     fireEvent.change(screen.getByLabelText('seo-title'), {
       target: { value: 'draft' },
     });
-    await openTab('Navigation');
+    await openTab('Menu, header & footer');
     expect(screen.queryByLabelText('seo-title')).toBeNull();
   });
 });

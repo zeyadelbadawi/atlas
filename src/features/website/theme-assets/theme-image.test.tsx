@@ -50,15 +50,60 @@ describe('ThemeImage', () => {
   it('renders a plain value exactly as the sections did before', () => {
     const { container } = render(
       <ThemeImage
-        value="/api/v1/public/media/academies/a/b.png"
+        value="https://cdn.example.com/b.png"
         alt="Our team"
         className="w-full"
         style={{ borderRadius: '4px' }}
       />
     );
     expect(container.innerHTML).toBe(
-      '<img src="/api/v1/public/media/academies/a/b.png" alt="Our team" class="w-full" style="border-radius: 4px;">'
+      '<img src="https://cdn.example.com/b.png" alt="Our team" class="w-full" style="border-radius: 4px;">'
     );
+  });
+
+  it('wraps an uploaded raster image in a picture with AVIF and WebP variants (CMS phase 4)', () => {
+    const url = '/api/v1/public/media/academies/a/b.png';
+    const { container } = render(
+      <ThemeImage
+        value={url}
+        alt="Our team"
+        className="w-full"
+        style={{ borderRadius: '4px' }}
+        sizes="(min-width: 768px) 50vw, 100vw"
+      />
+    );
+    const sources = [...container.querySelectorAll('picture > source')];
+    expect(sources.map((source) => source.getAttribute('type'))).toEqual([
+      'image/avif',
+      'image/webp',
+    ]);
+    expect(sources[0].getAttribute('srcset')).toBe(
+      `${url}?w=480&f=avif 480w, ${url}?w=960&f=avif 960w, ${url}?w=1600&f=avif 1600w`
+    );
+    expect(sources[1].getAttribute('srcset')).toBe(
+      `${url}?w=480&f=webp 480w, ${url}?w=960&f=webp 960w, ${url}?w=1600&f=webp 1600w`
+    );
+    for (const source of sources) {
+      expect(source.getAttribute('sizes')).toBe(
+        '(min-width: 768px) 50vw, 100vw'
+      );
+    }
+    // The <img> is the one the sections always drew: the original as src.
+    expect(container.querySelector('picture > img')!.outerHTML).toBe(
+      `<img src="${url}" alt="Our team" class="w-full" style="border-radius: 4px;">`
+    );
+  });
+
+  it.each([
+    ['a GIF', '/api/v1/public/media/academies/a/b.gif'],
+    ['an SVG', '/api/v1/public/media/academies/a/b.svg'],
+    ['a signed link', '/api/v1/public/media/academies/a/b.png?exp=1&sig=x'],
+    ['an external URL', 'https://example.com/api/v1/public/media/a/b.png'],
+    ['a data URL', 'data:image/png;base64,iVBORw0KGgo='],
+  ])('adds no variants to %s', (_label, value) => {
+    const { container } = render(<ThemeImage value={value} alt="" />);
+    expect(container.querySelector('picture')).toBeNull();
+    expect(container.querySelector('img')!.getAttribute('src')).toBe(value);
   });
 
   it('renders a released asset as a lazy, sized picture with focal point and LQIP', () => {
