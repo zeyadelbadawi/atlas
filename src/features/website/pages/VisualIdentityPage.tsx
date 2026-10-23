@@ -31,7 +31,6 @@ import { useParams } from 'react-router-dom';
 import { ImageIcon, Loader2, RefreshCw, Save, Upload, X } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
-import { SectionTabs } from '@components/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -49,7 +48,6 @@ import {
   ALLOWED_FAVICON_TYPES,
   MAX_ACADEMY_NAME_LENGTH,
   MAX_FAVICON_FILE_SIZE,
-  getAcademyAdminTabs,
   useAcademy,
 } from '@features/academy';
 import { useUploadMediaAsset } from '@features/media';
@@ -364,8 +362,6 @@ export function VisualIdentityEditor({
         descriptionKey="website:visualIdentity.subtitle"
         breadcrumbs={breadcrumbs}
       />
-
-      <SectionTabs items={getAcademyAdminTabs(academyId)} />
 
       <div className="space-y-6 pb-24">
         <Card>

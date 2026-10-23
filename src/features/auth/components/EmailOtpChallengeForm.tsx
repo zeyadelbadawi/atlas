@@ -31,7 +31,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
-import { Loader2, MailCheck, RefreshCw } from 'lucide-react';
+import { Loader2, MailCheck, MailSearch, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -323,6 +323,26 @@ export function EmailOtpChallengeForm({
             t('auth:emailOtp.checkInbox')
           ) : null}
         </p>
+      </div>
+
+      {/* Codes from a new sending domain often land in spam: say where to
+          look before the person reaches for "Send a new code". */}
+      <div
+        className="flex items-start gap-3 rounded-md border border-primary/20 bg-primary/5 p-3 text-start"
+        data-testid="email-otp-spam-hint"
+      >
+        <MailSearch
+          className="mt-0.5 size-5 shrink-0 text-primary"
+          aria-hidden
+        />
+        <div className="space-y-0.5">
+          <p className="text-sm font-medium">
+            {t('auth:emailOtp.spamHintTitle')}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {t('auth:emailOtp.spamHintBody')}
+          </p>
+        </div>
       </div>
 
       <div className="flex items-start gap-3">
