@@ -207,7 +207,7 @@ test.describe('J51 — visual editor @critical', () => {
     await expect
       .poll(async () =>
         panel
-          .locator('input[type="text"], textarea')
+          .locator('input, textarea')
           .evaluateAll((elements) =>
             elements.some((element) =>
               (element as HTMLInputElement).value.includes('J51i')
