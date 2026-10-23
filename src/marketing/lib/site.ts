@@ -67,6 +67,20 @@ export function contactHref(lang: MarketingLang, topic = 'sales', planKey?: stri
   return `${localePath(lang, '/contact')}?${query.toString()}`;
 }
 
+/**
+ * B2 — the platform team's WhatsApp number in international form
+ * (`+201001234567`), from VITE_PLATFORM_WHATSAPP at build time. Unset means
+ * no WhatsApp link is rendered anywhere (never a placeholder number).
+ */
+export const PLATFORM_WHATSAPP: string = import.meta.env.VITE_PLATFORM_WHATSAPP ?? '';
+
+/** A `wa.me` chat link with an optional opening message, or undefined for no usable number. */
+export function whatsappHref(number: string, text?: string): string | undefined {
+  const digits = number.replace(/\D/g, '');
+  if (digits.length < 8 || digits.length > 15) return undefined;
+  return `https://wa.me/${digits}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
+}
+
 export function formatNumber(lang: MarketingLang, value: number): string {
   return new Intl.NumberFormat(LOCALE[lang]).format(value);
 }

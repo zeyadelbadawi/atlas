@@ -64,6 +64,8 @@ import {
   MARKETING_CONTACT_ROLES,
   MARKETING_CONTACT_STUDENT_BANDS,
   MARKETING_CONTACT_SUBJECT_MAX,
+  MARKETING_CONTACT_LINK_ONLY_TOPICS,
+  MARKETING_CONTACT_QUALIFIED_TOPICS,
   MARKETING_CONTACT_TOPICS,
   marketingContactSchema,
   toSourcePath,
@@ -152,7 +154,17 @@ export function MarketingContactSection({
   const messageLength = (watch('message') ?? '').length;
   // Read per render so a test (or a later runtime flag) can switch it.
   const consentFieldsOn = isFeatureEnabled('marketingContactConsent');
-  const isSalesTopic = watch('topic') === 'sales';
+  const currentTopic = watch('topic');
+  const isQualifiedTopic = MARKETING_CONTACT_QUALIFIED_TOPICS.includes(currentTopic);
+  const isFoundingTopic = currentTopic === 'founding';
+  // B2 — a link-only topic (`?topic=founding`) is listed only while it is
+  // the preselected one; the public list stays the four ordinary topics.
+  const topicOptions: readonly PlatformContactTopic[] = [
+    ...MARKETING_CONTACT_TOPICS,
+    ...MARKETING_CONTACT_LINK_ONLY_TOPICS.filter(
+      (topic) => topic === defaultTopic
+    ),
+  ];
 
   const onSubmit = async (values: MarketingContactParsed) => {
     if (inFlight.current) return;
@@ -188,7 +200,7 @@ export function MarketingContactSection({
   /** B0-SUP-04 — the flag-gated fields, only what the visitor actually gave. */
   const leadFields = (values: MarketingContactParsed) => {
     const phoneNumber = values.phoneNumber.trim();
-    const sales = values.topic === 'sales';
+    const sales = MARKETING_CONTACT_QUALIFIED_TOPICS.includes(values.topic);
     return {
       ...(phoneNumber ? { phoneNumber, phoneCountry: values.phoneCountry } : {}),
       contactConsent: values.contactConsent,
@@ -369,7 +381,10 @@ export function MarketingContactSection({
                           onBlur={field.onBlur}
                           aria-label={t('home:contact.form.topic')}
                           aria-invalid={!!errors.topic}
-                          aria-describedby={describedBy('topic')}
+                          aria-describedby={describedBy(
+                            'topic',
+                            isFoundingTopic ? fieldId('topic-founding-hint') : undefined
+                          )}
                           aria-required
                         >
                           <SelectValue
@@ -379,7 +394,7 @@ export function MarketingContactSection({
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          {MARKETING_CONTACT_TOPICS.map((topic) => (
+                          {topicOptions.map((topic) => (
                             <SelectItem key={topic} value={topic}>
                               {t(`home:contact.topics.${topic}`)}
                             </SelectItem>
@@ -389,6 +404,15 @@ export function MarketingContactSection({
                     )}
                   />
                   {fieldError('topic')}
+                  {isFoundingTopic ? (
+                    <p
+                      id={fieldId('topic-founding-hint')}
+                      className="text-sm text-muted-foreground"
+                      data-testid="marketing-contact-founding-hint"
+                    >
+                      {t('home:contact.foundingHint')}
+                    </p>
+                  ) : null}
                 </div>
               </div>
 
@@ -439,7 +463,7 @@ export function MarketingContactSection({
                     disabled={isPending}
                   />
 
-                  {isSalesTopic ? (
+                  {isQualifiedTopic ? (
                     <fieldset
                       className="grid gap-5 sm:grid-cols-2"
                       data-testid="marketing-contact-qualification"

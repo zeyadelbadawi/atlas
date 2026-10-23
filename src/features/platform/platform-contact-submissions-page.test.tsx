@@ -375,6 +375,36 @@ describe('Platform contact inbox — list', () => {
     );
   });
 
+  it('B2 — badges Founding Academies applications and filters them by topic', async () => {
+    dataset.push(
+      enquiry('c3', {
+        name: 'Nour Founding',
+        topic: 'founding',
+        sourcePath: '/founding',
+        status: 'new',
+      })
+    );
+    renderPage();
+    const table = await screen.findByRole('table');
+    const badge = within(table).getByText('Founding Academies');
+    expect(badge.closest('span')).toBeTruthy();
+
+    fireEvent.change(screen.getByRole('combobox', { name: 'Topic' }), {
+      target: { value: 'founding' },
+    });
+    await waitFor(() =>
+      expect(lastListRequest()).toMatchObject({ topic: 'founding' })
+    );
+    await waitFor(() =>
+      expect(
+        within(screen.getByRole('table')).queryByText('Layla Haddad')
+      ).toBeNull()
+    );
+    expect(
+      within(screen.getByRole('table')).getByText('Nour Founding')
+    ).toBeTruthy();
+  });
+
   it('distinguishes the empty inbox from a failed read, and retries', async () => {
     dataset = [];
     renderPage();

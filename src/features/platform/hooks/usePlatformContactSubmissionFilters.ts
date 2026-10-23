@@ -35,7 +35,7 @@ export const PLATFORM_CONTACT_STATUSES: readonly PlatformContactSubmissionStatus
   ['new', 'read', 'archived'];
 
 export const PLATFORM_CONTACT_TOPICS: readonly PlatformContactSubmissionTopic[] =
-  ['sales', 'support', 'partnership', 'other'];
+  ['founding', 'sales', 'support', 'partnership', 'other'];
 
 const DEFAULT_SORT: PlatformContactSortOption = 'createdAt:desc';
 

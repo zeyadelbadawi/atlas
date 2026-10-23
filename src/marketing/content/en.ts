@@ -13,6 +13,8 @@ const SUBSCRIPTION = '/dashboard/tenant/subscription';
 const inAcademy = (section: 'payments' | 'courses' | 'team' | 'website') =>
   `/dashboard/academy?open=${section}`;
 const SALES = '/contact?topic=sales';
+/** B2 — the Founding Academies application (link-only contact topic). */
+const FOUNDING = '/contact?topic=founding';
 
 export const en: MarketingContent = {
   lang: 'en',
@@ -223,6 +225,13 @@ export const en: MarketingContent = {
         'Ask about plans, get help setting up your academy, or reach support. Send us a message and tell us about your academy.',
       ogTitle: 'Talk to the {brand} team',
       ogImageAlt: 'Contact {brand}',
+    },
+    founding: {
+      title: 'Founding Academies: Price Locked for 24 Months | {brand}',
+      description:
+        'The first 20 academies on {brand} pay the standard annual price and keep it for 24 months, with setup done together. We start 5 academies a week.',
+      ogTitle: 'Become a {brand} Founding Academy',
+      ogImageAlt: '{brand} Founding Academies',
     },
     notFound: {
       title: 'Page Not Found | {brand}',
@@ -1197,7 +1206,10 @@ export const en: MarketingContent = {
       support: 'Help with my account',
       partnership: 'Partnership',
       other: 'Something else',
+      founding: 'Founding Academies',
     },
+    foundingHint:
+      'Applying as a Founding Academy? Tell us your academy’s name, roughly how many students you teach and when you would like to start. We start 5 academies a week, in the order applications arrive.',
     consent: {
       contact: 'You may contact me about this enquiry by email, phone or WhatsApp.',
       marketing: 'Send me news and offers about {brand}. I can unsubscribe at any time.',
@@ -1227,6 +1239,130 @@ export const en: MarketingContent = {
       body: 'Something went wrong on our side or with the connection. Your text is still here, so please try again.',
       rateLimited:
         'You’ve sent several messages in a short time. Please wait a few minutes, then try again.',
+    },
+  },
+
+  // ─── Founding Academies (B2, noindex, shared by link only) ────────────────
+  founding: {
+    hero: {
+      eyebrow: 'Founding Academies',
+      title: 'Be one of the first 20 academies on {brand}',
+      lead: 'The first 20 academies that join {brand} on a yearly plan pay the standard annual price and keep that price for 24 months, renewal included. We set up your academy with you, and we start 5 academies a week so each one gets proper attention.',
+    },
+    offer: {
+      title: 'What a founding academy gets',
+      lead: 'Four terms, written plainly. The price is the standard one; what you get is the lock, the setup and our attention.',
+      items: [
+        {
+          title: 'The standard annual price',
+          body: 'You pay the yearly price listed for your plan today, in Egyptian pounds.',
+        },
+        {
+          title: 'Locked for 24 months',
+          body: 'Your yearly price stays the same for 24 months from the day your plan starts, renewal included. If our catalog prices go up in that time, yours does not.',
+        },
+        {
+          title: 'Setup done with you, included',
+          body: 'Up to 6 hours of setup with our team is part of the plan: your academy website, your first courses and your payment methods, done together step by step.',
+        },
+        {
+          title: 'Five academies a week',
+          body: 'Setup is done by people on our team, so we start 5 founding academies a week, in the order applications arrive. There are 20 seats in total.',
+        },
+      ],
+    },
+    prices: {
+      eyebrow: 'Prices',
+      title: 'The annual prices',
+      lead: 'These are the standard yearly prices of the {brand} plans, from the current catalog. A founding academy keeps the price of its plan for 24 months.',
+      perYear: '{yearlyPrice} / year',
+      lockNote: 'Prices are in Egyptian pounds. The price of your plan on the day it starts is the price you keep for 24 months.',
+      unavailable: 'Contact us for the current annual prices.',
+    },
+    fit: {
+      title: 'Who it is for',
+      fitTitle: 'A good fit if you',
+      fit: [
+        'Teach paid students and want an academy under your own name',
+        'Are ready to pay for a full year',
+        'Can give a few hours in your first weeks to setting up with us',
+        'Want to tell us what works for you and what does not',
+      ],
+      notYetTitle: 'Not the right fit if you',
+      notYet: [
+        'Want to try {brand} before deciding: a regular trial suits you better',
+        'Prefer to pay month by month: the founding price is for yearly plans only',
+        'Need what we do not offer yet, such as a mobile app or live sessions',
+      ],
+    },
+    steps: {
+      title: 'What happens after you apply',
+      items: [
+        {
+          title: 'You apply',
+          body: 'Send the form on the contact page, or message us on WhatsApp. Tell us about your academy and your students.',
+        },
+        {
+          title: 'We talk',
+          body: 'Someone from our team replies to agree your start week and the plan that fits your size.',
+        },
+        {
+          title: 'You pay the annual price',
+          body: 'Pay by InstaPay, mobile wallet or bank transfer and upload the proof. Your plan and its 24-month price lock start when we approve the payment.',
+        },
+        {
+          title: 'We set up together',
+          body: 'In your start week we set up your academy with you: website, courses and payment methods.',
+        },
+      ],
+    },
+    faq: {
+      anchor: 'faq',
+      eyebrow: 'Questions',
+      title: 'Questions about Founding Academies',
+      items: [
+        {
+          question: 'Is the founding price a discount?',
+          answer:
+            'No. You pay the standard annual price of your plan. What you get is that price locked for 24 months, setup with our team included, and a place among the first 20 academies.',
+        },
+        {
+          question: 'What happens after 24 months?',
+          answer:
+            'Your plan renews at the catalog price of that time. If it is different from yours, we email you before the renewal.',
+        },
+        {
+          question: 'Can I change plans during the 24 months?',
+          answer:
+            'Yes. Talk to us and we move you to the plan that fits. The lock then covers the annual price of the new plan as it is on the day you change.',
+        },
+        {
+          question: 'Can I pay monthly?',
+          answer: 'No. The founding price is for yearly plans only.',
+        },
+        {
+          question: 'What if I cancel?',
+          answer:
+            'Your plan runs to the end of the year you paid for. If you leave the programme, the price lock ends at your next renewal.',
+        },
+        {
+          question: 'Why only 5 academies a week?',
+          answer:
+            'Because setup is done by people on our team. Five a week is what we can do well. If this week is full, we give you the next start week.',
+        },
+        {
+          question: 'How many seats are left?',
+          answer:
+            'There are 20 seats in total. Ask us through the form or on WhatsApp and we tell you where things stand.',
+        },
+      ],
+    },
+    closing: {
+      title: 'Apply to be a founding academy',
+      lead: 'Tell us about your academy. We reply by email, or on WhatsApp if you prefer, and agree your start week with you.',
+      primaryCta: { label: 'Apply through the contact form', href: FOUNDING },
+      whatsapp: 'Message us on WhatsApp',
+      whatsappMessage: 'Hello, I would like to apply as a {brand} Founding Academy.',
     },
   },
 

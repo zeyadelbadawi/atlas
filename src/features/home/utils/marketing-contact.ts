@@ -22,12 +22,34 @@ export const MARKETING_CONTACT_LIMITS = {
   messageMax: 5000,
 } as const;
 
+/** The topics the form lists to every visitor. */
 export const MARKETING_CONTACT_TOPICS: readonly PlatformContactTopic[] = [
   'sales',
   'support',
   'partnership',
   'other',
 ];
+
+/**
+ * B2 — topics reached only by a shared link (`?topic=founding`): the form
+ * lists one only while it is the preselected topic, so the Founding
+ * Academies programme is never advertised in the public topic list.
+ */
+export const MARKETING_CONTACT_LINK_ONLY_TOPICS: readonly PlatformContactTopic[] =
+  ['founding'];
+
+/** Every topic the API accepts (the server's `PLATFORM_CONTACT_TOPICS`). */
+export const MARKETING_CONTACT_ALL_TOPICS: readonly PlatformContactTopic[] = [
+  ...MARKETING_CONTACT_TOPICS,
+  ...MARKETING_CONTACT_LINK_ONLY_TOPICS,
+];
+
+/**
+ * B0-SUP-04 / B2 — the topics that carry the optional qualification
+ * answers (the server's `PLATFORM_CONTACT_QUALIFIED_TOPICS`).
+ */
+export const MARKETING_CONTACT_QUALIFIED_TOPICS: readonly PlatformContactTopic[] =
+  ['sales', 'founding'];
 
 const L = MARKETING_CONTACT_LIMITS;
 
@@ -76,7 +98,7 @@ const marketingContactObject = z.object({
     .string()
     .trim()
     .max(L.organizationMax, 'home:contact.errors.organizationTooLong'),
-  topic: z.enum(['sales', 'support', 'partnership', 'other'], {
+  topic: z.enum(['sales', 'support', 'partnership', 'other', 'founding'], {
     errorMap: () => ({ message: 'home:contact.errors.topicRequired' }),
   }),
   message: z

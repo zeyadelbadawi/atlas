@@ -114,7 +114,7 @@ describe('the real registry', () => {
     expect(validatePages(MARKETING_PAGES)).toEqual([]);
   });
 
-  it('builds, with one H1 per page and the 404 pages noindex', () => {
+  it('builds, with one H1 per page and only the 404 and founding pages noindex', () => {
     if (MARKETING_PAGES.length === 0) return;
     const site = buildMarketingSite({
       pages: MARKETING_PAGES,
@@ -128,8 +128,12 @@ describe('the real registry', () => {
       const noindex =
         doc.querySelector('meta[name="robots"]')?.getAttribute('content') ?? '';
       expect(/noindex/.test(noindex), file.path).toBe(
-        file.path.endsWith('404.html')
+        file.path.endsWith('404.html') || /(^|\/)founding\/index\.html$/.test(file.path)
       );
+    }
+    // B2 — the founding page is shared by link only: in no sitemap or llms file.
+    for (const file of site.files.filter((f) => !f.path.endsWith('.html'))) {
+      expect(file.contents, file.path).not.toContain('/founding');
     }
   });
 });
