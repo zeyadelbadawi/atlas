@@ -34,6 +34,11 @@ import {
   RiwaqVideo,
   RiwaqWhatsappBar,
 } from './riwaq-engage-sections';
+import {
+  RiwaqAnnouncementBar,
+  RiwaqComparison,
+  RiwaqInterestForm,
+} from './riwaq-enrol-sections';
 
 export {
   RiwaqAbout,
@@ -72,6 +77,10 @@ export const RIWAQ_SECTION_RENDERERS: Partial<SectionRenderers> = {
   video: RiwaqVideo,
   pricing: RiwaqPricing,
   countdown: RiwaqCountdown,
+  // CMS phase 3d (batch C).
+  interestForm: RiwaqInterestForm,
+  announcementBar: RiwaqAnnouncementBar,
+  comparison: RiwaqComparison,
   // CMS phase 3d.
   logos: RiwaqLogos,
   map: RiwaqMap,

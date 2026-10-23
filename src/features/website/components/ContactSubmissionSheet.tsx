@@ -22,6 +22,8 @@ import {
   Loader2,
   Mail,
   MailOpen,
+  MessageCircle,
+  Phone,
   Reply,
 } from 'lucide-react';
 import {
@@ -35,10 +37,12 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { StatusBadge } from '@components/data-display';
 import { useDateFormatter } from '@hooks';
+import { formatInternational } from '@components/phone';
 import type { ContactSubmission, ContactSubmissionStatus } from '@types';
 import {
   getContactSubmissionStatusLabelKey,
   getContactSubmissionStatusTone,
+  isInterestSubmission,
 } from '../utils/contact-submission.utils';
 
 export interface ContactSubmissionSheetProps {
@@ -64,6 +68,8 @@ export function ContactSubmissionSheet({
   const { t } = useTranslation();
   const fmt = useDateFormatter();
   const isBusy = pendingStatus !== undefined;
+  const interest = submission ? isInterestSubmission(submission) : false;
+  const phone = submission?.phone ?? undefined;
 
   const actionButton = (
     status: ContactSubmissionStatus,
@@ -92,9 +98,19 @@ export function ContactSubmissionSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="flex w-full flex-col gap-0 overflow-y-auto p-0 sm:max-w-xl">
         <SheetHeader className="space-y-1 border-b border-border p-6 text-start">
-          <SheetTitle>{t('website:messages.drawer.title')}</SheetTitle>
+          <SheetTitle>
+            {t(
+              interest
+                ? 'website:messages.drawer.interestTitle'
+                : 'website:messages.drawer.title'
+            )}
+          </SheetTitle>
           <SheetDescription>
-            {t('website:messages.drawer.description')}
+            {t(
+              interest
+                ? 'website:messages.drawer.interestDescription'
+                : 'website:messages.drawer.description'
+            )}
           </SheetDescription>
         </SheetHeader>
 
@@ -117,12 +133,47 @@ export function ContactSubmissionSheet({
               </div>
 
               <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-                <dt className="text-muted-foreground">
-                  {t('website:messages.drawer.email')}
-                </dt>
-                <dd className="min-w-0 break-all" dir="auto">
-                  {submission.email}
-                </dd>
+                {interest ? (
+                  <>
+                    <dt className="text-muted-foreground">
+                      {t('website:messages.drawer.form')}
+                    </dt>
+                    <dd>{t('website:messages.kind.interest')}</dd>
+                  </>
+                ) : null}
+                {phone ? (
+                  <>
+                    <dt className="text-muted-foreground">
+                      {t('website:messages.drawer.phone')}
+                    </dt>
+                    <dd className="min-w-0">
+                      <span dir="ltr" data-ltr-content className="tabular-nums">
+                        {formatInternational(phone)}
+                      </span>
+                    </dd>
+                  </>
+                ) : null}
+                {submission.choice ? (
+                  <>
+                    <dt className="text-muted-foreground" dir="auto">
+                      {submission.choiceLabel ||
+                        t('website:messages.drawer.choice')}
+                    </dt>
+                    <dd className="min-w-0 break-words font-medium" dir="auto">
+                      {submission.choice}
+                    </dd>
+                  </>
+                ) : null}
+                {submission.email || !interest ? (
+                  <>
+                    <dt className="text-muted-foreground">
+                      {t('website:messages.drawer.email')}
+                    </dt>
+                    <dd className="min-w-0 break-all" dir="auto">
+                      {submission.email}
+                    </dd>
+                  </>
+                ) : null}
                 <dt className="text-muted-foreground">
                   {t('website:messages.drawer.received')}
                 </dt>
@@ -153,13 +204,19 @@ export function ContactSubmissionSheet({
                 {t('website:messages.drawer.message')}
               </h3>
               {/* Plain text on purpose — see the file's doc comment. */}
-              <p
-                className="whitespace-pre-wrap break-words rounded-md border border-border bg-muted/30 p-4 text-sm leading-relaxed text-foreground"
-                dir="auto"
-                data-testid="contact-submission-message"
-              >
-                {submission.message}
-              </p>
+              {submission.message ? (
+                <p
+                  className="whitespace-pre-wrap break-words rounded-md border border-border bg-muted/30 p-4 text-sm leading-relaxed text-foreground"
+                  dir="auto"
+                  data-testid="contact-submission-message"
+                >
+                  {submission.message}
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  {t('website:messages.drawer.noMessage')}
+                </p>
+              )}
             </section>
 
             <Separator />
@@ -169,16 +226,50 @@ export function ContactSubmissionSheet({
               aria-label={t('website:messages.drawer.actions')}
               className="flex flex-wrap items-center gap-2"
             >
-              <Button asChild size="sm">
-                <a href={`mailto:${submission.email}`}>
-                  <Reply
-                    className="size-4 rtl:-scale-x-100"
-                    strokeWidth={2}
-                    aria-hidden
-                  />
-                  {t('website:messages.drawer.reply')}
-                </a>
-              </Button>
+              {submission.email ? (
+                <Button asChild size="sm">
+                  <a href={`mailto:${submission.email}`}>
+                    <Reply
+                      className="size-4 rtl:-scale-x-100"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                    {t('website:messages.drawer.reply')}
+                  </a>
+                </Button>
+              ) : null}
+              {phone ? (
+                <>
+                  <Button
+                    asChild
+                    size="sm"
+                    variant={submission.email ? 'outline' : 'default'}
+                  >
+                    <a href={`tel:${phone}`}>
+                      <Phone className="size-4" strokeWidth={2} aria-hidden />
+                      {t('website:messages.drawer.call')}
+                    </a>
+                  </Button>
+                  <Button asChild size="sm" variant="outline">
+                    <a
+                      href={`https://wa.me/${phone.replace(/\D/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <MessageCircle
+                        className="size-4"
+                        strokeWidth={2}
+                        aria-hidden
+                      />
+                      {t('website:messages.drawer.whatsapp')}
+                      <span className="sr-only">
+                        {' '}
+                        {t('website:messages.drawer.opensInNewTab')}
+                      </span>
+                    </a>
+                  </Button>
+                </>
+              ) : null}
 
               {submission.status === 'new'
                 ? actionButton(

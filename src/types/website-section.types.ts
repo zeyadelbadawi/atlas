@@ -51,6 +51,10 @@ export const SECTION_TYPES = [
   'video',
   'pricing',
   'countdown',
+  // CMS phase 3d (batch C) — shared by every theme, each with a renderer.
+  'interestForm',
+  'announcementBar',
+  'comparison',
   // CMS phase 3d (batch B) — shared by every theme, each with a renderer.
   'logos',
   'map',
@@ -601,6 +605,83 @@ export interface CountdownSectionConfig extends SectionButtons {
   readonly endedMessage?: LocalizedText;
 }
 
+/**
+ * CMS phase 3d (batch C) — how the interest form shows one of its optional
+ * fields (see `INTEREST_FIELD_MODES`). Name and phone are always asked.
+ */
+export type InterestFieldMode = 'hidden' | 'optional' | 'required';
+
+export interface InterestOption {
+  readonly id: string;
+  readonly label: LocalizedText;
+}
+
+/**
+ * CMS phase 3d — "register your interest": a lead form that reaches the
+ * academy's Messages through the Contact form's endpoint. A choice list
+ * with no options is not shown. The API checks every submission against
+ * the PUBLISHED section (required fields, the chosen option).
+ */
+export interface InterestFormSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly emailField: InterestFieldMode;
+  readonly choiceField: InterestFieldMode;
+  /** The choice list's label ("Course", "Grade"); empty → "Your choice". */
+  readonly choiceLabel?: LocalizedText;
+  readonly options: readonly InterestOption[];
+  readonly messageField: InterestFieldMode;
+  /** Empty → "Send". */
+  readonly submitLabel?: LocalizedText;
+  /** Shown and announced once the form is sent; empty → a standard thank-you. */
+  readonly successMessage?: LocalizedText;
+}
+
+/** CMS phase 3d — the notice strip's ground, drawn by each theme (see `ANNOUNCEMENT_TONES`). */
+export type AnnouncementTone = 'brand' | 'soft' | 'dark';
+
+/**
+ * CMS phase 3d — a slim notice strip: a short line and at most one button
+ * (the `cta` slot of the section button system). Never dismissible, never
+ * moving.
+ */
+export interface AnnouncementBarSectionConfig {
+  readonly text: LocalizedText;
+  readonly tone: AnnouncementTone;
+  readonly cta?: WebsiteCta;
+}
+
+export interface ComparisonColumn {
+  readonly id: string;
+  readonly label: LocalizedText;
+  /** The column to draw attention to (the editor keeps it to one; the site draws the first). */
+  readonly highlighted?: boolean;
+}
+
+/** One cell: ✓ (`yes`), ✗ (`no`) or a short text. `column` is its column's id. */
+export type ComparisonCell =
+  | { readonly column: string; readonly value: 'yes' | 'no' }
+  | {
+      readonly column: string;
+      readonly value: 'text';
+      readonly text: LocalizedText;
+    };
+
+export interface ComparisonRow {
+  readonly id: string;
+  readonly label: LocalizedText;
+  /** At most one per column; a column without one shows a dash. */
+  readonly cells: readonly ComparisonCell[];
+}
+
+/** CMS phase 3d — a comparison table: 2–4 columns, up to 15 rows. */
+export interface ComparisonSectionConfig {
+  readonly title: LocalizedText;
+  readonly description?: LocalizedText;
+  readonly columns: readonly ComparisonColumn[];
+  readonly rows: readonly ComparisonRow[];
+}
+
 /** Every section's config, keyed by its `SectionType`. */
 export interface SectionConfigMap {
   readonly hero: HeroSectionConfig;
@@ -624,6 +705,10 @@ export interface SectionConfigMap {
   readonly video: VideoSectionConfig;
   readonly pricing: PricingSectionConfig;
   readonly countdown: CountdownSectionConfig;
+  // CMS phase 3d (batch C).
+  readonly interestForm: InterestFormSectionConfig;
+  readonly announcementBar: AnnouncementBarSectionConfig;
+  readonly comparison: ComparisonSectionConfig;
   readonly logos: LogosSectionConfig;
   readonly map: MapSectionConfig;
   readonly schedule: ScheduleSectionConfig;

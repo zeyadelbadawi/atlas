@@ -28,6 +28,11 @@ import {
   AtelierWhatsappBar,
 } from './atelier-engage-sections';
 import {
+  AtelierAnnouncementBar,
+  AtelierComparison,
+  AtelierInterestForm,
+} from './atelier-enrol-sections';
+import {
   AtelierLogos,
   AtelierMap,
   AtelierResults,
@@ -63,6 +68,10 @@ export const ATELIER_SECTION_RENDERERS: Partial<SectionRenderers> = {
   video: AtelierVideo,
   pricing: AtelierPricing,
   countdown: AtelierCountdown,
+  // CMS phase 3d (batch C).
+  interestForm: AtelierInterestForm,
+  announcementBar: AtelierAnnouncementBar,
+  comparison: AtelierComparison,
   instructors: AtelierInstructors,
   statistics: AtelierStatistics,
   testimonials: AtelierTestimonials,

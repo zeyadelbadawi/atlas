@@ -91,6 +91,11 @@ export const SECTION_DESIGN_SUPPORT: Record<SectionType, SectionDesignSupport> =
     video: FULL,
     pricing: FULL,
     countdown: FULL,
+    // CMS phase 3d (batch C): a form and a table read down the page; the
+    // notice strip's line and button may be centred.
+    interestForm: NO_ALIGN,
+    announcementBar: FULL,
+    comparison: NO_ALIGN,
   };
 
 /**

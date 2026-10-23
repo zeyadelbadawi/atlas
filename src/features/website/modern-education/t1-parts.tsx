@@ -34,7 +34,12 @@ import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.type
 /* Section frame                                                        */
 /* ------------------------------------------------------------------ */
 
-export type T1Tone = 'default' | 'soft' | 'ink';
+/**
+ * `brand` (CMS phase 3d, batch C) is the brand's own CTA fill with its
+ * guaranteed foreground — the notice strip's loudest tone; no other section
+ * uses it.
+ */
+export type T1Tone = 'default' | 'soft' | 'ink' | 'brand';
 
 /** A labelled section landmark with the theme's rhythm, tone and container. */
 export function T1Section({
@@ -61,7 +66,11 @@ export function T1Section({
       {...sectionDesignAttributes(design)}
       className={cn(
         't1-section',
-        shown === 'ink' ? 't1-ink' : 'text-[var(--website-foreground)]',
+        shown === 'ink'
+          ? 't1-ink'
+          : shown === 'brand'
+            ? 't1-brand'
+            : 'text-[var(--website-foreground)]',
         className
       )}
     >

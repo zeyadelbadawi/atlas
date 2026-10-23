@@ -75,6 +75,7 @@ export function SectionRenderer({
         academyId={academyId}
         pages={pages}
         linkRenderer={linkRenderer}
+        sectionId={instance.id}
       />
     </SectionDesignContext.Provider>
   );

@@ -12,12 +12,30 @@ import type { FieldErrorLookup } from './SectionButtonsEditor';
 import { YouTubeVideoField } from './YouTubeVideoField';
 import { DeadlineField, type DeadlineValue } from './DeadlineField';
 import { PricingPlansEditor, resolvePlanIssue } from './PricingPlansEditor';
+import {
+  ComparisonGridEditor,
+  resolveComparisonIssue,
+} from './ComparisonGridEditor';
 
 const CUSTOM_KINDS: ReadonlySet<string> = new Set([
   'youtube',
   'deadline',
   'plans',
+  'comparison',
 ]);
+
+/**
+ * The config keys a custom field edits, when more than its own `key`: the
+ * comparison grid edits `columns` and `rows` (so a problem under `rows` is
+ * named after it too).
+ */
+export function customFieldKeys(
+  descriptor: CustomFieldDescriptor
+): readonly string[] {
+  return descriptor.kind === 'comparison'
+    ? ['columns', 'rows']
+    : [descriptor.key];
+}
 
 export function isCustomField(
   descriptor: SectionFieldDescriptor
@@ -25,10 +43,11 @@ export function isCustomField(
   return CUSTOM_KINDS.has(descriptor.kind);
 }
 
-/** How the form's summary names a problem inside a custom field (`rest` is the path after its key). */
+/** How the form's summary names a problem inside a custom field (`rest` is the path after `head`, the config key it is under). */
 export function resolveCustomFieldIssue(
   descriptor: CustomFieldDescriptor,
-  rest: readonly string[]
+  rest: readonly string[],
+  head: string = descriptor.key
 ): {
   readonly labelKeys: readonly string[];
   readonly itemNumber?: number;
@@ -36,6 +55,9 @@ export function resolveCustomFieldIssue(
 } {
   if (descriptor.kind === 'plans' && rest.length > 0) {
     return resolvePlanIssue(rest);
+  }
+  if (descriptor.kind === 'comparison') {
+    return resolveComparisonIssue(head, rest);
   }
   return { labelKeys: [descriptor.labelKey] };
 }
@@ -86,6 +108,22 @@ export function CustomSectionField({
           schemaError={
             errorFor(key, labelKey) ?? errorFor('timeZone', labelKey)
           }
+        />
+      );
+    case 'comparison':
+      return (
+        <ComparisonGridEditor
+          labelKey={labelKey}
+          columns={
+            draft.columns as Parameters<
+              typeof ComparisonGridEditor
+            >[0]['columns']
+          }
+          rows={
+            draft.rows as Parameters<typeof ComparisonGridEditor>[0]['rows']
+          }
+          onChange={onPatch}
+          errorFor={errorFor}
         />
       );
     case 'plans':

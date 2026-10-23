@@ -200,6 +200,10 @@ describe('MANARA_SECTION_RENDERERS', () => {
         'video',
         'pricing',
         'countdown',
+        // CMS phase 3d (batch C).
+        'interestForm',
+        'announcementBar',
+        'comparison',
       ].sort()
     );
   });

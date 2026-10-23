@@ -71,6 +71,10 @@ export const SECTION_TYPE_ORDER: readonly SectionType[] = [
   'video',
   'pricing',
   'countdown',
+  // CMS phase 3d (batch C).
+  'interestForm',
+  'announcementBar',
+  'comparison',
 ];
 
 /** The bounded icon names a Feature item may reference — a curated subset of `lucide-react`, never an arbitrary asset. */
@@ -149,6 +153,30 @@ export const COUNTDOWN_DEADLINE_PATTERN =
 export const TIME_ZONE_PATTERN =
   /^[A-Za-z][A-Za-z0-9_+-]*(?:\/[A-Za-z0-9_+-]+){0,2}$/;
 export const MAX_TIME_ZONE_LENGTH = 64;
+/*
+ * CMS phase 3d (batch C) — the "register your interest" form, the notice
+ * strip and the comparison table. Characters per language; mirrors the
+ * backend's `website.constants.ts` exactly (the parity cases prove it).
+ */
+export const MAX_INTEREST_FORM_DESCRIPTION_LENGTH = 280;
+export const MAX_INTEREST_CHOICE_LABEL_LENGTH = 60;
+export const MAX_INTEREST_OPTIONS = 12;
+export const MAX_INTEREST_OPTION_LENGTH = 80;
+export const MAX_INTEREST_SUCCESS_MESSAGE_LENGTH = 200;
+/** How the form shows one of its optional fields: not at all, optional, or required. */
+export const INTEREST_FIELD_MODES = ['hidden', 'optional', 'required'] as const;
+export const MAX_ANNOUNCEMENT_TEXT_LENGTH = 140;
+/** The notice strip's ground: the brand's fill, the theme's soft ground or its dark ground. */
+export const ANNOUNCEMENT_TONES = ['brand', 'soft', 'dark'] as const;
+export const MAX_COMPARISON_DESCRIPTION_LENGTH = 280;
+export const MIN_COMPARISON_COLUMNS = 2;
+export const MAX_COMPARISON_COLUMNS = 4;
+export const MAX_COMPARISON_ROWS = 15;
+export const MAX_COMPARISON_COLUMN_LABEL_LENGTH = 40;
+export const MAX_COMPARISON_ROW_LABEL_LENGTH = 80;
+export const MAX_COMPARISON_CELL_TEXT_LENGTH = 40;
+/** A cell: ✓ (`yes`), ✗ (`no`) or a short text in both languages. */
+export const COMPARISON_CELL_VALUES = ['yes', 'no', 'text'] as const;
 export const MAX_HERO_HIGHLIGHTS = 4;
 export const MAX_CHIP_TEXT = 40;
 export const MIN_COURSE_CATEGORIES = 2;

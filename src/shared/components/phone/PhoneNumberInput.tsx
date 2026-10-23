@@ -64,6 +64,12 @@ export interface PhoneNumberInputProps {
   readonly describedBy?: string;
   readonly autoFocus?: boolean;
   readonly className?: string;
+  /**
+   * Merged over the country button's and the number input's own classes —
+   * a public website theme gives them its own height, edge and colours.
+   */
+  readonly triggerClassName?: string;
+  readonly inputClassName?: string;
 }
 
 function examplePlaceholder(country: CountryCode): string {
@@ -90,6 +96,8 @@ export const PhoneNumberInput = forwardRef<
     describedBy,
     autoFocus,
     className,
+    triggerClassName,
+    inputClassName,
   },
   ref
 ) {
@@ -177,7 +185,8 @@ export const PhoneNumberInput = forwardRef<
               'flex h-10 shrink-0 items-center gap-1.5 rounded-l-md border border-r-0 border-input bg-background px-2.5 text-sm',
               'hover:bg-accent focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
               'disabled:cursor-not-allowed',
-              invalid && 'border-destructive'
+              invalid && 'border-destructive',
+              triggerClassName
             )}
           >
             <CountryFlag country={country} />
@@ -275,7 +284,8 @@ export const PhoneNumberInput = forwardRef<
           'flex h-10 w-full min-w-0 rounded-r-md border border-input bg-background px-3 py-2 text-base tabular-nums ring-offset-background md:text-sm',
           'placeholder:text-muted-foreground focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
           'disabled:cursor-not-allowed',
-          invalid && 'border-destructive'
+          invalid && 'border-destructive',
+          inputClassName
         )}
       />
     </div>

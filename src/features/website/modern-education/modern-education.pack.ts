@@ -54,6 +54,11 @@ import {
   T1Video,
   T1WhatsappBar,
 } from './t1-engage-sections';
+import {
+  T1AnnouncementBar,
+  T1Comparison,
+  T1InterestForm,
+} from './t1-enrol-sections';
 import { T1ComingSoon, T1NotFound } from './T1SystemPages';
 import { MODERN_EDUCATION_ASSETS } from '../theme-assets/manifests/modern-education.manifest';
 
@@ -81,6 +86,10 @@ export const MODERN_EDUCATION_PACK: ThemePack = {
     video: T1Video,
     pricing: T1Pricing,
     countdown: T1Countdown,
+    // CMS phase 3d (batch C).
+    interestForm: T1InterestForm,
+    announcementBar: T1AnnouncementBar,
+    comparison: T1Comparison,
     // CMS phase 3d.
     logos: T1Logos,
     map: T1Map,

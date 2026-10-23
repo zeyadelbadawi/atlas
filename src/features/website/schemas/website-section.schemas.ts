@@ -75,6 +75,22 @@ import {
   MAX_WHATSAPP_BAR_TITLE_LENGTH,
   MIN_PRICING_PLANS,
   TIME_ZONE_PATTERN,
+  ANNOUNCEMENT_TONES,
+  COMPARISON_CELL_VALUES,
+  INTEREST_FIELD_MODES,
+  MAX_ANNOUNCEMENT_TEXT_LENGTH,
+  MAX_COMPARISON_CELL_TEXT_LENGTH,
+  MAX_COMPARISON_COLUMN_LABEL_LENGTH,
+  MAX_COMPARISON_COLUMNS,
+  MAX_COMPARISON_DESCRIPTION_LENGTH,
+  MAX_COMPARISON_ROW_LABEL_LENGTH,
+  MAX_COMPARISON_ROWS,
+  MAX_INTEREST_CHOICE_LABEL_LENGTH,
+  MAX_INTEREST_FORM_DESCRIPTION_LENGTH,
+  MAX_INTEREST_OPTION_LENGTH,
+  MAX_INTEREST_OPTIONS,
+  MAX_INTEREST_SUCCESS_MESSAGE_LENGTH,
+  MIN_COMPARISON_COLUMNS,
 } from '../constants/website.constants';
 import { isAllowedImageValue } from '../utils/image-value.utils';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
@@ -607,6 +623,98 @@ export const countdownSectionSchema = z.object({
   tertiaryCta: websiteCtaSchema.optional(),
 });
 
+/*
+ * CMS phase 3d (batch C) — mirror the backend's identically named schemas
+ * field for field (the parity cases prove it).
+ */
+
+const interestOptionSchema = z.object({
+  id: z.string().min(1, 'validation:required'),
+  label: localizedRequired(MAX_INTEREST_OPTION_LENGTH),
+});
+
+/** "Register your interest": name and phone always; email, a choice and a message as the Owner sets. */
+export const interestFormSectionSchema = z.object({
+  title: localizedRequired(MAX_SHORT_TEXT),
+  description: localizedOptional(
+    MAX_INTEREST_FORM_DESCRIPTION_LENGTH
+  ).optional(),
+  emailField: z.enum(INTEREST_FIELD_MODES),
+  choiceField: z.enum(INTEREST_FIELD_MODES),
+  choiceLabel: localizedOptional(MAX_INTEREST_CHOICE_LABEL_LENGTH).optional(),
+  options: z.array(interestOptionSchema).max(MAX_INTEREST_OPTIONS),
+  messageField: z.enum(INTEREST_FIELD_MODES),
+  submitLabel: localizedOptional(MAX_CTA_LABEL_LENGTH).optional(),
+  successMessage: localizedOptional(
+    MAX_INTEREST_SUCCESS_MESSAGE_LENGTH
+  ).optional(),
+});
+
+/** A slim notice strip: a short line, one optional button and a named tone. */
+export const announcementBarSectionSchema = z.object({
+  text: localizedRequired(MAX_ANNOUNCEMENT_TEXT_LENGTH),
+  tone: z.enum(ANNOUNCEMENT_TONES),
+  cta: websiteCtaSchema.optional(),
+});
+
+const comparisonColumnSchema = z.object({
+  id: z.string().min(1, 'validation:required'),
+  label: localizedRequired(MAX_COMPARISON_COLUMN_LABEL_LENGTH),
+  highlighted: z.boolean().optional(),
+});
+
+const comparisonCellSchema = z.discriminatedUnion('value', [
+  z.object({
+    column: z.string().min(1),
+    value: z.literal(COMPARISON_CELL_VALUES[0]),
+  }),
+  z.object({
+    column: z.string().min(1),
+    value: z.literal(COMPARISON_CELL_VALUES[1]),
+  }),
+  z.object({
+    column: z.string().min(1),
+    value: z.literal(COMPARISON_CELL_VALUES[2]),
+    text: localizedRequired(MAX_COMPARISON_CELL_TEXT_LENGTH),
+  }),
+]);
+
+const comparisonRowSchema = z.object({
+  id: z.string().min(1, 'validation:required'),
+  label: localizedRequired(MAX_COMPARISON_ROW_LABEL_LENGTH),
+  cells: z.array(comparisonCellSchema).max(MAX_COMPARISON_COLUMNS),
+});
+
+/** A comparison table; every cell names one of the columns, once per row. */
+export const comparisonSectionSchema = z
+  .object({
+    title: localizedRequired(MAX_SHORT_TEXT),
+    description: localizedOptional(
+      MAX_COMPARISON_DESCRIPTION_LENGTH
+    ).optional(),
+    columns: z
+      .array(comparisonColumnSchema)
+      .min(MIN_COMPARISON_COLUMNS)
+      .max(MAX_COMPARISON_COLUMNS),
+    rows: z.array(comparisonRowSchema).max(MAX_COMPARISON_ROWS),
+  })
+  .superRefine((config, ctx) => {
+    const columnIds = new Set(config.columns.map((column) => column.id));
+    config.rows.forEach((row, rowIndex) => {
+      const seen = new Set<string>();
+      row.cells.forEach((cell, cellIndex) => {
+        if (!columnIds.has(cell.column) || seen.has(cell.column)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'validation:invalid',
+            path: ['rows', rowIndex, 'cells', cellIndex, 'column'],
+          });
+        }
+        seen.add(cell.column);
+      });
+    });
+  });
+
 const SECTION_SCHEMAS = {
   hero: heroSectionSchema,
   about: aboutSectionSchema,
@@ -629,6 +737,10 @@ const SECTION_SCHEMAS = {
   video: videoSectionSchema,
   pricing: pricingSectionSchema,
   countdown: countdownSectionSchema,
+  // CMS phase 3d (batch C).
+  interestForm: interestFormSectionSchema,
+  announcementBar: announcementBarSectionSchema,
+  comparison: comparisonSectionSchema,
   logos: logosSectionSchema,
   map: mapSectionSchema,
   schedule: scheduleSectionSchema,

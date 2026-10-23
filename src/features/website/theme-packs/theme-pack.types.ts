@@ -42,6 +42,11 @@ export interface SectionRenderProps<TType extends SectionType> {
   readonly pages: readonly WebsitePage[];
   /** Present only where CTAs may really navigate (the public runtime). */
   readonly linkRenderer?: WebsiteLinkRenderer;
+  /**
+   * The section instance's id (CMS phase 3d): the interest form names its
+   * published section when it submits, so the API can check what it sends.
+   */
+  readonly sectionId?: string;
 }
 
 export type SectionRendererComponent<TType extends SectionType> = ComponentType<

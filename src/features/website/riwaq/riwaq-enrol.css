@@ -1,0 +1,61 @@
+/*
+ * Riwaq — CMS phase 3d (batch C): the brand ground, the notice strip and
+ * the comparison's highlighted column (`sections/riwaq-enrol-sections.tsx`).
+ */
+
+/* The brand ground: the action fill and its text, a pair the brand mapping
+   keeps at 4.5:1. Every colour on it follows from that pair, as on the
+   other grounds: text, links, focus and the marker in the action text, and
+   a solid button inverted. Only the notice strip uses it. */
+[data-theme-pack='riwaq'] [data-ground='brand'] {
+  --rw-env-bg: var(--rw-action);
+  --rw-env-text: var(--rw-action-text);
+  --rw-env-heading: var(--rw-action-text);
+  --rw-env-muted: var(--rw-action-text);
+  --rw-env-rule: color-mix(in srgb, var(--rw-action-text) 35%, transparent);
+  --rw-env-rule-strong: var(--rw-action-text);
+  --rw-env-marker: var(--rw-action-text);
+  --rw-env-focus: var(--rw-action-text);
+  --rw-env-link: var(--rw-action-text);
+  --rw-env-action: var(--rw-action-text);
+  --rw-env-action-text: var(--rw-action);
+  --rw-env-action-hover: var(--rw-action-text);
+}
+[data-theme-pack='riwaq'] [data-ground='brand'] .rw-btn:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* The notice strip: a slim band at the Owner's spacing choice. It gives a
+   following band on the same ground its full top padding back. */
+.rw-band.rwn-announce {
+  padding-block: calc(0.75rem * var(--ws-space, 1));
+}
+.rw-band.rwn-announce[data-ground] + .rw-band[data-ground],
+[data-preview-section]:has(> .rw-band.rwn-announce)
+  + [data-preview-section]
+  > .rw-band[data-ground] {
+  padding-block-start: calc(var(--rw-rhythm) * var(--ws-space, 1));
+}
+
+/* The comparison's highlighted column header: the marker above the name. */
+[data-theme-pack='riwaq'] .rwn-compare-highlight {
+  background: var(--rw-stone);
+  box-shadow: inset 0 3px 0 var(--rw-env-marker);
+}
+
+/* The interest form sits in the head's body column (the page grid). */
+.rwn-form-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--rw-cols), minmax(0, 1fr));
+  column-gap: var(--rw-gap);
+}
+.rwn-form-grid > * {
+  grid-column: 1 / -1;
+  min-inline-size: 0;
+}
+@media (min-width: 1024px) {
+  .rwn-form-grid > * {
+    grid-column: 4 / span 8;
+  }
+}

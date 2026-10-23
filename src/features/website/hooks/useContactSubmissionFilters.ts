@@ -21,6 +21,7 @@ import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '@constants';
 import type {
+  ContactSubmissionKind,
   ContactSubmissionListQuery,
   ContactSubmissionSortField,
   ContactSubmissionStatus,
@@ -47,10 +48,17 @@ const STATUSES: readonly ContactSubmissionStatus[] = [
   'archived',
 ];
 
+/** CMS phase 3d (batch C) — the forms a message can come from. */
+export const CONTACT_SUBMISSION_KINDS: readonly ContactSubmissionKind[] = [
+  'contact',
+  'interest',
+];
+
 /** URL parameter names — identical to the API's own, so a URL reads like its request. */
 const PARAM = {
   search: 'search',
   status: 'status',
+  kind: 'kind',
   from: 'from',
   to: 'to',
   sortBy: 'sortBy',
@@ -63,6 +71,7 @@ const PARAM = {
 const FILTER_PARAMS = [
   PARAM.search,
   PARAM.status,
+  PARAM.kind,
   PARAM.from,
   PARAM.to,
 ] as const;
@@ -70,6 +79,8 @@ const FILTER_PARAMS = [
 export interface ContactSubmissionFilterState {
   readonly search: string;
   readonly status?: ContactSubmissionStatus;
+  /** Only Contact form messages, or only interest-form submissions. */
+  readonly kind?: ContactSubmissionKind;
   /** `YYYY-MM-DD`, inclusive. */
   readonly from?: string;
   /** `YYYY-MM-DD`, inclusive. */
@@ -100,6 +111,8 @@ export function parseContactSubmissionFilters(
 ): ContactSubmissionFilterState {
   const rawStatus = params.get(PARAM.status);
   const status = STATUSES.find((value) => value === rawStatus);
+  const rawKind = params.get(PARAM.kind);
+  const kind = CONTACT_SUBMISSION_KINDS.find((value) => value === rawKind);
 
   const rawSort = `${params.get(PARAM.sortBy) ?? ''}:${
     params.get(PARAM.sortDirection) ?? ''
@@ -115,6 +128,7 @@ export function parseContactSubmissionFilters(
   return {
     search: params.get(PARAM.search)?.trim() ?? '',
     ...(status ? { status } : {}),
+    ...(kind ? { kind } : {}),
     ...(from ? { from } : {}),
     ...(to ? { to } : {}),
     sort,
@@ -145,6 +159,7 @@ export function toContactSubmissionListQuery(
 ): ContactSubmissionListQuery {
   const filters = {
     ...(state.status ? { status: state.status } : {}),
+    ...(state.kind ? { kind: state.kind } : {}),
     ...(state.from ? { from: state.from } : {}),
     ...(state.to ? { to: state.to } : {}),
   };
@@ -158,16 +173,17 @@ export function toContactSubmissionListQuery(
 
 export interface UseContactSubmissionFiltersResult {
   readonly filters: ContactSubmissionFilterState;
-  /** Whether anything narrows the result set (search, status or dates). */
+  /** Whether anything narrows the result set (search, status, form or dates). */
   readonly hasFilters: boolean;
   readonly setSearch: (search: string) => void;
   readonly setStatus: (status: ContactSubmissionStatus | undefined) => void;
+  readonly setKind: (kind: ContactSubmissionKind | undefined) => void;
   readonly setFrom: (from: string | undefined) => void;
   readonly setTo: (to: string | undefined) => void;
   readonly setSort: (sort: ContactSubmissionSortOption) => void;
   readonly setPage: (page: number) => void;
   readonly setPageSize: (pageSize: number) => void;
-  /** Removes search, status and dates; keeps sort and page size. */
+  /** Removes search, status, form and dates; keeps sort and page size. */
   readonly clearFilters: () => void;
 }
 
@@ -217,6 +233,10 @@ export function useContactSubmissionFilters(): UseContactSubmissionFiltersResult
   const setStatus = useCallback(
     (status: ContactSubmissionStatus | undefined) =>
       setOptional(PARAM.status, status),
+    [setOptional]
+  );
+  const setKind = useCallback(
+    (kind: ContactSubmissionKind | undefined) => setOptional(PARAM.kind, kind),
     [setOptional]
   );
   const setFrom = useCallback(
@@ -273,6 +293,7 @@ export function useContactSubmissionFilters(): UseContactSubmissionFiltersResult
   const hasFilters =
     filters.search !== '' ||
     filters.status !== undefined ||
+    filters.kind !== undefined ||
     filters.from !== undefined ||
     filters.to !== undefined;
 
@@ -281,6 +302,7 @@ export function useContactSubmissionFilters(): UseContactSubmissionFiltersResult
     hasFilters,
     setSearch,
     setStatus,
+    setKind,
     setFrom,
     setTo,
     setSort,
