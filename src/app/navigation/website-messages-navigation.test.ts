@@ -30,10 +30,11 @@ function visibleIds(permissions: readonly string[]): string[] {
     permissions,
   } as unknown as OrganizationContext;
 
-  const academy = getDashboardNavigation(ACADEMY).find(
-    (section) => section.id === 'academy'
-  );
-  return filterNavigationItems(academy?.items ?? [], {
+  // The academy entries are split across several `academy*` sections.
+  const academyItems = getDashboardNavigation(ACADEMY)
+    .filter((section) => section.id.startsWith('academy'))
+    .flatMap((section) => section.items);
+  return filterNavigationItems(academyItems, {
     isAuthenticated: true,
     user,
     organization,
@@ -43,53 +44,26 @@ function visibleIds(permissions: readonly string[]): string[] {
 }
 
 describe('website Messages navigation entry', () => {
-  it('is shown, right after Website, to a role that manages the website', () => {
+  // Owner decision (B2): website messages live inside the Website area
+  // (its overview links to them), not in the sidebar.
+  it('is not a sidebar entry, even for a role that manages the website', () => {
     const ids = visibleIds([
       'academy.view',
       'academy.website.view',
       'academy.website.manage',
     ]);
-    expect(ids).toContain('academy-website-messages');
-    expect(ids.indexOf('academy-website-messages')).toBe(
-      ids.indexOf('academy-website') + 1
-    );
-  });
-
-  it('links to the academy-scoped Messages route', () => {
-    const academy = getDashboardNavigation(ACADEMY).find(
-      (section) => section.id === 'academy'
-    );
-    const entry = academy?.items.find(
-      (item) => item.id === 'academy-website-messages'
-    );
-    expect(entry?.path).toBe(`/dashboard/academy/${ACADEMY}/website/messages`);
-    expect(entry?.requiredPermissions).toEqual(['academy.website.manage']);
+    expect(ids).toContain('academy-website');
+    expect(ids).not.toContain('academy-website-messages');
   });
 
   it('B0-WEB-04: a plain or staff member (academy.view only) sees no Website entry at all', () => {
     // The exact set the backend's ORGANIZATION_MEMBER_PERMISSIONS now holds.
     const ids = visibleIds(['academy.view']);
     expect(ids).not.toContain('academy-website');
-    expect(ids).not.toContain('academy-website-messages');
   });
 
-  it('is hidden from a member who can only view the website', () => {
+  it('shows Website to a member who can only view the website', () => {
     const ids = visibleIds(['academy.view', 'academy.website.view']);
     expect(ids).toContain('academy-website');
-    expect(ids).not.toContain('academy-website-messages');
-  });
-
-  it('is hidden from an instructor', () => {
-    const ids = visibleIds(['instructor.dashboard.view', 'course.view']);
-    expect(ids).not.toContain('academy-website-messages');
-  });
-
-  it('does not exist before an academy is active', () => {
-    const academy = getDashboardNavigation(undefined).find(
-      (section) => section.id === 'academy'
-    );
-    expect(
-      academy?.items.some((item) => item.id === 'academy-website-messages')
-    ).toBe(false);
   });
 });

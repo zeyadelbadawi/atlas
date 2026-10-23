@@ -30,10 +30,11 @@ function showsRequests(
     role: 'manager',
     permissions,
   } as unknown as OrganizationContext;
-  const academy = getDashboardNavigation(ACADEMY).find(
-    (section) => section.id === 'academy'
-  );
-  return filterNavigationItems(academy?.items ?? [], {
+  // The academy entries are split across several `academy*` sections.
+  const academyItems = getDashboardNavigation(ACADEMY)
+    .filter((section) => section.id.startsWith('academy'))
+    .flatMap((section) => section.items);
+  return filterNavigationItems(academyItems, {
     isAuthenticated: true,
     user,
     organization,
