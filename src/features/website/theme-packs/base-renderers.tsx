@@ -33,6 +33,9 @@ import { LogosSection } from '../sections/LogosSection';
 import { MapSection } from '../sections/MapSection';
 import { ScheduleSection } from '../sections/ScheduleSection';
 import { ResultsSection } from '../sections/ResultsSection';
+import { InterestFormSection } from '../sections/InterestFormSection';
+import { AnnouncementBarSection } from '../sections/AnnouncementBarSection';
+import { ComparisonSection } from '../sections/ComparisonSection';
 import type { SectionRenderers } from './theme-pack.types';
 
 export const BASE_RENDERERS: SectionRenderers = {
@@ -197,5 +200,37 @@ export const BASE_RENDERERS: SectionRenderers = {
         linkRenderer={linkRenderer}
       />
     );
+  },
+  // CMS phase 3d (batch C).
+  interestForm: function BaseInterestForm({
+    config,
+    academyId,
+    sectionId,
+    linkRenderer,
+  }) {
+    return (
+      <InterestFormSection
+        config={config}
+        academyId={academyId}
+        sectionId={sectionId}
+        isPublic={!!linkRenderer}
+      />
+    );
+  },
+  announcementBar: function BaseAnnouncementBar({
+    config,
+    pages,
+    linkRenderer,
+  }) {
+    return (
+      <AnnouncementBarSection
+        config={config}
+        pages={pages}
+        linkRenderer={linkRenderer}
+      />
+    );
+  },
+  comparison: function BaseComparison({ config, linkRenderer }) {
+    return <ComparisonSection config={config} isPublic={!!linkRenderer} />;
   },
 };

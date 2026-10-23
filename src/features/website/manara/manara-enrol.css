@@ -1,0 +1,20 @@
+/*
+ * Manara — CMS phase 3d (batch C): the notice strip and the comparison's
+ * highlighted column (`sections/manara-enrol-sections.tsx`). Colours come
+ * from the block's ground (`data-env`), whose text and action pairs the
+ * brand mapping keeps at 4.5:1.
+ */
+
+/* The notice strip: a slim block at the Owner's spacing choice. */
+[data-theme-pack='manara'] .mn-block.mnn-announce {
+  padding-block: calc(0.75rem * var(--ws-space, 1));
+}
+[data-theme-pack='manara'] .mnn-announce .mn-link.mnn-announce-action {
+  min-block-size: 2.75rem;
+}
+
+/* The comparison's highlighted column header: dyed in the brand block. */
+[data-theme-pack='manara'] .mnn-compare-highlight {
+  background-color: var(--mn-block);
+  color: var(--mn-block-text);
+}

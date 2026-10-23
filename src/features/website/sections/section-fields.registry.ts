@@ -51,6 +51,16 @@ import {
   MAX_SCHEDULE_ROW_DETAIL_LENGTH,
   MAX_SCHEDULE_ROW_TITLE_LENGTH,
   MAX_SCHEDULE_ROWS,
+  INTEREST_FIELD_MODES,
+  ANNOUNCEMENT_TONES,
+  MAX_ANNOUNCEMENT_TEXT_LENGTH,
+  MAX_COMPARISON_DESCRIPTION_LENGTH,
+  MAX_CTA_LABEL_LENGTH,
+  MAX_INTEREST_CHOICE_LABEL_LENGTH,
+  MAX_INTEREST_FORM_DESCRIPTION_LENGTH,
+  MAX_INTEREST_OPTION_LENGTH,
+  MAX_INTEREST_OPTIONS,
+  MAX_INTEREST_SUCCESS_MESSAGE_LENGTH,
 } from '../constants/website.constants';
 import type { SectionFieldSchema } from './section-field.types';
 import { SCHEDULE_DAYS } from '@types';
@@ -68,6 +78,20 @@ const dayOptions = SCHEDULE_DAYS.map((day) => ({
 const iconOptions = FEATURE_ICON_OPTIONS.map((icon) => ({
   value: icon,
   labelKey: `website:icons.${icon}`,
+}));
+
+/** CMS phase 3d (batch C) — how the interest form shows one optional field. */
+const interestFieldModeOptions = (field: 'email' | 'choice' | 'message') =>
+  INTEREST_FIELD_MODES.map((mode) => ({
+    value: mode,
+    labelKey: `website:fields.interestFieldModes.${mode}`,
+    hintKey: `website:fields.interestFieldHints.${field}.${mode}`,
+  }));
+
+const announcementToneOptions = ANNOUNCEMENT_TONES.map((tone) => ({
+  value: tone,
+  labelKey: `website:fields.announcementTones.${tone}`,
+  hintKey: `website:fields.announcementToneHints.${tone}`,
 }));
 
 export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
@@ -1083,6 +1107,128 @@ export const SECTION_FIELD_SCHEMAS: Record<SectionType, SectionFieldSchema> = {
         maxLength: MAX_COUNTDOWN_ENDED_MESSAGE_LENGTH,
       },
       { key: 'buttons', kind: 'buttons', labelKey: 'website:fields.buttons' },
+    ],
+  },
+  // CMS phase 3d (batch C).
+  interestForm: {
+    type: 'interestForm',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_INTEREST_FORM_DESCRIPTION_LENGTH,
+      },
+      {
+        key: 'emailField',
+        kind: 'select',
+        labelKey: 'website:fields.interestEmailField',
+        options: interestFieldModeOptions('email'),
+      },
+      {
+        key: 'choiceField',
+        kind: 'select',
+        labelKey: 'website:fields.interestChoiceField',
+        options: interestFieldModeOptions('choice'),
+      },
+      {
+        key: 'choiceLabel',
+        kind: 'text',
+        labelKey: 'website:fields.interestChoiceLabel',
+        localized: true,
+        maxLength: MAX_INTEREST_CHOICE_LABEL_LENGTH,
+      },
+      {
+        key: 'messageField',
+        kind: 'select',
+        labelKey: 'website:fields.interestMessageField',
+        options: interestFieldModeOptions('message'),
+      },
+      {
+        key: 'submitLabel',
+        kind: 'text',
+        labelKey: 'website:fields.interestSubmitLabel',
+        localized: true,
+        maxLength: MAX_CTA_LABEL_LENGTH,
+      },
+      {
+        key: 'successMessage',
+        kind: 'longText',
+        labelKey: 'website:fields.interestSuccessMessage',
+        localized: true,
+        maxLength: MAX_INTEREST_SUCCESS_MESSAGE_LENGTH,
+      },
+    ],
+    repeatable: {
+      key: 'options',
+      maxItems: MAX_INTEREST_OPTIONS,
+      labelKey: 'website:fields.interestOptions',
+      itemLabelKey: 'website:fields.interestOption',
+      itemFields: [
+        {
+          key: 'label',
+          kind: 'text',
+          labelKey: 'website:fields.interestOptionLabel',
+          localized: true,
+          maxLength: MAX_INTEREST_OPTION_LENGTH,
+        },
+      ],
+    },
+  },
+  announcementBar: {
+    type: 'announcementBar',
+    fields: [
+      {
+        key: 'text',
+        kind: 'text',
+        labelKey: 'website:fields.announcementText',
+        localized: true,
+        maxLength: MAX_ANNOUNCEMENT_TEXT_LENGTH,
+      },
+      {
+        key: 'tone',
+        kind: 'select',
+        labelKey: 'website:fields.announcementTone',
+        options: announcementToneOptions,
+      },
+      {
+        key: 'buttons',
+        kind: 'buttons',
+        labelKey: 'website:fields.announcementButton',
+        maxButtons: 1,
+      },
+    ],
+  },
+  comparison: {
+    type: 'comparison',
+    fields: [
+      {
+        key: 'title',
+        kind: 'text',
+        labelKey: 'website:fields.title',
+        localized: true,
+        maxLength: MAX_SHORT_TEXT,
+      },
+      {
+        key: 'description',
+        kind: 'longText',
+        labelKey: 'website:fields.description',
+        localized: true,
+        maxLength: MAX_COMPARISON_DESCRIPTION_LENGTH,
+      },
+      {
+        key: 'columns',
+        kind: 'comparison',
+        labelKey: 'website:fields.comparisonTable',
+      },
     ],
   },
 };

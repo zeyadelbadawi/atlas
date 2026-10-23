@@ -33,8 +33,12 @@ import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.type
 /* Chapters                                                             */
 /* ------------------------------------------------------------------ */
 
-/** The two environments a chapter can sit in (plus the deeper paper band). */
-export type AtelierEnv = 'paper' | 'deep' | 'ink';
+/**
+ * The two environments a chapter can sit in (plus the deeper paper band).
+ * `brand` (CMS phase 3d, batch C) is the brand's CTA fill with its
+ * guaranteed foreground — the notice strip's loudest tone only.
+ */
+export type AtelierEnv = 'paper' | 'deep' | 'ink' | 'brand';
 
 /**
  * A chapter: a labelled section landmark with Atelier's rhythm and grid,

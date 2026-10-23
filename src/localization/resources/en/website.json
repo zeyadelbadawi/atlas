@@ -822,6 +822,15 @@
     },
     "countdown": {
       "label": "Countdown"
+    },
+    "interestForm": {
+      "label": "Register your interest"
+    },
+    "announcementBar": {
+      "label": "Notice strip"
+    },
+    "comparison": {
+      "label": "Comparison table"
     }
   },
   "fields": {
@@ -952,7 +961,52 @@
     "videoPoster": "Poster image (optional)",
     "deadline": "Closes on",
     "endedMessage": "Message after it ends",
-    "pricingPlans": "Plans"
+    "pricingPlans": "Plans",
+    "interestEmailField": "Email field",
+    "interestChoiceField": "Choice list",
+    "interestChoiceLabel": "Choice list label",
+    "interestMessageField": "Message field",
+    "interestSubmitLabel": "Button text (optional)",
+    "interestSuccessMessage": "Message after sending (optional)",
+    "interestOptions": "Choice list options",
+    "interestOption": "Option",
+    "interestOptionLabel": "Option text",
+    "interestFieldModes": {
+      "hidden": "Don’t ask",
+      "optional": "Ask, optional",
+      "required": "Ask, required"
+    },
+    "interestFieldHints": {
+      "email": {
+        "hidden": "Visitors give only their name and phone number.",
+        "optional": "Visitors may add an email address.",
+        "required": "Visitors must give an email address."
+      },
+      "choice": {
+        "hidden": "Visitors don’t choose a course or grade.",
+        "optional": "Visitors may choose one of the options below, such as a course or a grade.",
+        "required": "Visitors must choose one of the options below. With no options, the list isn’t shown."
+      },
+      "message": {
+        "hidden": "Visitors don’t write a message.",
+        "optional": "Visitors may add a message.",
+        "required": "Visitors must write a message."
+      }
+    },
+    "announcementText": "Notice",
+    "announcementTone": "Colour",
+    "announcementTones": {
+      "brand": "Brand",
+      "soft": "Soft",
+      "dark": "Dark"
+    },
+    "announcementToneHints": {
+      "brand": "Your brand colour, the boldest choice. Your theme keeps the text readable.",
+      "soft": "Your theme’s soft background, a quiet notice.",
+      "dark": "Your theme’s dark background, with light text."
+    },
+    "announcementButton": "Button (optional)",
+    "comparisonTable": "Columns and rows"
   },
   "buttons": {
     "button": "Button",
@@ -1179,6 +1233,45 @@
     },
     "whatsappBar": {
       "previewNoButtons": "Give a button a WhatsApp number, a phone number or a page. Visitors don’t see this bar until one of its buttons works."
+    },
+    "interestForm": {
+      "name": "Your name",
+      "phone": "Phone number",
+      "email": "Email",
+      "message": "Message",
+      "optional": "(optional)",
+      "requiredNote": "Every field is required unless it says optional.",
+      "choiceDefault": "Your choice",
+      "choosePrompt": "Choose one",
+      "submit": "Send",
+      "sending": "Sending…",
+      "successTitle": "Thank you",
+      "successDefault": "We received your details and will contact you soon.",
+      "sendFailed": "We couldn’t send your details. Check your connection and try again.",
+      "rateLimited": "This form was sent several times from your connection. Please wait a few minutes, then try again.",
+      "unavailable": "This form is no longer available. Refresh the page and try again.",
+      "previewNote": "This is a preview, so nothing was sent. On your published site, this form sends to your Messages.",
+      "errors": {
+        "name": "Enter your name.",
+        "tooLong": "Shorten this to {{count}} characters or fewer.",
+        "emailRequired": "Enter your email address.",
+        "emailInvalid": "Enter an email address like name@example.com.",
+        "choice": "Choose an option for “{{label}}”.",
+        "message": "Write your message.",
+        "server": "Check this field and try again.",
+        "choiceGone": "This option is no longer offered. Refresh the page and choose again."
+      }
+    },
+    "announcement": {
+      "label": "Announcement"
+    },
+    "comparison": {
+      "yes": "Yes",
+      "no": "No",
+      "empty": "Not specified",
+      "criterion": "Feature",
+      "highlighted": "highlighted",
+      "previewEmpty": "Add at least two columns and one row. Visitors don’t see this table until then."
     }
   },
   "common": {
@@ -1498,10 +1591,10 @@
   },
   "messages": {
     "title": "Messages",
-    "subtitle": "Messages visitors send through your website's Contact form.",
+    "subtitle": "Messages visitors send through your website’s Contact form and its “register your interest” forms.",
     "newCount_one": "{{formatted}} new",
     "newCount_other": "{{formatted}} new",
-    "searchLabel": "Search by name, email or message",
+    "searchLabel": "Search by name, email, phone or message",
     "filters": {
       "label": "Filter messages",
       "status": "Filter by status",
@@ -1509,7 +1602,9 @@
       "dateRange": "Received date",
       "from": "Received from",
       "to": "Received to",
-      "clear": "Clear filters"
+      "clear": "Clear filters",
+      "kind": "Form",
+      "kindAll": "All forms"
     },
     "status": {
       "new": "New",
@@ -1527,7 +1622,7 @@
     "table": {
       "caption": "Website messages",
       "name": "Name",
-      "email": "Email",
+      "email": "Email or phone",
       "message": "Message",
       "status": "Status",
       "received": "Received"
@@ -1537,7 +1632,7 @@
     "openMessage": "Open message from {{name}}",
     "empty": {
       "title": "No messages yet",
-      "description": "When visitors send a message through your website's Contact form, it will appear here."
+      "description": "When visitors send a message through your website’s Contact form or a “register your interest” form, it will appear here."
     },
     "noResults": {
       "title": "No messages match these filters",
@@ -1552,7 +1647,16 @@
       "status": "Status",
       "message": "Message",
       "reply": "Reply by email",
-      "actions": "Message actions"
+      "actions": "Message actions",
+      "interestTitle": "Registration interest",
+      "interestDescription": "Sent through a “register your interest” form on your website.",
+      "form": "Form",
+      "phone": "Phone",
+      "choice": "Choice",
+      "noMessage": "No message was added.",
+      "call": "Call",
+      "whatsapp": "WhatsApp",
+      "opensInNewTab": "(opens in a new tab)"
     },
     "actions": {
       "markRead": "Mark as read",
@@ -1567,6 +1671,11 @@
       "restored": "Message restored",
       "undo": "Undo",
       "failed": "Couldn't update the message"
+    },
+    "kind": {
+      "contact": "Contact form",
+      "interest": "Register your interest",
+      "interestTag": "Interest"
     }
   },
   "visualIdentity": {
@@ -2099,7 +2208,10 @@
         "whatsappBar": "A short strip with WhatsApp, call or page buttons.",
         "video": "A YouTube video that loads only when visitors press play.",
         "pricing": "Your plans or packages, with prices and what each includes.",
-        "countdown": "A live countdown to a registration deadline."
+        "countdown": "A live countdown to a registration deadline.",
+        "interestForm": "A short form visitors fill in so you can call them back. It arrives in your Messages.",
+        "announcementBar": "A slim strip with one short notice, such as “Registration is open”.",
+        "comparison": "A table comparing your academy or your plans, with ✓, ✗ or short text."
       }
     },
     "settings": {
@@ -2264,6 +2376,40 @@
       "addButton": "Add a button",
       "removeButton": "Remove the button",
       "featureLabel": "Feature"
+    },
+    "comparison": {
+      "columns": "Columns",
+      "rows": "Rows",
+      "column": "Column",
+      "row": "Row",
+      "columnLabel": "Column name",
+      "rowLabel": "Row name",
+      "cellText": "Text",
+      "columnsCount": "{{count}} of {{max}}",
+      "rowsCount": "{{count}} of {{max}}",
+      "untitledColumn": "Column {{number}}",
+      "untitledRow": "Row {{number}}",
+      "moveColumnUp": "Move column “{{name}}” earlier",
+      "moveColumnDown": "Move column “{{name}}” later",
+      "removeColumn": "Remove column “{{name}}”",
+      "highlight": "Highlight this column",
+      "columnsHint": "A table has {{min}} to {{max}} columns. Only one column can be highlighted; choosing one clears the others. Removing a column removes its values from every row.",
+      "addColumn": "Add a column",
+      "columnsFull": "{{max}} columns is the most a table can show",
+      "moveRowUp": "Move row “{{name}}” up",
+      "moveRowDown": "Move row “{{name}}” down",
+      "removeRow": "Remove row “{{name}}”",
+      "needsAttention": "Needs a fix",
+      "noRows": "No rows yet. Add a row for each thing you compare.",
+      "addRow": "Add a row",
+      "rowsFull": "{{max}} rows is the most a table can show",
+      "choices": {
+        "yes": "✓ Yes",
+        "no": "✗ No",
+        "text": "Text"
+      },
+      "cellUnset": "Not set yet: visitors see a dash.",
+      "clearCell": "Clear this value"
     }
   }
 }

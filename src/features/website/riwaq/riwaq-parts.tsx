@@ -33,7 +33,11 @@ import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.type
 /* Bands                                                                */
 /* ------------------------------------------------------------------ */
 
-export type RiwaqGround = 'porcelain' | 'stone' | 'deep';
+/**
+ * `brand` (CMS phase 3d, batch C) is the action fill with its guaranteed
+ * text — the notice strip's loudest tone only (`riwaq-enrol.css`).
+ */
+export type RiwaqGround = 'porcelain' | 'stone' | 'deep' | 'brand';
 
 /**
  * A band: a labelled section landmark on one ground, with the colonnade

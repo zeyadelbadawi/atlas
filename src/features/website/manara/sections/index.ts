@@ -33,6 +33,11 @@ import {
   ManaraVideo,
   ManaraWhatsappBar,
 } from './manara-engage-sections';
+import {
+  ManaraAnnouncementBar,
+  ManaraComparison,
+  ManaraInterestForm,
+} from './manara-enrol-sections';
 
 export {
   ManaraAbout,
@@ -74,6 +79,10 @@ export const MANARA_SECTION_RENDERERS: Partial<SectionRenderers> = {
   video: ManaraVideo,
   pricing: ManaraPricing,
   countdown: ManaraCountdown,
+  // CMS phase 3d (batch C).
+  interestForm: ManaraInterestForm,
+  announcementBar: ManaraAnnouncementBar,
+  comparison: ManaraComparison,
   // CMS phase 3d.
   logos: ManaraLogos,
   map: ManaraMap,

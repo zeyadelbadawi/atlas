@@ -87,6 +87,10 @@ describe('theme packs', () => {
       'video',
       'pricing',
       'countdown',
+      // CMS phase 3d (batch C).
+      'interestForm',
+      'announcementBar',
+      'comparison',
       // CMS phase 3d.
       'logos',
       'map',

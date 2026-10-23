@@ -1,5 +1,6 @@
 /**
- * Website Messages — the Academy's Contact form inbox.
+ * Website Messages — the Academy's Contact form inbox (and, since CMS
+ * phase 3d, its "register your interest" submissions).
  *
  * The real page, hooks, service and query cache run end to end; only the
  * transport (`apiClient.get`/`patch`) is replaced by a tiny in-memory
@@ -219,6 +220,7 @@ function serve(): void {
     const rows = dataset.filter(
       (row) =>
         (!params.status || row.status === params.status) &&
+        (!params.kind || (row.kind ?? 'contact') === params.kind) &&
         (!search ||
           `${row.name} ${row.email} ${row.message}`
             .toLowerCase()
@@ -425,7 +427,7 @@ describe('Website Messages — list', () => {
     expect(
       (
         screen.getByRole('searchbox', {
-          name: 'Search by name, email or message',
+          name: 'Search by name, email, phone or message',
         }) as HTMLInputElement
       ).value
     ).toBe('layla');
@@ -464,7 +466,7 @@ describe('Website Messages — list', () => {
       act: async (user: ReturnType<typeof userEvent.setup>) => {
         await user.type(
           screen.getByRole('searchbox', {
-            name: 'Search by name, email or message',
+            name: 'Search by name, email, phone or message',
           }),
           'm1'
         );
@@ -565,7 +567,7 @@ describe('Website Messages — empty, no results and error', () => {
     expect(await screen.findByText('No messages yet')).toBeTruthy();
     expect(
       screen.getByText(
-        "When visitors send a message through your website's Contact form, it will appear here."
+        'When visitors send a message through your website’s Contact form or a “register your interest” form, it will appear here.'
       )
     ).toBeTruthy();
     expect(screen.queryByText('No messages match these filters')).toBeNull();
@@ -763,6 +765,72 @@ describe('Website Messages — reading and managing a message', () => {
     expect(
       (window as unknown as { __pwned?: boolean }).__pwned
     ).toBeUndefined();
+  });
+});
+
+describe('Website Messages — "register your interest" submissions (CMS phase 3d)', () => {
+  const interest = submission('i1', {
+    name: 'Mariam Adel',
+    email: '',
+    message: '',
+    status: 'read',
+    kind: 'interest',
+    phone: '+201001234567',
+    choice: 'Third secondary',
+    choiceLabel: 'Grade',
+  });
+
+  it('tags them in the list with the phone and the chosen option', async () => {
+    dataset = [interest, ...BASE_ROWS];
+    renderPage();
+    const table = await findTable();
+    const row = within(table).getByText('Mariam Adel').closest('tr')!;
+    expect(within(row).getByText('Interest')).toBeTruthy();
+    expect(within(row).getByText('+20 10 01234567')).toBeTruthy();
+    expect(within(row).getByText('Grade: Third secondary')).toBeTruthy();
+  });
+
+  it('shows the phone, the choice and call / WhatsApp actions in the sheet', async () => {
+    dataset = [interest, ...BASE_ROWS];
+    renderPage();
+    const user = userEvent.setup(USER_EVENT_OPTIONS);
+    const table = await findTable();
+    await user.click(within(table).getByText('Mariam Adel'));
+    const sheet = await screen.findByRole('dialog');
+    expect(
+      within(sheet).getByRole('heading', { name: 'Registration interest' })
+    ).toBeTruthy();
+    expect(within(sheet).getByText('Register your interest')).toBeTruthy();
+    expect(within(sheet).getByText('Grade')).toBeTruthy();
+    expect(within(sheet).getByText('Third secondary')).toBeTruthy();
+    expect(within(sheet).getByText('No message was added.')).toBeTruthy();
+    expect(
+      within(sheet).queryByRole('link', { name: 'Reply by email' })
+    ).toBeNull();
+    expect(
+      within(sheet).getByRole('link', { name: 'Call' }).getAttribute('href')
+    ).toBe('tel:+201001234567');
+    const whatsapp = within(sheet).getByRole('link', { name: /WhatsApp/ });
+    expect(whatsapp.getAttribute('href')).toBe('https://wa.me/201001234567');
+    expect(whatsapp.getAttribute('rel')).toBe('noopener noreferrer');
+  });
+
+  it('filters by form on the server and keeps it in the URL', async () => {
+    dataset = [interest, ...BASE_ROWS];
+    renderPage();
+    await findTable();
+    fireEvent.change(screen.getByRole('combobox', { name: 'Form' }), {
+      target: { value: 'interest' },
+    });
+    await waitFor(() =>
+      expect(lastListRequest()).toMatchObject({ kind: 'interest' })
+    );
+    expect(location()).toContain('kind=interest');
+    const table = await findTable();
+    await waitFor(() =>
+      expect(within(table).queryByText('Layla Hassan')).toBeNull()
+    );
+    expect(within(table).getByText('Mariam Adel')).toBeTruthy();
   });
 });
 

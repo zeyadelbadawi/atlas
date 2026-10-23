@@ -12,7 +12,10 @@
  */
 import {
   Award,
+  BellRing,
   BookOpenCheck,
+  ClipboardList,
+  Table2,
   CalendarClock,
   Handshake,
   MapPin,
@@ -170,6 +173,22 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadataEntry> = {
     type: 'countdown',
     labelKey: 'website:sections.countdown.label',
     icon: Timer,
+  },
+  // CMS phase 3d (batch C).
+  interestForm: {
+    type: 'interestForm',
+    labelKey: 'website:sections.interestForm.label',
+    icon: ClipboardList,
+  },
+  announcementBar: {
+    type: 'announcementBar',
+    labelKey: 'website:sections.announcementBar.label',
+    icon: BellRing,
+  },
+  comparison: {
+    type: 'comparison',
+    labelKey: 'website:sections.comparison.label',
+    icon: Table2,
   },
 };
 
@@ -334,6 +353,7 @@ export function getDefaultSectionConfig<TType extends SectionType>(
       items: SAMPLE_RESULTS,
     },
     ...phase3dStarterConfigs(),
+    ...phase3dBatchCStarterConfigs(),
   };
 
   return defaults[type] as SectionConfigMap[TType];
@@ -445,6 +465,110 @@ function phase3dStarterConfigs(): Pick<
         label: { en: 'Book your seat', ar: 'احجز مقعدك' },
         authAction: 'signUp',
       },
+    },
+  };
+}
+
+/**
+ * CMS phase 3d (batch C) — starter content in both languages. The interest
+ * form starts with the three secondary grades as its choice (Egypt's most
+ * common case; the Owner edits or hides the list), the notice strip with an
+ * open-registration line and a sign-up button, and the comparison with
+ * "Our academy" against "Studying alone". Ids are fresh per section.
+ */
+function phase3dBatchCStarterConfigs(): Pick<
+  SectionConfigMap,
+  'interestForm' | 'announcementBar' | 'comparison'
+> {
+  const id = () => crypto.randomUUID();
+  const us = id();
+  const alone = id();
+  const row = (
+    en: string,
+    ar: string,
+    cells: SectionConfigMap['comparison']['rows'][number]['cells']
+  ) => ({ id: id(), label: { en, ar }, cells });
+  return {
+    interestForm: {
+      title: { en: 'Register your interest', ar: 'سجّل اهتمامك' },
+      description: {
+        en: 'Leave your name and number and we will call you about the new term.',
+        ar: 'اترك اسمك ورقمك وسنتصل بك بخصوص الترم الجديد.',
+      },
+      emailField: 'optional',
+      choiceField: 'required',
+      choiceLabel: { en: 'Grade', ar: 'الصف الدراسي' },
+      options: [
+        {
+          id: id(),
+          label: { en: 'First secondary', ar: 'الصف الأول الثانوي' },
+        },
+        {
+          id: id(),
+          label: { en: 'Second secondary', ar: 'الصف الثاني الثانوي' },
+        },
+        {
+          id: id(),
+          label: { en: 'Third secondary', ar: 'الصف الثالث الثانوي' },
+        },
+      ],
+      messageField: 'hidden',
+      submitLabel: { en: 'Send', ar: 'أرسل' },
+      successMessage: {
+        en: 'Thank you! We will call you soon.',
+        ar: 'شكرًا لك! سنتصل بك قريبًا.',
+      },
+    },
+    announcementBar: {
+      text: {
+        en: 'Registration for 2026/2027 is open',
+        ar: 'التسجيل للعام الدراسي 2026/2027 مفتوح الآن',
+      },
+      tone: 'brand',
+      cta: {
+        label: { en: 'Register now', ar: 'سجّل الآن' },
+        authAction: 'signUp',
+      },
+    },
+    comparison: {
+      title: {
+        en: 'Our academy or studying alone?',
+        ar: 'أكاديميتنا أم المذاكرة وحدك؟',
+      },
+      description: {
+        en: 'What you get when you study with us.',
+        ar: 'ما تحصل عليه عندما تدرس معنا.',
+      },
+      columns: [
+        {
+          id: us,
+          label: { en: 'Our academy', ar: 'أكاديميتنا' },
+          highlighted: true,
+        },
+        { id: alone, label: { en: 'Studying alone', ar: 'المذاكرة وحدك' } },
+      ],
+      rows: [
+        row('Live classes with a teacher', 'حصص مباشرة مع مدرس', [
+          { column: us, value: 'yes' },
+          { column: alone, value: 'no' },
+        ]),
+        row('Answers to your questions', 'إجابات عن أسئلتك', [
+          {
+            column: us,
+            value: 'text',
+            text: { en: 'Same day', ar: 'في نفس اليوم' },
+          },
+          {
+            column: alone,
+            value: 'text',
+            text: { en: 'Search alone', ar: 'تبحث وحدك' },
+          },
+        ]),
+        row('Weekly tests and follow-up', 'اختبارات ومتابعة أسبوعية', [
+          { column: us, value: 'yes' },
+          { column: alone, value: 'no' },
+        ]),
+      ],
     },
   };
 }

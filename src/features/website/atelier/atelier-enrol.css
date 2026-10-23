@@ -1,0 +1,72 @@
+/*
+ * Atelier — CMS phase 3d (batch C): the brand ground and the notice strip
+ * (`sections/atelier-enrol-sections.tsx`). The interest form and the
+ * comparison use the contact page's and the theme's existing classes.
+ */
+
+/* The brand ground: the brand as Atelier sets it in text (`--atelier-brand`,
+   solved to 4.5:1 against the paper as painted, for every palette) with the
+   paper as its text — the same pair, reversed. Atelier's CTA fill is only
+   held to 3:1 against the paper, and its label to 4.5:1 only where the
+   palette allows, so it is not used here. Only the notice strip uses this
+   ground; its actions take the same pair, inverted or as a line. */
+[data-theme-pack='atelier'] [data-env='brand'] {
+  background-color: var(--atelier-brand);
+  color: var(--atelier-paper);
+}
+[data-theme-pack='atelier'] [data-env='brand'] .at-btn {
+  background: var(--atelier-paper);
+  color: var(--atelier-brand);
+  border-color: var(--atelier-paper);
+}
+[data-theme-pack='atelier'] [data-env='brand'] .at-btn:hover,
+[data-theme-pack='atelier'] [data-env='brand'] .at-btn:active {
+  background: var(--atelier-paper);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+[data-theme-pack='atelier'] [data-env='brand'] .at-btn-ghost {
+  color: var(--atelier-paper);
+  border-color: var(--atelier-paper);
+}
+[data-theme-pack='atelier'] [data-env='brand'] .at-link {
+  color: var(--atelier-paper);
+}
+[data-theme-pack='atelier'] [data-env='brand'] :is(a, button):focus-visible {
+  outline: 2px solid var(--atelier-paper);
+  outline-offset: 3px;
+}
+
+/* The notice strip: a slim chapter, at the Owner's spacing choice. */
+[data-theme-pack='atelier'] .at-chapter.atn-announce {
+  padding-block: calc(0.75rem * var(--ws-space, 1));
+}
+[data-theme-pack='atelier'] .atn-announce-text {
+  font-family: var(--at-font-display);
+  font-size: 1.125rem;
+  line-height: 1.4;
+}
+/* A text action is still a 44px target; its underline stays under the
+   words. */
+[data-theme-pack='atelier'] .atn-announce .at-link.atn-announce-action {
+  display: inline-block;
+  padding-block: 0.6875rem;
+  background-position-y: calc(100% - 0.5625rem);
+}
+[data-theme-pack='atelier'] .atn-announce .atn-announce-action:not(.at-link) {
+  min-height: 2.75rem;
+}
+/* A filled button on the strip's deep paper uses the brand-text pair too:
+   Atelier's CTA pair can paint just under 4.5:1 for some light brands
+   (e.g. a light cyan reads 4.42:1), and the strip promises 4.5:1. */
+[data-theme-pack='atelier'] .atn-announce[data-env='deep'] .at-btn {
+  background: var(--atelier-brand);
+  color: var(--atelier-paper);
+  border-color: var(--atelier-brand);
+}
+[data-theme-pack='atelier'] .atn-announce[data-env='deep'] .at-btn:hover,
+[data-theme-pack='atelier'] .atn-announce[data-env='deep'] .at-btn:active {
+  background: var(--atelier-brand);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

@@ -55,6 +55,7 @@ import {
 } from './SectionButtonsEditor';
 import {
   CustomSectionField,
+  customFieldKeys,
   isCustomField,
   resolveCustomFieldIssue,
 } from './section-field-editors';
@@ -243,10 +244,17 @@ function resolveIssueField(
     };
   }
 
-  const field = schema.fields.find((candidate) => candidate.key === head);
+  const field = schema.fields.find((candidate) =>
+    isCustomField(candidate)
+      ? customFieldKeys(candidate).includes(head ?? '')
+      : candidate.key === head
+  );
   if (field) {
     if (isCustomField(field)) {
-      return { ...resolveCustomFieldIssue(field, parts.slice(1)), language };
+      return {
+        ...resolveCustomFieldIssue(field, parts.slice(1), head),
+        language,
+      };
     }
     if (field.kind === 'cta') {
       return {
@@ -1226,6 +1234,7 @@ export function SectionConfigForm<TType extends SectionType>({
                 key={field.key}
                 labelKey={field.labelKey}
                 minButtons={field.minButtons}
+                maxButtons={field.maxButtons}
                 errorFor={errorFor}
                 pages={pages}
                 academyId={academyId}

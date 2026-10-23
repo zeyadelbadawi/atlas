@@ -42,7 +42,8 @@ export type SectionFieldKind =
   | 'url'
   | 'youtube'
   | 'deadline'
-  | 'plans';
+  | 'plans'
+  | 'comparison';
 
 interface FieldDescriptorBase {
   readonly key: string;
@@ -105,6 +106,8 @@ export interface ButtonsFieldDescriptor extends FieldDescriptorBase {
   readonly kind: 'buttons';
   /** How many buttons the section needs (a CTA band needs one). */
   readonly minButtons?: number;
+  /** How many it may have when fewer than three (a notice strip has one, in `cta`). */
+  readonly maxButtons?: number;
 }
 
 /**
@@ -113,10 +116,13 @@ export interface ButtonsFieldDescriptor extends FieldDescriptorBase {
  * - `youtube`: a YouTube link, stored as the video id under `key`;
  * - `deadline`: a date and time in the academy's time zone, stored as an
  *   ISO deadline under `key` and the zone under `timeZone`;
- * - `plans`: a pricing section's plans, each with its features and button.
+ * - `plans`: a pricing section's plans, each with its features and button;
+ * - `comparison`: a comparison table's columns and rows (`columns` and
+ *   `rows`), each row's cell per column ✓ / ✗ / short text
+ *   (`ComparisonGridEditor`).
  */
 export interface CustomFieldDescriptor extends FieldDescriptorBase {
-  readonly kind: 'youtube' | 'deadline' | 'plans';
+  readonly kind: 'youtube' | 'deadline' | 'plans' | 'comparison';
 }
 
 /** A fully discriminated union on `kind` — `select` is the only variant that carries `options`, so `descriptor.options` narrows correctly without a cast. */
