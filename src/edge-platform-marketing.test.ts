@@ -126,13 +126,13 @@ describe('static marketing site (Caddyfile)', () => {
     expect(body).not.toContain('index.html');
   });
 
-  it('answers /blog, the planned pages and unknown /ar paths with the branded 404', () => {
+  it('answers /blog and unknown /ar paths with the branded 404 (the product pages are published, M1b)', () => {
     const ar = matcher(platform, 'marketing_gone_ar');
     expect(ar).toContain('path /ar/*');
     expect(ar).toContain('try_files /ar/404.html');
     const gone = matcher(platform, 'marketing_gone');
     expect(gone).toMatch(/path \/blog \/blog\/\* /);
-    expect(gone).toContain('/features/content-protection');
+    expect(gone).not.toContain('/features/');
     expect(gone).toContain('try_files /404.html');
     expect(platform).toMatch(
       /handle @marketing_gone_ar \{\s*(?:import edge_html \*\s*)?root \* \/srv-marketing\s*rewrite \* \/ar\/404\.html\s*file_server \{\s*status 404\s*\}\s*\}/

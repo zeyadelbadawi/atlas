@@ -12,7 +12,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildMarketingSite } from './site';
 import { htmlToText, mainHtml } from './llms-full';
-import { MARKETING_PLANNED_PATHS } from './routing';
 import { buildLlmsTxt, buildRobotsTxt, type LlmsCopy } from './seo-files';
 import { FIXTURE_ASSETS, FIXTURE_CTX, FIXTURE_PAGES } from './test-fixtures';
 
@@ -129,8 +128,6 @@ describe('llms.txt and llms-full.txt', () => {
       'https://atlass.dpdns.org/ar/pricing',
     ]);
     expect(llms).not.toMatch(/404|notFound/);
-    for (const planned of MARKETING_PLANNED_PATHS)
-      expect(llms).not.toContain(planned);
   });
 
   it('falls back to a factual file without copy', () => {

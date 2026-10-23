@@ -4,6 +4,7 @@
  * written here: they come from the live catalog at build time.
  */
 import type { MarketingContent } from './content.types';
+import { PRODUCT_EN } from './product.en';
 
 const REGISTER = '/auth/register';
 // Signed-in stand-ins for the trial CTAs: the app resolves `?open=` to the
@@ -63,32 +64,36 @@ export const en: MarketingContent = {
       menuClose: 'Close menu',
       menuLabel: 'Site menu',
     },
-    plannedBadge: 'Coming soon',
-    plannedPages: [
+    productPages: [
       {
         id: 'academy-website',
         label: 'Academy website',
-        description: 'Designs, pages and your own domain.',
+        description: 'Designs, a visual editor, page history and your own domain.',
+        moreLabel: 'How the academy website works',
       },
       {
         id: 'payments',
         label: 'Payments',
         description: 'Wallets, InstaPay and bank transfer, approved by you.',
+        moreLabel: 'How student payments work',
       },
       {
         id: 'content-protection',
         label: 'Lessons and devices',
         description: 'How lessons play and which devices can open them.',
+        moreLabel: 'How lessons and devices work',
       },
       {
         id: 'teams-and-academies',
         label: 'Teams and academies',
         description: 'Roles for your assistants, and more than one academy.',
+        moreLabel: 'How teams and several academies work',
       },
       {
         id: 'quizzes-and-certificates',
         label: 'Quizzes and certificates',
         description: 'Exams, homework and certificates anyone can check.',
+        moreLabel: 'How quizzes, homework and certificates work',
       },
     ],
     languageSwitch: {
@@ -143,7 +148,7 @@ export const en: MarketingContent = {
             { label: 'Product overview', href: '/features' },
             { label: 'Pricing', href: '/pricing' },
           ],
-          planned: true,
+          products: true,
         },
         {
           title: 'Company',
@@ -195,6 +200,41 @@ export const en: MarketingContent = {
         'An academy site on your own subdomain or domain, wallet and InstaPay payments you approve, quizzes and certificates, and roles for your assistants.',
       ogTitle: 'What you can run on {brand} today',
       ogImageAlt: '{brand} product overview',
+    },
+    'academy-website': {
+      title: 'Academy Website on Your Own Domain, Arabic & English | {brand}',
+      description:
+        'Your academy site on its own subdomain or a domain you own, built in a visual editor from 32 section types, with page history, in Arabic and English.',
+      ogTitle: 'An academy website under your name',
+      ogImageAlt: '{brand}: academy website and visual editor',
+    },
+    'payments': {
+      title: 'Collect Course Payments by Vodafone Cash & InstaPay | {brand}',
+      description:
+        'Students pay you by wallet, InstaPay or bank transfer and upload the proof. You approve once and they are enrolled. No commission on these payments.',
+      ogTitle: 'Student payments by wallet, InstaPay or bank transfer',
+      ogImageAlt: '{brand}: student payments you approve',
+    },
+    'content-protection': {
+      title: 'Lessons and Device Limits for Paid Courses | {brand}',
+      description:
+        'YouTube lessons played inside your academy for enrolled students, a device limit you set, one screen at a time, and the student\'s code on each video.',
+      ogTitle: 'Lessons and devices on {brand}',
+      ogImageAlt: '{brand}: lessons and device limits',
+    },
+    'teams-and-academies': {
+      title: 'Add Teaching Assistants and Run Several Academies | {brand}',
+      description:
+        'Add assistants as managers or instructors; each instructor sees only their own courses. Open more academies with their own name, domain and students.',
+      ogTitle: 'Teams and several academies on {brand}',
+      ogImageAlt: '{brand}: roles for your team and several academies',
+    },
+    'quizzes-and-certificates': {
+      title: 'Quizzes, Assignments and Verifiable Certificates | {brand}',
+      description:
+        'Quizzes with five question types and grading, assignments with due dates and feedback, and certificates anyone can verify online.',
+      ogTitle: 'Quizzes, homework and certificates on {brand}',
+      ogImageAlt: '{brand}: quizzes, assignments and certificates',
     },
     pricing: {
       title: '{brand} Pricing: Plans by Students and Academies',
@@ -694,9 +734,9 @@ export const en: MarketingContent = {
         claim: 'ORG-3.2, ANL-2, MSG-9',
       },
     ],
-    planned: {
-      title: 'Detailed product pages',
-      lead: 'We are writing a page for each part of the product. They will appear here when they are ready.',
+    productPages: {
+      title: 'Each part in detail',
+      lead: 'A page for each part of the product: what it does today, how it works and where it stops.',
     },
     closing: {
       title: 'Try it with your own courses and students',
@@ -709,6 +749,9 @@ export const en: MarketingContent = {
       secondaryCta: { label: 'Set it up with us', href: SALES },
     },
   },
+
+  // ─── Product pages (M1b) ──────────────────────────────────────────────────
+  product: PRODUCT_EN,
 
   // ─── Pricing ──────────────────────────────────────────────────────────────
   pricing: {
@@ -1235,8 +1278,6 @@ export const en: MarketingContent = {
     eyebrow: 'Error 404',
     title: 'Page not found',
     body: 'This page does not exist. Go to the home page, see pricing or contact us.',
-    plannedHint:
-      'If you followed a link to a product page, that page is coming soon.',
     links: [
       { label: 'Home page', href: '/' },
       { label: 'Pricing', href: '/pricing' },
@@ -1255,6 +1296,11 @@ export const en: MarketingContent = {
     pageNotes: {
       home: 'What {brand} is, how student payments work, and who it suits.',
       features: 'What an academy on {brand} can do today, with its limits.',
+      'academy-website': 'The academy website: visual editor, 32 section types, templates, page history, languages and domains.',
+      'payments': 'How students pay by wallet, InstaPay or bank transfer, and how the owner approves.',
+      'content-protection': 'How lessons play, device limits, the student code on videos, and the limits.',
+      'teams-and-academies': 'Owner, manager and instructor roles, and running more than one academy.',
+      'quizzes-and-certificates': 'Quiz question types, homework, and certificates anyone can verify.',
       pricing: 'Plans by number of students and academies, trial terms and limits.',
       security: 'How academy data is kept apart, sign-in protection and privacy requests.',
       about: 'Why {brand} exists and who it is for.',

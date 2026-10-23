@@ -7,11 +7,11 @@
  */
 import type { ReactNode } from 'react';
 import { BadgeCheck, BarChart3, Check, ClipboardCheck, Globe, Languages, LayoutTemplate, ListChecks, Mail, MonitorSmartphone, Palette, UserPlus, type LucideIcon } from 'lucide-react';
-import type { MkItem, MkSectionHead } from '../content/content.types';
-import { ButtonLink, Container, CtaBand, Faq, FitColumns, Section, SectionHeading, StepList, dirOf } from '../components/ui';
+import type { MarketingProductPageId, MkItem, MkSectionHead } from '../content/content.types';
+import { ButtonLink, Container, CtaBand, Faq, FitColumns, MoreLink, Section, SectionHeading, StepList, dirOf } from '../components/ui';
 import { PricingCards } from '../components/pricing';
 import { Screenshot } from '../components/screenshot';
-import { AtlasMark } from '../components/chrome';
+import { AtlasMark, productPagePath } from '../components/chrome';
 import { canFill, fill, link } from '../lib/copy';
 import { formatNumber } from '../lib/site';
 import type { MarketingLang, MarketingPageDef } from '../types';
@@ -27,6 +27,19 @@ function Head({ env, head, id, level = 2 }: { env: PageEnv; head: MkSectionHead;
       title={fill(head.title, env.tokens)}
       lead={head.lead ? fill(head.lead, env.tokens) : undefined}
     />
+  );
+}
+
+/** IA §5 — each pillar links to its product page with descriptive anchor text. */
+function ProductMore({ env, id }: { env: PageEnv; id: MarketingProductPageId }) {
+  const label = env.content.chrome.productPages.find((p) => p.id === id)?.moreLabel;
+  if (!label) return null;
+  return (
+    <div>
+      <MoreLink href={productPagePath(env.lang, id)} dir={dirOf(env.lang)}>
+        {fill(label, env.tokens)}
+      </MoreLink>
+    </div>
   );
 }
 
@@ -198,6 +211,7 @@ function HomePage({ env }: { env: PageEnv }) {
                   {fill(h.payments.cta.label, tokens)}
                 </ButtonLink>
               </div>
+              <ProductMore env={env} id="payments" />
             </>
           }
           media={
@@ -220,6 +234,7 @@ function HomePage({ env }: { env: PageEnv }) {
             <>
               <Head env={env} head={h.website} id="website-title" />
               <ItemList env={env} items={h.website.items} icons={WEBSITE_ICONS} />
+              <ProductMore env={env} id="academy-website" />
             </>
           }
           media={
@@ -261,6 +276,7 @@ function HomePage({ env }: { env: PageEnv }) {
             {fill(h.team.cta.label, tokens)}
           </a>
         </div>
+        <ProductMore env={env} id="teams-and-academies" />
       </Section>
 
       {/* S8 Assessments */}
@@ -270,6 +286,7 @@ function HomePage({ env }: { env: PageEnv }) {
             <>
               <Head env={env} head={h.assessments} id="assessments-title" />
               <ItemList env={env} items={h.assessments.items} icons={ASSESSMENT_ICONS} />
+              <ProductMore env={env} id="quizzes-and-certificates" />
             </>
           }
           media={<Screenshot name="quiz-builder" lang={lang} alt={fill(h.assessments.title, tokens)} demoLabel={demo} />}

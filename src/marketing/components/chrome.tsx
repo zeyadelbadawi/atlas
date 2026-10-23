@@ -4,7 +4,7 @@
  */
 import type { ReactNode } from 'react';
 import { ChevronDown, Menu, Monitor, Moon, Sun } from 'lucide-react';
-import type { MarketingContent, MarketingPlannedPageId } from '../content/content.types';
+import type { MarketingContent, MarketingProductPageId } from '../content/content.types';
 import type { MarketingLang } from '../types';
 import { fill, link, type Tokens } from '../lib/copy';
 import { docsHref, localePath } from '../lib/site';
@@ -68,26 +68,17 @@ function ThemeToggle({ copy }: { copy: MarketingContent['chrome']['theme'] }) {
   );
 }
 
-/**
- * Where each product topic is covered today: its section on the product
- * overview page. The detailed product pages are still planned, so the
- * menu and footer link to these sections instead of listing pages that
- * do not exist yet.
- */
-export const PRODUCT_SECTION_ANCHOR: Record<MarketingPlannedPageId, string> = {
-  'academy-website': 'website',
-  payments: 'payments',
-  'content-protection': 'lessons',
-  'teams-and-academies': 'team',
-  'quizzes-and-certificates': 'assessments',
-};
+/** M1b — the product page of a topic, in the page language. */
+export function productPagePath(lang: MarketingContent['lang'], id: MarketingProductPageId): string {
+  return localePath(lang, `/features/${id}`);
+}
 
-function ProductSectionList({ content, overview }: { content: MarketingContent; overview: string }) {
+function ProductSectionList({ content }: { content: MarketingContent }) {
   return (
     <ul className="mt-1 border-t border-border pt-1">
-      {content.chrome.plannedPages.map((item) => (
+      {content.chrome.productPages.map((item) => (
         <li key={item.id}>
-          <a href={`${overview}#${PRODUCT_SECTION_ANCHOR[item.id]}`} className="block rounded-lg p-3 hover:bg-surface">
+          <a href={productPagePath(content.lang, item.id)} className="block rounded-lg p-3 hover:bg-surface">
             <span className="block font-medium text-foreground">{item.label}</span>
             <span className="mt-0.5 block text-sm text-muted-foreground">{item.description}</span>
           </a>
@@ -156,7 +147,7 @@ export function Header({
                     {h.productOverview.description}
                   </span>
                 </a>
-                <ProductSectionList content={content} overview={overview} />
+                <ProductSectionList content={content} />
               </div>
             </details>
             {nav.map((item) => (
@@ -223,6 +214,19 @@ export function Header({
                       <a href={overview} className="block rounded-lg px-3 py-3 font-semibold">
                         {h.productOverview.label}
                       </a>
+                      <ul className="ms-3 border-s border-border ps-2 text-base">
+                        {content.chrome.productPages.map((item) => (
+                          <li key={item.id}>
+                            <a
+                              href={productPagePath(lang, item.id)}
+                              aria-current={currentId === item.id ? 'page' : undefined}
+                              className="block rounded-lg px-3 py-2.5 text-muted-foreground aria-[current=page]:text-primary"
+                            >
+                              {item.label}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
                     </li>
                     {[...nav, { id: 'about', label: h.about, href: localePath(lang, '/about') }].map((item) => (
                       <li key={item.id}>
@@ -290,13 +294,13 @@ export function Footer({
                     </li>
                   );
                 })}
-                {column.planned ? (
+                {column.products ? (
                   <li>
                     <ul className="space-y-3">
-                      {content.chrome.plannedPages.map((item) => (
+                      {content.chrome.productPages.map((item) => (
                         <li key={item.id}>
                           <a
-                            href={`${localePath(lang, '/features')}#${PRODUCT_SECTION_ANCHOR[item.id]}`}
+                            href={productPagePath(lang, item.id)}
                             className="text-muted-foreground hover:text-foreground"
                           >
                             {item.label}

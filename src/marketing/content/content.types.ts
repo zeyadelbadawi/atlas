@@ -54,6 +54,7 @@ import type { PlanLimitKey } from '@/types/plan.types';
 export type MarketingPageId =
   | 'home'
   | 'features'
+  | MarketingProductPageId
   | 'pricing'
   | 'security'
   | 'about'
@@ -66,8 +67,11 @@ export type MarketingPlanKey = 'starter' | 'growth' | 'enterprise';
 /** Contact topics accepted by `POST /api/v1/public/contact` in B1. */
 export type MarketingContactTopic = 'sales' | 'support' | 'partnership' | 'other';
 
-/** The five product pages that are planned (DL-37). Never linked in B1. */
-export type MarketingPlannedPageId =
+/**
+ * The five product pages (M1b, B2): `/features/<id>` and `/ar/features/<id>`.
+ * Planned in B1 (DL-37); published now.
+ */
+export type MarketingProductPageId =
   | 'academy-website'
   | 'payments'
   | 'content-protection'
@@ -159,10 +163,13 @@ export interface MkPageSeo {
   readonly ogImageAlt: string;
 }
 
-export interface MkPlannedPage {
-  readonly id: MarketingPlannedPageId;
+/** A product page as the header menu, the footer and the hub list it. */
+export interface MkProductPageLink {
+  readonly id: MarketingProductPageId;
   readonly label: string;
   readonly description: string;
+  /** Descriptive anchor text for in-page links to it (home pillars, siblings). */
+  readonly moreLabel: string;
 }
 
 // ─── Global chrome ──────────────────────────────────────────────────────────
@@ -184,9 +191,7 @@ export interface MkChrome {
     readonly menuClose: string;
     readonly menuLabel: string;
   };
-  /** Label shown beside every planned page; the item is not a link. */
-  readonly plannedBadge: string;
-  readonly plannedPages: readonly MkPlannedPage[];
+  readonly productPages: readonly MkProductPageLink[];
   /** The link to the OTHER language. Its text is in that language. */
   readonly languageSwitch: {
     readonly targetLang: 'en' | 'ar';
@@ -246,8 +251,8 @@ export interface MkChrome {
     readonly columns: readonly {
       readonly title: string;
       readonly links: readonly MkLink[];
-      /** Product topics listed in this column, linked to their sections on the product overview page. */
-      readonly planned?: boolean;
+      /** The product pages (`chrome.productPages`) are listed in this column. */
+      readonly products?: boolean;
     }[];
     /** Render only if a consent dialog exists on the marketing host. */
     readonly cookiePreferences: string;
@@ -338,9 +343,37 @@ export interface MkFeatures {
     readonly secondaryCta: MkLink;
   };
   readonly groups: readonly MkFeatureGroup[];
-  /** Uses `chrome.plannedPages` and `chrome.plannedBadge`. */
-  readonly planned: MkSectionHead;
+  /** The list of product pages; uses `chrome.productPages`. */
+  readonly productPages: MkSectionHead;
   readonly closing: MkClosing;
+}
+
+// ─── Product pages (M1b) ────────────────────────────────────────────────────
+
+export interface MkProductSection extends MkSectionHead {
+  readonly id: string;
+  readonly points: readonly string[];
+  /** Honest limit shown under the points, when the section has one. */
+  readonly note?: string;
+  /** Claim IDs / sources this section rests on (never rendered). */
+  readonly claim?: string;
+  /** The help-center article that explains this in detail (`help:/…`). */
+  readonly learnMore?: MkLink;
+}
+
+export interface MkProductPage {
+  /** Breadcrumb and `og:title` stem. */
+  readonly name: string;
+  readonly hero: MkSectionHead & {
+    readonly primaryCta: MkLink;
+    readonly secondaryCta: MkLink;
+  };
+  readonly sections: readonly MkProductSection[];
+  /** "Where it stops": the honest limits, as a list. */
+  readonly limits: MkSectionHead & { readonly items: readonly string[] };
+  /** Sibling pages linked at the end (IA §5). */
+  readonly related: readonly MarketingProductPageId[];
+  readonly relatedTitle: string;
 }
 
 // ─── Pricing ────────────────────────────────────────────────────────────────
@@ -512,8 +545,6 @@ export interface MkNotFound {
   readonly eyebrow: string;
   readonly title: string;
   readonly body: string;
-  /** Shown too, since planned product URLs return this page. */
-  readonly plannedHint: string;
   /** Home, pricing and contact only. */
   readonly links: readonly MkLink[];
 }
@@ -573,6 +604,7 @@ export interface MarketingContent {
   readonly seo: Readonly<Record<MarketingPageId, MkPageSeo>>;
   readonly home: MkHome;
   readonly features: MkFeatures;
+  readonly product: Readonly<Record<MarketingProductPageId, MkProductPage>>;
   readonly pricing: MkPricing;
   readonly security: MkSecurity;
   readonly about: MkAbout;

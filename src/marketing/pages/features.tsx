@@ -1,17 +1,29 @@
 /**
  * Product hub `/features` · `/ar/features` — SPEC §B.5: one block per
  * capability group with a question H2, a quotable answer, the honest limit,
- * a real screenshot, and the planned pages listed (not linked) as planned.
+ * a real screenshot, a link to the group's product page (M1b), and the
+ * five product pages listed at the end.
  */
-import { Check } from 'lucide-react';
-import { ButtonLink, Container, CtaBand, LearnMore, Section, SectionHeading, dirOf } from '../components/ui';
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { ButtonLink, Container, CtaBand, LearnMore, MoreLink, Section, SectionHeading, dirOf } from '../components/ui';
 import { Screenshot } from '../components/screenshot';
 import { HeroArt } from '../components/hero-art';
+import { productPagePath } from '../components/chrome';
+import type { MarketingProductPageId } from '../content/content.types';
 import type { ScreenshotKey } from '../data/screenshots';
 import { fill, link } from '../lib/copy';
 import { localePath } from '../lib/site';
 import type { MarketingLang, MarketingPageDef } from '../types';
 import { Shell, breadcrumb, pageEnv, seoHead, webPage, type PageEnv } from './shared';
+
+/** The product page that covers each group in detail (M1b). */
+const GROUP_PAGE: Record<string, MarketingProductPageId> = {
+  payments: 'payments',
+  website: 'academy-website',
+  lessons: 'content-protection',
+  assessments: 'quizzes-and-certificates',
+  team: 'teams-and-academies',
+};
 
 /** Real capture per group id; groups without one render text only. */
 const GROUP_SHOTS: Record<string, ScreenshotKey> = {
@@ -88,7 +100,14 @@ function FeaturesPage({ env }: { env: PageEnv }) {
             {group.note ? (
               <p className="mt-6 rounded-lg border border-border bg-surface p-4 leading-relaxed">{fill(group.note, tokens)}</p>
             ) : null}
-            {group.learnMore ? <LearnMore lang={lang} value={group.learnMore} tokens={tokens} /> : null}
+            <div className="flex flex-wrap items-center gap-x-6">
+              {GROUP_PAGE[group.id] ? (
+                <MoreLink href={productPagePath(lang, GROUP_PAGE[group.id])} dir={dir}>
+                  {content.chrome.productPages.find((p) => p.id === GROUP_PAGE[group.id])?.moreLabel}
+                </MoreLink>
+              ) : null}
+              {group.learnMore ? <LearnMore lang={lang} value={group.learnMore} tokens={tokens} /> : null}
+            </div>
           </div>
         );
         return (
@@ -107,23 +126,27 @@ function FeaturesPage({ env }: { env: PageEnv }) {
         );
       })}
 
-      <Section labelledBy="planned-title" className="border-t border-border">
+      <Section labelledBy="product-pages-title" className="border-t border-border">
         <SectionHeading
-          id="planned-title"
-          eyebrow={f.planned.eyebrow ? fill(f.planned.eyebrow, tokens) : undefined}
-          title={fill(f.planned.title, tokens)}
-          lead={f.planned.lead ? fill(f.planned.lead, tokens) : undefined}
+          id="product-pages-title"
+          eyebrow={f.productPages.eyebrow ? fill(f.productPages.eyebrow, tokens) : undefined}
+          title={fill(f.productPages.title, tokens)}
+          lead={f.productPages.lead ? fill(f.productPages.lead, tokens) : undefined}
         />
         <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {content.chrome.plannedPages.map((item) => (
-            <li key={item.id} className="mk-card p-5">
-              <span className="flex flex-wrap items-center gap-2 font-semibold text-foreground">
-                {item.label}
-                <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
-                  {content.chrome.plannedBadge}
+          {content.chrome.productPages.map((item) => (
+            <li key={item.id}>
+              <a href={productPagePath(lang, item.id)} className="mk-card block h-full p-5 hover:border-primary">
+                <span className="flex items-center justify-between gap-2 font-semibold text-foreground">
+                  {item.label}
+                  {dir === 'rtl' ? (
+                    <ArrowLeft className="size-4 shrink-0 text-primary" aria-hidden strokeWidth={1.75} />
+                  ) : (
+                    <ArrowRight className="size-4 shrink-0 text-primary" aria-hidden strokeWidth={1.75} />
+                  )}
                 </span>
-              </span>
-              <span className="mt-1 block text-sm text-muted-foreground">{item.description}</span>
+                <span className="mt-1 block text-sm text-muted-foreground">{item.description}</span>
+              </a>
             </li>
           ))}
         </ul>
