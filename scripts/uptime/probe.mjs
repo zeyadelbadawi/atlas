@@ -133,7 +133,15 @@ function defaultSleep(ms) {
 export function certificateExpiry(host) {
   return new Promise((resolve) => {
     const socket = tls.connect(
-      { host, port: 443, servername: host, timeout: TIMEOUT_MS },
+      {
+        host,
+        port: 443,
+        servername: host,
+        timeout: TIMEOUT_MS,
+        // Read valid_to even for an expired or untrusted certificate; the
+        // page check already reports trust failures.
+        rejectUnauthorized: false,
+      },
       () => {
         const cert = socket.getPeerCertificate();
         socket.end();
@@ -188,7 +196,7 @@ export function renderStatus(problems, now) {
   ].join('\n');
 }
 
-async function github(path, init = {}) {
+async function github(path, init = {}, { allow422 = false } = {}) {
   const repo = process.env.GITHUB_REPOSITORY;
   const response = await fetch(`https://api.github.com/repos/${repo}${path}`, {
     ...init,
@@ -199,7 +207,7 @@ async function github(path, init = {}) {
       ...(init.body ? { 'content-type': 'application/json' } : {}),
     },
   });
-  if (!response.ok && response.status !== 422) {
+  if (!response.ok && !(allow422 && response.status === 422)) {
     throw new Error(
       `GitHub API ${init.method ?? 'GET'} ${path}: HTTP ${response.status}`
     );
@@ -208,19 +216,26 @@ async function github(path, init = {}) {
 }
 
 async function report(problems, now) {
-  const open = await github(`/issues?labels=${LABEL}&state=open&per_page=1`);
-  const issue = Array.isArray(open) && open.length > 0 ? open[0] : null;
+  // Only this reporter's own issue (by title), never another `uptime` one.
+  const open = await github(`/issues?labels=${LABEL}&state=open&per_page=100`);
+  const issue = Array.isArray(open)
+    ? (open.find((candidate) => candidate.title === TITLE) ?? null)
+    : null;
   const action = decide(issue, problems);
   const status = renderStatus(problems, now);
   if (action === 'open') {
-    await github('/labels', {
-      method: 'POST',
-      body: JSON.stringify({
-        name: LABEL,
-        color: 'B42318',
-        description: 'External uptime probe',
-      }),
-    }); // 422 = already exists
+    await github(
+      '/labels',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          name: LABEL,
+          color: 'B42318',
+          description: 'External uptime probe',
+        }),
+      },
+      { allow422: true }
+    ); // 422 = already exists
     await github('/issues', {
       method: 'POST',
       body: JSON.stringify({ title: TITLE, labels: [LABEL], body: status }),
