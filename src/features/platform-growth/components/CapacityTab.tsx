@@ -86,6 +86,20 @@ const PERCENT_PARAMS = new Set(['utilization', 'ratio']);
 const DAY_PARAMS = new Set(['start', 'end']);
 const HOUR_PARAMS = new Set(['estimatedHours', 'ownerHours']);
 
+/**
+ * Which param each alert sentence's plural agrees with (the sentences have
+ * `_one` / `_other`, and Arabic's six forms). Hours and the attribution
+ * ratio have no counted noun.
+ */
+const ALERT_COUNT_PARAM: Partial<Record<CapacityAlert['key'], string>> = {
+  onboarding_cap_reached: 'onboardings',
+  hire_warn: 'payingOrgs',
+  hire_now: 'payingOrgs',
+  requests_backlog: 'open',
+  season_soon: 'daysToStart',
+  in_season: 'daysLeft',
+};
+
 /** Alert params formatted for the reading language. */
 export function alertParams(
   alert: CapacityAlert,
@@ -105,12 +119,9 @@ export function alertParams(
       out[name] = DAY_PARAMS.has(name) ? formatDay(value, language) : value;
     }
   }
-  // i18next plurals read `count`.
-  const countSource =
-    alert.params.daysToStart ??
-    alert.params.daysLeft ??
-    alert.params.open ??
-    alert.params.payingOrgs;
+  // i18next plurals read `count`: the number the sentence's noun counts.
+  const countParam = ALERT_COUNT_PARAM[alert.key];
+  const countSource = countParam ? alert.params[countParam] : undefined;
   if (typeof countSource === 'number') out.count = countSource;
   return out;
 }
@@ -148,9 +159,9 @@ function AlertsList({
             <p className="flex items-start gap-2 text-sm text-foreground">
               <Icon className="mt-0.5 size-4 shrink-0" aria-hidden />
               <span>
-                <span className="me-1 font-semibold">
+                <span className="font-semibold">
                   {t(`${K}capacity.severity.${alert.severity}`)}:
-                </span>
+                </span>{' '}
                 {t(
                   `${K}capacity.alerts.${alert.key}`,
                   alertParams(alert, language)

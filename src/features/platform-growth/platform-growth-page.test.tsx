@@ -28,6 +28,7 @@ import {
   spendEntry,
 } from './__tests__/fixtures';
 import { RAW_KEY, installDomShims, renderPage } from './__tests__/render';
+import type { CapacityReport } from './types';
 
 vi.mock('@/components/ui/select', () => import('./__tests__/select-mock'));
 
@@ -212,6 +213,60 @@ describe('capacity tab', () => {
         .getAllByRole('columnheader')
         .map((th) => th.textContent)
     ).toEqual(['Week starting', 'Sign-ups', 'Onboardings', 'Paid conversions']);
+  });
+
+  it('alert sentences agree with their number, in English and Arabic', async () => {
+    const alerts = [
+      {
+        key: 'onboarding_cap_reached',
+        severity: 'warning',
+        params: { onboardings: 1, cap: 1 },
+      },
+      {
+        key: 'requests_backlog',
+        severity: 'warning',
+        params: { open: 1, oldestOpenHours: 50 },
+      },
+      {
+        key: 'hire_warn',
+        severity: 'warning',
+        params: { payingOrgs: 10, warnAt: 10, hireAt: 40 },
+      },
+      {
+        key: 'in_season',
+        severity: 'info',
+        params: { daysLeft: 0, end: '2027-09-30' },
+      },
+    ] as const;
+    get.mockImplementation(async (path: string) =>
+      path.endsWith('/capacity')
+        ? capacityReport({
+            alerts: alerts as unknown as CapacityReport['alerts'],
+          })
+        : serve(path)
+    );
+    open();
+    const title = await screen.findByText('What needs attention');
+    const items = within(
+      title.parentElement!.querySelector('ul')!
+    ).getAllByRole('listitem');
+    expect(items.map((item) => item.querySelector('p')!.textContent)).toEqual([
+      'Warning: 1 onboarding this week against a cap of 1.',
+      'Warning: 1 unread contact enquiry; it has waited 50 h.',
+      'Warning: 10 paying organizations: time to plan a hire (hire at 40).',
+      'Note: In season until 30 Sept 2027 (the last day).',
+    ]);
+    cleanup();
+
+    open('/dashboard/platform/growth', 'ar');
+    const arTitle = await screen.findByText('ما يحتاج انتباهك');
+    const ar = within(arTitle.parentElement!.querySelector('ul')!)
+      .getAllByRole('listitem')
+      .map((item) => item.querySelector('p')!.textContent);
+    expect(ar[0]).toContain('عملية تجهيز واحدة هذا الأسبوع');
+    expect(ar[1]).toContain('استفسار تواصل واحد غير مقروء');
+    expect(ar[2]).toContain('١٠ مؤسسات مدفوعة');
+    expect(ar[3]).toContain('(اليوم الأخير)');
   });
 
   it('says so when nothing needs attention', async () => {

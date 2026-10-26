@@ -53,14 +53,21 @@
       "critical": "Act now"
     },
     "alerts": {
-      "onboarding_cap_reached": "{{onboardings}} onboardings this week against a cap of {{cap}}.",
+      "onboarding_cap_reached_one": "{{onboardings}} onboarding this week against a cap of {{cap}}.",
+      "onboarding_cap_reached_other": "{{onboardings}} onboardings this week against a cap of {{cap}}.",
       "hours_over_capacity": "This week needs about {{estimatedHours}} h of your {{ownerHours}} h ({{utilization}}).",
-      "hire_warn": "{{payingOrgs}} paying organizations: time to plan a hire (hire at {{hireAt}}).",
-      "hire_now": "{{payingOrgs}} paying organizations reached the hire point ({{hireAt}}). Hire now.",
-      "requests_backlog": "{{open}} unread contact enquiries; the oldest has waited {{oldestOpenHours}} h.",
+      "hire_warn_one": "{{payingOrgs}} paying organization: time to plan a hire (hire at {{hireAt}}).",
+      "hire_warn_other": "{{payingOrgs}} paying organizations: time to plan a hire (hire at {{hireAt}}).",
+      "hire_now_one": "{{payingOrgs}} paying organization reached the hire point ({{hireAt}}). Hire now.",
+      "hire_now_other": "{{payingOrgs}} paying organizations reached the hire point ({{hireAt}}). Hire now.",
+      "requests_backlog_one": "{{open}} unread contact enquiry; it has waited {{oldestOpenHours}} h.",
+      "requests_backlog_other": "{{open}} unread contact enquiries; the oldest has waited {{oldestOpenHours}} h.",
       "attribution_low": "Only {{attributed}} of {{signups}} sign-ups in the last 30 days have a known source ({{ratio}}).",
-      "season_soon": "The season starts on {{start}}, in {{daysToStart}} days.",
-      "in_season": "In season until {{end}} ({{daysLeft}} days left)."
+      "season_soon_one": "The season starts on {{start}}, in {{daysToStart}} day.",
+      "season_soon_other": "The season starts on {{start}}, in {{daysToStart}} days.",
+      "in_season_zero": "In season until {{end}} (the last day).",
+      "in_season_one": "In season until {{end}} ({{daysLeft}} day left).",
+      "in_season_other": "In season until {{end}} ({{daysLeft}} days left)."
     },
     "actions": {
       "requests": "Open contact enquiries",
