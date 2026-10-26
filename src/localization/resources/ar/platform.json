@@ -620,6 +620,8 @@
       "received": "تاريخ الاستلام",
       "readAt": "أول قراءة",
       "source": "أُرسل من",
+      "heardFrom": "كيف عرفوا عنّا",
+      "heardFromOther": "بكلماتهم",
       "language": "اللغة",
       "status": "الحالة",
       "message": "الرسالة",
