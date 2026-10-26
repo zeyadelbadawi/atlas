@@ -20,6 +20,7 @@ import { BaseService } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
 import { toCollectionParams } from '@api';
 import type { PaginatedResult, SortDirection } from '@types';
+import type { HeardFrom } from '@utils/acquisition-channel.utils';
 
 export type PlatformContactSubmissionStatus = 'new' | 'read' | 'archived';
 export type PlatformContactSubmissionTopic =
@@ -57,6 +58,10 @@ export interface PlatformContactSubmission {
   readonly preferredChannel?: string | null;
   /** B0-ANL-04 — sanitised UTM values / referrer host / landing template. */
   readonly attribution?: Readonly<Record<string, string>> | null;
+  /** G1 — the visitor's answer to "How did you first hear about us?" (optional). */
+  readonly heardFrom?: HeardFrom | null;
+  /** G1 — their own words when they chose Other (scrubbed by the server). */
+  readonly heardFromOther?: string | null;
 }
 
 /** B0-SUP-04 — one recorded consent. `given: false` = not ticked (no marketing). */

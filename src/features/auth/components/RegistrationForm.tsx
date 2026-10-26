@@ -53,6 +53,11 @@ import {
 } from '@components/phone';
 import { isFeatureEnabled } from '@config/feature-flags.config';
 import { getLandingAttribution } from '@utils/landing-attribution.utils';
+import {
+  HEARD_FROM_OTHER_MAX,
+  heardFromPayload,
+  shuffledHeardFromOptions,
+} from '@utils/acquisition-channel.utils';
 
 /**
  * Registration failures that describe the ACADEMY's policy rather than
@@ -121,6 +126,12 @@ function buildRegistrationSchema(mode: RegistrationMode) {
       // always sends both fields and the server re-validates them.
       phoneCountry: z.string(),
       phoneNumber: z.string(),
+      // G1 — optional, never required (organization sign-up only).
+      heardFrom: z.string().optional(),
+      heardFromOther: z
+        .string()
+        .max(HEARD_FROM_OTHER_MAX, 'auth:register.heardFrom.otherTooLong')
+        .optional(),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: 'auth:register.errors.passwordMismatch',
@@ -299,6 +310,8 @@ export function RegistrationForm({
       planId: undefined,
       phoneCountry: defaultPhoneCountry(),
       phoneNumber: '',
+      heardFrom: '',
+      heardFromOther: '',
     },
   });
   const {
@@ -318,6 +331,10 @@ export function RegistrationForm({
   // offered only on the organization owner sign-up while the flag is on.
   const [whatsappConsent, setWhatsappConsent] = useState(false);
   const whatsappConsentOffered = isFeatureEnabled('ownerWhatsappConsent');
+  // G1 — "How did you first hear about us?": the answers in a random order
+  // (Other last), fixed for this visit so the list does not jump around.
+  const [heardFromOrder] = useState(() => shuffledHeardFromOptions());
+  const heardFromValue = form.watch('heardFrom');
 
   /*
     Pre-selects the plan the visitor arrived for (`?plan=` or the
@@ -410,16 +427,21 @@ export function RegistrationForm({
   const isLoading = registerAccount.isPending;
 
   /**
-   * B0-IAM-08 / B0-ANL-04 — only on the ORGANIZATION OWNER sign-up (never a
-   * learner's): the WhatsApp opt-in when ticked, and the in-memory landing
-   * attribution. Both flag-gated; nothing extra is sent while they are off.
+   * B0-IAM-08 / B0-ANL-04 / G1 — only on the ORGANIZATION OWNER sign-up
+   * (never a learner's): the WhatsApp opt-in when ticked, the in-memory
+   * landing attribution (both flag-gated), and the voluntary "How did you
+   * first hear about us?" answer whenever one was given.
    */
-  const organizationLeadFields = (isOrganizationSignup: boolean) => {
+  const organizationLeadFields = (
+    isOrganizationSignup: boolean,
+    data: RegistrationFormData
+  ) => {
     if (!isOrganizationSignup || academyId) return {};
     const attribution = getLandingAttribution();
     return {
       ...(whatsappConsentOffered && whatsappConsent ? { whatsappConsent: true } : {}),
       ...(attribution ? { attribution } : {}),
+      ...heardFromPayload(data.heardFrom, data.heardFromOther),
     };
   };
 
@@ -448,7 +470,7 @@ export function RegistrationForm({
         phoneCountry: data.phoneCountry,
         ...(organizationName ? { organizationName } : {}),
         ...(planId ? { planId } : {}),
-        ...(organizationLeadFields(Boolean(organizationName))),
+        ...(organizationLeadFields(Boolean(organizationName), data)),
       },
       {
         onSuccess: (result) => {
@@ -800,6 +822,71 @@ export function RegistrationForm({
                 {t(planNoticeKey ?? 'auth:register.plan.chooseLater')}
               </p>
             )}
+
+            {/* G1 — the optional last question; never required. */}
+            <div className="space-y-2" data-testid="signup-heard-from">
+              <Label htmlFor="heardFrom">
+                {t('auth:register.heardFrom.label')}
+                <span className="ms-1 font-normal text-muted-foreground">
+                  ({t('auth:register.heardFrom.optional')})
+                </span>
+              </Label>
+              <select
+                id="heardFrom"
+                aria-describedby="heardFrom-hint"
+                disabled={isLoading}
+                {...register('heardFrom')}
+                className="flex h-11 w-full rounded-md border border-input bg-background px-3 text-base text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+              >
+                <option value="">
+                  {t('auth:register.heardFrom.placeholder')}
+                </option>
+                {heardFromOrder.map((option) => (
+                  <option key={option} value={option}>
+                    {t(`auth:register.heardFrom.options.${option}`)}
+                  </option>
+                ))}
+              </select>
+              <p id="heardFrom-hint" className="text-xs text-muted-foreground">
+                {t('auth:register.heardFrom.hint')}
+              </p>
+            </div>
+            {heardFromValue === 'other' ? (
+              <div className="space-y-2">
+                <Label htmlFor="heardFromOther">
+                  {t('auth:register.heardFrom.otherLabel')}
+                  <span className="ms-1 font-normal text-muted-foreground">
+                    ({t('auth:register.heardFrom.optional')})
+                  </span>
+                </Label>
+                <Input
+                  id="heardFromOther"
+                  type="text"
+                  dir="auto"
+                  autoComplete="off"
+                  maxLength={HEARD_FROM_OTHER_MAX}
+                  disabled={isLoading}
+                  aria-describedby="heardFromOther-hint"
+                  aria-invalid={!!errors.heardFromOther}
+                  {...register('heardFromOther')}
+                />
+                {errors.heardFromOther ? (
+                  <p className="text-sm text-destructive">
+                    {t(
+                      errors.heardFromOther.message ||
+                        'auth:register.heardFrom.otherTooLong',
+                      { max: HEARD_FROM_OTHER_MAX }
+                    )}
+                  </p>
+                ) : null}
+                <p
+                  id="heardFromOther-hint"
+                  className="text-xs text-muted-foreground"
+                >
+                  {t('auth:register.heardFrom.otherHint')}
+                </p>
+              </div>
+            ) : null}
           </div>
         ) : null}
 

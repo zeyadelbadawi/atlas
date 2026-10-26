@@ -204,8 +204,11 @@ export function PlatformContactSubmissionSheet({
             </section>
 
             {/* B0-SUP-04 / B0-ANL-04 — present only for enquiries sent
-                while the consent / attribution flags were on. */}
-            {submission.contactConsent || submission.attribution ? (
+                while the consent / attribution flags were on, or (G1) when
+                the visitor answered "How did you first hear about us?". */}
+            {submission.contactConsent ||
+            submission.attribution ||
+            submission.heardFrom ? (
               <>
                 <Separator />
                 <section className="space-y-3" data-testid="platform-contact-consents">
@@ -267,6 +270,31 @@ export function PlatformContactSubmissionSheet({
                         </dt>
                         <dd className="min-w-0 break-words" dir="auto">
                           {submission.subject}
+                        </dd>
+                      </>
+                    ) : null}
+                    {/* G1 — the visitor's own answer, when they gave one. */}
+                    {submission.heardFrom ? (
+                      <>
+                        <dt className="text-muted-foreground">
+                          {t(`${K}.drawer.heardFrom`)}
+                        </dt>
+                        <dd data-testid="platform-contact-heard-from">
+                          {t(`platformGrowth:channels.${submission.heardFrom}`)}
+                        </dd>
+                      </>
+                    ) : null}
+                    {submission.heardFrom === 'other' && submission.heardFromOther ? (
+                      <>
+                        <dt className="text-muted-foreground">
+                          {t(`${K}.drawer.heardFromOther`)}
+                        </dt>
+                        <dd
+                          className="min-w-0 break-words"
+                          dir="auto"
+                          data-testid="platform-contact-heard-from-other"
+                        >
+                          {submission.heardFromOther}
                         </dd>
                       </>
                     ) : null}

@@ -68,10 +68,11 @@ export const FEATURE_FLAGS = {
   /**
    * B0-ANL-04 — capture UTM values, the referrer host and the landing
    * template in memory (never browser storage) and send them with the
-   * organization sign-up and the contact form. Flip together with the
-   * server's `FLAG_ATTRIBUTION_CAPTURE_MODE=on`.
+   * organization sign-up and the contact form. On since G1 (DL-67: counsel
+   * approved the consent wording, 26 Oct 2026), together with the server's
+   * `FLAG_ATTRIBUTION_CAPTURE_MODE=on`.
    */
-  signupAttribution: false,
+  signupAttribution: true,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;

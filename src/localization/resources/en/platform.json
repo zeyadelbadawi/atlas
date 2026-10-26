@@ -549,6 +549,8 @@
       "received": "Received",
       "readAt": "First read",
       "source": "Sent from",
+      "heardFrom": "How they heard about us",
+      "heardFromOther": "In their words",
       "language": "Language",
       "status": "Status",
       "message": "Message",

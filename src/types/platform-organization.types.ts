@@ -18,6 +18,10 @@
  * point.
  */
 import type { TenantSubscription, TenantUsage } from './tenant.types';
+import type {
+  AcquisitionChannel,
+  HeardFrom,
+} from '@/shared/utils/acquisition-channel.utils';
 
 /**
  * An organization's operational status on the platform. Distinct from
@@ -66,6 +70,8 @@ export interface PlatformOrganizationDetail extends PlatformOrganizationSummary 
   readonly ownerPhone?: PlatformOrganizationOwnerPhone;
   /** B0-ANL-04 — sanitised sign-up attribution, or `null` (untagged / not captured). */
   readonly signupAttribution?: Readonly<Record<string, string>> | null;
+  /** G1 — the channel this organization counts under in CAC, and why (additive). */
+  readonly acquisition?: OrganizationAcquisition;
   readonly subscription?: TenantSubscription;
   readonly usage?: TenantUsage;
   readonly academies: readonly PlatformOrganizationAcademyRef[];
@@ -78,4 +84,30 @@ export interface PlatformOrganizationOwnerPhone {
   readonly country: string;
   readonly whatsappConsentAt: string;
   readonly whatsappConsentVersion: string;
+}
+
+/** G1 — how the channel was decided, in resolution order (contract §1.1). */
+export type ChannelDecidedBy =
+  | 'override'
+  | 'self_reported'
+  | 'utm'
+  | 'referrer'
+  | 'self_reported_other'
+  | 'none';
+
+/** G1 — an organization's acquisition facts (`GET /organizations/:id`, `PATCH /platform-growth/organizations/:id/channel`). */
+export interface OrganizationAcquisition {
+  readonly resolvedChannel: AcquisitionChannel;
+  readonly decidedBy: ChannelDecidedBy;
+  /** The Platform Owner's override, or `null` (automatic). */
+  readonly override: {
+    readonly channel: AcquisitionChannel;
+    readonly note: string | null;
+    readonly updatedAt: string | null;
+    readonly updatedByName: string | null;
+  } | null;
+  readonly heardFrom: HeardFrom | null;
+  readonly heardFromOther: string | null;
+  /** The sanitised sign-up attribution (same object as `signupAttribution`). */
+  readonly attribution: Readonly<Record<string, string>> | null;
 }

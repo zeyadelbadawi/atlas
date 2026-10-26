@@ -365,6 +365,12 @@ export const DASHBOARD_ROUTES = {
   platformAnnouncementNew: '/dashboard/platform/announcements/new',
   platformAnnouncementEdit: '/dashboard/platform/announcements/:announcementId',
   platformLaunchChecklist: '/dashboard/platform/launch-checklist',
+  /**
+   * G1 — Growth & capacity (Platform Owner only): season capacity, CAC per
+   * channel, the marketing spend ledger and their settings, in tabs
+   * deep-linked by `?tab=capacity|cac|spend|settings`.
+   */
+  platformGrowth: '/dashboard/platform/growth',
 
   /**
    * Customer Requests — custom services (logo, domain, theme, section,

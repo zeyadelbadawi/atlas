@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDateFormatter } from '@hooks';
 import { OrganizationCommissionCard } from '@features/platform-commerce';
+import { AcquisitionCard } from '@features/platform-growth';
 import { usePlatformOrganization } from '../hooks';
 import { SubscriptionAdjustmentsCard } from '../components/SubscriptionAdjustmentsCard';
 import { InternalOrganizationCard } from '../components/InternalOrganizationCard';
@@ -103,6 +104,12 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
             />
           </CardContent>
         </Card>
+
+        {/* G1 — the CAC channel, how it was decided, and "Set channel". */}
+        <AcquisitionCard
+          organizationId={organization.id}
+          acquisition={organization.acquisition}
+        />
 
         <Card>
           <CardHeader>

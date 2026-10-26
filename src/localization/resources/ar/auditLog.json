@@ -168,7 +168,9 @@
     "platform_blog_post": "مقال مدونة",
     "platform_blog_image": "صورة مدونة",
     "site_announcement": "إعلان",
-    "launch_checklist_item": "مهمة إطلاق"
+    "launch_checklist_item": "مهمة إطلاق",
+    "growth_settings": "إعدادات النمو والسعة",
+    "marketing_spend_entry": "مصروف تسويق"
   },
   "fields": {
     "title": "العنوان",
@@ -247,7 +249,12 @@
     "trialDurationDays": "مدة التجربة (بالأيام)",
     "giftedDaysMonthly": "أيام الإعداد المُهداة (شهري)",
     "giftedDaysYearly": "أيام الإعداد المُهداة (سنوي)",
-    "limits": "الحدود"
+    "limits": "الحدود",
+    "month": "الشهر",
+    "channel": "القناة",
+    "previousChannel": "القناة السابقة",
+    "amountMinorUnits": "المبلغ (بالقرش)",
+    "changedFields": "الحقول المعدّلة"
   },
   "values": {
     "empty": "—",
@@ -773,6 +780,14 @@
         "item_updated": "{{actor}} حدّث مهمة الإطلاق «{{target}}»",
         "item_deleted": "{{actor}} حذف «{{target}}» من قائمة مهام الإطلاق",
         "reordered": "{{actor}} أعاد ترتيب قائمة مهام الإطلاق"
+      },
+      "growth": {
+        "settings_updated": "{{actor}} غيّر إعدادات النمو والسعة",
+        "spend_created": "{{actor}} سجّل مصروف تسويق",
+        "spend_updated": "{{actor}} عدّل مصروف تسويق",
+        "spend_deleted": "{{actor}} حذف مصروف تسويق",
+        "organization_channel_set": "{{actor}} حدّد قناة الاكتساب للمؤسسة {{target}}",
+        "organization_channel_set_noTarget": "{{actor}} حدّد قناة الاكتساب لمؤسسة"
       }
     },
     "trial_policy": {

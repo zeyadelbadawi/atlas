@@ -12,6 +12,7 @@ import { HeroArt, type HeroArtName } from '../components/hero-art';
 import { CONTACT_LIMITS, CONTACT_TOPICS } from '../client/contact-validation';
 import { canFill, fill, link } from '../lib/copy';
 import { localePath } from '../lib/site';
+import { HEARD_FROM_OPTIONS, HEARD_FROM_OTHER_MAX } from '@/shared/utils/acquisition-channel.utils';
 import type { MkSectionHead } from '../content/content.types';
 import type { MarketingLang, MarketingPageDef } from '../types';
 import { Shell, breadcrumb, orgId, pageEnv, seoHead, webPage, type PageEnv } from './shared';
@@ -292,6 +293,22 @@ function ContactPage({ env }: { env: PageEnv }) {
               <Field id="contact-message" label={fill(c.form.message, tokens)} hint={fill(c.form.messageHint, tokens)}>
                 <textarea id="contact-message" name="message" rows={6} required maxLength={CONTACT_LIMITS.messageMax} aria-describedby="contact-message-hint contact-message-error" className="mk-field" />
               </Field>
+              {/* G1 — optional last question. client/main.ts shuffles the answers (Other stays last) and shows the free text for Other. */}
+              <Field id="contact-heardFrom" label={fill(c.heardFrom.label, tokens)} optional>
+                <select id="contact-heardFrom" name="heardFrom" defaultValue="" aria-describedby="contact-heardFrom-error" className="mk-field" data-heard-from>
+                  <option value="">{fill(c.heardFrom.placeholder, tokens)}</option>
+                  {HEARD_FROM_OPTIONS.map((option) => (
+                    <option key={option} value={option}>
+                      {fill(c.heardFrom.options[option], tokens)}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <div data-heard-from-other hidden>
+                <Field id="contact-heardFromOther" label={fill(c.heardFrom.otherLabel, tokens)} hint={fill(c.heardFrom.otherHint, tokens)} optional>
+                  <input id="contact-heardFromOther" name="heardFromOther" type="text" autoComplete="off" maxLength={HEARD_FROM_OTHER_MAX} aria-describedby="contact-heardFromOther-hint contact-heardFromOther-error" className="mk-field" />
+                </Field>
+              </div>
               {/* Honeypot: hidden from people and assistive tech. */}
               <div aria-hidden="true" className="absolute -start-[9999px] h-px w-px overflow-hidden">
                 <label htmlFor="contact-company">Company</label>
