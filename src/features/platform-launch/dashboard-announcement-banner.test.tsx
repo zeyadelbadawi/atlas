@@ -27,19 +27,28 @@ const BANNER: PublicAnnouncement = {
 };
 
 const get = vi.fn();
+const post = vi.fn();
 beforeEach(() => {
   window.localStorage.clear();
   get.mockResolvedValue({ banners: [BANNER] });
+  post.mockResolvedValue(undefined);
   vi.spyOn(apiClient, 'get').mockImplementation(((
     path: string,
     options?: unknown
   ) => get(path, options)) as typeof apiClient.get);
+  vi.spyOn(apiClient, 'post').mockImplementation(((
+    path: string,
+    payload?: unknown
+  ) => post(path, payload)) as typeof apiClient.post);
 });
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
   get.mockReset();
+  post.mockReset();
 });
+
+const EVENTS = 'public/site-announcements/ann-9/events';
 
 const open = (language: 'en' | 'ar' = 'en') =>
   renderPage(<DashboardAnnouncementBanner />, {
@@ -119,5 +128,33 @@ describe('Dashboard announcement banner', () => {
     open();
     await screen.findByRole('region', { name: 'Announcement' });
     expect(screen.queryByRole('link')).toBeNull();
+  });
+
+  it('counts one view, a click and a close for the Platform Owner', async () => {
+    open();
+    await screen.findByRole('region', { name: 'Announcement' });
+    await waitFor(() =>
+      expect(post).toHaveBeenCalledWith(EVENTS, { type: 'view' })
+    );
+    expect(post).toHaveBeenCalledTimes(1);
+    const cta = screen.getByRole('link', { name: 'Details' });
+    // jsdom cannot navigate; only the counting matters here.
+    cta.addEventListener('click', (event) => event.preventDefault());
+    await userEvent.click(cta);
+    expect(post).toHaveBeenCalledWith(EVENTS, { type: 'click' });
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Dismiss announcement' })
+    );
+    expect(post).toHaveBeenCalledWith(EVENTS, { type: 'dismiss' });
+    expect(post).toHaveBeenCalledTimes(3);
+  });
+
+  it('never breaks when counting fails', async () => {
+    post.mockRejectedValue(new Error('down'));
+    open();
+    expect(
+      await screen.findByRole('region', { name: 'Announcement' })
+    ).toBeTruthy();
+    await waitFor(() => expect(post).toHaveBeenCalled());
   });
 });

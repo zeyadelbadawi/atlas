@@ -7,8 +7,10 @@
  * localStorage, so an edited banner shows again; storage failures (private
  * mode) only mean it may show again next visit. Nothing renders while
  * loading or on error, so the content never jumps for a failed request.
+ * A shown banner counts one view per announcement version per page load;
+ * its button and close button count a click and a close.
  */
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '@hooks';
 import {
@@ -17,6 +19,7 @@ import {
   safeStore,
 } from '@/marketing/announcements/presentation';
 import { useDashboardAnnouncements } from '../hooks/usePlatformAnnouncements';
+import { dashboardAnnouncementService } from '../services/DashboardAnnouncementService';
 import { AnnouncementBannerView } from './AnnouncementBannerView';
 
 const store = safeStore(() =>
@@ -40,6 +43,22 @@ export function DashboardAnnouncementBanner(): JSX.Element | null {
     })
     .slice(0, MAX_BANNERS);
 
+  // One view per announcement version for this page load (the layout stays
+  // mounted across dashboard navigation).
+  const viewed = useRef(new Set<string>());
+  const shownKeys = banners
+    .map((banner) => `${banner.id}|${dismissKey(banner.id, banner.updatedAt)}`)
+    .join(',');
+  useEffect(() => {
+    if (!shownKeys) return;
+    for (const entry of shownKeys.split(',')) {
+      const [id, key] = entry.split('|');
+      if (viewed.current.has(key)) continue;
+      viewed.current.add(key);
+      dashboardAnnouncementService.recordEvent(id, 'view');
+    }
+  }, [shownKeys]);
+
   if (banners.length === 0) return null;
 
   return (
@@ -57,7 +76,11 @@ export function DashboardAnnouncementBanner(): JSX.Element | null {
             dismissible={banner.dismissible}
             dismissLabel={t('layout:dashboardAnnouncement.dismiss')}
             regionLabel={t('layout:dashboardAnnouncement.region')}
+            onCtaClick={() =>
+              dashboardAnnouncementService.recordEvent(banner.id, 'click')
+            }
             onDismiss={() => {
+              dashboardAnnouncementService.recordEvent(banner.id, 'dismiss');
               store.setItem(key, '1');
               setDismissed((current) => [...current, key]);
             }}
