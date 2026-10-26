@@ -328,7 +328,8 @@ export default function PlatformAnnouncementEditorPage(): JSX.Element {
     transition.isPending ||
     remove.isPending;
   const surface = state.surface;
-  const surfaceName = t(`${K}announcements.surface.${surface}`);
+  // Mid-sentence form ("New site pop-up", not "New Site pop-up").
+  const surfaceName = t(`${K}announcements.surfaceInline.${surface}`);
   const set = <F extends keyof AnnouncementEditorState>(
     field: F,
     value: AnnouncementEditorState[F]

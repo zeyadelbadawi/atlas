@@ -320,6 +320,11 @@
       "marketing_popup": "Site pop-up",
       "dashboard_banner": "Dashboard banner"
     },
+    "surfaceInline": {
+      "marketing_banner": "site banner",
+      "marketing_popup": "site pop-up",
+      "dashboard_banner": "dashboard banner"
+    },
     "surfaceHint": {
       "marketing_banner": "A bar at the top of marketing pages. Up to two show at once.",
       "marketing_popup": "A dialog on marketing pages. One shows at a time, the highest priority first.",

@@ -320,6 +320,11 @@
       "marketing_popup": "نافذة منبثقة للموقع",
       "dashboard_banner": "شريط لوحة التحكم"
     },
+    "surfaceInline": {
+      "marketing_banner": "شريط الموقع",
+      "marketing_popup": "نافذة منبثقة للموقع",
+      "dashboard_banner": "شريط لوحة التحكم"
+    },
     "surfaceHint": {
       "marketing_banner": "شريط في أعلى صفحات الموقع التسويقي. يظهر حتى شريطين معًا.",
       "marketing_popup": "نافذة على صفحات الموقع التسويقي. تظهر نافذة واحدة فقط، الأعلى أولوية أولًا.",
