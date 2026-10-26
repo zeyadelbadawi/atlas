@@ -97,8 +97,8 @@
       "title": "أكاديمية مؤسِّسة — السعر ثابت حتى {{date}}",
       "titleEnded": "أكاديمية مؤسِّسة — انتهى تثبيت السعر لمدة ٢٤ شهرًا",
       "lockedPrice": "سعرك المؤسِّس: {{price}} في السنة.",
-      "renewalLocked": "تجديدك يوم {{date}} بسعرك المؤسِّس: {{price}}.",
-      "renewalCatalog": "تجديدك يوم {{date}} بالسعر السنوي الحالي: {{price}}."
+      "renewalLocked": "تجديدك يوم {{date}} بسعرك المؤسِّس: {{price}}",
+      "renewalCatalog": "تجديدك يوم {{date}} بالسعر السنوي الحالي: {{price}}"
     },
     "priceChange": {
       "title": "تتغير خطة {{plan}} عند تجديدك القادم",

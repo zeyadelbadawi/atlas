@@ -283,8 +283,8 @@
 - key: academy/delete-card
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{secondAcademyId}/settings
-  waitFor: { text: academy:settings.localization }
+  path: /dashboard/academy/{secondAcademyId}/settings?section=danger
+  waitFor: { selector: '[data-testid="open-delete-academy"]' }
   actions:
     - scroll: { testId: open-delete-academy }
   highlight: { text: academy:delete.consequenceWebsite }
@@ -292,8 +292,8 @@
 - key: academy/delete-button
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{secondAcademyId}/settings
-  waitFor: { text: academy:settings.localization }
+  path: /dashboard/academy/{secondAcademyId}/settings?section=danger
+  waitFor: { selector: '[data-testid="open-delete-academy"]' }
   actions:
     - scroll: { testId: open-delete-academy }
   highlight: { testId: open-delete-academy }
@@ -301,8 +301,8 @@
 - key: academy/delete-reason
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{secondAcademyId}/settings
-  waitFor: { text: academy:settings.localization }
+  path: /dashboard/academy/{secondAcademyId}/settings?section=danger
+  waitFor: { selector: '[data-testid="open-delete-academy"]' }
   actions:
     - scroll: { testId: open-delete-academy }
     - click: { testId: open-delete-academy }
@@ -312,8 +312,8 @@
 - key: academy/delete-type-name
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{secondAcademyId}/settings
-  waitFor: { text: academy:settings.localization }
+  path: /dashboard/academy/{secondAcademyId}/settings?section=danger
+  waitFor: { selector: '[data-testid="open-delete-academy"]' }
   actions:
     - scroll: { testId: open-delete-academy }
     - click: { testId: open-delete-academy }
@@ -323,8 +323,8 @@
 - key: academy/delete-confirm
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{secondAcademyId}/settings
-  waitFor: { text: academy:settings.localization }
+  path: /dashboard/academy/{secondAcademyId}/settings?section=danger
+  waitFor: { selector: '[data-testid="open-delete-academy"]' }
   actions:
     - scroll: { testId: open-delete-academy }
     - click: { testId: open-delete-academy }
