@@ -49,7 +49,7 @@
 - key: troubleshooting/owner-device-policy
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=devices
   waitFor: { text: academy:protection.devices.title }
   highlight: { text: academy:protection.devices.maxDevices.label }
 
@@ -270,7 +270,7 @@
 - key: troubleshooting/registration-policy
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=registration
   waitFor: { text: academy:registration.policy.title }
   highlight: { text: academy:registration.policy.description }
 

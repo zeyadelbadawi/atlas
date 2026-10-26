@@ -21,7 +21,7 @@ When you create an academy, Atlas builds it in stages: it creates the academy an
 
 ## Open a setup
 
-1. In the sidebar, open **New Academy**. The **Academy Provisioning** page lists every setup with its **Status** and number of **Attempts**.
+1. In the sidebar, open **Create an academy**. The **Academy Provisioning** page lists every setup with its **Status** and number of **Attempts**.
 
    ![The Academy Provisioning list with the Status column highlighted](shot:academy/provisioning-history)
 

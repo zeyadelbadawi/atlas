@@ -74,6 +74,10 @@
   surface: dashboard
   path: /dashboard/academy/{academyId}/settings
   waitFor: { text: academy:settings.localization }
+  # The save bar appears only once something changed (B2).
+  actions:
+    - click: { label: academy:create.timezoneLabel }
+    - click: { role: option, name: UTC, exact: true }
   highlight: { role: button, name: academy:settings.saveButton }
 
 # --- Visual identity (DOC-ACD-004) ------------------------------------------
@@ -279,8 +283,8 @@
 - key: academy/delete-card
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{secondAcademyId}/settings
-  waitFor: { text: academy:settings.localization }
+  path: /dashboard/academy/{secondAcademyId}/settings?section=danger
+  waitFor: { selector: '[data-testid="open-delete-academy"]' }
   actions:
     - scroll: { testId: open-delete-academy }
   highlight: { text: academy:delete.consequenceWebsite }
@@ -288,8 +292,8 @@
 - key: academy/delete-button
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{secondAcademyId}/settings
-  waitFor: { text: academy:settings.localization }
+  path: /dashboard/academy/{secondAcademyId}/settings?section=danger
+  waitFor: { selector: '[data-testid="open-delete-academy"]' }
   actions:
     - scroll: { testId: open-delete-academy }
   highlight: { testId: open-delete-academy }
@@ -297,8 +301,8 @@
 - key: academy/delete-reason
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{secondAcademyId}/settings
-  waitFor: { text: academy:settings.localization }
+  path: /dashboard/academy/{secondAcademyId}/settings?section=danger
+  waitFor: { selector: '[data-testid="open-delete-academy"]' }
   actions:
     - scroll: { testId: open-delete-academy }
     - click: { testId: open-delete-academy }
@@ -308,8 +312,8 @@
 - key: academy/delete-type-name
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{secondAcademyId}/settings
-  waitFor: { text: academy:settings.localization }
+  path: /dashboard/academy/{secondAcademyId}/settings?section=danger
+  waitFor: { selector: '[data-testid="open-delete-academy"]' }
   actions:
     - scroll: { testId: open-delete-academy }
     - click: { testId: open-delete-academy }
@@ -319,8 +323,8 @@
 - key: academy/delete-confirm
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{secondAcademyId}/settings
-  waitFor: { text: academy:settings.localization }
+  path: /dashboard/academy/{secondAcademyId}/settings?section=danger
+  waitFor: { selector: '[data-testid="open-delete-academy"]' }
   actions:
     - scroll: { testId: open-delete-academy }
     - click: { testId: open-delete-academy }

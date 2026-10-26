@@ -3,7 +3,7 @@ id: DOC-ACD-002
 title: Edit your academy profile and contact details
 description: Change your academy's name, description, contact email and phone, website link and address on the Academy Profile page.
 summary: >
-  Open Academy Overview, choose View Profile, edit the basic information,
+  Open Academy home, choose View Profile, edit the basic information,
   contact information and address, then select Save Changes. Owners and
   managers can do this. Academy names are unique across Atlas, and your
   contact details are shown on your academy's public pages.
@@ -20,7 +20,7 @@ The academy owner and managers can edit the academy profile. Instructors can't o
 
 ## Edit the profile
 
-1. In the sidebar, open **Academy Overview**, then choose **View Profile**.
+1. In the sidebar, open **Academy home**, then choose **View Profile**.
 
    ![The academy overview with the View Profile button highlighted](shot:academy/overview-view-profile)
 

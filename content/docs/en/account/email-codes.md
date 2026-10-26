@@ -34,7 +34,7 @@ email**: "We sent a 6-digit code to" followed by your address, partly hidden.
   [Set up an authenticator app](doc:DOC-IAM-006).
 
 Academy owners can see which setting applies to their learners in **Academy
-Settings**, under **Communication**, on the **Email & sign-in codes** card. The
+Settings**, in the **Emails to students** section, on the **Email & sign-in codes** card. The
 card is for information only: "These settings follow the platform's
 configuration and can't be changed per academy yet."
 
@@ -81,7 +81,7 @@ password ([Reset or change your password](doc:DOC-IAM-003)).
 
 ## If the code doesn't arrive
 
-- Wait a minute and check your spam or junk folder.
+- Wait a minute and check your spam or junk folder. The code page reminds you too, under **Can't find the email?**. If the email is there, mark it as **Not spam** so your next codes reach your inbox.
 - Choose **Send a new code** when it becomes available.
 - If Atlas says "We can't deliver email to this address right now, so a code
   can't be sent", choose **Reset your password**, or contact your academy or

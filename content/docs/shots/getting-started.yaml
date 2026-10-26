@@ -204,7 +204,7 @@
 - key: getting-started/launch-registration
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=registration
   waitFor: { text: academy:registration.policy.title }
   highlight: { text: academy:registration.policy.title, exact: true }
 

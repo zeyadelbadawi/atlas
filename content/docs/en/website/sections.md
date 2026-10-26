@@ -121,7 +121,7 @@ A **Title** and a list of **Images**, each with alt text and a **Caption**.
 
 ## Contact
 
-Fields: **Title**, **Description**, **Email**, **Phone**, **Address** and **Show contact form**. Leave email, phone or address empty to use the contact details from your academy profile. Messages from the form arrive in **Website Messages**: see [Contact form and website messages](doc:DOC-WEB-013).
+Fields: **Title**, **Description**, **Email**, **Phone**, **Address** and **Show contact form**. Leave email, phone or address empty to use the contact details from your academy profile. Messages from the form arrive in the **Messages** tab of **Website**: see [Contact form and website messages](doc:DOC-WEB-013).
 
 ## Call to Action
 

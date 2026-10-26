@@ -158,6 +158,7 @@
     "add_on": "add-on",
     "observability": "monitoring",
     "platform_contact_submission": "contact enquiry",
+    "founding_membership": "founding academy",
     "lesson": "lesson",
     "communication_campaign": "message",
     "forensic_watermark": "watermark code",
@@ -726,6 +727,15 @@
       "contact_submission": {
         "status_changed": "{{actor}} changed the status of a contact enquiry",
         "deleted": "{{actor}} deleted a contact enquiry"
+      },
+      "founding": {
+        "created": "{{actor}} added {{target}} as a founding academy",
+        "updated": "{{actor}} changed the notes or setup hours of {{target}}",
+        "plan_changed": "{{actor}} re-locked the founding price of {{target}} on another plan",
+        "revoked": "{{actor}} revoked the founding membership of {{target}}",
+        "ended": "The founding price lock of {{target}} ended",
+        "emailed": "{{actor}} emailed {{target}} about its founding membership",
+        "renewal_price_notice_sent": "{{target}} was told its next renewal is at the catalog price"
       },
       "campaign": {
         "sent": "{{actor}} sent a platform message",

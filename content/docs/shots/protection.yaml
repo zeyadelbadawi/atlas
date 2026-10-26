@@ -17,14 +17,14 @@
 - key: protection/settings-nav
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=protection
   waitFor: { text: academy:protection.sectionTitle }
   highlight: { role: link, name: navigation:items.academySettings }
 
 - key: protection/settings-video-protection
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=protection
   waitFor: { text: academy:protection.content.watermark.label }
   actions:
     - scroll: { text: academy:protection.content.title, exact: true }
@@ -33,7 +33,7 @@
 - key: protection/settings-devices
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=devices
   waitFor: { text: academy:protection.devices.maxDevices.label }
   actions:
     - scroll: { text: academy:protection.devices.title, exact: true }
@@ -42,7 +42,7 @@
 - key: protection/settings-devices-save
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=devices
   waitFor: { text: academy:protection.devices.maxDevices.label }
   actions:
     - scroll: { selector: 'form:has(input[name="maxDevices"]) button[type="submit"]' }

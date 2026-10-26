@@ -864,6 +864,7 @@ export const en: MarketingContent = {
         '{trialDays} days with the full limits of the plan you pick.',
         'No card. One trial per customer.',
         'Cancel during the trial and it ends straight away.',
+        'We email you 3 days and 1 day before your trial ends, so you have time to pay.',
       ],
       giftedYearly:
         'When you buy a yearly plan for the first time, we add {giftedDuration} to it.',

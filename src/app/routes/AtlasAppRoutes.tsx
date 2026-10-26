@@ -472,6 +472,9 @@ const PlatformSupportDetailPage = lazy(
   () => import('@features/support/pages/PlatformSupportDetailPage')
 );
 // TASK 7 — the Atlas marketing contact form's Platform Owner inbox.
+const PlatformFoundingAcademiesPage = lazy(
+  () => import('@features/platform/pages/PlatformFoundingAcademiesPage')
+);
 const PlatformContactSubmissionsPage = lazy(
   () => import('@features/platform/pages/PlatformContactSubmissionsPage')
 );
@@ -2448,6 +2451,18 @@ export default function AtlasAppRoutes(): JSX.Element {
                   requiredRoles={['platform_owner']}
                 >
                   <PlatformContactSubmissionsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformFoundingAcademies}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformFoundingAcademiesPage />
                 </RouteGuard>
               }
             />

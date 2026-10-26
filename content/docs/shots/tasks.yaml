@@ -138,14 +138,14 @@
 - key: tasks/protect-settings
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=protection
   waitFor: { text: academy:protection.sectionTitle }
   highlight: { text: academy:protection.sectionTitle, exact: true }
 
 - key: tasks/protect-devices
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=devices
   waitFor: { text: academy:protection.devices.title }
   highlight: { text: academy:protection.devices.title, exact: true }
 
@@ -172,14 +172,14 @@
 - key: tasks/learners-policy
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=registration
   waitFor: { text: academy:registration.policy.title }
   highlight: { role: button, name: academy:registration.policy.save }
 
 - key: tasks/learners-invite-links
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=registration
   waitFor: { text: academy:registration.invites.title }
   highlight: { text: academy:registration.invites.title, exact: true }
 

@@ -264,6 +264,14 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     // Forensic video watermark — every Platform Owner lookup, found or not.
     'platform.watermark.looked_up': 'security',
     'platform.contact_submission.deleted': 'platform',
+    // B2 — Founding Academies (Platform Owner records).
+    'platform.founding.created': 'platform',
+    'platform.founding.updated': 'platform',
+    'platform.founding.plan_changed': 'platform',
+    'platform.founding.revoked': 'platform',
+    'platform.founding.ended': 'platform',
+    'platform.founding.emailed': 'platform',
+    'platform.founding.renewal_price_notice_sent': 'platform',
     'platform.campaign.sent': 'platform',
     'academy.message.sent': 'academy',
   };

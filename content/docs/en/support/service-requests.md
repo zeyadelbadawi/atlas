@@ -5,7 +5,7 @@ description: Ask the Atlas team for a logo, custom domain help, a custom theme, 
 summary: >
   The academy owner can ask the Atlas team for a logo, help with a custom
   domain, a custom theme, a new website section or a custom feature. Describe
-  what you need in Atlas service requests; the team reviews every request,
+  what you need in Ask Atlas for help; the team reviews every request,
   replies there with next steps, and you follow each update in the request
   and by email.
 type: step-by-step
@@ -33,7 +33,7 @@ A service request is for work you'd like the Atlas team to do for your academy. 
 
 ## Send a request
 
-1. In the sidebar, open **Atlas service requests**.
+1. In the sidebar, under **Settings**, open **Ask Atlas for help**. The page is called **Requests**.
 
    ![The Requests page with its entry in the sidebar highlighted](shot:support/requests-page)
 

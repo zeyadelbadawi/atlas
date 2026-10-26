@@ -42,7 +42,7 @@ See [How selling courses works](doc:DOC-COM-001).
    ![A learner's Purchases page in My Learn](shot:tasks/sell-learner-purchases)
 
 4. **Review the proof and approve.** You get an email and a notification when a proof
-   arrives. Open **Payments**, open the payment, check in your bank or wallet that the
+   arrives. Open **Student payments**, open the payment, check in your bank or wallet that the
    money arrived, then choose **Approve** or **Reject payment**. Approving gives the
    learner the course. See [Review payment proofs](doc:DOC-COM-003).
 

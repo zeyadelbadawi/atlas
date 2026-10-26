@@ -49,8 +49,8 @@ the registration policy are owner-only.
 
    ![The Payment methods page](shot:getting-started/launch-payment-methods)
 
-5. **Choose who can join.** Open **Academy Settings** and, under **Registration**,
-   choose a **Registration policy**: **Open**, **Approval required** or **Invite only**.
+5. **Choose who can join.** Open **Academy Settings**, choose the **Student registration**
+   section and choose a **Registration policy**: **Open**, **Approval required** or **Invite only**.
    Then choose **Save policy**. See [Choose who can join](doc:DOC-ORG-005).
 
    ![The Registration policy card in Academy Settings](shot:getting-started/launch-registration)

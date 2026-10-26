@@ -50,7 +50,7 @@ The limits for each plan are on the [pricing page](site:/pricing).
    ![The Usage page showing current usage against plan limits](shot:troubleshooting/usage-page)
 
 2. Decide whether to free up space or upgrade.
-   - **Free up space:** remove an instructor who no longer teaches with you, remove files you no longer need from **Academy Media**, or **Revoke** the access of learners who should no longer be enrolled.
+   - **Free up space:** remove an instructor who no longer teaches with you, remove files you no longer need from **Media library**, or **Revoke** the access of learners who should no longer be enrolled.
    - **Upgrade:** open **Subscription** and choose **Compare plans** to see what each plan allows.
 
    ![The Subscription page with the Compare plans button highlighted](shot:troubleshooting/compare-plans)

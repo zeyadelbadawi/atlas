@@ -1067,6 +1067,17 @@ export function getDashboardNavigation(
           matchNestedPaths: true,
         },
         {
+          // B2 — Founding Academies, with the enquiry inboxes they come from.
+          // `PlatformFoundingAcademiesController` (PlatformOwnerGuard + RLS)
+          // is the server-side boundary; this entry only decides visibility.
+          id: 'platform-founding-academies',
+          labelKey: 'navigation:items.platformFoundingAcademies',
+          path: DASHBOARD_ROUTES.platformFoundingAcademies,
+          icon: Award,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+        },
+        {
           // B0-SEC-13 — data export / account deletion requests.
           // `PlatformPrivacyRequestsController` (PlatformOwnerGuard + RLS)
           // is the server-side boundary.

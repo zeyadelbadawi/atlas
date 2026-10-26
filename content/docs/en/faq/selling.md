@@ -31,7 +31,7 @@ No. Learners pay to the payment methods you set up for your academy, so the mone
 
 ## Are payments approved automatically?
 
-No. A learner sends the money and uploads a proof. You check in your bank or wallet app that the money arrived, then approve or reject it in **Payments**. Approving enrolls the learner and emails them. See [Review payment proofs and approve enrollments](doc:DOC-COM-003).
+No. A learner sends the money and uploads a proof. You check in your bank or wallet app that the money arrived, then approve or reject it in **Student payments**. Approving enrolls the learner and emails them. See [Review payment proofs and approve enrollments](doc:DOC-COM-003).
 
 ## Can a manager or instructor review payments?
 

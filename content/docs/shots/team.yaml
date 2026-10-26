@@ -148,14 +148,14 @@
 - key: team/registration-section
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=registration
   waitFor: { text: academy:registration.policy.title }
   highlight: { role: radiogroup, name: academy:registration.policy.title }
 
 - key: team/registration-choose
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=registration
   waitFor: { text: academy:registration.policy.title }
   actions:
     - scroll: { role: radiogroup, name: academy:registration.policy.title }
@@ -167,7 +167,7 @@
 - key: team/registration-save
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=registration
   waitFor: { text: academy:registration.policy.title }
   actions:
     - scroll: { role: radiogroup, name: academy:registration.policy.title }
@@ -179,28 +179,28 @@
 - key: team/registration-manager
   as: manager
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=registration
   waitFor: { text: academy:registration.policy.title }
   highlight: { text: academy:registration.policy.ownerOnly }
 
 - key: team/invites-card
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=registration
   waitFor: { text: academy:registration.policy.title }
   highlight: { text: academy:registration.invites.title, exact: true }
 
 - key: team/invites-create-button
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=registration
   waitFor: { text: academy:registration.policy.title }
   highlight: { role: button, name: academy:registration.invites.create.trigger }
 
 - key: team/invites-create-dialog
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=registration
   waitFor: { text: academy:registration.policy.title }
   actions:
     - scroll: { role: button, name: academy:registration.invites.create.trigger }
@@ -213,7 +213,7 @@
 - key: team/invites-create-submit
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=registration
   waitFor: { text: academy:registration.policy.title }
   actions:
     - scroll: { role: button, name: academy:registration.invites.create.trigger }
@@ -224,14 +224,14 @@
 - key: team/invites-revoke-button
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=registration
   waitFor: { text: academy:registration.policy.title }
   highlight: { testId: invite-revoke, nth: 0 }
 
 - key: team/invites-revoke-confirm
   as: owner
   surface: dashboard
-  path: /dashboard/academy/{academyId}/settings
+  path: /dashboard/academy/{academyId}/settings?section=registration
   waitFor: { text: academy:registration.policy.title }
   actions:
     # By test id: in Arabic the button reads «إلغاء», the same word as every Cancel.

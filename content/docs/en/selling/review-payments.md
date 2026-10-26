@@ -24,7 +24,7 @@ Atlas emails you and adds a notification each time a learner submits a proof. Th
 
 ## Review a payment
 
-1. In the academy sidebar, open **Payments**.
+1. In the academy sidebar, under **Sales & payments**, open **Student payments**.
 
    ![The Payments page with Payments highlighted in the sidebar](shot:selling/payments-nav)
 

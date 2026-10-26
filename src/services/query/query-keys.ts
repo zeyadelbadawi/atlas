@@ -1251,6 +1251,23 @@ export const platformContactSubmissionKeys = {
 } as const;
 
 /**
+ * B2 — Founding Academies (Platform Owner). `all` is the prefix every
+ * mutation invalidates, so the seat meter, the table and an open detail
+ * never disagree after a create, edit or revoke.
+ */
+export const platformFoundingKeys = {
+  all: ['platform-founding'] as const,
+  list: (query?: unknown) => [...platformFoundingKeys.all, 'list', query] as const,
+  summary: () => [...platformFoundingKeys.all, 'summary'] as const,
+  detail: (id: string) => [...platformFoundingKeys.all, 'detail', id] as const,
+  plans: () => [...platformFoundingKeys.all, 'plans'] as const,
+  candidates: (search: string) =>
+    [...platformFoundingKeys.all, 'candidates', search] as const,
+  quote: (organizationId: string, planKey: string) =>
+    [...platformFoundingKeys.all, 'quote', organizationId, planKey] as const,
+} as const;
+
+/**
  * Forensic watermark lookup (docs/FORENSIC_WATERMARK.md) — the Platform
  * Owner's "who leaked this recording?" answer. The response carries a
  * person's name, email and phone, so this root is deliberately absent from

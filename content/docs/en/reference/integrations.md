@@ -51,6 +51,6 @@ Atlas does a few connections well and leaves out the rest. This page lists both,
 
 ## Ask for something
 
-If your academy needs a connection that Atlas does not have, send a **Custom feature** request from **Atlas service requests** in your academy. See [Request a service from the Atlas team](doc:DOC-SUP-002).
+If your academy needs a connection that Atlas does not have, send a **Custom feature** request from **Ask Atlas for help** in your academy's sidebar. See [Request a service from the Atlas team](doc:DOC-SUP-002).
 
 Related: [Frequently asked questions](doc:DOC-FAQ-001) · [How selling courses works](doc:DOC-COM-001)

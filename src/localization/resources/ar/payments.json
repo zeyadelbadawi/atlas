@@ -39,6 +39,8 @@
     "startingCheckout": "جارٍ بدء عملية الدفع…",
     "startCheckout": "بدء عملية الدفع",
     "summaryTitle": "ملخص الطلب",
+    "foundingPreview": "سعرك كأكاديمية مؤسِّسة لهذه الباقة: {{price}} في السنة، ثابت حتى {{date}}.",
+    "foundingPrice": "سعر الأكاديمية المؤسِّسة، ثابت حتى {{date}}.",
     "paymentMethodTitle": "طريقة الدفع",
     "methodUnavailable": "غير متاحة بعد",
     "creatingPayment": "جارٍ إنشاء الدفعة…",
