@@ -27,7 +27,10 @@ export type HeroArtName =
   | 'payments'
   | 'content-protection'
   | 'teams-and-academies'
-  | 'quizzes-and-certificates';
+  | 'quizzes-and-certificates'
+  // B3 — the resources hub and the multi-academy solution page.
+  | 'resources'
+  | 'multi-academy';
 
 const ROOT = '/marketing-assets/heroes/v1';
 export const HERO_ART_WIDTHS = [480, 768, 1080] as const;

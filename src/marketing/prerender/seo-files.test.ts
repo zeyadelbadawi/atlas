@@ -44,6 +44,8 @@ describe('sitemaps', () => {
     ).toEqual([
       'https://atlass.dpdns.org/sitemaps/marketing-en.xml',
       'https://atlass.dpdns.org/sitemaps/marketing-ar.xml',
+      // B3 — the blog's sitemap, rendered at request time by the ssr container.
+      'https://atlass.dpdns.org/sitemaps/blog.xml',
     ]);
   });
 

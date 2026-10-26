@@ -103,11 +103,16 @@ export function Header({
   const lang = content.lang;
   const h = content.chrome.header;
   const sw = content.chrome.languageSwitch;
+  // B3 — Blog and Resources join the bar; the help center link shows from
+  // `xl` up (Resources links it first, and the drawer always lists it), so
+  // the desktop bar still fits at 1024 px in both languages.
   const nav = [
     { id: 'pricing', label: h.pricing, href: localePath(lang, '/pricing') },
+    { id: 'blog', label: h.blog, href: localePath(lang, '/blog') },
+    { id: 'resources', label: h.resources, href: localePath(lang, '/resources') },
     { id: 'security', label: h.security, href: localePath(lang, '/security') },
     { id: 'contact', label: h.contact, href: localePath(lang, '/contact') },
-    { id: 'help', label: h.help, href: docsHref(lang, '/') },
+    { id: 'help', label: h.help, href: docsHref(lang, '/'), wideOnly: true },
   ];
   const trial = link(lang, content.chrome.ctas.trial, tokens);
   const trialShort = link(lang, content.chrome.ctas.trialShort, tokens);
@@ -155,7 +160,7 @@ export function Header({
                 key={item.id}
                 href={item.href}
                 aria-current={currentId === item.id ? 'page' : undefined}
-                className="inline-flex min-h-11 items-center rounded-md px-3 text-[0.95rem] font-medium text-foreground/80 hover:text-foreground aria-[current=page]:text-primary"
+                className={`${item.wideOnly ? 'hidden xl:inline-flex' : 'inline-flex'} min-h-11 items-center rounded-md px-3 text-[0.95rem] font-medium text-foreground/80 hover:text-foreground aria-[current=page]:text-primary`}
               >
                 {item.label}
               </a>
@@ -358,6 +363,13 @@ export function PageShell({
       <a href="#main" className="mk-skip">
         {content.chrome.skipToContent}
       </a>
+      {/* B3 — site banners land here (client/announcements.ts); empty without JS. */}
+      <div
+        data-mk-announcements
+        data-label-region={content.chrome.announcements.region}
+        data-label-dismiss={content.chrome.announcements.dismiss}
+        data-label-close={content.chrome.announcements.close}
+      />
       <Header
         content={content}
         tokens={tokens}

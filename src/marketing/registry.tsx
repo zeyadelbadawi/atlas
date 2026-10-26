@@ -11,6 +11,8 @@ import { PRICING_PAGES } from './pages/pricing';
 import { COMPANY_PAGES } from './pages/company';
 import { LEGAL_PAGES, NOT_FOUND_PAGES } from './pages/legal';
 import { FOUNDING_PAGES } from './pages/founding';
+import { RESOURCES_PAGES } from './pages/resources';
+import { SOLUTION_PAGES } from './pages/solutions';
 
 export const MARKETING_PAGES: readonly MarketingPageDef[] = [
   ...HOME_PAGES,
@@ -18,6 +20,9 @@ export const MARKETING_PAGES: readonly MarketingPageDef[] = [
   ...PRODUCT_PAGES,
   ...PRICING_PAGES,
   ...COMPANY_PAGES,
+  // B3 — the resources hub and the multi-academy solution page.
+  ...RESOURCES_PAGES,
+  ...SOLUTION_PAGES,
   // B2 — noindex and out of the sitemap/llms (inSitemap: false); link-only.
   ...FOUNDING_PAGES,
   ...LEGAL_PAGES,

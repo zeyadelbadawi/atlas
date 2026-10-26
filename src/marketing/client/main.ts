@@ -9,11 +9,15 @@
  *   - the contact form (`POST /api/v1/public/contact`);
  *   - the cookieless marketing beacon (`client/beacon.ts`, DL-51);
  *   - the header's Sign in / Open dashboard swap and the transition into
- *     the dashboard host (`client/app-handoff.ts`, DL-63).
+ *     the dashboard host (`client/app-handoff.ts`, DL-63);
+ *   - B3: site banners and the pop-up (`client/announcements.ts`), and the
+ *     newest blog posts on /resources (`client/resources.ts`), both after load.
  */
 import '../styles/marketing.css';
 import { startBeacon } from './beacon';
 import { initAppHandoff } from './app-handoff';
+import { initAnnouncements } from './announcements';
+import { initLatestPosts } from './resources';
 import { APP_ORIGIN } from '../lib/site';
 import { CONTACT_LIMITS, validateContact, type ContactField } from './contact-validation';
 
@@ -282,3 +286,5 @@ initPricing();
 initContactForm();
 initAppHandoff(APP_ORIGIN);
 startBeacon();
+initAnnouncements();
+initLatestPosts();
