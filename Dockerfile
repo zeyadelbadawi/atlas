@@ -88,13 +88,13 @@ CMD ["node", "server/ssr/server.mjs"]
 # Cross-compiled on the build host's own architecture: Go builds a static
 # linux/arm64 Caddy natively in about a minute, where compiling it under
 # QEMU emulation took close to an hour.
-FROM --platform=$BUILDPLATFORM mirror.gcr.io/library/caddy:2-builder-alpine@sha256:d6161a2c82fd58b3205048958fb6246d0c5d892beee8a47e90944610c4efd100 AS caddy-build
+FROM --platform=$BUILDPLATFORM mirror.gcr.io/library/caddy:2-builder-alpine@sha256:ef9b65adf9a224770c6d5f6d1ae1bf99bc3caaa78d8c4bae3ea949ee6984f301 AS caddy-build
 ARG TARGETOS
 ARG TARGETARCH
 RUN GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0 \
     xcaddy build --with github.com/caddy-dns/cloudflare
 
-FROM mirror.gcr.io/library/caddy:2-alpine@sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f
+FROM mirror.gcr.io/library/caddy:2-alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f
 COPY --from=caddy-build /usr/bin/caddy /usr/bin/caddy
 # Stale-tab recovery — the previous builds' hashed chunks, carried forward
 # by the deploy workflow (each build's for 14 days), so a tab opened before this
