@@ -242,6 +242,7 @@ export const BLOG_AR: MarketingContent['blog'] = {
     },
     news: { label: 'أخبار {brand}', description: 'الجديد على {brand}.' },
   },
+  breadcrumbLabel: 'مسار الصفحة',
   topicsLabel: 'الموضوعات',
   allTopics: 'كل الموضوعات',
   featured: 'مميز',

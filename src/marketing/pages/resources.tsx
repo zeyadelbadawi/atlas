@@ -106,7 +106,7 @@ function ResourcesPage({ env }: { env: PageEnv }) {
           className="mt-10 grid gap-5 md:grid-cols-3"
           data-blog-latest
           data-locale={lang}
-          data-reading-time={r.blog.readingTime}
+          data-reading-time={r.blog.readingTime.replace('{minutes}', '%s')}
           aria-live="polite"
         >
           {RESOURCES_FALLBACK_TOPICS.map((topic) => (

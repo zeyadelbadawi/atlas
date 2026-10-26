@@ -123,7 +123,8 @@ export function buildSitemapIndex(
         `<sitemap><loc>${escapeXml(absoluteUrl(ctx.siteUrl, `/${localeSitemapFile(lang)}`))}</loc><lastmod>${escapeXml(ctx.buildDate)}</lastmod></sitemap>`
     ),
     ...dynamicSitemaps.map(
-      (file) => `<sitemap><loc>${escapeXml(absoluteUrl(ctx.siteUrl, `/${file}`))}</loc></sitemap>`
+      (file) =>
+        `<sitemap><loc>${escapeXml(absoluteUrl(ctx.siteUrl, `/${file}`))}</loc></sitemap>`
     ),
   ];
   return (

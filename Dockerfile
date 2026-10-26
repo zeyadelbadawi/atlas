@@ -78,7 +78,12 @@ COPY package.json ./
 COPY --from=ssr-deps /app/node_modules ./node_modules
 COPY --from=ssr-build /app/dist ./dist
 COPY --from=ssr-build /app/dist-ssr ./dist-ssr
-COPY server/ssr/handler.mjs server/ssr/server.mjs ./server/ssr/
+# B3 — the marketing blog is rendered here at request time with the
+# marketing prerender bundle and its build context (blog-context.json,
+# written by scripts/marketing/prerender.mjs in the build stage), so its
+# pages share this build's hashed stylesheet, scripts, header and footer.
+COPY --from=ssr-build /app/dist-marketing-ssr ./dist-marketing-ssr
+COPY server/ssr/handler.mjs server/ssr/server.mjs server/ssr/blog.mjs ./server/ssr/
 USER node
 EXPOSE 3100
 HEALTHCHECK --interval=15s --timeout=3s --start-period=10s --retries=3 \

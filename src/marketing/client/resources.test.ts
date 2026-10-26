@@ -8,7 +8,7 @@ import { initLatestPosts, parsePosts, renderLatestPosts } from './resources';
 
 beforeEach(() => {
   document.body.innerHTML = `
-    <ul data-blog-latest data-locale="ar" data-reading-time="قراءة {minutes} دقيقة">
+    <ul data-blog-latest data-locale="ar" data-reading-time="قراءة %s دقيقة">
       <li><a href="/ar/blog/topics/protection">a</a></li><li></li><li></li>
     </ul>
     <p data-blog-latest-fallback>fallback</p>`;

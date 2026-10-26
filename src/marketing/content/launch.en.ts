@@ -249,6 +249,7 @@ export const BLOG_EN: MarketingContent['blog'] = {
     },
     news: { label: '{brand} news', description: 'What is new on {brand}.' },
   },
+  breadcrumbLabel: 'Breadcrumb',
   topicsLabel: 'Topics',
   allTopics: 'All topics',
   featured: 'Featured',

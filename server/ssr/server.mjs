@@ -27,6 +27,16 @@
  *   SSR_PRELOAD_ARABIC_FONTS  `off` stops an Arabic Theme 1 page preloading
  *                        the Arabic subsets of Rubik and Readex Pro (default
  *                        on; B0-WEB-12: About AR mobile CLS 0.066 → 0.040)
+ *
+ * B3 — the marketing blog (server/ssr/blog.mjs), on the marketing host only:
+ *   SSR_MARKETING_ENTRY   the marketing prerender bundle
+ *                         (default ./dist-marketing-ssr/entry.js)
+ *   SSR_MARKETING_CONTEXT its build context (default
+ *                         ./dist-marketing-ssr/blog-context.json); without
+ *                         both files the blog is off (Caddy then serves its
+ *                         own "temporarily unavailable" page)
+ *   SSR_MARKETING_HOST    the apex host (default: the build's site URL host)
+ *   SSR_BLOG_CACHE_TTL_MS blog page cache lifetime (default 30000)
  */
 import { createServer } from 'node:http';
 import { createReadStream, existsSync, statSync } from 'node:fs';
@@ -36,6 +46,7 @@ import {
   DEFAULT_MAX_HTML_BYTES,
   createSsrHandler,
 } from './handler.mjs';
+import { createBlogHandler } from './blog.mjs';
 
 process.env.NODE_ENV ??= 'production';
 
@@ -69,6 +80,26 @@ const { handle } = await createSsrHandler({
   preloadArabicFonts: env('SSR_PRELOAD_ARABIC_FONTS', 'on') !== 'off',
   log,
 });
+
+const MARKETING_ENTRY = resolve(
+  env('SSR_MARKETING_ENTRY', 'dist-marketing-ssr/entry.js')
+);
+const MARKETING_CONTEXT = resolve(
+  env('SSR_MARKETING_CONTEXT', 'dist-marketing-ssr/blog-context.json')
+);
+const blog =
+  existsSync(MARKETING_ENTRY) && existsSync(MARKETING_CONTEXT)
+    ? await createBlogHandler({
+        entryPath: MARKETING_ENTRY,
+        contextPath: MARKETING_CONTEXT,
+        apiOrigin: API_ORIGIN,
+        marketingHost: env('SSR_MARKETING_HOST', ''),
+        apiTimeoutMs: Number(env('SSR_API_TIMEOUT_MS', 2_000)),
+        cacheTtlMs: Number(env('SSR_BLOG_CACHE_TTL_MS', 30_000)),
+        log,
+      })
+    : null;
+log({ event: 'blog', enabled: Boolean(blog), host: blog?.host });
 
 const ASSET_TYPES = {
   '.js': 'text/javascript; charset=utf-8',
@@ -119,6 +150,20 @@ const server = createServer(async (req, res) => {
   }
   if (url.pathname.startsWith('/assets/')) {
     serveAsset(req, res, url.pathname);
+    return;
+  }
+  // B3 — the marketing blog answers first; it only claims blog paths on the
+  // marketing host, so academy hosts never reach it.
+  const blogResult = blog
+    ? await blog.handleBlog({
+        method: req.method ?? 'GET',
+        url: `${url.pathname}${url.search}`,
+        host: req.headers.host ?? '',
+      })
+    : null;
+  if (blogResult) {
+    res.writeHead(blogResult.status, blogResult.headers);
+    res.end(req.method === 'HEAD' ? undefined : blogResult.body);
     return;
   }
   const result = await handle({

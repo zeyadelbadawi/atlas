@@ -28,6 +28,8 @@ export interface BlogArticleProps {
   } | null;
   /** Rendered above the title (breadcrumbs on the site). */
   readonly before?: ReactNode;
+  /** Rendered between the cover and the body (the table of contents on the site). */
+  readonly aside?: ReactNode;
   /** Rendered after the body (related posts on the site). */
   readonly after?: ReactNode;
   /** The heading level of the title: the page's h1 on the site. */
@@ -44,6 +46,7 @@ export function BlogArticle({
   date,
   cover,
   before,
+  aside,
   after,
   titleAs = 'h1',
 }: BlogArticleProps) {
@@ -83,6 +86,7 @@ export function BlogArticle({
           />
         </figure>
       ) : null}
+      {aside}
       <div className="mt-6 text-base sm:text-[1.0625rem]" data-blog-body>
         {renderBlogMarkdown(body)}
       </div>

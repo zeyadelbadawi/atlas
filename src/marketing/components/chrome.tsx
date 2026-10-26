@@ -104,8 +104,9 @@ export function Header({
   const h = content.chrome.header;
   const sw = content.chrome.languageSwitch;
   // B3 — Blog and Resources join the bar; the help center link shows from
-  // `xl` up (Resources links it first, and the drawer always lists it), so
-  // the desktop bar still fits at 1024 px in both languages.
+  // `2xl` up (Resources links it first, and the drawer and footer always
+  // list it), so the desktop bar stays on one line from 1024 px in both
+  // languages.
   const nav = [
     { id: 'pricing', label: h.pricing, href: localePath(lang, '/pricing') },
     { id: 'blog', label: h.blog, href: localePath(lang, '/blog') },
@@ -133,7 +134,7 @@ export function Header({
       data-header
     >
       <Container className="flex h-full items-center justify-between gap-4">
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-6 xl:gap-8">
           <Logo lang={lang} brand={content.brand.name} label={h.homeLabel} />
           <nav aria-label={h.navLabel} className="hidden items-center gap-1 lg:flex">
             <details className="mk-menu relative">
@@ -160,7 +161,7 @@ export function Header({
                 key={item.id}
                 href={item.href}
                 aria-current={currentId === item.id ? 'page' : undefined}
-                className={`${item.wideOnly ? 'hidden xl:inline-flex' : 'inline-flex'} min-h-11 items-center rounded-md px-3 text-[0.95rem] font-medium text-foreground/80 hover:text-foreground aria-[current=page]:text-primary`}
+                className={`${item.wideOnly ? 'hidden 2xl:inline-flex' : 'inline-flex'} min-h-11 items-center whitespace-nowrap rounded-md px-3 text-[0.95rem] font-medium text-foreground/80 hover:text-foreground aria-[current=page]:text-primary`}
               >
                 {item.label}
               </a>
@@ -190,11 +191,11 @@ export function Header({
           <a
             href={signIn.href}
             data-signed-out-only
-            className="hidden min-h-11 items-center rounded-md px-3 text-[0.95rem] font-medium text-foreground/80 hover:text-foreground lg:inline-flex"
+            className="hidden min-h-11 items-center whitespace-nowrap rounded-md px-3 text-[0.95rem] font-medium text-foreground/80 hover:text-foreground lg:inline-flex"
           >
             {signIn.label}
           </a>
-          <a href={trial.href} data-mkt-cta="cta_t" data-signed-out-only className="mk-btn mk-btn-primary hidden px-4 text-sm sm:inline-flex">
+          <a href={trial.href} data-mkt-cta="cta_t" data-signed-out-only className="mk-btn mk-btn-primary hidden whitespace-nowrap px-4 text-sm sm:inline-flex">
             {trial.label}
           </a>
           <a href={trialShort.href} data-mkt-cta="cta_t" data-signed-out-only className="mk-btn mk-btn-primary px-3 text-sm sm:hidden" aria-label={trial.label}>

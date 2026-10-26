@@ -14,7 +14,12 @@ import type {
 import { isNoindex, renderDocument, type MarketingAssets } from './document';
 import { buildLlmsFullTxt } from './llms-full';
 import { buildPricingMarkdown } from './pricing-md';
-import { MARKETING_404_FILE, marketingFileForPath } from './routing';
+import {
+  MARKETING_404_FILE,
+  MARKETING_BLOG_UNAVAILABLE_FILE,
+  marketingFileForPath,
+} from './routing';
+import { renderBlogUnavailable } from '../blog/site';
 import {
   LLMS_FULL_FILE,
   PRICING_MD_FILE,
@@ -162,6 +167,21 @@ export function buildMarketingSite(
         );
       }
     }
+  }
+
+  // B3 — the blog's "temporarily unavailable" page, served by Caddy (503)
+  // when the renderer that draws the blog cannot be reached.
+  for (const [lang, file] of pages.length > 0
+    ? Object.entries(MARKETING_BLOG_UNAVAILABLE_FILE)
+    : []) {
+    files.push({
+      path: file,
+      contents: renderBlogUnavailable({
+        lang: lang as MarketingLang,
+        ctx,
+        assets,
+      }),
+    });
   }
 
   const langs = sitemapLanguages(resolved);

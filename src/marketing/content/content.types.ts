@@ -675,6 +675,8 @@ export interface MkBlog {
     Record<MarketingBlogTopic, { readonly label: string; readonly description: string }>
   >;
   readonly topicsLabel: string;
+  /** The breadcrumb trail's accessible name. */
+  readonly breadcrumbLabel: string;
   readonly allTopics: string;
   readonly featured: string;
   /** `{minutes}`. */

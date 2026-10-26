@@ -44,7 +44,8 @@ export function renderLatestPosts(
   if (posts.length === 0) return;
   const doc = list.ownerDocument;
   const lang = list.dataset.locale === 'ar' ? 'ar' : 'en';
-  const readingTemplate = list.dataset.readingTime ?? '{minutes}';
+  // `%s` is the number (the page writes it so no `{token}` is left in the HTML).
+  const readingTemplate = list.dataset.readingTime ?? '%s';
   const number = new Intl.NumberFormat(lang === 'ar' ? 'ar-EG' : 'en-US');
   const items = posts.map((post) => {
     const li = doc.createElement('li');
@@ -63,7 +64,7 @@ export function renderLatestPosts(
     const meta = doc.createElement('span');
     meta.className = 'mt-auto block pt-4 text-sm text-muted-foreground';
     meta.textContent = readingTemplate.replace(
-      '{minutes}',
+      '%s',
       number.format(post.readingMinutes)
     );
     a.append(title, excerpt, meta);

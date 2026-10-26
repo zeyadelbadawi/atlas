@@ -11,8 +11,8 @@
  *  - `/`, `/ar`, `/pricing`, `/ar/pricing` are complete without JavaScript:
  *    200 HTML, `lang`/`dir`, a title naming Atlas, one H1, self canonical,
  *    the hreflang trio, and indexable (no robots noindex, meta or header);
- *  - a trailing slash is one 301; planned feature pages and `/blog` are a
- *    real 404 with the branded page (Arabic under `/ar`);
+ *  - a trailing slash is one 301; unknown pages are a real 404 with the
+ *    branded page (Arabic under `/ar`) — `/blog` is the live blog since B3;
  *  - app routes are still the single-page app, and a marketing page reached
  *    INSIDE the app reloads once into the static page;
  *  - robots.txt, llms.txt and pricing.md are served as text.
@@ -78,13 +78,12 @@ test.describe('J49 — static marketing site @production-build', () => {
     }
   });
 
-  test('planned pages and the blog are a real, branded 404', async ({
+  test('unknown pages are a real, branded 404', async ({
     request,
   }) => {
     for (const [path, lang] of [
       ['/features/payments', 'en'],
       ['/features/academy-website', 'en'],
-      ['/blog', 'en'],
       ['/ar/features/payments', 'ar'],
       ['/ar/does-not-exist', 'ar'],
     ]) {
