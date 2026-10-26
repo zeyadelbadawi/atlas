@@ -11,6 +11,7 @@ import arPlatformCommerce from './ar/platformCommerce.json';
 import arPlatformObservability from './ar/platformObservability.json';
 import arPlatformEmail from './ar/platformEmail.json';
 import arPlatformLaunch from './ar/platformLaunch.json';
+import arPlatformGrowth from './ar/platformGrowth.json';
 import arMessaging from './ar/messaging.json';
 import arLayout from './ar/layout.json';
 import arHome from './ar/home.json';
@@ -46,6 +47,7 @@ const bundle: Record<string, Record<string, unknown>> = {
   platformObservability: arPlatformObservability,
   platformEmail: arPlatformEmail,
   platformLaunch: arPlatformLaunch,
+  platformGrowth: arPlatformGrowth,
   messaging: arMessaging,
   layout: arLayout,
   home: arHome,

@@ -129,7 +129,8 @@
     "platformLaunch": "Launch center",
     "platformBlog": "Blog",
     "platformAnnouncements": "Banners & pop-ups",
-    "platformLaunchChecklist": "Launch checklist"
+    "platformLaunchChecklist": "Launch checklist",
+    "platformGrowth": "Growth & capacity"
   },
   "account": {
     "menu": "Account menu",

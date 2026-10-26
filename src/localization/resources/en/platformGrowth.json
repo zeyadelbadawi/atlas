@@ -1,0 +1,332 @@
+{
+  "title": "Growth & capacity",
+  "subtitle": "Your season capacity, the cost of each paying academy by channel, and your marketing spend.",
+  "tabs": {
+    "label": "Growth & capacity sections",
+    "capacity": "Capacity",
+    "cac": "CAC",
+    "spend": "Spend",
+    "settings": "Settings"
+  },
+  "channels": {
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "youtube": "YouTube",
+    "tiktok": "TikTok",
+    "whatsapp": "WhatsApp",
+    "teacher_referral": "Teacher referral",
+    "assistant_or_agency": "Assistant or agency",
+    "google_search": "Google search",
+    "google_ads": "Google Ads",
+    "meta_ads": "Meta ads (Facebook / Instagram)",
+    "ai_assistant": "AI assistant",
+    "event": "Event",
+    "email": "Email",
+    "partner": "Partner",
+    "other": "Other",
+    "unknown": "Unknown"
+  },
+  "common": {
+    "optional": "optional",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "failed": "That didn’t work",
+    "conflictTitle": "Someone else saved first",
+    "showTable": "Show as table",
+    "showChart": "Show as chart"
+  },
+  "range": {
+    "label": "Months",
+    "from": "From",
+    "to": "To",
+    "apply": "Show",
+    "invalid": "Choose both months.",
+    "reversed": "The first month must not be after the last.",
+    "tooLong": "Choose at most {{max}} months."
+  },
+  "capacity": {
+    "alertsTitle": "What needs attention",
+    "noAlerts": "Nothing needs attention right now.",
+    "severity": {
+      "info": "Note",
+      "warning": "Warning",
+      "critical": "Act now"
+    },
+    "alerts": {
+      "onboarding_cap_reached": "{{onboardings}} onboardings this week against a cap of {{cap}}.",
+      "hours_over_capacity": "This week needs about {{estimatedHours}} h of your {{ownerHours}} h ({{utilization}}).",
+      "hire_warn": "{{payingOrgs}} paying organizations: time to plan a hire (hire at {{hireAt}}).",
+      "hire_now": "{{payingOrgs}} paying organizations reached the hire point ({{hireAt}}). Hire now.",
+      "requests_backlog": "{{open}} unread contact enquiries; the oldest has waited {{oldestOpenHours}} h.",
+      "attribution_low": "Only {{attributed}} of {{signups}} sign-ups in the last 30 days have a known source ({{ratio}}).",
+      "season_soon": "The season starts on {{start}}, in {{daysToStart}} days.",
+      "in_season": "In season until {{end}} ({{daysLeft}} days left)."
+    },
+    "actions": {
+      "requests": "Open contact enquiries",
+      "coverage": "See source coverage",
+      "cap": "Review the weekly cap",
+      "hours": "Review your hours",
+      "hiring": "Review hiring thresholds",
+      "season": "Change season dates"
+    },
+    "season": {
+      "title": "Season",
+      "dates": "{{start}} – {{end}}",
+      "inSeason_one": "In season · {{value}} day left",
+      "inSeason_other": "In season · {{value}} days left",
+      "daysToStart_one": "Starts in {{value}} day",
+      "daysToStart_other": "Starts in {{value}} days",
+      "ended": "The season has ended. Set next season’s dates in Settings."
+    },
+    "week": {
+      "title": "This week",
+      "range": "{{start}} – {{end}} (Saturday to Friday, Cairo time)",
+      "onboardings": "Onboardings",
+      "onboardingsValue": "{{value}} of {{cap}}",
+      "underCap_one": "{{value}} more fits this week",
+      "underCap_other": "{{value}} more fit this week",
+      "atCap": "At the weekly cap",
+      "overCap": "Over the weekly cap",
+      "signups": "Sign-ups",
+      "paidConversions": "Paid conversions"
+    },
+    "load": {
+      "title": "Your hours this week",
+      "label": "Estimated hours",
+      "value": "{{hours}} h of {{owner}} h",
+      "state": {
+        "ok": "Within your hours ({{percent}})",
+        "tight": "Close to your limit ({{percent}})",
+        "over": "Over your hours ({{percent}})"
+      },
+      "payingOrgs": "Paying organizations",
+      "activeTrials": "Active trials",
+      "formula": "Estimate from your settings: this week’s onboardings × minutes per onboarding, plus weekly support minutes for each paying organization."
+    },
+    "hiring": {
+      "title": "Hiring",
+      "value_one": "{{value}} paying organization",
+      "value_other": "{{value}} paying organizations",
+      "thresholds": "Plan a hire at {{warn}} · Hire at {{hire}}",
+      "state": {
+        "ok": "No hire needed yet",
+        "warn": "Plan a hire",
+        "hire": "Hire now"
+      }
+    },
+    "requests": {
+      "title": "Contact enquiries",
+      "open_one": "{{value}} unread",
+      "open_other": "{{value}} unread",
+      "oldest_one": "Oldest waiting {{value}} hour",
+      "oldest_other": "Oldest waiting {{value}} hours",
+      "none": "No unread enquiries."
+    },
+    "attribution": {
+      "title": "Known source, last 30 days",
+      "value": "{{attributed}} of {{signups}} sign-ups have a known source.",
+      "empty": "No sign-ups in the last 30 days."
+    },
+    "chart": {
+      "title": "Last 12 weeks",
+      "description": "Sign-ups, onboardings (first academy ready) and paid conversions (first plan payment) per week, Saturday to Friday.",
+      "legend": "Legend",
+      "series": {
+        "signups": "Sign-ups",
+        "onboardings": "Onboardings",
+        "paidConversions": "Paid conversions"
+      },
+      "week": "Week starting",
+      "weekOf": "Week starting {{date}}",
+      "ariaLabel": "Line chart of sign-ups, onboardings and paid conversions per week over the last {{count}} weeks. Use “Show as table” for the numbers.",
+      "empty": "No weeks to show yet."
+    }
+  },
+  "cac": {
+    "note": "Cash spend only; founder time is not included.",
+    "cohortNote": "Each sign-up counts in the month it signed up, even if it paid later. CAC = spend ÷ paying organizations.",
+    "showAll": "Show channels with no activity",
+    "rangeLabel": "{{from}} to {{to}}",
+    "overallTitle": "Whole period",
+    "overallCaption": "CAC by channel, {{range}}",
+    "monthCaption": "CAC by channel, {{month}}",
+    "noActivity": "No sign-ups or spend this month.",
+    "summary": {
+      "spend": "Spend",
+      "paying": "Paying organizations",
+      "blendedCac": "Blended CAC",
+      "noSpend": "No spend logged",
+      "coverage": "Known source",
+      "coverageValue": "{{attributed}} of {{signups}} sign-ups"
+    },
+    "table": {
+      "channel": "Channel",
+      "signups": "Sign-ups",
+      "paying": "Paying",
+      "spend": "Spend",
+      "cac": "CAC",
+      "blended": "All channels (blended)",
+      "noPayingYet": "spent, no paying yet",
+      "notApplicable": "no spend, no paying",
+      "founding_one": "incl. {{value}} founding",
+      "founding_other": "incl. {{value}} founding",
+      "unknownNote_one": "{{value}} sign-up with no known source counts in the blended row only.",
+      "unknownNote_other": "{{value}} sign-ups with no known source count in the blended row only.",
+      "noChannelActivity": "No channel had activity."
+    },
+    "empty": {
+      "title": "No numbers for these months yet",
+      "description": "Numbers appear as organizations sign up and you log spend. The channel comes from tagged links (utm_source and friends, for example ?utm_source=facebook), the “How did you first hear about us?” answer, the referring site, or a channel you set on the organization."
+    }
+  },
+  "spend": {
+    "add": "Add spend",
+    "intro": "Log cash paid for marketing: ads, freelancers, agencies and partner fees, by month and channel. Founder time is not a cost here.",
+    "monthTotal": "Total {{amount}}",
+    "entryName": "{{channel}}, {{month}}",
+    "edit": "Edit {{name}}",
+    "delete": "Delete {{name}}",
+    "conflictBody": "This entry was changed or deleted by someone else. The list has been reloaded; check it and try again.",
+    "empty": {
+      "title": "No spend logged in these months",
+      "description": "Add what you paid for ads, freelancers, agencies or partners so the CAC tab can work out the cost of each paying organization."
+    },
+    "dialog": {
+      "addTitle": "Add spend",
+      "editTitle": "Edit spend",
+      "description": "Cash paid for marketing in one month, on one channel.",
+      "month": "Month",
+      "channel": "Channel",
+      "channelPlaceholder": "Choose a channel",
+      "amount": "Amount (EGP)",
+      "amountHint": "Up to two decimals, for example 1250.50.",
+      "descriptionLabel": "What it was for",
+      "descriptionHint": "For example: Facebook ads for the June campaign.",
+      "save": "Save",
+      "errors": {
+        "month": "Choose a month.",
+        "channel": "Choose a channel.",
+        "amount": "Enter an amount above 0 with at most two decimals, up to EGP 100,000,000.",
+        "description": "Use {{max}} characters or fewer."
+      }
+    },
+    "confirmDelete": {
+      "title": "Delete this spend entry?",
+      "body": "{{name}}: {{amount}}. CAC for that month changes at once. This can’t be undone."
+    },
+    "toasts": {
+      "added": "Spend added",
+      "saved": "Spend saved",
+      "deleted": "Spend deleted"
+    }
+  },
+  "settings": {
+    "sections": {
+      "season": {
+        "title": "Season",
+        "description": "The busy months when you onboard and support academies."
+      },
+      "capacity": {
+        "title": "Your capacity",
+        "description": "What a week of onboarding and support costs you, and how much time you give it."
+      },
+      "hiring": {
+        "title": "Hiring thresholds",
+        "description": "Paying organizations at which to plan a hire, and to hire."
+      }
+    },
+    "fields": {
+      "seasonStart": {
+        "label": "Season starts",
+        "hint": "Default 1 June."
+      },
+      "seasonEnd": {
+        "label": "Season ends",
+        "hint": "Must be after the start. Default 30 September."
+      },
+      "weeklyOwnerHours": {
+        "label": "Your hours per week",
+        "hint": "Hours you give to onboarding and support in the season, {{min}}–{{max}}, one decimal allowed."
+      },
+      "onboardingCapPerWeek": {
+        "label": "Onboardings per week",
+        "hint": "The most new academies you set up in one week, {{min}}–{{max}}."
+      },
+      "minutesPerOnboarding": {
+        "label": "Minutes per onboarding",
+        "hint": "Your time to set up one academy, {{min}}–{{max}}."
+      },
+      "supportMinutesPerPayingOrgPerWeek": {
+        "label": "Support minutes per paying organization, each week",
+        "hint": "{{min}}–{{max}}."
+      },
+      "hireWarnPayingOrgs": {
+        "label": "Plan a hire at",
+        "hint": "Paying organizations; shows a warning. {{min}}–{{max}}."
+      },
+      "hireNowPayingOrgs": {
+        "label": "Hire now at",
+        "hint": "At least the “plan a hire” number. {{min}}–{{max}}."
+      }
+    },
+    "errors": {
+      "date": "Enter a date.",
+      "seasonOrder": "The end must be after the start.",
+      "range": "Enter a whole number in the allowed range.",
+      "hours": "Enter 1 to 80 hours, with at most one decimal.",
+      "hireOrder": "Must be at least the “plan a hire” number."
+    },
+    "errorSummary": "Check these fields:",
+    "save": "Save settings",
+    "discard": "Discard changes",
+    "unsaved": "You have unsaved changes.",
+    "lastSaved": "Last saved {{date}}",
+    "lastSavedBy": "Last saved {{date}} by {{name}}",
+    "conflictBody": "These settings were saved by someone else while you were editing. Load their version: fields you changed keep what you typed, then save again.",
+    "reload": "Load the latest version",
+    "toasts": {
+      "saved": "Settings saved"
+    }
+  },
+  "acquisition": {
+    "title": "Acquisition",
+    "channel": "Counted under",
+    "howDecided": "How it was decided",
+    "decidedBy": {
+      "override": "You set this channel.",
+      "self_reported": "Their answer to “How did you first hear about us?”.",
+      "utm": "The UTM tags on the link they arrived from.",
+      "referrer": "The site that referred them.",
+      "self_reported_other": "They answered “Somewhere else” and nothing else matched.",
+      "none": "No source is known."
+    },
+    "heardFrom": "Their answer",
+    "notAnswered": "Not answered",
+    "inTheirWords": "In their words",
+    "captured": "Link and referrer at sign-up",
+    "nothingCaptured": "Nothing captured",
+    "fields": {
+      "utmSource": "Source",
+      "utmMedium": "Medium",
+      "utmCampaign": "Campaign",
+      "utmTerm": "Term",
+      "utmContent": "Content",
+      "referrerDomain": "Referred by",
+      "landingTemplate": "Landing page"
+    },
+    "override": {
+      "title": "Set channel",
+      "description": "When you know the source (a WhatsApp chat, a call), set it here. It wins over everything else in CAC.",
+      "channel": "Channel",
+      "automatic": "Automatic (from their answer, link or referrer)",
+      "note": "Note",
+      "noteHint": "For example: signed up after a WhatsApp call. Up to 200 characters.",
+      "save": "Save channel",
+      "saved": "Channel set",
+      "cleared": "Channel back to automatic",
+      "setBy": "Set by {{name}} on {{date}}",
+      "setOn": "Set on {{date}}"
+    }
+  }
+}

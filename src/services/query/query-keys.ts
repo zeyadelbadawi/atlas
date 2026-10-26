@@ -1291,6 +1291,18 @@ export const platformLaunchChecklistKeys = {
   all: ['platform-launch-checklist'] as const,
 } as const;
 
+/** G1 — Growth & capacity: settings, spend ledger, CAC and capacity (Platform Owner). */
+export const platformGrowthKeys = {
+  all: ['platform-growth'] as const,
+  settings: () => [...platformGrowthKeys.all, 'settings'] as const,
+  spendAll: () => [...platformGrowthKeys.all, 'spend'] as const,
+  spend: (range?: unknown) =>
+    [...platformGrowthKeys.all, 'spend', range] as const,
+  cacAll: () => [...platformGrowthKeys.all, 'cac'] as const,
+  cac: (range?: unknown) => [...platformGrowthKeys.all, 'cac', range] as const,
+  capacity: () => [...platformGrowthKeys.all, 'capacity'] as const,
+} as const;
+
 /** B3 — the dashboard banner every signed-in dashboard user may see. */
 export const dashboardAnnouncementKeys = {
   all: ['dashboard-announcements'] as const,

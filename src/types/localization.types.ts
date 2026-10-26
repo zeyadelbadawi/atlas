@@ -65,6 +65,7 @@ export const TRANSLATION_NAMESPACES = [
   'platformObservability',
   'platformEmail',
   'platformLaunch',
+  'platformGrowth',
   'messaging',
   'onboarding',
   'customerRequests',

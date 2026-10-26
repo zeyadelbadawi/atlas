@@ -550,5 +550,14 @@
     "notFound": "This checklist item no longer exists.",
     "stale": "Someone else changed this item first. Reload the checklist and try again.",
     "reorderMismatch": "The checklist changed while you were reordering it. Reload and try again."
+  },
+  "growth": {
+    "settingsStale": "Someone else saved the growth settings first. Load the latest version and try again.",
+    "spendStale": "Someone else changed this spend entry first. Reload the list and try again.",
+    "spendNotFound": "This spend entry no longer exists.",
+    "monthRangeInvalid": "Choose a valid range of months, with the first month not after the last.",
+    "monthRangeTooLong": "Choose at most 36 months.",
+    "seasonRangeInvalid": "The season must end after it starts.",
+    "hireThresholdsInvalid": "“Hire now” must be at least the “plan a hire” number."
   }
 }
