@@ -23,5 +23,9 @@
   },
   "dashboard": {
     "contentLabel": "المحتوى الرئيسي"
+  },
+  "dashboardAnnouncement": {
+    "region": "إعلان",
+    "dismiss": "إغلاق الإعلان"
   }
 }

@@ -353,6 +353,20 @@ export const DASHBOARD_ROUTES = {
   platformFoundingAcademies: '/dashboard/platform/founding-academies',
 
   /**
+   * B3 — Launch & content (Platform Owner only): the launch center, the
+   * Atlas blog, marketing/dashboard banners and pop-ups, and the launch
+   * checklist. Static `new` children are declared before `:id`.
+   */
+  platformLaunch: '/dashboard/platform/launch',
+  platformBlog: '/dashboard/platform/blog',
+  platformBlogNew: '/dashboard/platform/blog/new',
+  platformBlogEdit: '/dashboard/platform/blog/:postId',
+  platformAnnouncements: '/dashboard/platform/announcements',
+  platformAnnouncementNew: '/dashboard/platform/announcements/new',
+  platformAnnouncementEdit: '/dashboard/platform/announcements/:announcementId',
+  platformLaunchChecklist: '/dashboard/platform/launch-checklist',
+
+  /**
    * Customer Requests — custom services (logo, domain, theme, section,
    * feature) academies ask the Atlas team for. Platform Owner only. The
    * static `routing` child is registered before `:requestId`. The detail

@@ -126,31 +126,26 @@ describe('static marketing site (Caddyfile)', () => {
     expect(body).not.toContain('index.html');
   });
 
-  it('answers /blog and unknown /ar paths with the branded 404 (the product pages are published, M1b)', () => {
+  it('answers unknown /ar paths with the branded 404 (the product pages are published, M1b)', () => {
     const ar = matcher(platform, 'marketing_gone_ar');
     expect(ar).toContain('path /ar/*');
     expect(ar).toContain('try_files /ar/404.html');
-    const gone = matcher(platform, 'marketing_gone');
-    expect(gone).toMatch(/path \/blog \/blog\/\* /);
-    expect(gone).not.toContain('/features/');
-    expect(gone).toContain('try_files /404.html');
     expect(platform).toMatch(
       /handle @marketing_gone_ar \{\s*(?:import edge_html \*\s*)?root \* \/srv-marketing\s*rewrite \* \/ar\/404\.html\s*file_server \{\s*status 404\s*\}\s*\}/
     );
-    expect(platform).toMatch(
-      /handle @marketing_gone \{\s*(?:import edge_html \*\s*)?root \* \/srv-marketing\s*rewrite \* \/404\.html\s*file_server \{\s*status 404\s*\}\s*\}/
-    );
+    // B3 — the blog is no longer a retired URL (it was B0-WEB-13's 404).
+    expect(platform).not.toContain('@marketing_gone ');
+    expect(platform).not.toContain('retired_blog');
   });
 
   it('is routed inside the document handler (same headers), in order, before the app', () => {
     const order = [
       'import page_policy_headers',
+      'handle @marketing_blog',
       'handle @marketing_root_file',
       'handle @marketing_slash',
       'handle @marketing_page',
       'handle @marketing_gone_ar',
-      'handle @marketing_gone',
-      'handle @retired_blog',
       'handle @academy_page',
       'try_files {path} /index.html',
     ].map((marker) => platform.indexOf(marker));
@@ -169,7 +164,6 @@ describe('static marketing site (Caddyfile)', () => {
       'marketing_slash',
       'marketing_page',
       'marketing_gone_ar',
-      'marketing_gone',
     ]) {
       expect(matcher(platform, name)).toContain(`expression \`${ON}\``);
     }
@@ -186,12 +180,42 @@ describe('static marketing site (Caddyfile)', () => {
     expect(caddyfile).not.toContain('@holding_page');
   });
 
-  it('keeps the retired blog a real 404 when the static site is off', () => {
-    const blog = matcher(platform, 'retired_blog');
-    expect(blog).toMatch(/host atlass\.dpdns\.org www\.atlass\.dpdns\.org\n/);
-    expect(platform).toMatch(
-      /handle @retired_blog \{\s*rewrite \* \/index\.html\s*file_server \{\s*status 404\s*\}\s*\}/
+  it('B3 — sends the blog and its sitemap to the renderer, apex only, before the root files', () => {
+    const blog = matcher(platform, 'marketing_blog');
+    expect(blog).toMatch(/host atlass\.dpdns\.org\n/);
+    expect(blog).not.toContain('www.');
+    expect(blog).toContain(
+      'path /blog /blog/* /ar/blog /ar/blog/* /sitemaps/blog.xml'
     );
+    expect(platform).toMatch(
+      /handle @marketing_blog \{\s*import marketing_blog_proxy\s*\}/
+    );
+    const proxy = directives(block('(marketing_blog_proxy)'));
+    expect(proxy).toContain('vars atlas_blog 1');
+    expect(proxy).toContain('reverse_proxy ssr:3100');
+    expect(proxy).toContain('header_up X-Real-IP {client_ip}');
+    // A renderer that does not claim the request: the branded 503, never the app.
+    expect(proxy).toMatch(/@blog_pass header X-Atlas-SSR pass/);
+    expect(proxy).toMatch(
+      /handle_response @blog_pass \{[\s\S]*root \* \/srv-marketing\s*rewrite \* \/blog-unavailable\.html\s*file_server \{\s*status 503/
+    );
+    expect(proxy).not.toContain('index.html');
+  });
+
+  it('B3 — a renderer that is down answers the blog with the branded 503 in its language', () => {
+    const errors = directives(block('(blog_unavailable)'));
+    expect(errors).toMatch(
+      /@blog_unavailable_ar \{\s*vars atlas_blog 1\s*path \/ar\/blog \/ar\/blog\/\*/
+    );
+    expect(errors).toContain('rewrite * /ar/blog-unavailable.html');
+    expect(errors).toContain('rewrite * /blog-unavailable.html');
+    expect(errors).toContain('header Cache-Control "no-store"');
+    expect(errors).not.toContain('index.html');
+    expect(platform).toMatch(
+      /handle_errors \{\s*import blog_unavailable\s*import ssr_unavailable hsts_platform\s*\}/
+    );
+    // Academy blog URLs are never touched by it.
+    expect(customDomains).not.toContain('blog_unavailable');
   });
 
   it('leaves academy subdomains and connected domains untouched', () => {
@@ -202,8 +226,8 @@ describe('static marketing site (Caddyfile)', () => {
       'marketing_page',
       'marketing_slash',
       'marketing_root_file',
-      'marketing_gone',
       'marketing_gone_ar',
+      'marketing_blog',
     ]) {
       expect(matcher(platform, name)).toMatch(/host atlass\.dpdns\.org\n/);
     }
@@ -220,6 +244,16 @@ describe('the image keeps marketing files out of /srv (Dockerfile)', () => {
       'COPY --from=build /app/dist-marketing /srv-marketing'
     );
     expect(dockerfile).not.toMatch(/MARKETING_PLANS_ALLOW_SNAPSHOT=1/);
+  });
+
+  it('B3 — ships the marketing bundle and the blog renderer in the ssr image', () => {
+    const ssr = dockerfile.slice(dockerfile.indexOf(' AS ssr\n'));
+    expect(ssr).toContain(
+      'COPY --from=ssr-build /app/dist-marketing-ssr ./dist-marketing-ssr'
+    );
+    expect(ssr).toMatch(
+      /COPY server\/ssr\/handler\.mjs server\/ssr\/server\.mjs server\/ssr\/blog\.mjs \.\/server\/ssr\//
+    );
   });
 });
 

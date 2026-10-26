@@ -164,7 +164,11 @@
     "forensic_watermark": "watermark code",
     "trial_policy": "trial policy",
     "academy_payout": "academy payout",
-    "privacy_request": "Privacy request"
+    "privacy_request": "Privacy request",
+    "platform_blog_post": "blog post",
+    "platform_blog_image": "blog image",
+    "site_announcement": "announcement",
+    "launch_checklist_item": "launch checklist item"
   },
   "fields": {
     "title": "Title",
@@ -744,6 +748,31 @@
       "watermark": {
         "looked_up": "{{actor}} looked up the watermark code {{target}}",
         "looked_up_noTarget": "{{actor}} looked up a watermark code"
+      },
+      "blog_post": {
+        "created": "{{actor}} created the blog post “{{target}}”",
+        "updated": "{{actor}} edited the blog post “{{target}}”",
+        "published": "{{actor}} published the blog post “{{target}}”",
+        "unpublished": "{{actor}} unpublished the blog post “{{target}}”",
+        "archived": "{{actor}} archived the blog post “{{target}}”",
+        "deleted": "{{actor}} deleted the blog post “{{target}}”"
+      },
+      "blog_image": {
+        "uploaded": "{{actor}} uploaded a blog image"
+      },
+      "site_announcement": {
+        "created": "{{actor}} created the announcement “{{target}}”",
+        "updated": "{{actor}} edited the announcement “{{target}}”",
+        "activated": "{{actor}} activated the announcement “{{target}}”",
+        "deactivated": "{{actor}} turned off the announcement “{{target}}”",
+        "archived": "{{actor}} archived the announcement “{{target}}”",
+        "deleted": "{{actor}} deleted the announcement “{{target}}”"
+      },
+      "launch_checklist": {
+        "item_created": "{{actor}} added “{{target}}” to the launch checklist",
+        "item_updated": "{{actor}} updated the launch checklist item “{{target}}”",
+        "item_deleted": "{{actor}} removed “{{target}}” from the launch checklist",
+        "reordered": "{{actor}} reordered the launch checklist"
       }
     },
     "trial_policy": {

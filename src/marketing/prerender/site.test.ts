@@ -25,6 +25,9 @@ describe('buildMarketingSite', () => {
       [
         '404.html',
         'ar/404.html',
+        // B3 — the blog's static 503 (Caddy serves it while the renderer is down).
+        'ar/blog-unavailable.html',
+        'blog-unavailable.html',
         'ar/index.html',
         'ar/pricing/index.html',
         'index.html',
@@ -128,7 +131,9 @@ describe('the real registry', () => {
       const noindex =
         doc.querySelector('meta[name="robots"]')?.getAttribute('content') ?? '';
       expect(/noindex/.test(noindex), file.path).toBe(
-        file.path.endsWith('404.html') || /(^|\/)founding\/index\.html$/.test(file.path)
+        file.path.endsWith('404.html') ||
+          file.path.endsWith('blog-unavailable.html') ||
+          /(^|\/)founding\/index\.html$/.test(file.path)
       );
     }
     // B2 — the founding page is shared by link only: in no sitemap or llms file.

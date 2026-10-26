@@ -53,4 +53,13 @@ export interface MarketingHead {
   readonly jsonLd?: readonly object[];
   /** Defaults to `index, follow`; 404 uses `noindex, follow`. */
   readonly robots?: string;
+  /** B3 — `og:type`; defaults to `website` (a blog post is an `article`). */
+  readonly ogType?: 'website' | 'article';
+  /** B3 — the OG image's real size when it is not the 1200×630 default (a post cover). */
+  readonly ogImageSize?: { readonly width: number; readonly height: number };
+  /** B3 — `article:published_time` / `article:modified_time` (ISO) for a post. */
+  readonly articleTimes?: {
+    readonly published: string;
+    readonly modified: string;
+  };
 }

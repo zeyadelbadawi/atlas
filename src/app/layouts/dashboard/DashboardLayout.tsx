@@ -8,6 +8,7 @@
  */
 import { LifecyclePanel } from '@features/tenant';
 import { PlatformOwnerMfaNotice } from '@features/profile';
+import { DashboardAnnouncementBanner } from '@features/platform-launch';
 import { useTranslation } from 'react-i18next';
 import { SkipToContentLink } from '@components/navigation';
 import { STORAGE_KEYS } from '@constants';
@@ -143,6 +144,9 @@ function DashboardShell(): JSX.Element {
         <div className="px-4 pt-4 sm:px-6 lg:px-8 empty:hidden">
           <PlatformOwnerMfaNotice />
         </div>
+        {/* B3 — the Platform Owner's dashboard banner (audience-filtered by
+            the API), dismissible per announcement version. */}
+        <DashboardAnnouncementBanner />
 
         <main
           id={MAIN_CONTENT_ID}
