@@ -290,6 +290,12 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     'platform.launch_checklist.item_updated': 'platform',
     'platform.launch_checklist.item_deleted': 'platform',
     'platform.launch_checklist.reordered': 'platform',
+    // G1 — Growth & capacity (Platform Owner records).
+    'platform.growth.settings_updated': 'platform',
+    'platform.growth.spend_created': 'platform',
+    'platform.growth.spend_updated': 'platform',
+    'platform.growth.spend_deleted': 'platform',
+    'platform.growth.organization_channel_set': 'platform',
     'platform.campaign.sent': 'platform',
     'academy.message.sent': 'academy',
   };

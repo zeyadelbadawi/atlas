@@ -168,7 +168,9 @@
     "platform_blog_post": "blog post",
     "platform_blog_image": "blog image",
     "site_announcement": "announcement",
-    "launch_checklist_item": "launch checklist item"
+    "launch_checklist_item": "launch checklist item",
+    "growth_settings": "growth & capacity settings",
+    "marketing_spend_entry": "marketing spend entry"
   },
   "fields": {
     "title": "Title",
@@ -247,7 +249,12 @@
     "trialDurationDays": "Trial length (days)",
     "giftedDaysMonthly": "Gifted setup days (monthly)",
     "giftedDaysYearly": "Gifted setup days (yearly)",
-    "limits": "Limits"
+    "limits": "Limits",
+    "month": "Month",
+    "channel": "Channel",
+    "previousChannel": "Previous channel",
+    "amountMinorUnits": "Amount (piastres)",
+    "changedFields": "Changed fields"
   },
   "values": {
     "empty": "—",
@@ -773,6 +780,14 @@
         "item_updated": "{{actor}} updated the launch checklist item “{{target}}”",
         "item_deleted": "{{actor}} removed “{{target}}” from the launch checklist",
         "reordered": "{{actor}} reordered the launch checklist"
+      },
+      "growth": {
+        "settings_updated": "{{actor}} changed the growth & capacity settings",
+        "spend_created": "{{actor}} logged a marketing spend entry",
+        "spend_updated": "{{actor}} edited a marketing spend entry",
+        "spend_deleted": "{{actor}} deleted a marketing spend entry",
+        "organization_channel_set": "{{actor}} set the acquisition channel of {{target}}",
+        "organization_channel_set_noTarget": "{{actor}} set an organization’s acquisition channel"
       }
     },
     "trial_policy": {
