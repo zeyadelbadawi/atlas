@@ -1279,6 +1279,25 @@ export const en: MarketingContent = {
     },
     foundingHint:
       'Applying as a Founding Academy? Tell us your academy’s name, roughly how many students you teach and when you would like to start. We start 5 academies a week, in the order applications arrive.',
+    heardFrom: {
+      label: 'How did you first hear about us? (optional)',
+      placeholder: 'Choose an answer',
+      options: {
+        facebook: 'Facebook',
+        youtube: 'YouTube',
+        tiktok: 'TikTok',
+        instagram: 'Instagram',
+        whatsapp: 'WhatsApp',
+        teacher_referral: 'Another teacher told me',
+        assistant_or_agency: 'My assistant or an agency',
+        google_search: 'Searching on Google',
+        ai_assistant: 'An AI assistant, like ChatGPT or Gemini',
+        event: 'An event or exhibition',
+        other: 'Somewhere else',
+      },
+      otherLabel: 'Where did you hear about us? (optional)',
+      otherHint: 'A few words are enough. Please don’t include a phone number or email.',
+    },
     consent: {
       contact: 'You may contact me about this enquiry by email, phone or WhatsApp.',
       marketing: 'Send me news and offers about {brand}. I can unsubscribe at any time.',

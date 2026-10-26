@@ -235,6 +235,22 @@ describe('marketing pages', () => {
     });
   });
 
+  it('asks "How did you first hear about us?" as the optional last field (G1)', () => {
+    for (const r of rendered.filter((x) => x.page.id === 'contact')) {
+      const select = r.html.match(/<select[^>]*name="heardFrom"[^>]*>([\s\S]*?)<\/select>/);
+      expect(select, r.page.path).not.toBeNull();
+      expect(select![0]).not.toMatch(/\srequired/);
+      const values = [...select![1].matchAll(/value="([^"]*)"/g)].map((m) => m[1]);
+      expect(values).toEqual(['', 'facebook', 'youtube', 'tiktok', 'instagram', 'whatsapp', 'teacher_referral', 'assistant_or_agency', 'google_search', 'ai_assistant', 'event', 'other']);
+      expect(r.html).toMatch(/<div data-heard-from-other="true" hidden="">/);
+      expect(r.html).toMatch(/<input[^>]*name="heardFromOther"[^>]*maxLength="100"/);
+      // The last field before the honeypot.
+      expect(r.html.indexOf('name="heardFrom"')).toBeGreaterThan(r.html.indexOf('name="message"'));
+      expect(r.html.indexOf('name="heardFromOther"')).toBeLessThan(r.html.indexOf('name="company"'));
+      expect(text(r.html)).toContain(r.page.lang === 'ar' ? 'عرفت عنّا منين؟' : 'How did you first hear about us?');
+    }
+  });
+
   it('marks the 404 noindex without alternates', () => {
     for (const r of rendered.filter((x) => x.page.id === '404')) {
       expect(r.head.robots).toBe('noindex, follow');
