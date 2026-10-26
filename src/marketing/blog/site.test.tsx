@@ -160,6 +160,37 @@ describe('blog index', () => {
     expect(html).toMatch(/aria-current="page"[^>]*>Blog</);
   });
 
+  it('leads the blog home with the newest featured post, not on topic pages', () => {
+    const items = [
+      summary({ slug: 'newest', featured: false, title: 'Newest post' }),
+      summary({ slug: 'pillar', featured: true, title: 'Pillar post' }),
+      summary({ slug: 'older', featured: false, title: 'Older post' }),
+    ];
+    const order = (html: string) =>
+      ['newest', 'pillar', 'older'].sort(
+        (a, b) =>
+          html.indexOf(`href="/blog/${a}"`) - html.indexOf(`href="/blog/${b}"`)
+      );
+    const home = renderBlogIndex({
+      lang: 'en',
+      page: 1,
+      topic: null,
+      result: { items, pagination: { page: 1, totalPages: 1, totalItems: 3 } },
+      ctx,
+      assets,
+    }).html;
+    expect(order(home)).toEqual(['pillar', 'newest', 'older']);
+    const topicPage = renderBlogIndex({
+      lang: 'en',
+      page: 1,
+      topic: 'protection',
+      result: { items, pagination: { page: 1, totalPages: 1, totalItems: 3 } },
+      ctx,
+      assets,
+    }).html;
+    expect(order(topicPage)).toEqual(['newest', 'pillar', 'older']);
+  });
+
   it('renders Arabic topic pages right to left with their own title', () => {
     const { html } = renderBlogIndex({
       lang: 'ar',

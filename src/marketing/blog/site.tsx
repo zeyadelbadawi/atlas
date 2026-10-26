@@ -396,7 +396,15 @@ function BlogIndex({
     : b.hero.lead
       ? fill(b.hero.lead, env.tokens)
       : undefined;
-  const featuredFirst = page === 1 && !topic && result.items[0]?.featured;
+  // The blog home leads with the newest featured post (the editor's
+  // "Featured: shown first on the blog home page"); the API lists by date.
+  const home = page === 1 && !topic;
+  const leadPost = home
+    ? result.items.find((post) => post.featured)
+    : undefined;
+  const items = leadPost
+    ? [leadPost, ...result.items.filter((post) => post !== leadPost)]
+    : result.items;
   return (
     <>
       <section
@@ -449,12 +457,12 @@ function BlogIndex({
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {result.items.map((post, index) => (
+              {items.map((post, index) => (
                 <PostCard
                   key={post.slug}
                   env={env}
                   post={post}
-                  large={Boolean(featuredFirst) && index === 0}
+                  large={Boolean(leadPost) && index === 0}
                   eager={index < 2}
                 />
               ))}
