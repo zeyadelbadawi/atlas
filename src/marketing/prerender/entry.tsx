@@ -22,6 +22,18 @@ export {
   snapshotAllowed,
 } from './plans';
 export { MARKETING_THEME_SCRIPT, themeScriptFileName } from './theme-script';
+// B3 — the blog, rendered at request time by the `ssr` container
+// (server/ssr/blog.mjs imports this same bundle).
+export {
+  blogRoute,
+  buildBlogSitemap,
+  isBlogPath,
+  renderBlogIndex,
+  renderBlogNotFound,
+  renderBlogPost,
+  renderBlogUnavailable,
+  BLOG_PAGE_SIZE,
+} from '../blog/site';
 
 /**
  * The llms.txt copy of each language (`content/<lang>.ts` → `llms`), with

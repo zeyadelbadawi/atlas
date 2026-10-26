@@ -10,6 +10,7 @@
  */
 import type { MarketingContent } from './content.types';
 import { PRODUCT_AR } from './product.ar';
+import { BLOG_AR, MULTI_ACADEMY_AR, RESOURCES_AR } from './launch.ar';
 
 const REGISTER = '/auth/register';
 // Signed-in stand-ins for the trial CTAs: the app resolves `?open=` to the
@@ -109,6 +110,8 @@ export const ar: MarketingContent = {
       contact: 'تواصل معنا',
       about: 'عن {brand}',
       help: 'مركز المساعدة',
+      blog: 'المدونة',
+      resources: 'المصادر',
       menuOpen: 'افتح القائمة',
       menuClose: 'أغلق القائمة',
       menuLabel: 'قائمة الموقع',
@@ -186,6 +189,11 @@ export const ar: MarketingContent = {
       managePlan: { label: 'إدارة باقتك', href: SUBSCRIPTION },
     },
     trialMicrocopy: 'تجربة {trialDuration}، من غير كارت.',
+    announcements: {
+      region: 'إعلان',
+      dismiss: 'اقفل الإعلان',
+      close: 'اقفل',
+    },
     stickyCta: { regionLabel: 'إجراءات سريعة' },
     footer: {
       label: 'تذييل الموقع',
@@ -196,6 +204,7 @@ export const ar: MarketingContent = {
           links: [
             { label: 'نظرة على المنتج', href: '/features' },
             { label: 'الأسعار', href: '/pricing' },
+            { label: 'تشغيل أكتر من أكاديمية', href: '/solutions/multi-academy' },
           ],
           products: true,
         },
@@ -208,8 +217,10 @@ export const ar: MarketingContent = {
           ],
         },
         {
-          title: 'المساعدة',
+          title: 'المصادر',
           links: [
+            { label: 'المدونة', href: '/blog' },
+            { label: 'المصادر', href: '/resources' },
             { label: 'مركز المساعدة', href: 'help:/' },
             { label: 'البداية مع {brand}', href: 'help:/getting-started' },
             { label: 'الأسئلة الشائعة', href: 'help:/faq/general' },
@@ -319,6 +330,20 @@ export const ar: MarketingContent = {
         'أول ٢٠ أكاديمية على {brand} تدفع السعر السنوي العادي وتحتفظ به ٢٤ شهرًا، والتجهيز معانا مشمول. بنبدأ مع ٥ أكاديميات في الأسبوع.',
       ogTitle: 'خليك أكاديمية مؤسِّسة على {brand}',
       ogImageAlt: 'الأكاديميات المؤسِّسة على {brand}',
+    },
+    resources: {
+      title: 'مصادر لأصحاب الأكاديميات: المدونة والمساعدة | {brand}',
+      description:
+        'مدونة {brand} ومركز المساعدة وأكاديمية تجريبية: مقالات وأدلة خطوة بخطوة للمدرسين اللي بيديروا أكاديمية أونلاين.',
+      ogTitle: 'مصادر لأصحاب الأكاديميات',
+      ogImageAlt: 'مصادر {brand}',
+    },
+    'multi-academy': {
+      title: 'شغّل أكتر من أكاديمية من حساب واحد | {brand}',
+      description:
+        'افتح أكتر من أكاديمية على {brand}، كل واحدة بموقعها وكورساتها وفريقها وطلابها، بحساب صاحب واحد واشتراك واحد.',
+      ogTitle: 'أكتر من أكاديمية، حساب واحد',
+      ogImageAlt: 'أكتر من أكاديمية على {brand}',
     },
     notFound: {
       title: 'الصفحة مش موجودة | {brand}',
@@ -1450,6 +1475,10 @@ export const ar: MarketingContent = {
   },
 
   // ─── 404 ──────────────────────────────────────────────────────────────────
+  resources: RESOURCES_AR,
+  multiAcademy: MULTI_ACADEMY_AR,
+  blog: BLOG_AR,
+
   notFound: {
     eyebrow: 'خطأ ٤٠٤',
     title: 'الصفحة مش موجودة',
@@ -1481,6 +1510,8 @@ export const ar: MarketingContent = {
       security: 'فصل بيانات الأكاديميات، وحماية تسجيل الدخول، وطلبات الخصوصية.',
       about: 'لماذا يوجد {brand}، ولمن هو.',
       contact: 'نموذج تواصل للباقات والتجهيز والدعم والشراكات.',
+      resources: 'المدونة ومركز المساعدة وأكاديمية تجريبية.',
+      'multi-academy': 'تشغيل أكتر من أكاديمية بحساب واحد واشتراك واحد، وعدد الأكاديميات في كل باقة.',
     },
     pricingFileNote:
       'الباقات والأسعار بالجنيه المصري ومدد الدفع والحدود وشروط التجربة، من قائمة الأسعار الحالية.',

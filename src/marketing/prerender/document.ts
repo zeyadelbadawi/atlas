@@ -215,14 +215,14 @@ export function renderHead(
   const title = ogTitle(head.title);
   const imageAlt = head.ogImageAlt ?? title;
   lines.push(
-    meta('property', 'og:type', 'website'),
+    meta('property', 'og:type', head.ogType ?? 'website'),
     meta('property', 'og:site_name', SITE_NAME[lang]),
     meta('property', 'og:title', title),
     meta('property', 'og:description', head.description),
     ...(noindex ? [] : [meta('property', 'og:url', canonical)]),
     meta('property', 'og:image', ogImage),
-    meta('property', 'og:image:width', '1200'),
-    meta('property', 'og:image:height', '630'),
+    meta('property', 'og:image:width', String(head.ogImageSize?.width ?? 1200)),
+    meta('property', 'og:image:height', String(head.ogImageSize?.height ?? 630)),
     meta('property', 'og:image:alt', imageAlt),
     meta('property', 'og:locale', OG_LOCALE[lang]),
     ...(head.alternates && !noindex
@@ -234,6 +234,13 @@ export function renderHead(
     meta('name', 'twitter:image', ogImage),
     meta('name', 'twitter:image:alt', imageAlt)
   );
+
+  if (head.articleTimes) {
+    lines.push(
+      meta('property', 'article:published_time', head.articleTimes.published),
+      meta('property', 'article:modified_time', head.articleTimes.modified)
+    );
+  }
 
   for (const block of head.jsonLd ?? []) {
     lines.push(

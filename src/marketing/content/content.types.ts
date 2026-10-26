@@ -61,6 +61,9 @@ export type MarketingPageId =
   | 'contact'
   /** B2 — Founding Academies: noindex, out of nav/sitemap/llms, shared by link only. */
   | 'founding'
+  /** B3 — the resources hub and the multi-academy solution page. */
+  | 'resources'
+  | 'multi-academy'
   | 'notFound';
 
 /** Keys of the catalog plans the copy knows about (`GET /public/plans`). */
@@ -196,6 +199,9 @@ export interface MkChrome {
     readonly about: string;
     /** The help center (its own host). */
     readonly help: string;
+    /** B3 — the blog (server-rendered) and the resources hub. */
+    readonly blog: string;
+    readonly resources: string;
     readonly menuOpen: string;
     readonly menuClose: string;
     readonly menuLabel: string;
@@ -253,6 +259,12 @@ export interface MkChrome {
   };
   /** Standard trial microcopy under CTA-T. Omit when the catalog has no trial. */
   readonly trialMicrocopy: string;
+  /** B3 — labels for the banners and pop-up the client script adds. */
+  readonly announcements: {
+    readonly region: string;
+    readonly dismiss: string;
+    readonly close: string;
+  };
   readonly stickyCta: { readonly regionLabel: string };
   readonly footer: {
     readonly label: string;
@@ -589,6 +601,114 @@ export interface MkFounding {
   };
 }
 
+/** B3 — the resources hub (`/resources`). */
+export interface MkResources {
+  readonly hero: MkSectionHead;
+  /** Latest posts: filled client-side from the public blog API; the static fallback links to the blog. */
+  readonly blog: MkSectionHead & {
+    readonly allPosts: string;
+    /** Shown in the HTML (no JS, or the API is down): a short invitation to the blog. */
+    readonly fallback: string;
+    /** `{minutes}`: the reading time, for posts the client script adds. */
+    readonly readingTime: string;
+  };
+  readonly help: MkSectionHead & { readonly cta: string };
+  readonly demo: MkSectionHead & { readonly cta: string; readonly note: string };
+  readonly guides: MkSectionHead & {
+    readonly items: readonly { readonly title: string; readonly body: string; readonly href: string }[];
+  };
+  readonly closing: MkClosing;
+}
+
+/** B3 — one organization running several academies (`/solutions/multi-academy`). */
+export interface MkMultiAcademy {
+  /** Breadcrumb and `og:title` stem. */
+  readonly name: string;
+  readonly hero: MkSectionHead & {
+    readonly primaryCta: MkLink;
+    readonly secondaryCta: MkLink;
+  };
+  /** What each academy has of its own. */
+  readonly separate: MkSectionWithItems;
+  /** What stays shared: one owner account, one subscription, the plan's limits. */
+  readonly shared: MkSectionWithItems;
+  /** Academies per plan, from the live catalog. */
+  readonly plans: MkSectionHead & {
+    readonly planColumn: string;
+    readonly academiesColumn: string;
+    readonly caption: string;
+    readonly note: string;
+    readonly unavailable: string;
+  };
+  readonly steps: MkSectionWithItems;
+  readonly limits: MkSectionHead & { readonly items: readonly string[] };
+  readonly faq: MkFaqSection;
+  readonly closing: MkClosing;
+}
+
+/** B3 — blog topics (the API's `topic` values). */
+export type MarketingBlogTopic =
+  | 'protection'
+  | 'payments'
+  | 'exams'
+  | 'website'
+  | 'season'
+  | 'teaching'
+  | 'news';
+
+/** B3 — copy for the server-rendered blog pages (`/blog`, `/blog/:slug`, …). */
+export interface MkBlog {
+  readonly name: string;
+  readonly hero: MkSectionHead;
+  readonly seo: {
+    readonly title: string;
+    readonly description: string;
+    /** `{topic}`. */
+    readonly topicTitle: string;
+    /** `{topic}`, `{description}`. */
+    readonly topicDescription: string;
+    /** `{page}`. */
+    readonly pageSuffix: string;
+    readonly ogImageAlt: string;
+  };
+  readonly topics: Readonly<
+    Record<MarketingBlogTopic, { readonly label: string; readonly description: string }>
+  >;
+  readonly topicsLabel: string;
+  /** The breadcrumb trail's accessible name. */
+  readonly breadcrumbLabel: string;
+  readonly allTopics: string;
+  readonly featured: string;
+  /** `{minutes}`. */
+  readonly readingTime: string;
+  /** `{date}`. */
+  readonly publishedOn: string;
+  readonly readPost: string;
+  readonly pagination: {
+    readonly label: string;
+    readonly newer: string;
+    readonly older: string;
+    /** `{page}`, `{pages}`. */
+    readonly status: string;
+  };
+  readonly empty: { readonly title: string; readonly body: string };
+  readonly post: {
+    readonly relatedTitle: string;
+    readonly backToBlog: string;
+    readonly tocLabel: string;
+    /** Shown when the other language exists; written in that language. */
+    readonly alternate: string;
+  };
+  readonly closing: MkClosing;
+  /** The 503 page when the blog cannot be loaded. */
+  readonly unavailable: {
+    readonly title: string;
+    readonly body: string;
+    readonly retry: string;
+    readonly home: string;
+  };
+}
+
 export interface MkNotFound {
   readonly eyebrow: string;
   readonly title: string;
@@ -659,6 +779,9 @@ export interface MarketingContent {
   readonly about: MkAbout;
   readonly contact: MkContact;
   readonly founding: MkFounding;
+  readonly resources: MkResources;
+  readonly multiAcademy: MkMultiAcademy;
+  readonly blog: MkBlog;
   readonly notFound: MkNotFound;
   readonly llms: MkLlms;
   readonly jsonLd: MkJsonLd;

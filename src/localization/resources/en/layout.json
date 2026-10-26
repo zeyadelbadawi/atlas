@@ -23,5 +23,9 @@
   },
   "dashboard": {
     "contentLabel": "Main content"
+  },
+  "dashboardAnnouncement": {
+    "region": "Announcement",
+    "dismiss": "Dismiss announcement"
   }
 }

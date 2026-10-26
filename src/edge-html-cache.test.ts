@@ -73,14 +73,18 @@ describe('edge-cached documents (Caddyfile)', () => {
       'handle @marketing_root_file {',
       'handle @marketing_page {',
       'handle @marketing_gone_ar {',
-      'handle @marketing_gone {',
       'handle @apex_no_app {',
     ]) {
       const block = handleBlock(apex, opening);
       expect(block).toContain('import edge_html *');
       expect(block).toContain('root * /srv-marketing');
     }
-    expect(apex.match(/import edge_html/g)).toHaveLength(5);
+    expect(apex.match(/import edge_html/g)).toHaveLength(4);
+    // B3 — the blog is rendered per request and tagged `atlas-blog` by the
+    // renderer itself (purged on publish), never the deploy-only `atlas-html`.
+    expect(handleBlock(apex, 'handle @marketing_blog {')).not.toContain(
+      'edge_html'
+    );
   });
 
   it('never reaches the API, academy websites or the app shell they share', () => {

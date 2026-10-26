@@ -489,7 +489,18 @@
   "blog": {
     "ambiguousAcademy": "Choose which academy this post belongs to.",
     "invalidScheduledDate": "Choose a publishing date and time in the future.",
-    "slugTaken": "Another post in this academy already uses this address. Choose a different one."
+    "slugTaken": "Another post already uses this address. Choose a different one.",
+    "notFound": "This post no longer exists.",
+    "stale": "Someone else saved this post first. Reload it to see their changes.",
+    "translationsIncomplete": "Write the English and Arabic versions in full (title, excerpt and body) before publishing.",
+    "translationMissing": "This language has not been written yet.",
+    "relatedPostInvalid": "Choose up to three other existing posts as related posts.",
+    "unsafeMarkdownUrl": "A link or image address is not allowed. Use https:// links, mailto: or a site path, and https:// or site images.",
+    "invalidTransition": "That change is not possible for this post right now. Reload it and try again.",
+    "deleteNotAllowed": "Only drafts and archived posts can be deleted. Unpublish or archive it first.",
+    "imageInvalid": "That file is not a PNG, JPEG or WebP image.",
+    "imageTooLarge": "The image is larger than 5 MB.",
+    "imageDimensionsTooLarge": "The image is larger than 6000 pixels on a side."
   },
   "enrollment": {
     "academyMembershipRequired": "You need active access to this academy first. If your registration is waiting for approval or you were blocked, contact the academy.",
@@ -522,5 +533,22 @@
   "tenant": {
     "noSubscription": "Your organization doesn't have a subscription yet. Choose a plan to start.",
     "usageNotAvailable": "Usage isn't calculated yet. Check again in a little while."
+  },
+  "siteAnnouncements": {
+    "notFound": "This banner or pop-up no longer exists.",
+    "stale": "Someone else saved this first. Reload it to see their changes.",
+    "invalidTransition": "That change is not possible right now. Reload and try again.",
+    "deleteNotAllowed": "Turn it off before deleting it.",
+    "contentRequired": "Write the message in at least one language before activating.",
+    "popupTitleRequired": "A pop-up needs a title in every language it shows in.",
+    "ctaUrlRequired": "Add the link the button opens.",
+    "bodyRequired": "Write the message text for every language that has a title or button.",
+    "htmlNotAllowed": "Use plain text only: no HTML tags.",
+    "invalidWindow": "The end must be after the start."
+  },
+  "launchChecklist": {
+    "notFound": "This checklist item no longer exists.",
+    "stale": "Someone else changed this item first. Reload the checklist and try again.",
+    "reorderMismatch": "The checklist changed while you were reordering it. Reload and try again."
   }
 }

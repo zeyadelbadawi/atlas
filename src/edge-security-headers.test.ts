@@ -122,8 +122,9 @@ describe('P63g — HSTS scope follows ownership', () => {
       'Strict-Transport-Security "max-age=31536000"'
     );
     // The platform block, the dashboard host (DL-63) and the help center
-    // (DL-57), all Atlas-owned.
-    expect(directives.split('import hsts_platform').length - 1).toBe(3);
+    // (DL-57), all Atlas-owned — plus the two pages of the apex-only
+    // `(blog_unavailable)` error snippet (B3).
+    expect(directives.split('import hsts_platform').length - 1).toBe(5);
     expect(directives.split('import hsts_custom_domain').length - 1).toBe(1);
     // The catch-all imports the custom-domain snippet, never the platform one.
     const catchAll = directives.slice(directives.indexOf('\n:443 {'));
@@ -156,8 +157,10 @@ describe('every document Caddy serves gets the headers', () => {
     // `(app_assets)` handler (stale-tab recovery), which both import too,
     // plus the help center's document handler (DL-57), plus the dashboard
     // host's document handler (DL-63), which imports the two asset
-    // handlers as well.
-    expect(imports).toBe(7);
+    // handlers as well, plus the two pages of the apex-only
+    // `(blog_unavailable)` error snippet (B3: the blog's static 503 when
+    // its renderer is down).
+    expect(imports).toBe(9);
     expect(directives.split('import theme_assets').length - 1).toBe(3);
     expect(directives.split('import app_assets').length - 1).toBe(3);
     const catchAll = directives.slice(directives.indexOf('\n:443 {'));

@@ -1257,7 +1257,8 @@ export const platformContactSubmissionKeys = {
  */
 export const platformFoundingKeys = {
   all: ['platform-founding'] as const,
-  list: (query?: unknown) => [...platformFoundingKeys.all, 'list', query] as const,
+  list: (query?: unknown) =>
+    [...platformFoundingKeys.all, 'list', query] as const,
   summary: () => [...platformFoundingKeys.all, 'summary'] as const,
   detail: (id: string) => [...platformFoundingKeys.all, 'detail', id] as const,
   plans: () => [...platformFoundingKeys.all, 'plans'] as const,
@@ -1265,6 +1266,36 @@ export const platformFoundingKeys = {
     [...platformFoundingKeys.all, 'candidates', search] as const,
   quote: (organizationId: string, planKey: string) =>
     [...platformFoundingKeys.all, 'quote', organizationId, planKey] as const,
+} as const;
+
+/** B3 — the Platform Owner's Atlas blog (`platform-blog-posts`). */
+export const platformBlogKeys = {
+  all: ['platform-blog'] as const,
+  list: (query?: unknown) => [...platformBlogKeys.all, 'list', query] as const,
+  detail: (id: string) => [...platformBlogKeys.all, 'detail', id] as const,
+  preview: (id: string, locale: string) =>
+    [...platformBlogKeys.all, 'preview', id, locale] as const,
+} as const;
+
+/** B3 — marketing banners, pop-ups and dashboard banners (Platform Owner). */
+export const platformAnnouncementKeys = {
+  all: ['platform-site-announcements'] as const,
+  list: (query?: unknown) =>
+    [...platformAnnouncementKeys.all, 'list', query] as const,
+  detail: (id: string) =>
+    [...platformAnnouncementKeys.all, 'detail', id] as const,
+} as const;
+
+/** B3 — the launch checklist (Platform Owner). */
+export const platformLaunchChecklistKeys = {
+  all: ['platform-launch-checklist'] as const,
+} as const;
+
+/** B3 — the dashboard banner every signed-in dashboard user may see. */
+export const dashboardAnnouncementKeys = {
+  all: ['dashboard-announcements'] as const,
+  feed: (locale: string) =>
+    [...dashboardAnnouncementKeys.all, 'feed', locale] as const,
 } as const;
 
 /**

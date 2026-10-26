@@ -34,7 +34,8 @@
     "academySales": "Sales & payments",
     "academySite": "Website & brand",
     "academyInsights": "Reports",
-    "academyAdmin": "Settings"
+    "academyAdmin": "Settings",
+    "platformLaunch": "Launch & content"
   },
   "items": {
     "home": "Home",
@@ -124,7 +125,11 @@
     "platformCoursePayments": "Course payments",
     "platformPayouts": "Payouts",
     "platformCommission": "Commission",
-    "platformPrivacyRequests": "Privacy requests"
+    "platformPrivacyRequests": "Privacy requests",
+    "platformLaunch": "Launch center",
+    "platformBlog": "Blog",
+    "platformAnnouncements": "Banners & pop-ups",
+    "platformLaunchChecklist": "Launch checklist"
   },
   "account": {
     "menu": "Account menu",

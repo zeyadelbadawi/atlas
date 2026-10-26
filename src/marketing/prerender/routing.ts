@@ -7,13 +7,15 @@
  * Imported by `vite.config.ts`: no path aliases, no browser APIs.
  *
  * Evaluated in order (SPEC §E.4):
+ *   0. B3: the blog (`/blog`, `/blog/*`, `/ar/blog`, `/ar/blog/*`,
+ *      `/sitemaps/blog.xml`) → the `ssr` renderer (`kind: 'blog'`); it is
+ *      rendered at request time, never prerendered;
  *   1. root files (`/robots.txt`, `/sitemap.xml`, `/sitemaps/*`, `/llms.txt`,
  *      `/llms-full.txt`, `/pricing.md`) → the file, or a real 404;
  *   2. a trailing slash on a page URL → one 301 to the slash-less URL
  *      (query kept);
  *   3. a page URL → its prerendered `index.html`;
- *   4. retired URLs (`/blog*`) and any other `/ar/...` → the branded 404
- *      page with status 404;
+ *   4. any other `/ar/...` → the branded 404 page with status 404;
  *   5. anything else → not ours (the single-page app answers).
  */
 
@@ -30,13 +32,28 @@ export const MARKETING_PRODUCT_PATHS = [
   '/features/quizzes-and-certificates',
 ] as const;
 
-/** Paths under the platform host that answer with the branded 404 page. */
-export function isMarketingGonePath(pathname: string): boolean {
-  const path = pathname.replace(/\/+$/, '') || '/';
-  const unprefixed =
-    path === '/ar' ? '/' : path.startsWith('/ar/') ? path.slice(3) : path;
-  return unprefixed === '/blog' || unprefixed.startsWith('/blog/');
+/**
+ * B3 — the blog's paths on the platform host, answered by the `ssr`
+ * renderer (Caddyfile `@marketing_blog`). Before B3 these were a retired
+ * URL answered with the branded 404 (B0-WEB-13).
+ */
+export const MARKETING_BLOG_SITEMAP = '/sitemaps/blog.xml';
+
+export function isMarketingBlogPath(pathname: string): boolean {
+  return (
+    pathname === MARKETING_BLOG_SITEMAP ||
+    /^\/(?:ar\/)?blog(?:\/|$)/.test(pathname)
+  );
 }
+
+/**
+ * The static "temporarily unavailable" page Caddy serves (503) for a blog
+ * URL while the renderer is unreachable.
+ */
+export const MARKETING_BLOG_UNAVAILABLE_FILE = {
+  en: 'blog-unavailable.html',
+  ar: 'ar/blog-unavailable.html',
+} as const;
 
 /** Root files of the platform host, served from `dist/marketing/`. */
 export const MARKETING_ROOT_FILES = [
@@ -75,6 +92,7 @@ export function contentTypeFor(file: string): string {
 }
 
 export type MarketingRoute =
+  | { readonly kind: 'blog' }
   | { readonly kind: 'file'; readonly file: string; readonly status: 200 }
   | {
       readonly kind: 'redirect';
@@ -100,6 +118,8 @@ export function resolveMarketingRequest(
   if (!pathname.startsWith('/') || pathname.split('/').includes('..'))
     return null;
 
+  if (isMarketingBlogPath(pathname)) return { kind: 'blog' };
+
   if (isMarketingRootFile(pathname)) {
     const file = pathname.slice(1);
     return exists(file)
@@ -123,14 +143,6 @@ export function resolveMarketingRequest(
     if (exists(file)) return { kind: 'file', file, status: 200 };
   }
 
-  if (isMarketingGonePath(pathname) && exists(MARKETING_404_FILE.en)) {
-    const ar = pathname === '/ar' || pathname.startsWith('/ar/');
-    const file =
-      ar && exists(MARKETING_404_FILE.ar)
-        ? MARKETING_404_FILE.ar
-        : MARKETING_404_FILE.en;
-    return { kind: 'notFound', file, status: 404 };
-  }
   if (pathname.startsWith('/ar/') && exists(MARKETING_404_FILE.ar)) {
     return { kind: 'notFound', file: MARKETING_404_FILE.ar, status: 404 };
   }

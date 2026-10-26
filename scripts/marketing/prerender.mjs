@@ -12,7 +12,12 @@
  *      above-the-fold font files per language;
  *   3. the theme script, written as a hashed file under dist/assets/;
  *   4. every page of MARKETING_PAGES + sitemap index and locale sitemaps,
- *      robots.txt, llms.txt, llms-full.txt and pricing.md.
+ *      robots.txt, llms.txt, llms-full.txt and pricing.md;
+ *   5. B3: `dist-marketing-ssr/blog-context.json` — the same catalog, site
+ *      URL, build date and asset URLs, for the blog pages the `ssr`
+ *      container renders at request time with this same bundle
+ *      (server/ssr/blog.mjs), so they share this build's stylesheet,
+ *      scripts, header and footer.
  *
  * Env: VITE_SITE_URL (origin, default https://atlass.dpdns.org),
  * MARKETING_PLANS_URL, MARKETING_PLANS_TIMEOUT_MS,
@@ -182,6 +187,12 @@ async function main() {
     llms: site.marketingLlmsCopy(loaded.plans),
   });
   for (const message of built.warnings) warn(message);
+
+  // 5. The blog renderer's build context (B3).
+  writeFileSync(
+    join(SSR_DIR, 'blog-context.json'),
+    `${JSON.stringify({ siteUrl, buildDate, plans: loaded.plans, assets }, null, 2)}\n`
+  );
 
   rmSync(OUT, { recursive: true, force: true });
   for (const file of built.files) {

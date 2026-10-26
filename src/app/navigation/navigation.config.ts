@@ -48,6 +48,9 @@ import {
   ShieldAlert,
   MessageSquarePlus,
   ScanSearch,
+  Flag,
+  Newspaper,
+  ListChecks,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -691,6 +694,53 @@ export function getDashboardNavigation(
           labelKey: 'navigation:items.platformSecurityMonitoring',
           path: DASHBOARD_ROUTES.platformSecurityMonitoring,
           icon: ShieldAlert,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+        },
+      ],
+      showDivider: true,
+    },
+    {
+      /*
+        B3 — LAUNCH & CONTENT: everything blog- and launch-related, managed
+        by the Platform Owner. The APIs (`platform-blog-posts`,
+        `platform-site-announcements`, `platform-launch-checklist`) enforce
+        PlatformOwnerGuard + RLS; these entries only decide visibility.
+      */
+      id: 'platform-launch',
+      labelKey: 'navigation:sections.platformLaunch',
+      items: [
+        {
+          id: 'platform-launch-center',
+          labelKey: 'navigation:items.platformLaunch',
+          path: DASHBOARD_ROUTES.platformLaunch,
+          icon: Flag,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+        },
+        {
+          id: 'platform-blog',
+          labelKey: 'navigation:items.platformBlog',
+          path: DASHBOARD_ROUTES.platformBlog,
+          icon: Newspaper,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+          matchNestedPaths: true,
+        },
+        {
+          id: 'platform-announcements',
+          labelKey: 'navigation:items.platformAnnouncements',
+          path: DASHBOARD_ROUTES.platformAnnouncements,
+          icon: Megaphone,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+          matchNestedPaths: true,
+        },
+        {
+          id: 'platform-launch-checklist',
+          labelKey: 'navigation:items.platformLaunchChecklist',
+          path: DASHBOARD_ROUTES.platformLaunchChecklist,
+          icon: ListChecks,
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
         },

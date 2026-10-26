@@ -286,6 +286,76 @@
 	}
 }
 
+# B3 — the Atlas blog on the platform apex, rendered at request time by
+# the same renderer container (`server/ssr/blog.mjs`, with the marketing
+# site's own bundle, header and footer), so a post published from the
+# Platform Owner dashboard is live without a deploy. The renderer answers
+# every blog URL itself: the page (Cache-Tag `atlas-blog`, purged by the
+# backend on each publish), a 301, the branded 404, or — when the API
+# fails — its own branded 503. Never the single-page app: a renderer that
+# does not claim the request (`X-Atlas-SSR: pass`) is answered with the
+# static "temporarily unavailable" page, and so is a renderer that is down
+# or times out (`blog_unavailable`, from handle_errors).
+(marketing_blog_proxy) {
+	vars atlas_blog 1
+	reverse_proxy ssr:3100 {
+		header_up X-Real-IP {client_ip}
+		header_up X-Forwarded-Host {host}
+		transport http {
+			dial_timeout 1s
+			response_header_timeout 4s
+		}
+		@blog_pass header X-Atlas-SSR pass
+		handle_response @blog_pass {
+			header Cache-Control "no-store"
+			header Retry-After "60"
+			root * /srv-marketing
+			rewrite * /blog-unavailable.html
+			file_server {
+				status 503
+			}
+		}
+	}
+}
+
+# The renderer could not be reached for a blog URL: the static branded
+# "temporarily unavailable" page in the URL's language, 503, uncached.
+(blog_unavailable) {
+	@blog_unavailable_ar {
+		vars atlas_blog 1
+		path /ar/blog /ar/blog/*
+		expression `{err.status_code} in [502, 503, 504]`
+	}
+	handle @blog_unavailable_ar {
+		import security_headers
+		import csp
+		import hsts_platform
+		header Cache-Control "no-store"
+		header Retry-After "60"
+		root * /srv-marketing
+		rewrite * /ar/blog-unavailable.html
+		file_server {
+			status 503
+		}
+	}
+	@blog_unavailable {
+		vars atlas_blog 1
+		expression `{err.status_code} in [502, 503, 504]`
+	}
+	handle @blog_unavailable {
+		import security_headers
+		import csp
+		import hsts_platform
+		header Cache-Control "no-store"
+		header Retry-After "60"
+		root * /srv-marketing
+		rewrite * /blog-unavailable.html
+		file_server {
+			status 503
+		}
+	}
+}
+
 # B0-OPS-04 — origin lock. Every legitimate request reaches this origin
 # through Cloudflare: the platform and academy subdomains are proxied
 # records, and connected custom domains arrive through Cloudflare for SaaS
@@ -454,8 +524,20 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 		# back to the single-page app (marked noindex below) — after one
 		# `docker compose up -d --no-deps caddy`. The root files stay on.
 		#
-		# Order: root files → trailing-slash 301 → page → branded 404s →
-		# (below) retired blog, academy renderer, the app.
+		# Order: blog (renderer) → root files → trailing-slash 301 → page →
+		# branded 404s → (below) academy renderer, the app.
+
+		# B3 — the blog and its sitemap: the renderer (`marketing_blog_proxy`).
+		# Apex only: an academy host never reaches it (academy websites have
+		# their own routing), and before the root files so /sitemaps/blog.xml
+		# is the live one, not a file.
+		@marketing_blog {
+			host atlass.dpdns.org
+			path /blog /blog/* /ar/blog /ar/blog/* /sitemaps/blog.xml
+		}
+		handle @marketing_blog {
+			import marketing_blog_proxy
+		}
 
 		# Root files: /robots.txt, the sitemaps, llms.txt, llms-full.txt,
 		# pricing.md and the OG images. A missing one is a real 404, never
@@ -528,9 +610,9 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 		}
 
 		# Genuine 404s with the branded page (SPEC §B.1, §E.4, F-12): any
-		# other `/ar/...` gets the Arabic one; the retired blog and the
-		# planned feature pages (never a 200, a redirect or a soft 404) the
-		# English one. Listed in src/marketing/prerender/routing.ts too.
+		# other `/ar/...` gets the Arabic one (never a 200, a redirect or a
+		# soft 404). Listed in src/marketing/prerender/routing.ts too. The
+		# blog (B3) is no longer a retired URL: it is answered above.
 		@marketing_gone_ar {
 			host atlass.dpdns.org
 			expression `{env.ATLAS_MARKETING_STATIC} != "off"`
@@ -548,24 +630,6 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 				status 404
 			}
 		}
-		@marketing_gone {
-			host atlass.dpdns.org
-			expression `{env.ATLAS_MARKETING_STATIC} != "off"`
-			path /blog /blog/* /ar/blog /ar/blog/*
-			file {
-				root /srv-marketing
-				try_files /404.html
-			}
-		}
-		handle @marketing_gone {
-			import edge_html *
-			root * /srv-marketing
-			rewrite * /404.html
-			file_server {
-				status 404
-			}
-		}
-
 		# With the static site switched off, the app answers the marketing
 		# home and keeps it out of search results (the B0 holding state).
 		@marketing_static_off {
@@ -578,23 +642,6 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 			defer
 		}
 
-		# B0-WEB-13 — the legacy marketing site's blog is gone, and the SPA
-		# answered `/blog` with a 200 "not found" page (a soft 404). On the
-		# platform host it is a real 404: the branded page above while the
-		# static site is on; otherwise the same shell (the app still shows
-		# its own not-found page), with the status set, as
-		# `ssr_unavailable` sets 200. Platform host only — an academy
-		# website may have a page whose slug is `blog`.
-		@retired_blog {
-			host atlass.dpdns.org www.atlass.dpdns.org
-			path /blog /blog/*
-		}
-		handle @retired_blog {
-			rewrite * /index.html
-			file_server {
-				status 404
-			}
-		}
 		# Academy subdomains only: the platform itself (apex, www) is the
 		# dashboard and is never server-rendered.
 		@academy_page {
@@ -650,6 +697,7 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 	}
 
 	handle_errors {
+		import blog_unavailable
 		import ssr_unavailable hsts_platform
 	}
 }
