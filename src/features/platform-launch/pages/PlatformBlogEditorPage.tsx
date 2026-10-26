@@ -462,7 +462,7 @@ export default function PlatformBlogEditorPage(): JSX.Element {
           breadcrumbs={breadcrumbs}
         />
         <div
-          className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]"
+          className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]"
           aria-busy="true"
         >
           <Skeleton className="h-[32rem] w-full" />
@@ -829,7 +829,7 @@ export default function PlatformBlogEditorPage(): JSX.Element {
         ) : null}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <Card className="min-w-0">
           <CardContent className="p-4 sm:p-6">
             <Tabs

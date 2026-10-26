@@ -694,7 +694,7 @@ export default function PlatformAnnouncementEditorPage(): JSX.Element {
         ) : null}
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <div className="min-w-0 space-y-6">
           <Card>
             <CardHeader className="pb-3">
