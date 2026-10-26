@@ -1,0 +1,536 @@
+{
+  "common": {
+    "save": "حفظ",
+    "saving": "جارٍ الحفظ…",
+    "saveDraft": "حفظ كمسودة",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "close": "إغلاق",
+    "back": "رجوع",
+    "reload": "تحميل أحدث نسخة",
+    "optional": "اختياري",
+    "required": "مطلوب",
+    "counter": "{{value}} / {{max}}",
+    "resultRange": "{{from}}–{{to}} من {{total}}",
+    "clearFilters": "مسح الفلاتر",
+    "noValue": "—",
+    "english": "الإنجليزية",
+    "arabic": "العربية",
+    "languageTab": "{{language}}",
+    "complete": "مكتملة",
+    "incomplete": "غير مكتملة",
+    "empty": "لم تُكتب بعد",
+    "updatedBy": "آخر حفظ {{date}} بواسطة {{name}}",
+    "updatedAt": "آخر حفظ {{date}}",
+    "unsavedChanges": "تغييرات غير محفوظة",
+    "allSaved": "كل التغييرات محفوظة",
+    "conflictTitle": "حفظ شخص آخر هذا العنصر أثناء تعديلك",
+    "conflictBody": "لم تُحفظ تغييراتك، فلم يُكتب فوق شيء من تغييراته. انسخ ما تحتاجه، ثم حمّل أحدث نسخة وأعد تطبيق تغييراتك.",
+    "toasts": {
+      "saved": "تم الحفظ",
+      "failed": "لم تنجح العملية",
+      "deleted": "تم الحذف"
+    }
+  },
+  "launch": {
+    "title": "مركز الإطلاق",
+    "subtitle": "كل ما يخص يوم الإطلاق في مكان واحد: قائمة المهام، وما يظهر الآن على الموقع ولوحة التحكم، والمدونة.",
+    "quickActions": "إجراءات سريعة",
+    "actions": {
+      "newPost": "مقال جديد",
+      "newBanner": "شريط جديد للموقع",
+      "newPopup": "نافذة منبثقة جديدة للموقع",
+      "newDashboardBanner": "شريط جديد للوحة التحكم",
+      "composeEmail": "كتابة رسالة الإطلاق"
+    },
+    "checklist": {
+      "title": "قائمة مهام الإطلاق",
+      "progress": "تم {{done}} من {{total}}",
+      "progressLabel": "تقدّم قائمة مهام الإطلاق",
+      "next": "التالي",
+      "allDone": "اكتملت كل مهام القائمة.",
+      "open": "فتح القائمة"
+    },
+    "blog": {
+      "title": "المدونة",
+      "published": "منشورة",
+      "scheduled": "مجدولة",
+      "drafts": "مسودات",
+      "open": "إدارة المقالات"
+    },
+    "live": {
+      "title": "يظهر الآن",
+      "empty": "لا يوجد شريط أو نافذة منبثقة ظاهرة الآن.",
+      "open": "إدارة الشرائط والنوافذ المنبثقة",
+      "until": "حتى {{date}}",
+      "noEnd": "بلا تاريخ انتهاء"
+    }
+  },
+  "blog": {
+    "title": "المدونة",
+    "subtitle": "مقالات مدونة أطلس. النشر يحتاج النسختين الإنجليزية والعربية.",
+    "newPost": "مقال جديد",
+    "searchLabel": "ابحث بالعنوان أو الرابط المختصر",
+    "filters": {
+      "status": "الحالة",
+      "allStatuses": "كل الحالات",
+      "topic": "الموضوع",
+      "allTopics": "كل الموضوعات",
+      "kind": "النوع",
+      "allKinds": "كل الأنواع"
+    },
+    "sort": {
+      "label": "الترتيب",
+      "updatedAt": "آخر حفظ",
+      "publishAt": "تاريخ النشر",
+      "title": "العنوان"
+    },
+    "table": {
+      "caption": "مقالات المدونة",
+      "title": "العنوان",
+      "status": "الحالة",
+      "topic": "الموضوع",
+      "kind": "النوع",
+      "languages": "اللغات",
+      "date": "التاريخ",
+      "untitled": "مقال بلا عنوان"
+    },
+    "dates": {
+      "publishedOn": "نُشر {{date}}",
+      "scheduledFor": "مجدول في {{date}}",
+      "savedOn": "حُفظ {{date}}"
+    },
+    "status": {
+      "draft": "مسودة",
+      "scheduled": "مجدول",
+      "published": "منشور",
+      "archived": "مؤرشف"
+    },
+    "topics": {
+      "protection": "حماية المحتوى",
+      "payments": "المدفوعات",
+      "exams": "الامتحانات والاختبارات",
+      "website": "موقع الأكاديمية",
+      "season": "موسم الدراسة",
+      "teaching": "التدريس أونلاين",
+      "news": "أخبار أطلس"
+    },
+    "kinds": {
+      "pillar": "مقال محوري",
+      "cluster": "مقال فرعي",
+      "article": "مقال"
+    },
+    "languageBadge": {
+      "en": "EN",
+      "ar": "ع",
+      "complete": "النسخة {{language}} مكتوبة",
+      "missing": "النسخة {{language}} غير مكتوبة"
+    },
+    "empty": {
+      "title": "لا توجد مقالات بعد",
+      "description": "اكتب أول مقال. يبقى مسودة حتى تنشره."
+    },
+    "noResults": {
+      "title": "لا توجد مقالات مطابقة",
+      "description": "جرّب بحثًا آخر أو امسح الفلاتر."
+    }
+  },
+  "editor": {
+    "newTitle": "مقال جديد",
+    "editTitle": "تعديل المقال",
+    "subtitle": "اكتب اللغتين، راجع المعاينة، ثم انشر الآن أو جدول النشر.",
+    "notFound": "هذا المقال لم يعد موجودًا.",
+    "tabs": {
+      "label": "لغة المقال",
+      "en": "الإنجليزية",
+      "ar": "العربية"
+    },
+    "fields": {
+      "title": "العنوان",
+      "excerpt": "المقتطف",
+      "excerptHint": "جملة أو جملتان تظهران في قائمة المدونة وفي نتائج البحث.",
+      "body": "نص المقال",
+      "bodyHint": "بصيغة Markdown. استخدم ## للأقسام؛ العنوان هو عنوان الصفحة.",
+      "coverAlt": "وصف صورة الغلاف",
+      "coverAltHint": "صِف الصورة لمن لا يستطيع رؤيتها. مطلوب عند وجود صورة غلاف.",
+      "seoTitle": "عنوان البحث",
+      "seoTitleHint": "يظهر في نتائج البحث وتبويب المتصفح. اتركه فارغًا لاستخدام العنوان.",
+      "seoDescription": "وصف البحث",
+      "seoDescriptionHint": "اتركه فارغًا لاستخدام المقتطف.",
+      "slug": "الرابط المختصر",
+      "slugHint": "حروف إنجليزية صغيرة وأرقام وشرطات. واحد للغتين.",
+      "slugGenerate": "إنشاء من العنوان الإنجليزي",
+      "kind": "النوع",
+      "topic": "الموضوع",
+      "featured": "مميز",
+      "featuredHint": "يظهر أولًا في الصفحة الرئيسية للمدونة.",
+      "authorName": "اسم الكاتب",
+      "publishAt": "تاريخ النشر"
+    },
+    "body": {
+      "write": "كتابة",
+      "preview": "معاينة",
+      "viewLabel": "عرض نص المقال",
+      "previewLabel": "معاينة مباشرة",
+      "previewEmpty": "لا يوجد ما يُعرض بعد.",
+      "readingTime": "قراءة {{count}} دقيقة تقريبًا"
+    },
+    "toolbar": {
+      "label": "التنسيق",
+      "heading": "عنوان قسم",
+      "subheading": "عنوان فرعي",
+      "bold": "عريض",
+      "italic": "مائل",
+      "link": "رابط",
+      "bulletList": "قائمة نقطية",
+      "numberedList": "قائمة مرقّمة",
+      "quote": "اقتباس",
+      "image": "صورة",
+      "linkPlaceholder": "نص الرابط",
+      "imagePlaceholder": "وصف الصورة",
+      "uploadingImage": "جارٍ رفع الصورة…"
+    },
+    "sections": {
+      "content": "المحتوى",
+      "seo": "البحث والمشاركة",
+      "settings": "إعدادات المقال",
+      "cover": "صورة الغلاف",
+      "related": "مقالات ذات صلة",
+      "publishing": "النشر"
+    },
+    "cover": {
+      "upload": "رفع صورة غلاف",
+      "replace": "استبدال",
+      "remove": "إزالة الغلاف",
+      "hint": "PNG أو JPEG أو WebP، حتى ٥ ميجابايت. تُحفظ بصيغة WebP.",
+      "uploading": "جارٍ الرفع…",
+      "alt": "معاينة صورة الغلاف",
+      "tooLarge": "حجم الملف أكبر من ٥ ميجابايت.",
+      "wrongType": "اختر صورة PNG أو JPEG أو WebP.",
+      "failed": "تعذّر رفع الصورة."
+    },
+    "related": {
+      "hint": "حتى ثلاثة مقالات تظهر أسفل هذا المقال.",
+      "search": "ابحث عن مقالات لإضافتها",
+      "add": "إضافة",
+      "remove": "إزالة {{title}}",
+      "max": "الحد الأقصى ثلاثة مقالات ذات صلة.",
+      "none": "لا توجد مقالات ذات صلة بعد.",
+      "noMatches": "لا توجد مقالات أخرى مطابقة."
+    },
+    "publishing": {
+      "status": "الحالة",
+      "publishAt": "تاريخ النشر",
+      "firstPublished": "أول نشر",
+      "notPublished": "لم يُنشر بعد",
+      "created": "تاريخ الإنشاء",
+      "readingTime": "مدة القراءة",
+      "minutes": "{{count}} دقيقة",
+      "liveUrl": "العنوان العام"
+    },
+    "actions": {
+      "save": "حفظ",
+      "create": "إنشاء مسودة",
+      "preview": "معاينة",
+      "publish": "نشر الآن",
+      "schedule": "جدولة",
+      "reschedule": "تغيير الموعد",
+      "unpublish": "إلغاء النشر",
+      "archive": "أرشفة",
+      "delete": "حذف المقال",
+      "more": "إجراءات أخرى",
+      "viewLive": "عرض على الموقع"
+    },
+    "validation": {
+      "titleLength": "اكتب عنوانًا من ٣ إلى ١٤٠ حرفًا.",
+      "excerptLength": "اكتب مقتطفًا من ٢٠ إلى ٣٠٠ حرف.",
+      "bodyRequired": "اكتب نص المقال.",
+      "bodyTooLong": "نص المقال أطول من ٦٠٬٠٠٠ حرف.",
+      "coverAltRequired": "صِف صورة الغلاف.",
+      "coverAltLength": "اجعل الوصف أقل من ٢٠٠ حرف.",
+      "seoTitleLength": "اجعل عنوان البحث أقل من ٧٠ حرفًا.",
+      "seoDescriptionLength": "اجعل وصف البحث أقل من ١٧٠ حرفًا.",
+      "slug": "استخدم من ٣ إلى ٨٠ حرفًا إنجليزيًا صغيرًا أو رقمًا مع شرطة واحدة بين الكلمات.",
+      "authorName": "اكتب اسم كاتب من ١ إلى ٨٠ حرفًا.",
+      "oneLanguage": "اكتب لغة واحدة على الأقل قبل الحفظ.",
+      "summary": "صحّح الحقول المميزة أولًا.",
+      "languageHasErrors": "في النسخة {{language}} حقول تحتاج تصحيحًا."
+    },
+    "publishCheck": {
+      "title": "النشر يحتاج اللغتين",
+      "body": "أكمل هذه أولًا:",
+      "missing": "النسخة {{language}} لم تُكتب",
+      "invalid": "في النسخة {{language}} حقول تحتاج تصحيحًا",
+      "unsaved": "احفظ تغييراتك قبل النشر."
+    },
+    "confirm": {
+      "publishTitle": "نشر هذا المقال الآن؟",
+      "publishBody": "يظهر في المدونة بالإنجليزية والعربية فورًا.",
+      "scheduleTitle": "جدولة هذا المقال",
+      "scheduleBody": "يُنشر في هذا الموعد (بتوقيتك). حتى ذلك الحين لا يراه الزوار.",
+      "schedulePast": "اختر موعدًا في المستقبل.",
+      "unpublishTitle": "إلغاء نشر هذا المقال؟",
+      "unpublishBody": "يُزال من المدونة ويعود مسودة. يتوقف رابطه عن العمل حتى تنشره مرة أخرى.",
+      "archiveTitle": "أرشفة هذا المقال؟",
+      "archiveBody": "يُزال من المدونة ويُحتفظ به للرجوع إليه. يمكنك حذفه لاحقًا.",
+      "deleteTitle": "حذف هذا المقال؟",
+      "deleteBody": "لا يمكن التراجع عن ذلك.",
+      "confirmPublish": "نشر",
+      "confirmSchedule": "جدولة",
+      "confirmUnpublish": "إلغاء النشر",
+      "confirmArchive": "أرشفة",
+      "confirmDelete": "حذف"
+    },
+    "toasts": {
+      "created": "تم إنشاء المسودة",
+      "saved": "تم حفظ المقال",
+      "published": "تم نشر المقال",
+      "scheduled": "تمت جدولة المقال",
+      "unpublished": "تم إلغاء نشر المقال",
+      "archived": "تمت أرشفة المقال",
+      "deleted": "تم حذف المقال"
+    },
+    "preview": {
+      "title": "معاينة",
+      "description": "شكل المقال في المدونة.",
+      "unsavedNote": "تُعرض تغييراتك غير المحفوظة.",
+      "byline": "{{author}} · قراءة {{minutes}} دقيقة",
+      "languageLabel": "لغة المعاينة",
+      "noLanguage": "هذه اللغة لم تُكتب بعد."
+    }
+  },
+  "announcements": {
+    "title": "الشرائط والنوافذ المنبثقة",
+    "subtitle": "رسائل على الموقع التسويقي (شريط أو نافذة منبثقة) وشريط في أعلى كل لوحة تحكم.",
+    "searchLabel": "ابحث بالاسم",
+    "new": {
+      "marketing_banner": "شريط جديد للموقع",
+      "marketing_popup": "نافذة منبثقة جديدة للموقع",
+      "dashboard_banner": "شريط جديد للوحة التحكم"
+    },
+    "filters": {
+      "surface": "المكان",
+      "allSurfaces": "كل الأماكن",
+      "status": "الحالة",
+      "allStatuses": "كل الحالات"
+    },
+    "surface": {
+      "marketing_banner": "شريط الموقع",
+      "marketing_popup": "نافذة منبثقة للموقع",
+      "dashboard_banner": "شريط لوحة التحكم"
+    },
+    "surfaceHint": {
+      "marketing_banner": "شريط في أعلى صفحات الموقع التسويقي. يظهر حتى شريطين معًا.",
+      "marketing_popup": "نافذة على صفحات الموقع التسويقي. تظهر نافذة واحدة فقط، الأعلى أولوية أولًا.",
+      "dashboard_banner": "شريط في أعلى لوحة التحكم للمستخدمين المسجلين."
+    },
+    "status": {
+      "draft": "مسودة",
+      "active": "مفعّل",
+      "archived": "مؤرشف"
+    },
+    "live": {
+      "live": "ظاهر الآن",
+      "scheduled": "يبدأ لاحقًا",
+      "ended": "انتهى",
+      "off": "متوقف"
+    },
+    "tone": {
+      "info": "معلومة",
+      "promo": "عرض",
+      "success": "خبر سار",
+      "warning": "تنبيه"
+    },
+    "table": {
+      "caption": "الشرائط والنوافذ المنبثقة",
+      "name": "الاسم",
+      "surface": "المكان",
+      "status": "الحالة",
+      "window": "الموعد",
+      "stats": "مشاهدات · نقرات · إغلاقات",
+      "updated": "آخر حفظ"
+    },
+    "window": {
+      "always": "بلا مواعيد",
+      "from": "من {{date}}",
+      "until": "حتى {{date}}",
+      "range": "{{from}} – {{to}}"
+    },
+    "stats": {
+      "views": "مشاهدات",
+      "clicks": "نقرات",
+      "dismissals": "إغلاقات",
+      "summary": "{{views}} · {{clicks}} · {{dismissals}}"
+    },
+    "empty": {
+      "title": "لا توجد شرائط أو نوافذ منبثقة بعد",
+      "description": "أنشئ واحدة ليوم الإطلاق. تبقى متوقفة حتى تفعّلها."
+    },
+    "noResults": {
+      "title": "لا توجد نتائج مطابقة",
+      "description": "جرّب بحثًا آخر أو امسح الفلاتر."
+    }
+  },
+  "announcementEditor": {
+    "newTitle": "إنشاء {{surface}}",
+    "editTitle": "تعديل {{surface}}",
+    "notFound": "هذا العنصر لم يعد موجودًا.",
+    "sections": {
+      "basics": "الأساسيات",
+      "message": "الرسالة",
+      "schedule": "متى تظهر",
+      "targeting": "أين تظهر",
+      "behaviour": "السلوك",
+      "preview": "المعاينة",
+      "stats": "النتائج"
+    },
+    "fields": {
+      "name": "اسم داخلي",
+      "nameHint": "لا يراه غيرك.",
+      "surface": "المكان",
+      "tone": "النمط",
+      "title": "العنوان",
+      "titleRequired": "العنوان (مطلوب للنافذة المنبثقة)",
+      "body": "الرسالة",
+      "bodyHint": "نص عادي، حتى ٦٠٠ حرف.",
+      "ctaLabel": "نص الزر",
+      "ctaUrl": "رابط الزر",
+      "ctaUrlHint": "عنوان يبدأ بـ https:// أو مسار في الموقع مثل /pricing.",
+      "image": "الصورة",
+      "imageHint": "اختيارية. PNG أو JPEG أو WebP، حتى ٥ ميجابايت.",
+      "startsAt": "تبدأ",
+      "endsAt": "تنتهي",
+      "scheduleHint": "اتركهما فارغين لتظهر بمجرد تفعيلها وحتى توقفها. المواعيد بتوقيتك.",
+      "pages": "الصفحات",
+      "pagesHint": "اتركها فارغة لكل صفحات الموقع التسويقي. المسار يشمل الصفحات التي تحته والنسخة العربية.",
+      "pagesAdd": "إضافة مسار",
+      "pagesPlaceholder": "/pricing",
+      "pagesRemove": "إزالة {{path}}",
+      "pagesAll": "كل صفحات الموقع التسويقي",
+      "dismissible": "يمكن للزائر إغلاقها",
+      "popupDelaySeconds": "التأخير قبل ظهورها (بالثواني)",
+      "popupFrequency": "عدد مرات الظهور",
+      "audience": "من يراها",
+      "priority": "الأولوية",
+      "priorityHint": "من ٠ إلى ١٠٠. الأعلى يظهر أولًا."
+    },
+    "frequency": {
+      "once": "مرة واحدة لكل متصفح",
+      "session": "مرة في كل زيارة",
+      "always": "مع كل فتح للصفحة"
+    },
+    "audience": {
+      "all": "كل من سجّل الدخول إلى لوحة التحكم",
+      "organization_owners": "مالكو المؤسسات",
+      "academy_staff": "مالكو الأكاديميات ومديروها ومدرّبوها"
+    },
+    "validation": {
+      "name": "اكتب اسمًا من ١ إلى ١٢٠ حرفًا.",
+      "oneLanguage": "اكتب الرسالة بلغة واحدة على الأقل.",
+      "body": "اكتب رسالة حتى ٦٠٠ حرف.",
+      "title": "النافذة المنبثقة تحتاج عنوانًا (حتى ١٢٠ حرفًا).",
+      "titleLength": "اجعل العنوان أقل من ١٢٠ حرفًا.",
+      "ctaLabel": "اجعل نص الزر أقل من ٤٠ حرفًا.",
+      "ctaUrlRequired": "أضف الرابط الذي يفتحه الزر.",
+      "ctaUrl": "استخدم عنوانًا يبدأ بـ https:// أو مسارًا يبدأ بـ /.",
+      "path": "المسار يبدأ بـ / وبلا مسافات أو استعلام أو #.",
+      "endsBeforeStart": "يجب أن يكون الانتهاء بعد البدء.",
+      "delay": "استخدم من ٠ إلى ٦٠ ثانية.",
+      "priority": "استخدم رقمًا من ٠ إلى ١٠٠.",
+      "summary": "صحّح الحقول المميزة أولًا."
+    },
+    "actions": {
+      "save": "حفظ",
+      "create": "إنشاء",
+      "activate": "تفعيل",
+      "deactivate": "إيقاف",
+      "archive": "أرشفة",
+      "delete": "حذف"
+    },
+    "confirm": {
+      "activateTitle": "تفعيل {{surface}}؟",
+      "activateBody": "يظهر للزوار خلال دقائق (داخل مواعيده إن وُجدت).",
+      "deactivateTitle": "إيقاف هذا العنصر؟",
+      "deactivateBody": "يتوقف عن الظهور ويعود مسودة.",
+      "archiveTitle": "أرشفة هذا العنصر؟",
+      "archiveBody": "يتوقف عن الظهور ويُحتفظ به مع نتائجه.",
+      "deleteTitle": "حذف هذا العنصر؟",
+      "deleteBody": "لا يمكن التراجع عن ذلك.",
+      "unsaved": "احفظ تغييراتك أولًا."
+    },
+    "toasts": {
+      "created": "تم الإنشاء",
+      "saved": "تم الحفظ",
+      "activated": "تم التفعيل",
+      "deactivated": "تم الإيقاف",
+      "archived": "تمت الأرشفة",
+      "deleted": "تم الحذف"
+    },
+    "preview": {
+      "label": "معاينة {{language}}",
+      "noContent": "لا توجد رسالة باللغة {{language}}: لن تظهر بهذه اللغة.",
+      "dismiss": "إغلاق",
+      "popupClose": "إغلاق",
+      "marketingPage": "صفحة الموقع التسويقي",
+      "dashboard": "لوحة التحكم"
+    }
+  },
+  "checklist": {
+    "title": "قائمة مهام الإطلاق",
+    "subtitle": "ما يجب أن يكون جاهزًا قبل الإطلاق. علّم كل مهمة عند إنجازها؛ يُحفظ الوقت ومن أنجزها.",
+    "progress": "تم {{done}} من {{total}}",
+    "progressLabel": "تقدّم القائمة",
+    "add": "إضافة مهمة",
+    "sections": {
+      "product": "المنتج",
+      "content": "المحتوى",
+      "marketing": "التسويق",
+      "communication": "التواصل",
+      "operations": "التشغيل"
+    },
+    "item": {
+      "markDone": "تعليم «{{title}}» كمنجزة",
+      "doneBy": "أُنجزت {{date}} بواسطة {{name}}",
+      "doneAt": "أُنجزت {{date}}",
+      "open": "فتح الرابط",
+      "notes": "ملاحظات",
+      "moveUp": "نقل «{{title}}» لأعلى",
+      "moveDown": "نقل «{{title}}» لأسفل",
+      "drag": "اسحب لإعادة ترتيب «{{title}}»",
+      "edit": "تعديل «{{title}}»",
+      "delete": "حذف «{{title}}»",
+      "moved": "نُقلت «{{title}}» إلى الموضع {{position}}",
+      "openNamed": "فتح رابط: {{title}}"
+    },
+    "dialog": {
+      "addTitle": "إضافة مهمة",
+      "editTitle": "تعديل المهمة",
+      "section": "القسم",
+      "title": "العنوان",
+      "description": "الوصف",
+      "linkUrl": "الرابط",
+      "linkUrlHint": "اختياري. مسار في لوحة التحكم مثل /dashboard/platform/blog أو عنوان يبدأ بـ https://",
+      "notes": "ملاحظات",
+      "save": "حفظ",
+      "titleRequired": "اكتب عنوانًا من ١ إلى ١٦٠ حرفًا.",
+      "descriptionLength": "اجعل الوصف أقل من ١٬٠٠٠ حرف.",
+      "notesLength": "اجعل الملاحظات أقل من ٢٬٠٠٠ حرف.",
+      "linkInvalid": "استخدم عنوانًا يبدأ بـ https:// أو مسارًا يبدأ بـ /."
+    },
+    "confirmDelete": {
+      "title": "حذف هذه المهمة؟",
+      "body": "تُزال «{{title}}» من القائمة."
+    },
+    "empty": {
+      "title": "القائمة فارغة",
+      "description": "أضف ما يجب أن يكون جاهزًا قبل الإطلاق."
+    },
+    "toasts": {
+      "added": "تمت إضافة المهمة",
+      "saved": "تم حفظ المهمة",
+      "deleted": "تم حذف المهمة",
+      "reorderFailed": "تعذّر حفظ الترتيب الجديد."
+    }
+  }
+}
