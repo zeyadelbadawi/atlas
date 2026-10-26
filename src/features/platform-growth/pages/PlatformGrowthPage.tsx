@@ -79,7 +79,7 @@ export default function PlatformGrowthPage(): JSX.Element {
         breadcrumbs={breadcrumbs}
       />
       <Tabs value={tab} onValueChange={selectTab} dir={direction}>
-        <div className="-mx-4 mb-5 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+        <div className="relative -mx-4 mb-5 overflow-x-auto px-4 sm:mx-0 sm:px-0">
           <TabsList aria-label={t(`${K}tabs.label`)} className="h-auto">
             {GROWTH_TABS.map((value) => (
               <TabsTrigger key={value} value={value} className="min-h-11 px-4">

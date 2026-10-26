@@ -176,7 +176,7 @@ export function WeeklyChart({
       {showTable ? (
         <div
           id={viewId}
-          className="max-h-80 overflow-auto rounded-md border border-border"
+          className="relative max-h-80 overflow-auto rounded-md border border-border"
         >
           <table className="w-full text-sm">
             <caption className="sr-only">{title}</caption>

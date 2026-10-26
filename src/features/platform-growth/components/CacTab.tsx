@@ -99,7 +99,7 @@ function ChannelTable({
   const cell = 'px-3 py-2 text-end tabular-nums whitespace-nowrap';
 
   return (
-    <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+    <div className="relative -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
       <table className="w-full min-w-[30rem] text-sm">
         <caption className="sr-only">{caption}</caption>
         <thead>
