@@ -28,6 +28,7 @@ import {
   dismissKey,
   isAnnouncementTone,
   isSafeAnnouncementUrl,
+  localizeAnnouncementHref,
   popupAllowed,
   rememberPopupShown,
   safeStore,
@@ -203,7 +204,9 @@ function ctaLink(
 ): HTMLAnchorElement | null {
   if (!item.ctaLabel || !item.ctaUrl) return null;
   const a = el(doc, 'a', className);
-  a.href = item.ctaUrl;
+  // One link for both languages: on an Arabic page a site path opens the
+  // Arabic page.
+  a.href = localizeAnnouncementHref(item.ctaUrl, doc.documentElement.lang);
   a.textContent = item.ctaLabel;
   if (/^https:/i.test(item.ctaUrl)) a.rel = 'noopener';
   a.addEventListener('click', onClick);

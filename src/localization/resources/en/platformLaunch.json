@@ -396,7 +396,7 @@
       "bodyHint": "Plain text, up to 600 characters.",
       "ctaLabel": "Button label",
       "ctaUrl": "Button link",
-      "ctaUrlHint": "https://… or a site path such as /pricing.",
+      "ctaUrlHint": "https://… or a site path such as /pricing. On Arabic pages, a site path opens the Arabic version.",
       "image": "Image",
       "imageHint": "Optional. PNG, JPEG or WebP, up to 5 MB.",
       "startsAt": "Starts",

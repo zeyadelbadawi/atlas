@@ -15,6 +15,7 @@ import {
   type MarketingAnnouncement,
 } from './announcements';
 import {
+  localizeAnnouncementHref,
   pathMatchesPages,
   popupAllowed,
   safeStore,
@@ -323,5 +324,54 @@ describe('robustness', () => {
     );
     expect(document.querySelector('[data-announcement]')).toBeNull();
     fetchSpy.mockRestore();
+  });
+});
+
+describe('links on Arabic pages', () => {
+  it('opens the Arabic version of a site path', () => {
+    expect(localizeAnnouncementHref('/pricing', 'ar')).toBe('/ar/pricing');
+    expect(localizeAnnouncementHref('/', 'ar')).toBe('/ar');
+    expect(localizeAnnouncementHref('/contact?topic=sales', 'ar')).toBe(
+      '/ar/contact?topic=sales'
+    );
+    expect(localizeAnnouncementHref('/blog#latest', 'ar')).toBe(
+      '/ar/blog#latest'
+    );
+  });
+
+  it('leaves English pages, absolute URLs, Arabic paths and files alone', () => {
+    expect(localizeAnnouncementHref('/pricing', 'en')).toBe('/pricing');
+    expect(localizeAnnouncementHref('https://example.com/x', 'ar')).toBe(
+      'https://example.com/x'
+    );
+    expect(localizeAnnouncementHref('/ar/pricing', 'ar')).toBe('/ar/pricing');
+    expect(localizeAnnouncementHref('/ar', 'ar')).toBe('/ar');
+    expect(localizeAnnouncementHref('/llms.txt', 'ar')).toBe('/llms.txt');
+    expect(localizeAnnouncementHref('/api/v1/public/media/x', 'ar')).toBe(
+      '/api/v1/public/media/x'
+    );
+  });
+
+  it('renders the banner and pop-up CTA in the page language', () => {
+    document.documentElement.lang = 'ar';
+    try {
+      renderAnnouncements(
+        document,
+        parseFeed({
+          banners: [BANNER],
+          popup: { ...POPUP, popupDelaySeconds: 0 },
+        }),
+        deps()
+      );
+      expect(
+        document.querySelector('[role="region"] a')?.getAttribute('href')
+      ).toBe('/ar/pricing');
+      timers.forEach((timer) => timer.fn());
+      expect(
+        document.querySelector('[role="dialog"] a')?.getAttribute('href')
+      ).toBe('/ar/blog');
+    } finally {
+      document.documentElement.lang = '';
+    }
   });
 });

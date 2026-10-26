@@ -68,6 +68,24 @@ export function unlocalizedPath(pathname: string): string {
   return trimmed.startsWith('/ar/') ? trimmed.slice(3) : trimmed;
 }
 
+/**
+ * A CTA link as the visitor's page language needs it. One `ctaUrl` serves
+ * both languages, and every marketing page has an Arabic twin under `/ar`,
+ * so on an Arabic page a site path opens the Arabic page: `/pricing` →
+ * `/ar/pricing`, `/` → `/ar`, `/contact?topic=sales` → `/ar/contact?topic=sales`.
+ * Absolute URLs, paths already under `/ar`, `/api/…` and files (a path
+ * with an extension, such as `/llms.txt`) are left as they are.
+ */
+export function localizeAnnouncementHref(url: string, lang: string): string {
+  if (lang !== 'ar' || !url.startsWith('/') || url.startsWith('//')) return url;
+  const match = /^([^?#]*)(.*)$/.exec(url);
+  const path = match?.[1] ?? url;
+  const rest = match?.[2] ?? '';
+  if (path === '/ar' || path.startsWith('/ar/')) return url;
+  if (path.startsWith('/api/') || /\.[a-z0-9]+$/i.test(path)) return url;
+  return `/ar${path === '/' ? '' : path}${rest}`;
+}
+
 /** Whether a path matches a `pages` list ([] = every page; prefixes cover their children). */
 export function pathMatchesPages(
   pathname: string,
