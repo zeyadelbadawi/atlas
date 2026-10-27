@@ -51,6 +51,7 @@ import {
   Flag,
   Newspaper,
   ListChecks,
+  TrendingUp,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -703,8 +704,9 @@ export function getDashboardNavigation(
     {
       /*
         B3 — LAUNCH & CONTENT: everything blog- and launch-related, managed
-        by the Platform Owner. The APIs (`platform-blog-posts`,
-        `platform-site-announcements`, `platform-launch-checklist`) enforce
+        by the Platform Owner, plus G1's Growth & capacity. The APIs
+        (`platform-blog-posts`, `platform-site-announcements`,
+        `platform-launch-checklist`, `platform-growth`) enforce
         PlatformOwnerGuard + RLS; these entries only decide visibility.
       */
       id: 'platform-launch',
@@ -741,6 +743,15 @@ export function getDashboardNavigation(
           labelKey: 'navigation:items.platformLaunchChecklist',
           path: DASHBOARD_ROUTES.platformLaunchChecklist,
           icon: ListChecks,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+        },
+        {
+          // G1 — season capacity, CAC per channel and marketing spend.
+          id: 'platform-growth',
+          labelKey: 'navigation:items.platformGrowth',
+          path: DASHBOARD_ROUTES.platformGrowth,
+          icon: TrendingUp,
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
         },

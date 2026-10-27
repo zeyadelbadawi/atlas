@@ -7,105 +7,47 @@
  * a module variable: no cookie, no localStorage, no sessionStorage — nothing
  * is written to the browser before any consent, and a reload forgets it.
  * It is sent once, with the organization signup (`/auth/register`) or the
- * marketing contact form (`POST /public/contact`).
+ * marketing contact form (`POST /public/contact`). The pure reading rules
+ * (`landing-attribution.core`) are shared with the static marketing site,
+ * whose links into the sign-up hand over `utm_*`, `ref` and `lt` (G1).
  *
  * Nothing is captured unless the `signupAttribution` feature flag is on
- * (off until the owner enables it). Values that look like personal data —
- * an email address or a phone number — are dropped here, and again by the
- * server, which is the authority (`sanitizeAttribution` in atlas-backend).
- * An untagged, direct visit captures nothing.
+ * (on since G1, with the server's `FLAG_ATTRIBUTION_CAPTURE_MODE=on`).
+ * Values that look like personal data — an email address or a phone
+ * number — are dropped here, and again by the server, which is the
+ * authority (`sanitizeAttribution` in atlas-backend). An untagged,
+ * direct visit captures nothing.
  */
 import { isFeatureEnabled } from '@config/feature-flags.config';
+import { ENV } from '@config/env.config';
 import type { LandingAttribution } from '@types';
+import { readLandingAttribution } from './landing-attribution.core';
 
 export type { LandingAttribution };
+export {
+  LANDING_ATTRIBUTION_VALUE_MAX,
+  looksLikePersonalData,
+  readLandingAttribution,
+} from './landing-attribution.core';
 
-/** Longest value kept per field — the server caps at the same length. */
-export const LANDING_ATTRIBUTION_VALUE_MAX = 100;
-
-const UTM_PARAMS = [
-  ['utm_source', 'utmSource'],
-  ['utm_medium', 'utmMedium'],
-  ['utm_campaign', 'utmCampaign'],
-  ['utm_term', 'utmTerm'],
-  ['utm_content', 'utmContent'],
-] as const;
-
-const CONTROL_CHARS =
-  // eslint-disable-next-line no-control-regex
-  /[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u2028-\u202e\u2066-\u2069]/g;
-const EMAIL_LIKE = /@|%40/i;
-/** 9+ digits with optional separators: every mobile number, never an 8-digit date. */
-const PHONE_LIKE = /\d(?:[\s().\-_/+]*\d){8,}/;
-const TEMPLATE_SLUG = /^[a-z0-9][a-z0-9_-]{0,63}$/;
-
-/** True when a value looks like an email address or a phone number. */
-export function looksLikePersonalData(value: string): boolean {
-  return EMAIL_LIKE.test(value) || PHONE_LIKE.test(value);
-}
-
-/** A UTF-16 surrogate without its partner (half of an emoji, say). */
-const LONE_SURROGATE =
-  /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g;
-
-function clean(value: string | null): string | undefined {
-  if (!value) return undefined;
-  const text = value.replace(CONTROL_CHARS, '').replace(/\s+/g, ' ').trim();
-  if (!text || looksLikePersonalData(text)) return undefined;
-  // Cut, then drop any half of a surrogate pair the cut (or the input)
-  // left behind: Postgres rejects JSON with a lone surrogate.
-  return (
-    text
-      .slice(0, LANDING_ATTRIBUTION_VALUE_MAX)
-      .replace(LONE_SURROGATE, '')
-      .trim() || undefined
-  );
-}
-
-function referrerHost(referrer: string, ownHost: string): string | undefined {
-  if (!referrer) return undefined;
-  try {
-    const host = new URL(referrer).hostname.toLowerCase();
-    if (
-      !host ||
-      host === ownHost.toLowerCase() ||
-      looksLikePersonalData(host)
-    ) {
-      return undefined;
+/**
+ * G1 — never a referrer: the platform base domain and the marketing site's
+ * host, with every subdomain (the dashboard, the help center, academies).
+ */
+export function platformInternalDomains(): string[] {
+  const domains: string[] = [];
+  if (ENV.platformBaseDomain) domains.push(ENV.platformBaseDomain);
+  for (const origin of [ENV.siteUrl, ENV.appUrl]) {
+    if (!origin) continue;
+    try {
+      domains.push(
+        new URL(origin).hostname.replace(/^(?:www|dashboard)\./, '')
+      );
+    } catch {
+      // An unparseable origin adds nothing.
     }
-    return host.includes('.') ? host : undefined;
-  } catch {
-    return undefined;
   }
-}
-
-function templateFor(pathname: string): string | undefined {
-  const first = pathname.split('/').filter(Boolean)[0];
-  const slug = (first ?? 'home').toLowerCase();
-  return TEMPLATE_SLUG.test(slug) ? slug : undefined;
-}
-
-/** Pure: what a landing URL + referrer yield, or `null` for an untagged, direct visit. */
-export function readLandingAttribution(
-  location: {
-    readonly search: string;
-    readonly pathname: string;
-    readonly hostname: string;
-  },
-  referrer: string
-): LandingAttribution | null {
-  const params = new URLSearchParams(location.search);
-  const found: Record<string, string> = {};
-  for (const [param, key] of UTM_PARAMS) {
-    const value = clean(params.get(param));
-    if (value) found[key] = value;
-  }
-  const domain = referrerHost(referrer, location.hostname);
-  if (domain) found.referrerDomain = domain;
-  if (Object.keys(found).length === 0) return null;
-  const template = templateFor(location.pathname);
-  if (template) found.landingTemplate = template;
-  return found as LandingAttribution;
+  return domains;
 }
 
 let captured: LandingAttribution | null | undefined;
@@ -117,7 +59,9 @@ export function captureLandingAttribution(): void {
     captured = null;
     return;
   }
-  captured = readLandingAttribution(window.location, document.referrer ?? '');
+  captured = readLandingAttribution(window.location, document.referrer ?? '', {
+    internalDomains: platformInternalDomains(),
+  });
 }
 
 /** What was captured at landing (memory only), or `null`. Always `null` while the flag is off. */

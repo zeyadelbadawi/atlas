@@ -1,6 +1,7 @@
 /**
- * B3 — the "Launch & content" sidebar section: exactly four Platform-Owner
- * pages (launch center, blog, banners & pop-ups, launch checklist), every
+ * B3 / G1 — the "Launch & content" sidebar section: exactly five
+ * Platform-Owner pages (launch center, blog, banners & pop-ups, launch
+ * checklist, and G1's Growth & capacity right after the checklist), every
  * route (including the editors) guarded for `platform_owner`, labels in
  * both languages. The router source is read as text (rendering it would
  * mount the whole application).
@@ -20,6 +21,7 @@ const SIDEBAR_KEYS = [
   'platformBlog',
   'platformAnnouncements',
   'platformLaunchChecklist',
+  'platformGrowth',
 ] as const;
 
 const ROUTE_KEYS = [
@@ -34,7 +36,7 @@ const section = () =>
   getDashboardNavigation().find((s) => s.id === 'platform-launch');
 
 describe('Launch & content navigation (B3)', () => {
-  it('has exactly the four pages, platform-owner only, after Email & Notifications', () => {
+  it('has exactly the five pages, platform-owner only, after Email & Notifications', () => {
     const sections = getDashboardNavigation();
     const index = sections.findIndex((s) => s.id === 'platform-launch');
     expect(index).toBeGreaterThan(
@@ -63,7 +65,7 @@ describe('Launch & content navigation (B3)', () => {
         } as unknown as CurrentUser,
         isFeatureEnabled: () => true,
       });
-    expect(visible(['platform_owner'])).toHaveLength(4);
+    expect(visible(['platform_owner'])).toHaveLength(5);
     expect(visible(['organization_owner'])).toHaveLength(0);
     expect(visible(['instructor'])).toHaveLength(0);
   });
@@ -83,6 +85,7 @@ describe('Launch & content navigation (B3)', () => {
     expect(DASHBOARD_ROUTES.platformLaunchChecklist).toBe(
       '/dashboard/platform/launch-checklist'
     );
+    expect(DASHBOARD_ROUTES.platformGrowth).toBe('/dashboard/platform/growth');
   });
 
   it('guards every route, editors included, for platform owners', () => {
@@ -103,6 +106,8 @@ describe('Launch & content navigation (B3)', () => {
   it('labels the section and its pages in English and Arabic', () => {
     expect(en.sections.platformLaunch).toBe('Launch & content');
     expect(ar.sections.platformLaunch).toBe('الإطلاق والمحتوى');
+    expect(en.items.platformGrowth).toBe('Growth & capacity');
+    expect(ar.items.platformGrowth).toBe('النمو والسعة');
     for (const key of SIDEBAR_KEYS) {
       expect((en.items as Record<string, string>)[key]).toBeTruthy();
       expect((ar.items as Record<string, string>)[key]).toBeTruthy();

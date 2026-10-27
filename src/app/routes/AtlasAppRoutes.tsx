@@ -495,6 +495,9 @@ const PlatformAnnouncementEditorPage = lazy(
 const PlatformLaunchChecklistPage = lazy(
   () => import('@features/platform-launch/pages/PlatformLaunchChecklistPage')
 );
+const PlatformGrowthPage = lazy(
+  () => import('@features/platform-growth/pages/PlatformGrowthPage')
+);
 const PlatformContactSubmissionsPage = lazy(
   () => import('@features/platform/pages/PlatformContactSubmissionsPage')
 );
@@ -2575,6 +2578,19 @@ export default function AtlasAppRoutes(): JSX.Element {
                   requiredRoles={['platform_owner']}
                 >
                   <PlatformLaunchChecklistPage />
+                </RouteGuard>
+              }
+            />
+            {/* G1 — Growth & capacity. The API's PlatformOwnerGuard + RLS
+                are the real control. */}
+            <Route
+              path={DASHBOARD_ROUTES.platformGrowth}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformGrowthPage />
                 </RouteGuard>
               }
             />

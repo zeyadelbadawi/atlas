@@ -49,6 +49,7 @@
  * CLAIMS. `claim` carries the feature ID(s) behind a statement (claims
  * register, SPEC A.11). The build may hide an item whose claim is gated.
  */
+import type { HeardFrom } from '@/shared/utils/acquisition-channel.utils';
 import type { PlanLimitKey } from '@/types/plan.types';
 
 export type MarketingPageId =
@@ -542,6 +543,18 @@ export interface MkContact {
   readonly topics: Readonly<Record<MarketingContactTopic | MarketingLinkOnlyContactTopic, string>>;
   /** B2 — shown under the topic only while `founding` is selected. */
   readonly foundingHint: string;
+  /**
+   * G1 — the optional last question, "How did you first hear about us?".
+   * The options are shuffled on the page (Other stays last); choosing Other
+   * reveals a short free-text box (≤ 100 characters).
+   */
+  readonly heardFrom: {
+    readonly label: string;
+    readonly placeholder: string;
+    readonly options: Readonly<Record<HeardFrom, string>>;
+    readonly otherLabel: string;
+    readonly otherHint: string;
+  };
   /** Two separate boxes, both unticked by default. */
   readonly consent: { readonly contact: string; readonly marketing: string };
   readonly errors: {
