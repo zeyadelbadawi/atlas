@@ -121,6 +121,12 @@ describe('settings', () => {
     expect(validateSettings({ ...draft, weeklyOwnerHours: '12.5' })).toEqual(
       {}
     );
+    // One decimal that is not exact in binary (2.2 * 10 = 22.000000000000004).
+    for (const hours of ['2.2', '1.1', '15.3']) {
+      expect(validateSettings({ ...draft, weeklyOwnerHours: hours })).toEqual(
+        {}
+      );
+    }
   });
 
   it('sends only the changed fields, as numbers', () => {

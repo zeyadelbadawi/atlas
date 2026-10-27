@@ -11,6 +11,7 @@ import * as flags from '@config/feature-flags.config';
 import { FEATURE_FLAGS } from '@config/feature-flags.config';
 import {
   attributionHandoffParams,
+  cleanAttributionValue,
   isInternalHost,
   landingTemplateFor,
 } from './landing-attribution.core';
@@ -58,6 +59,15 @@ describe('readLandingAttribution', () => {
     expect(JSON.stringify(read)).not.toMatch(
       /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/
     );
+  });
+
+  it('drops lone surrogates and keeps whole emoji (no lookbehind regex)', () => {
+    const high = String.fromCharCode(0xd83d);
+    const low = String.fromCharCode(0xde00);
+    expect(cleanAttributionValue(`a${high}${low}b`)).toBe(`a${high}${low}b`);
+    expect(cleanAttributionValue(`a${high}b`)).toBe('ab');
+    expect(cleanAttributionValue(`a${low}b`)).toBe('ab');
+    expect(cleanAttributionValue(`${low}${high}`)).toBeUndefined();
   });
 
   it('captures nothing for an untagged visit or a same-site referrer', () => {

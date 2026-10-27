@@ -57,9 +57,28 @@ export function looksLikePersonalData(value: string): boolean {
   return EMAIL_LIKE.test(value) || PHONE_LIKE.test(value);
 }
 
-/** A UTF-16 surrogate without its partner (half of an emoji, say). */
-const LONE_SURROGATE =
-  /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g;
+/**
+ * Drops every UTF-16 surrogate without its partner (half of an emoji, say).
+ * A loop, not a regex: the regex form needs a lookbehind, which Safari
+ * before 16.4 cannot parse, and this module ships in the marketing bundle.
+ */
+function dropLoneSurrogates(text: string): string {
+  let out = '';
+  for (let i = 0; i < text.length; i += 1) {
+    const unit = text.charCodeAt(i);
+    if (unit >= 0xd800 && unit <= 0xdbff) {
+      const next = text.charCodeAt(i + 1);
+      if (next >= 0xdc00 && next <= 0xdfff) {
+        out += text.slice(i, i + 2);
+        i += 1;
+      }
+      continue;
+    }
+    if (unit >= 0xdc00 && unit <= 0xdfff) continue;
+    out += text[i];
+  }
+  return out;
+}
 
 /** One attribution value as it is kept, or `undefined` when it is dropped. */
 export function cleanAttributionValue(
@@ -71,10 +90,8 @@ export function cleanAttributionValue(
   // Cut, then drop any half of a surrogate pair the cut (or the input)
   // left behind: Postgres rejects JSON with a lone surrogate.
   return (
-    text
-      .slice(0, LANDING_ATTRIBUTION_VALUE_MAX)
-      .replace(LONE_SURROGATE, '')
-      .trim() || undefined
+    dropLoneSurrogates(text.slice(0, LANDING_ATTRIBUTION_VALUE_MAX)).trim() ||
+    undefined
   );
 }
 

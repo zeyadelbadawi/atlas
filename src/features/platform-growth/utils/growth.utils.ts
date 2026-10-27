@@ -223,7 +223,9 @@ function parseSetting(field: NumericSetting, text: string): number | null {
   const limits = SETTINGS_LIMITS[field];
   if (value < limits.min || value > limits.max) return null;
   if (field === 'weeklyOwnerHours') {
-    return Math.round(value * 10) === value * 10 ? value : null;
+    // `2.2 * 10` is 22.000000000000004: compare tenths with a tolerance.
+    const tenths = value * 10;
+    return Math.abs(tenths - Math.round(tenths)) < 1e-9 ? value : null;
   }
   return Number.isInteger(value) ? value : null;
 }
