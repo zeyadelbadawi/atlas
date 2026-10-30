@@ -107,6 +107,21 @@
     "subdomainReserved": "This address is reserved and can't be used. Please choose another one.",
     "subscriptionRequired": "An active subscription or trial is needed to set up an academy."
   },
+  "founding": {
+    "notFound": "This founding membership no longer exists.",
+    "organizationNotFound": "That academy was not found.",
+    "planNotEligible": "Choose one of the self-serve plans with a yearly price.",
+    "alreadyMember": "This academy is already a founding academy.",
+    "seatsFull": "All 20 founding seats are taken.",
+    "stale": "Someone changed this membership. Reopen it and try again.",
+    "revoked": "This membership is revoked and can no longer be changed.",
+    "notActive": "Only an active membership can move to another plan.",
+    "lockStartOutOfRange": "The lock start must be within a year of today.",
+    "contactNotFound": "That founding request was not found.",
+    "emailIncomplete": "Write the subject and message in both languages.",
+    "recipientCountChanged": "The list of recipients changed. Review the message again before sending.",
+    "recipientsInvalid": "Choose active founding academies only."
+  },
   "checkout": {
     "annualPlanChangeViaSupport": "You can’t switch to a different plan from checkout while more than 30 days of your annual plan remain. Contact Atlas support to change plans, or renew your current plan.",
     "expired": "This checkout has expired. Please start again.",
@@ -474,7 +489,18 @@
   "blog": {
     "ambiguousAcademy": "Choose which academy this post belongs to.",
     "invalidScheduledDate": "Choose a publishing date and time in the future.",
-    "slugTaken": "Another post in this academy already uses this address. Choose a different one."
+    "slugTaken": "Another post already uses this address. Choose a different one.",
+    "notFound": "This post no longer exists.",
+    "stale": "Someone else saved this post first. Reload it to see their changes.",
+    "translationsIncomplete": "Write the English and Arabic versions in full (title, excerpt and body) before publishing.",
+    "translationMissing": "This language has not been written yet.",
+    "relatedPostInvalid": "Choose up to three other existing posts as related posts.",
+    "unsafeMarkdownUrl": "A link or image address is not allowed. Use https:// links, mailto: or a site path, and https:// or site images.",
+    "invalidTransition": "That change is not possible for this post right now. Reload it and try again.",
+    "deleteNotAllowed": "Only drafts and archived posts can be deleted. Unpublish or archive it first.",
+    "imageInvalid": "That file is not a PNG, JPEG or WebP image.",
+    "imageTooLarge": "The image is larger than 5 MB.",
+    "imageDimensionsTooLarge": "The image is larger than 6000 pixels on a side."
   },
   "enrollment": {
     "academyMembershipRequired": "You need active access to this academy first. If your registration is waiting for approval or you were blocked, contact the academy.",
@@ -507,5 +533,31 @@
   "tenant": {
     "noSubscription": "Your organization doesn't have a subscription yet. Choose a plan to start.",
     "usageNotAvailable": "Usage isn't calculated yet. Check again in a little while."
+  },
+  "siteAnnouncements": {
+    "notFound": "This banner or pop-up no longer exists.",
+    "stale": "Someone else saved this first. Reload it to see their changes.",
+    "invalidTransition": "That change is not possible right now. Reload and try again.",
+    "deleteNotAllowed": "Turn it off before deleting it.",
+    "contentRequired": "Write the message in at least one language before activating.",
+    "popupTitleRequired": "A pop-up needs a title in every language it shows in.",
+    "ctaUrlRequired": "Add the link the button opens.",
+    "bodyRequired": "Write the message text for every language that has a title or button.",
+    "htmlNotAllowed": "Use plain text only: no HTML tags.",
+    "invalidWindow": "The end must be after the start."
+  },
+  "launchChecklist": {
+    "notFound": "This checklist item no longer exists.",
+    "stale": "Someone else changed this item first. Reload the checklist and try again.",
+    "reorderMismatch": "The checklist changed while you were reordering it. Reload and try again."
+  },
+  "growth": {
+    "settingsStale": "Someone else saved the growth settings first. Load the latest version and try again.",
+    "spendStale": "Someone else changed this spend entry first. Reload the list and try again.",
+    "spendNotFound": "This spend entry no longer exists.",
+    "monthRangeInvalid": "Choose a valid range of months, with the first month not after the last.",
+    "monthRangeTooLong": "Choose at most 36 months.",
+    "seasonRangeInvalid": "The season must end after it starts.",
+    "hireThresholdsInvalid": "“Hire now” must be at least the “plan a hire” number."
   }
 }

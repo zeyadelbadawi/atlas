@@ -445,6 +445,67 @@ describe('Platform contact inbox — reading and deleting', () => {
     expect(notifySuccess).not.toHaveBeenCalled();
   });
 
+  it('G1 — shows the visitor\'s "How did you hear" answer and their own words for Other', async () => {
+    dataset = [
+      enquiry('c3', {
+        name: 'Mona Fathy',
+        heardFrom: 'other',
+        heardFromOther: 'A poster at the Cairo book fair',
+      }),
+      enquiry('c4', { name: 'Hany Adel', heardFrom: 'youtube' }),
+      ...BASE_ROWS,
+    ];
+    renderPage();
+    const { user, sheet } = await openEnquiry('Mona Fathy');
+    expect(within(sheet).getByText('How they heard about us')).toBeTruthy();
+    expect(
+      within(sheet).getByTestId('platform-contact-heard-from').textContent
+    ).toBe('Other');
+    expect(within(sheet).getByText('In their words')).toBeTruthy();
+    const words = within(sheet).getByTestId(
+      'platform-contact-heard-from-other'
+    );
+    expect(words.textContent).toBe('A poster at the Cairo book fair');
+    expect(words.getAttribute('dir')).toBe('auto');
+
+    await user.keyboard('{Escape}');
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    const { sheet: second } = await openEnquiry('Hany Adel');
+    expect(
+      within(second).getByTestId('platform-contact-heard-from').textContent
+    ).toBe('YouTube');
+    expect(
+      within(second).queryByTestId('platform-contact-heard-from-other')
+    ).toBeNull();
+
+    await user.keyboard('{Escape}');
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    const { sheet: unanswered } = await openEnquiry('Omar Said');
+    expect(
+      within(unanswered).queryByTestId('platform-contact-heard-from')
+    ).toBeNull();
+  });
+
+  it('G1 — shows the answer in Arabic', async () => {
+    dataset = [
+      enquiry('c3', {
+        name: 'منى فتحي',
+        heardFrom: 'other',
+        heardFromOther: 'ملصق في معرض الكتاب',
+      }),
+    ];
+    renderPage('ar');
+    const { sheet } = await openEnquiry('منى فتحي');
+    expect(within(sheet).getByText('كيف عرفوا عنّا')).toBeTruthy();
+    expect(
+      within(sheet).getByTestId('platform-contact-heard-from').textContent
+    ).toBe('أخرى');
+    expect(within(sheet).getByText('بكلماتهم')).toBeTruthy();
+    expect(sheet.textContent).not.toMatch(
+      /platformGrowth:|contactSubmissions\./
+    );
+  });
+
   it('asks for confirmation before deleting, and Cancel sends nothing', async () => {
     renderPage();
     const { user, sheet } = await openEnquiry('Omar Said');

@@ -34,7 +34,8 @@
     "academySales": "المبيعات والمدفوعات",
     "academySite": "الموقع والهوية",
     "academyInsights": "التقارير",
-    "academyAdmin": "الإعدادات"
+    "academyAdmin": "الإعدادات",
+    "platformLaunch": "الإطلاق والمحتوى"
   },
   "items": {
     "home": "الرئيسية",
@@ -79,6 +80,7 @@
     "platformWatermarkLookup": "تتبّع العلامة المائية",
     "platformSupport": "الدعم",
     "platformContactSubmissions": "استفسارات التواصل",
+    "platformFoundingAcademies": "الأكاديميات المؤسِّسة",
     "platformCustomerRequests": "طلبات العملاء",
     "platformEmailCompose": "إنشاء وإرسال",
     "platformEmailActivity": "نشاط بريد الأكاديميات",
@@ -123,7 +125,12 @@
     "platformCoursePayments": "مدفوعات الدورات",
     "platformPayouts": "مستحقات الأكاديميات",
     "platformCommission": "العمولة",
-    "platformPrivacyRequests": "طلبات الخصوصية"
+    "platformPrivacyRequests": "طلبات الخصوصية",
+    "platformLaunch": "مركز الإطلاق",
+    "platformBlog": "المدونة",
+    "platformAnnouncements": "الشرائط والنوافذ المنبثقة",
+    "platformLaunchChecklist": "قائمة مهام الإطلاق",
+    "platformGrowth": "النمو والسعة"
   },
   "account": {
     "menu": "قائمة الحساب",

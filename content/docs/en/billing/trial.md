@@ -44,6 +44,10 @@ To keep going without a break, choose **Subscribe to …** with your plan's name
 
 When the Atlas team approves your payment, the trial ends and your paid plan starts. You keep trial access until then. Days left in the trial aren't added to the paid period, but your first paid subscription may include [gifted setup days](doc:DOC-BIL-003).
 
+## Reminders before it ends
+
+Atlas emails the organization owner, and adds a notification, 3 days before the trial ends (for trials of 7 days or more) and again 1 day before. Payments are reviewed by a person, so paying when the first reminder arrives keeps your site online. See [Emails Atlas sends](doc:DOC-REF-005).
+
 ## When the trial ends
 
 - Your dashboard becomes read-only: you can see everything, but you can't make changes.

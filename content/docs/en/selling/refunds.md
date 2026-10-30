@@ -33,7 +33,7 @@ Only the organization owner can record a refund, the same person who approves pa
 
 1. Agree the refund with the learner.
 2. Send the money back yourself, from your own bank, wallet or InstaPay app.
-3. In the academy's **Payments**, open the **Approved** tab and select the learner's payment.
+3. In the academy sidebar, open **Student payments**, then the **Approved** tab, and select the learner's payment.
 4. Choose **Record refund…**. If you want, write a **Note for the learner (optional)**: it's shown to the learner and sent in their email.
 5. Choose **Record refund**, read the confirmation and choose **Record refund** again.
 
@@ -42,7 +42,7 @@ Record it only after the money has gone back: a refund can't be undone.
 ## What happens next
 
 - The learner's access to the course ends straight away. Their progress is kept.
-- The order shows **Refunded** in [Course orders](doc:DOC-COM-004) and in the learner's **Purchases**, and the payment shows **Refunded** in **Payments**, with who recorded it and when.
+- The order shows **Refunded** in [Course orders](doc:DOC-COM-004) and in the learner's **Purchases**, and the payment shows **Refunded** in **Student payments**, with who recorded it and when.
 - The payment drops out of your sales figures (**Sales recorded in Atlas (manual payments)**).
 - The learner gets an email and a notification that the academy recorded the refund, with your note.
 

@@ -44,7 +44,7 @@ The academy owner and managers can change the website settings. The **Settings**
 
    ![The Leave without saving? dialog with the Stay on this page button](shot:website/settings-unsaved-dialog)
 
-4. Your logo, favicon and colours are on a separate page: open **Visual Identity** in the sidebar. These changes go live on your site as soon as you save them, without publishing.
+4. Your logo, favicon and colours are on a separate page: open **Visual identity** in the sidebar. These changes go live on your site as soon as you save them, without publishing.
 
    ![The Visual Identity page with the Logo and colours card](shot:website/visual-identity)
 

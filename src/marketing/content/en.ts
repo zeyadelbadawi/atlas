@@ -5,6 +5,7 @@
  */
 import type { MarketingContent } from './content.types';
 import { PRODUCT_EN } from './product.en';
+import { BLOG_EN, MULTI_ACADEMY_EN, RESOURCES_EN } from './launch.en';
 
 const REGISTER = '/auth/register';
 // Signed-in stand-ins for the trial CTAs: the app resolves `?open=` to the
@@ -62,6 +63,8 @@ export const en: MarketingContent = {
       contact: 'Contact',
       about: 'About',
       help: 'Help center',
+      blog: 'Blog',
+      resources: 'Resources',
       menuOpen: 'Open menu',
       menuClose: 'Close menu',
       menuLabel: 'Site menu',
@@ -139,6 +142,11 @@ export const en: MarketingContent = {
       managePlan: { label: 'Manage my plan', href: SUBSCRIPTION },
     },
     trialMicrocopy: '{trialDays}-day trial. No card needed.',
+    announcements: {
+      region: 'Announcement',
+      dismiss: 'Dismiss announcement',
+      close: 'Close',
+    },
     stickyCta: { regionLabel: 'Quick actions' },
     footer: {
       label: 'Site footer',
@@ -149,6 +157,7 @@ export const en: MarketingContent = {
           links: [
             { label: 'Product overview', href: '/features' },
             { label: 'Pricing', href: '/pricing' },
+            { label: 'Running several academies', href: '/solutions/multi-academy' },
           ],
           products: true,
         },
@@ -161,8 +170,10 @@ export const en: MarketingContent = {
           ],
         },
         {
-          title: 'Help',
+          title: 'Resources',
           links: [
+            { label: 'Blog', href: '/blog' },
+            { label: 'Resources', href: '/resources' },
             { label: 'Help center', href: 'help:/' },
             { label: 'Getting started', href: 'help:/getting-started' },
             { label: 'FAQ', href: 'help:/faq/general' },
@@ -272,6 +283,20 @@ export const en: MarketingContent = {
         'The first 20 academies on {brand} pay the standard annual price and keep it for 24 months, with setup done together. We start 5 academies a week.',
       ogTitle: 'Become a {brand} Founding Academy',
       ogImageAlt: '{brand} Founding Academies',
+    },
+    resources: {
+      title: 'Resources for Academy Owners: Blog, Help and Demo | {brand}',
+      description:
+        'The {brand} blog, the help center and a demo academy: articles and step-by-step guides for teachers who run an academy online.',
+      ogTitle: 'Resources for academy owners',
+      ogImageAlt: '{brand} resources',
+    },
+    'multi-academy': {
+      title: 'Run Several Academies From One Account | {brand}',
+      description:
+        'Open more than one academy on {brand}, each with its own website, courses, team and students, under one owner account and one subscription.',
+      ogTitle: 'Several academies, one account',
+      ogImageAlt: 'Several academies on {brand}',
     },
     notFound: {
       title: 'Page Not Found | {brand}',
@@ -864,6 +889,7 @@ export const en: MarketingContent = {
         '{trialDays} days with the full limits of the plan you pick.',
         'No card. One trial per customer.',
         'Cancel during the trial and it ends straight away.',
+        'We email you 3 days and 1 day before your trial ends, so you have time to pay.',
       ],
       giftedYearly:
         'When you buy a yearly plan for the first time, we add {giftedDuration} to it.',
@@ -1253,6 +1279,25 @@ export const en: MarketingContent = {
     },
     foundingHint:
       'Applying as a Founding Academy? Tell us your academy’s name, roughly how many students you teach and when you would like to start. We start 5 academies a week, in the order applications arrive.',
+    heardFrom: {
+      label: 'How did you first hear about us? (optional)',
+      placeholder: 'Choose an answer',
+      options: {
+        facebook: 'Facebook',
+        youtube: 'YouTube',
+        tiktok: 'TikTok',
+        instagram: 'Instagram',
+        whatsapp: 'WhatsApp',
+        teacher_referral: 'Another teacher told me',
+        assistant_or_agency: 'My assistant or an agency',
+        google_search: 'Searching on Google',
+        ai_assistant: 'An AI assistant, like ChatGPT or Gemini',
+        event: 'An event or exhibition',
+        other: 'Somewhere else',
+      },
+      otherLabel: 'Where did you hear about us? (optional)',
+      otherHint: 'A few words are enough. Please don’t include a phone number or email.',
+    },
     consent: {
       contact: 'You may contact me about this enquiry by email, phone or WhatsApp.',
       marketing: 'Send me news and offers about {brand}. I can unsubscribe at any time.',
@@ -1410,6 +1455,10 @@ export const en: MarketingContent = {
   },
 
   // ─── 404 ──────────────────────────────────────────────────────────────────
+  resources: RESOURCES_EN,
+  multiAcademy: MULTI_ACADEMY_EN,
+  blog: BLOG_EN,
+
   notFound: {
     eyebrow: 'Error 404',
     title: 'Page not found',
@@ -1441,6 +1490,8 @@ export const en: MarketingContent = {
       security: 'How academy data is kept apart, sign-in protection and privacy requests.',
       about: 'Why {brand} exists and who it is for.',
       contact: 'Contact form for plans, setup help, support and partnerships.',
+      resources: 'The blog, the help center and a demo academy.',
+      'multi-academy': 'Running more than one academy from one account and one subscription, and the academies each plan includes.',
     },
     pricingFileNote:
       'Plans, prices in EGP, billing periods, limits and trial terms, generated from the live catalog.',

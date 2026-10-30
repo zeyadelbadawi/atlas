@@ -1,0 +1,541 @@
+{
+  "common": {
+    "save": "Save",
+    "saving": "Saving…",
+    "saveDraft": "Save draft",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "reload": "Reload latest",
+    "optional": "Optional",
+    "required": "Required",
+    "counter": "{{value}} / {{max}}",
+    "resultRange": "{{from}}–{{to}} of {{total}}",
+    "clearFilters": "Clear filters",
+    "noValue": "—",
+    "english": "English",
+    "arabic": "Arabic",
+    "languageTab": "{{language}}",
+    "complete": "Complete",
+    "incomplete": "Incomplete",
+    "empty": "Not written",
+    "updatedBy": "Last saved {{date}} by {{name}}",
+    "updatedAt": "Last saved {{date}}",
+    "unsavedChanges": "Unsaved changes",
+    "allSaved": "All changes saved",
+    "conflictTitle": "Someone else saved this while you were editing",
+    "conflictBody": "Your changes were not saved, so nothing of theirs was overwritten. Copy anything you need, then reload the latest version and apply your changes again.",
+    "toasts": {
+      "saved": "Saved",
+      "failed": "That did not work",
+      "deleted": "Deleted"
+    }
+  },
+  "launch": {
+    "title": "Launch center",
+    "subtitle": "Everything for launch day in one place: the checklist, what is live on the site and the dashboard, and the blog.",
+    "quickActions": "Quick actions",
+    "actions": {
+      "newPost": "New blog post",
+      "newBanner": "New site banner",
+      "newPopup": "New site pop-up",
+      "newDashboardBanner": "New dashboard banner",
+      "composeEmail": "Compose launch email"
+    },
+    "checklist": {
+      "title": "Launch checklist",
+      "progress": "{{done}} of {{total}} done",
+      "progressLabel": "Launch checklist progress",
+      "next": "Next up",
+      "allDone": "Everything on the checklist is done.",
+      "open": "Open checklist"
+    },
+    "blog": {
+      "title": "Blog",
+      "published": "Published",
+      "scheduled": "Scheduled",
+      "drafts": "Drafts",
+      "open": "Manage posts"
+    },
+    "live": {
+      "title": "Live now",
+      "empty": "No banner or pop-up is live right now.",
+      "open": "Manage banners and pop-ups",
+      "until": "Until {{date}}",
+      "noEnd": "No end date"
+    }
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Posts on the Atlas blog. Publishing needs both the English and the Arabic version.",
+    "newPost": "New post",
+    "searchLabel": "Search title or slug",
+    "filters": {
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "topic": "Topic",
+      "allTopics": "All topics",
+      "kind": "Type",
+      "allKinds": "All types"
+    },
+    "sort": {
+      "label": "Sort",
+      "updatedAt": "Recently saved",
+      "publishAt": "Publish date",
+      "title": "Title"
+    },
+    "table": {
+      "caption": "Blog posts",
+      "title": "Title",
+      "status": "Status",
+      "topic": "Topic",
+      "kind": "Type",
+      "languages": "Languages",
+      "date": "Date",
+      "untitled": "Untitled post"
+    },
+    "dates": {
+      "publishedOn": "Published {{date}}",
+      "scheduledFor": "Scheduled for {{date}}",
+      "savedOn": "Saved {{date}}"
+    },
+    "status": {
+      "draft": "Draft",
+      "scheduled": "Scheduled",
+      "published": "Published",
+      "archived": "Archived"
+    },
+    "topics": {
+      "protection": "Content protection",
+      "payments": "Payments",
+      "exams": "Exams and quizzes",
+      "website": "Academy website",
+      "season": "Teaching season",
+      "teaching": "Teaching online",
+      "news": "Atlas news"
+    },
+    "kinds": {
+      "pillar": "Pillar",
+      "cluster": "Cluster",
+      "article": "Article"
+    },
+    "languageBadge": {
+      "en": "EN",
+      "ar": "AR",
+      "complete": "{{language}} version written",
+      "missing": "{{language}} version not written"
+    },
+    "empty": {
+      "title": "No posts yet",
+      "description": "Write the first post. It stays a draft until you publish it."
+    },
+    "noResults": {
+      "title": "No posts match",
+      "description": "Try another search or clear the filters."
+    }
+  },
+  "editor": {
+    "newTitle": "New blog post",
+    "editTitle": "Edit post",
+    "subtitle": "Write both languages, check the preview, then publish now or schedule.",
+    "notFound": "This post no longer exists.",
+    "tabs": {
+      "label": "Post language",
+      "en": "English",
+      "ar": "Arabic"
+    },
+    "fields": {
+      "title": "Title",
+      "excerpt": "Excerpt",
+      "excerptHint": "One or two sentences shown on the blog list and in search results.",
+      "body": "Body",
+      "bodyHint": "Markdown. Use ## for sections; the title is the page heading.",
+      "coverAlt": "Cover image description",
+      "coverAltHint": "Describe the image for people who cannot see it. Required when there is a cover image.",
+      "seoTitle": "Search title",
+      "seoTitleHint": "Shown in search results and browser tabs. Leave empty to use the title.",
+      "seoDescription": "Search description",
+      "seoDescriptionHint": "Leave empty to use the excerpt.",
+      "slug": "URL slug",
+      "slugHint": "Lowercase letters, numbers and hyphens. The same for both languages.",
+      "slugGenerate": "Make from English title",
+      "kind": "Type",
+      "topic": "Topic",
+      "featured": "Featured",
+      "featuredHint": "Shown first on the blog home page.",
+      "authorName": "Author name",
+      "publishAt": "Publish on"
+    },
+    "body": {
+      "write": "Write",
+      "preview": "Preview",
+      "viewLabel": "Body view",
+      "previewLabel": "Live preview",
+      "previewEmpty": "Nothing to preview yet.",
+      "readingTime": "About {{count}} min read"
+    },
+    "toolbar": {
+      "label": "Formatting",
+      "heading": "Section heading",
+      "subheading": "Subheading",
+      "bold": "Bold",
+      "italic": "Italic",
+      "link": "Link",
+      "bulletList": "Bulleted list",
+      "numberedList": "Numbered list",
+      "quote": "Quote",
+      "image": "Image",
+      "linkPlaceholder": "link text",
+      "imagePlaceholder": "image description",
+      "uploadingImage": "Uploading image…"
+    },
+    "sections": {
+      "content": "Content",
+      "seo": "Search and sharing",
+      "settings": "Post settings",
+      "cover": "Cover image",
+      "related": "Related posts",
+      "publishing": "Publishing"
+    },
+    "cover": {
+      "upload": "Upload cover",
+      "replace": "Replace",
+      "remove": "Remove cover",
+      "hint": "PNG, JPEG or WebP, up to 5 MB. Stored as WebP.",
+      "uploading": "Uploading…",
+      "alt": "Cover image preview",
+      "tooLarge": "That file is larger than 5 MB.",
+      "wrongType": "Choose a PNG, JPEG or WebP image.",
+      "failed": "The image could not be uploaded."
+    },
+    "related": {
+      "hint": "Up to three posts shown under this one.",
+      "search": "Search posts to add",
+      "add": "Add",
+      "remove": "Remove {{title}}",
+      "max": "Three related posts is the maximum.",
+      "none": "No related posts yet.",
+      "noMatches": "No other posts match."
+    },
+    "publishing": {
+      "status": "Status",
+      "publishAt": "Publish date",
+      "firstPublished": "First published",
+      "notPublished": "Not published yet",
+      "created": "Created",
+      "readingTime": "Reading time",
+      "minutes": "{{count}} min",
+      "liveUrl": "Public address"
+    },
+    "actions": {
+      "save": "Save",
+      "create": "Create draft",
+      "preview": "Preview",
+      "publish": "Publish now",
+      "schedule": "Schedule",
+      "reschedule": "Change schedule",
+      "unpublish": "Unpublish",
+      "archive": "Archive",
+      "delete": "Delete post",
+      "more": "More actions",
+      "viewLive": "View on site"
+    },
+    "validation": {
+      "titleLength": "Write a title of 3 to 140 characters.",
+      "excerptLength": "Write an excerpt of 20 to 300 characters.",
+      "bodyRequired": "Write the body.",
+      "bodyTooLong": "The body is longer than 60,000 characters.",
+      "coverAltRequired": "Describe the cover image.",
+      "coverAltLength": "Keep the description under 200 characters.",
+      "seoTitleLength": "Keep the search title under 70 characters.",
+      "seoDescriptionLength": "Keep the search description under 170 characters.",
+      "slug": "Use 3 to 80 lowercase letters, numbers and single hyphens.",
+      "authorName": "Write an author name of 1 to 80 characters.",
+      "oneLanguage": "Write at least one language before saving.",
+      "summary": "Fix the highlighted fields first.",
+      "languageHasErrors": "{{language}} has fields to fix."
+    },
+    "publishCheck": {
+      "title": "Both languages are needed to publish",
+      "body": "Complete these first:",
+      "missing": "{{language}} version is not written",
+      "invalid": "{{language}} version has fields to fix",
+      "unsaved": "Save your changes before publishing."
+    },
+    "confirm": {
+      "publishTitle": "Publish this post now?",
+      "publishBody": "It appears on the blog in English and Arabic straight away.",
+      "scheduleTitle": "Schedule this post",
+      "scheduleBody": "It goes live at this time (your time zone). Until then, visitors cannot see it.",
+      "schedulePast": "Choose a time in the future.",
+      "unpublishTitle": "Unpublish this post?",
+      "unpublishBody": "It is removed from the blog and becomes a draft. Its address stops working until you publish it again.",
+      "archiveTitle": "Archive this post?",
+      "archiveBody": "It is removed from the blog and kept for reference. You can delete it later.",
+      "deleteTitle": "Delete this post?",
+      "deleteBody": "This cannot be undone.",
+      "confirmPublish": "Publish",
+      "confirmSchedule": "Schedule",
+      "confirmUnpublish": "Unpublish",
+      "confirmArchive": "Archive",
+      "confirmDelete": "Delete"
+    },
+    "toasts": {
+      "created": "Draft created",
+      "saved": "Post saved",
+      "published": "Post published",
+      "scheduled": "Post scheduled",
+      "unpublished": "Post unpublished",
+      "archived": "Post archived",
+      "deleted": "Post deleted"
+    },
+    "preview": {
+      "title": "Preview",
+      "description": "How the post looks on the blog.",
+      "unsavedNote": "Showing your unsaved changes.",
+      "byline": "{{author}} · {{minutes}} min read",
+      "languageLabel": "Preview language",
+      "noLanguage": "This language is not written yet."
+    }
+  },
+  "announcements": {
+    "title": "Banners & pop-ups",
+    "subtitle": "Messages on the marketing site (a banner bar or a pop-up) and a banner on every dashboard.",
+    "searchLabel": "Search by name",
+    "new": {
+      "marketing_banner": "New site banner",
+      "marketing_popup": "New site pop-up",
+      "dashboard_banner": "New dashboard banner"
+    },
+    "filters": {
+      "surface": "Where",
+      "allSurfaces": "Everywhere",
+      "status": "Status",
+      "allStatuses": "All statuses"
+    },
+    "surface": {
+      "marketing_banner": "Site banner",
+      "marketing_popup": "Site pop-up",
+      "dashboard_banner": "Dashboard banner"
+    },
+    "surfaceInline": {
+      "marketing_banner": "site banner",
+      "marketing_popup": "site pop-up",
+      "dashboard_banner": "dashboard banner"
+    },
+    "surfaceHint": {
+      "marketing_banner": "A bar at the top of marketing pages. Up to two show at once.",
+      "marketing_popup": "A dialog on marketing pages. One shows at a time, the highest priority first.",
+      "dashboard_banner": "A banner at the top of the dashboard for signed-in users."
+    },
+    "status": {
+      "draft": "Draft",
+      "active": "Active",
+      "archived": "Archived"
+    },
+    "live": {
+      "live": "Live",
+      "scheduled": "Starts later",
+      "ended": "Ended",
+      "off": "Off"
+    },
+    "tone": {
+      "info": "Information",
+      "promo": "Promotion",
+      "success": "Good news",
+      "warning": "Warning"
+    },
+    "table": {
+      "caption": "Banners and pop-ups",
+      "name": "Name",
+      "surface": "Where",
+      "status": "Status",
+      "window": "When",
+      "stats": "Views · clicks · closes",
+      "updated": "Saved"
+    },
+    "window": {
+      "always": "No dates",
+      "from": "From {{date}}",
+      "until": "Until {{date}}",
+      "range": "{{from}} – {{to}}"
+    },
+    "stats": {
+      "views": "Views",
+      "clicks": "Clicks",
+      "dismissals": "Closes",
+      "summary": "{{views}} · {{clicks}} · {{dismissals}}"
+    },
+    "empty": {
+      "title": "No banners or pop-ups yet",
+      "description": "Create one for launch day. It stays off until you activate it."
+    },
+    "noResults": {
+      "title": "Nothing matches",
+      "description": "Try another search or clear the filters."
+    }
+  },
+  "announcementEditor": {
+    "newTitle": "New {{surface}}",
+    "editTitle": "Edit {{surface}}",
+    "notFound": "This announcement no longer exists.",
+    "sections": {
+      "basics": "Basics",
+      "message": "Message",
+      "schedule": "When it shows",
+      "targeting": "Where it shows",
+      "behaviour": "Behaviour",
+      "preview": "Preview",
+      "stats": "Results"
+    },
+    "fields": {
+      "name": "Internal name",
+      "nameHint": "Only you see this.",
+      "surface": "Where",
+      "tone": "Style",
+      "title": "Title",
+      "titleRequired": "Title (required for a pop-up)",
+      "body": "Message",
+      "bodyHint": "Plain text, up to 600 characters.",
+      "ctaLabel": "Button label",
+      "ctaUrl": "Button link",
+      "ctaUrlHint": "https://… or a site path such as /pricing. On Arabic pages, a site path opens the Arabic version.",
+      "image": "Image",
+      "imageHint": "Optional. PNG, JPEG or WebP, up to 5 MB.",
+      "startsAt": "Starts",
+      "endsAt": "Ends",
+      "scheduleHint": "Leave empty to show as soon as it is active, and until you turn it off. Times are in your time zone.",
+      "pages": "Pages",
+      "pagesHint": "Leave empty for every marketing page. A path also covers the pages under it and the Arabic version.",
+      "pagesAdd": "Add path",
+      "pagesPlaceholder": "/pricing",
+      "pagesRemove": "Remove {{path}}",
+      "pagesAll": "Every marketing page",
+      "dismissible": "Visitors can close it",
+      "popupDelaySeconds": "Delay before it opens (seconds)",
+      "popupFrequency": "How often",
+      "audience": "Who sees it",
+      "priority": "Priority",
+      "priorityHint": "0 to 100. Higher shows first."
+    },
+    "frequency": {
+      "once": "Once per browser",
+      "session": "Once per visit",
+      "always": "On every page view"
+    },
+    "audience": {
+      "all": "Everyone signed in to the dashboard",
+      "organization_owners": "Organization owners",
+      "academy_staff": "Academy owners, managers and instructors"
+    },
+    "validation": {
+      "name": "Write a name of 1 to 120 characters.",
+      "oneLanguage": "Write the message in at least one language.",
+      "body": "Write a message of up to 600 characters.",
+      "title": "A pop-up needs a title (up to 120 characters).",
+      "titleLength": "Keep the title under 120 characters.",
+      "ctaLabel": "Keep the button label under 40 characters.",
+      "ctaUrlRequired": "Add the link the button opens.",
+      "ctaUrl": "Use an https:// address or a site path that starts with /.",
+      "path": "A path starts with / and has no spaces, query or #.",
+      "endsBeforeStart": "The end must be after the start.",
+      "delay": "Use 0 to 60 seconds.",
+      "priority": "Use a number from 0 to 100.",
+      "summary": "Fix the highlighted fields first."
+    },
+    "actions": {
+      "save": "Save",
+      "create": "Create",
+      "activate": "Activate",
+      "deactivate": "Turn off",
+      "archive": "Archive",
+      "delete": "Delete"
+    },
+    "confirm": {
+      "activateTitle": "Activate this {{surface}}?",
+      "activateBody": "It shows to visitors within a few minutes (inside its dates, if it has any).",
+      "deactivateTitle": "Turn this off?",
+      "deactivateBody": "It stops showing and goes back to draft.",
+      "archiveTitle": "Archive this?",
+      "archiveBody": "It stops showing and is kept with its results.",
+      "deleteTitle": "Delete this?",
+      "deleteBody": "This cannot be undone.",
+      "unsaved": "Save your changes first."
+    },
+    "toasts": {
+      "created": "Created",
+      "saved": "Saved",
+      "activated": "Activated",
+      "deactivated": "Turned off",
+      "archived": "Archived",
+      "deleted": "Deleted"
+    },
+    "preview": {
+      "label": "Preview in {{language}}",
+      "noContent": "No {{language}} message: this language does not show it.",
+      "dismiss": "Close",
+      "popupClose": "Close",
+      "marketingPage": "Marketing page",
+      "dashboard": "Dashboard"
+    }
+  },
+  "checklist": {
+    "title": "Launch checklist",
+    "subtitle": "What has to be ready before launch. Tick items as they are done; the time and who ticked it are kept.",
+    "progress": "{{done}} of {{total}} done",
+    "progressLabel": "Checklist progress",
+    "add": "Add item",
+    "sections": {
+      "product": "Product",
+      "content": "Content",
+      "marketing": "Marketing",
+      "communication": "Communication",
+      "operations": "Operations"
+    },
+    "item": {
+      "markDone": "Mark “{{title}}” done",
+      "doneBy": "Done {{date}} by {{name}}",
+      "doneAt": "Done {{date}}",
+      "open": "Open link",
+      "notes": "Notes",
+      "moveUp": "Move “{{title}}” up",
+      "moveDown": "Move “{{title}}” down",
+      "drag": "Drag to reorder “{{title}}”",
+      "edit": "Edit “{{title}}”",
+      "delete": "Delete “{{title}}”",
+      "moved": "“{{title}}” moved to position {{position}}",
+      "openNamed": "Open link: {{title}}"
+    },
+    "dialog": {
+      "addTitle": "Add checklist item",
+      "editTitle": "Edit checklist item",
+      "section": "Section",
+      "title": "Title",
+      "description": "Description",
+      "linkUrl": "Link",
+      "linkUrlHint": "Optional. A dashboard path such as /dashboard/platform/blog, or https://…",
+      "notes": "Notes",
+      "save": "Save",
+      "titleRequired": "Write a title of 1 to 160 characters.",
+      "descriptionLength": "Keep the description under 1,000 characters.",
+      "notesLength": "Keep the notes under 2,000 characters.",
+      "linkInvalid": "Use https://… or a path that starts with /."
+    },
+    "confirmDelete": {
+      "title": "Delete this item?",
+      "body": "“{{title}}” is removed from the checklist."
+    },
+    "empty": {
+      "title": "The checklist is empty",
+      "description": "Add the things that must be ready before launch."
+    },
+    "toasts": {
+      "added": "Item added",
+      "saved": "Item saved",
+      "deleted": "Item deleted",
+      "reorderFailed": "The new order could not be saved."
+    }
+  }
+}

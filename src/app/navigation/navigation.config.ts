@@ -48,6 +48,10 @@ import {
   ShieldAlert,
   MessageSquarePlus,
   ScanSearch,
+  Flag,
+  Newspaper,
+  ListChecks,
+  TrendingUp,
 } from 'lucide-react';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { NavigationItem, NavigationSection } from '@types';
@@ -698,6 +702,63 @@ export function getDashboardNavigation(
       showDivider: true,
     },
     {
+      /*
+        B3 — LAUNCH & CONTENT: everything blog- and launch-related, managed
+        by the Platform Owner, plus G1's Growth & capacity. The APIs
+        (`platform-blog-posts`, `platform-site-announcements`,
+        `platform-launch-checklist`, `platform-growth`) enforce
+        PlatformOwnerGuard + RLS; these entries only decide visibility.
+      */
+      id: 'platform-launch',
+      labelKey: 'navigation:sections.platformLaunch',
+      items: [
+        {
+          id: 'platform-launch-center',
+          labelKey: 'navigation:items.platformLaunch',
+          path: DASHBOARD_ROUTES.platformLaunch,
+          icon: Flag,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+        },
+        {
+          id: 'platform-blog',
+          labelKey: 'navigation:items.platformBlog',
+          path: DASHBOARD_ROUTES.platformBlog,
+          icon: Newspaper,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+          matchNestedPaths: true,
+        },
+        {
+          id: 'platform-announcements',
+          labelKey: 'navigation:items.platformAnnouncements',
+          path: DASHBOARD_ROUTES.platformAnnouncements,
+          icon: Megaphone,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+          matchNestedPaths: true,
+        },
+        {
+          id: 'platform-launch-checklist',
+          labelKey: 'navigation:items.platformLaunchChecklist',
+          path: DASHBOARD_ROUTES.platformLaunchChecklist,
+          icon: ListChecks,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+        },
+        {
+          // G1 — season capacity, CAC per channel and marketing spend.
+          id: 'platform-growth',
+          labelKey: 'navigation:items.platformGrowth',
+          path: DASHBOARD_ROUTES.platformGrowth,
+          icon: TrendingUp,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
+        },
+      ],
+      showDivider: true,
+    },
+    {
       id: 'administration',
       labelKey: 'navigation:sections.administration',
       items: [
@@ -1065,6 +1126,17 @@ export function getDashboardNavigation(
           requiresAuth: true,
           requiredRoles: ['platform_owner'],
           matchNestedPaths: true,
+        },
+        {
+          // B2 — Founding Academies, with the enquiry inboxes they come from.
+          // `PlatformFoundingAcademiesController` (PlatformOwnerGuard + RLS)
+          // is the server-side boundary; this entry only decides visibility.
+          id: 'platform-founding-academies',
+          labelKey: 'navigation:items.platformFoundingAcademies',
+          path: DASHBOARD_ROUTES.platformFoundingAcademies,
+          icon: Award,
+          requiresAuth: true,
+          requiredRoles: ['platform_owner'],
         },
         {
           // B0-SEC-13 — data export / account deletion requests.

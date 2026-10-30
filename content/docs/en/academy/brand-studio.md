@@ -25,7 +25,7 @@ The academy owner and managers can change the visual identity. Your academy's na
 
 ## Change your logo, colours and favicon
 
-1. In the sidebar, open **Visual Identity**.
+1. In the sidebar, under **Website & brand**, open **Visual identity**.
 
    ![The Visual Identity page with its entry in the sidebar highlighted](shot:academy/visual-identity)
 

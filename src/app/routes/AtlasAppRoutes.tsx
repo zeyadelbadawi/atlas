@@ -472,6 +472,32 @@ const PlatformSupportDetailPage = lazy(
   () => import('@features/support/pages/PlatformSupportDetailPage')
 );
 // TASK 7 — the Atlas marketing contact form's Platform Owner inbox.
+const PlatformFoundingAcademiesPage = lazy(
+  () => import('@features/platform/pages/PlatformFoundingAcademiesPage')
+);
+// B3 — Launch & content (Platform Owner): launch center, blog, banners and
+// pop-ups, launch checklist.
+const PlatformLaunchCenterPage = lazy(
+  () => import('@features/platform-launch/pages/PlatformLaunchCenterPage')
+);
+const PlatformBlogListPage = lazy(
+  () => import('@features/platform-launch/pages/PlatformBlogListPage')
+);
+const PlatformBlogEditorPage = lazy(
+  () => import('@features/platform-launch/pages/PlatformBlogEditorPage')
+);
+const PlatformAnnouncementsPage = lazy(
+  () => import('@features/platform-launch/pages/PlatformAnnouncementsPage')
+);
+const PlatformAnnouncementEditorPage = lazy(
+  () => import('@features/platform-launch/pages/PlatformAnnouncementEditorPage')
+);
+const PlatformLaunchChecklistPage = lazy(
+  () => import('@features/platform-launch/pages/PlatformLaunchChecklistPage')
+);
+const PlatformGrowthPage = lazy(
+  () => import('@features/platform-growth/pages/PlatformGrowthPage')
+);
 const PlatformContactSubmissionsPage = lazy(
   () => import('@features/platform/pages/PlatformContactSubmissionsPage')
 );
@@ -2448,6 +2474,123 @@ export default function AtlasAppRoutes(): JSX.Element {
                   requiredRoles={['platform_owner']}
                 >
                   <PlatformContactSubmissionsPage />
+                </RouteGuard>
+              }
+            />
+
+            <Route
+              path={DASHBOARD_ROUTES.platformFoundingAcademies}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformFoundingAcademiesPage />
+                </RouteGuard>
+              }
+            />
+
+            {/* B3 — Launch & content. The static `new` paths are declared
+                before `:id`. PlatformOwnerGuard + RLS on the API are the real
+                control. */}
+            <Route
+              path={DASHBOARD_ROUTES.platformLaunch}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformLaunchCenterPage />
+                </RouteGuard>
+              }
+            />
+            <Route
+              path={DASHBOARD_ROUTES.platformBlog}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformBlogListPage />
+                </RouteGuard>
+              }
+            />
+            <Route
+              path={DASHBOARD_ROUTES.platformBlogNew}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformBlogEditorPage />
+                </RouteGuard>
+              }
+            />
+            <Route
+              path={DASHBOARD_ROUTES.platformBlogEdit}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformBlogEditorPage />
+                </RouteGuard>
+              }
+            />
+            <Route
+              path={DASHBOARD_ROUTES.platformAnnouncements}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformAnnouncementsPage />
+                </RouteGuard>
+              }
+            />
+            <Route
+              path={DASHBOARD_ROUTES.platformAnnouncementNew}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformAnnouncementEditorPage />
+                </RouteGuard>
+              }
+            />
+            <Route
+              path={DASHBOARD_ROUTES.platformAnnouncementEdit}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformAnnouncementEditorPage />
+                </RouteGuard>
+              }
+            />
+            <Route
+              path={DASHBOARD_ROUTES.platformLaunchChecklist}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformLaunchChecklistPage />
+                </RouteGuard>
+              }
+            />
+            {/* G1 — Growth & capacity. The API's PlatformOwnerGuard + RLS
+                are the real control. */}
+            <Route
+              path={DASHBOARD_ROUTES.platformGrowth}
+              element={
+                <RouteGuard
+                  requireAuthentication
+                  requiredRoles={['platform_owner']}
+                >
+                  <PlatformGrowthPage />
                 </RouteGuard>
               }
             />

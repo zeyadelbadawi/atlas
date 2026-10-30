@@ -61,6 +61,7 @@ import {
 import {
   cn,
   formatCurrency,
+  formatDate,
   isOnboardingReturnPath,
   MIRROR_IN_RTL,
   planBillingCycles,
@@ -141,6 +142,7 @@ export default function CheckoutPage(): JSX.Element {
     summary renders nothing rather than inventing a previous plan.
   */
   const subscriptionQuery = useTenantSubscription();
+  const foundingLock = subscriptionQuery.data?.founding;
 
   const idempotencyKey = useState(() => generateIdempotencyKey())[0];
   const [billingCycle, setBillingCycle] =
@@ -338,6 +340,29 @@ export default function CheckoutPage(): JSX.Element {
                       </span>
                     </p>
                   ) : null}
+                  {/* B2 — display only: the checkout the server creates
+                      decides the price from the membership, never this. */}
+                  {foundingLock &&
+                  effectiveBillingCycle === 'yearly' &&
+                  targetPlan?.id === foundingLock.planId &&
+                  foundingLock.nextRenewal?.locked ? (
+                    <p
+                      className="text-sm text-muted-foreground"
+                      data-testid="checkout-founding-preview"
+                    >
+                      {t('payments:checkout.foundingPreview', {
+                        price: formatCurrency(
+                          foundingLock.nextRenewal.amount,
+                          i18n.language as LanguageCode,
+                          foundingLock.nextRenewal.currency
+                        ),
+                        date: formatDate(
+                          foundingLock.lockEndsAt,
+                          i18n.language as LanguageCode
+                        ),
+                      })}
+                    </p>
+                  ) : null}
                 </div>
               ) : null}
 
@@ -406,6 +431,19 @@ export default function CheckoutPage(): JSX.Element {
                     </span>
                   ) : null}
                 </p>
+                {checkout.snapshot.founding ? (
+                  <p
+                    className="text-sm text-muted-foreground"
+                    data-testid="checkout-founding-price"
+                  >
+                    {t('payments:checkout.foundingPrice', {
+                      date: formatDate(
+                        checkout.snapshot.founding.lockEndsAt,
+                        i18n.language as LanguageCode
+                      ),
+                    })}
+                  </p>
+                ) : null}
               </CardContent>
             </Card>
 

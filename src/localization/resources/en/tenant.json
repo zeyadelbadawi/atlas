@@ -85,6 +85,13 @@
     "featuresSubtitle": "Capabilities you add to your plan separately.",
     "cancelSubscription": "Cancel subscription",
     "scheduledChange": "Your plan changes to {{plan}} on {{date}}. Until then you keep everything in your current plan.",
+    "founding": {
+      "title": "Founding Academy — price locked until {{date}}",
+      "titleEnded": "Founding Academy — your 24-month price lock has ended",
+      "lockedPrice": "Your founding price: {{price}} a year.",
+      "renewalLocked": "Your renewal on {{date}} is at your founding price: {{price}}.",
+      "renewalCatalog": "Your renewal on {{date}} is at the current yearly price: {{price}}."
+    },
     "priceChange": {
       "title": "The {{plan}} plan changes at your next renewal",
       "when": "Nothing changes for your current paid period. The change applies from your next renewal, due {{date}}.",

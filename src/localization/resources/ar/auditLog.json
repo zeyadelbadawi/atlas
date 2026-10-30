@@ -158,12 +158,19 @@
     "add_on": "إضافة",
     "observability": "المراقبة",
     "platform_contact_submission": "استفسار تواصل",
+    "founding_membership": "أكاديمية مؤسِّسة",
     "lesson": "درس",
     "communication_campaign": "رسالة",
     "forensic_watermark": "رمز علامة مائية",
     "trial_policy": "سياسة الفترة التجريبية",
     "academy_payout": "دفعة مستحقات أكاديمية",
-    "privacy_request": "طلب خصوصية"
+    "privacy_request": "طلب خصوصية",
+    "platform_blog_post": "مقال مدونة",
+    "platform_blog_image": "صورة مدونة",
+    "site_announcement": "إعلان",
+    "launch_checklist_item": "مهمة إطلاق",
+    "growth_settings": "إعدادات النمو والسعة",
+    "marketing_spend_entry": "مصروف تسويق"
   },
   "fields": {
     "title": "العنوان",
@@ -242,7 +249,12 @@
     "trialDurationDays": "مدة التجربة (بالأيام)",
     "giftedDaysMonthly": "أيام الإعداد المُهداة (شهري)",
     "giftedDaysYearly": "أيام الإعداد المُهداة (سنوي)",
-    "limits": "الحدود"
+    "limits": "الحدود",
+    "month": "الشهر",
+    "channel": "القناة",
+    "previousChannel": "القناة السابقة",
+    "amountMinorUnits": "المبلغ (بالقرش)",
+    "changedFields": "الحقول المعدّلة"
   },
   "values": {
     "empty": "—",
@@ -727,6 +739,15 @@
         "status_changed": "{{actor}} غيّر حالة استفسار تواصل",
         "deleted": "{{actor}} حذف استفسار تواصل"
       },
+      "founding": {
+        "created": "{{actor}} أضاف {{target}} كأكاديمية مؤسِّسة",
+        "updated": "{{actor}} غيّر ملاحظات أو ساعات تجهيز {{target}}",
+        "plan_changed": "{{actor}} ثبّت السعر المؤسِّس لـ {{target}} على باقة أخرى",
+        "revoked": "{{actor}} ألغى العضوية المؤسِّسة لـ {{target}}",
+        "ended": "انتهى تثبيت السعر المؤسِّس لـ {{target}}",
+        "emailed": "{{actor}} راسل {{target}} بخصوص عضويتها المؤسِّسة",
+        "renewal_price_notice_sent": "أُبلغت {{target}} أن تجديدها القادم بسعر الكتالوج"
+      },
       "campaign": {
         "sent": "أرسل {{actor}} رسالة من المنصة",
         "sent_full": "أرسل {{actor}} رسالة من المنصة إلى {{recipientCount}} شخصًا"
@@ -734,6 +755,39 @@
       "watermark": {
         "looked_up": "بحث {{actor}} عن رمز العلامة المائية {{target}}",
         "looked_up_noTarget": "بحث {{actor}} عن رمز علامة مائية"
+      },
+      "blog_post": {
+        "created": "{{actor}} أنشأ مقال المدونة «{{target}}»",
+        "updated": "{{actor}} عدّل مقال المدونة «{{target}}»",
+        "published": "{{actor}} نشر مقال المدونة «{{target}}»",
+        "unpublished": "{{actor}} ألغى نشر مقال المدونة «{{target}}»",
+        "archived": "{{actor}} أرشف مقال المدونة «{{target}}»",
+        "deleted": "{{actor}} حذف مقال المدونة «{{target}}»"
+      },
+      "blog_image": {
+        "uploaded": "{{actor}} رفع صورة للمدونة"
+      },
+      "site_announcement": {
+        "created": "{{actor}} أنشأ الإعلان «{{target}}»",
+        "updated": "{{actor}} عدّل الإعلان «{{target}}»",
+        "activated": "{{actor}} فعّل الإعلان «{{target}}»",
+        "deactivated": "{{actor}} أوقف الإعلان «{{target}}»",
+        "archived": "{{actor}} أرشف الإعلان «{{target}}»",
+        "deleted": "{{actor}} حذف الإعلان «{{target}}»"
+      },
+      "launch_checklist": {
+        "item_created": "{{actor}} أضاف «{{target}}» إلى قائمة مهام الإطلاق",
+        "item_updated": "{{actor}} حدّث مهمة الإطلاق «{{target}}»",
+        "item_deleted": "{{actor}} حذف «{{target}}» من قائمة مهام الإطلاق",
+        "reordered": "{{actor}} أعاد ترتيب قائمة مهام الإطلاق"
+      },
+      "growth": {
+        "settings_updated": "{{actor}} غيّر إعدادات النمو والسعة",
+        "spend_created": "{{actor}} سجّل مصروف تسويق",
+        "spend_updated": "{{actor}} عدّل مصروف تسويق",
+        "spend_deleted": "{{actor}} حذف مصروف تسويق",
+        "organization_channel_set": "{{actor}} حدّد قناة الاكتساب للمؤسسة {{target}}",
+        "organization_channel_set_noTarget": "{{actor}} حدّد قناة الاكتساب لمؤسسة"
       }
     },
     "trial_policy": {

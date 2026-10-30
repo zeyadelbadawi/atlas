@@ -45,7 +45,7 @@ Only the organization owner can create academies.
 
 ### Retry a stalled or failed setup
 
-1. In the sidebar, open **New Academy** to see **Academy Provisioning**, the list of your setup requests and their status. Open the request that stopped.
+1. In the sidebar, open **Create an academy** to see **Academy Provisioning**, the list of your setup requests and their status. Open the request that stopped.
 
    ![The Academy Provisioning list with the Status column highlighted](shot:troubleshooting/provisioning-history)
 

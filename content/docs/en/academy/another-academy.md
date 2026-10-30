@@ -3,7 +3,7 @@ id: DOC-ACD-007
 title: Create another academy
 description: Add another academy with its own website, courses and learners under the same subscription, up to your plan's academy limit.
 summary: >
-  The organization owner can add academies from New Academy in the sidebar,
+  The organization owner can add academies from Create an academy in the sidebar,
   up to the number of academies the plan allows. Each academy has its own
   website, address, courses, team, learners and payment methods, and all of
   them share your organization's subscription.
@@ -25,7 +25,7 @@ Only the organization owner can create academies. How many academies you can hav
 
 ## Create the academy
 
-1. In the sidebar, open **New Academy**. The **Academy Provisioning** page lists every academy you have set up.
+1. In the sidebar, open **Create an academy**. The **Academy Provisioning** page lists every academy you have set up.
 
    ![The Academy Provisioning page with New Academy highlighted in the sidebar](shot:academy/provisioning-list)
 

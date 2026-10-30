@@ -21,8 +21,8 @@ Only the academy owner can view or change the protection settings. See
 
 ## Stages
 
-1. **Check what is on automatically.** Open **Academy Settings** and go to **Content
-   protection**. Under **Video protection**, the **Forensic watermark on every video** and
+1. **Check what is on automatically.** Open **Academy Settings** and choose the **Content
+   protection** section. Under **Video protection**, the **Forensic watermark on every video** and
    the **Player protections** are always on: each learner sees their own code on the
    video, full screen keeps the watermark, and the player offers no download. See
    [The forensic watermark explained](doc:DOC-MED-002).

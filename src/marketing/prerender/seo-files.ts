@@ -101,15 +101,32 @@ export function sitemapLanguages(
   return (['en', 'ar'] as const).filter((lang) => present.has(lang));
 }
 
-/** `sitemap.xml`: a `<sitemapindex>` of the locale sitemaps (SPEC §E.5). */
+/**
+ * B3 — the blog's sitemap, generated at request time by the `ssr`
+ * container from the published posts (`server/ssr/blog.mjs`), so a post
+ * published from the dashboard is listed without a deploy.
+ */
+export const BLOG_SITEMAP_FILE = 'sitemaps/blog.xml';
+
+/**
+ * `sitemap.xml`: a `<sitemapindex>` of the locale sitemaps (SPEC §E.5) and
+ * the blog's dynamic sitemap (no `lastmod`: it changes without a build).
+ */
 export function buildSitemapIndex(
   langs: readonly MarketingLang[],
-  ctx: Pick<MarketingRenderContext, 'siteUrl' | 'buildDate'>
+  ctx: Pick<MarketingRenderContext, 'siteUrl' | 'buildDate'>,
+  dynamicSitemaps: readonly string[] = [BLOG_SITEMAP_FILE]
 ): string {
-  const entries = langs.map(
-    (lang) =>
-      `<sitemap><loc>${escapeXml(absoluteUrl(ctx.siteUrl, `/${localeSitemapFile(lang)}`))}</loc><lastmod>${escapeXml(ctx.buildDate)}</lastmod></sitemap>`
-  );
+  const entries = [
+    ...langs.map(
+      (lang) =>
+        `<sitemap><loc>${escapeXml(absoluteUrl(ctx.siteUrl, `/${localeSitemapFile(lang)}`))}</loc><lastmod>${escapeXml(ctx.buildDate)}</lastmod></sitemap>`
+    ),
+    ...dynamicSitemaps.map(
+      (file) =>
+        `<sitemap><loc>${escapeXml(absoluteUrl(ctx.siteUrl, `/${file}`))}</loc></sitemap>`
+    ),
+  ];
   return (
     '<?xml version="1.0" encoding="UTF-8"?>\n' +
     '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +

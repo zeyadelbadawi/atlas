@@ -75,13 +75,13 @@ Each term shows its Arabic name in the Arabic version of the app in brackets.
 - **Forensic watermark** (علامة مائية شخصية): a visible code tied to the viewer that moves across every video, so a leaked recording can be traced. See [The forensic watermark explained](doc:DOC-MED-002).
 - **Devices** (الأجهزة): the browsers a learner learns on. Each academy allows a set number. See [Device limits](doc:DOC-MED-003).
 - **Sharing signals** (مؤشرات المشاركة): a report that points out accounts that may be shared. See [Sharing signals report](doc:DOC-MED-006).
-- **Academy Media** (وسائط الأكاديمية): your academy's library of uploaded images and PDFs. See [Media library](doc:DOC-MED-007).
+- **Media library** (مكتبة الوسائط): your academy's library of uploaded images and PDFs. See [Media library](doc:DOC-MED-007).
 
 ## Messages and help
 
 - **Messages** (الرسائل): emails and in-app notifications you send to your learners. See [Message your learners](doc:DOC-MSG-003).
 - **Announcements** (الإعلانات): posts your learners see in their notifications. See [Post announcements](doc:DOC-MSG-004).
-- **Atlas service requests** (طلبات خدمات أطلس): requests for work from the Atlas team, such as a logo or a custom feature. See [Request a service](doc:DOC-SUP-002).
+- **Ask Atlas for help** (اطلب خدمة من أطلس): requests for work from the Atlas team, such as a logo or a custom feature. See [Request a service](doc:DOC-SUP-002).
 - **Activity log** (سجل النشاط): a record of changes made in your academy. See [Academy activity log](doc:DOC-ANL-004).
 - **Reports** (التقارير) and **Student analytics** (تحليلات الطلاب): views of enrollments, progress and learners. See [Academy reports](doc:DOC-ANL-003) and [Student analytics](doc:DOC-ANL-002).
 

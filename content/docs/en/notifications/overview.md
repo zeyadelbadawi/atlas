@@ -58,7 +58,7 @@ Academy and course announcements appear only as notifications, in My Learn. They
 
 ## Academy email settings
 
-In **Academy Settings**, the **Email & sign-in codes** card shows how your academy uses email, such as when learners are asked for a code at sign-in. These settings follow Atlas's configuration and can't be changed per academy yet.
+In **Academy Settings**, in the **Emails to students** section, the **Email & sign-in codes** card shows how your academy uses email, such as when learners are asked for a code at sign-in. These settings follow Atlas's configuration and can't be changed per academy yet.
 
 > [!LIMITATION]
 > Atlas does not send SMS, WhatsApp or push notifications. To reach learners outside Atlas, use the email channel in [Messages](doc:DOC-MSG-003).

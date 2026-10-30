@@ -5,7 +5,7 @@ description: Learners get help from their academy, through Contact your academy 
 summary: >
   Learners get help from their academy, not from Atlas directly. In My Learn,
   Contact your academy opens the academy's contact page, and the message
-  reaches the academy's team in Website Messages. Many common problems also
+  reaches the academy's team in the Messages tab of Website. Many common problems also
   have a guide in this Help Center that learners can follow on their own.
 type: feature-explanation
 audience: [learner, owner]
@@ -48,9 +48,9 @@ Your own data is different: in My Learn, open **Profile**, then the **Account** 
 
 ## If you're the owner: where learner messages arrive
 
-Messages sent through your website's contact form arrive in **Website Messages** in your dashboard. The owner and managers can read them there, and you get a notification when a new one arrives.
+Messages sent through your website's contact form arrive in your dashboard under **Website**, in the **Messages** tab. The owner and managers can read them there, and you get a notification when a new one arrives.
 
-![The Website Messages page in the dashboard](shot:support/website-messages)
+![The Messages tab of Website in the dashboard](shot:support/website-messages)
 
 - The contact form works only while your website is published and serving. If your site shows "Coming soon", learners can't reach you through it. See [The Coming Soon page](doc:DOC-ACD-009).
 - Make sure your contact email and phone are up to date in your [academy profile](doc:DOC-ACD-002).

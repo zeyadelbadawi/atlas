@@ -4,6 +4,8 @@
  * These types describe the shape of authentication state, sessions, users and
  * authorization without depending on any specific backend implementation.
  */
+import type { HeardFrom } from '@/shared/utils/acquisition-channel.utils';
+
 
 /** The lifecycle states of a session. */
 export type SessionStatus = 'authenticated' | 'unauthenticated' | 'restoring';
@@ -300,6 +302,13 @@ export interface RegistrationRequest {
   readonly whatsappConsent?: boolean;
   /** B0-ANL-04 — in-memory landing attribution (`signupAttribution` flag), organization sign-up only. */
   readonly attribution?: LandingAttribution;
+  /**
+   * G1 — the optional "How did you first hear about us?" answer, organization
+   * sign-up only; `heardFromOther` (≤ 100) only with `other`. Not flag-gated:
+   * it is a voluntary answer, sent whenever given.
+   */
+  readonly heardFrom?: HeardFrom;
+  readonly heardFromOther?: string;
 }
 
 /**

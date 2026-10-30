@@ -3,8 +3,8 @@ id: DOC-MED-004
 title: Content protection settings
 description: Set how many devices each learner can use, and see the always-on watermark and player protections in your academy's settings.
 summary: >
-  The academy owner finds Content protection near the bottom of Academy
-  Settings. Video protection shows the forensic watermark and player
+  The academy owner finds Content protection as its own section of
+  Academy Settings. Video protection shows the forensic watermark and player
   protections, which are always on. Learner devices is where you set Devices
   per learner, up to the platform maximum shown. Managers see a short
   explanation instead of the settings.
@@ -27,11 +27,11 @@ settings."
 
    ![The academy dashboard with Academy Settings highlighted in the sidebar](shot:protection/settings-nav)
 
-2. Scroll to **Content protection**. Read the **Video protection** card: **Forensic watermark on every video** and the **Player protections** are marked **Always on**. There is nothing to change here.
+2. In the list of settings sections, choose **Content protection**. Read the **Video protection** card: **Forensic watermark on every video** and the **Player protections** are marked **Always on**. There is nothing to change here.
 
    ![The Video protection card with Forensic watermark on every video highlighted](shot:protection/settings-video-protection)
 
-3. In **Learner devices**, enter a number in **Devices per learner**, from 1 up to the maximum the page shows.
+3. Choose the **Student devices** section. In the **Learner devices** card, enter a number in **Devices per learner**, from 1 up to the maximum the page shows.
 
    ![The Learner devices card with the Devices per learner field highlighted](shot:protection/settings-devices)
 
@@ -52,7 +52,7 @@ their **Devices** page.
 - **Concurrent sessions** is shown to learners on their Devices page. Lessons
   always play on one device at a time whatever this number says
   ([Device limits](doc:DOC-MED-003)).
-- **Video protection tier** says there is no tier to choose yet: video
+- **Video protection tier**, in the **Video** section, says there is no tier to choose yet: video
   lessons use YouTube links.
 
 > [!LIMITATION]

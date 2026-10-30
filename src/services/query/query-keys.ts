@@ -1251,6 +1251,66 @@ export const platformContactSubmissionKeys = {
 } as const;
 
 /**
+ * B2 — Founding Academies (Platform Owner). `all` is the prefix every
+ * mutation invalidates, so the seat meter, the table and an open detail
+ * never disagree after a create, edit or revoke.
+ */
+export const platformFoundingKeys = {
+  all: ['platform-founding'] as const,
+  list: (query?: unknown) =>
+    [...platformFoundingKeys.all, 'list', query] as const,
+  summary: () => [...platformFoundingKeys.all, 'summary'] as const,
+  detail: (id: string) => [...platformFoundingKeys.all, 'detail', id] as const,
+  plans: () => [...platformFoundingKeys.all, 'plans'] as const,
+  candidates: (search: string) =>
+    [...platformFoundingKeys.all, 'candidates', search] as const,
+  quote: (organizationId: string, planKey: string) =>
+    [...platformFoundingKeys.all, 'quote', organizationId, planKey] as const,
+} as const;
+
+/** B3 — the Platform Owner's Atlas blog (`platform-blog-posts`). */
+export const platformBlogKeys = {
+  all: ['platform-blog'] as const,
+  list: (query?: unknown) => [...platformBlogKeys.all, 'list', query] as const,
+  detail: (id: string) => [...platformBlogKeys.all, 'detail', id] as const,
+  preview: (id: string, locale: string) =>
+    [...platformBlogKeys.all, 'preview', id, locale] as const,
+} as const;
+
+/** B3 — marketing banners, pop-ups and dashboard banners (Platform Owner). */
+export const platformAnnouncementKeys = {
+  all: ['platform-site-announcements'] as const,
+  list: (query?: unknown) =>
+    [...platformAnnouncementKeys.all, 'list', query] as const,
+  detail: (id: string) =>
+    [...platformAnnouncementKeys.all, 'detail', id] as const,
+} as const;
+
+/** B3 — the launch checklist (Platform Owner). */
+export const platformLaunchChecklistKeys = {
+  all: ['platform-launch-checklist'] as const,
+} as const;
+
+/** G1 — Growth & capacity: settings, spend ledger, CAC and capacity (Platform Owner). */
+export const platformGrowthKeys = {
+  all: ['platform-growth'] as const,
+  settings: () => [...platformGrowthKeys.all, 'settings'] as const,
+  spendAll: () => [...platformGrowthKeys.all, 'spend'] as const,
+  spend: (range?: unknown) =>
+    [...platformGrowthKeys.all, 'spend', range] as const,
+  cacAll: () => [...platformGrowthKeys.all, 'cac'] as const,
+  cac: (range?: unknown) => [...platformGrowthKeys.all, 'cac', range] as const,
+  capacity: () => [...platformGrowthKeys.all, 'capacity'] as const,
+} as const;
+
+/** B3 — the dashboard banner every signed-in dashboard user may see. */
+export const dashboardAnnouncementKeys = {
+  all: ['dashboard-announcements'] as const,
+  feed: (locale: string) =>
+    [...dashboardAnnouncementKeys.all, 'feed', locale] as const,
+} as const;
+
+/**
  * Forensic watermark lookup (docs/FORENSIC_WATERMARK.md) — the Platform
  * Owner's "who leaked this recording?" answer. The response carries a
  * person's name, email and phone, so this root is deliberately absent from

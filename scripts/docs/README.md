@@ -52,6 +52,9 @@ pnpm docs:capture -- --only selling/              # keys starting with a prefix 
 pnpm docs:capture -- --only selling/payment-methods --lang ar
 pnpm docs:capture -- --changed                    # only shots whose spec or app commit changed
 
+# Founding Academy shots (DOC-BIL-010) only, with the demo membership on, then off again
+node scripts/docs/seed/founding.mjs on && pnpm docs:capture -- --only billing/founding- ; node scripts/docs/seed/founding.mjs off
+
 scripts/docs/stack/stop.sh              # stop the API and the app (data kept)
 ```
 

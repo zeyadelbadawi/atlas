@@ -10,6 +10,12 @@
  *                 (`ssrLoadModule`), with the dev client script and
  *                 stylesheet; plans from the committed snapshot unless
  *                 MARKETING_PLANS_URL is set (dev is not a build).
+ *                 B3: the blog is rendered live too, from the public API at
+ *                 MARKETING_BLOG_API_ORIGIN (default http://localhost:3000);
+ *                 an unreachable API gives the 503 "unavailable" page, as
+ *                 in production.
+ *   vite preview  B3: the blog needs the renderer, so it answers with the
+ *                 built "temporarily unavailable" page (503).
  *
  * Only for the platform host as the dev servers see it (`localhost`, an IP,
  * or the site's own host) and never with the academy preview selector
@@ -22,6 +28,7 @@ import path from 'node:path';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { Plugin, ViteDevServer } from 'vite';
 import {
+  MARKETING_BLOG_UNAVAILABLE_FILE,
   contentTypeFor,
   isMarketingRootFile,
   resolveMarketingRequest,
@@ -76,7 +83,7 @@ function parse(
 function send(
   req: IncomingMessage,
   res: ServerResponse,
-  route: MarketingRoute,
+  route: Exclude<MarketingRoute, { kind: 'blog' }>,
   read: (file: string) => string | Buffer | undefined
 ): void {
   if (route.kind === 'redirect') {
@@ -104,6 +111,114 @@ interface DevSiteModule {
   readonly loadPlans: (
     options: unknown
   ) => Promise<{ plans: unknown[]; source: string }>;
+  // B3 — the blog renderer (src/marketing/blog/site.tsx).
+  readonly blogRoute: (pathname: string, search: string) => DevBlogRoute | null;
+  readonly renderBlogIndex: (input: unknown) => {
+    status: number;
+    html: string;
+  };
+  readonly renderBlogPost: (input: unknown) => string;
+  readonly renderBlogNotFound: (input: unknown) => string;
+  readonly renderBlogUnavailable: (input: unknown) => string;
+  readonly buildBlogSitemap: (input: unknown) => string;
+  readonly BLOG_PAGE_SIZE: number;
+}
+
+type DevBlogRoute =
+  | { kind: 'redirect'; location: string }
+  | { kind: 'list'; lang: string; page: number; topic: string | null }
+  | { kind: 'post'; lang: string; slug: string }
+  | { kind: 'sitemap' }
+  | { kind: 'notFound'; lang: string };
+
+/** The blog on the dev server: the public API, rendered like the `ssr` container does. */
+async function renderDevBlog(
+  site: DevSiteModule,
+  pathname: string,
+  search: string,
+  input: { ctx: unknown; assets: unknown }
+): Promise<{ status: number; type: string; body: string; location?: string }> {
+  const route = site.blogRoute(pathname, search);
+  const html = 'text/html; charset=utf-8';
+  if (!route) return { status: 404, type: html, body: 'Not Found' };
+  if (route.kind === 'redirect')
+    return { status: 301, type: html, body: '', location: route.location };
+  const lang = 'lang' in route ? route.lang : 'en';
+  if (route.kind === 'notFound')
+    return {
+      status: 404,
+      type: html,
+      body: site.renderBlogNotFound({ lang, ...input }),
+    };
+  const origin =
+    process.env.MARKETING_BLOG_API_ORIGIN || 'http://localhost:3000';
+  const api = async (path: string): Promise<unknown> => {
+    const response = await fetch(`${origin}/api/v1/public/blog/${path}`, {
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(3000),
+    });
+    if (response.status === 404) return null;
+    if (!response.ok) throw new Error(`api ${response.status}`);
+    return response.json();
+  };
+  try {
+    if (route.kind === 'sitemap') {
+      const data = (await api('sitemap')) as { items?: unknown[] } | null;
+      return {
+        status: 200,
+        type: 'application/xml; charset=utf-8',
+        body: site.buildBlogSitemap({
+          siteUrl: (input.ctx as { siteUrl: string }).siteUrl,
+          items: data?.items ?? [],
+        }),
+      };
+    }
+    if (route.kind === 'list') {
+      const query = new URLSearchParams({
+        locale: route.lang,
+        page: String(route.page),
+        pageSize: String(site.BLOG_PAGE_SIZE),
+        ...(route.topic ? { topic: route.topic } : {}),
+      });
+      const data = (await api(`posts?${query.toString()}`)) as {
+        items?: unknown[];
+        pagination?: { totalItems?: number; totalPages?: number };
+      } | null;
+      const out = site.renderBlogIndex({
+        lang: route.lang,
+        page: route.page,
+        topic: route.topic,
+        result: {
+          items: data?.items ?? [],
+          pagination: {
+            page: route.page,
+            totalItems: data?.pagination?.totalItems ?? 0,
+            totalPages: Math.max(1, data?.pagination?.totalPages ?? 1),
+          },
+        },
+        ...input,
+      });
+      return { status: out.status, type: html, body: out.html };
+    }
+    const post = await api(`posts/${route.slug}?locale=${route.lang}`);
+    return post
+      ? {
+          status: 200,
+          type: html,
+          body: site.renderBlogPost({ lang: route.lang, post, ...input }),
+        }
+      : {
+          status: 404,
+          type: html,
+          body: site.renderBlogNotFound({ lang: route.lang, ...input }),
+        };
+  } catch {
+    return {
+      status: 503,
+      type: html,
+      body: site.renderBlogUnavailable({ lang, ...input }),
+    };
+  }
 }
 
 export function atlasMarketingStatic(options: {
@@ -188,6 +303,36 @@ export function atlasMarketingStatic(options: {
               (file) => files.has(file)
             );
             if (!route) return next();
+            if (route.kind === 'blog') {
+              const out = await renderDevBlog(
+                site,
+                parsed.pathname,
+                parsed.search,
+                {
+                  ctx: {
+                    plans: devPlanList,
+                    siteUrl: options.siteUrl,
+                    buildDate: new Date().toISOString().slice(0, 10),
+                  },
+                  assets: {
+                    stylesheets: ['/src/marketing/styles/marketing.css'],
+                    moduleScripts: [
+                      '/@vite/client',
+                      '/src/marketing/client/main.ts',
+                    ],
+                    modulePreloads: [],
+                    themeScript: DEV_THEME_SCRIPT_PATH,
+                    fontPreloads: { en: [], ar: [] },
+                  },
+                }
+              );
+              res.statusCode = out.status;
+              if (out.location) res.setHeader('Location', out.location);
+              res.setHeader('Content-Type', out.type);
+              res.setHeader('Cache-Control', 'no-cache');
+              res.end(req.method === 'HEAD' ? undefined : out.body);
+              return;
+            }
             send(req, res, route, (file) => files.get(file));
           })().catch((error: unknown) => {
             if (error instanceof Error) server.ssrFixStacktrace(error);
@@ -225,6 +370,24 @@ export function atlasMarketingStatic(options: {
             }
           );
           if (!route) return next();
+          if (route.kind === 'blog') {
+            // No renderer behind `vite preview`: the built 503 page.
+            const ar = parsed.pathname.startsWith('/ar/');
+            const file = MARKETING_BLOG_UNAVAILABLE_FILE[ar ? 'ar' : 'en'];
+            res.statusCode = 503;
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            res.setHeader('Cache-Control', 'no-store');
+            try {
+              res.end(
+                req.method === 'HEAD'
+                  ? undefined
+                  : fs.readFileSync(fileIn(file))
+              );
+            } catch {
+              res.end('Service Unavailable');
+            }
+            return;
+          }
           send(req, res, route, (file) => fs.readFileSync(fileIn(file)));
         }
       );

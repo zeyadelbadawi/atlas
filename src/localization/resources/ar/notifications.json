@@ -334,6 +334,14 @@
       "title": "تم جدولة إلغاء اشتراكك",
       "message": "ينتهي اشتراكك في {{effectiveAtDate}}. كل شيء يستمر في العمل حتى ذلك الحين."
     },
+    "lifecycleFoundingRenewalPriceNotice": {
+      "title": "تجديدك القادم بسعر الكتالوج",
+      "message": "تثبيت سعر الأكاديمية المؤسِّسة لا يشمل تجديدك القادم لباقة {{planName}}. ستتجدد بالسعر السنوي الحالي."
+    },
+    "platformFoundingMessage": {
+      "title": "رسالة من فريق أطلس",
+      "message": "أرسلنا لك بريدًا بخصوص عضويتك في الأكاديميات المؤسِّسة."
+    },
     "lifecycleSubscriptionPriceChangeNotice": {
       "title": "تتغير خطتك عند التجديد",
       "message": "يتغير سعر خطة {{planName}} أو حدودها من تجديدك القادم. لا يتغير شيء قبل ذلك."

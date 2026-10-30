@@ -158,12 +158,19 @@
     "add_on": "add-on",
     "observability": "monitoring",
     "platform_contact_submission": "contact enquiry",
+    "founding_membership": "founding academy",
     "lesson": "lesson",
     "communication_campaign": "message",
     "forensic_watermark": "watermark code",
     "trial_policy": "trial policy",
     "academy_payout": "academy payout",
-    "privacy_request": "Privacy request"
+    "privacy_request": "Privacy request",
+    "platform_blog_post": "blog post",
+    "platform_blog_image": "blog image",
+    "site_announcement": "announcement",
+    "launch_checklist_item": "launch checklist item",
+    "growth_settings": "growth & capacity settings",
+    "marketing_spend_entry": "marketing spend entry"
   },
   "fields": {
     "title": "Title",
@@ -242,7 +249,12 @@
     "trialDurationDays": "Trial length (days)",
     "giftedDaysMonthly": "Gifted setup days (monthly)",
     "giftedDaysYearly": "Gifted setup days (yearly)",
-    "limits": "Limits"
+    "limits": "Limits",
+    "month": "Month",
+    "channel": "Channel",
+    "previousChannel": "Previous channel",
+    "amountMinorUnits": "Amount (piastres)",
+    "changedFields": "Changed fields"
   },
   "values": {
     "empty": "—",
@@ -727,6 +739,15 @@
         "status_changed": "{{actor}} changed the status of a contact enquiry",
         "deleted": "{{actor}} deleted a contact enquiry"
       },
+      "founding": {
+        "created": "{{actor}} added {{target}} as a founding academy",
+        "updated": "{{actor}} changed the notes or setup hours of {{target}}",
+        "plan_changed": "{{actor}} re-locked the founding price of {{target}} on another plan",
+        "revoked": "{{actor}} revoked the founding membership of {{target}}",
+        "ended": "The founding price lock of {{target}} ended",
+        "emailed": "{{actor}} emailed {{target}} about its founding membership",
+        "renewal_price_notice_sent": "{{target}} was told its next renewal is at the catalog price"
+      },
       "campaign": {
         "sent": "{{actor}} sent a platform message",
         "sent_full": "{{actor}} sent a platform message to {{recipientCount}} people"
@@ -734,6 +755,39 @@
       "watermark": {
         "looked_up": "{{actor}} looked up the watermark code {{target}}",
         "looked_up_noTarget": "{{actor}} looked up a watermark code"
+      },
+      "blog_post": {
+        "created": "{{actor}} created the blog post “{{target}}”",
+        "updated": "{{actor}} edited the blog post “{{target}}”",
+        "published": "{{actor}} published the blog post “{{target}}”",
+        "unpublished": "{{actor}} unpublished the blog post “{{target}}”",
+        "archived": "{{actor}} archived the blog post “{{target}}”",
+        "deleted": "{{actor}} deleted the blog post “{{target}}”"
+      },
+      "blog_image": {
+        "uploaded": "{{actor}} uploaded a blog image"
+      },
+      "site_announcement": {
+        "created": "{{actor}} created the announcement “{{target}}”",
+        "updated": "{{actor}} edited the announcement “{{target}}”",
+        "activated": "{{actor}} activated the announcement “{{target}}”",
+        "deactivated": "{{actor}} turned off the announcement “{{target}}”",
+        "archived": "{{actor}} archived the announcement “{{target}}”",
+        "deleted": "{{actor}} deleted the announcement “{{target}}”"
+      },
+      "launch_checklist": {
+        "item_created": "{{actor}} added “{{target}}” to the launch checklist",
+        "item_updated": "{{actor}} updated the launch checklist item “{{target}}”",
+        "item_deleted": "{{actor}} removed “{{target}}” from the launch checklist",
+        "reordered": "{{actor}} reordered the launch checklist"
+      },
+      "growth": {
+        "settings_updated": "{{actor}} changed the growth & capacity settings",
+        "spend_created": "{{actor}} logged a marketing spend entry",
+        "spend_updated": "{{actor}} edited a marketing spend entry",
+        "spend_deleted": "{{actor}} deleted a marketing spend entry",
+        "organization_channel_set": "{{actor}} set the acquisition channel of {{target}}",
+        "organization_channel_set_noTarget": "{{actor}} set an organization’s acquisition channel"
       }
     },
     "trial_policy": {

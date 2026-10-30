@@ -3,7 +3,7 @@ id: DOC-ORG-006
 title: Invite learners with invite links
 description: Create an invite link for one email or for anyone, choose how many times it can be used and for how many days, copy it once and revoke it later.
 summary: >
-  In Academy Settings, under Registration, open Invite links and choose Create
+  In Academy Settings, in the Student registration section, open Invite links and choose Create
   invite. Leave the email empty for a link anyone can use, or type one address
   to make it personal. Set the maximum uses and the days it stays valid, then
   copy the link: it is shown only once. Links matter only when registration is
@@ -25,7 +25,7 @@ Invite links are needed only when your [registration policy](doc:DOC-ORG-005) is
 
 ## Create an invite link
 
-1. In the academy sidebar, open **Academy Settings** and scroll down to **Invite links**.
+1. In the academy sidebar, open **Academy Settings** and choose **Student registration** in the list of sections. **Invite links** is below the registration policy.
 
    ![The Invite links card in Academy Settings](shot:team/invites-card)
 

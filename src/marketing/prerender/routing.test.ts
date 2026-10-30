@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 import {
   MARKETING_PRODUCT_PATHS,
   MARKETING_ROOT_FILES,
-  isMarketingGonePath,
+  isMarketingBlogPath,
   marketingFileForPath,
   resolveMarketingRequest,
 } from './routing';
@@ -80,20 +80,21 @@ describe('resolveMarketingRequest', () => {
     });
   });
 
-  it('answers retired URLs and unknown /ar paths with the branded 404', () => {
-    expect(route('/blog')).toEqual({
-      kind: 'notFound',
-      file: '404.html',
-      status: 404,
-    });
-    expect(route('/blog/old-post')).toMatchObject({
-      file: '404.html',
-      status: 404,
-    });
-    // M1b — the product pages are published: no longer a planned 404.
+  it('sends the blog to the renderer (B3) and unknown /ar paths to the branded 404', () => {
+    for (const path of [
+      '/blog',
+      '/blog/old-post',
+      '/blog/topics/payments',
+      '/ar/blog',
+      '/ar/blog/x',
+      '/sitemaps/blog.xml',
+    ]) {
+      expect(route(path), path).toEqual({ kind: 'blog' });
+    }
+    // M1b — the product pages are published pages, never the blog.
     for (const path of MARKETING_PRODUCT_PATHS) {
-      expect(isMarketingGonePath(path)).toBe(false);
-      expect(isMarketingGonePath(`/ar${path}`)).toBe(false);
+      expect(isMarketingBlogPath(path)).toBe(false);
+      expect(isMarketingBlogPath(`/ar${path}`)).toBe(false);
     }
     expect(route('/ar/does-not-exist')).toMatchObject({
       file: 'ar/404.html',
@@ -123,15 +124,20 @@ describe('resolveMarketingRequest', () => {
 
   it('serves nothing when nothing is built', () => {
     expect(resolveMarketingRequest('/', '', () => false)).toBeNull();
-    expect(resolveMarketingRequest('/blog', '', () => false)).toBeNull();
+    // The blog is never a built file: it always belongs to the renderer.
+    expect(resolveMarketingRequest('/blog', '', () => false)).toEqual({
+      kind: 'blog',
+    });
     expect(resolveMarketingRequest('/ar/x', '', () => false)).toBeNull();
   });
 
   it('maps paths to files', () => {
     expect(marketingFileForPath('/')).toBe('index.html');
     expect(marketingFileForPath('/ar/pricing')).toBe('ar/pricing/index.html');
-    expect(isMarketingGonePath('/features')).toBe(false);
-    expect(isMarketingGonePath('/ar/blog/')).toBe(true);
+    expect(isMarketingBlogPath('/features')).toBe(false);
+    expect(isMarketingBlogPath('/ar/blog/')).toBe(true);
+    expect(isMarketingBlogPath('/blogger')).toBe(false);
+    expect(isMarketingBlogPath('/ar/sitemaps/blog.xml')).toBe(false);
   });
 });
 
@@ -163,12 +169,18 @@ describe('the Caddyfile mirrors these rules', () => {
     expect(paths).toContain(' /sitemaps/*');
   });
 
-  it('404s the retired blog, and no longer the published product pages', () => {
-    const paths = matcher('marketing_gone');
-    for (const path of MARKETING_PRODUCT_PATHS) {
+  it('routes exactly the blog paths to the renderer, before the root files', () => {
+    const paths = matcher('marketing_blog');
+    expect(paths).toMatch(/host atlass\.dpdns\.org\n/);
+    expect(paths).toContain(
+      'path /blog /blog/* /ar/blog /ar/blog/* /sitemaps/blog.xml'
+    );
+    for (const path of MARKETING_PRODUCT_PATHS)
       expect(paths).not.toContain(` ${path}`);
-      expect(paths).not.toContain(` /ar${path}`);
-    }
-    expect(paths).toMatch(/ \/blog \/blog\/\* /);
+    expect(caddyfile.indexOf('handle @marketing_blog')).toBeLessThan(
+      caddyfile.indexOf('handle @marketing_root_file')
+    );
+    expect(caddyfile).not.toContain('@marketing_gone ');
+    expect(caddyfile).not.toContain('@retired_blog');
   });
 });

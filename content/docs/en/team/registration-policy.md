@@ -3,7 +3,7 @@ id: DOC-ORG-005
 title: "Choose who can join: open, approval or invite-only"
 description: Set your academy's registration policy to Open, Approval required or Invite only, and see what new learners get under each one.
 summary: >
-  In Academy Settings, under Registration, the owner chooses how new learners
+  In Academy Settings, in the Student registration section, the owner chooses how new learners
   join the academy website: Open (anyone can sign up and start straight
   away), Approval required (each sign-up waits until you approve it) or
   Invite only (only people with a valid invite link can register). Save the
@@ -29,7 +29,7 @@ The registration policy decides who can create an account on your academy websit
 
 ## Change the policy
 
-1. In the academy sidebar, open **Academy Settings** and scroll down to **Registration**.
+1. In the academy sidebar, open **Academy Settings** and choose **Student registration** in the list of sections.
 
    ![The Registration section of Academy Settings with the three options](shot:team/registration-section)
 

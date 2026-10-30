@@ -10,6 +10,8 @@ import enPlatformAddOns from './en/platformAddOns.json';
 import enPlatformCommerce from './en/platformCommerce.json';
 import enPlatformObservability from './en/platformObservability.json';
 import enPlatformEmail from './en/platformEmail.json';
+import enPlatformLaunch from './en/platformLaunch.json';
+import enPlatformGrowth from './en/platformGrowth.json';
 import enMessaging from './en/messaging.json';
 import enLayout from './en/layout.json';
 import enHome from './en/home.json';
@@ -44,6 +46,8 @@ const bundle: Record<string, Record<string, unknown>> = {
   platformCommerce: enPlatformCommerce,
   platformObservability: enPlatformObservability,
   platformEmail: enPlatformEmail,
+  platformLaunch: enPlatformLaunch,
+  platformGrowth: enPlatformGrowth,
   messaging: enMessaging,
   layout: enLayout,
   home: enHome,

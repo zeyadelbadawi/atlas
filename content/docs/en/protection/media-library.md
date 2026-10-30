@@ -26,7 +26,7 @@ files but not upload or delete them.
 
 ## Upload and manage files
 
-1. In the dashboard, open your academy and choose **Academy Media** in the sidebar.
+1. In the dashboard, open your academy and choose **Media library** in the sidebar.
 
    ![The academy dashboard with Academy Media highlighted in the sidebar](shot:protection/media-nav)
 

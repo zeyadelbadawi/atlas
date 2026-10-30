@@ -34,7 +34,8 @@
     "academySales": "Sales & payments",
     "academySite": "Website & brand",
     "academyInsights": "Reports",
-    "academyAdmin": "Settings"
+    "academyAdmin": "Settings",
+    "platformLaunch": "Launch & content"
   },
   "items": {
     "home": "Home",
@@ -79,6 +80,7 @@
     "platformWatermarkLookup": "Watermark Lookup",
     "platformSupport": "Support",
     "platformContactSubmissions": "Contact Enquiries",
+    "platformFoundingAcademies": "Founding Academies",
     "platformCustomerRequests": "Customer Requests",
     "platformEmailCompose": "Compose and Send",
     "platformEmailActivity": "Academy Email Activity",
@@ -123,7 +125,12 @@
     "platformCoursePayments": "Course payments",
     "platformPayouts": "Payouts",
     "platformCommission": "Commission",
-    "platformPrivacyRequests": "Privacy requests"
+    "platformPrivacyRequests": "Privacy requests",
+    "platformLaunch": "Launch center",
+    "platformBlog": "Blog",
+    "platformAnnouncements": "Banners & pop-ups",
+    "platformLaunchChecklist": "Launch checklist",
+    "platformGrowth": "Growth & capacity"
   },
   "account": {
     "menu": "Account menu",

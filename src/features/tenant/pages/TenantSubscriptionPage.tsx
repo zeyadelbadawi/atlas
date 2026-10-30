@@ -38,6 +38,7 @@ import { PlanComparisonDialog } from '../components/PlanComparisonDialog';
 import { SubscriptionGiftDetails } from '../components/SubscriptionGiftDetails';
 import { ScheduledPlanChangeNotice } from '../components/ScheduledPlanChangeNotice';
 import { PriceChangeNotice } from '../components/PriceChangeNotice';
+import { FoundingMembershipNotice } from '../components/FoundingMembershipNotice';
 import {
   resolvePlanDescription,
   resolvePlanName,
@@ -182,6 +183,9 @@ export default function TenantSubscriptionPage(): JSX.Element {
             {/* B0-BIL-04 — a smaller plan bought mid-period waits for the
                 end of the period already paid for. */}
             <ScheduledPlanChangeNotice subscription={subscription} />
+
+            {/* B2 — a Founding Academy's locked price and next renewal. */}
+            <FoundingMembershipNotice subscription={subscription} />
 
             {/* B0-BIL-07 — the plan's price or limits change at renewal. */}
             <PriceChangeNotice subscription={subscription} />

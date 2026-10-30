@@ -9,13 +9,23 @@
  *   - the contact form (`POST /api/v1/public/contact`);
  *   - the cookieless marketing beacon (`client/beacon.ts`, DL-51);
  *   - the header's Sign in / Open dashboard swap and the transition into
- *     the dashboard host (`client/app-handoff.ts`, DL-63).
+ *     the dashboard host (`client/app-handoff.ts`, DL-63);
+ *   - B3: site banners and the pop-up (`client/announcements.ts`), and the
+ *     newest blog posts on /resources (`client/resources.ts`), both after load;
+ *   - G1: this page view's attribution, in memory only (`client/attribution.ts`):
+ *     sent with the contact form, and handed to the app's sign-up links; the
+ *     contact form's optional "How did you first hear about us?" (`client/heard-from.ts`).
  */
 import '../styles/marketing.css';
 import { startBeacon } from './beacon';
 import { initAppHandoff } from './app-handoff';
+import { initAnnouncements } from './announcements';
+import { initLatestPosts } from './resources';
 import { APP_ORIGIN } from '../lib/site';
 import { CONTACT_LIMITS, validateContact, type ContactField } from './contact-validation';
+import { initSignupHandoff, readPageAttribution } from './attribution';
+import { heardFromFields, initHeardFrom } from './heard-from';
+import type { LandingAttribution } from '@/shared/utils/landing-attribution.core';
 
 const THEME_KEY = 'atlas:marketing-theme';
 type ThemeChoice = 'light' | 'dark' | 'system';
@@ -126,10 +136,11 @@ function initPricing(): void {
     });
 }
 
-function initContactForm(): void {
+function initContactForm(attribution: LandingAttribution | null): void {
   const form = document.querySelector<HTMLFormElement>('form[data-contact-form]');
   if (!form) return;
   const startedAt = Date.now();
+  initHeardFrom(form);
   const params = new URLSearchParams(window.location.search);
   const topicSelect = form.elements.namedItem('topic') as HTMLSelectElement | null;
   const presetTopic = params.get('topic');
@@ -241,6 +252,8 @@ function initContactForm(): void {
         locale: document.documentElement.lang === 'ar' ? 'ar' : 'en',
         sourcePath,
         startedAt,
+        ...heardFromFields(form),
+        ...(attribution ? { attribution } : {}),
         ...(company ? { company } : {}),
       }),
     })
@@ -279,6 +292,12 @@ initTheme();
 initMenus();
 initHeader();
 initPricing();
-initContactForm();
+// Read once per page view; never stored. The sign-up links are rewritten
+// before the header's signed-in swap remembers their signed-out targets.
+const pageAttribution = readPageAttribution(window.location, document.referrer, APP_ORIGIN);
+initContactForm(pageAttribution);
+initSignupHandoff(document, APP_ORIGIN, pageAttribution);
 initAppHandoff(APP_ORIGIN);
 startBeacon();
+initAnnouncements();
+initLatestPosts();

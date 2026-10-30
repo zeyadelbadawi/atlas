@@ -48,11 +48,11 @@ Only the organization owner can change the address, and only **once every 60 day
 
 Your first change after creating the academy is always allowed. After a change, the field stays read-only for 60 days and tells you the date you can change it again, for example "You changed the address recently. You can change it again on 19 December 2026." Changing back to one of your old addresses counts as a change too.
 
-1. In the sidebar, open **Academy Settings**. Under **General**, type the new address in **Academy Slug**. The same naming rules apply as when you created the academy. Under the field, Atlas tells you what will happen when you save.
+1. In the sidebar, open **Academy Settings**. In the **Academy details** section, under **General**, type the new address in **Academy Slug**. The same naming rules apply as when you created the academy. Under the field, Atlas tells you what will happen when you save.
 
    ![The Academy Slug field with a new address typed in and the note about what happens when you save](shot:academy/settings-slug)
 
-2. Select **Save Settings**. You see "Settings updated successfully". If the address is used by another academy or reserved, the field tells you, and nothing changes.
+2. Select **Save Settings** in the "You have unsaved changes" bar at the bottom of the page. You see "Settings updated successfully". If the address is used by another academy or reserved, the field tells you, and nothing changes.
 
    ![The Save Settings button after typing a new Academy Slug](shot:academy/settings-slug-save)
 

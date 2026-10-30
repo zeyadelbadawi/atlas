@@ -61,7 +61,7 @@ Common reasons for each message:
 
 Only the organization owner can review learners' payments. Managers see "Only the organization owner can review payments".
 
-1. In the academy sidebar, open **Payments**. The **Waiting for review** tab lists the proofs learners sent.
+1. In the academy sidebar, open **Student payments**. The **Waiting for review** tab lists the proofs learners sent.
 
    ![The Payments page with the Waiting for review tab highlighted](shot:troubleshooting/owner-payments-pending)
 

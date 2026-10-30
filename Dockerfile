@@ -22,7 +22,12 @@
 # as reviewable PRs, and src/ci-supply-chain-pins.test.ts fails CI if a
 # FROM loses its digest.
 
-FROM mirror.gcr.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS build
+# The build runs on the build host's own architecture (like the Caddy
+# compile below): its output — HTML, CSS, JS bundles, images — is the same
+# for every platform. Under QEMU emulation, `pnpm install` crashed node
+# with an illegal instruction and hung the deploy until its timeout
+# whenever package.json changed (the cached layer had hidden it).
+FROM --platform=$BUILDPLATFORM mirror.gcr.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS build
 WORKDIR /app
 RUN corepack enable
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
@@ -62,14 +67,18 @@ RUN mkdir -p dist-docs \
 FROM build AS ssr-build
 RUN pnpm run build:ssr
 
-FROM mirror.gcr.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS ssr-deps
+FROM --platform=$BUILDPLATFORM mirror.gcr.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS ssr-deps
+ARG TARGETARCH
 WORKDIR /app
 RUN corepack enable
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 # Runtime packages only (the SSR bundle imports React, the router, i18n
 # and the other app dependencies from node_modules). No lifecycle
-# scripts: nothing the renderer loads needs a build step.
-RUN pnpm install --frozen-lockfile --prod --ignore-scripts
+# scripts: nothing the renderer loads needs a build step. Installed
+# natively, but any platform-specific package is chosen for the image's
+# own platform (linux, musl, TARGETARCH), never the build host's.
+RUN pnpm install --frozen-lockfile --prod --ignore-scripts \
+      --os=linux --libc=musl --cpu="$(case "$TARGETARCH" in amd64) echo x64 ;; *) echo "$TARGETARCH" ;; esac)"
 
 FROM mirror.gcr.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS ssr
 WORKDIR /app
@@ -78,7 +87,12 @@ COPY package.json ./
 COPY --from=ssr-deps /app/node_modules ./node_modules
 COPY --from=ssr-build /app/dist ./dist
 COPY --from=ssr-build /app/dist-ssr ./dist-ssr
-COPY server/ssr/handler.mjs server/ssr/server.mjs ./server/ssr/
+# B3 — the marketing blog is rendered here at request time with the
+# marketing prerender bundle and its build context (blog-context.json,
+# written by scripts/marketing/prerender.mjs in the build stage), so its
+# pages share this build's hashed stylesheet, scripts, header and footer.
+COPY --from=ssr-build /app/dist-marketing-ssr ./dist-marketing-ssr
+COPY server/ssr/handler.mjs server/ssr/server.mjs server/ssr/blog.mjs ./server/ssr/
 USER node
 EXPOSE 3100
 HEALTHCHECK --interval=15s --timeout=3s --start-period=10s --retries=3 \
