@@ -82,9 +82,52 @@ describe('Privacy Policy content', () => {
     }
   });
 
-  it('carries the 20 October 2026 revision date', () => {
-    expect(PRIVACY_POLICY_EN.lastUpdated).toBe('20 October 2026');
-    expect(PRIVACY_POLICY_AR.lastUpdated).toBe('٢٠ أكتوبر ٢٠٢٦');
+  it('carries the 30 October 2026 revision date', () => {
+    expect(PRIVACY_POLICY_EN.lastUpdated).toBe('30 October 2026');
+    expect(PRIVACY_POLICY_AR.lastUpdated).toBe('٣٠ أكتوبر ٢٠٢٦');
+  });
+
+  it('discloses the mobile app: push tokens, consents, Apple, analytics (EN + AR)', () => {
+    const en = sectionText(PRIVACY_POLICY_EN, 'what-we-collect');
+    for (const fact of [
+      'push notification token',
+      'confirmation that you are 13 or older',
+      'revoke it with Apple',
+      'read on your device and never sent to us',
+      'Google Analytics for Firebase',
+      'not linked to your Atlas account',
+      'advertising identifier on your device is not collected',
+    ])
+      expect(en).toContain(fact);
+    expect(sectionText(PRIVACY_POLICY_EN, 'scope')).toContain(
+      'iOS and Android'
+    );
+    expect(sectionText(PRIVACY_POLICY_EN, 'sharing')).toContain(
+      'Firebase Cloud Messaging'
+    );
+    expect(sectionText(PRIVACY_POLICY_EN, 'retention')).toContain(
+      'Mobile app push tokens'
+    );
+    expect(sectionText(PRIVACY_POLICY_EN, 'deletion')).toContain(
+      'Privacy and data'
+    );
+    const ar = sectionText(PRIVACY_POLICY_AR, 'what-we-collect');
+    for (const fact of [
+      'رمز الإشعارات',
+      '١٣ عامًا أو أكثر',
+      'إلغائه لدى Apple',
+      'يُقرأ على جهازك ولا يُرسل إلينا مطلقًا',
+      'Google Analytics for Firebase',
+      'ولا تُربط هذه الإحصاءات بحسابك',
+      'ولا يُجمع المعرّف الإعلاني',
+    ])
+      expect(ar).toContain(fact);
+    expect(sectionText(PRIVACY_POLICY_AR, 'sharing')).toContain(
+      'Firebase Cloud Messaging'
+    );
+    expect(sectionText(PRIVACY_POLICY_AR, 'deletion')).toContain(
+      'الخصوصية والبيانات'
+    );
   });
 
   it('discloses the cookieless marketing-site counts (EN + AR)', () => {
