@@ -41,8 +41,20 @@
  *                                after last shown, survives account deletion;
  *                                atlas-backend docs/FORENSIC_WATERMARK.md)
  *
+ *   - mobile push tokens      -> `push_devices` (FCM token, platform, app version,
+ *                                locale, academy, session; removed on sign-out,
+ *                                notifications off, invalid token, account deletion)
+ *   - mobile consents         -> `user_consents` (terms/privacy/age_13_plus version,
+ *                                source ios|android)
+ *   - Sign in with Apple      -> `apple_refresh_tokens` (sealed, for revoke only)
+ *   - mobile app analytics    -> Google Analytics for Firebase, mobile app only,
+ *                                opt-out in the app; route templates + 4 learning
+ *                                and 2 notification events, no user id, no advertising id
+ *                                (atlas-mobile lib/core/firebase/atlas_analytics.dart)
+ *
  * THINGS DELIBERATELY NOT CLAIMED, because they are not true of Atlas:
- * no advertising, no analytics product, no marketing pixels, no
+ * no advertising, no analytics product on the web (the mobile app's
+ * opt-out usage statistics are disclosed in §3), no marketing pixels, no
  * behavioural profiling, no sale of personal data, no automated
  * decision-making with legal effect. A privacy policy that lists
  * practices the product does not have is not a safer policy — it is an
@@ -59,7 +71,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
   summary:
     'How Atlas collects, uses, and protects personal data when you use the Atlas platform.',
   effectiveDate: '11 September 2026',
-  lastUpdated: '20 October 2026',
+  lastUpdated: '30 October 2026',
   sections: [
     {
       id: 'who-we-are',
@@ -81,7 +93,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
       blocks: [
         {
           kind: 'paragraph',
-          text: 'This policy applies to the Atlas web application, the Atlas API, and the public academy websites Atlas hosts on behalf of its customers.',
+          text: 'This policy applies to the Atlas web application, the Atlas app for learners on iOS and Android, the Atlas API, and the public academy websites Atlas hosts on behalf of its customers.',
         },
         {
           kind: 'paragraph',
@@ -185,6 +197,16 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
               detail:
                 'For a sample of visits, three page-speed timings (how long the main content took to appear, how quickly the page responded to a tap or click, and how much the layout shifted), the type of page (for example “course page”, never its address), and whether the screen is phone-sized. Nothing that identifies you, your account, your academy, your device or the page address is sent or stored with them; they are kept only as aggregate counts and deleted after 15 days. Browsers that send Global Privacy Control or Do Not Track are never measured.',
             },
+            {
+              term: 'Atlas mobile app',
+              detail:
+                "If you use the Atlas app for learners on iOS or Android: when you allow notifications, the device's push notification token, the platform (iOS or Android), the app version, the language notifications are written in, the academy and sign-in session the token belongs to, and when we last sent to it. When you create an account in the app, the versions of the terms and privacy policy you accepted, your confirmation that you are 13 or older, and whether you used iOS or Android. If you sign in with Apple, we keep an encrypted Apple token only so that we can revoke it with Apple when you delete your account. The app uses the camera only to scan an academy's QR code, which is read on your device and never sent to us, or to take a photo you choose to attach to an assignment; photos and files are sent only when you attach them.",
+            },
+            {
+              term: 'App usage statistics (mobile app only)',
+              detail:
+                'Unless you switch it off in the app (Account, then Privacy and data), the app sends Google Analytics for Firebase the screens you open, named by their type (for example “quiz”, never the course or its content), when you join a course, finish a lesson, or submit a quiz or an assignment, and whether you allowed notifications and when you open one, with no name, email address, answers or other content. Google also receives an identifier it generates for that installation of the app, the device model, operating system and app version, and an approximate location (country or region) derived from your IP address. These statistics are not linked to your Atlas account, are never used for advertising, and the advertising identifier on your device is not collected. We use them to see which parts of the app are used and to improve it, on the basis of our legitimate interest in doing so. Detailed event data is deleted by Google after the retention period set in our Google Analytics account.',
+            },
           ],
         },
       ],
@@ -215,6 +237,10 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
         {
           kind: 'paragraph',
           text: 'Atlas does not use analytics cookies, advertising cookies, marketing pixels, or any third-party tracking script. The page-speed measurement described in section 3 stores nothing in your browser and uses no identifier, so it is neither a cookie nor a tracking technology; it runs on Atlas’s own servers, is never used to profile anyone, and is skipped entirely for browsers that send Global Privacy Control or Do Not Track. The Atlas marketing website likewise counts page visits and button clicks in aggregate, on Atlas’s own servers, without cookies, identifiers or stored IP addresses, and does not measure browsers that send Global Privacy Control or Do Not Track.',
+        },
+        {
+          kind: 'paragraph',
+          text: 'The Atlas mobile app does not use cookies for tracking. Its optional usage statistics are described in section 3, under “App usage statistics”, and can be switched off in the app.',
         },
         {
           kind: 'paragraph',
@@ -471,6 +497,26 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
                 'If you choose to sign in with Google, Google confirms your identity to Atlas and shares your name and email address with us. Google handles that sign-in under its own terms and privacy policy.',
             },
             {
+              term: 'Sign in with Apple',
+              detail:
+                'If you choose to sign in with Apple in the mobile app, Apple confirms your identity to Atlas and may share your name and an email address with us, which can be a private relay address that forwards to you. Apple handles that sign-in under its own terms and privacy policy.',
+            },
+            {
+              term: 'Push notifications',
+              detail:
+                "Notifications to the mobile app are delivered through Google's Firebase Cloud Messaging and, on iPhone and iPad, Apple's push notification service. They receive the device's push token and the text of each notification.",
+            },
+            {
+              term: 'App usage statistics',
+              detail:
+                "Google Analytics for Firebase receives the mobile app's optional usage statistics described in section 3.",
+            },
+            {
+              term: 'App stores',
+              detail:
+                'The mobile app is distributed through the Apple App Store and Google Play, which handle downloads and updates under their own terms and privacy policies. Atlas sells nothing in the app.',
+            },
+            {
               term: 'Live video sessions',
               detail:
                 'Where an academy runs live sessions, they are hosted by a video-meeting provider, which receives the display name of each participant who joins.',
@@ -582,6 +628,21 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
                 'Aggregate counts only, deleted automatically after 15 days.',
             },
             {
+              term: 'Mobile app push tokens',
+              detail:
+                'Kept while notifications are on for that app installation. Removed when you sign out of the app or turn notifications off, when the push service reports the token is no longer valid, or when you delete your account.',
+            },
+            {
+              term: 'Consent records from the mobile app',
+              detail:
+                'Kept while your account exists, so we can show which version of the terms and privacy policy you accepted.',
+            },
+            {
+              term: 'App usage statistics',
+              detail:
+                'Held by Google Analytics for Firebase and deleted after the retention period set in our Google Analytics account.',
+            },
+            {
               term: 'Billing and audit records',
               detail:
                 'Retained as long as needed for accounting, legal, and security purposes. This includes proof of payment you upload.',
@@ -597,6 +658,10 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
         {
           kind: 'paragraph',
           text: 'You can delete your own Atlas account from your profile settings, confirming the request with a one-time code we email to you. Deleting your account signs you out everywhere, ends your active sessions immediately, and prevents further sign-in.',
+        },
+        {
+          kind: 'paragraph',
+          text: "Learners can also delete their account in the Atlas mobile app, under Account, then Privacy and data. An account that manages an academy is deleted from the Atlas website. Deleting your account also removes your mobile push tokens and, if you signed in with Apple, revokes Atlas's access with Apple.",
         },
         {
           kind: 'paragraph',
