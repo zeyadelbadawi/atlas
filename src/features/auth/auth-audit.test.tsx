@@ -9,7 +9,13 @@
  */
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -140,10 +146,16 @@ describe('sign-up name bound', () => {
       .spyOn(authenticationService, 'register')
       .mockResolvedValue({ account: 'new' } as RegistrationResult);
     renderAt('/auth/register', <RegistrationForm />, false);
-    const name = (await screen.findByLabelText('Full Name')) as HTMLInputElement;
-    expect(name.maxLength).toBe(100);
-    // `maxLength` stops typing; a pasted/programmatic value is still validated.
+    const name = (await screen.findByLabelText(
+      'Full Name'
+    )) as HTMLInputElement;
+    // B1 (V42) — no hard `maxLength` (a paste is not cut silently); the
+    // counter shows the limit and the rule refuses it.
+    expect(name.maxLength).toBe(-1);
     fireEvent.change(name, { target: { value: 'x'.repeat(101) } });
+    expect((await screen.findByTestId('name-counter')).textContent).toBe(
+      '101 / 100 characters'
+    );
     fireEvent.change(screen.getByLabelText('Email'), {
       target: { value: 'sara@example.com' },
     });

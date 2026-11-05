@@ -17,23 +17,40 @@ import {
   PAGE_SLUG_REGEX,
 } from '../constants/website.constants';
 import { localizedOptional } from './website-section.schemas';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 export const createWebsitePageSchema = z.object({
   title: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_PAGE_TITLE_LENGTH, 'validation:maxLength'),
+    .max(
+      MAX_PAGE_TITLE_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_PAGE_TITLE_LENGTH,
+      })
+    ),
   slug: z
     .string()
-    .min(MIN_PAGE_SLUG_LENGTH, 'validation:minLength')
-    .max(MAX_PAGE_SLUG_LENGTH, 'validation:maxLength')
+    .min(
+      MIN_PAGE_SLUG_LENGTH,
+      validationMessage('validation:minLength', { count: MIN_PAGE_SLUG_LENGTH })
+    )
+    .max(
+      MAX_PAGE_SLUG_LENGTH,
+      validationMessage('validation:maxLength', { count: MAX_PAGE_SLUG_LENGTH })
+    )
     .regex(PAGE_SLUG_REGEX, 'validation:invalidSlug'),
 });
 export type CreateWebsitePageFormData = z.infer<typeof createWebsitePageSchema>;
 
 const canonicalPathSchema = z
   .string()
-  .max(MAX_CANONICAL_PATH_LENGTH, 'validation:maxLength')
+  .max(
+    MAX_CANONICAL_PATH_LENGTH,
+    validationMessage('validation:maxLength', {
+      count: MAX_CANONICAL_PATH_LENGTH,
+    })
+  )
   .regex(CANONICAL_PATH_REGEX, 'validation:invalidUrl')
   .optional()
   .or(z.literal(''));
@@ -58,7 +75,12 @@ export const globalSeoSchema = z.object({
   /** Deliberately lenient (length-only) — a real, verified domain is out of scope for this prompt; see the field's doc comment in `website.types.ts`. */
   canonicalBaseUrl: z
     .string()
-    .max(MAX_CANONICAL_PATH_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_CANONICAL_PATH_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_CANONICAL_PATH_LENGTH,
+      })
+    )
     .optional(),
 });
 export type GlobalSeoFormData = z.infer<typeof globalSeoSchema>;

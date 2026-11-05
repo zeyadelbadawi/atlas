@@ -15,7 +15,7 @@
  * P66 added `TrustedDevicesCard` beside the sessions — the browsers
  * remembered at an email-code step, backed by `/auth/trusted-devices`.
  */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -31,10 +31,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { ErrorState } from '@components/feedback';
 import { useToast } from '@hooks';
-import { isFieldViolationError, useServerValidation } from '@forms';
+import { useServerValidation } from '@forms';
 import { useChangePassword } from '../hooks';
+import {
+  fieldErrorText,
+  hasViolationOn,
+  useFocusFirstViolation,
+  useLabelledViolations,
+} from '@forms';
+import { RequiredMark, SaveFailedAlert } from '@forms';
 import { ProfileSessionsCard } from './ProfileSessionsCard';
 import { TrustedDevicesCard } from './TrustedDevicesCard';
 import { TwoFactorCard } from './TwoFactorCard';
@@ -55,6 +61,16 @@ const passwordSchema = z
   });
 
 type PasswordFormData = z.infer<typeof passwordSchema>;
+
+/** The backend's 401 for a wrong current password (`UsersService.changePassword`). */
+const INVALID_CURRENT_PASSWORD_KEY = 'errors.auth.invalidCurrentPassword';
+
+/** API fields this form can show a violation beside, with their labels. */
+const FIELD_LABELS = {
+  currentPassword: 'profile:fields.currentPassword',
+  newPassword: 'profile:fields.newPassword',
+  confirmPassword: 'profile:fields.confirmNewPassword',
+} as const;
 
 export interface ProfileSecuritySectionProps {
   /** Google Identity — where "Connect Google" starts from (defaults to management). */
@@ -88,10 +104,32 @@ export function ProfileSecuritySection({
 
   // B0-SEC-11 — a refused new password (e.g. too common) is shown on the
   // field, not as a generic "something went wrong" card.
-  useServerValidation(form, changePassword.error);
-  const hasFieldViolations =
-    isFieldViolationError(changePassword.error) &&
-    (changePassword.error?.violations?.length ?? 0) > 0;
+  const passwordError = changePassword.error;
+  useServerValidation(form, useLabelledViolations(passwordError, FIELD_LABELS));
+  useFocusFirstViolation(form, passwordError, FIELD_LABELS);
+
+  // B1 (V09) — a wrong current password is a 401 with no violation. It
+  // belongs on the current-password field, in the backend's own words —
+  // not an "Unexpected error" card under a "session expired" toast.
+  const wrongCurrentPassword =
+    passwordError?.messageKey === INVALID_CURRENT_PASSWORD_KEY;
+  const { setError } = form;
+  useEffect(() => {
+    if (!wrongCurrentPassword) return;
+    setError(
+      'currentPassword',
+      { type: 'server', message: 'errors:auth.invalidCurrentPassword' },
+      { shouldFocus: true }
+    );
+  }, [passwordError, wrongCurrentPassword, setError]);
+
+  // Anything no field can show: one inline message with the real reason.
+  const saveFailure =
+    passwordError &&
+    !wrongCurrentPassword &&
+    !hasViolationOn(passwordError, FIELD_LABELS)
+      ? passwordError
+      : null;
 
   const isLoading = changePassword.isPending;
 
@@ -121,14 +159,11 @@ export function ProfileSecuritySection({
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-            {changePassword.error && !hasFieldViolations ? (
-              <ErrorState onRetry={handleSubmit(handleFormSubmit)} />
-            ) : null}
-
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="currentPassword">
                   {t('profile:fields.currentPassword')}
+                  <RequiredMark />
                 </Label>
                 <div className="relative">
                   <Input
@@ -137,7 +172,13 @@ export function ProfileSecuritySection({
                     placeholder={t('profile:placeholders.currentPassword')}
                     disabled={isLoading}
                     {...register('currentPassword')}
+                    aria-required
                     aria-invalid={!!errors.currentPassword}
+                    aria-describedby={
+                      errors.currentPassword
+                        ? 'currentPassword-error'
+                        : undefined
+                    }
                     className="pe-10"
                   />
                   <button
@@ -159,10 +200,16 @@ export function ProfileSecuritySection({
                   </button>
                 </div>
                 {errors.currentPassword ? (
-                  <p className="text-sm text-destructive">
-                    {t(
+                  <p
+                    id="currentPassword-error"
+                    role="alert"
+                    className="text-sm text-destructive"
+                  >
+                    {fieldErrorText(
+                      t,
                       errors.currentPassword.message ||
-                        'profile:errors.currentPasswordRequired'
+                        'profile:errors.currentPasswordRequired',
+                      t('profile:fields.currentPassword')
                     )}
                   </p>
                 ) : null}
@@ -171,6 +218,7 @@ export function ProfileSecuritySection({
               <div className="space-y-2">
                 <Label htmlFor="newPassword">
                   {t('profile:fields.newPassword')}
+                  <RequiredMark />
                 </Label>
                 <div className="relative">
                   <Input
@@ -179,7 +227,11 @@ export function ProfileSecuritySection({
                     placeholder={t('profile:placeholders.newPassword')}
                     disabled={isLoading}
                     {...register('newPassword')}
+                    aria-required
                     aria-invalid={!!errors.newPassword}
+                    aria-describedby={
+                      errors.newPassword ? 'newPassword-error' : undefined
+                    }
                     className="pe-10"
                   />
                   <button
@@ -201,10 +253,16 @@ export function ProfileSecuritySection({
                   </button>
                 </div>
                 {errors.newPassword ? (
-                  <p className="text-sm text-destructive">
-                    {t(
+                  <p
+                    id="newPassword-error"
+                    role="alert"
+                    className="text-sm text-destructive"
+                  >
+                    {fieldErrorText(
+                      t,
                       errors.newPassword.message ||
-                        'profile:errors.passwordTooShort'
+                        'profile:errors.passwordTooShort',
+                      t('profile:fields.newPassword')
                     )}
                   </p>
                 ) : null}
@@ -216,6 +274,7 @@ export function ProfileSecuritySection({
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">
                   {t('profile:fields.confirmNewPassword')}
+                  <RequiredMark />
                 </Label>
                 <div className="relative">
                   <Input
@@ -224,7 +283,13 @@ export function ProfileSecuritySection({
                     placeholder={t('profile:placeholders.confirmPassword')}
                     disabled={isLoading}
                     {...register('confirmPassword')}
+                    aria-required
                     aria-invalid={!!errors.confirmPassword}
+                    aria-describedby={
+                      errors.confirmPassword
+                        ? 'confirmPassword-error'
+                        : undefined
+                    }
                     className="pe-10"
                   />
                   <button
@@ -246,15 +311,29 @@ export function ProfileSecuritySection({
                   </button>
                 </div>
                 {errors.confirmPassword ? (
-                  <p className="text-sm text-destructive">
-                    {t(
+                  <p
+                    id="confirmPassword-error"
+                    role="alert"
+                    className="text-sm text-destructive"
+                  >
+                    {fieldErrorText(
+                      t,
                       errors.confirmPassword.message ||
-                        'profile:errors.passwordMismatch'
+                        'profile:errors.passwordMismatch',
+                      t('profile:fields.confirmNewPassword')
                     )}
                   </p>
                 ) : null}
               </div>
             </div>
+
+            {saveFailure ? (
+              <SaveFailedAlert
+                error={saveFailure}
+                titleKey="profile:errors.passwordNotChanged"
+                onRetry={handleSubmit(handleFormSubmit)}
+              />
+            ) : null}
 
             <Button type="submit" disabled={isLoading}>
               {isLoading

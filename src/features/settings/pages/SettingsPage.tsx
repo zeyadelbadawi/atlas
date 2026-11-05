@@ -23,7 +23,10 @@ export default function SettingsPage(): JSX.Element {
       />
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList>
+        {/* B1 (V16) — the four tabs wrap onto a second row on a phone
+            instead of pushing the page 467–630 px wide (the pattern of
+            the website settings tabs). */}
+        <TabsList className="h-auto max-w-full flex-wrap justify-start">
           <TabsTrigger value="general">
             {t('settings:general.title')}
           </TabsTrigger>
@@ -38,7 +41,13 @@ export default function SettingsPage(): JSX.Element {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="general" className="space-y-6">
+        {/* B1 (V27) — kept mounted while another tab is open, so a draft
+            survives a tab switch and its leave-warning stays armed. */}
+        <TabsContent
+          value="general"
+          forceMount
+          className="space-y-6 data-[state=inactive]:hidden"
+        >
           <GeneralSettings />
         </TabsContent>
 

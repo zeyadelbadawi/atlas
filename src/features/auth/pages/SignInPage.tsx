@@ -5,7 +5,12 @@
  * SessionService and AuthenticationService infrastructure.
  */
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useSearchParams, Link } from 'react-router-dom';
+import {
+  useLocation,
+  useNavigate,
+  useSearchParams,
+  Link,
+} from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, LogIn } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -171,7 +176,12 @@ export default function SignInPage(): JSX.Element {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <div className="mx-auto flex size-12 items-center justify-center rounded-pill bg-primary text-primary-foreground">
-            <LogIn className="size-6" strokeWidth={2} aria-hidden />
+            {/* A directional arrow: it points the reading way (B1, V45). */}
+            <LogIn
+              className="size-6 rtl:-scale-x-100"
+              strokeWidth={2}
+              aria-hidden
+            />
           </div>
           <PageHeader
             titleKey="auth:signIn.title"

@@ -10,6 +10,7 @@
  */
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation, useApiQuery, useInvalidate } from '@/shared/hooks';
+import { INLINE_ERRORS_META } from '@services/query';
 import { LIVE_LIST_QUERY_OPTIONS } from '@config';
 import { invalidateSupportCases, supportKeys } from '@services/query';
 import { mySupportService } from '../services/SupportService';
@@ -63,6 +64,9 @@ export function useCreateSupportCase() {
     // ticket, so a generic toast would be a second message for one event.
     showSuccessToast: false,
     showErrorToast: false,
+    // B1 — the dialog shows the real reason itself; without this the
+    // app-wide toast repeated it beside the inline message.
+    meta: { [INLINE_ERRORS_META]: true },
     // Both "my tickets" lists — this page's and the dashboard tracker's.
     onSuccess: () => invalidateSupportCases(queryClient),
   });

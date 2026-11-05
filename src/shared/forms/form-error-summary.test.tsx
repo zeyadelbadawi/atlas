@@ -84,7 +84,7 @@ describe('FormErrorSummary', () => {
     render(<Harness />);
     await submit();
     const summary = screen.getByTestId('form-error-summary');
-    expect(summary.textContent).toContain('Fix these 2 problems before saving');
+    expect(summary.textContent).toContain('Fix these 2 problems to continue');
     expect(summary.textContent).toContain(
       'Required: Enter a valid email address'
     );
@@ -111,7 +111,7 @@ describe('FormErrorSummary', () => {
     render(<Harness lang="ar" />);
     await submit();
     expect(screen.getByTestId('form-error-summary').textContent).toContain(
-      'صحّح هاتين المشكلتين قبل الحفظ'
+      'صحّح هاتين المشكلتين للمتابعة'
     );
   });
 

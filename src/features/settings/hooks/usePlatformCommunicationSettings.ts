@@ -7,7 +7,7 @@
  * into one cache entry would make each tab's save clobber the other's.
  */
 import { useApiMutation, useApiQuery } from '@/shared/hooks';
-import { platformSettingsKeys } from '@services/query';
+import { INLINE_ERRORS_META, platformSettingsKeys } from '@services/query';
 import { platformSettingsService } from '../services/PlatformSettingsService';
 import type { ApiError } from '@api';
 import type {
@@ -32,6 +32,9 @@ export function useUpdatePlatformCommunicationSettings() {
       platformSettingsService.updateCommunications(payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B1 (V20) — the tab shows a failure once (on its field, or one inline
+    // message); the app-wide toast stays quiet.
+    meta: { [INLINE_ERRORS_META]: true },
     invalidateKeys: [platformSettingsKeys.communications()],
   });
 }

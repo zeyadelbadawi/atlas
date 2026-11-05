@@ -14,7 +14,11 @@
  */
 import { errorMessageKey, errorTitleKey } from '@services';
 import type { ApiError } from '@services';
-import { humanizeFieldName, toErrorsNamespaceKey } from '@utils';
+import {
+  displayableErrorKey,
+  humanizeFieldName,
+  toErrorsNamespaceKey,
+} from '@utils';
 
 export interface MutationErrorToast {
   readonly titleKey: string;
@@ -25,7 +29,7 @@ export interface MutationErrorToast {
 export interface MutationErrorToastOptions {
   /** A caller's explicit message replaces the derived one (legacy option). */
   readonly errorMessageKey?: string;
-  /** Whether a translation key exists — a raw key never reaches the screen. */
+  /** Whether a key resolves to a translated STRING — a raw key or an object never reaches the screen. */
   readonly exists: (key: string) => boolean;
   /** `navigator.onLine`; `false` explains that nothing was saved offline. */
   readonly online: boolean;
@@ -45,6 +49,36 @@ const ACTION_FALLBACK: Partial<Record<ApiError['kind'], string>> = {
   forbidden: 'errors:mutation.forbidden',
   unknown: 'errors:mutation.failed',
 };
+
+/**
+ * B1 — a kind's title is only true for the kind's GENERIC description.
+ * "Your session has expired" above "Your current password is incorrect", or
+ * "This item was changed elsewhere" above "This phone number is already in
+ * use", told the customer something false. When the description is a
+ * specific reason, these kinds get a neutral title instead.
+ */
+const MISLEADING_WITH_SPECIFIC: ReadonlySet<ApiError['kind']> = new Set([
+  'unauthorized',
+  'conflict',
+  // "Check the highlighted fields" when nothing could be highlighted.
+  'validation',
+  'unknown',
+]);
+
+/** The toast title that is true for this description. */
+export function errorToastTitleKey(
+  kind: ApiError['kind'],
+  descriptionKey: string
+): string {
+  const action = ACTION_TITLE[kind];
+  if (action) return action;
+  const specific =
+    descriptionKey !== errorMessageKey(kind) &&
+    descriptionKey !== ACTION_FALLBACK[kind];
+  return specific && MISLEADING_WITH_SPECIFIC.has(kind)
+    ? 'errors:mutation.failedTitle'
+    : errorTitleKey(kind);
+}
 
 export function mutationErrorToast(
   error: Pick<ApiError, 'kind' | 'messageKey' | 'violations'>,
@@ -82,15 +116,18 @@ export function mutationErrorToast(
     }
   }
 
-  const specific = toErrorsNamespaceKey(error.messageKey);
-  const isGenericForKind = specific === errorMessageKey(error.kind);
-  const descriptionKey =
-    !isGenericForKind && options.exists(specific)
-      ? specific
-      : (ACTION_FALLBACK[error.kind] ?? errorMessageKey(error.kind));
+  const specific = displayableErrorKey(
+    toErrorsNamespaceKey(error.messageKey),
+    options.exists
+  );
+  const isGenericForKind =
+    specific === null || specific === errorMessageKey(error.kind);
+  const descriptionKey = !isGenericForKind
+    ? specific
+    : (ACTION_FALLBACK[error.kind] ?? errorMessageKey(error.kind));
 
   return {
-    titleKey: ACTION_TITLE[error.kind] ?? errorTitleKey(error.kind),
+    titleKey: errorToastTitleKey(error.kind, descriptionKey),
     descriptionKey,
   };
 }

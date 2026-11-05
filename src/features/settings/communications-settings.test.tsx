@@ -47,6 +47,7 @@ const baseSettings: PlatformCommunicationSettings = {
 };
 
 let settings: PlatformCommunicationSettings = baseSettings;
+let updateError: unknown = null;
 
 const mutate = vi.fn(
   (
@@ -67,7 +68,7 @@ vi.mock('./hooks', () => ({
   useUpdatePlatformCommunicationSettings: () => ({
     mutate,
     isPending: false,
-    error: null,
+    error: updateError,
   }),
 }));
 
@@ -84,6 +85,7 @@ afterEach(() => {
   cleanup();
   vi.clearAllMocks();
   settings = baseSettings;
+  updateError = null;
 });
 
 function renderTab() {
@@ -195,7 +197,29 @@ describe('CommunicationsSettings', () => {
       (screen.getByLabelText(/remember atlas devices/i) as HTMLInputElement)
         .disabled
     ).toBe(true);
-    expect(screen.queryByRole('button', { name: /^save$/i })).toBeNull();
+    // B1 (V40) — no disabled Cancel/Save sitting on the card's edge.
+    expect(screen.queryByRole('button', { name: /save settings/i })).toBeNull();
+    expect(screen.queryByRole('button', { name: /^cancel$/i })).toBeNull();
     expect(mutate).not.toHaveBeenCalled();
+  });
+
+  // B1 (V20) — one message per failure: the inline one, with the real
+  // reason; no toast on top of it.
+  it('says once, with the real reason, that the settings were not saved', async () => {
+    const { ApiError } = await import('@api');
+    updateError = new ApiError({
+      kind: 'server',
+      messageKey: 'errors.internal',
+      status: 500,
+      retryable: true,
+    });
+    renderTab();
+    const alert = await screen.findByTestId('save-failed');
+    expect(alert.textContent).toContain(
+      'The communication settings could not be saved.'
+    );
+    expect(alert.textContent).toContain('Something failed on our side');
+    expect(screen.getAllByRole('alert')).toHaveLength(1);
+    expect(notifyError).not.toHaveBeenCalled();
   });
 });

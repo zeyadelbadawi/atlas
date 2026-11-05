@@ -12,19 +12,35 @@ import {
   MAX_ASSIGNMENT_INSTRUCTIONS_LENGTH,
   MAX_ASSIGNMENT_TITLE_LENGTH,
 } from '../constants/learning.constants';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 export const assignmentAuthoringSchema = z.object({
   title: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_ASSIGNMENT_TITLE_LENGTH, 'validation:maxLength'),
+    .max(
+      MAX_ASSIGNMENT_TITLE_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_ASSIGNMENT_TITLE_LENGTH,
+      })
+    ),
   description: z
     .string()
-    .max(MAX_ASSIGNMENT_DESCRIPTION_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_ASSIGNMENT_DESCRIPTION_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_ASSIGNMENT_DESCRIPTION_LENGTH,
+      })
+    )
     .optional(),
   instructions: z
     .string()
-    .max(MAX_ASSIGNMENT_INSTRUCTIONS_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_ASSIGNMENT_INSTRUCTIONS_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_ASSIGNMENT_INSTRUCTIONS_LENGTH,
+      })
+    )
     .optional(),
   status: z.enum(['draft', 'published']),
   /** A `datetime-local` input value (`YYYY-MM-DDTHH:mm`) — converted to/from an ISO timestamp at the page boundary, matching `InstructorAnnouncementsPage`'s own `scheduledAt` convention. */

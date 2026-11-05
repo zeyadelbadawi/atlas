@@ -5,6 +5,7 @@
  * Atlas form infrastructure.
  */
 import { z } from 'zod';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 /**
  * Trial Policy update schema (Platform Owner only).
@@ -19,7 +20,7 @@ export const updateTrialPolicySchema = z.object({
   durationDays: z
     .number({ invalid_type_error: 'validation:number' })
     .int('validation:integer')
-    .min(0, 'validation:min'),
+    .min(0, validationMessage('validation:min', { min: 0 })),
 });
 
 export type UpdateTrialPolicyFormData = z.infer<typeof updateTrialPolicySchema>;

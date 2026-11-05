@@ -9,6 +9,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation, useApiQuery } from '@/shared/hooks';
 import { authenticationService } from '@services/identity';
+import { INLINE_ERRORS_META } from '@services/query';
 import type { ApiError } from '@api';
 import type { UserSession } from '@types';
 
@@ -29,6 +30,12 @@ export function useSessions() {
     // on focus keeps a revoked-elsewhere session from lingering on screen
     // without polling the endpoint continuously.
     staleTime: 30_000,
+    // B1 (V17) — the HTTP client already replays a failed GET three times;
+    // query-level retries on top kept "Loading your content…" on screen for
+    // ~20 s before the card could say anything. One round, then the card's
+    // error state with its own retry — and no toast repeating it.
+    retry: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 

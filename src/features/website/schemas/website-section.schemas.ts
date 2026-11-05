@@ -142,6 +142,7 @@ import {
   type SectionType,
 } from '@types';
 import { DEFAULT_PUBLIC_WEBSITE_LOCALE } from '../constants/locale.constants';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 /** Matches the backend's identically-named helper (`section-config.schemas.ts`) exactly. Exported so `website.schemas.ts` (header/footer/navigation/page SEO) applies the exact same widening rule. */
 export function coerceLegacyLocalized(value: unknown): unknown {
@@ -179,18 +180,34 @@ export const localizedRequired = (maxLength: number) => {
       en: z
         .string()
         .min(1, 'validation:required')
-        .max(maxLength, 'validation:maxLength'),
-      ar: z.string().max(maxLength, 'validation:maxLength'),
+        .max(
+          maxLength,
+          validationMessage('validation:maxLength', { count: maxLength })
+        ),
+      ar: z
+        .string()
+        .max(
+          maxLength,
+          validationMessage('validation:maxLength', { count: maxLength })
+        ),
     })
   );
   const arabicRequired = z.preprocess(
     coerceLegacyLocalized,
     z.object({
-      en: z.string().max(maxLength, 'validation:maxLength'),
+      en: z
+        .string()
+        .max(
+          maxLength,
+          validationMessage('validation:maxLength', { count: maxLength })
+        ),
       ar: z
         .string()
         .min(1, 'validation:required')
-        .max(maxLength, 'validation:maxLength'),
+        .max(
+          maxLength,
+          validationMessage('validation:maxLength', { count: maxLength })
+        ),
     })
   );
   return z.lazy(() =>
@@ -203,8 +220,18 @@ export const localizedOptional = (maxLength: number) =>
   z.preprocess(
     coerceLegacyLocalized,
     z.object({
-      en: z.string().max(maxLength, 'validation:maxLength'),
-      ar: z.string().max(maxLength, 'validation:maxLength'),
+      en: z
+        .string()
+        .max(
+          maxLength,
+          validationMessage('validation:maxLength', { count: maxLength })
+        ),
+      ar: z
+        .string()
+        .max(
+          maxLength,
+          validationMessage('validation:maxLength', { count: maxLength })
+        ),
     })
   );
 
@@ -341,7 +368,10 @@ const testimonialItemSchema = z.object({
   authorName: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_SHORT_TEXT, 'validation:maxLength'),
+    .max(
+      MAX_SHORT_TEXT,
+      validationMessage('validation:maxLength', { count: MAX_SHORT_TEXT })
+    ),
   authorRole: localizedOptional(MAX_SHORT_TEXT).optional(),
   avatar: imageValueSchema.optional(),
   avatarAlt: localizedOptional(MAX_SHORT_TEXT).optional(),
@@ -407,8 +437,17 @@ export const contactSectionSchema = z.object({
     .email('validation:invalidEmail')
     .optional()
     .or(z.literal('')),
-  phone: z.string().max(30, 'validation:maxLength').optional(),
-  address: z.string().max(MAX_SHORT_TEXT, 'validation:maxLength').optional(),
+  phone: z
+    .string()
+    .max(30, validationMessage('validation:maxLength', { count: 30 }))
+    .optional(),
+  address: z
+    .string()
+    .max(
+      MAX_SHORT_TEXT,
+      validationMessage('validation:maxLength', { count: MAX_SHORT_TEXT })
+    )
+    .optional(),
   showForm: z.boolean(),
 });
 
@@ -523,7 +562,10 @@ export const mapSectionSchema = z.object({
   note: localizedOptional(MAX_MAP_NOTE_LENGTH).optional(),
   query: z
     .string()
-    .max(MAX_MAP_QUERY_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_MAP_QUERY_LENGTH,
+      validationMessage('validation:maxLength', { count: MAX_MAP_QUERY_LENGTH })
+    )
     .optional(),
 });
 
@@ -560,7 +602,10 @@ const resultItemSchema = z.object({
   studentName: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_SHORT_TEXT, 'validation:maxLength'),
+    .max(
+      MAX_SHORT_TEXT,
+      validationMessage('validation:maxLength', { count: MAX_SHORT_TEXT })
+    ),
   result: localizedRequired(MAX_RESULT_VALUE_LENGTH),
   detail: localizedOptional(MAX_SHORT_TEXT).optional(),
   photo: imageValueSchema.optional(),
@@ -648,7 +693,10 @@ export const countdownSectionSchema = z.object({
   }),
   timeZone: z
     .string()
-    .max(MAX_TIME_ZONE_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_TIME_ZONE_LENGTH,
+      validationMessage('validation:maxLength', { count: MAX_TIME_ZONE_LENGTH })
+    )
     .regex(TIME_ZONE_PATTERN, 'validation:invalid')
     .optional(),
   endedMessage: localizedOptional(
@@ -790,7 +838,10 @@ const videoTestimonialItemSchema = z.object({
   name: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_SHORT_TEXT, 'validation:maxLength'),
+    .max(
+      MAX_SHORT_TEXT,
+      validationMessage('validation:maxLength', { count: MAX_SHORT_TEXT })
+    ),
   role: localizedRequired(MAX_VIDEO_TESTIMONIAL_ROLE_LENGTH),
   quote: localizedOptional(MAX_VIDEO_TESTIMONIAL_QUOTE_LENGTH).optional(),
   poster: imageValueSchema.optional(),
@@ -810,17 +861,32 @@ const downloadItemSchema = z.object({
   /** A media-library file or an http(s) address (`isDownloadLinkOrEmpty`); empty until added. */
   url: z
     .string()
-    .max(MAX_DOWNLOAD_URL_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_DOWNLOAD_URL_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_DOWNLOAD_URL_LENGTH,
+      })
+    )
     .refine(isDownloadLinkOrEmpty, {
       message: 'validation:invalidDownloadLink',
     }),
   fileType: z
     .string()
-    .max(MAX_DOWNLOAD_FILE_TYPE_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_DOWNLOAD_FILE_TYPE_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_DOWNLOAD_FILE_TYPE_LENGTH,
+      })
+    )
     .optional(),
   fileSize: z
     .string()
-    .max(MAX_DOWNLOAD_FILE_SIZE_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_DOWNLOAD_FILE_SIZE_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_DOWNLOAD_FILE_SIZE_LENGTH,
+      })
+    )
     .optional(),
 });
 

@@ -228,12 +228,19 @@ export function ProfileSessionsCard(): JSX.Element {
   };
 
   const renderBody = (): JSX.Element => {
-    if (sessions.isLoading) {
+    // A retry after a failure shows that it is retrying.
+    if (sessions.isLoading || (sessions.isError && sessions.isFetching)) {
       return <SectionLoader />;
     }
 
     if (sessions.isError) {
-      return <ErrorState onRetry={() => void sessions.refetch()} />;
+      return (
+        <ErrorState
+          kind={sessions.error?.kind}
+          titleKey="profile:sections.security.sessionsLoadFailed"
+          onRetry={() => void sessions.refetch()}
+        />
+      );
     }
 
     const data = sessions.data ?? [];

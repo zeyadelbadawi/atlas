@@ -111,6 +111,32 @@ const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 1_000;
 
 /**
+ * B1 (UX audit) — the longest `Retry-After` worth waiting for on a 429.
+ * Rate-limit windows are minutes long (sign-in: 15 minutes); replaying a
+ * refused request three times inside them only spent the customer's
+ * remaining attempts and held a spinner for ~12 s before the message. A
+ * 429 is retried once, and only when the server says it clears this soon.
+ */
+const MAX_RATE_LIMIT_WAIT_MS = 3_000;
+
+/** `Retry-After` in milliseconds (delta-seconds or HTTP-date); `null` when absent or unusable. */
+export function retryAfterMs(
+  headers: unknown,
+  now = Date.now()
+): number | null {
+  const raw =
+    headers && typeof headers === 'object'
+      ? ((headers as Record<string, unknown>)['retry-after'] ??
+        (headers as Record<string, unknown>)['Retry-After'])
+      : undefined;
+  if (typeof raw !== 'string' && typeof raw !== 'number') return null;
+  const seconds = Number(raw);
+  if (Number.isFinite(seconds)) return seconds >= 0 ? seconds * 1000 : null;
+  const date = Date.parse(String(raw));
+  return Number.isFinite(date) ? Math.max(0, date - now) : null;
+}
+
+/**
  * The auth-lifecycle endpoints, which must never trigger the 401
  * refresh-and-retry below.
  *
@@ -342,7 +368,18 @@ export class HttpClient {
           const retryCount =
             (originalRequest.headers['X-Retry-Count'] as number) ?? 0;
 
-          if (retryCount < MAX_RETRIES) {
+          if (error.response?.status === 429) {
+            const waitMs = retryAfterMs(error.response.headers);
+            if (
+              retryCount === 0 &&
+              waitMs !== null &&
+              waitMs <= MAX_RATE_LIMIT_WAIT_MS
+            ) {
+              originalRequest.headers['X-Retry-Count'] = 1;
+              await this.delay(waitMs);
+              return this.instance.request(originalRequest);
+            }
+          } else if (retryCount < MAX_RETRIES) {
             originalRequest.headers['X-Retry-Count'] = retryCount + 1;
 
             await this.delay(RETRY_DELAY_MS * (retryCount + 1));

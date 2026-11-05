@@ -123,7 +123,7 @@ describe('ProfilePhoneCard', () => {
       screen.getByText('You haven’t added a phone number yet.')
     ).toBeTruthy();
     await user.click(screen.getByRole('button', { name: 'Add phone number' }));
-    const input = screen.getByLabelText('Mobile number');
+    const input = screen.getByLabelText(/^Mobile number/);
     await user.type(input, '+20 100 123 4567');
     await user.click(screen.getByRole('button', { name: 'Save changes' }));
     await waitFor(() => expect(updateMutate).toHaveBeenCalledTimes(1));
@@ -162,7 +162,7 @@ describe('ProfilePhoneCard', () => {
     renderCard();
     expect(screen.getByText('Verified')).toBeTruthy();
     await user.click(screen.getByRole('button', { name: 'Change number' }));
-    const input = screen.getByLabelText('Mobile number') as HTMLInputElement;
+    const input = screen.getByLabelText(/^Mobile number/) as HTMLInputElement;
     expect(input.value).toBe('1001234567');
     expect(screen.getByTestId('phone-country-trigger').textContent).toContain(
       '+20'
@@ -228,9 +228,79 @@ describe('ProfilePhoneCard', () => {
     ).toBeTruthy();
   });
 
+  // B1 (V11) — "this number is already used by another account" is a 409
+  // with a `phoneNumber` violation: it is shown on the field, once, and
+  // never as "This item was changed elsewhere — reload the page".
+  const PHONE_TAKEN = () =>
+    new ApiError({
+      kind: 'conflict',
+      messageKey: 'errors.auth.phoneTaken',
+      status: 409,
+      retryable: false,
+      violations: [
+        { field: 'phoneNumber', messageKey: 'validation:phoneTaken' },
+      ],
+    });
+
+  /** Opens the editor, then lets the save come back with `error`. */
+  async function saveFails(error: ApiError, language: 'en' | 'ar' = 'en') {
+    const user = userEvent.setup();
+    const view = renderCard(language);
+    await user.click(
+      screen.getByRole('button', {
+        name: language === 'ar' ? 'إضافة رقم هاتف' : 'Add phone number',
+      })
+    );
+    updateError = error;
+    view.rerender(
+      <I18nextProvider i18n={createI18nInstance(language)}>
+        <MemoryRouter initialEntries={['/profile']}>
+          <div dir={language === 'ar' ? 'rtl' : 'ltr'}>
+            <ProfilePhoneCard />
+          </div>
+        </MemoryRouter>
+      </I18nextProvider>
+    );
+  }
+
+  it('shows a taken number on the field, not as a conflict card', async () => {
+    await saveFails(PHONE_TAKEN());
+    const message = await screen.findByText(/already used by another account/);
+    expect(message.getAttribute('role')).toBe('alert');
+    expect(
+      screen.getByLabelText(/^Mobile number/).getAttribute('aria-invalid')
+    ).toBe('true');
+    expect(screen.getAllByRole('alert')).toHaveLength(1);
+    expect(screen.queryByText(/changed elsewhere/i)).toBeNull();
+    expect(screen.queryByText(/Reload the page/i)).toBeNull();
+    expect(screen.queryByTestId('save-failed')).toBeNull();
+  });
+
+  it('shows a taken number on the field in Arabic', async () => {
+    await saveFails(PHONE_TAKEN(), 'ar');
+    expect(await screen.findByText(/مستخدم في حساب آخر/)).toBeTruthy();
+    expect(screen.getAllByRole('alert')).toHaveLength(1);
+  });
+
+  it('says once, with the real reason, that a number was not saved after a server error', async () => {
+    await saveFails(
+      new ApiError({
+        kind: 'server',
+        messageKey: 'errors.internal',
+        status: 500,
+        retryable: true,
+      })
+    );
+    const alert = screen.getByTestId('save-failed');
+    expect(alert.textContent).toContain("Your phone number wasn't saved");
+    expect(alert.textContent).toContain('Something failed on our side');
+    expect(screen.getAllByRole('alert')).toHaveLength(1);
+    expect(screen.queryByText('Unexpected error')).toBeNull();
+  });
+
   it('opens the editor from the prompt link (?phone=add)', () => {
     renderCard('en', '/profile?phone=add');
-    expect(screen.getByLabelText('Mobile number')).toBeTruthy();
+    expect(screen.getByLabelText(/^Mobile number/)).toBeTruthy();
   });
 
   it('renders in Arabic with the number left-to-right inside right-to-left text', () => {

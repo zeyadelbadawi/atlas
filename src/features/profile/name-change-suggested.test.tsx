@@ -76,7 +76,7 @@ describe('ProfilePersonalSection — display-name prompt', () => {
     expect(prompt.textContent).toContain('Nile Academy');
     expect(prompt.textContent).not.toContain('Delta Academy');
 
-    const lastName = screen.getByLabelText('Last name') as HTMLInputElement;
+    const lastName = screen.getByLabelText(/^Last name/) as HTMLInputElement;
     expect(lastName.disabled).toBe(true);
     fireEvent.click(screen.getByRole('button', { name: 'Change name' }));
     expect(lastName.disabled).toBe(false);

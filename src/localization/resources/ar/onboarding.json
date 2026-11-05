@@ -85,7 +85,8 @@
     "failedGeneric": "لم تكتمل عملية الدفع.",
     "resubmit": "إرسال دفعة جديدة",
     "priceMonthly": "{{price}} شهرياً",
-    "priceYearly": "{{price}} سنوياً"
+    "priceYearly": "{{price}} سنوياً",
+    "choosePlanFirst": "اختر باقة لبدء تجربتك."
   },
   "academy": {
     "provisioningTitle": "جارٍ إعداد {{name}}",

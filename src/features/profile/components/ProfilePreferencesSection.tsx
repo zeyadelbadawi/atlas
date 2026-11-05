@@ -6,9 +6,12 @@
  * LANGUAGE AND THEME are a form with a Save button: they apply to the
  * whole interface at once, and applying them the instant a select
  * changes would re-render the page — in the other direction, for
- * Arabic — under the person's pointer. On save they apply locally
- * (`useLanguage`/`useTheme`) and persist through `useUpdatePreferences`
- * so the next sign-in starts the same way.
+ * Arabic — under the person's pointer. They persist through
+ * `useUpdatePreferences` and apply locally (`useLanguage`/`useTheme`)
+ * only once the save SUCCEEDED (B1, V15): applied first, a failed save
+ * left the page right-to-left with English text, said it failed in the
+ * language it had not switched to, and kept the unsaved language after a
+ * reload.
  *
  * EMAIL PREFERENCES are the `CommunicationPreferencesPanel`: a matrix of
  * per-category switches that save on change, optimistically, with a
@@ -38,10 +41,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { ErrorState } from '@components/feedback';
 import { useToast, useLanguage, useTheme } from '@hooks';
+import { ensureLanguageLoaded } from '@localization';
 import { CommunicationPreferencesPanel } from '@features/notifications';
 import { useUpdatePreferences } from '../hooks';
+import { SaveFailedAlert } from '@forms';
 
 const preferencesSchema = z.object({
   language: z.enum(['en', 'ar']),
@@ -51,7 +55,7 @@ const preferencesSchema = z.object({
 type PreferencesFormData = z.infer<typeof preferencesSchema>;
 
 export function ProfilePreferencesSection(): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { toast } = useToast();
   const { language, setLanguage } = useLanguage();
   const { preference, setPreference } = useTheme();
@@ -68,20 +72,24 @@ export function ProfilePreferencesSection(): JSX.Element {
   const formValues = watch();
 
   const handleFormSubmit = (data: PreferencesFormData) => {
-    if (data.language !== language) {
-      setLanguage(data.language);
-    }
-    if (data.theme !== preference) {
-      setPreference(data.theme);
-    }
-
     updatePreferences.mutate(
       { language: data.language, theme: data.theme },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
+          if (data.theme !== preference) {
+            setPreference(data.theme);
+          }
+          if (data.language !== language) {
+            // Load the new language before switching, so the page never
+            // shows a moment of right-to-left English (or the reverse).
+            await ensureLanguageLoaded(i18n, data.language).catch(() => {});
+            setLanguage(data.language);
+          }
+          // Confirmed in the language the page now shows.
+          const tt = i18n.getFixedT(data.language);
           toast({
-            title: t('profile:success.preferencesUpdated'),
-            description: t('profile:success.changesApplied'),
+            title: tt('profile:success.preferencesUpdated'),
+            description: tt('profile:success.changesApplied'),
           });
         },
       }
@@ -98,10 +106,6 @@ export function ProfilePreferencesSection(): JSX.Element {
       </CardHeader>
       <CardContent className="space-y-6">
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-          {updatePreferences.error ? (
-            <ErrorState onRetry={handleSubmit(handleFormSubmit)} />
-          ) : null}
-
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="language">{t('profile:fields.language')}</Label>
@@ -156,6 +160,14 @@ export function ProfilePreferencesSection(): JSX.Element {
               </Select>
             </div>
           </div>
+
+          {updatePreferences.error ? (
+            <SaveFailedAlert
+              error={updatePreferences.error}
+              titleKey="profile:errors.preferencesNotSaved"
+              onRetry={handleSubmit(handleFormSubmit)}
+            />
+          ) : null}
 
           <Button type="submit" disabled={updatePreferences.isPending}>
             <Save className="me-2 size-4" aria-hidden />

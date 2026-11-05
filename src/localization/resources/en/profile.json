@@ -82,7 +82,9 @@
       "otherTrustedDevicesForgotten": "Other devices forgotten",
       "trustedDeviceForgetFailed": "Could not forget that device. Please try again.",
       "noTrustedDevices": "No remembered devices",
-      "noTrustedDevicesDescription": "When you tick “Remember this device” at sign-in, that browser will be listed here."
+      "noTrustedDevicesDescription": "When you tick “Remember this device” at sign-in, that browser will be listed here.",
+      "sessionsLoadFailed": "We couldn't load your active sessions",
+      "trustedDevicesLoadFailed": "We couldn't load your remembered devices"
     }
   },
   "fields": {
@@ -97,7 +99,8 @@
     "theme": "Theme",
     "currentPassword": "Current password",
     "newPassword": "New password",
-    "confirmNewPassword": "Confirm new password"
+    "confirmNewPassword": "Confirm new password",
+    "fullName": "Your full name"
   },
   "placeholders": {
     "currentPassword": "Enter your current password",
@@ -123,13 +126,18 @@
     "currentPasswordRequired": "Current password is required",
     "passwordTooShort": "Password must be at least 8 characters",
     "passwordMismatch": "Passwords do not match",
-    "userNotFound": "We couldn't load your profile."
+    "userNotFound": "We couldn't load your profile.",
+    "nameTooLong": "Your first and last name together must be {{count}} characters or fewer",
+    "notSaved": "Your changes weren't saved",
+    "passwordNotChanged": "Your password wasn't changed",
+    "preferencesNotSaved": "Your language and theme weren't saved, so nothing has changed"
   },
   "success": {
     "passwordChanged": "Password changed",
     "passwordUpdated": "Your password has been updated.",
     "preferencesUpdated": "Preferences updated",
-    "changesApplied": "Your changes have been applied."
+    "changesApplied": "Your changes have been applied.",
+    "profileUpdated": "Your name has been saved"
   },
   "actions": {
     "changePassword": "Change password",
@@ -236,7 +244,9 @@
       "body": "So we can reach you about your account if we ever need to. If you are a student in an academy, its owners and managers can see it, and so can Atlas platform administrators.",
       "action": "Add phone number",
       "dismiss": "Not now"
-    }
+    },
+    "notSaved": "Your phone number wasn't saved",
+    "notRemoved": "Your phone number wasn't removed"
   },
   "privacyRequests": {
     "title": "Your data",
@@ -281,5 +291,14 @@
       "completed": "Done",
       "rejected": "Declined"
     }
+  },
+  "roles": {
+    "platform_owner": "Platform owner",
+    "owner": "Owner",
+    "administrator": "Administrator",
+    "manager": "Manager",
+    "member": "Member",
+    "instructor": "Instructor",
+    "staff": "Staff"
   }
 }

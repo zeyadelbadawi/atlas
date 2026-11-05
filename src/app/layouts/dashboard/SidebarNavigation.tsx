@@ -46,13 +46,30 @@ export function SidebarNavigation({
   const { t } = useTranslation();
   const location = useLocation();
 
+  // B1 (V31) — one highlighted item: the most specific match. A nested
+  // page (e.g. /dashboard/provisioning/new) used to light up both its own
+  // item and its parent's.
+  const flatten = (items: readonly NavigationItem[]): NavigationItem[] =>
+    items.flatMap((entry) => [entry, ...flatten(entry.children ?? [])]);
+  const activePath = flatten(sections.flatMap((section) => section.items))
+    .filter((candidate) =>
+      isPathActive(
+        location.pathname,
+        candidate.path,
+        candidate.matchNestedPaths
+      )
+    )
+    .reduce<string | null>(
+      (best, candidate) =>
+        best === null || candidate.path.length > best.length
+          ? candidate.path
+          : best,
+      null
+    );
+
   const renderItem = (item: NavigationItem): JSX.Element => {
     const label = t(item.labelKey);
-    const isActive = isPathActive(
-      location.pathname,
-      item.path,
-      item.matchNestedPaths
-    );
+    const isActive = item.path === activePath;
 
     const link = (
       <NavLink

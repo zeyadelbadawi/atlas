@@ -1,11 +1,11 @@
 /**
  * useUpdatePlatformSettings hook.
  *
- * Both `GeneralSettings` and `SecuritySettings` share this one mutation —
- * each patches only the fields it owns, never the whole object.
+ * `GeneralSettings` patches only the fields it owns, never the whole
+ * object.
  */
 import { useApiMutation } from '@/shared/hooks';
-import { platformSettingsKeys } from '@services/query';
+import { INLINE_ERRORS_META, platformSettingsKeys } from '@services/query';
 import { platformSettingsService } from '../services/PlatformSettingsService';
 import type { ApiError } from '@api';
 import type { PlatformConfiguration } from '@types';
@@ -18,8 +18,11 @@ export function useUpdatePlatformSettings() {
   >({
     mutationFn: (payload) =>
       platformSettingsService.updateConfiguration(payload),
-    showSuccessToast: false,
+    // B1 — a save is confirmed; a failure is shown once, by the form (on
+    // its fields, or one inline message), never also as a toast.
+    successMessageKey: 'settings:messages.saveSuccess',
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     invalidateKeys: [platformSettingsKeys.all],
   });
 }

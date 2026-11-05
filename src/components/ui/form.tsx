@@ -15,6 +15,7 @@ import type {
 } from 'react-hook-form';
 
 import { cn } from '../../lib/utils';
+import { parseValidationMessage } from '../../shared/forms/validation-message';
 import { Label } from './label';
 
 const Form = FormProvider;
@@ -159,8 +160,19 @@ const FormMessage = React.forwardRef<
     // already uses for the other form-field convention. Without this,
     // every field error in a shadcn-based form rendered the raw key
     // string instead of translated text.
-    const body = rawMessage
-        ? (rawMessage.includes(':') ? t(rawMessage) : rawMessage)
+    //
+    // B1 — the message may carry its values (`validationMessage`), and a
+    // shadcn field has no label text here, so `{{field}}` defaults to "This
+    // field": customers used to read "{{field}} must be {{count}}
+    // characters or fewer".
+    const parsed = rawMessage ? parseValidationMessage(rawMessage) : null;
+    const body = parsed
+        ? parsed.key.includes(':')
+            ? t(parsed.key, {
+                  field: t('validation:thisField'),
+                  ...parsed.values,
+              })
+            : rawMessage
         : children;
 
     if (!body) {

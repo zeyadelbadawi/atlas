@@ -10,7 +10,9 @@
   },
   "stages": {
     "listLabel": "Setup progress",
-    "academy": { "label": "Create your Academy and reserve its address" },
+    "academy": {
+      "label": "Create your Academy and reserve its address"
+    },
     "website": {
       "label": "Build your website",
       "labelComplete": "Build your website with starter pages"
@@ -24,7 +26,9 @@
       "logoMissing": "Your logo wasn't added because the page was closed or reloaded before it uploaded.",
       "logoAddLater": "Add your logo in Branding"
     },
-    "ready": { "label": "Ready" },
+    "ready": {
+      "label": "Ready"
+    },
     "state": {
       "pending": "waiting",
       "current": "in progress",
@@ -126,7 +130,8 @@
     },
     "subdomainSuggested": "Suggested from your Academy name. Edit it if you would prefer a different address.",
     "addressInProgress": "This address is already being set up from another tab or an earlier attempt.",
-    "followInProgress": "Follow that setup"
+    "followInProgress": "Follow that setup",
+    "subdomainCheckFailed": "We couldn't check this address. Check your connection and try again."
   },
   "history": {
     "title": "Academy Provisioning",

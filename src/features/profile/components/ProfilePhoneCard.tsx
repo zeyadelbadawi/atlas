@@ -48,10 +48,12 @@ import {
   isPhoneCountry,
   refinePhone,
 } from '@components/phone';
-import { isFieldViolationError, useServerValidation } from '@forms';
+import { useServerValidation } from '@forms';
 import { useToast } from '@app/providers';
 import type { ApiError } from '@api';
 import { useRemovePhone, useUpdatePhone, useUserPhone } from '../hooks';
+import { hasViolationOn, useLabelledViolations } from '@forms';
+import { SaveFailedAlert } from '@forms';
 
 const phoneSchema = z
   .object({ phoneCountry: z.string(), phoneNumber: z.string() })
@@ -62,6 +64,12 @@ const phoneSchema = z
 type PhoneFormData = z.infer<typeof phoneSchema>;
 
 const RATE_LIMITED_KEY = 'errors.auth.rateLimited';
+
+/** API fields the phone form shows a violation beside, with their labels. */
+const FIELD_LABELS = {
+  phoneNumber: 'profile:phone.label',
+  phoneCountry: 'profile:phone.label',
+} as const;
 
 function isRateLimited(error: ApiError | null): boolean {
   return (
@@ -91,7 +99,13 @@ export function ProfilePhoneCard(): JSX.Element {
     reset,
     formState: { errors },
   } = form;
-  useServerValidation(form, updatePhone.error);
+  // B1 (V11) — "this number is already used" (409 `errors.auth.phoneTaken`)
+  // carries a `phoneNumber` violation: it is shown on the field, never as
+  // "This item was changed elsewhere — reload the page".
+  useServerValidation(
+    form,
+    useLabelledViolations(updatePhone.error, FIELD_LABELS)
+  );
 
   const startEditing = () => {
     updatePhone.reset();
@@ -141,9 +155,7 @@ export function ProfilePhoneCard(): JSX.Element {
   };
 
   const updateError = updatePhone.error;
-  const hasFieldViolations =
-    isFieldViolationError(updateError) &&
-    (updateError?.violations?.length ?? 0) > 0;
+  const hasFieldViolations = hasViolationOn(updateError, FIELD_LABELS);
 
   return (
     <Card id="phone" data-testid="profile-phone-card">
@@ -176,8 +188,9 @@ export function ProfilePhoneCard(): JSX.Element {
                 {t('profile:phone.rateLimited')}
               </p>
             ) : updateError && !hasFieldViolations ? (
-              <ErrorState
-                kind={updateError.kind}
+              <SaveFailedAlert
+                error={updateError}
+                titleKey="profile:phone.notSaved"
                 onRetry={handleSubmit(submit)}
               />
             ) : null}
@@ -186,6 +199,7 @@ export function ProfilePhoneCard(): JSX.Element {
               errors={errors}
               id="profile-phone"
               label={t('profile:phone.label')}
+              required
               disabled={updatePhone.isPending}
               autoFocus
             />
@@ -246,14 +260,16 @@ export function ProfilePhoneCard(): JSX.Element {
               </p>
             ) : null}
             {removePhone.error ? (
-              <ErrorState
-                kind={removePhone.error.kind}
-                descriptionKey={
-                  isRateLimited(removePhone.error)
-                    ? 'profile:phone.rateLimited'
-                    : undefined
-                }
-              />
+              isRateLimited(removePhone.error) ? (
+                <p role="alert" className="text-sm text-destructive">
+                  {t('profile:phone.rateLimited')}
+                </p>
+              ) : (
+                <SaveFailedAlert
+                  error={removePhone.error}
+                  titleKey="profile:phone.notRemoved"
+                />
+              )
             ) : null}
             <div className="flex flex-wrap gap-3">
               <Button type="button" variant="outline" onClick={startEditing}>

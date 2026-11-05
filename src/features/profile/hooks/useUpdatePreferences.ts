@@ -7,6 +7,7 @@
  */
 import { useApiMutation, useAuth } from '@/shared/hooks';
 import { currentUserService } from '@services/identity';
+import { INLINE_ERRORS_META } from '@services/query';
 import type { ApiError } from '@api';
 import type { CurrentUser, UserPreferences } from '@types';
 
@@ -18,6 +19,9 @@ export function useUpdatePreferences() {
       currentUserService.updatePreferences(preferences),
     showSuccessToast: false,
     showErrorToast: false,
+    // B1 (V15) — the section says itself that nothing was saved, in the
+    // language still on screen; no toast repeats it.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await refreshSession();
     },

@@ -6,6 +6,7 @@
  * their own schemas rather than redefining common rules.
  */
 import { z } from 'zod';
+import { validationMessage } from './validation-message';
 
 /** Message keys consumed by the field-error renderer. */
 export const VALIDATION_MESSAGE_KEYS = {
@@ -35,11 +36,21 @@ export function requiredText(options?: {
     .min(1, VALIDATION_MESSAGE_KEYS.required);
 
   if (options?.minLength !== undefined) {
-    schema = schema.min(options.minLength, VALIDATION_MESSAGE_KEYS.minLength);
+    schema = schema.min(
+      options.minLength,
+      validationMessage(VALIDATION_MESSAGE_KEYS.minLength, {
+        count: options.minLength,
+      })
+    );
   }
 
   if (options?.maxLength !== undefined) {
-    schema = schema.max(options.maxLength, VALIDATION_MESSAGE_KEYS.maxLength);
+    schema = schema.max(
+      options.maxLength,
+      validationMessage(VALIDATION_MESSAGE_KEYS.maxLength, {
+        count: options.maxLength,
+      })
+    );
   }
 
   return schema;
@@ -51,7 +62,12 @@ export function optionalText(maxLength?: number) {
   const bounded =
     maxLength === undefined
       ? base
-      : base.max(maxLength, VALIDATION_MESSAGE_KEYS.maxLength);
+      : base.max(
+          maxLength,
+          validationMessage(VALIDATION_MESSAGE_KEYS.maxLength, {
+            count: maxLength,
+          })
+        );
 
   return bounded
     .optional()
@@ -80,8 +96,14 @@ export function numberInRange(minimum: number, maximum: number) {
       required_error: VALIDATION_MESSAGE_KEYS.required,
       invalid_type_error: VALIDATION_MESSAGE_KEYS.number,
     })
-    .min(minimum, VALIDATION_MESSAGE_KEYS.min)
-    .max(maximum, VALIDATION_MESSAGE_KEYS.max);
+    .min(
+      minimum,
+      validationMessage(VALIDATION_MESSAGE_KEYS.min, { min: minimum })
+    )
+    .max(
+      maximum,
+      validationMessage(VALIDATION_MESSAGE_KEYS.max, { max: maximum })
+    );
 }
 
 /** A required ISO-8601 date string. */

@@ -23,7 +23,8 @@
     "dateFormat": "Date Format",
     "timeFormat": "Time Format",
     "timeFormat12": "12-hour",
-    "timeFormat24": "24-hour"
+    "timeFormat24": "24-hour",
+    "characterCount": "{{count}} / {{max}} characters"
   },
   "security": {
     "title": "Security Settings",
@@ -104,7 +105,8 @@
     "saveSuccess": "Settings saved successfully",
     "saveError": "Failed to save settings",
     "resetSuccess": "Settings reset to defaults",
-    "unsavedChanges": "You have unsaved changes"
+    "unsavedChanges": "You have unsaved changes",
+    "notSaved": "Your settings weren't saved"
   },
   "communications": {
     "title": "Communications",

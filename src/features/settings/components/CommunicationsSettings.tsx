@@ -41,6 +41,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ErrorState } from '@components/feedback';
 import { useToast } from '@app/providers';
 import { useServerValidation } from '@forms';
+import { hasViolationOn, useLabelledViolations } from '@forms';
+import { SaveFailedAlert } from '@forms';
 import {
   usePlatformCommunicationSettings,
   useUpdatePlatformCommunicationSettings,
@@ -54,6 +56,19 @@ import type {
   EmailProviderStatus,
   PlatformCommunicationSettings,
 } from '@types';
+
+/** API fields this tab shows a violation beside, with their labels. */
+const FIELD_NAMES = {
+  emailOtpPolicyManagement:
+    'settings:communications.emailOtpPolicyManagement.label',
+  emailOtpPolicyAcademyDefault:
+    'settings:communications.emailOtpPolicyAcademyDefault.label',
+  trustedDeviceDaysManagement:
+    'settings:communications.trustedDeviceDaysManagement',
+  trustedDeviceDaysAcademy: 'settings:communications.trustedDeviceDaysAcademy',
+  digestHourLocal: 'settings:communications.digestHourLocal',
+  quotaAlertThresholds: 'settings:communications.quota.listLabel',
+} as const;
 
 function toFormValues(
   settings: PlatformCommunicationSettings
@@ -170,7 +185,7 @@ function ProviderStatusList({
 
 export function CommunicationsSettings(): JSX.Element {
   const { t } = useTranslation();
-  const { notifySuccess, notifyError } = useToast();
+  const { notifySuccess } = useToast();
   const {
     data: settings,
     isLoading,
@@ -209,7 +224,10 @@ export function CommunicationsSettings(): JSX.Element {
     if (settings) reset(toFormValues(settings));
   }, [settings, reset]);
 
-  useServerValidation(form, update.error ?? null);
+  useServerValidation(
+    form,
+    useLabelledViolations(update.error ?? null, FIELD_NAMES)
+  );
 
   const thresholds = watch('quotaAlertThresholds');
   const isSaving = update.isPending;
@@ -256,13 +274,6 @@ export function CommunicationsSettings(): JSX.Element {
       onSuccess: (saved) => {
         reset(toFormValues(saved));
         notifySuccess('settings:communications.saved');
-      },
-      onError: (err) => {
-        // Field violations land on their inputs via `useServerValidation`;
-        // anything else gets the generic failure.
-        if (err.kind !== 'validation') {
-          notifyError('settings:communications.saveFailed');
-        }
       },
     });
   };
@@ -327,12 +338,13 @@ export function CommunicationsSettings(): JSX.Element {
               </AlertDescription>
             </Alert>
           ) : null}
-          {update.error && update.error.kind !== 'validation' ? (
-            <Alert variant="destructive" role="alert">
-              <AlertDescription>
-                {t('settings:communications.saveFailed')}
-              </AlertDescription>
-            </Alert>
+          {/* B1 (V20) — field violations land on their inputs; anything
+              else is this one message, with the real reason. */}
+          {update.error && !hasViolationOn(update.error, FIELD_NAMES) ? (
+            <SaveFailedAlert
+              error={update.error}
+              titleKey="settings:communications.saveFailed"
+            />
           ) : null}
 
           <Controller
@@ -531,29 +543,34 @@ export function CommunicationsSettings(): JSX.Element {
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-end gap-3" hidden={readOnly}>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => reset(toFormValues(settings))}
-          disabled={!isDirty || isSaving}
-        >
-          {t('settings:actions.cancel')}
-        </Button>
-        <Button type="submit" disabled={!isDirty || isSaving}>
-          {isSaving ? (
-            <>
-              <Loader2 className="size-4 animate-spin" aria-hidden />
-              {t('settings:actions.saving')}
-            </>
-          ) : (
-            <>
-              <Save className="size-4" aria-hidden />
-              {t('settings:actions.save')}
-            </>
-          )}
-        </Button>
-      </div>
+      {/* B1 (V40) — read-only: no Cancel/Save at all. The `hidden`
+          attribute this used lost to the `flex` class, so two disabled
+          buttons sat on the card's edge. */}
+      {readOnly ? null : (
+        <div className="flex flex-wrap items-center justify-end gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => reset(toFormValues(settings))}
+            disabled={!isDirty || isSaving}
+          >
+            {t('settings:actions.cancel')}
+          </Button>
+          <Button type="submit" disabled={!isDirty || isSaving}>
+            {isSaving ? (
+              <>
+                <Loader2 className="size-4 animate-spin" aria-hidden />
+                {t('settings:actions.saving')}
+              </>
+            ) : (
+              <>
+                <Save className="size-4" aria-hidden />
+                {t('settings:actions.save')}
+              </>
+            )}
+          </Button>
+        </div>
+      )}
     </form>
   );
 }

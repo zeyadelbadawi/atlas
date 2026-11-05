@@ -155,11 +155,20 @@ describe('EmailOtpChallengeForm — submitting', () => {
         .getAttribute('aria-checked')
     ).toBe('true');
 
+    // B1 (V34) — never greyed out for an incomplete code: pressing it
+    // says what is missing instead.
     const verify = screen.getByRole('button', { name: /^verify$/i });
-    expect(verify.hasAttribute('disabled')).toBe(true);
+    expect(verify.hasAttribute('disabled')).toBe(false);
+    fireEvent.click(verify);
+    expect(
+      screen.getByText('Enter all 6 digits of the code from the email.')
+    ).toBeTruthy();
+    expect(onSubmit).not.toHaveBeenCalled();
 
     fireEvent.change(codeInput(), { target: { value: '123456' } });
-    expect(verify.hasAttribute('disabled')).toBe(false);
+    expect(
+      screen.queryByText('Enter all 6 digits of the code from the email.')
+    ).toBeNull();
 
     fireEvent.click(verify);
     expect(onSubmit).toHaveBeenCalledWith({

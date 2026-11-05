@@ -62,7 +62,10 @@
     "descriptionPlaceholder": "Describe the problem, what you expected, and what you saw instead.",
     "descriptionInvalid": "Please describe the problem in at least 10 characters.",
     "submit": "Submit ticket",
-    "failed": "Your ticket could not be submitted. Please check the details and try again."
+    "failed": "Your ticket could not be submitted. Please check the details and try again.",
+    "subjectTooLong": "Keep the subject to {{count}} characters or fewer.",
+    "descriptionTooLong": "Keep the description to {{count}} characters or fewer. Attach a file for longer details.",
+    "characterCount": "{{count}} / {{max}} characters"
   },
   "attachment": {
     "label": "Image (optional)",

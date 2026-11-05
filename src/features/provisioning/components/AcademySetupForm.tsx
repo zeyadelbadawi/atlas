@@ -19,7 +19,7 @@
  * already claimed the same address answers 409 with its request id, and
  * this form offers to follow that request instead.
  */
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
@@ -28,7 +28,7 @@ import { Check, CheckCircle2, Loader2, XCircle } from 'lucide-react';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { Button } from '@/components/ui/button';
-import { cn } from '@utils';
+import { cn, isTranslatedString } from '@utils';
 import {
   listWebsiteThemes,
   SetupBrandStudio,
@@ -36,7 +36,7 @@ import {
 } from '@features/website';
 import { DEFAULT_WEBSITE_THEME_KEY } from '@types';
 import type { ProvisioningRequest, WebsiteThemeKey } from '@types';
-import { isApiError } from '@api';
+import { errorMessageKey, isApiError } from '@api';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import {
   Form,
@@ -48,7 +48,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useSlugSuggestion, useUnsavedChanges } from '@hooks';
+import {
+  resolveErrorTextKey,
+  useSlugSuggestion,
+  useUnsavedChanges,
+} from '@hooks';
+import { errorToastTitleKey } from '@/shared/hooks/mutation-error-toast';
 import { useNameConflictError, useServerValidation } from '@forms';
 import { MAX_SUBDOMAIN_LENGTH } from '../constants/provisioning.constants';
 import {
@@ -60,6 +65,7 @@ import {
   type CreateProvisioningRequestFormData,
 } from '../schemas/provisioning.schemas';
 import { generateProvisioningIdempotencyKey } from '../utils/idempotency.utils';
+import { provisioningService } from '../services/ProvisioningService';
 import { pendingLogoStore } from '../logo/pending-logo';
 import { pendingFaviconStore } from '../logo/pending-favicon';
 import { startAcademyBuild } from '@components/academy-build';
@@ -85,7 +91,7 @@ export function AcademySetupForm({
   submitLabelKey = 'provisioning:start.submit',
   brandStudioOpen = false,
 }: AcademySetupFormProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const createRequest = useCreateProvisioningRequest();
 
   const idempotencyKey = useState(() =>
@@ -94,6 +100,9 @@ export function AcademySetupForm({
 
   const form = useForm<CreateProvisioningRequestFormData>({
     resolver: zodResolver(createProvisioningRequestSchema),
+    // B1 (V13) — a bad address is explained when the field is left, not
+    // only after a submit the disabled button never allowed.
+    mode: 'onTouched',
     // Phase 6 — `websiteSetupMode` is pre-selected to `'complete'`: the
     // easiest action (submit without touching this field) should be the
     // one that produces a presentable site, not an empty shell — see the
@@ -183,7 +192,63 @@ export function AcademySetupForm({
   // hands over its own sub-forms at submit time.
   const paymentMethodsRef = useRef<SetupPaymentMethodsHandle>(null);
 
+  // B1 (V32) — "Available" only for an address that also passes the format
+  // rules; a green check beside "a" contradicted "at least 3 characters".
+  const subdomainFormatOk =
+    createProvisioningRequestSchema.shape.requestedSubdomain.safeParse(
+      subdomainValue
+    ).success;
+
+  // B1 (V14) — after a refused request, focus goes where the answer is: the
+  // first field the server rejected, or the error panel (it rendered below
+  // the viewport with focus left on the page body).
+  const errorPanelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const error = createRequest.error;
+    if (!error) return;
+    const firstField = isApiError(error)
+      ? error.violations?.[0]?.field
+      : undefined;
+    if (firstField) {
+      form.setFocus(firstField as keyof CreateProvisioningRequestFormData);
+      return;
+    }
+    errorPanelRef.current?.focus();
+    errorPanelRef.current?.scrollIntoView?.({
+      block: 'center',
+      behavior: 'smooth',
+    });
+  }, [createRequest.error, form]);
+
   const onSubmit = async (data: CreateProvisioningRequestFormData) => {
+    // B1 (V13) — the button no longer greys out silently. A submit while
+    // the (debounced) availability check is still out asks the server now
+    // and carries on when the address is free; otherwise it says why.
+    let status = availability.data?.status;
+    if (status !== 'available') {
+      try {
+        status = (
+          await provisioningService.checkSubdomainAvailability(
+            data.requestedSubdomain
+          )
+        ).status;
+      } catch {
+        status = undefined;
+      }
+    }
+    if (status !== 'available') {
+      form.setError(
+        'requestedSubdomain',
+        {
+          type: 'availability',
+          message: status
+            ? `provisioning:start.subdomainStatus.${status}`
+            : 'provisioning:start.subdomainCheckFailed',
+        },
+        { shouldFocus: true }
+      );
+      return;
+    }
     const paymentMethods = await paymentMethodsRef.current?.collect();
     // `null`: a chosen method is incomplete; the section shows why.
     if (paymentMethods === null) return;
@@ -288,7 +353,8 @@ export function AcademySetupForm({
                       className="size-4 shrink-0 animate-spin text-muted-foreground"
                       aria-hidden
                     />
-                  ) : availability.data?.status === 'available' ? (
+                  ) : availability.data?.status === 'available' &&
+                    subdomainFormatOk ? (
                     <CheckCircle2
                       className="size-4 shrink-0 text-success"
                       aria-hidden
@@ -309,9 +375,13 @@ export function AcademySetupForm({
                 )}
               </FormDescription>
               {field.value &&
+              subdomainFormatOk &&
+              // Shown once: a submit-time result replaces this live line.
+              form.formState.errors.requestedSubdomain?.type !==
+                'availability' &&
               availability.data?.status !== 'available' &&
               availability.data ? (
-                <p className="text-sm text-destructive">
+                <p role="status" className="text-sm text-destructive">
                   {t(
                     `provisioning:start.subdomainStatus.${availability.data.status}`
                   )}
@@ -430,13 +500,7 @@ export function AcademySetupForm({
         <SetupPaymentMethods ref={paymentMethodsRef} />
 
         <div className="flex items-center justify-end">
-          <Button
-            type="submit"
-            disabled={
-              createRequest.isPending ||
-              availability.data?.status !== 'available'
-            }
-          >
+          <Button type="submit" disabled={createRequest.isPending}>
             {createRequest.isPending ? (
               <>
                 <Loader2 className="size-4 animate-spin" aria-hidden />
@@ -479,7 +543,24 @@ export function AcademySetupForm({
             {t('errors:provisioning.subdomainUnavailable')}
           </p>
         ) : createRequest.error && !nameConflict ? (
-          <ErrorState onRetry={() => void form.handleSubmit(onSubmit)()} />
+          <div ref={errorPanelRef} tabIndex={-1} className="outline-none">
+            <ErrorState
+              kind={createRequest.error.kind}
+              {...(() => {
+                const kind = createRequest.error.kind;
+                const descriptionKey = resolveErrorTextKey(
+                  createRequest.error.messageKey,
+                  errorMessageKey(kind),
+                  (key) => isTranslatedString(i18n, key)
+                );
+                return {
+                  descriptionKey,
+                  titleKey: errorToastTitleKey(kind, descriptionKey),
+                };
+              })()}
+              onRetry={() => void form.handleSubmit(onSubmit)()}
+            />
+          </div>
         ) : null}
       </form>
     </Form>

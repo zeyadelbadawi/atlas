@@ -18,6 +18,20 @@ export interface AtlasToastProviderProps {
   readonly children: ReactNode;
 }
 
+const BELOW_HEADER = 'calc(var(--layout-header-height, 3.75rem) + 0.75rem)';
+const TOAST_OFFSET = {
+  top: BELOW_HEADER,
+  right: '1.5rem',
+  left: '1.5rem',
+  bottom: '1.5rem',
+};
+const TOAST_MOBILE_OFFSET = {
+  top: BELOW_HEADER,
+  right: '1rem',
+  left: '1rem',
+  bottom: '1rem',
+};
+
 export function AtlasToastProvider({
   children,
 }: AtlasToastProviderProps): JSX.Element {
@@ -88,6 +102,12 @@ export function AtlasToastProvider({
         // Anchored to the reading edge so notifications never cover primary
         // actions, in either direction.
         position={isRtl ? 'top-left' : 'top-right'}
+        // B1 (UX audit) — below the sticky header, never over it: at the
+        // default offset a toast covered the language menu, notifications
+        // and account menu (all six header controls on a phone) for its
+        // whole duration.
+        offset={TOAST_OFFSET}
+        mobileOffset={TOAST_MOBILE_OFFSET}
         dir={isRtl ? 'rtl' : 'ltr'}
         closeButton
         richColors={false}

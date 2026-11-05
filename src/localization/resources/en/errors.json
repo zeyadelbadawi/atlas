@@ -311,7 +311,8 @@
     "notFound": "This item no longer exists — it may have been deleted. Reload the page and try again.",
     "forbidden": "You don't have permission to do this. If you need it, ask the owner of your academy or organization.",
     "notFoundTitle": "Couldn't find this item",
-    "forbiddenTitle": "Not allowed"
+    "forbiddenTitle": "Not allowed",
+    "failedTitle": "That didn't work"
   },
   "domain": {
     "insufficientRole": "You don't have permission to change this academy's domain.",

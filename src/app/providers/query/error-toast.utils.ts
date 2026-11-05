@@ -12,12 +12,14 @@
  */
 import { errorMessageKey } from '@services';
 import type { ApiError } from '@services';
-import { toErrorsNamespaceKey } from '@utils';
+import { displayableErrorKey, toErrorsNamespaceKey } from '@utils';
 
 export function errorToastDescriptionKey(
   error: Pick<ApiError, 'kind' | 'messageKey'>,
   exists: (key: string) => boolean
 ): string {
-  const namespaced = toErrorsNamespaceKey(error.messageKey);
-  return exists(namespaced) ? namespaced : errorMessageKey(error.kind);
+  return (
+    displayableErrorKey(toErrorsNamespaceKey(error.messageKey), exists) ??
+    errorMessageKey(error.kind)
+  );
 }

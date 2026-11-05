@@ -7,7 +7,7 @@
  * without a request being made.
  */
 import { useApiQuery } from '@/shared/hooks';
-import { authKeys } from '@services/query';
+import { authKeys, INLINE_ERRORS_META } from '@services/query';
 import { authenticationService } from '@services/identity';
 import type { ApiError } from '@api';
 
@@ -23,5 +23,7 @@ export function useValidatePasswordResetToken(token: string | null) {
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: Infinity,
+    // B1 (V20) — the page says what happened (and offers a retry); no toast.
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

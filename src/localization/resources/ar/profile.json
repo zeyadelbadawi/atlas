@@ -82,7 +82,9 @@
       "otherTrustedDevicesForgotten": "تم نسيان الأجهزة الأخرى",
       "trustedDeviceForgetFailed": "تعذّر نسيان هذا الجهاز. يرجى المحاولة مجددًا.",
       "noTrustedDevices": "لا توجد أجهزة متذكَّرة",
-      "noTrustedDevicesDescription": "عندما تختار «تذكّر هذا الجهاز» عند تسجيل الدخول، سيظهر ذلك المتصفح هنا."
+      "noTrustedDevicesDescription": "عندما تختار «تذكّر هذا الجهاز» عند تسجيل الدخول، سيظهر ذلك المتصفح هنا.",
+      "sessionsLoadFailed": "تعذّر تحميل جلساتك النشطة",
+      "trustedDevicesLoadFailed": "تعذّر تحميل أجهزتك المتذكَّرة"
     }
   },
   "fields": {
@@ -97,7 +99,8 @@
     "theme": "المظهر",
     "currentPassword": "كلمة المرور الحالية",
     "newPassword": "كلمة المرور الجديدة",
-    "confirmNewPassword": "تأكيد كلمة المرور الجديدة"
+    "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+    "fullName": "اسمك الكامل"
   },
   "placeholders": {
     "currentPassword": "أدخل كلمة مرورك الحالية",
@@ -123,13 +126,18 @@
     "currentPasswordRequired": "كلمة المرور الحالية مطلوبة",
     "passwordTooShort": "يجب ألا تقل كلمة المرور عن 8 أحرف",
     "passwordMismatch": "كلمتا المرور غير متطابقتين",
-    "userNotFound": "تعذّر تحميل ملفك الشخصي."
+    "userNotFound": "تعذّر تحميل ملفك الشخصي.",
+    "nameTooLong": "يجب ألّا يزيد الاسم الأول واسم العائلة معًا عن {{count}} حرفًا",
+    "notSaved": "لم تُحفظ تغييراتك",
+    "passwordNotChanged": "لم تتغيّر كلمة المرور",
+    "preferencesNotSaved": "لم تُحفظ اللغة والمظهر، ولم يتغيّر شيء"
   },
   "success": {
     "passwordChanged": "تم تغيير كلمة المرور",
     "passwordUpdated": "تم تحديث كلمة مرورك.",
     "preferencesUpdated": "تم تحديث التفضيلات",
-    "changesApplied": "تم تطبيق تغييراتك."
+    "changesApplied": "تم تطبيق تغييراتك.",
+    "profileUpdated": "تم حفظ اسمك"
   },
   "actions": {
     "changePassword": "تغيير كلمة المرور",
@@ -236,7 +244,9 @@
       "body": "حتى نتمكن من التواصل معك بشأن حسابك إذا احتجنا إلى ذلك. إذا كنت طالبًا في أكاديمية، يستطيع مالكوها ومديروها رؤيته، وكذلك مسؤولو منصة أطلس.",
       "action": "إضافة رقم هاتف",
       "dismiss": "ليس الآن"
-    }
+    },
+    "notSaved": "لم يُحفظ رقم هاتفك",
+    "notRemoved": "لم يُحذف رقم هاتفك"
   },
   "privacyRequests": {
     "title": "بياناتك",
@@ -281,5 +291,14 @@
       "completed": "تم",
       "rejected": "مرفوض"
     }
+  },
+  "roles": {
+    "platform_owner": "مالك المنصة",
+    "owner": "المالك",
+    "administrator": "المسؤول",
+    "manager": "المدير",
+    "member": "عضو",
+    "instructor": "المدرّب",
+    "staff": "فريق العمل"
   }
 }

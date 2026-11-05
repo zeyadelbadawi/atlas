@@ -2,6 +2,7 @@
  * Instructor validation schemas.
  */
 import { z } from 'zod';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 /** Maximum length for grading feedback — a generous cap, not a backend rule. */
 export const MAX_GRADING_FEEDBACK_LENGTH = 2000;
@@ -16,11 +17,16 @@ export const MAX_GRADING_FEEDBACK_LENGTH = 2000;
 export const gradeSubmissionSchema = z.object({
   score: z
     .number({ invalid_type_error: 'validation:required' })
-    .min(0, 'validation:min')
-    .max(100, 'validation:max'),
+    .min(0, validationMessage('validation:min', { min: 0 }))
+    .max(100, validationMessage('validation:max', { max: 100 })),
   feedback: z
     .string()
-    .max(MAX_GRADING_FEEDBACK_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_GRADING_FEEDBACK_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_GRADING_FEEDBACK_LENGTH,
+      })
+    )
     .optional(),
 });
 

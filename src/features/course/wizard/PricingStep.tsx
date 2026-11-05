@@ -34,6 +34,7 @@ import { useStepSave } from './useStepSave';
 import { WizardStepFooter } from './WizardStepFooter';
 import type { WizardStepProps } from './wizard-step.types';
 import { currencyOptions } from '@utils';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 const pricingSchema = z
   .object({
@@ -41,7 +42,10 @@ const pricingSchema = z
     pricingType: z.enum(['free', 'paid']),
     pricingAmount: z.preprocess(
       (value) => (value === '' || value === null ? undefined : value),
-      z.coerce.number().min(0, 'validation:min').optional()
+      z.coerce
+        .number()
+        .min(0, validationMessage('validation:min', { min: 0 }))
+        .optional()
     ),
     pricingCurrency: z.string().optional(),
   })

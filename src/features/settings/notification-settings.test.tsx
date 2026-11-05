@@ -76,13 +76,19 @@ describe('NotificationSettings', () => {
       screen.getByRole('switch', { name: 'Email for Academy updates' })
     );
 
-    expect(mutate).toHaveBeenCalledWith({ email: false, push: true, sms: false });
+    expect(mutate).toHaveBeenCalledWith({
+      email: false,
+      push: true,
+      sms: false,
+    });
   });
 
   it('shows loading and error states', () => {
     useNotificationPreferences.mockReturnValue({ isLoading: true });
     const { unmount } = renderSettings();
-    expect(screen.getByRole('status', { name: 'Loading email preferences' })).toBeTruthy();
+    expect(
+      screen.getByRole('status', { name: 'Loading email preferences' })
+    ).toBeTruthy();
     unmount();
 
     const refetch = vi.fn();

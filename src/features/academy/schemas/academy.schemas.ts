@@ -12,6 +12,7 @@ import {
   MAX_MEMBER_NAME_LENGTH,
   MIN_MEMBER_NAME_LENGTH,
 } from '../constants/academy.constants';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 /** Shortest address a new academy may take (backend `MIN_ACADEMY_SLUG_LENGTH`). */
 export const MIN_NEW_ACADEMY_SLUG_LENGTH = 3;
@@ -24,7 +25,12 @@ export const createAcademySchema = z.object({
   name: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_ACADEMY_NAME_LENGTH, 'validation:maxLength'),
+    .max(
+      MAX_ACADEMY_NAME_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_ACADEMY_NAME_LENGTH,
+      })
+    ),
   // A new address needs MIN_NEW_ACADEMY_SLUG_LENGTH characters (the backend
   // refuses shorter new labels); the settings forms keep min(1) so an
   // existing shorter address still saves.
@@ -32,11 +38,21 @@ export const createAcademySchema = z.object({
     .string()
     .min(1, 'validation:required')
     .min(MIN_NEW_ACADEMY_SLUG_LENGTH, 'validation:slugTooShort')
-    .max(MAX_ACADEMY_SLUG_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_ACADEMY_SLUG_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_ACADEMY_SLUG_LENGTH,
+      })
+    )
     .regex(SLUG_REGEX, 'validation:invalidSlug'),
   description: z
     .string()
-    .max(MAX_ACADEMY_DESCRIPTION_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_ACADEMY_DESCRIPTION_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_ACADEMY_DESCRIPTION_LENGTH,
+      })
+    )
     .optional(),
   contactEmail: z
     .string()
@@ -58,15 +74,30 @@ export const updateAcademyProfileSchema = z.object({
   name: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_ACADEMY_NAME_LENGTH, 'validation:maxLength'),
+    .max(
+      MAX_ACADEMY_NAME_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_ACADEMY_NAME_LENGTH,
+      })
+    ),
   slug: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_ACADEMY_SLUG_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_ACADEMY_SLUG_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_ACADEMY_SLUG_LENGTH,
+      })
+    )
     .regex(SLUG_REGEX, 'validation:invalidSlug'),
   description: z
     .string()
-    .max(MAX_ACADEMY_DESCRIPTION_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_ACADEMY_DESCRIPTION_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_ACADEMY_DESCRIPTION_LENGTH,
+      })
+    )
     .optional(),
   contactEmail: z
     .string()
@@ -94,15 +125,30 @@ export const updateAcademySettingsSchema = z.object({
   name: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_ACADEMY_NAME_LENGTH, 'validation:maxLength'),
+    .max(
+      MAX_ACADEMY_NAME_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_ACADEMY_NAME_LENGTH,
+      })
+    ),
   slug: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_ACADEMY_SLUG_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_ACADEMY_SLUG_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_ACADEMY_SLUG_LENGTH,
+      })
+    )
     .regex(SLUG_REGEX, 'validation:invalidSlug'),
   description: z
     .string()
-    .max(MAX_ACADEMY_DESCRIPTION_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_ACADEMY_DESCRIPTION_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_ACADEMY_DESCRIPTION_LENGTH,
+      })
+    )
     .optional(),
   language: z.string().min(1, 'validation:required'),
   timezone: z.string().min(1, 'validation:required'),
@@ -125,7 +171,12 @@ export const updateAcademyBrandingSchema = z.object({
   name: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_ACADEMY_NAME_LENGTH, 'validation:maxLength'),
+    .max(
+      MAX_ACADEMY_NAME_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_ACADEMY_NAME_LENGTH,
+      })
+    ),
   logo: z.string().optional(),
   favicon: z.string().optional(),
 });

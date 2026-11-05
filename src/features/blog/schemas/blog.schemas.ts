@@ -10,6 +10,7 @@ import {
   MAX_BLOG_SLUG_LENGTH,
   MAX_BLOG_TITLE_LENGTH,
 } from '../constants/blog.constants';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -17,20 +18,38 @@ export const blogPostSchema = z.object({
   title: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_BLOG_TITLE_LENGTH, 'validation:maxLength'),
+    .max(
+      MAX_BLOG_TITLE_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_BLOG_TITLE_LENGTH,
+      })
+    ),
   slug: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_BLOG_SLUG_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_BLOG_SLUG_LENGTH,
+      validationMessage('validation:maxLength', { count: MAX_BLOG_SLUG_LENGTH })
+    )
     .regex(SLUG_REGEX, 'validation:invalidSlug'),
   excerpt: z
     .string()
-    .max(MAX_BLOG_EXCERPT_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_BLOG_EXCERPT_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_BLOG_EXCERPT_LENGTH,
+      })
+    )
     .optional(),
   content: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_BLOG_CONTENT_LENGTH, 'validation:maxLength'),
+    .max(
+      MAX_BLOG_CONTENT_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_BLOG_CONTENT_LENGTH,
+      })
+    ),
   featuredImage: z.string().optional(),
   category: z.string().optional(),
   tags: z.string().optional(),
@@ -44,11 +63,21 @@ export const blogPostSchema = z.object({
     ),
   metaTitle: z
     .string()
-    .max(MAX_BLOG_META_TITLE_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_BLOG_META_TITLE_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_BLOG_META_TITLE_LENGTH,
+      })
+    )
     .optional(),
   metaDescription: z
     .string()
-    .max(MAX_BLOG_META_DESCRIPTION_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_BLOG_META_DESCRIPTION_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_BLOG_META_DESCRIPTION_LENGTH,
+      })
+    )
     .optional(),
   ogImage: z.string().optional(),
 });

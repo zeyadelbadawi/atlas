@@ -12,7 +12,7 @@
  */
 import { useApiMutation, useApiQuery, useInvalidate } from '@/shared/hooks';
 import { authenticationService } from '@services/identity';
-import { authKeys } from '@services/query';
+import { INLINE_ERRORS_META, authKeys } from '@services/query';
 import type { ApiError } from '@api';
 import type { TrustedDevice } from '@types';
 
@@ -23,6 +23,10 @@ export function useTrustedDevices() {
     queryKey: TRUSTED_DEVICES_QUERY_KEY,
     queryFn: () => authenticationService.listTrustedDevices(),
     staleTime: 30_000,
+    // B1 (V17) — see `useSessions`: one round of the HTTP client's own
+    // retries, then the card's error state (with retry), not a toast too.
+    retry: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 

@@ -42,25 +42,52 @@ import {
 import { useStepSave } from './useStepSave';
 import { WizardStepFooter } from './WizardStepFooter';
 import type { WizardStepProps } from './wizard-step.types';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 const detailsSchema = z.object({
   description: z
     .string()
-    .max(MAX_COURSE_DESCRIPTION_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_COURSE_DESCRIPTION_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_COURSE_DESCRIPTION_LENGTH,
+      })
+    )
     .optional(),
   level: z
     .enum(['beginner', 'intermediate', 'advanced', 'all_levels'])
     .optional(),
   language: z
     .string()
-    .max(MAX_COURSE_LANGUAGE_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_COURSE_LANGUAGE_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_COURSE_LANGUAGE_LENGTH,
+      })
+    )
     .optional(),
   outcomes: z
-    .array(z.string().max(MAX_COURSE_OUTCOME_LENGTH, 'validation:maxLength'))
+    .array(
+      z
+        .string()
+        .max(
+          MAX_COURSE_OUTCOME_LENGTH,
+          validationMessage('validation:maxLength', {
+            count: MAX_COURSE_OUTCOME_LENGTH,
+          })
+        )
+    )
     .max(MAX_COURSE_OUTCOMES, 'validation:maxItems'),
   requirements: z
     .array(
-      z.string().max(MAX_COURSE_REQUIREMENT_LENGTH, 'validation:maxLength')
+      z
+        .string()
+        .max(
+          MAX_COURSE_REQUIREMENT_LENGTH,
+          validationMessage('validation:maxLength', {
+            count: MAX_COURSE_REQUIREMENT_LENGTH,
+          })
+        )
     )
     .max(MAX_COURSE_REQUIREMENTS, 'validation:maxItems'),
 });

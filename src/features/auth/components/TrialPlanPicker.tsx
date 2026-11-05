@@ -20,9 +20,14 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn, formatCurrency } from '@utils';
 import { formatLimitValue, resolvePlanName } from '@features/tenant';
 import type { LanguageCode, Plan, PlanFamily, PlanLimitKey } from '@types';
+import { REQUIRED_LABEL_CLASS } from '../utils/required-label';
 
 /** The limits a first-time customer compares plans on — the rest live on the Plans page. */
-const KEY_LIMITS: readonly PlanLimitKey[] = ['academies', 'students', 'courses'];
+const KEY_LIMITS: readonly PlanLimitKey[] = [
+  'academies',
+  'students',
+  'courses',
+];
 
 const FAMILY_ORDER: readonly PlanFamily[] = ['normal', 'premium'];
 
@@ -36,6 +41,8 @@ export interface TrialPlanPickerProps {
   readonly errorKey?: string;
   /** An explanatory notice key shown above the cards (e.g. "that plan is no longer available"). */
   readonly noticeKey?: string;
+  /** B1 (V1) — marks the group as required (an asterisk after its legend). */
+  readonly required?: boolean;
 }
 
 function formatPriceAfterTrial(
@@ -70,6 +77,7 @@ export function TrialPlanPicker({
   disabled = false,
   errorKey,
   noticeKey,
+  required = false,
 }: TrialPlanPickerProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const language = i18n.language as LanguageCode;
@@ -84,7 +92,12 @@ export function TrialPlanPicker({
 
   return (
     <fieldset className="space-y-4" aria-describedby="trial-plan-description">
-      <legend className="font-display text-sm font-semibold text-foreground">
+      <legend
+        className={cn(
+          'font-display text-sm font-semibold text-foreground',
+          required && REQUIRED_LABEL_CLASS
+        )}
+      >
         {t('auth:register.plan.title')}
       </legend>
       <p
@@ -110,6 +123,7 @@ export function TrialPlanPicker({
         disabled={disabled}
         aria-label={t('auth:register.plan.title')}
         aria-invalid={!!errorKey}
+        aria-required={required || undefined}
         className="gap-5"
       >
         {groups.map((group) => (

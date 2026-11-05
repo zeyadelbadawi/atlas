@@ -26,17 +26,65 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { ErrorState } from '@components/feedback';
 import { useUnsavedChanges } from '@hooks';
 import { saveViaForm } from '@utils';
-import { useNameConflictError } from '@forms';
+import {
+  nameConflictFromError,
+  useNameConflictError,
+  useServerValidation,
+} from '@forms';
+import { validationMessage } from '@/shared/forms/validation-message';
 import { useUpdateProfile } from '../hooks';
+import {
+  fieldErrorText,
+  hasViolationOn,
+  useFocusFirstViolation,
+  useLabelledViolations,
+} from '@forms';
+import { RequiredMark, SaveFailedAlert } from '@forms';
 import type { CurrentUser } from '@types';
 
-const personalSchema = z.object({
-  firstName: z.string().min(1, 'profile:errors.firstNameRequired'),
-  lastName: z.string().min(1, 'profile:errors.lastNameRequired'),
-});
+/** `UpdateProfileDto.name` — `@MaxLength(100)` on "first last". */
+const NAME_MAX_LENGTH = 100;
+
+/** The API's one `name` field is edited as two; its violations land here. */
+const SERVER_FIELDS = { name: 'firstName' } as const;
+
+/** Every violation field this form shows beside an input. */
+const FIELD_VIOLATIONS = {
+  ...SERVER_FIELDS,
+  firstName: 'firstName',
+  lastName: 'lastName',
+} as const;
+
+const fullName = (first: string, last: string): string =>
+  `${first} ${last}`.trim();
+
+// B1 (UX audit, V08) — the backend's length limit is checked before
+// sending, with the number in the message, instead of a 400 that only ever
+// said "Unexpected error". The message sits on the longer of the two
+// fields: the one the person most likely needs to shorten.
+const personalSchema = z
+  .object({
+    firstName: z.string().trim().min(1, 'profile:errors.firstNameRequired'),
+    lastName: z.string().trim().min(1, 'profile:errors.lastNameRequired'),
+  })
+  .superRefine((data, context) => {
+    if (fullName(data.firstName, data.lastName).length <= NAME_MAX_LENGTH) {
+      return;
+    }
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: [
+        data.firstName.length >= data.lastName.length
+          ? 'firstName'
+          : 'lastName',
+      ],
+      message: validationMessage('profile:errors.nameTooLong', {
+        count: NAME_MAX_LENGTH,
+      }),
+    });
+  });
 
 type PersonalFormData = z.infer<typeof personalSchema>;
 
@@ -64,13 +112,8 @@ export function ProfilePersonalSection({
     formState: { errors, isDirty },
     reset,
   } = form;
-  // W4 — a learner name is unique inside each academy; a rename that clashes
-  // is refused and names the user's own academies. Shown on the family-name
-  // field (the copy suggests adding a middle or family name).
-  const nameConflict = useNameConflictError(form, updateProfile.error, {
-    fields: { name: 'lastName' },
-  });
-
+  // Declared before the server-error effects below, so a reset never
+  // clears a field error they have just placed.
   useEffect(() => {
     reset({
       firstName: user.name.split(' ')[0] || '',
@@ -78,6 +121,34 @@ export function ProfilePersonalSection({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.name]);
+
+  // W4 — a learner name is unique inside each academy; a rename that clashes
+  // is refused and names the user's own academies. Shown on the family-name
+  // field (the copy suggests adding a middle or family name).
+  const nameConflict = useNameConflictError(form, updateProfile.error, {
+    fields: { name: 'lastName' },
+  });
+  // B1 (V08) — every other violation lands on its field, labelled in the
+  // page's language. A name clash is already placed above; it is not
+  // applied twice.
+  const violations = useLabelledViolations(
+    nameConflictFromError(updateProfile.error) ? null : updateProfile.error,
+    {
+      name: 'profile:fields.fullName',
+      firstName: 'profile:fields.firstName',
+      lastName: 'profile:fields.lastName',
+    }
+  );
+  useServerValidation(form, violations, SERVER_FIELDS);
+  useFocusFirstViolation(form, violations, FIELD_VIOLATIONS, SERVER_FIELDS);
+  // Anything no field can show: one inline message, nothing else (the
+  // mutation is `inlineErrors`, so no toast repeats it).
+  const saveFailure =
+    updateProfile.error &&
+    !nameConflict &&
+    !hasViolationOn(updateProfile.error, FIELD_VIOLATIONS)
+      ? updateProfile.error
+      : null;
 
   const handleFormSubmit = (data: PersonalFormData) => {
     const name = `${data.firstName} ${data.lastName}`.trim();
@@ -159,35 +230,50 @@ export function ProfilePersonalSection({
               </AlertDescription>
             </Alert>
           ) : null}
-          {updateProfile.error && !nameConflict ? (
-            <ErrorState onRetry={handleSubmit(handleFormSubmit)} />
-          ) : null}
-
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="firstName">{t('profile:fields.firstName')}</Label>
+              <Label htmlFor="firstName">
+                {t('profile:fields.firstName')}
+                <RequiredMark />
+              </Label>
               <Input
                 id="firstName"
+                autoComplete="given-name"
                 disabled={!isEditing || updateProfile.isPending}
                 {...register('firstName')}
+                aria-required
                 aria-invalid={!!errors.firstName}
+                aria-describedby={
+                  errors.firstName ? 'firstName-error' : undefined
+                }
               />
               {errors.firstName ? (
-                <p className="text-sm text-destructive">
-                  {t(
+                <p
+                  id="firstName-error"
+                  role="alert"
+                  className="text-sm text-destructive"
+                >
+                  {fieldErrorText(
+                    t,
                     errors.firstName.message ||
-                      'profile:errors.firstNameRequired'
+                      'profile:errors.firstNameRequired',
+                    t('profile:fields.firstName')
                   )}
                 </p>
               ) : null}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="lastName">{t('profile:fields.lastName')}</Label>
+              <Label htmlFor="lastName">
+                {t('profile:fields.lastName')}
+                <RequiredMark />
+              </Label>
               <Input
                 id="lastName"
+                autoComplete="family-name"
                 disabled={!isEditing || updateProfile.isPending}
                 {...register('lastName')}
+                aria-required
                 aria-invalid={!!errors.lastName}
                 aria-describedby={
                   errors.lastName ? 'lastName-error' : undefined
@@ -201,14 +287,12 @@ export function ProfilePersonalSection({
                 >
                   {/* A server message arrives already translated (it names
                       the user's academies); anything else is a key. */}
-                  {errors.lastName.type === 'server' &&
-                  errors.lastName.message &&
-                  !errors.lastName.message.startsWith('errors:')
-                    ? errors.lastName.message
-                    : t(
-                        errors.lastName.message ||
-                          'profile:errors.lastNameRequired'
-                      )}
+                  {fieldErrorText(
+                    t,
+                    errors.lastName.message ||
+                      'profile:errors.lastNameRequired',
+                    t('profile:fields.lastName')
+                  )}
                 </p>
               ) : null}
             </div>
@@ -227,6 +311,14 @@ export function ProfilePersonalSection({
               {t('profile:hints.emailReadOnly')}
             </p>
           </div>
+
+          {saveFailure ? (
+            <SaveFailedAlert
+              error={saveFailure}
+              titleKey="profile:errors.notSaved"
+              onRetry={handleSubmit(handleFormSubmit)}
+            />
+          ) : null}
 
           <div className="flex gap-3">
             {!isEditing ? (

@@ -282,7 +282,11 @@ export function normalizeResponseError(
     // caller to suddenly supply one.
     messageKey: readString(body.messageKey),
     requestId: readRequestId(body),
-    violations: kind === 'validation' ? readViolations(body) : undefined,
+    // B1 — kept for every kind: a 409 can name its field too (the phone
+    // number already in use carries a `phoneNumber` violation), and dropping
+    // it left the form unable to mark the field. Callers decide which kinds
+    // they map onto fields (`isFieldViolationError`).
+    violations: readViolations(body),
     // Read for every kind, not just one: `details` is how the backend
     // hands a client what it needs to RECOVER, and which errors need that
     // is the backend's call, not a list maintained here. The save-conflict

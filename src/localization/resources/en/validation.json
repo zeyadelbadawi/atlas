@@ -16,7 +16,11 @@
   "invalidWalletNumber": "Enter an Egyptian mobile wallet number: 010, 011, 012 or 015 followed by 8 digits.",
   "invalidInstapayAddress": "Enter a valid InstaPay address, like name@instapay.",
   "minLength": "{{field}} must be at least {{count}} characters",
+  "minLength_one": "{{field}} must be at least {{count}} character",
+  "minLength_other": "{{field}} must be at least {{count}} characters",
   "maxLength": "{{field}} must be {{count}} characters or fewer",
+  "maxLength_one": "{{field}} must be {{count}} character or fewer",
+  "maxLength_other": "{{field}} must be {{count}} characters or fewer",
   "min": "{{field}} must be {{min}} or more",
   "max": "{{field}} must be {{max}} or less",
   "pattern": "{{field}} has an unexpected format",
@@ -63,5 +67,6 @@
   "invalidDeadline": "Choose a complete date and time.",
   "invalidDownloadLink": "Paste a web address that starts with https://, or choose a file from your media library.",
   "invalidYear": "Enter a four-digit year, such as 2025.",
-  "customColumnCount": "Choose the layout again: its number of columns does not match."
+  "customColumnCount": "Choose the layout again: its number of columns does not match.",
+  "thisField": "This field"
 }

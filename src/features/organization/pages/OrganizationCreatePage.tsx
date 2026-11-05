@@ -31,14 +31,14 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
-import { useAuth, useUnsavedChanges } from '@hooks';
+import { useAuth, useErrorText, useUnsavedChanges } from '@hooks';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import {
   nameConflictFromError,
   useNameConflictError,
   useServerValidation,
 } from '@forms';
-import { isApiError } from '@api';
+import { errorMessageKey, isApiError } from '@api';
 import { useCreateOrganization } from '../hooks';
 import {
   createOrganizationSchema,
@@ -47,6 +47,7 @@ import {
 
 export default function OrganizationCreatePage(): JSX.Element {
   const { t } = useTranslation();
+  const errorText = useErrorText();
   const navigate = useNavigate();
   const { refreshSession } = useAuth();
   const {
@@ -98,9 +99,15 @@ export default function OrganizationCreatePage(): JSX.Element {
         return;
       }
       if (nameConflictFromError(caughtError)) return;
+      // B1 (V29) — the real reason, not "could not be completed" every time.
       toast({
         title: t('organization:create.error'),
-        description: t('errors:generic.description'),
+        description: errorText(
+          isApiError(caughtError) ? caughtError.messageKey : undefined,
+          isApiError(caughtError)
+            ? errorMessageKey(caughtError.kind)
+            : 'errors:generic.description'
+        ),
         variant: 'destructive',
       });
     }

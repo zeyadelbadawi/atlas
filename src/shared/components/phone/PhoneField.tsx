@@ -8,6 +8,7 @@ import { Controller } from 'react-hook-form';
 import type { Control, FieldErrors, FieldValues, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label';
+import { RequiredMark } from '@forms';
 import { PhoneNumberInput } from './PhoneNumberInput';
 import type { CountryCode } from './phone-number';
 
@@ -16,6 +17,8 @@ export interface PhoneFieldProps<T extends FieldValues> {
   readonly errors: FieldErrors<T>;
   readonly id: string;
   readonly label: string;
+  /** Marks the label as required, the same way `FormField` does. */
+  readonly required?: boolean;
   readonly hint?: string;
   readonly disabled?: boolean;
   readonly autoFocus?: boolean;
@@ -39,6 +42,7 @@ export function PhoneField<T extends FieldValues>({
   errors,
   id,
   label,
+  required,
   hint,
   disabled,
   autoFocus,
@@ -55,7 +59,10 @@ export function PhoneField<T extends FieldValues>({
 
   return (
     <div className="space-y-2">
-      <Label htmlFor={id}>{label}</Label>
+      <Label htmlFor={id}>
+        {label}
+        {required ? <RequiredMark /> : null}
+      </Label>
       <Controller
         control={control}
         name={countryName}
