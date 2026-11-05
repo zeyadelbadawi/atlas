@@ -37,12 +37,9 @@ import { StatusBadge } from '@components/data-display';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuth, usePlatform } from '@hooks';
+import { useAuth, useErrorText, usePlatform } from '@hooks';
 import { useConfirmDialog } from '@app/providers';
-import {
-  isOnboardingPendingForActiveOrganization,
-  toErrorsNamespaceKey,
-} from '@utils';
+import { isOnboardingPendingForActiveOrganization } from '@utils';
 import {
   DASHBOARD_ROUTES,
   ONBOARDING_ROUTES,
@@ -63,6 +60,7 @@ import {
 
 export default function ProvisioningStatusPage(): JSX.Element {
   const { t } = useTranslation();
+  const errorText = useErrorText();
   const navigate = useNavigate();
   const { requestId } = useParams<{ requestId: string }>();
   const { user, organization } = useAuth();
@@ -195,7 +193,10 @@ export default function ProvisioningStatusPage(): JSX.Element {
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
                 {request.lastError
-                  ? t(toErrorsNamespaceKey(request.lastError.messageKey))
+                  ? errorText(
+                      request.lastError.messageKey,
+                      'provisioning:status.failedGenericDescription'
+                    )
                   : t('provisioning:status.failedGenericDescription')}
               </p>
               {progress.retryError ? (
