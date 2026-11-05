@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AUTH_ROUTES } from '@app/routes/route-paths';
-import { toErrorsNamespaceKey } from '@utils';
+import { useErrorText } from '@hooks';
 import type { ApiError } from '@api';
 
 const signInSchema = z.object({
@@ -60,6 +60,7 @@ export function SignInForm({
   defaultEmail,
 }: SignInFormProps): JSX.Element {
   const { t } = useTranslation();
+  const errorText = useErrorText();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -83,12 +84,11 @@ export function SignInForm({
       {error ? (
         <Alert variant="destructive">
           <AlertDescription>
-            {/* Backend keys arrive as `errors.auth.x`; the bundle is the
-                `errors:` namespace, so the prefix is remapped before `t()`. */}
-            {t(
-              error.messageKey
-                ? toErrorsNamespaceKey(error.messageKey)
-                : 'auth:signIn.errors.invalidCredentials'
+            {/* Backend keys arrive as `errors.auth.x`; an untranslated one
+                falls back instead of rendering an empty box (B1). */}
+            {errorText(
+              error.messageKey,
+              'auth:signIn.errors.invalidCredentials'
             )}
           </AlertDescription>
         </Alert>

@@ -96,7 +96,11 @@
   "form": {
     "required": "Required",
     "optional": "Optional",
-    "requiredFieldIndicator": "This field is required"
+    "requiredFieldIndicator": "This field is required",
+    "errorSummary": {
+      "title_one": "Fix this problem before saving",
+      "title_other": "Fix these {{count}} problems before saving"
+    }
   },
   "feedback": {
     "successTitle": "Done",

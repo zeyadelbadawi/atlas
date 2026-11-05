@@ -12,6 +12,9 @@ import type {
 import { useToast } from '@app/providers';
 import { useTranslation } from 'react-i18next';
 import { invalidateQueryPrefixes } from '@services/query/query-utils';
+import { INLINE_ERRORS_META } from '@services/query/query-client';
+import { normalizeUnknownError } from '@services';
+import { mutationErrorToast } from './mutation-error-toast';
 
 export interface UseApiMutationOptions<
   TData,
@@ -45,7 +48,7 @@ export function useApiMutation<
 ): UseMutationResult<TData, TError, TVariables, TContext> {
   const queryClient = useQueryClient();
   const { notifySuccess, notifyError } = useToast();
-  const { t } = useTranslation();
+  const { i18n } = useTranslation();
 
   const {
     successMessageKey,
@@ -55,11 +58,15 @@ export function useApiMutation<
     invalidateKeys,
     onSuccess,
     onError,
+    meta,
     ...mutationOptions
   } = options;
 
   return useMutation<TData, TError, TVariables, TContext>({
     ...mutationOptions,
+    // B0 — this hook shows the failure itself (one toast, with the real
+    // reason), so the app-wide reporter must not add a second one.
+    meta: showErrorToast ? { ...meta, [INLINE_ERRORS_META]: true } : meta,
     onSuccess: async (data, variables, context) => {
       // Show success toast.
       if (showSuccessToast && successMessageKey) {
@@ -80,11 +87,14 @@ export function useApiMutation<
     onError: (error, variables, context) => {
       // Show error toast.
       if (showErrorToast) {
-        notifyError(
-          errorMessageKey ?? 'errors:mutation.failed',
-          undefined,
-          undefined
-        );
+        const toast = mutationErrorToast(normalizeUnknownError(error), {
+          errorMessageKey,
+          // Without an i18n provider (isolated tests) nothing is known to
+          // exist, so the per-kind fallback copy is used, never a raw key.
+          exists: (key) => typeof i18n?.exists === 'function' && i18n.exists(key),
+          online: typeof navigator === 'undefined' || navigator.onLine !== false,
+        });
+        if (toast) notifyError(toast.titleKey, toast.descriptionKey, toast.values);
       }
 
       // Call user-provided onError.

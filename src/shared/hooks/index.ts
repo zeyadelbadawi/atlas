@@ -34,6 +34,8 @@ export { usePlatform } from './usePlatform';
 export { useFeatureFlag } from './useFeatureFlag';
 export { useApiQuery } from './useApiQuery';
 export { useApiMutation } from './useApiMutation';
+export { useErrorText, resolveErrorTextKey } from './useErrorText';
+export type { ErrorTextResolver } from './useErrorText';
 export type { UseApiMutationOptions } from './useApiMutation';
 export { useAcademyBoundMutation } from './useAcademyBoundMutation';
 export type { AcademyScopedVariables } from './useAcademyBoundMutation';

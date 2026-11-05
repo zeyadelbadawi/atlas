@@ -96,7 +96,15 @@
   "form": {
     "required": "مطلوب",
     "optional": "اختياري",
-    "requiredFieldIndicator": "هذا الحقل مطلوب"
+    "requiredFieldIndicator": "هذا الحقل مطلوب",
+    "errorSummary": {
+      "title_zero": "صحّح هذه المشكلات قبل الحفظ",
+      "title_one": "صحّح هذه المشكلة قبل الحفظ",
+      "title_two": "صحّح هاتين المشكلتين قبل الحفظ",
+      "title_few": "صحّح هذه المشكلات الـ{{count}} قبل الحفظ",
+      "title_many": "صحّح هذه المشكلات الـ{{count}} قبل الحفظ",
+      "title_other": "صحّح هذه المشكلات الـ{{count}} قبل الحفظ"
+    }
   },
   "feedback": {
     "successTitle": "تم بنجاح",

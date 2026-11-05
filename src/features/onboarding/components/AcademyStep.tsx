@@ -30,8 +30,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@hooks';
-import { toErrorsNamespaceKey } from '@utils';
+import { useAuth, useErrorText } from '@hooks';
 import {
   AcademySetupForm,
   isBrandingFailure,
@@ -62,6 +61,7 @@ function ProvisioningRun({
   readonly onSettled: () => void;
 }): JSX.Element {
   const { t } = useTranslation();
+  const errorText = useErrorText();
   const progress = useProvisioningProgress(requestId);
   const request = progress.request;
   const requestStatus = request?.status;
@@ -105,7 +105,10 @@ function ProvisioningRun({
         testId="academy-provisioning-failed"
         description={
           request?.lastError
-            ? t(toErrorsNamespaceKey(request.lastError.messageKey))
+            ? errorText(
+                request.lastError.messageKey,
+                'onboarding:academy.failedDescription'
+              )
             : t('onboarding:academy.failedDescription')
         }
         actions={

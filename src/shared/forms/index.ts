@@ -4,6 +4,8 @@
 export { FormField } from './FormField';
 export type { FormFieldProps } from './FormField';
 export { FormActions } from './FormActions';
+export { FormErrorSummary, flattenFormErrors } from './FormErrorSummary';
+export type { FormErrorSummaryProps } from './FormErrorSummary';
 export type { FormActionsProps } from './FormActions';
 export * from './form.utils';
 export * from './validation.schemas';
