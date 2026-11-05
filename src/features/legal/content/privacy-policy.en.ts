@@ -65,13 +65,14 @@
  * qualified legal review.
  */
 import type { LegalDocument } from './legal-content.types';
+import { companyIdentity, companyName } from './company-identity';
 
 export const PRIVACY_POLICY_EN: LegalDocument = {
   title: 'Privacy Policy',
   summary:
     'How Atlas collects, uses, and protects personal data when you use the Atlas platform.',
   effectiveDate: '11 September 2026',
-  lastUpdated: '30 October 2026',
+  lastUpdated: '5 November 2026',
   sections: [
     {
       id: 'who-we-are',
@@ -80,6 +81,10 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
         {
           kind: 'paragraph',
           text: 'Atlas is a software-as-a-service platform that lets education providers run online academies — creating courses, enrolling students, managing instructors, publishing a public academy website, and handling subscriptions.',
+        },
+        {
+          kind: 'paragraph',
+          text: `Atlas is owned and operated by ${companyIdentity('en')}. In this policy, "Atlas", "we" and "us" mean ${companyName('en')} as the operator of the platform.`,
         },
         {
           kind: 'paragraph',
@@ -748,6 +753,10 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
         {
           kind: 'paragraph',
           text: 'For any privacy question, or to make a request about your personal data, contact us through the support option in your Atlas dashboard. If you do not have an account, you can reach us using the contact details published on the Atlas website.',
+        },
+        {
+          kind: 'paragraph',
+          text: `Atlas is operated by ${companyIdentity('en')}.`,
         },
       ],
     },

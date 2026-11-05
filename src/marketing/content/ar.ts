@@ -235,7 +235,9 @@ export const ar: MarketingContent = {
         },
       ],
       cookiePreferences: 'تفضيلات ملفات تعريف الارتباط',
-      copyright: '© {year} {brand}',
+      copyright: '© {year} {company}. جميع الحقوق محفوظة.',
+      legalLine:
+        '{brand} منصة تملكها وتديرها شركة {company} · سجل تجاري رقم {commercialRegister} · رقم التسجيل الضريبي {taxRegistration}',
     },
     breadcrumbs: { home: 'الرئيسية', product: 'المنتج' },
     demoLabel: 'محتوى تجريبي',
@@ -1287,6 +1289,13 @@ export const ar: MarketingContent = {
         { label: 'الأمان والخصوصية', href: '/security' },
         { label: 'تسجيل الدخول إلى حسابك', href: '/auth/sign-in' },
       ],
+    },
+    companyDetails: {
+      title: 'بيانات الشركة',
+      legalName: 'الشركة',
+      commercialRegister: 'رقم السجل التجاري',
+      taxRegistration: 'رقم التسجيل الضريبي',
+      address: 'المقر المسجّل',
     },
     form: {
       label: 'تواصل مع فريق {brand}',

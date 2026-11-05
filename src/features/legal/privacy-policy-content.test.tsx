@@ -82,9 +82,9 @@ describe('Privacy Policy content', () => {
     }
   });
 
-  it('carries the 30 October 2026 revision date', () => {
-    expect(PRIVACY_POLICY_EN.lastUpdated).toBe('30 October 2026');
-    expect(PRIVACY_POLICY_AR.lastUpdated).toBe('٣٠ أكتوبر ٢٠٢٦');
+  it('carries the 5 November 2026 revision date', () => {
+    expect(PRIVACY_POLICY_EN.lastUpdated).toBe('5 November 2026');
+    expect(PRIVACY_POLICY_AR.lastUpdated).toBe('٥ نوفمبر ٢٠٢٦');
   });
 
   it('discloses the mobile app: push tokens, consents, Apple, analytics (EN + AR)', () => {
