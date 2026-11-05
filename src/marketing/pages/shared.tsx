@@ -30,6 +30,7 @@ import {
   Wallet,
   type LucideIcon,
 } from 'lucide-react';
+import { COMPANY, isPlaceholderNumber } from '@/config/company.config';
 import type { MarketingContent } from '../content/content.types';
 import { ar } from '../content/ar';
 import { en } from '../content/en';
@@ -50,7 +51,13 @@ export interface PageEnv {
 export function pageEnv(lang: MarketingLang, ctx: MarketingRenderContext): PageEnv {
   const raw = CONTENT[lang];
   const year = new Date(ctx.buildDate).getUTCFullYear();
-  const tokens: Tokens = { ...catalogTokens(raw, ctx.plans), year: String(year) };
+  const tokens: Tokens = {
+    ...catalogTokens(raw, ctx.plans),
+    year: String(year),
+    company: COMPANY.legalName[lang],
+    commercialRegister: COMPANY.commercialRegisterNumber,
+    taxRegistration: COMPANY.taxRegistrationNumber,
+  };
   return { content: fillTree(raw, tokens), lang, ctx, tokens };
 }
 
@@ -141,6 +148,9 @@ export function entityGraph(env: PageEnv): object[] {
       '@id': orgId(url),
       name: content.brand.name,
       alternateName: content.brand.otherName,
+      legalName: COMPANY.legalName[env.lang],
+      // The zero placeholder is never published as a tax ID.
+      ...(isPlaceholderNumber(COMPANY.taxRegistrationNumber) ? {} : { taxID: COMPANY.taxRegistrationNumber }),
       url: `${url}/`,
       logo: `${url}/icon-512.png`,
       description: fill(content.jsonLd.organizationDescription, tokens),

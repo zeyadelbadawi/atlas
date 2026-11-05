@@ -7,13 +7,14 @@
  * never appear on the Arabic page because a translation was forgotten.
  */
 import type { LegalDocument } from './legal-content.types';
+import { companyIdentity, companyName } from './company-identity';
 
 export const PRIVACY_POLICY_AR: LegalDocument = {
   title: 'سياسة الخصوصية',
   summary:
     'كيف يجمع أطلس البيانات الشخصية ويستخدمها ويحميها عند استخدامك للمنصة.',
   effectiveDate: '١١ سبتمبر ٢٠٢٦',
-  lastUpdated: '٣٠ أكتوبر ٢٠٢٦',
+  lastUpdated: '٥ نوفمبر ٢٠٢٦',
   sections: [
     {
       id: 'who-we-are',
@@ -22,6 +23,10 @@ export const PRIVACY_POLICY_AR: LegalDocument = {
         {
           kind: 'paragraph',
           text: 'أطلس منصة برمجية كخدمة تتيح لمقدّمي التعليم إدارة أكاديميات إلكترونية — إنشاء الدورات، وتسجيل الطلاب، وإدارة المدرّبين، ونشر موقع إلكتروني عام للأكاديمية، وإدارة الاشتراكات.',
+        },
+        {
+          kind: 'paragraph',
+          text: `تملك ${companyIdentity('ar')}، منصةَ أطلس وتديرها. ويُقصد بـ«أطلس» و«نحن» في هذه السياسة ${companyName('ar')} بصفتها مشغّل المنصة.`,
         },
         {
           kind: 'paragraph',
@@ -689,6 +694,10 @@ export const PRIVACY_POLICY_AR: LegalDocument = {
         {
           kind: 'paragraph',
           text: 'لأي استفسار يتعلق بالخصوصية، أو لتقديم طلب بشأن بياناتك الشخصية، تواصل معنا عبر خيار الدعم في لوحة تحكم أطلس. وإذا لم يكن لديك حساب، يمكنك الوصول إلينا عبر بيانات التواصل المنشورة على موقع أطلس.',
+        },
+        {
+          kind: 'paragraph',
+          text: `تدير أطلسَ ${companyIdentity('ar')}.`,
         },
       ],
     },

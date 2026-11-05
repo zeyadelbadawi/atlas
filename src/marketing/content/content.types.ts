@@ -278,8 +278,10 @@ export interface MkChrome {
     }[];
     /** Render only if a consent dialog exists on the marketing host. */
     readonly cookiePreferences: string;
-    /** Until the legal entity is confirmed (B0-OC-17) this names the brand only. */
+    /** Names the legal entity ({company}, from `COMPANY` in src/config/company.config.ts). */
     readonly copyright: string;
+    /** Who owns and operates the brand, with the registration numbers. */
+    readonly legalLine: string;
   };
   readonly breadcrumbs: { readonly home: string; readonly product: string };
   /** Caption chip on every screenshot. */
@@ -521,6 +523,14 @@ export interface MkContact {
     readonly privacyWithConsent: string;
   };
   readonly aside: { readonly title: string; readonly links: readonly MkLink[] };
+  /** The operating company's registration details (values from `COMPANY`). */
+  readonly companyDetails: {
+    readonly title: string;
+    readonly legalName: string;
+    readonly commercialRegister: string;
+    readonly taxRegistration: string;
+    readonly address: string;
+  };
   readonly form: {
     readonly label: string;
     readonly name: string;

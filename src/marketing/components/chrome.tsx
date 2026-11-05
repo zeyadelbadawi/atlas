@@ -338,6 +338,7 @@ export function Footer({
         <p className="mt-12 border-t border-border pt-6 text-sm text-muted-foreground">
           {fill(f.copyright, tokens)}
         </p>
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{fill(f.legalLine, tokens)}</p>
       </Container>
     </footer>
   );

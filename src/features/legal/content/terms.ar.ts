@@ -7,17 +7,22 @@
  * the Arabic page.
  */
 import type { LegalDocument } from './legal-content.types';
+import { companyIdentity, companyName } from './company-identity';
 
 export const TERMS_AR: LegalDocument = {
   title: 'شروط الخدمة',
   summary: 'الشروط التي يمكنك بموجبها استخدام منصة أطلس.',
   effectiveDate: '١١ سبتمبر ٢٠٢٦',
-  lastUpdated: '٩ أكتوبر ٢٠٢٦',
+  lastUpdated: '٥ نوفمبر ٢٠٢٦',
   sections: [
     {
       id: 'acceptance',
       heading: '١. قبول هذه الشروط',
       blocks: [
+        {
+          kind: 'paragraph',
+          text: `هذه الشروط اتفاق بينك وبين ${companyIdentity('ar')}، المالكة لأطلس والمشغّلة لها. ويُقصد بـ«أطلس» و«نحن» في هذه الشروط ${companyName('ar')}.`,
+        },
         {
           kind: 'paragraph',
           text: 'بإنشائك حسابًا في أطلس أو باستخدامك للمنصة، فإنك توافق على هذه الشروط. وإذا كنت توافق نيابةً عن مؤسسة، فأنت تؤكد أنك مخوّل بإلزامها، ويُقصد بـ«أنت» تلك المؤسسة.',
@@ -297,6 +302,10 @@ export const TERMS_AR: LegalDocument = {
         {
           kind: 'paragraph',
           text: 'يمكن طرح الأسئلة حول هذه الشروط عبر خيار الدعم في لوحة تحكم أطلس.',
+        },
+        {
+          kind: 'paragraph',
+          text: `تدير أطلسَ ${companyIdentity('ar')}.`,
         },
       ],
     },

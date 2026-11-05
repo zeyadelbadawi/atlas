@@ -19,17 +19,22 @@
  * This is an implementation draft and requires qualified legal review.
  */
 import type { LegalDocument } from './legal-content.types';
+import { companyIdentity, companyName } from './company-identity';
 
 export const TERMS_EN: LegalDocument = {
   title: 'Terms of Service',
   summary: 'The terms on which you may use the Atlas platform.',
   effectiveDate: '11 September 2026',
-  lastUpdated: '9 October 2026',
+  lastUpdated: '5 November 2026',
   sections: [
     {
       id: 'acceptance',
       heading: '1. Acceptance of these terms',
       blocks: [
+        {
+          kind: 'paragraph',
+          text: `These terms are an agreement between you and ${companyIdentity('en')}, which owns and operates Atlas. In these terms, "Atlas", "we" and "us" mean ${companyName('en')}.`,
+        },
         {
           kind: 'paragraph',
           text: 'By creating an Atlas account or using the Atlas platform, you agree to these terms. If you are agreeing on behalf of an organization, you confirm you are authorised to bind it, and "you" means that organization.',
@@ -309,6 +314,10 @@ export const TERMS_EN: LegalDocument = {
         {
           kind: 'paragraph',
           text: 'Questions about these terms can be raised through the support option in your Atlas dashboard.',
+        },
+        {
+          kind: 'paragraph',
+          text: `Atlas is operated by ${companyIdentity('en')}.`,
         },
       ],
     },

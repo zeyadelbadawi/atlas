@@ -48,9 +48,9 @@ describe('Terms of Service content', () => {
     expect(shape(TERMS_AR)).toEqual(shape(TERMS_EN));
   });
 
-  it('carries the 9 October 2026 revision date', () => {
-    expect(TERMS_EN.lastUpdated).toBe('9 October 2026');
-    expect(TERMS_AR.lastUpdated).toBe('٩ أكتوبر ٢٠٢٦');
+  it('carries the 5 November 2026 revision date', () => {
+    expect(TERMS_EN.lastUpdated).toBe('5 November 2026');
+    expect(TERMS_AR.lastUpdated).toBe('٥ نوفمبر ٢٠٢٦');
   });
 
   it('warns that redistributed recordings may be traced through the watermark (EN + AR)', () => {

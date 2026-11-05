@@ -13,6 +13,7 @@ import { CONTACT_LIMITS, CONTACT_TOPICS } from '../client/contact-validation';
 import { canFill, fill, link } from '../lib/copy';
 import { localePath } from '../lib/site';
 import { HEARD_FROM_OPTIONS, HEARD_FROM_OTHER_MAX } from '@/shared/utils/acquisition-channel.utils';
+import { COMPANY } from '@/config/company.config';
 import type { MkSectionHead } from '../content/content.types';
 import type { MarketingLang, MarketingPageDef } from '../types';
 import { Shell, breadcrumb, orgId, pageEnv, seoHead, webPage, type PageEnv } from './shared';
@@ -343,10 +344,40 @@ function ContactPage({ env }: { env: PageEnv }) {
                 );
               })}
             </ul>
+            <CompanyDetails env={env} />
           </aside>
         </div>
       </Section>
     </Shell>
+  );
+}
+
+/** The operating company's registration details, from `COMPANY`. */
+function CompanyDetails({ env }: { env: PageEnv }) {
+  const c = env.content.contact.companyDetails;
+  const address = COMPANY.registeredAddress?.[env.lang];
+  const rows: [string, string, boolean][] = [
+    [c.legalName, COMPANY.legalName[env.lang], false],
+    [c.commercialRegister, COMPANY.commercialRegisterNumber, true],
+    [c.taxRegistration, COMPANY.taxRegistrationNumber, true],
+    ...(address ? ([[c.address, address, false]] as [string, string, boolean][]) : []),
+  ];
+  return (
+    <section aria-labelledby="contact-company-title" className="mt-10 border-t border-border pt-6">
+      <h2 id="contact-company-title" className="text-lg font-semibold text-foreground">
+        {c.title}
+      </h2>
+      <dl className="mt-4 space-y-3 text-sm">
+        {rows.map(([term, value, numeric]) => (
+          <div key={term}>
+            <dt className="text-muted-foreground">{term}</dt>
+            <dd className="mt-0.5 font-medium text-foreground">
+              {numeric ? <bdi dir="ltr">{value}</bdi> : value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   );
 }
 
@@ -386,6 +417,7 @@ const aboutLd = (env: PageEnv): object[] => [
     '@id': orgId(env.ctx.siteUrl),
     name: env.content.brand.name,
     alternateName: env.content.brand.otherName,
+    legalName: COMPANY.legalName[env.lang],
     url: `${env.ctx.siteUrl}/`,
     description: fill(env.content.jsonLd.organizationDescription, env.tokens),
   },

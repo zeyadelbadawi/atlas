@@ -188,7 +188,9 @@ export const en: MarketingContent = {
         },
       ],
       cookiePreferences: 'Cookie preferences',
-      copyright: '© {year} {brand}',
+      copyright: '© {year} {company}. All rights reserved.',
+      legalLine:
+        '{brand} is owned and operated by {company} · Commercial register no. {commercialRegister} · Tax registration no. {taxRegistration}',
     },
     breadcrumbs: { home: 'Home', product: 'Product' },
     demoLabel: 'Demo content',
@@ -1248,6 +1250,13 @@ export const en: MarketingContent = {
         { label: 'Security and privacy', href: '/security' },
         { label: 'Sign in to your account', href: '/auth/sign-in' },
       ],
+    },
+    companyDetails: {
+      title: 'Company details',
+      legalName: 'Company',
+      commercialRegister: 'Commercial register no.',
+      taxRegistration: 'Tax registration no.',
+      address: 'Registered office',
     },
     form: {
       label: 'Contact the {brand} team',
