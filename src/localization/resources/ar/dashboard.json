@@ -241,7 +241,10 @@
         "heartbeat": "نبضة اتصال",
         "second_session": "رُصدت جلسة ثانية",
         "device_change": "تغيّر الجهاز",
-        "warning_acknowledged": "تم الإقرار بالتحذير"
+        "warning_acknowledged": "تم الإقرار بالتحذير",
+        "screenshot": "التُقطت لقطة شاشة (التطبيق)",
+        "screen_capture_start": "بدأ تسجيل الشاشة أو عرضها (التطبيق)",
+        "screen_capture_stop": "توقف تسجيل الشاشة أو عرضها (التطبيق)"
       },
       "empty": {
         "title": "لا توجد أحداث نزاهة",

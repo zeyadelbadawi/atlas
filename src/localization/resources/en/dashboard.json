@@ -237,7 +237,10 @@
         "heartbeat": "Heartbeat",
         "second_session": "Second session detected",
         "device_change": "Device changed",
-        "warning_acknowledged": "Warning acknowledged"
+        "warning_acknowledged": "Warning acknowledged",
+        "screenshot": "Screenshot taken (app)",
+        "screen_capture_start": "Screen recording or mirroring started (app)",
+        "screen_capture_stop": "Screen recording or mirroring stopped (app)"
       },
       "empty": {
         "title": "No integrity events",

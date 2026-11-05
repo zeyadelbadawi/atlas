@@ -365,6 +365,18 @@
           "summary_other": "Printing was started {{count}} times.",
           "innocent": "Pressing Ctrl+P by mistake."
         },
+        "screenshot": {
+          "title": "Screenshot in the app",
+          "summary_one": "A screenshot was taken once during the quiz in the mobile app.",
+          "summary_other": "A screenshot was taken {{count}} times during the quiz in the mobile app.",
+          "innocent": "A screenshot taken by mistake (the buttons are easy to press together), or of a notification. Reported by iPhones only: Android phones block screenshots during the quiz."
+        },
+        "screen_captured": {
+          "title": "Screen recorded or mirrored",
+          "summary_one": "The phone's screen was recorded, mirrored or cast once, for {{total}}. The app hid the questions meanwhile.",
+          "summary_other": "The phone's screen was recorded, mirrored or cast {{count}} times, {{total}} in total (longest {{longest}}). The app hid the questions meanwhile.",
+          "innocent": "AirPlay or screen mirroring left on, or a screen recording started before the quiz."
+        },
         "connection_gap": {
           "title": "No contact from the browser",
           "summary_one": "Nothing arrived from the browser for {{total}}.",
@@ -407,7 +419,10 @@
         "heartbeat": "Heartbeat",
         "second_session": "Second session detected",
         "device_change": "Device changed",
-        "warning_acknowledged": "Warning acknowledged"
+        "warning_acknowledged": "Warning acknowledged",
+        "screenshot": "Screenshot taken (app)",
+        "screen_capture_start": "Screen recording or mirroring started (app)",
+        "screen_capture_stop": "Screen recording or mirroring stopped (app)"
       },
       "notMonitored": "Integrity monitoring was not enabled for this attempt, so nothing was recorded. This is different from a monitored attempt with no events — enable integrity on the quiz (and, if it is not yet available for this academy, ask the platform to turn it on) to record tab switches, copying, pasting, printing and leaving fullscreen.",
       "elapsed": "+{{time}} from start",

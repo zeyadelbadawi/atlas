@@ -196,6 +196,8 @@ export type IntegritySignalKey =
   | 'paste_after_copy'
   | 'copy'
   | 'print'
+  | 'screenshot'
+  | 'screen_captured'
   | 'connection_gap';
 
 /** One fact worth a look (`review`) or context (`info`), with the events behind it. */

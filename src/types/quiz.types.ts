@@ -233,6 +233,9 @@ export const QUIZ_ATTEMPT_EVENT_TYPES = [
   'second_session',
   'device_change',
   'warning_acknowledged',
+  'screenshot',
+  'screen_capture_start',
+  'screen_capture_stop',
 ] as const;
 export type QuizAttemptEventType = (typeof QUIZ_ATTEMPT_EVENT_TYPES)[number];
 
