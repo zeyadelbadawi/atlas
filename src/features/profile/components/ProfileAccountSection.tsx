@@ -22,7 +22,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { useDateFormatter } from '@hooks';
+import { useDateFormatter, useSession } from '@hooks';
+import { humanizeFieldName } from '@utils';
 import type { CurrentUser } from '@types';
 
 export interface ProfileAccountSectionProps {
@@ -40,9 +41,30 @@ export function ProfileAccountSection({
   user,
   audience = 'staff',
 }: ProfileAccountSectionProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const fmt = useDateFormatter();
+  const session = useSession();
   const isLearner = audience === 'learner';
+
+  // B1 (V30) — role words are translated ("Owner" read in English on the
+  // Arabic page). A role the catalogue does not know is shown readable,
+  // never as a raw identifier.
+  const roleLabel = (role: string): string =>
+    t(`profile:roles.${role}`, { defaultValue: humanizeFieldName(role) });
+
+  // `roles` holds only platform-wide roles (`platform_owner`); an
+  // organization role is shown on its organization below. With none, the
+  // row is left out rather than saying "No role assigned" to an owner.
+  const platformRoles = user.roles.map(roleLabel);
+
+  // Only the organization this session is working in is "Current" — the
+  // primary flag can be set on more than one membership. Without an
+  // active organization, the first primary one stands in, as at sign-in.
+  const memberships = user.organizationMemberships ?? [];
+  const currentOrganizationId =
+    session.organization?.id ??
+    (memberships.find((membership) => membership.isPrimary) ?? memberships[0])
+      ?.organizationId;
 
   return (
     <Card>
@@ -66,15 +88,15 @@ export function ProfileAccountSection({
               <p className="mt-1 font-mono text-sm">{user.id}</p>
             </div>
           )}
-          {isLearner ? null : (
+          {isLearner || platformRoles.length === 0 ? null : (
             <div>
               <p className="text-sm font-medium text-muted-foreground">
                 {t('profile:fields.role')}
               </p>
-              <p className="mt-1 text-sm capitalize">
-                {user.roles.length > 0
-                  ? user.roles.join(', ')
-                  : t('profile:status.noRole')}
+              <p className="mt-1 text-sm" data-testid="platform-role">
+                {new Intl.ListFormat(i18n.language, {
+                  type: 'conjunction',
+                }).format(platformRoles)}
               </p>
             </div>
           )}
@@ -95,30 +117,29 @@ export function ProfileAccountSection({
               <h3 className="mb-3 text-sm font-medium">
                 {t('profile:sections.account.organizations')}
               </h3>
-              {user.organizationMemberships &&
-              user.organizationMemberships.length > 0 ? (
-                <div className="space-y-2">
-                  {user.organizationMemberships.map((membership) => (
-                    <div
+              {memberships.length > 0 ? (
+                <ul className="space-y-2">
+                  {memberships.map((membership) => (
+                    <li
                       key={membership.organizationId}
-                      className="flex items-center justify-between rounded-lg border p-3"
+                      className="flex items-center justify-between gap-3 rounded-lg border p-3"
                     >
-                      <div>
-                        <p className="font-medium">
+                      <div className="min-w-0">
+                        <p className="truncate font-medium">
                           {membership.organizationName}
                         </p>
-                        <p className="text-sm capitalize text-muted-foreground">
-                          {membership.role}
+                        <p className="text-sm text-muted-foreground">
+                          {roleLabel(membership.role)}
                         </p>
                       </div>
-                      {membership.isPrimary ? (
-                        <Badge variant="outline">
+                      {membership.organizationId === currentOrganizationId ? (
+                        <Badge variant="outline" className="shrink-0">
                           {t('profile:status.current')}
                         </Badge>
                       ) : null}
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               ) : (
                 <p className="text-sm text-muted-foreground">
                   {t('profile:sections.account.noOrganizations')}

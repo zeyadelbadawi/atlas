@@ -118,7 +118,6 @@ export function FormErrorSummary<TValues extends FieldValues>({
     if (!visible) return undefined;
     const timer = setTimeout(() => ref.current?.focus(), 0);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitCount, visible]);
 
   if (!visible) return <span ref={anchor} hidden aria-hidden />;

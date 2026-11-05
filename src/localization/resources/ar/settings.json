@@ -23,7 +23,8 @@
     "dateFormat": "تنسيق التاريخ",
     "timeFormat": "تنسيق الوقت",
     "timeFormat12": "12 ساعة",
-    "timeFormat24": "24 ساعة"
+    "timeFormat24": "24 ساعة",
+    "characterCount": "{{count}} / {{max}} حرفًا"
   },
   "security": {
     "title": "إعدادات الأمان",
@@ -104,7 +105,8 @@
     "saveSuccess": "تم حفظ الإعدادات بنجاح",
     "saveError": "فشل حفظ الإعدادات",
     "resetSuccess": "تم إعادة تعيين الإعدادات إلى الافتراضي",
-    "unsavedChanges": "لديك تغييرات غير محفوظة"
+    "unsavedChanges": "لديك تغييرات غير محفوظة",
+    "notSaved": "لم تُحفظ الإعدادات"
   },
   "communications": {
     "title": "التواصل",

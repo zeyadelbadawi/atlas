@@ -23,7 +23,8 @@ export function useUpdateProfile() {
 
   return useApiMutation<CurrentUser, UpdateProfileVariables, ApiError>({
     mutationFn: (updates) => currentUserService.updateProfile(updates),
-    showSuccessToast: false,
+    // B1 (V28) — a saved name is confirmed, not left to be noticed.
+    successMessageKey: 'profile:success.profileUpdated',
     showErrorToast: false,
     // The form renders every failure itself (fields, a taken name on the
     // name field — W4 — or its own message), so the app-wide error toast

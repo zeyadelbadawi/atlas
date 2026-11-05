@@ -21,7 +21,9 @@ export const PHONE_TAKEN_ERROR_KEY = 'errors.auth.phoneTaken';
 /** A failure whose violations belong on form fields: a 400, or the phone-taken 409. */
 export function isFieldViolationError(error: ApiError | null): boolean {
   if (!error) return false;
-  return error.kind === 'validation' || error.messageKey === PHONE_TAKEN_ERROR_KEY;
+  return (
+    error.kind === 'validation' || error.messageKey === PHONE_TAKEN_ERROR_KEY
+  );
 }
 
 /**

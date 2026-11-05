@@ -92,6 +92,28 @@ One message per failure with the real reason: "Invalid email or password" only f
 - **V31** one highlighted sidebar item, the most specific match; Dashboard no longer lights up on every page.
 - **V34/V20** onboarding plan step: "Choose a plan to start your trial." instead of a grey button; one trial-failure message.
 
+### Profile and Settings (V08, V09, V11, V15–V18, V20, V23, V27, V28, V30, V40)
+- **V08** profile name: the 100-character limit on "first last" is checked before sending; a server `name` violation lands on First name as "Your full name…", with focus there; any other failure is ONE inline "Your changes weren't saved" with the real reason, not "Unexpected error".
+- **V09** a wrong current password shows on that field, not as a "session expired" toast.
+- **V11** a phone number already in use shows on the phone field, not as a "changed elsewhere — reload" card.
+- **V15** language and theme change only after the save succeeds, and the new language loads first: a failed save never leaves the page in RTL with English text.
+- **V16** Settings tabs wrap at 375 px; no horizontal scroll in EN or AR.
+- **V17** active sessions and remembered devices: a specific error card with Try again, no toast. Still slow to appear — see the open item below.
+- **V18** Settings › General: name and description limits checked in the app (with a counter), email checked by the app instead of the browser's English bubble, server violations on their fields.
+- **V20** one message per failure on every profile and settings form, the Notifications tab included (`useUpdateNotificationPreferences` now marks its errors inline).
+- **V23** required markers on names, the three password fields, platform name and the phone field (`PhoneField` takes `required`).
+- **V27** leaving Settings › General with changes asks first; the draft survives tab switches.
+- **V28** saving your name says so; Settings › General confirms too.
+- **V30** the Role row shows only a real platform role; organization roles are translated; only the active organization is marked Current.
+- **V40** read-only Communications settings render no Cancel/Save.
+- **Shared** the form-feedback helpers these forms use (`SaveFailedAlert`, `RequiredMark`, `useFailureReason`, `fieldErrorText`, `useLabelledViolations`, `useFocusFirstViolation`, `hasViolationOn`) live in `@shared/forms` for later batches.
+- **Arabic numbers** length messages use the right noun form for the number (حرفان، ٣–١٠ أحرف، ١١–٩٩ حرفًا، ١٠٠ حرف).
+
+### Open, for a later batch
+- A GET that fails with a 500 takes ~12 s to show its error (HTTP-client retries on top of the query's). Changing the app-wide retry policy affects every page, so it gets its own change.
+- `useServerValidation` fills `{{field}}` with the API's English field name; profile and settings pass translated labels through `useLabelledViolations`. A `labels` option on the shared hook would let every form do the same.
+- The password and preferences success toasts still use the legacy toast hook (bottom corner); the password form has no leave warning.
+
 ### Not changed, with reason
 - **V35** header controls are 40 px (WCAG 2.2 AA asks 24 px); 44 px would overflow the 375 px header with six controls.
 - **V41** the mobile drawer already has a hidden title ("Main navigation") — not reproduced in code.

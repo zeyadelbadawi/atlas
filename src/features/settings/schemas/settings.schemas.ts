@@ -2,15 +2,46 @@
  * Platform Settings validation schemas.
  */
 import { z } from 'zod';
+import { validationMessage } from '@/shared/forms/validation-message';
+
+/**
+ * B1 (UX audit, V18) — the backend's limits (`UpdatePlatformSettingsDto`:
+ * `MAX_PLATFORM_NAME_LENGTH`, `MAX_PLATFORM_DESCRIPTION_LENGTH`), checked
+ * before sending and named in the message, instead of a 400 that only
+ * ever said "Unexpected error".
+ */
+export const PLATFORM_NAME_MAX_LENGTH = 100;
+export const PLATFORM_DESCRIPTION_MAX_LENGTH = 500;
 
 export const generalSettingsSchema = z.object({
-  platformName: z.string().min(1, 'settings:general.platformNameRequired'),
-  platformDescription: z.string().optional(),
+  platformName: z
+    .string()
+    .trim()
+    .min(1, 'settings:general.platformNameRequired')
+    .max(
+      PLATFORM_NAME_MAX_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: PLATFORM_NAME_MAX_LENGTH,
+      })
+    ),
+  platformDescription: z
+    .string()
+    .max(
+      PLATFORM_DESCRIPTION_MAX_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: PLATFORM_DESCRIPTION_MAX_LENGTH,
+      })
+    )
+    .optional(),
+  // Optional: empty is allowed, anything else must be an address.
   supportEmail: z
     .string()
-    .email('validation:email')
-    .optional()
-    .or(z.literal('')),
+    .trim()
+    .refine(
+      (value) => value === '' || z.string().email().safeParse(value).success,
+      'validation:email'
+    )
+    .optional(),
 });
 
 export type GeneralSettingsFormData = z.infer<typeof generalSettingsSchema>;

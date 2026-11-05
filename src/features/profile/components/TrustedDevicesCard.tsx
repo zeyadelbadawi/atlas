@@ -142,11 +142,15 @@ export function TrustedDevicesCard(): JSX.Element {
   );
 
   const renderBody = (): JSX.Element => {
-    if (devices.isLoading) return <SectionLoader />;
+    // A retry after a failure shows that it is retrying.
+    if (devices.isLoading || (devices.isError && devices.isFetching)) {
+      return <SectionLoader />;
+    }
     if (devices.isError) {
       return (
         <ErrorState
           kind={devices.error?.kind}
+          titleKey="profile:sections.security.trustedDevicesLoadFailed"
           onRetry={() => void devices.refetch()}
         />
       );
