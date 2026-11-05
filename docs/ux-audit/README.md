@@ -26,7 +26,7 @@ site and the public academy sites are out of scope for now.
 | V7 | Formats are checked before sending: email, phone, URL, numbers, prices (no negatives), dates (end after start), lengths (counter on long text). |
 | V8 | Uploads: type and size are checked before uploading, naming what is allowed. |
 | V9 | Irreversible actions (delete, cancel, suspend) ask for confirmation and say what will happen (`useConfirmDialog`). |
-| V10 | Leaving a page with unsaved changes warns first (`useDirtyGuard`). |
+| V10 | Leaving a page with unsaved changes warns first (`useUnsavedChanges`; `useDirtyGuard` for closing a dialog or drawer). |
 | V11 | Success is confirmed. |
 | V12 | All of the above in English and Arabic (RTL). |
 
@@ -40,7 +40,7 @@ site and the public academy sites are out of scope for now.
 | Server violations onto fields | `useServerValidation`, `applyServerViolations` |
 | Failure toast | `useApiMutation` — one toast with the specific reason (B0) |
 | Confirmation | `useConfirmDialog` |
-| Unsaved changes | `useDirtyGuard` |
+| Unsaved changes | `useUnsavedChanges` (`@hooks`) for leaving a page; `useDirtyGuard` for closing a dialog or drawer |
 
 ## Batches
 

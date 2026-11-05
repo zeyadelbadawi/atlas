@@ -35,6 +35,11 @@ export interface MutationErrorToastOptions {
  * Page-oriented copy reads wrong after an ACTION: "the page you are looking
  * for does not exist" after pressing Save. These kinds get action copy.
  */
+const ACTION_TITLE: Partial<Record<ApiError['kind'], string>> = {
+  notFound: 'errors:mutation.notFoundTitle',
+  forbidden: 'errors:mutation.forbiddenTitle',
+};
+
 const ACTION_FALLBACK: Partial<Record<ApiError['kind'], string>> = {
   notFound: 'errors:mutation.notFound',
   forbidden: 'errors:mutation.forbidden',
@@ -50,7 +55,10 @@ export function mutationErrorToast(
 
   if (options.errorMessageKey) return { titleKey: options.errorMessageKey };
 
-  if ((error.kind === 'network' || error.kind === 'timeout') && !options.online) {
+  if (
+    (error.kind === 'network' || error.kind === 'timeout') &&
+    !options.online
+  ) {
     return {
       titleKey: 'common:connectivity.actionNeedsConnection.title',
       descriptionKey: 'common:connectivity.actionNeedsConnection.description',
@@ -66,7 +74,10 @@ export function mutationErrorToast(
       return {
         titleKey: 'errors:validation.title',
         descriptionKey: first.messageKey,
-        values: { field: humanizeFieldName(first.field), ...(first.values ?? {}) },
+        values: {
+          field: humanizeFieldName(first.field),
+          ...(first.values ?? {}),
+        },
       };
     }
   }
@@ -78,5 +89,8 @@ export function mutationErrorToast(
       ? specific
       : (ACTION_FALLBACK[error.kind] ?? errorMessageKey(error.kind));
 
-  return { titleKey: errorTitleKey(error.kind), descriptionKey };
+  return {
+    titleKey: ACTION_TITLE[error.kind] ?? errorTitleKey(error.kind),
+    descriptionKey,
+  };
 }

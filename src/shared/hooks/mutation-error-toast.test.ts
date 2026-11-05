@@ -54,12 +54,14 @@ describe('mutationErrorToast', () => {
   });
 
   it('uses action copy, not page copy, when the item is gone or not allowed', () => {
-    expect(mutationErrorToast(createApiError('notFound'), online)?.descriptionKey).toBe(
-      'errors:mutation.notFound'
-    );
-    expect(mutationErrorToast(createApiError('forbidden'), online)?.descriptionKey).toBe(
-      'errors:mutation.forbidden'
-    );
+    expect(mutationErrorToast(createApiError('notFound'), online)).toEqual({
+      titleKey: 'errors:mutation.notFoundTitle',
+      descriptionKey: 'errors:mutation.notFound',
+    });
+    expect(mutationErrorToast(createApiError('forbidden'), online)).toEqual({
+      titleKey: 'errors:mutation.forbiddenTitle',
+      descriptionKey: 'errors:mutation.forbidden',
+    });
   });
 
   it('never puts an unknown backend key on screen', () => {
@@ -87,6 +89,8 @@ describe('mutationErrorToast', () => {
     for (const catalogue of [en, ar]) {
       expect(catalogue.mutation.notFound).toBeTruthy();
       expect(catalogue.mutation.forbidden).toBeTruthy();
+      expect(catalogue.mutation.notFoundTitle).toBeTruthy();
+      expect(catalogue.mutation.forbiddenTitle).toBeTruthy();
     }
   });
 });

@@ -3,7 +3,13 @@
  * two or more problems (or any problem the form cannot show by a field),
  * focused, every item naming the problem and moving focus to its field.
  */
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
 import { useForm } from 'react-hook-form';
 import { I18nextProvider } from 'react-i18next';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -33,10 +39,23 @@ function Harness({
       <form onSubmit={onSubmit} noValidate>
         <FormErrorSummary
           form={form}
-          fieldLabels={{ name: 'common:form.required', email: 'common:form.optional' }}
+          fieldLabels={{
+            name: 'common:form.required',
+            email: 'common:form.optional',
+          }}
         />
-        <input aria-label="name" {...form.register('name', { required: serverOnly ? false : 'validation:email' })} />
-        <input aria-label="email" {...form.register('email', { required: serverOnly ? false : 'Enter an email' })} />
+        <input
+          aria-label="name"
+          {...form.register('name', {
+            required: serverOnly ? false : 'validation:email',
+          })}
+        />
+        <input
+          aria-label="email"
+          {...form.register('email', {
+            required: serverOnly ? false : 'Enter an email',
+          })}
+        />
         <button type="submit">save</button>
       </form>
     </I18nextProvider>
@@ -66,12 +85,16 @@ describe('FormErrorSummary', () => {
     await submit();
     const summary = screen.getByTestId('form-error-summary');
     expect(summary.textContent).toContain('Fix these 2 problems before saving');
-    expect(summary.textContent).toContain('Required: Enter a valid email address');
+    expect(summary.textContent).toContain(
+      'Required: Enter a valid email address'
+    );
     expect(summary.textContent).toContain('Optional: Enter an email');
     expect(document.activeElement).toBe(summary);
 
     await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /Optional: Enter an email/ }));
+      fireEvent.click(
+        screen.getByRole('button', { name: /Optional: Enter an email/ })
+      );
     });
     expect(document.activeElement).toBe(screen.getByLabelText('email'));
   });
@@ -87,7 +110,9 @@ describe('FormErrorSummary', () => {
   it('speaks Arabic in an Arabic form', async () => {
     render(<Harness lang="ar" />);
     await submit();
-    expect(screen.getByTestId('form-error-summary').textContent).toContain('صحّح هاتين المشكلتين قبل الحفظ');
+    expect(screen.getByTestId('form-error-summary').textContent).toContain(
+      'صحّح هاتين المشكلتين قبل الحفظ'
+    );
   });
 
   it('flattens nested errors into field paths', () => {
@@ -100,5 +125,35 @@ describe('FormErrorSummary', () => {
       { name: 'address.city', message: 'x' },
       { name: null, message: 'y' },
     ]);
+  });
+});
+
+describe('FormErrorSummary — scoped to its own form', () => {
+  function TwoForms() {
+    const form = useForm<{ name: string }>({ defaultValues: { name: '' } });
+    const onSubmit = form.handleSubmit(() => {
+      // A server violation on a field THIS form does not render.
+      form.setError('phone' as never, { message: 'Enter a phone number' });
+    });
+    return (
+      <I18nextProvider i18n={createI18nInstance('en')}>
+        <form aria-label="other">
+          <input name="phone" aria-label="other phone" />
+        </form>
+        <form onSubmit={onSubmit} noValidate aria-label="mine">
+          <FormErrorSummary form={form} />
+          <input aria-label="name" {...form.register('name')} />
+          <button type="submit">save</button>
+        </form>
+      </I18nextProvider>
+    );
+  }
+
+  it('shows an error for a field missing from this form even if another form has it', async () => {
+    render(<TwoForms />);
+    await submit();
+    expect(screen.getByTestId('form-error-summary').textContent).toContain(
+      'Enter a phone number'
+    );
   });
 });

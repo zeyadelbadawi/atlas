@@ -52,12 +52,19 @@ export function flattenFormErrors(
   return items;
 }
 
-/** The control a field path renders as, if it is on the page. */
-function findControl(name: string): HTMLElement | null {
-  if (typeof document === 'undefined') return null;
+/**
+ * The control a field path renders as, looked up inside THIS form only: a
+ * same-named input in another form on the page must not count, or an error
+ * for a field this form does not render would be hidden.
+ */
+function findControl(
+  scope: ParentNode | null,
+  name: string
+): HTMLElement | null {
+  if (!scope) return null;
   // Field paths are `a.b.0.c`; only a quote or backslash needs escaping.
   const safe = name.replace(/["\\]/g, '\\$&');
-  return document.querySelector<HTMLElement>(`[name="${safe}"]`);
+  return scope.querySelector<HTMLElement>(`[name="${safe}"]`);
 }
 
 export function FormErrorSummary<TValues extends FieldValues>({
@@ -67,21 +74,42 @@ export function FormErrorSummary<TValues extends FieldValues>({
 }: FormErrorSummaryProps<TValues>): JSX.Element | null {
   const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
+  // Always rendered, so the owning form is known before the summary shows
+  // (a submit always follows at least one earlier render).
+  const anchor = useRef<HTMLSpanElement>(null);
   const { errors, submitCount, isSubmitting } = form.formState;
+  // The form this summary sits in; the whole document only as a last resort.
+  const scope = (): ParentNode | null =>
+    anchor.current?.closest('form') ??
+    ref.current?.closest('form') ??
+    (typeof document === 'undefined' ? null : document);
 
   const items = useMemo<SummaryItem[]>(
     () =>
       flattenFormErrors(errors as FieldErrors).map(({ name, message }) => {
         const labelKey = name ? fieldLabels?.[name] : undefined;
-        const label = labelKey ? t(labelKey) : name ? humanizeFieldName(name) : '';
-        const text = resolveValidationMessage(message, t, { field: label }) ?? message;
-        return { name, message: label && !text.includes(label) ? `${label}: ${text}` : text };
+        const label = labelKey
+          ? t(labelKey)
+          : name
+            ? humanizeFieldName(name)
+            : '';
+        const text =
+          resolveValidationMessage(message, t, { field: label }) ?? message;
+        return {
+          name,
+          message: label && !text.includes(label) ? `${label}: ${text}` : text,
+        };
       }),
     [errors, fieldLabels, t]
   );
 
-  const hasOrphan = items.some((item) => item.name === null || !findControl(item.name));
-  const visible = submitCount > 0 && !isSubmitting && (items.length >= 2 || (items.length > 0 && hasOrphan));
+  const hasOrphan = items.some(
+    (item) => item.name === null || !findControl(scope(), item.name)
+  );
+  const visible =
+    submitCount > 0 &&
+    !isSubmitting &&
+    (items.length >= 2 || (items.length > 0 && hasOrphan));
 
   // Land on the summary after each failed submit (not on every keystroke).
   // Deferred one tick: React Hook Form focuses the first invalid field right
@@ -93,7 +121,7 @@ export function FormErrorSummary<TValues extends FieldValues>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitCount, visible]);
 
-  if (!visible) return null;
+  if (!visible) return <span ref={anchor} hidden aria-hidden />;
 
   const focusField = (name: string): void => {
     try {
@@ -101,9 +129,10 @@ export function FormErrorSummary<TValues extends FieldValues>({
     } catch {
       /* not registered with the form — fall back to the DOM */
     }
-    const control = findControl(name);
+    const control = findControl(scope(), name);
     if (control && document.activeElement !== control) control.focus();
-    control?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    // Not every environment implements it (jsdom); focus already moved.
+    control?.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
   };
 
   return (
@@ -119,6 +148,7 @@ export function FormErrorSummary<TValues extends FieldValues>({
         className
       )}
     >
+      <span ref={anchor} hidden aria-hidden />
       <p
         id="form-error-summary-title"
         className="flex items-center gap-2 font-semibold text-destructive"
@@ -129,7 +159,7 @@ export function FormErrorSummary<TValues extends FieldValues>({
       <ul className="mt-2 list-disc space-y-1 ps-6 text-foreground">
         {items.map((item, index) => (
           <li key={`${item.name ?? 'form'}-${index}`}>
-            {item.name && findControl(item.name) ? (
+            {item.name && findControl(scope(), item.name) ? (
               <button
                 type="button"
                 onClick={() => focusField(item.name as string)}
