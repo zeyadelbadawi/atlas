@@ -2,6 +2,7 @@
  * Forum validation schemas.
  */
 import { z } from 'zod';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 export const MAX_THREAD_TITLE_LENGTH = 150;
 export const MAX_THREAD_BODY_LENGTH = 5000;
@@ -11,11 +12,21 @@ export const createThreadSchema = z.object({
   title: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_THREAD_TITLE_LENGTH, 'validation:maxLength'),
+    .max(
+      MAX_THREAD_TITLE_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_THREAD_TITLE_LENGTH,
+      })
+    ),
   body: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_THREAD_BODY_LENGTH, 'validation:maxLength'),
+    .max(
+      MAX_THREAD_BODY_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_THREAD_BODY_LENGTH,
+      })
+    ),
 });
 
 export type CreateThreadFormData = z.infer<typeof createThreadSchema>;
@@ -24,7 +35,12 @@ export const createReplySchema = z.object({
   body: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_REPLY_BODY_LENGTH, 'validation:maxLength'),
+    .max(
+      MAX_REPLY_BODY_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_REPLY_BODY_LENGTH,
+      })
+    ),
 });
 
 export type CreateReplyFormData = z.infer<typeof createReplySchema>;

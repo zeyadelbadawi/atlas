@@ -29,6 +29,7 @@ import {
   MAX_QUIZ_TITLE_LENGTH,
   MIN_QUIZ_QUESTIONS,
 } from '../constants/learning.constants';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 /* ---------- server bounds mirrored client-side ---------- */
 
@@ -81,8 +82,8 @@ function optionalNumber(min: number, max: number) {
       value === '' || value === undefined || value === null ? undefined : value,
     z.coerce
       .number()
-      .min(min, 'validation:min')
-      .max(max, 'validation:max')
+      .min(min, validationMessage('validation:min', { min: min }))
+      .max(max, validationMessage('validation:max', { max: max }))
       .optional()
   );
 }
@@ -95,8 +96,8 @@ function optionalInteger(min: number, max: number) {
     z.coerce
       .number()
       .int('validation:integer')
-      .min(min, 'validation:min')
-      .max(max, 'validation:max')
+      .min(min, validationMessage('validation:min', { min: min }))
+      .max(max, validationMessage('validation:max', { max: max }))
       .optional()
   );
 }
@@ -112,8 +113,8 @@ function requiredInteger(min: number, max: number) {
         invalid_type_error: 'validation:required',
       })
       .int('validation:integer')
-      .min(min, 'validation:min')
-      .max(max, 'validation:max')
+      .min(min, validationMessage('validation:min', { min: min }))
+      .max(max, validationMessage('validation:max', { max: max }))
   );
 }
 
@@ -121,7 +122,12 @@ const quizQuestionOptionSchema = z.object({
   label: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_QUIZ_OPTION_LABEL_LENGTH, 'validation:maxLength'),
+    .max(
+      MAX_QUIZ_OPTION_LABEL_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_QUIZ_OPTION_LABEL_LENGTH,
+      })
+    ),
   isCorrect: z.boolean(),
 });
 
@@ -135,7 +141,12 @@ const quizAcceptedAnswerSchema = z.object({
     .string()
     .trim()
     .min(1, 'validation:required')
-    .max(MAX_QUIZ_ACCEPTED_ANSWER_LENGTH, 'validation:maxLength'),
+    .max(
+      MAX_QUIZ_ACCEPTED_ANSWER_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_QUIZ_ACCEPTED_ANSWER_LENGTH,
+      })
+    ),
 });
 
 const quizQuestionSchema = z
@@ -143,21 +154,39 @@ const quizQuestionSchema = z
     prompt: z
       .string()
       .min(1, 'validation:required')
-      .max(MAX_QUIZ_QUESTION_PROMPT_LENGTH, 'validation:maxLength'),
+      .max(
+        MAX_QUIZ_QUESTION_PROMPT_LENGTH,
+        validationMessage('validation:maxLength', {
+          count: MAX_QUIZ_QUESTION_PROMPT_LENGTH,
+        })
+      ),
     type: z.enum(QUIZ_QUESTION_TYPES),
     options: z
       .array(quizQuestionOptionSchema)
-      .max(MAX_QUIZ_OPTIONS_PER_QUESTION, 'validation:max'),
+      .max(
+        MAX_QUIZ_OPTIONS_PER_QUESTION,
+        validationMessage('validation:max', {
+          max: MAX_QUIZ_OPTIONS_PER_QUESTION,
+        })
+      ),
     points: requiredInteger(MIN_QUIZ_QUESTION_POINTS, MAX_QUIZ_QUESTION_POINTS),
     explanation: z
       .string()
-      .max(MAX_QUIZ_EXPLANATION_LENGTH, 'validation:maxLength')
+      .max(
+        MAX_QUIZ_EXPLANATION_LENGTH,
+        validationMessage('validation:maxLength', {
+          count: MAX_QUIZ_EXPLANATION_LENGTH,
+        })
+      )
       .optional(),
     /** Empty string means "none"; the page drops it from the payload. */
     relatedLessonId: z.string().optional(),
     acceptedAnswers: z
       .array(quizAcceptedAnswerSchema)
-      .max(MAX_QUIZ_ACCEPTED_ANSWERS, 'validation:max')
+      .max(
+        MAX_QUIZ_ACCEPTED_ANSWERS,
+        validationMessage('validation:max', { max: MAX_QUIZ_ACCEPTED_ANSWERS })
+      )
       .optional(),
   })
   .superRefine((question, ctx) => {
@@ -267,10 +296,20 @@ export const quizAuthoringSchema = quizSettingsFormSchema
     title: z
       .string()
       .min(1, 'validation:required')
-      .max(MAX_QUIZ_TITLE_LENGTH, 'validation:maxLength'),
+      .max(
+        MAX_QUIZ_TITLE_LENGTH,
+        validationMessage('validation:maxLength', {
+          count: MAX_QUIZ_TITLE_LENGTH,
+        })
+      ),
     description: z
       .string()
-      .max(MAX_QUIZ_DESCRIPTION_LENGTH, 'validation:maxLength')
+      .max(
+        MAX_QUIZ_DESCRIPTION_LENGTH,
+        validationMessage('validation:maxLength', {
+          count: MAX_QUIZ_DESCRIPTION_LENGTH,
+        })
+      )
       .optional(),
     status: z.enum(['draft', 'published']),
     // W7 — whole numbers, like the server (`@IsInt`): a decimal used to pass
@@ -279,8 +318,14 @@ export const quizAuthoringSchema = quizSettingsFormSchema
     maxAttempts: optionalInteger(1, 1000),
     questions: z
       .array(quizQuestionSchema)
-      .min(MIN_QUIZ_QUESTIONS, 'validation:min')
-      .max(MAX_QUIZ_QUESTIONS, 'validation:max'),
+      .min(
+        MIN_QUIZ_QUESTIONS,
+        validationMessage('validation:min', { min: MIN_QUIZ_QUESTIONS })
+      )
+      .max(
+        MAX_QUIZ_QUESTIONS,
+        validationMessage('validation:max', { max: MAX_QUIZ_QUESTIONS })
+      ),
   })
   .superRefine((quiz, ctx) => {
     // Both are local wall-clock strings in the same format, so string

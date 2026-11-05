@@ -8,6 +8,7 @@
 import type { FieldValues, Path, UseFormSetError } from 'react-hook-form';
 import { isApiError } from '@services';
 import type { NormalizedApiError } from '@types';
+import { parseValidationMessage } from './validation-message';
 
 /**
  * Applies backend field violations to a form.
@@ -46,5 +47,13 @@ export function resolveValidationMessage(
   values?: Record<string, string | number>
 ): string | undefined {
   if (!message) return undefined;
-  return message.includes(':') ? translate(message, values ?? {}) : message;
+  const { key, values: packed } = parseValidationMessage(message);
+  if (!key.includes(':')) return message;
+  // B1 — a message rendered without its field's label still reads as a
+  // sentence ("This field is required"), never "{{field}} is required".
+  return translate(key, {
+    field: translate('validation:thisField'),
+    ...packed,
+    ...(values ?? {}),
+  });
 }

@@ -3,7 +3,7 @@
  *
  * Email and password authentication form with validation.
  */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -13,10 +13,16 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AUTH_ROUTES } from '@app/routes/route-paths';
-import { useErrorText } from '@hooks';
+import { useServerValidation } from '@forms';
 import type { ApiError } from '@api';
+import {
+  useAuthFailureText,
+  useFieldErrorText,
+  violationsAllOn,
+} from '../utils/auth-error-text';
+import { REQUIRED_LABEL_CLASS } from '../utils/required-label';
+import { AuthFormAlert } from './AuthFormAlert';
 
 const signInSchema = z.object({
   email: z
@@ -27,6 +33,8 @@ const signInSchema = z.object({
 });
 
 type SignInFormData = z.infer<typeof signInSchema>;
+
+const SIGN_IN_FIELDS: readonly string[] = ['email', 'password'];
 
 export interface SignInFormProps {
   /**
@@ -60,43 +68,61 @@ export function SignInForm({
   defaultEmail,
 }: SignInFormProps): JSX.Element {
   const { t } = useTranslation();
-  const errorText = useErrorText();
+  // B1 (V01) — only a 401 means the credentials were wrong. A server
+  // error, a dropped connection or a rate limit says what really happened.
+  const failureText = useAuthFailureText({
+    unauthorized: 'auth:signIn.errors.invalidCredentials',
+  });
+  const fieldErrorText = useFieldErrorText();
   const [showPassword, setShowPassword] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignInFormData>({
+  const form = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
       email: defaultEmail ?? '',
       password: '',
     },
   });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = form;
+
+  // B1 (V21) — a 400 that names a field marks that field.
+  useServerValidation(form, error);
+  const onFields = violationsAllOn(error, SIGN_IN_FIELDS);
+  const { setFocus } = form;
+  useEffect(() => {
+    const first = onFields ? error?.violations?.[0]?.field : undefined;
+    if (first) setFocus(first as keyof SignInFormData);
+  }, [error, onFields, setFocus]);
 
   const handleFormSubmit = async (data: SignInFormData) => {
     await onSubmit(data.email, data.password);
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-      {error ? (
-        <Alert variant="destructive">
-          <AlertDescription>
-            {/* Backend keys arrive as `errors.auth.x`; an untranslated one
-                falls back instead of rendering an empty box (B1). */}
-            {errorText(
-              error.messageKey,
-              'auth:signIn.errors.invalidCredentials'
-            )}
-          </AlertDescription>
-        </Alert>
-      ) : null}
+    // `noValidate`: the app's own messages, in the page's language — never
+    // the browser's English bubble on top of them (B1, V19).
+    <form
+      onSubmit={handleSubmit(handleFormSubmit)}
+      className="space-y-6"
+      noValidate
+    >
+      {/* A failure the fields cannot show (anything but a 400 on email or
+          password) — its real reason, focused so it is read first. */}
+      <AuthFormAlert
+        message={error && !onFields ? failureText(error) : null}
+        focusKey={error}
+        requestId={error?.kind === 'server' ? error.requestId : undefined}
+      />
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">{t('auth:signIn.email')}</Label>
+          <Label htmlFor="email" className={REQUIRED_LABEL_CLASS}>
+            {t('auth:signIn.email')}
+          </Label>
           <Input
             id="email"
             type="email"
@@ -104,18 +130,21 @@ export function SignInForm({
             autoComplete="email"
             disabled={isLoading}
             {...register('email')}
+            aria-required
             aria-invalid={!!errors.email}
             aria-describedby={errors.email ? 'email-error' : undefined}
           />
           {errors.email ? (
             <p id="email-error" className="text-sm text-destructive">
-              {t(errors.email.message || 'auth:signIn.errors.emailRequired')}
+              {fieldErrorText(errors.email, 'auth:signIn.errors.emailRequired')}
             </p>
           ) : null}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">{t('auth:signIn.password')}</Label>
+          <Label htmlFor="password" className={REQUIRED_LABEL_CLASS}>
+            {t('auth:signIn.password')}
+          </Label>
           <div className="relative">
             <Input
               id="password"
@@ -124,6 +153,7 @@ export function SignInForm({
               autoComplete="current-password"
               disabled={isLoading}
               {...register('password')}
+              aria-required
               aria-invalid={!!errors.password}
               aria-describedby={errors.password ? 'password-error' : undefined}
               className="pe-10"
@@ -148,8 +178,9 @@ export function SignInForm({
           </div>
           {errors.password ? (
             <p id="password-error" className="text-sm text-destructive">
-              {t(
-                errors.password.message || 'auth:signIn.errors.passwordRequired'
+              {fieldErrorText(
+                errors.password,
+                'auth:signIn.errors.passwordRequired'
               )}
             </p>
           ) : null}

@@ -20,6 +20,8 @@ import type { ApiError } from '@services';
 import { useToast } from '@app/providers/toast/useToast';
 import { useTranslation } from 'react-i18next';
 import { errorToastDescriptionKey } from './error-toast.utils';
+import { errorToastTitleKey } from '@/shared/hooks/mutation-error-toast';
+import { isTranslatedString } from '@utils';
 
 export interface AtlasQueryProviderProps {
   readonly children: ReactNode;
@@ -85,9 +87,12 @@ export function AtlasQueryProvider({
       // Namespaced and existence-checked: a dotted backend key or an
       // untranslated one must never reach the screen as a raw identifier
       // (see `errorToastDescriptionKey`).
+      const descriptionKey = errorToastDescriptionKey(error, (key) =>
+        isTranslatedString(i18n, key)
+      );
       notifyError(
-        errorTitleKey(error.kind),
-        errorToastDescriptionKey(error, (key) => i18n.exists(key))
+        errorToastTitleKey(error.kind, descriptionKey),
+        descriptionKey
       );
     },
     [notifyError, i18n]

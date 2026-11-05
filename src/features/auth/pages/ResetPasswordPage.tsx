@@ -2,17 +2,34 @@
  * Reset Password Page.
  *
  * Set new password after receiving reset link.
+ *
+ * B1 (UX audit, V10 / V37): a link that cannot be used — refused up front or
+ * on submit — is one page state with a heading and the way on (request a
+ * new link). A check that FAILED (server down, no connection) is not
+ * reported as a dead link: it says what happened and offers a retry.
  */
-import { useSearchParams, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ShieldCheck } from 'lucide-react';
-import { AUTH_ROUTES } from '@app/routes/route-paths';
+import { RefreshCw, ShieldCheck } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { PageContainer, PageHeader } from '@components/layout';
+import type { ApiError } from '@api';
 import { ResetPasswordForm } from '../components/ResetPasswordForm';
+import { InvalidResetLink } from '../components/InvalidResetLink';
+import { AuthFormAlert } from '../components/AuthFormAlert';
 import { GoogleSignInOption } from '../google/GoogleSignInOption';
 import { useValidatePasswordResetToken } from '../hooks';
 import { useUrlCredentialToken } from '../hooks/useUrlCredentialToken';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useAuthFailureText } from '../utils/auth-error-text';
+
+/** A failed CHECK, as opposed to an answer: asking again may work. */
+const TRANSIENT_KINDS: ReadonlySet<ApiError['kind']> = new Set([
+  'network',
+  'timeout',
+  'server',
+  'rateLimited',
+]);
 
 export default function ResetPasswordPage(): JSX.Element {
   const { t } = useTranslation();
@@ -32,11 +49,58 @@ export default function ResetPasswordPage(): JSX.Element {
   // A failed validation request is treated as "not valid": showing the
   // form on a guess would only move the same failure to the submit button.
   const validation = useValidatePasswordResetToken(token);
+  const failureText = useAuthFailureText();
+  // The link was refused on submit (expired while the person typed).
+  const [refusedOnSubmit, setRefusedOnSubmit] = useState(false);
+  const checkFailed =
+    !!token &&
+    validation.isError &&
+    TRANSIENT_KINDS.has(
+      (validation.error as ApiError | null)?.kind ?? 'unknown'
+    );
   const tokenValid: boolean | null = !token
     ? false
     : validation.isPending
       ? null
       : validation.data === true;
+  const variant = isSetup ? 'setup' : 'reset';
+
+  if (checkFailed) {
+    const error = validation.error as ApiError;
+    return (
+      <PageContainer className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
+        <div
+          className="w-full max-w-md space-y-8"
+          data-testid="reset-link-check-failed"
+        >
+          <div className="text-center">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-pill bg-primary text-primary-foreground">
+              <ShieldCheck className="size-6" strokeWidth={2} aria-hidden />
+            </div>
+            <PageHeader
+              titleKey="auth:resetPassword.checkFailedTitle"
+              className="mt-6"
+            />
+          </div>
+          <AuthFormAlert
+            message={failureText(error)}
+            focusKey={error}
+            requestId={error.kind === 'server' ? error.requestId : undefined}
+          />
+          <Button
+            type="button"
+            className="w-full"
+            onClick={() => void validation.refetch()}
+            disabled={validation.isFetching}
+            aria-busy={validation.isFetching}
+          >
+            <RefreshCw className="me-2 size-4" aria-hidden />
+            {t('common:actions.retry')}
+          </Button>
+        </div>
+      </PageContainer>
+    );
+  }
 
   if (tokenValid === null) {
     return (
@@ -48,32 +112,10 @@ export default function ResetPasswordPage(): JSX.Element {
     );
   }
 
-  if (tokenValid === false) {
+  if (tokenValid === false || refusedOnSubmit) {
     return (
       <PageContainer className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
-        <div className="w-full max-w-md space-y-8">
-          <Alert variant="destructive">
-            <AlertDescription>
-              {t(
-                isSetup
-                  ? 'auth:setPassword.errors.invalidToken'
-                  : 'auth:resetPassword.errors.invalidToken'
-              )}
-            </AlertDescription>
-          </Alert>
-          <div className="text-center">
-            <Link
-              to={AUTH_ROUTES.forgotPassword}
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              {t(
-                isSetup
-                  ? 'auth:setPassword.requestNewLink'
-                  : 'auth:resetPassword.requestNewLink'
-              )}
-            </Link>
-          </div>
-        </div>
+        <InvalidResetLink variant={variant} autoFocus={refusedOnSubmit} />
       </PageContainer>
     );
   }
@@ -111,7 +153,8 @@ export default function ResetPasswordPage(): JSX.Element {
 
         <ResetPasswordForm
           token={token!}
-          variant={isSetup ? 'setup' : 'reset'}
+          variant={variant}
+          onInvalidToken={() => setRefusedOnSubmit(true)}
         />
       </div>
     </PageContainer>

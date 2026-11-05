@@ -21,7 +21,7 @@ import { AlertTriangle, Clock, CreditCard, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@components/feedback';
-import { useToast } from '@hooks';
+import { useErrorText, useToast } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { formatCurrency, toErrorsNamespaceKey } from '@utils';
 import {
@@ -148,8 +148,12 @@ export function PlanStep({
 
   const catalogQuery = usePlanCatalog();
   const startTrial = useStartTrial();
+  const errorText = useErrorText();
   const [trialPlanId, setTrialPlanId] = useState<string>();
   const [trialRefused, setTrialRefused] = useState(false);
+  // B1 (V34) — the button is never greyed out without a reason: pressing it
+  // before choosing a plan says what is missing.
+  const [needsPlan, setNeedsPlan] = useState(false);
 
   const activePlans = [...(catalogQuery.data ?? [])]
     .filter((plan) => plan.status === 'active')
@@ -160,7 +164,11 @@ export function PlanStep({
     status.subscription.trialAvailable && !trialRefused && !isAwaiting;
 
   const handleStartTrial = (): void => {
-    if (!trialPlanId) return;
+    if (!trialPlanId) {
+      setNeedsPlan(true);
+      return;
+    }
+    setNeedsPlan(false);
     startTrial.mutate(
       { planId: trialPlanId },
       {
@@ -200,19 +208,30 @@ export function PlanStep({
           <TrialPlanPicker
             plans={trialPlans}
             value={trialPlanId}
-            onChange={setTrialPlanId}
+            onChange={(planId) => {
+              setTrialPlanId(planId);
+              setNeedsPlan(false);
+            }}
             disabled={startTrial.isPending}
           />
+          {needsPlan ? (
+            <p role="alert" className="text-sm text-destructive">
+              {t('onboarding:plan.choosePlanFirst')}
+            </p>
+          ) : null}
           {startTrial.error ? (
             <p role="alert" className="text-sm text-destructive">
-              {t('onboarding:plan.trialFailed')}
+              {errorText(
+                startTrial.error.messageKey,
+                'onboarding:plan.trialFailed'
+              )}
             </p>
           ) : null}
           <Button
             type="button"
             size="lg"
             onClick={handleStartTrial}
-            disabled={!trialPlanId || startTrial.isPending}
+            disabled={startTrial.isPending}
             aria-busy={startTrial.isPending}
           >
             {startTrial.isPending ? (
@@ -308,9 +327,12 @@ export function PlanStep({
                 {payment ? (
                   <Button asChild variant="outline" size="sm">
                     <Link
-                      to={buildPath(DASHBOARD_ROUTES.tenantBillingPaymentDetail, {
-                        paymentId: payment.id,
-                      })}
+                      to={buildPath(
+                        DASHBOARD_ROUTES.tenantBillingPaymentDetail,
+                        {
+                          paymentId: payment.id,
+                        }
+                      )}
                     >
                       {t('onboarding:plan.viewPayment')}
                     </Link>

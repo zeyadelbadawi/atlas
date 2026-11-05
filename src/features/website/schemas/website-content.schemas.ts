@@ -13,6 +13,7 @@ import {
   MAX_TESTIMONIAL_AUTHOR_ROLE_LENGTH,
   MAX_TESTIMONIAL_QUOTE_LENGTH,
 } from '../constants/website.constants';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 /** Both English and Arabic values are required — an entry that only exists in one language would silently disappear when a visitor's locale doesn't match it. */
 const localizedText = (maxLength: number) =>
@@ -20,17 +21,33 @@ const localizedText = (maxLength: number) =>
     en: z
       .string()
       .min(1, 'validation:required')
-      .max(maxLength, 'validation:maxLength'),
+      .max(
+        maxLength,
+        validationMessage('validation:maxLength', { count: maxLength })
+      ),
     ar: z
       .string()
       .min(1, 'validation:required')
-      .max(maxLength, 'validation:maxLength'),
+      .max(
+        maxLength,
+        validationMessage('validation:maxLength', { count: maxLength })
+      ),
   });
 
 const localizedTextOptional = (maxLength: number) =>
   z.object({
-    en: z.string().max(maxLength, 'validation:maxLength'),
-    ar: z.string().max(maxLength, 'validation:maxLength'),
+    en: z
+      .string()
+      .max(
+        maxLength,
+        validationMessage('validation:maxLength', { count: maxLength })
+      ),
+    ar: z
+      .string()
+      .max(
+        maxLength,
+        validationMessage('validation:maxLength', { count: maxLength })
+      ),
   });
 
 export const faqEntrySchema = z.object({
@@ -44,7 +61,12 @@ export const testimonialEntrySchema = z.object({
   authorName: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_TESTIMONIAL_AUTHOR_NAME_LENGTH, 'validation:maxLength'),
+    .max(
+      MAX_TESTIMONIAL_AUTHOR_NAME_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_TESTIMONIAL_AUTHOR_NAME_LENGTH,
+      })
+    ),
   authorRole: localizedTextOptional(
     MAX_TESTIMONIAL_AUTHOR_ROLE_LENGTH
   ).optional(),

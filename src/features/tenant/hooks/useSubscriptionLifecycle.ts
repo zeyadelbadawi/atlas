@@ -12,6 +12,7 @@
  */
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation, useAuth } from '@/shared/hooks';
+import { INLINE_ERRORS_META } from '@services/query';
 import { tenantKeys } from '@services/query';
 import { tenantService } from '../services/TenantService';
 import type {
@@ -57,6 +58,9 @@ export function useStartTrial() {
     // that knows whether `started` was true. See this file's header.
     showSuccessToast: false,
     showErrorToast: false,
+    // B1 — both callers (onboarding's plan step, the Plans page) show the
+    // failure themselves; the app-wide toast only repeated it.
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 

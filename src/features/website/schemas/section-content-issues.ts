@@ -23,6 +23,7 @@ import {
 } from './website-section.schemas';
 import { DEFAULT_PUBLIC_WEBSITE_LOCALE } from '../constants/locale.constants';
 import { SECTION_TYPES } from '@types';
+import { parseValidationMessage } from '@/shared/forms/validation-message';
 import type { FieldViolation, PublicWebsiteLocale, SectionType } from '@types';
 
 /** The message key every string length cap uses, in both repos. */
@@ -61,7 +62,9 @@ export function collectSectionIssues(
   if (result.success) return [];
   return result.error.issues.map((issue) => ({
     path: issue.path.join('.'),
-    messageKey: issue.message,
+    // The schema may pack values into its message (`validationMessage`);
+    // issues carry the bare key, and `maximum` carries the number.
+    messageKey: parseValidationMessage(issue.message).key,
     ...(issue.code === 'too_big' && issue.type === 'string'
       ? { maximum: Number(issue.maximum) }
       : {}),

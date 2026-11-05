@@ -43,6 +43,7 @@ import {
 } from './create-idempotency-key';
 import { useStepSave } from './useStepSave';
 import { WizardStepFooter } from './WizardStepFooter';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -51,15 +52,30 @@ const basicsStepSchema = z.object({
     .string()
     .trim()
     .min(1, 'validation:required')
-    .max(MAX_COURSE_TITLE_LENGTH, 'validation:maxLength'),
+    .max(
+      MAX_COURSE_TITLE_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_COURSE_TITLE_LENGTH,
+      })
+    ),
   slug: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_COURSE_SLUG_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_COURSE_SLUG_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_COURSE_SLUG_LENGTH,
+      })
+    )
     .regex(SLUG_REGEX, 'validation:invalidSlug'),
   shortDescription: z
     .string()
-    .max(MAX_COURSE_SHORT_DESCRIPTION_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_COURSE_SHORT_DESCRIPTION_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_COURSE_SHORT_DESCRIPTION_LENGTH,
+      })
+    )
     .optional(),
 });
 

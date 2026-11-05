@@ -98,8 +98,8 @@
     "optional": "Optional",
     "requiredFieldIndicator": "This field is required",
     "errorSummary": {
-      "title_one": "Fix this problem before saving",
-      "title_other": "Fix these {{count}} problems before saving"
+      "title_one": "Fix this problem to continue",
+      "title_other": "Fix these {{count}} problems to continue"
     }
   },
   "feedback": {

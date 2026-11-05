@@ -194,4 +194,18 @@ describe('ProvisioningStartPage (form extracted to AcademySetupForm)', () => {
       'This address is already being set up'
     );
   });
+
+  it('B1 (V13) — a taken address is explained on submit; the button is never silently grey', async () => {
+    vi.mocked(provisioningService.checkSubdomainAvailability).mockResolvedValue({
+      status: 'unavailable',
+    } as Awaited<ReturnType<typeof provisioningService.checkSubdomainAvailability>>);
+    const user = userEvent.setup();
+    renderPage();
+    await user.type(await screen.findByLabelText('Academy name'), 'Nile Academy');
+    const submit = screen.getByRole('button', { name: 'Start provisioning' });
+    expect((submit as HTMLButtonElement).disabled).toBe(false);
+    await user.click(submit);
+    expect((await screen.findAllByText('Already taken')).length).toBeGreaterThan(0);
+    expect(createRequest).not.toHaveBeenCalled();
+  });
 });

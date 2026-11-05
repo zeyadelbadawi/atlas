@@ -15,6 +15,7 @@ import { invalidateQueryPrefixes } from '@services/query/query-utils';
 import { INLINE_ERRORS_META } from '@services/query/query-client';
 import { normalizeUnknownError } from '@services';
 import { mutationErrorToast } from './mutation-error-toast';
+import { isTranslatedString } from '@utils';
 
 export interface UseApiMutationOptions<
   TData,
@@ -91,10 +92,12 @@ export function useApiMutation<
           errorMessageKey,
           // Without an i18n provider (isolated tests) nothing is known to
           // exist, so the per-kind fallback copy is used, never a raw key.
-          exists: (key) => typeof i18n?.exists === 'function' && i18n.exists(key),
-          online: typeof navigator === 'undefined' || navigator.onLine !== false,
+          exists: (key) => isTranslatedString(i18n, key),
+          online:
+            typeof navigator === 'undefined' || navigator.onLine !== false,
         });
-        if (toast) notifyError(toast.titleKey, toast.descriptionKey, toast.values);
+        if (toast)
+          notifyError(toast.titleKey, toast.descriptionKey, toast.values);
       }
 
       // Call user-provided onError.

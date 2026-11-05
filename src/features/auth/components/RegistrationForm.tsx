@@ -18,6 +18,14 @@
  * sign-up never reads the options, and when the flag is off, the options
  * are still loading, or they failed to load, the form is exactly the
  * account-only form it was before.
+ *
+ * B1 (UX audit): the browser's own validation bubble is off (`noValidate`),
+ * so every message is the app's, in the page's language (V19); each rule
+ * says what is really wrong — "too short", not "required" (V22, V42);
+ * required fields are marked (V23); two or more problems are listed in a
+ * summary at the top, and after a server error focus moves to the message
+ * or the field it is about (V24). "This phone number is already in use" is
+ * a phone-field error, never the "email already exists" card (V03).
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
@@ -37,15 +45,26 @@ import { ErrorState } from '@components/feedback';
 import { useToast } from '@hooks';
 import { AUTH_ROUTES } from '@app/routes/route-paths';
 import {
+  FormErrorSummary,
   isFieldViolationError,
+  PHONE_TAKEN_ERROR_KEY,
   useNameConflictError,
   useServerValidation,
 } from '@forms';
-import { toErrorsNamespaceKey } from '@utils';
+import { cn, toErrorsNamespaceKey } from '@utils';
 import { INTENDED_PLAN_STORAGE_KEY } from '@features/home';
 import { useRegister, useSignupOptions } from '../hooks';
 import { AUTH_ERROR_KEYS } from '../utils/academy-surface.utils';
 import { TrialPlanPicker } from './TrialPlanPicker';
+import { AuthFormAlert } from './AuthFormAlert';
+import {
+  useAuthFailureText,
+  useFieldErrorText,
+} from '../utils/auth-error-text';
+import {
+  REQUIRED_LABEL_CLASS,
+  REQUIRED_PHONE_LABEL_CLASS,
+} from '../utils/required-label';
 import {
   PhoneField,
   defaultPhoneCountry,
@@ -86,6 +105,37 @@ const OPTIONS_REFRESH_ERROR_KEYS: readonly string[] = [
   AUTH_ERROR_KEYS.organizationSignupDisabled,
 ];
 
+/**
+ * The 409s that mean "this email already has an account" — answered with
+ * the way to sign in. Any OTHER conflict is not about the email and must
+ * not say it is.
+ */
+const EMAIL_EXISTS_ERROR_KEYS: readonly string[] = [
+  AUTH_ERROR_KEYS.emailAlreadyRegistered,
+  AUTH_ERROR_KEYS.alreadyLearnerHere,
+];
+
+/** Mirrors the backend's `name` and `email` rules (`register.dto.ts`). */
+const NAME_MIN = 2;
+export const NAME_MAX = 100;
+const EMAIL_MAX = 254;
+/** The name counter appears once the limit is close. */
+const NAME_COUNTER_FROM = 80;
+
+/** Field labels, for the error summary. */
+const FIELD_LABELS: Readonly<Record<string, string>> = {
+  name: 'auth:register.name',
+  email: 'auth:register.email',
+  phoneNumber: 'auth:register.phone',
+  phoneCountry: 'auth:register.phone',
+  password: 'auth:register.password',
+  confirmPassword: 'auth:register.confirmPassword',
+  acceptTerms: 'auth:register.termsLabel',
+  organizationName: 'auth:register.organization.nameLabel',
+  planId: 'auth:register.plan.title',
+  heardFromOther: 'auth:register.heardFrom.otherLabel',
+};
+
 /** Mirrors the backend's `organizationName` rule: trimmed, 2–120 characters. */
 const ORGANIZATION_NAME_MIN = 2;
 const ORGANIZATION_NAME_MAX = 120;
@@ -105,16 +155,27 @@ const ACCOUNT_ONLY_MODE: RegistrationMode = {
 function buildRegistrationSchema(mode: RegistrationMode) {
   return z
     .object({
+      // Each rule in the order a person meets it: empty → too short → too
+      // long → format. The first one that fails is the one shown.
       name: z
         .string()
-        .min(2, 'auth:register.errors.nameRequired')
-        .max(100, 'auth:register.errors.nameTooLong'),
+        .trim()
+        .min(1, 'auth:register.errors.nameRequired')
+        .min(NAME_MIN, 'auth:register.errors.nameTooShort')
+        .max(NAME_MAX, 'auth:register.errors.nameTooLong'),
       email: z
         .string()
+        .trim()
         .min(1, 'auth:register.errors.emailRequired')
+        .max(EMAIL_MAX, 'auth:register.errors.emailTooLong')
         .email('auth:register.errors.invalidEmail'),
-      password: z.string().min(8, 'auth:register.errors.passwordTooShort'),
-      confirmPassword: z.string(),
+      password: z
+        .string()
+        .min(1, 'auth:register.errors.passwordRequired')
+        .min(8, 'auth:register.errors.passwordTooShort'),
+      confirmPassword: z
+        .string()
+        .min(1, 'auth:register.errors.confirmPasswordRequired'),
       acceptTerms: z.boolean().refine((val) => val === true, {
         message: 'auth:register.errors.termsRequired',
       }),
@@ -264,6 +325,10 @@ export function RegistrationForm({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const registerAccount = useRegister();
+  const failureText = useAuthFailureText();
+  const fieldErrorText = useFieldErrorText();
+  // Where focus goes after a server failure that no field can show.
+  const failureRef = useRef<HTMLDivElement>(null);
 
   /*
     New Customer Onboarding — only the management sign-up asks. An
@@ -319,8 +384,10 @@ export function RegistrationForm({
     handleSubmit,
     control,
     setValue,
+    setFocus,
     formState: { errors },
   } = form;
+  const nameLength = (form.watch('name') ?? '').length;
 
   // Why the picker is showing a notice: the plan the visitor chose was
   // refused by the server and has been cleared.
@@ -403,6 +470,14 @@ export function RegistrationForm({
   const failureKey = failure?.messageKey;
   const isEmailNotAcceptable =
     failureKey === AUTH_ERROR_KEYS.emailNotAcceptable;
+  // B1 (V03) — "this phone number is already in use" (409) belongs on the
+  // phone field. Placed here as well as by `useServerValidation`, because a
+  // 409's violations may not reach the client.
+  const isPhoneTaken = failureKey === PHONE_TAKEN_ERROR_KEY;
+  const isEmailExists =
+    failure?.kind === 'conflict' &&
+    !!failureKey &&
+    EMAIL_EXISTS_ERROR_KEYS.includes(failureKey);
   // Answered by re-reading the options (see `OPTIONS_REFRESH_ERROR_KEYS`),
   // never by the generic error card.
   const isStaleOptionsFailure =
@@ -422,7 +497,57 @@ export function RegistrationForm({
       type: 'server',
       message: toErrorsNamespaceKey(AUTH_ERROR_KEYS.emailNotAcceptable),
     });
-  }, [isEmailNotAcceptable, setError]);
+  }, [isEmailNotAcceptable, failure, setError]);
+  useEffect(() => {
+    if (!isPhoneTaken) return;
+    setError('phoneNumber', {
+      type: 'server',
+      // `PhoneField` shows a server message as it is: finished text.
+      message: t('validation:phoneTaken'),
+    });
+  }, [isPhoneTaken, failure, setError, t]);
+
+  // A failure with field violations is shown on those fields.
+  const hasFieldViolations =
+    isFieldViolationError(failure) &&
+    !!failure?.violations &&
+    failure.violations.length > 0;
+  const failureOnField =
+    isEmailNotAcceptable ||
+    isPhoneTaken ||
+    !!nameConflict ||
+    hasFieldViolations;
+
+  /*
+    B1 (V24) — after a server failure, focus goes where the answer is: the
+    field it is about, or the message above the form. (Two or more field
+    errors raise the error summary, which then takes focus itself.)
+  */
+  useEffect(() => {
+    if (!failure) return;
+    if (isPhoneTaken) {
+      document.getElementById('phoneNumber')?.focus();
+      return;
+    }
+    if (isEmailNotAcceptable) {
+      setFocus('email');
+      return;
+    }
+    if (failureOnField) {
+      const first = failure.violations?.[0]?.field;
+      if (first && first in form.getValues()) {
+        if (first === 'phoneNumber' || first === 'phoneCountry') {
+          document.getElementById('phoneNumber')?.focus();
+        } else {
+          setFocus(first as keyof RegistrationFormData);
+        }
+      }
+      return;
+    }
+    failureRef.current?.focus();
+    // Once per failure.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [failure]);
 
   const isLoading = registerAccount.isPending;
 
@@ -439,7 +564,9 @@ export function RegistrationForm({
     if (!isOrganizationSignup || academyId) return {};
     const attribution = getLandingAttribution();
     return {
-      ...(whatsappConsentOffered && whatsappConsent ? { whatsappConsent: true } : {}),
+      ...(whatsappConsentOffered && whatsappConsent
+        ? { whatsappConsent: true }
+        : {}),
       ...(attribution ? { attribution } : {}),
       ...heardFromPayload(data.heardFrom, data.heardFromOther),
     };
@@ -470,7 +597,7 @@ export function RegistrationForm({
         phoneCountry: data.phoneCountry,
         ...(organizationName ? { organizationName } : {}),
         ...(planId ? { planId } : {}),
-        ...(organizationLeadFields(Boolean(organizationName), data)),
+        ...organizationLeadFields(Boolean(organizationName), data),
       },
       {
         onSuccess: (result) => {
@@ -532,7 +659,15 @@ export function RegistrationForm({
   const selectedPlanId = form.watch('planId');
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+    // `noValidate`: the app's messages, in the page's language — never the
+    // browser's English bubble covering them (B1, V19).
+    <form
+      onSubmit={handleSubmit(handleFormSubmit)}
+      className="space-y-6"
+      noValidate
+    >
+      {/* B1 (V24) — two or more problems, or one no field can show. */}
+      <FormErrorSummary form={form} fieldLabels={FIELD_LABELS} />
       {optionsChanged ? (
         <Alert data-testid="signup-options-changed">
           <Info className="size-4" aria-hidden />
@@ -545,34 +680,35 @@ export function RegistrationForm({
         // The academy's registration policy said no — an invite is
         // required, the invite is invalid, or the request was not for
         // this host. No retry: the same submission cannot succeed.
-        <ErrorState
-          kind={failure?.kind ?? 'forbidden'}
-          titleKey={`auth:register.policy.${
-            policyFailureKey === AUTH_ERROR_KEYS.inviteRequired
-              ? 'inviteRequiredTitle'
-              : policyFailureKey === AUTH_ERROR_KEYS.inviteInvalid
-                ? 'inviteInvalidTitle'
-                : 'unavailableTitle'
-          }`}
-          descriptionKey={toErrorsNamespaceKey(policyFailureKey)}
-          requestId={failure?.requestId}
-        />
-      ) : registerAccount.error &&
-        !isEmailNotAcceptable &&
-        !nameConflict &&
-        !isStaleOptionsFailure &&
-        // A validation error with real field violations is shown inline,
-        // on the field that caused it, via `useServerValidation` above —
-        // this block is for every other failure.
-        !(
-          isFieldViolationError(registerAccount.error) &&
-          registerAccount.error.violations &&
-          registerAccount.error.violations.length > 0
-        ) ? (
-        registerAccount.error.kind === 'conflict' ? (
-          <div className="space-y-2">
+        <div ref={failureRef} tabIndex={-1} className="outline-none">
+          <ErrorState
+            kind={failure?.kind ?? 'forbidden'}
+            titleKey={`auth:register.policy.${
+              policyFailureKey === AUTH_ERROR_KEYS.inviteRequired
+                ? 'inviteRequiredTitle'
+                : policyFailureKey === AUTH_ERROR_KEYS.inviteInvalid
+                  ? 'inviteInvalidTitle'
+                  : 'unavailableTitle'
+            }`}
+            descriptionKey={toErrorsNamespaceKey(policyFailureKey)}
+            requestId={failure?.requestId}
+          />
+        </div>
+      ) : failure && !failureOnField && !isStaleOptionsFailure ? (
+        isEmailExists ||
+        (failure.kind === 'conflict' && !isManagementSurface) ? (
+          // "This email already has an account": the way on is to sign in,
+          // so that is offered right here — not a "try again" that cannot
+          // succeed, and not "this item was changed elsewhere".
+          <div
+            ref={failureRef}
+            tabIndex={-1}
+            className="space-y-2 outline-none"
+            data-testid="register-email-exists"
+          >
             <ErrorState
               kind="conflict"
+              titleKey="auth:register.errors.emailTakenTitle"
               descriptionKey={
                 // Launch Stabilization A4 — on an academy website an existing
                 // account CAN join this academy; the refusal means either
@@ -583,11 +719,8 @@ export function RegistrationForm({
                     ? 'auth:register.errors.alreadyLearnerHere'
                     : 'auth:register.errors.existingAccountAcademy'
               }
-              onRetry={handleSubmit(handleFormSubmit)}
             />
-            {/* The fix for "this email already has an account" is to
-                sign in with it, so that is offered right here. Not on
-                an academy website, whose sign-in lives elsewhere. */}
+            {/* Not on an academy website, whose sign-in lives elsewhere. */}
             {isManagementSurface ? (
               <p className="text-center text-sm">
                 <Link
@@ -601,35 +734,74 @@ export function RegistrationForm({
             ) : null}
           </div>
         ) : (
-          <ErrorState
-            kind={registerAccount.error.kind}
-            onRetry={handleSubmit(handleFormSubmit)}
-          />
+          // Everything else: ONE message with the real reason (or the copy
+          // for its kind), focused. The button below is the retry.
+          <div ref={failureRef} tabIndex={-1} className="outline-none">
+            <AuthFormAlert
+              message={failureText(failure)}
+              focusKey={failure}
+              autoFocus={false}
+              requestId={
+                failure.kind === 'server' ? failure.requestId : undefined
+              }
+            />
+          </div>
         )
       ) : null}
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="name">{t('auth:register.name')}</Label>
+          <Label htmlFor="name" className={REQUIRED_LABEL_CLASS}>
+            {t('auth:register.name')}
+          </Label>
+          {/* No hard `maxLength`: a pasted long name is not cut silently.
+              The counter shows the limit as it nears, the rule says it. */}
           <Input
             id="name"
             type="text"
             placeholder={t('auth:register.namePlaceholder')}
             autoComplete="name"
-            maxLength={100}
             disabled={isLoading}
             {...register('name')}
+            aria-required
             aria-invalid={!!errors.name}
+            aria-describedby={
+              [
+                errors.name ? 'name-error' : null,
+                nameLength >= NAME_COUNTER_FROM ? 'name-counter' : null,
+              ]
+                .filter(Boolean)
+                .join(' ') || undefined
+            }
           />
           {errors.name ? (
-            <p className="text-sm text-destructive">
-              {t(errors.name.message || 'auth:register.errors.nameRequired')}
+            <p id="name-error" className="text-sm text-destructive">
+              {fieldErrorText(errors.name, 'auth:register.errors.nameRequired')}
+            </p>
+          ) : null}
+          {nameLength >= NAME_COUNTER_FROM ? (
+            <p
+              id="name-counter"
+              data-testid="name-counter"
+              className={cn(
+                'text-end text-xs tabular-nums',
+                nameLength > NAME_MAX
+                  ? 'font-medium text-destructive'
+                  : 'text-muted-foreground'
+              )}
+            >
+              {t('auth:register.nameCounter', {
+                count: nameLength,
+                max: NAME_MAX,
+              })}
             </p>
           ) : null}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email">{t('auth:register.email')}</Label>
+          <Label htmlFor="email" className={REQUIRED_LABEL_CLASS}>
+            {t('auth:register.email')}
+          </Label>
           <Input
             id="email"
             type="email"
@@ -642,32 +814,46 @@ export function RegistrationForm({
             autoFocus={!!defaultEmail}
             disabled={isLoading}
             {...register('email')}
+            aria-required
             aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? 'email-error' : undefined}
           />
           {errors.email ? (
-            <p className="text-sm text-destructive">
-              {t(errors.email.message || 'auth:register.errors.emailRequired')}
+            <p id="email-error" className="text-sm text-destructive">
+              {fieldErrorText(
+                errors.email,
+                'auth:register.errors.emailRequired'
+              )}
             </p>
           ) : null}
         </div>
 
-        <PhoneField
-          control={control}
-          errors={errors}
-          id="phoneNumber"
-          label={t('auth:register.phone')}
-          hint={t('auth:register.phoneHint')}
-          disabled={isLoading}
-        />
+        {/* `PhoneField` takes a plain label: its required mark is put on
+            from here (see `REQUIRED_PHONE_LABEL_CLASS`). */}
+        <div className={REQUIRED_PHONE_LABEL_CLASS}>
+          <PhoneField
+            control={control}
+            errors={errors}
+            id="phoneNumber"
+            label={t('auth:register.phone')}
+            hint={t('auth:register.phoneHint')}
+            disabled={isLoading}
+          />
+        </div>
 
         {mode.organization && whatsappConsentOffered ? (
           // DRAFT wording pending counsel (`SIGNUP_WHATSAPP_CONSENT_WORDING_VERSION`,
           // utils/owner-whatsapp-consent.ts).
-          <div className="flex items-start gap-3" data-testid="owner-whatsapp-consent">
+          <div
+            className="flex items-start gap-3"
+            data-testid="owner-whatsapp-consent"
+          >
             <Checkbox
               id="whatsappConsent"
               checked={whatsappConsent}
-              onCheckedChange={(checked) => setWhatsappConsent(checked === true)}
+              onCheckedChange={(checked) =>
+                setWhatsappConsent(checked === true)
+              }
               disabled={isLoading}
             />
             <Label
@@ -680,7 +866,9 @@ export function RegistrationForm({
         ) : null}
 
         <div className="space-y-2">
-          <Label htmlFor="password">{t('auth:register.password')}</Label>
+          <Label htmlFor="password" className={REQUIRED_LABEL_CLASS}>
+            {t('auth:register.password')}
+          </Label>
           <div className="relative">
             <Input
               id="password"
@@ -689,6 +877,7 @@ export function RegistrationForm({
               autoComplete="new-password"
               disabled={isLoading}
               {...register('password')}
+              aria-required
               aria-invalid={!!errors.password}
               className="pe-10"
             />
@@ -712,9 +901,9 @@ export function RegistrationForm({
           </div>
           {errors.password ? (
             <p className="text-sm text-destructive">
-              {t(
-                errors.password.message ||
-                  'auth:register.errors.passwordTooShort'
+              {fieldErrorText(
+                errors.password,
+                'auth:register.errors.passwordTooShort'
               )}
             </p>
           ) : null}
@@ -724,7 +913,7 @@ export function RegistrationForm({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">
+          <Label htmlFor="confirmPassword" className={REQUIRED_LABEL_CLASS}>
             {t('auth:register.confirmPassword')}
           </Label>
           <div className="relative">
@@ -735,6 +924,7 @@ export function RegistrationForm({
               autoComplete="new-password"
               disabled={isLoading}
               {...register('confirmPassword')}
+              aria-required
               aria-invalid={!!errors.confirmPassword}
               className="pe-10"
             />
@@ -758,9 +948,9 @@ export function RegistrationForm({
           </div>
           {errors.confirmPassword ? (
             <p className="text-sm text-destructive">
-              {t(
-                errors.confirmPassword.message ||
-                  'auth:register.errors.passwordMismatch'
+              {fieldErrorText(
+                errors.confirmPassword,
+                'auth:register.errors.passwordMismatch'
               )}
             </p>
           ) : null}
@@ -771,7 +961,10 @@ export function RegistrationForm({
             data-testid="organization-signup-fields"
           >
             <div className="space-y-2">
-              <Label htmlFor="organizationName">
+              <Label
+                htmlFor="organizationName"
+                className={REQUIRED_LABEL_CLASS}
+              >
                 {t('auth:register.organization.nameLabel')}
               </Label>
               <Input
@@ -782,13 +975,14 @@ export function RegistrationForm({
                 maxLength={ORGANIZATION_NAME_MAX}
                 disabled={isLoading}
                 {...register('organizationName')}
+                aria-required
                 aria-invalid={!!errors.organizationName}
               />
               {errors.organizationName ? (
                 <p className="text-sm text-destructive">
-                  {t(
-                    errors.organizationName.message ||
-                      'auth:register.organization.errors.nameTooShort'
+                  {fieldErrorText(
+                    errors.organizationName,
+                    'auth:register.organization.errors.nameTooShort'
                   )}
                 </p>
               ) : (
@@ -809,6 +1003,7 @@ export function RegistrationForm({
                 disabled={isLoading}
                 errorKey={errors.planId?.message}
                 noticeKey={planNoticeKey}
+                required
               />
             ) : (
               // Trials are off (or no plan is trialable right now): the
@@ -872,9 +1067,9 @@ export function RegistrationForm({
                 />
                 {errors.heardFromOther ? (
                   <p className="text-sm text-destructive">
-                    {t(
-                      errors.heardFromOther.message ||
-                        'auth:register.heardFrom.otherTooLong',
+                    {fieldErrorText(
+                      errors.heardFromOther,
+                      'auth:register.heardFrom.otherTooLong',
                       { max: HEARD_FROM_OTHER_MAX }
                     )}
                   </p>
@@ -938,8 +1133,9 @@ export function RegistrationForm({
         </div>
         {errors.acceptTerms ? (
           <p className="text-sm text-destructive">
-            {t(
-              errors.acceptTerms.message || 'auth:register.errors.termsRequired'
+            {fieldErrorText(
+              errors.acceptTerms,
+              'auth:register.errors.termsRequired'
             )}
           </p>
         ) : null}

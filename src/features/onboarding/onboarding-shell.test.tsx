@@ -432,7 +432,14 @@ describe('onboarding shell — Plan step', () => {
     const start = await screen.findByRole('button', {
       name: 'Start trial',
     });
-    expect((start as HTMLButtonElement).disabled).toBe(true);
+    // B1 (V34) — not silently greyed out: without a plan it says what is
+    // missing and starts nothing.
+    expect((start as HTMLButtonElement).disabled).toBe(false);
+    await user.click(start);
+    expect((await screen.findByRole('alert')).textContent).toBe(
+      'Choose a plan to start your trial.'
+    );
+    expect(startTrial).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole('radio', { name: 'Growth' }));
     current = status({}, { nextStep: 'academy' });

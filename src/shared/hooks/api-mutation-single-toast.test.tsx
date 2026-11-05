@@ -34,7 +34,9 @@ function setup(showErrorToast?: boolean) {
         retry: false,
         showErrorToast,
         mutationFn: async () => {
-          throw createApiError('conflict', { messageKey: 'errors.domain.hostnameTaken' });
+          throw createApiError('conflict', {
+            messageKey: 'errors.domain.hostnameTaken',
+          });
         },
       }),
     { wrapper }
@@ -50,7 +52,8 @@ describe('useApiMutation — one toast per failure', () => {
 
     expect(notifyError).toHaveBeenCalledTimes(1);
     expect(notifyError).toHaveBeenCalledWith(
-      'errors:conflict.title',
+      // A specific reason gets a neutral title, not "changed elsewhere" (B1).
+      'errors:mutation.failedTitle',
       'errors:domain.hostnameTaken',
       undefined
     );

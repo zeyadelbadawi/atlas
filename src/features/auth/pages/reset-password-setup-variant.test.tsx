@@ -31,7 +31,6 @@ function testQueryClient(): QueryClient {
   return new QueryClient({ defaultOptions: { queries: { retry: false } } });
 }
 
-
 // The page reads `validation.data === true` and `validation.isPending`,
 // and treats anything else as an invalid token — so the mock has to
 // match that shape exactly or every case renders the error branch.
@@ -45,7 +44,13 @@ vi.mock('../hooks', () => ({
   }),
 }));
 vi.mock('../components/ResetPasswordForm', () => ({
-  ResetPasswordForm: ({ token, variant }: { token: string; variant?: string }) => (
+  ResetPasswordForm: ({
+    token,
+    variant,
+  }: {
+    token: string;
+    variant?: string;
+  }) => (
     <div data-testid="form" data-variant={variant ?? 'reset'}>
       {token}
     </div>
@@ -69,7 +74,7 @@ function renderAt(search: string) {
       <MemoryRouter initialEntries={[`/auth/reset-password${search}`]}>
         <ResetPasswordPage />
       </MemoryRouter>
-    </QueryClientProvider>,
+    </QueryClientProvider>
   );
 }
 
@@ -111,9 +116,11 @@ describe('ResetPasswordPage', () => {
       tokenState.valid = false;
       const { container } = renderAt('?token=stale&setup=1');
       expect(container.textContent).toContain(
-        'auth:setPassword.errors.invalidToken',
+        'auth:setPassword.errors.invalidToken'
       );
-      expect(container.textContent).toContain('auth:setPassword.requestNewLink');
+      expect(container.textContent).toContain(
+        'auth:setPassword.requestNewLink'
+      );
       // Telling someone their "reset link" expired, when they never had
       // one, is the same wrong sentence this whole variant exists to fix.
       expect(container.textContent).not.toContain('auth:resetPassword.');
@@ -123,10 +130,10 @@ describe('ResetPasswordPage', () => {
       tokenState.valid = false;
       const { container } = renderAt('?token=stale');
       expect(container.textContent).toContain(
-        'auth:resetPassword.errors.invalidToken',
+        'auth:resetPassword.errors.invalidToken'
       );
       expect(container.textContent).toContain(
-        'auth:resetPassword.requestNewLink',
+        'auth:resetPassword.requestNewLink'
       );
       expect(container.textContent).not.toContain('auth:setPassword.');
     });

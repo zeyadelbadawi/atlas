@@ -60,6 +60,7 @@ import {
   getLessonStatusLabelKey,
   getLessonStatusTone,
 } from '../utils/course-status.utils';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 /* ---------- form schema ---------- */
 
@@ -70,8 +71,8 @@ function optionalNumber(min: number, max: number) {
       value === '' || value === undefined || value === null ? undefined : value,
     z.coerce
       .number()
-      .min(min, 'validation:min')
-      .max(max, 'validation:max')
+      .min(min, validationMessage('validation:min', { min: min }))
+      .max(max, validationMessage('validation:max', { max: max }))
       .optional()
   );
 }
@@ -87,7 +88,7 @@ const completionSettingsSchema = z
       z.coerce
         .number()
         .int('validation:integer')
-        .min(1, 'validation:min')
+        .min(1, validationMessage('validation:min', { min: 1 }))
         .optional()
     ),
     requiredQuizzes: z.boolean(),

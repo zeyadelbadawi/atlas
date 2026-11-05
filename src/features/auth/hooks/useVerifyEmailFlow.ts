@@ -53,6 +53,7 @@ import {
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@hooks';
 import type { ApiError } from '@api';
+import type { ApiErrorKind } from '@types';
 import { useVerifyEmail } from './useVerifyEmail';
 
 export type VerifyEmailState =
@@ -72,6 +73,12 @@ export interface VerifyEmailFlow {
   readonly state: VerifyEmailState;
   /** Support reference for a failed request, when the backend sent one. */
   readonly requestId?: string;
+  /**
+   * B1 (V36) — what kind of failure a `network` state really was. The state
+   * stays `network` (both are retried the same way), but a server error is
+   * not a connection problem, so a page can word it differently.
+   */
+  readonly failureKind?: ApiErrorKind;
   /** Whether `retry` can do anything (a network or rate-limit failure, token still held). */
   readonly canRetry: boolean;
   readonly retry: () => void;
@@ -294,6 +301,7 @@ export function useVerifyEmailFlow(): VerifyEmailFlow {
   return {
     state,
     requestId: verifyEmail.error?.requestId,
+    failureKind: verifyEmail.isError ? verifyEmail.error?.kind : undefined,
     canRetry,
     retry,
     outcomeRef,

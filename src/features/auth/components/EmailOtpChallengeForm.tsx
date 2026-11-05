@@ -23,6 +23,11 @@
  *                              so the form offers a password reset and
  *                              support instead of a code field.
  *
+ * Any other failure (a server error, a dropped connection) is shown by its
+ * real reason or the copy for its kind — never a raw key (B1, V06). Verify
+ * is not greyed out for an incomplete code: pressing it says what is
+ * missing, under the field (B1, V34).
+ *
  * DIGITS STAY LEFT-TO-RIGHT. The slot group carries `dir="ltr"` so an
  * Arabic reader types and reads the code the way it appears in the
  * email; everything around it follows the page direction.
@@ -44,6 +49,7 @@ import {
 import { cn } from '@/lib/utils';
 import type { ApiError } from '@api';
 import type { EmailOtpChallenge, EmailOtpResendResult } from '@types';
+import { useAuthFailureText } from '../utils/auth-error-text';
 
 export const EMAIL_OTP_LENGTH = 6;
 
@@ -107,6 +113,9 @@ export function EmailOtpChallengeForm({
   const { t } = useTranslation();
   const [code, setCode] = useState('');
   const [rememberDevice, setRememberDevice] = useState(true);
+  // Verify pressed with fewer than six digits; cleared on typing.
+  const [incomplete, setIncomplete] = useState(false);
+  const failureText = useAuthFailureText();
 
   // A resend does not tell the client the new code's expiry, only the
   // next cooldown — so after one the countdown is unknown and hidden
@@ -160,8 +169,9 @@ export function EmailOtpChallengeForm({
     !isLoading &&
     cooldownSeconds === 0 &&
     resendsRemaining > 0;
-  const canSubmit =
-    !terminal && !isExpired && !isLoading && code.length === EMAIL_OTP_LENGTH;
+  // Disabled only while the reason is on screen: the expired message, or
+  // the request in flight. An incomplete code is answered on submit.
+  const canSubmit = !terminal && !isExpired && !isLoading;
 
   // Focus follows the next step: the field on mount, the field again
   // after a wrong code (cleared, so a retry does not start mid-code),
@@ -181,9 +191,21 @@ export function EmailOtpChallengeForm({
     inputRef.current?.focus();
   }, [isInvalid, error]);
 
+  // Any other failure (server, connection): back to the code once the
+  // request has finished, so focus does not fall to the page body.
+  useEffect(() => {
+    if (isOtherError && !isLoading && !terminal) inputRef.current?.focus();
+  }, [isOtherError, isLoading, terminal, error]);
+
   const handleSubmit = (event: React.FormEvent): void => {
     event.preventDefault();
     if (!canSubmit) return;
+    if (code.length !== EMAIL_OTP_LENGTH) {
+      setIncomplete(true);
+      inputRef.current?.focus();
+      return;
+    }
+    setIncomplete(false);
     void onSubmit({ code, rememberDevice });
   };
 
@@ -273,7 +295,7 @@ export function EmailOtpChallengeForm({
         </p>
       ) : isOtherError && error ? (
         <p role="alert" className="text-sm text-destructive">
-          {t(errorsKey(error.messageKey))}
+          {failureText(error)}
         </p>
       ) : null}
 
@@ -285,13 +307,21 @@ export function EmailOtpChallengeForm({
           name="code"
           maxLength={EMAIL_OTP_LENGTH}
           value={code}
-          onChange={setCode}
+          onChange={(next) => {
+            setIncomplete(false);
+            setCode(next);
+          }}
           pattern={REGEXP_ONLY_DIGITS}
           inputMode="numeric"
           autoComplete="one-time-code"
           disabled={isLoading || isExpired}
-          aria-invalid={isInvalid || isExpired}
-          aria-describedby="email-otp-hint"
+          aria-required
+          aria-invalid={isInvalid || isExpired || incomplete}
+          aria-describedby={
+            incomplete
+              ? 'email-otp-incomplete email-otp-hint'
+              : 'email-otp-hint'
+          }
           // The library positions its real <input> over the slots; the
           // group is what the eye reads, so it is the LTR island.
           containerClassName="justify-center"
@@ -303,12 +333,21 @@ export function EmailOtpChallengeForm({
                 index={index}
                 className={cn(
                   'h-12 w-11 text-lg font-medium sm:w-12',
-                  (isInvalid || isExpired) && 'border-destructive'
+                  (isInvalid || isExpired || incomplete) && 'border-destructive'
                 )}
               />
             ))}
           </InputOTPGroup>
         </InputOTP>
+        {incomplete ? (
+          <p
+            id="email-otp-incomplete"
+            role="alert"
+            className="text-center text-sm text-destructive"
+          >
+            {t('auth:emailOtp.codeIncomplete', { count: EMAIL_OTP_LENGTH })}
+          </p>
+        ) : null}
         <p
           id="email-otp-hint"
           className="text-center text-xs text-muted-foreground"
@@ -363,7 +402,12 @@ export function EmailOtpChallengeForm({
         </div>
       </div>
 
-      <Button type="submit" className="w-full" disabled={!canSubmit}>
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={!canSubmit}
+        aria-busy={isLoading}
+      >
         {isLoading ? (
           <>
             <Loader2 className="size-4 animate-spin" aria-hidden />

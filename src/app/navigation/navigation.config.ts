@@ -416,7 +416,9 @@ export function getDashboardNavigation(
           labelKey: 'navigation:items.dashboard',
           path: DASHBOARD_ROUTES.root,
           icon: LayoutDashboard,
-          matchNestedPaths: true,
+          // B1 (V31) — the home item is active on the home page only: as a
+          // prefix of every route it was highlighted on Profile, Support,
+          // Create an academy… beside the item that really was open.
           // The tenant dashboard. A Platform Owner has no organization, so
           // every card on it would be empty for them — they land on and
           // navigate to the Platform Dashboard instead

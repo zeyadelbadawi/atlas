@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import type { FieldValues, UseFormReturn, Path } from 'react-hook-form';
 import type { FieldViolation } from '@types';
 import type { ApiError } from '@api';
-import { humanizeFieldName } from '@utils';
+import { humanizeFieldName, isTranslatedString } from '@utils';
 
 /**
  * "This phone number is already in use" (409) carries a `phoneNumber`
@@ -35,7 +35,7 @@ export function useServerValidation<TValues extends FieldValues>(
   error: ApiError | null,
   fieldAliases?: Readonly<Record<string, Path<TValues>>>
 ): void {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   // Read through a ref: callers may pass an inline object, and a changed
   // object must not re-apply the same server errors on every render.
   const aliases = useRef(fieldAliases);
@@ -54,7 +54,12 @@ export function useServerValidation<TValues extends FieldValues>(
     // of the raw field name fills the `{{field}}` placeholder every
     // `validation:*` message uses.
     error.violations.forEach((violation: FieldViolation) => {
-      const message = t(violation.messageKey, {
+      // B1 (V44) — a key this build doesn't translate falls back to a
+      // generic field message instead of reaching the screen raw.
+      const messageKey = isTranslatedString(i18n, violation.messageKey)
+        ? violation.messageKey
+        : 'errors:validation.field';
+      const message = t(messageKey, {
         field: humanizeFieldName(violation.field),
         ...violation.values,
       });
@@ -66,5 +71,5 @@ export function useServerValidation<TValues extends FieldValues>(
         message,
       });
     });
-  }, [error, form, t]);
+  }, [error, form, t, i18n]);
 }

@@ -8,12 +8,18 @@ import {
   MAX_PAYMENT_REVIEW_NOTES_LENGTH,
   MIN_PAYMENT_REJECTION_NOTES_LENGTH,
 } from '../constants/billing.constants';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 /** Optional free-text reference note submitted alongside payment proof. */
 export const submitPaymentProofSchema = z.object({
   note: z
     .string()
-    .max(MAX_PAYMENT_PROOF_NOTE_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_PAYMENT_PROOF_NOTE_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_PAYMENT_PROOF_NOTE_LENGTH,
+      })
+    )
     .optional(),
 });
 
@@ -25,7 +31,12 @@ export type SubmitPaymentProofFormData = z.infer<
 export const approvePaymentSchema = z.object({
   notes: z
     .string()
-    .max(MAX_PAYMENT_REVIEW_NOTES_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_PAYMENT_REVIEW_NOTES_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_PAYMENT_REVIEW_NOTES_LENGTH,
+      })
+    )
     .optional(),
 });
 
@@ -35,8 +46,18 @@ export type ApprovePaymentFormData = z.infer<typeof approvePaymentSchema>;
 export const rejectPaymentSchema = z.object({
   notes: z
     .string()
-    .min(MIN_PAYMENT_REJECTION_NOTES_LENGTH, 'validation:minLength')
-    .max(MAX_PAYMENT_REVIEW_NOTES_LENGTH, 'validation:maxLength'),
+    .min(
+      MIN_PAYMENT_REJECTION_NOTES_LENGTH,
+      validationMessage('validation:minLength', {
+        count: MIN_PAYMENT_REJECTION_NOTES_LENGTH,
+      })
+    )
+    .max(
+      MAX_PAYMENT_REVIEW_NOTES_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_PAYMENT_REVIEW_NOTES_LENGTH,
+      })
+    ),
 });
 
 export type RejectPaymentFormData = z.infer<typeof rejectPaymentSchema>;

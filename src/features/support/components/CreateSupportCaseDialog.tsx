@@ -28,15 +28,27 @@ import { Textarea } from '@/components/ui/textarea';
 import { useNavigate } from 'react-router-dom';
 import { useDirtyGuard } from '@features/unsaved-changes';
 import { useServerValidation } from '@forms';
+import { useErrorText } from '@hooks';
 import { buildPath, DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useCreateSupportCase } from '../hooks';
 import { SupportAttachmentField } from './SupportAttachmentField';
 import type { SupportAttachmentInput } from '@types';
 
 /** Mirrors the backend's `MAX_SUPPORT_SUBJECT_LENGTH`/`MAX_SUPPORT_DESCRIPTION_LENGTH`. */
-const createSupportCaseSchema = z.object({
-  subject: z.string().trim().min(3).max(200),
-  description: z.string().trim().min(10).max(5000),
+/** B1 — each limit says which side was crossed (the old copy said "at least" for both). */
+const SUBJECT_MAX = 200;
+const DESCRIPTION_MAX = 5000;
+export const createSupportCaseSchema = z.object({
+  subject: z
+    .string()
+    .trim()
+    .min(3, 'support:create.subjectInvalid')
+    .max(SUBJECT_MAX, 'support:create.subjectTooLong'),
+  description: z
+    .string()
+    .trim()
+    .min(10, 'support:create.descriptionInvalid')
+    .max(DESCRIPTION_MAX, 'support:create.descriptionTooLong'),
 });
 
 type CreateSupportCaseFormData = z.infer<typeof createSupportCaseSchema>;
@@ -55,11 +67,13 @@ export function CreateSupportCaseDialog({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const createCase = useCreateSupportCase();
+  const errorText = useErrorText();
 
   const form = useForm<CreateSupportCaseFormData>({
     resolver: zodResolver(createSupportCaseSchema),
     defaultValues: { subject: '', description: '' },
   });
+  const descriptionLength = form.watch('description')?.length ?? 0;
 
   /*
     P53 — the optional image lives in local state rather than in the form
@@ -126,11 +140,27 @@ export function CreateSupportCaseDialog({
               id="support-subject"
               data-testid="support-subject"
               placeholder={t('support:create.subjectPlaceholder')}
+              aria-invalid={Boolean(form.formState.errors.subject)}
+              aria-describedby={
+                form.formState.errors.subject
+                  ? 'support-subject-error'
+                  : undefined
+              }
               {...form.register('subject')}
             />
             {form.formState.errors.subject ? (
-              <p className="text-sm text-destructive">
-                {t('support:create.subjectInvalid')}
+              <p
+                id="support-subject-error"
+                role="alert"
+                className="text-sm text-destructive"
+              >
+                {t(
+                  form.formState.errors.subject.message ??
+                    'support:create.subjectInvalid',
+                  {
+                    count: SUBJECT_MAX,
+                  }
+                )}
               </p>
             ) : null}
           </div>
@@ -144,11 +174,34 @@ export function CreateSupportCaseDialog({
               data-testid="support-description"
               rows={6}
               placeholder={t('support:create.descriptionPlaceholder')}
+              aria-invalid={Boolean(form.formState.errors.description)}
+              aria-describedby="support-description-count support-description-error"
               {...form.register('description')}
             />
+            <p
+              id="support-description-count"
+              className={
+                descriptionLength > DESCRIPTION_MAX
+                  ? 'text-xs font-medium text-destructive'
+                  : 'text-xs text-muted-foreground'
+              }
+            >
+              {t('support:create.characterCount', {
+                count: descriptionLength,
+                max: DESCRIPTION_MAX,
+              })}
+            </p>
             {form.formState.errors.description ? (
-              <p className="text-sm text-destructive">
-                {t('support:create.descriptionInvalid')}
+              <p
+                id="support-description-error"
+                role="alert"
+                className="text-sm text-destructive"
+              >
+                {t(
+                  form.formState.errors.description.message ??
+                    'support:create.descriptionInvalid',
+                  { count: DESCRIPTION_MAX }
+                )}
               </p>
             ) : null}
           </div>
@@ -165,8 +218,12 @@ export function CreateSupportCaseDialog({
           {/* A server-side refusal (wrong real type, over the real ceiling)
               surfaces here rather than silently doing nothing. */}
           {createCase.error ? (
-            <p className="text-sm text-destructive" data-testid="support-create-error">
-              {t('support:create.failed')}
+            <p
+              role="alert"
+              className="text-sm text-destructive"
+              data-testid="support-create-error"
+            >
+              {errorText(createCase.error.messageKey, 'support:create.failed')}
             </p>
           ) : null}
 

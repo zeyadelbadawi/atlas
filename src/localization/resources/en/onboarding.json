@@ -85,7 +85,8 @@
     "failedGeneric": "The payment was not completed.",
     "resubmit": "Submit a new payment",
     "priceMonthly": "{{price}} / month",
-    "priceYearly": "{{price}} / year"
+    "priceYearly": "{{price}} / year",
+    "choosePlanFirst": "Choose a plan to start your trial."
   },
   "academy": {
     "provisioningTitle": "Setting up {{name}}",

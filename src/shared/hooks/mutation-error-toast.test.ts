@@ -15,7 +15,8 @@ function exists(key: string): boolean {
   if (!root || !path) return false;
   let node: unknown = root;
   for (const part of path.split('.')) {
-    if (typeof node !== 'object' || node === null || !(part in node)) return false;
+    if (typeof node !== 'object' || node === null || !(part in node))
+      return false;
     node = (node as Record<string, unknown>)[part];
   }
   return typeof node === 'string';
@@ -33,9 +34,29 @@ describe('mutationErrorToast', () => {
       createApiError('conflict', { messageKey: 'errors.domain.hostnameTaken' }),
       online
     );
+    // A specific reason under the kind's title ("This item was changed
+    // elsewhere") was false; the title is neutral when the reason is specific.
     expect(toast).toEqual({
-      titleKey: 'errors:conflict.title',
+      titleKey: 'errors:mutation.failedTitle',
       descriptionKey: 'errors:domain.hostnameTaken',
+    });
+  });
+
+  it("keeps the kind's own title for the kind's generic reason", () => {
+    expect(mutationErrorToast(createApiError('conflict'), online)).toEqual({
+      titleKey: 'errors:conflict.title',
+      descriptionKey: 'errors:conflict.description',
+    });
+  });
+
+  it('never hands t() a key that names an object (errors.rateLimited)', () => {
+    const toast = mutationErrorToast(
+      createApiError('rateLimited', { messageKey: 'errors.rateLimited' }),
+      online
+    );
+    expect(toast).toEqual({
+      titleKey: 'errors:rateLimited.title',
+      descriptionKey: 'errors:rateLimited.description',
     });
   });
 
@@ -73,8 +94,13 @@ describe('mutationErrorToast', () => {
   });
 
   it('explains that nothing was saved while offline', () => {
-    const toast = mutationErrorToast(createApiError('network'), { exists, online: false });
-    expect(toast?.titleKey).toBe('common:connectivity.actionNeedsConnection.title');
+    const toast = mutationErrorToast(createApiError('network'), {
+      exists,
+      online: false,
+    });
+    expect(toast?.titleKey).toBe(
+      'common:connectivity.actionNeedsConnection.title'
+    );
   });
 
   it("keeps a caller's explicit message", () => {

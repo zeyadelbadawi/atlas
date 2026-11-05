@@ -246,6 +246,18 @@ describe('VerifyEmailPage (management host)', () => {
     expect(screen.getByText('common:actions.retry')).toBeTruthy();
   });
 
+  it('a server error is not called a connection problem (B1, V36)', () => {
+    fail(createApiError('server', { messageKey: 'errors.internal' }));
+    renderAt('/auth/verify-email?token=abc');
+    expect(errorState()).toBe('network');
+    expect(screen.getByText('auth:verifyEmail.serverDescription')).toBeTruthy();
+    expect(
+      screen.queryByText('auth:verifyEmail.networkDescription')
+    ).toBeNull();
+    // Still retried the same way: the token was never spent.
+    expect(screen.getByText('common:actions.retry')).toBeTruthy();
+  });
+
   it('an invalid link cannot be "retried" — the answer would not change', () => {
     fail(
       createApiError('validation', {

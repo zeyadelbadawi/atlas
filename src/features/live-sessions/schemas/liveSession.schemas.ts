@@ -8,6 +8,7 @@
  * not to be the control.
  */
 import { z } from 'zod';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 /** Mirrors the backend's own bounds so the two cannot quietly disagree. */
 export const MIN_SESSION_MINUTES = 5;
@@ -19,11 +20,15 @@ export const liveSessionFormSchema = z
       .string()
       .trim()
       .min(1, { message: 'validation:required' })
-      .max(200, { message: 'validation:maxLength' }),
+      .max(200, {
+        message: validationMessage('validation:maxLength', { count: 200 }),
+      }),
     description: z
       .string()
       .trim()
-      .max(2000, { message: 'validation:maxLength' })
+      .max(2000, {
+        message: validationMessage('validation:maxLength', { count: 2000 }),
+      })
       .optional()
       .or(z.literal('')),
     scheduledStartAt: z.string().min(1, { message: 'validation:required' }),
@@ -66,4 +71,3 @@ export const liveSessionFormSchema = z
   });
 
 export type LiveSessionFormData = z.infer<typeof liveSessionFormSchema>;
-

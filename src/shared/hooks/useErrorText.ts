@@ -12,7 +12,11 @@
  */
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toErrorsNamespaceKey } from '@utils';
+import {
+  displayableErrorKey,
+  isTranslatedString,
+  toErrorsNamespaceKey,
+} from '@utils';
 
 export type ErrorTextResolver = (
   messageKey: string | null | undefined,
@@ -27,8 +31,9 @@ export function resolveErrorTextKey(
   exists: (key: string) => boolean
 ): string {
   if (!messageKey) return fallbackKey;
-  const namespaced = toErrorsNamespaceKey(messageKey);
-  return exists(namespaced) ? namespaced : fallbackKey;
+  return (
+    displayableErrorKey(toErrorsNamespaceKey(messageKey), exists) ?? fallbackKey
+  );
 }
 
 export function useErrorText(): ErrorTextResolver {
@@ -36,10 +41,8 @@ export function useErrorText(): ErrorTextResolver {
   return useCallback<ErrorTextResolver>(
     (messageKey, fallbackKey, values) =>
       t(
-        resolveErrorTextKey(
-          messageKey,
-          fallbackKey,
-          (key) => typeof i18n?.exists === 'function' && i18n.exists(key)
+        resolveErrorTextKey(messageKey, fallbackKey, (key) =>
+          isTranslatedString(i18n, key)
         ),
         values ?? {}
       ),

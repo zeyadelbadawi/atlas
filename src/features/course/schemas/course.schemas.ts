@@ -21,6 +21,7 @@ import {
   MAX_LESSON_TITLE_LENGTH,
   MAX_LESSON_DESCRIPTION_LENGTH,
 } from '../constants/course.constants';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 /**
  * P64 Phase 4 catalog metadata, authored on the same create/edit form.
@@ -33,15 +34,36 @@ const catalogFields = {
     .optional(),
   language: z
     .string()
-    .max(MAX_COURSE_LANGUAGE_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_COURSE_LANGUAGE_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_COURSE_LANGUAGE_LENGTH,
+      })
+    )
     .optional(),
   outcomes: z
-    .array(z.string().max(MAX_COURSE_OUTCOME_LENGTH, 'validation:maxLength'))
+    .array(
+      z
+        .string()
+        .max(
+          MAX_COURSE_OUTCOME_LENGTH,
+          validationMessage('validation:maxLength', {
+            count: MAX_COURSE_OUTCOME_LENGTH,
+          })
+        )
+    )
     .max(MAX_COURSE_OUTCOMES, 'validation:maxItems')
     .optional(),
   requirements: z
     .array(
-      z.string().max(MAX_COURSE_REQUIREMENT_LENGTH, 'validation:maxLength')
+      z
+        .string()
+        .max(
+          MAX_COURSE_REQUIREMENT_LENGTH,
+          validationMessage('validation:maxLength', {
+            count: MAX_COURSE_REQUIREMENT_LENGTH,
+          })
+        )
     )
     .max(MAX_COURSE_REQUIREMENTS, 'validation:maxItems')
     .optional(),
@@ -56,7 +78,10 @@ const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
  */
 const pricingFields = {
   pricingType: z.enum(['free', 'paid']),
-  pricingAmount: z.coerce.number().min(0, 'validation:min').optional(),
+  pricingAmount: z.coerce
+    .number()
+    .min(0, validationMessage('validation:min', { min: 0 }))
+    .optional(),
   pricingCurrency: z.string().optional(),
 };
 
@@ -66,19 +91,39 @@ export const createCourseSchema = z
     title: z
       .string()
       .min(1, 'validation:required')
-      .max(MAX_COURSE_TITLE_LENGTH, 'validation:maxLength'),
+      .max(
+        MAX_COURSE_TITLE_LENGTH,
+        validationMessage('validation:maxLength', {
+          count: MAX_COURSE_TITLE_LENGTH,
+        })
+      ),
     slug: z
       .string()
       .min(1, 'validation:required')
-      .max(MAX_COURSE_SLUG_LENGTH, 'validation:maxLength')
+      .max(
+        MAX_COURSE_SLUG_LENGTH,
+        validationMessage('validation:maxLength', {
+          count: MAX_COURSE_SLUG_LENGTH,
+        })
+      )
       .regex(SLUG_REGEX, 'validation:invalidSlug'),
     shortDescription: z
       .string()
-      .max(MAX_COURSE_SHORT_DESCRIPTION_LENGTH, 'validation:maxLength')
+      .max(
+        MAX_COURSE_SHORT_DESCRIPTION_LENGTH,
+        validationMessage('validation:maxLength', {
+          count: MAX_COURSE_SHORT_DESCRIPTION_LENGTH,
+        })
+      )
       .optional(),
     description: z
       .string()
-      .max(MAX_COURSE_DESCRIPTION_LENGTH, 'validation:maxLength')
+      .max(
+        MAX_COURSE_DESCRIPTION_LENGTH,
+        validationMessage('validation:maxLength', {
+          count: MAX_COURSE_DESCRIPTION_LENGTH,
+        })
+      )
       .optional(),
     thumbnail: z.string().optional(),
     categoryId: z.string().optional(),
@@ -104,19 +149,39 @@ export const updateCourseSchema = z
     title: z
       .string()
       .min(1, 'validation:required')
-      .max(MAX_COURSE_TITLE_LENGTH, 'validation:maxLength'),
+      .max(
+        MAX_COURSE_TITLE_LENGTH,
+        validationMessage('validation:maxLength', {
+          count: MAX_COURSE_TITLE_LENGTH,
+        })
+      ),
     slug: z
       .string()
       .min(1, 'validation:required')
-      .max(MAX_COURSE_SLUG_LENGTH, 'validation:maxLength')
+      .max(
+        MAX_COURSE_SLUG_LENGTH,
+        validationMessage('validation:maxLength', {
+          count: MAX_COURSE_SLUG_LENGTH,
+        })
+      )
       .regex(SLUG_REGEX, 'validation:invalidSlug'),
     shortDescription: z
       .string()
-      .max(MAX_COURSE_SHORT_DESCRIPTION_LENGTH, 'validation:maxLength')
+      .max(
+        MAX_COURSE_SHORT_DESCRIPTION_LENGTH,
+        validationMessage('validation:maxLength', {
+          count: MAX_COURSE_SHORT_DESCRIPTION_LENGTH,
+        })
+      )
       .optional(),
     description: z
       .string()
-      .max(MAX_COURSE_DESCRIPTION_LENGTH, 'validation:maxLength')
+      .max(
+        MAX_COURSE_DESCRIPTION_LENGTH,
+        validationMessage('validation:maxLength', {
+          count: MAX_COURSE_DESCRIPTION_LENGTH,
+        })
+      )
       .optional(),
     thumbnail: z.string().optional(),
     categoryId: z.string().optional(),
@@ -149,10 +214,20 @@ export const courseSectionSchema = z.object({
   title: z
     .string()
     .min(1, 'validation:required')
-    .max(MAX_SECTION_TITLE_LENGTH, 'validation:maxLength'),
+    .max(
+      MAX_SECTION_TITLE_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_SECTION_TITLE_LENGTH,
+      })
+    ),
   description: z
     .string()
-    .max(MAX_SECTION_DESCRIPTION_LENGTH, 'validation:maxLength')
+    .max(
+      MAX_SECTION_DESCRIPTION_LENGTH,
+      validationMessage('validation:maxLength', {
+        count: MAX_SECTION_DESCRIPTION_LENGTH,
+      })
+    )
     .optional(),
 });
 
@@ -182,10 +257,20 @@ export const courseLessonSchema = z
     title: z
       .string()
       .min(1, 'validation:required')
-      .max(MAX_LESSON_TITLE_LENGTH, 'validation:maxLength'),
+      .max(
+        MAX_LESSON_TITLE_LENGTH,
+        validationMessage('validation:maxLength', {
+          count: MAX_LESSON_TITLE_LENGTH,
+        })
+      ),
     description: z
       .string()
-      .max(MAX_LESSON_DESCRIPTION_LENGTH, 'validation:maxLength')
+      .max(
+        MAX_LESSON_DESCRIPTION_LENGTH,
+        validationMessage('validation:maxLength', {
+          count: MAX_LESSON_DESCRIPTION_LENGTH,
+        })
+      )
       .optional(),
     contentType: z.enum(['text', 'video', 'file']),
     contentUrl: z
@@ -200,7 +285,12 @@ export const courseLessonSchema = z
      */
     bodyHtml: z
       .string()
-      .max(MAX_LESSON_BODY_HTML_LENGTH, 'validation:maxLength')
+      .max(
+        MAX_LESSON_BODY_HTML_LENGTH,
+        validationMessage('validation:maxLength', {
+          count: MAX_LESSON_BODY_HTML_LENGTH,
+        })
+      )
       .optional(),
     /**
      * B0-MED-05 — a file just uploaded to the protected tier for this File

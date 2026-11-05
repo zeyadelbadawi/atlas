@@ -66,6 +66,12 @@ const FAILURE_COPY: Record<
   },
 };
 
+/** A `network` state whose request reached the server and failed there. */
+const SERVER_FAILURE_COPY = {
+  title: 'auth:verifyEmail.networkTitle',
+  description: 'auth:verifyEmail.serverDescription',
+} as const;
+
 /** States a new link would fix. */
 const RESENDABLE: ReadonlySet<VerifyEmailState> = new Set([
   'missing',
@@ -76,7 +82,7 @@ const RESENDABLE: ReadonlySet<VerifyEmailState> = new Set([
 export default function VerifyEmailPage(): JSX.Element {
   const { t } = useTranslation();
   const { isAuthenticated, signOut } = useAuth();
-  const { state, requestId, canRetry, retry, outcomeRef } =
+  const { state, requestId, failureKind, canRetry, retry, outcomeRef } =
     useVerifyEmailFlow();
 
   const linkClass =
@@ -207,7 +213,11 @@ export default function VerifyEmailPage(): JSX.Element {
     );
   }
 
-  const copy = FAILURE_COPY[state];
+  // B1 (V36) — a server error is not "check your connection".
+  const isServerFailure =
+    state === 'network' &&
+    (failureKind === 'server' || failureKind === 'unknown');
+  const copy = isServerFailure ? SERVER_FAILURE_COPY : FAILURE_COPY[state];
   return shell(
     <div
       ref={outcomeRef}
@@ -221,7 +231,11 @@ export default function VerifyEmailPage(): JSX.Element {
       </h1>
       <ErrorState
         kind={
-          state === 'rateLimited' || state === 'network' ? state : 'validation'
+          isServerFailure
+            ? 'server'
+            : state === 'rateLimited' || state === 'network'
+              ? state
+              : 'validation'
         }
         titleKey={copy.title}
         descriptionKey={copy.description}

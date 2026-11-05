@@ -44,7 +44,8 @@ const { HttpClient, isReplaySafe } = await import('./http-client');
 function failure(
   method: string,
   status: number | null,
-  data?: unknown
+  data?: unknown,
+  headers: Record<string, string> = {}
 ): AxiosError {
   return {
     isAxiosError: true,
@@ -55,7 +56,7 @@ function failure(
     response:
       status === null
         ? undefined
-        : { status, data: {}, statusText: '', headers: {}, config: {} },
+        : { status, data: {}, statusText: '', headers, config: {} },
   } as unknown as AxiosError;
 }
 
@@ -99,9 +100,26 @@ describe('HttpClient transient retry', () => {
     expect(requestSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('replays a POST refused by the rate limiter (429: nothing was written)', async () => {
-    expect(await run(failure('post', 429))).toBe('retried');
+  it('replays a POST refused by the rate limiter once, when it clears within seconds', async () => {
+    expect(
+      await run(failure('post', 429, undefined, { 'retry-after': '1' }))
+    ).toBe('retried');
   });
+
+  it.each([
+    ['no Retry-After', {}],
+    ['a long Retry-After', { 'retry-after': '900' }],
+  ])(
+    'surfaces a 429 at once with %s (B1: replays only spent attempts)',
+    async (_label, headers) => {
+      expect(await run(failure('post', 429, undefined, headers))).toBe(
+        'rejected'
+      );
+      expect(await run(failure('get', 429, undefined, headers))).toBe(
+        'rejected'
+      );
+    }
+  );
 
   it('replays a POST whose body carries an idempotency key the server dedupes on', async () => {
     const body = JSON.stringify({
