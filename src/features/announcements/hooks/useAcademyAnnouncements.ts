@@ -22,7 +22,7 @@ import {
   useAcademyBoundMutation,
 } from '@/shared/hooks';
 import type { AcademyScopedVariables } from '@/shared/hooks';
-import { announcementKeys } from '@services/query';
+import { announcementKeys, INLINE_ERRORS_META } from '@services/query';
 import type { ApiError } from '@api';
 import { announcementService } from '../services/AnnouncementService';
 import type {
@@ -59,6 +59,9 @@ export function useCreateAcademyAnnouncement(academyId: string) {
     // of an inline form error reads as two failures for one problem.
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, { academyId }) => {
       // The whole root: a new academy announcement also belongs in every
       // reader's feed, which is cached under a different key.
@@ -88,6 +91,9 @@ export function useUpdateAcademyAnnouncement(academyId: string) {
       ),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, { academyId }) => {
       await invalidate(announcementKeys.all);
     },
@@ -108,6 +114,9 @@ export function usePublishAcademyAnnouncement(academyId: string) {
       announcementService.publishAcademyAnnouncement(academyId, announcementId),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, { academyId }) => {
       await invalidate(announcementKeys.all);
     },
@@ -128,6 +137,9 @@ export function useArchiveAcademyAnnouncement(academyId: string) {
       announcementService.archiveAcademyAnnouncement(academyId, announcementId),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, { academyId }) => {
       await invalidate(announcementKeys.all);
     },

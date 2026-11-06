@@ -11,7 +11,10 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation, useAcademyBoundMutation } from '@/shared/hooks';
 import type { AcademyScopedVariables } from '@/shared/hooks';
-import { invalidateRoster as invalidateRosterQueries } from '@services/query';
+import {
+  invalidateRoster as invalidateRosterQueries,
+  INLINE_ERRORS_META,
+} from '@services/query';
 import type { ApiError } from '@api';
 import { academyRosterService } from '../services/AcademyRosterService';
 import type {
@@ -55,6 +58,9 @@ export function useBlockAcademyStudent(academyId: string) {
       academyRosterService.blockStudent(id, userId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: (_data, { academyId: id, payload: { userId } }) =>
       invalidateRoster(id, userId),
   });
@@ -75,6 +81,9 @@ function useStudentAction(
     mutationFn: ({ academyId: id, payload: { userId } }) => action(id, userId),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: (_data, { academyId: id, payload: { userId } }) =>
       invalidateRoster(id, userId),
   });
@@ -115,6 +124,9 @@ export function useEnrollAcademyStudent(academyId: string) {
       academyRosterService.enrollStudent(id, userId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: (_data, { academyId: id, payload: { userId } }) =>
       invalidateRoster(id, userId),
   });
@@ -143,6 +155,9 @@ export function useRevokeRosterEnrollment(academyId: string) {
       academyRosterService.revokeEnrollment(id, enrollmentId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: (_data, { academyId: id, payload: { userId } }) =>
       invalidateRoster(id, userId),
   });
@@ -165,6 +180,9 @@ export function useUpdateRosterEnrollmentExpiry(academyId: string) {
       academyRosterService.updateEnrollmentExpiry(id, enrollmentId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: (_data, { academyId: id, payload: { userId } }) =>
       invalidateRoster(id, userId),
   });

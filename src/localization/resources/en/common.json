@@ -81,7 +81,9 @@
     "sortDescending": "Sort descending",
     "clearSort": "Clear sorting",
     "selectAllRows": "Select all rows",
-    "selectRow": "Select row"
+    "selectRow": "Select row",
+    "scrollHint": "Scroll sideways to see every column.",
+    "scrollRegion": "Table, scrolls sideways"
   },
   "pagination": {
     "summary": "Showing {{from}}–{{to}} of {{total}}",
@@ -102,7 +104,8 @@
       "title_one": "Fix this problem to continue",
       "title_other": "Fix these {{count}} problems to continue"
     },
-    "notSaved": "Your changes weren't saved"
+    "notSaved": "Your changes weren't saved",
+    "characterCount": "{{count}} / {{max}} characters"
   },
   "feedback": {
     "successTitle": "Done",

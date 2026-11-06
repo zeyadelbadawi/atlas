@@ -27,12 +27,21 @@ vi.mock('@hooks', async (importOriginal) => ({
 
 vi.mock('@app/providers', () => ({
   useConfirmDialog: () => ({ confirm: async () => true }),
+  useToast: () => ({
+    notifySuccess: vi.fn(),
+    notifyError: vi.fn(),
+    notify: vi.fn(),
+    dismissAll: vi.fn(),
+  }),
 }));
 
 const { AnnouncementManagerPanel } =
   await import('./components/AnnouncementManagerPanel');
 
-const SCHEDULED_AT = '2026-11-02T08:30:00.000Z';
+// A week ahead, on a whole minute: a schedule in the past is refused (B4 V05).
+const SCHEDULED_AT = new Date(
+  Math.ceil((Date.now() + 7 * 86_400_000) / 60_000) * 60_000
+).toISOString();
 
 function renderPanel(announcement: Announcement) {
   const onUpdate = vi.fn().mockResolvedValue(undefined);

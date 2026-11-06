@@ -55,6 +55,15 @@
       "description": "لن يظهر بعد ذلك في قوائم الطلاب.",
       "confirmLabel": "أرشفة",
       "cancelLabel": "إلغاء"
+    },
+    "scheduledFor": "مجدول في {{date}}",
+    "publishedOn": "نُشر في {{date}}",
+    "notSavedTitle": "لم يتم حفظ الإعلان",
+    "publishFailedTitle": "لم يتم نشر الإعلان",
+    "archiveFailedTitle": "لم تتم أرشفة الإعلان",
+    "archiveDraftDialog": {
+      "title": "هل تريد أرشفة هذا الإعلان؟",
+      "description": "لن يُنشر، وتُلغى أي جدولة له. يبقى في هذه القائمة بحالة «مؤرشف»."
     }
   },
   "academy": {

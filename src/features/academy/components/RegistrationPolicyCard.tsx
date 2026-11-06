@@ -9,7 +9,7 @@
  * sees a Save that can only 403 — but the 403 is still mapped, because
  * the session role is a hint and the server is the authority.
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2, Save, UserCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -23,14 +23,16 @@ import {
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ErrorState } from '@components/feedback';
 import { useToast } from '@app/providers';
+import { useUnsavedChanges } from '@hooks';
+import type { ApiError } from '@api';
+import { InlineFailureAlert } from './InlineFailureAlert';
 import {
   useAcademyRegistrationPolicy,
   useUpdateAcademyRegistrationPolicy,
 } from '../hooks';
-import { getRosterErrorKey } from '../utils/academy-roster.utils';
+import { getRosterSpecificKey } from '../utils/academy-roster.utils';
 import type { AcademyRegistrationPolicy } from '@types';
 
 export interface RegistrationPolicyCardProps {
@@ -50,7 +52,7 @@ export function RegistrationPolicyCard({
   canEdit,
 }: RegistrationPolicyCardProps): JSX.Element {
   const { t } = useTranslation();
-  const { notifySuccess, notifyError } = useToast();
+  const { notifySuccess } = useToast();
 
   const { data, isLoading, error, refetch } =
     useAcademyRegistrationPolicy(academyId);
@@ -59,31 +61,46 @@ export function RegistrationPolicyCard({
   const [selected, setSelected] = useState<AcademyRegistrationPolicy | null>(
     null
   );
-  const [inlineErrorKey, setInlineErrorKey] = useState<string | null>(null);
+  const [failure, setFailure] = useState<ApiError | null>(null);
 
   useEffect(() => {
     if (data) setSelected(data.registrationPolicy);
   }, [data]);
 
-  const isDirty = !!data && selected !== null && selected !== data.registrationPolicy;
+  const isDirty =
+    !!data && selected !== null && selected !== data.registrationPolicy;
+
+  const markSavedRef = useRef<() => void>(() => undefined);
+  // B4 (UX audit) V07 — leaving with an unsaved choice asks first (and the
+  // section switch on Settings asks too: it reads the same registry).
+  const save = () =>
+    new Promise<boolean>((resolve) => {
+      if (!selected) return resolve(false);
+      setFailure(null);
+      update.mutate(
+        { registrationPolicy: selected },
+        {
+          onSuccess: () => {
+            markSavedRef.current();
+            notifySuccess('academy:registration.policy.saved');
+            resolve(true);
+          },
+          // ONE message (B4 V09): the inline alert with the real reason.
+          onError: (err) => {
+            setFailure(err);
+            resolve(false);
+          },
+        }
+      );
+    });
+  const { markSaved } = useUnsavedChanges({
+    isDirty: canEdit && isDirty,
+    onSave: save,
+  });
+  markSavedRef.current = markSaved;
 
   const handleSave = () => {
-    if (!selected) return;
-    setInlineErrorKey(null);
-    update.mutate(
-      { registrationPolicy: selected },
-      {
-        onSuccess: () => notifySuccess('academy:registration.policy.saved'),
-        onError: (err) => {
-          const key = getRosterErrorKey(
-            err,
-            'academy:registration.policy.saveFailed'
-          );
-          setInlineErrorKey(key);
-          notifyError(key);
-        },
-      }
-    );
+    void save();
   };
 
   return (
@@ -154,10 +171,12 @@ export function RegistrationPolicyCard({
               </p>
             ) : null}
 
-            {inlineErrorKey ? (
-              <Alert variant="destructive" role="alert">
-                <AlertDescription>{t(inlineErrorKey)}</AlertDescription>
-              </Alert>
+            {failure ? (
+              <InlineFailureAlert
+                error={failure}
+                titleKey="academy:registration.policy.notChanged"
+                specificKey={getRosterSpecificKey(failure)}
+              />
             ) : null}
 
             <div className="flex justify-end">

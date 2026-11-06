@@ -16,7 +16,7 @@
  * refuses anything above it (`errors.academy.devicePolicyAboveMaximum`)
  * rather than silently lowering it. Owner only — reads included.
  */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -53,6 +53,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { ErrorState } from '@components/feedback';
 import { useToast } from '@app/providers';
+import { hasViolationOn, isFieldViolationError } from '@forms';
 import { useAcademyDevicePolicy, useUpdateAcademyDevicePolicy } from '../hooks';
 import {
   buildDevicePolicySchema,
@@ -130,6 +131,11 @@ function DevicePolicyBody({
   return <DevicePolicyForm academyId={academyId} data={data} />;
 }
 
+const DEVICE_FIELD_LABELS: Readonly<Record<string, string>> = {
+  maxDevices: 'academy:protection.devices.maxDevices.label',
+  maxConcurrentSessions: 'academy:protection.devices.maxSessions.label',
+};
+
 function DevicePolicyForm({
   academyId,
   data,
@@ -138,7 +144,7 @@ function DevicePolicyForm({
   readonly data: AcademyDevicePolicy;
 }): JSX.Element {
   const { t, i18n } = useTranslation();
-  const { notifySuccess, notifyError } = useToast();
+  const { notifySuccess } = useToast();
   const update = useUpdateAcademyDevicePolicy(academyId);
   const [pending, setPending] = useState<DevicePolicyFormData | null>(null);
 
@@ -171,7 +177,6 @@ function DevicePolicyForm({
       },
       {
         onSuccess: () => notifySuccess('academy:protection.devices.saved'),
-        onError: () => notifyError('academy:protection.devices.saveFailed'),
       }
     );
   };
@@ -187,14 +192,57 @@ function DevicePolicyForm({
     save(values);
   };
 
-  const inlineError = update.error
-    ? protectionErrorMessage(
-        t,
-        i18n,
-        update.error,
-        'academy:protection.devices.saveFailed'
-      )
-    : null;
+  // B4 (UX audit) V20 — a refused number is marked on its field with the
+  // real range ("from 1 to 5", the form's own limit — the server's message
+  // may carry no number); anything else is the ONE inline message below.
+  const aboveMaximum =
+    update.error?.messageKey === 'errors.academy.devicePolicyAboveMaximum';
+  useEffect(() => {
+    const error = update.error;
+    if (!error) return;
+    const limits = {
+      maxDevices,
+      maxConcurrentSessions: maxSessions,
+    } as const;
+    const refused = (Object.keys(limits) as (keyof typeof limits)[]).filter(
+      (name) =>
+        (name === 'maxDevices' && aboveMaximum) ||
+        (isFieldViolationError(error) &&
+          error.violations?.some((violation) => violation.field === name))
+    );
+    refused.forEach((name, index) => {
+      form.setError(
+        name,
+        {
+          type: 'server',
+          message:
+            name === 'maxDevices' && aboveMaximum
+              ? t('academy:protection.devices.aboveMaximum', {
+                  max: maxDevices,
+                })
+              : t('academy:protection.devices.outOfRangeMax', {
+                  max: limits[name],
+                }),
+        },
+        { shouldFocus: index === 0 }
+      );
+    });
+  }, [update.error, aboveMaximum, form, maxDevices, maxSessions, t]);
+  const fieldHandled =
+    aboveMaximum ||
+    (!!update.error &&
+      isFieldViolationError(update.error) &&
+      hasViolationOn(update.error, DEVICE_FIELD_LABELS));
+
+  const inlineError =
+    update.error && !fieldHandled
+      ? protectionErrorMessage(
+          t,
+          i18n,
+          update.error,
+          'academy:protection.devices.saveFailed'
+        )
+      : null;
 
   return (
     <Form {...form}>

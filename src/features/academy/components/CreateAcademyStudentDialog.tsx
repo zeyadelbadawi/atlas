@@ -14,6 +14,9 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { ApiError } from '@api';
+import { isTranslatedString } from '@utils';
+import { InlineFailureAlert } from './InlineFailureAlert';
 import { useForm } from 'react-hook-form';
 import { useDirtyGuard } from '@features/unsaved-changes';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,7 +31,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
-import { useToast } from '@app/providers/toast/useToast';
 import {
   nameConflictFromError,
   useNameConflictError,
@@ -37,7 +39,10 @@ import {
 import { useCreateAcademyStudent } from '../hooks';
 import { useAcademyMemberLookup } from '../hooks/useAcademyMemberLookup';
 import { MemberAccountFields, isBlockedByLookup } from './MemberAccountFields';
-import { memberAddErrorKey, memberAddPayload } from '../utils/member-add.utils';
+import {
+  memberAddPayload,
+  memberAddSpecificKey,
+} from '../utils/member-add.utils';
 import type { AcademyMemberAddOutcome } from '@types';
 import {
   createAcademyStudentSchema,
@@ -60,14 +65,15 @@ export function CreateAcademyStudentDialog({
   onOpenChange,
   academyId,
 }: CreateAcademyStudentDialogProps): JSX.Element {
-  const { t } = useTranslation();
-  const { notifyError } = useToast();
+  const { t, i18n } = useTranslation();
   const createStudent = useCreateAcademyStudent();
   // The address just added, and what the add did, shown as confirmation.
   const [created, setCreated] = useState<{
     email: string;
     outcome: AcademyMemberAddOutcome;
   } | null>(null);
+
+  const [failure, setFailure] = useState<ApiError | null>(null);
 
   const form = useForm<CreateAcademyStudentFormData>({
     resolver: zodResolver(createAcademyStudentSchema),
@@ -98,12 +104,14 @@ export function CreateAcademyStudentDialog({
       if (!nextOpen) {
         form.reset(DEFAULT_VALUES);
         setCreated(null);
+        setFailure(null);
       }
       onOpenChange(nextOpen);
     });
   };
 
   const onSubmit = (data: CreateAcademyStudentFormData) => {
+    setFailure(null);
     createStudent.mutate(
       { academyId, payload: memberAddPayload(data) },
       {
@@ -111,6 +119,9 @@ export function CreateAcademyStudentDialog({
           setCreated({ email: data.email.trim(), outcome: result.outcome });
         },
         onError: (error) => {
+          // Field violations are shown on their fields (useServerValidation);
+          // anything else is ONE message inside the dialog, with the real
+          // reason (B4 V09/V26) — no toast under the overlay.
           if (
             error.kind === 'validation' &&
             error.violations &&
@@ -118,7 +129,6 @@ export function CreateAcademyStudentDialog({
           ) {
             return;
           }
-
           if (nameConflictFromError(error)) return;
           if (error.messageKey === 'errors.academy.nameRequiredForNewAccount') {
             form.setError('name', {
@@ -126,9 +136,7 @@ export function CreateAcademyStudentDialog({
             });
             return;
           }
-          notifyError(
-            memberAddErrorKey(error, 'academy:members.createStudent')
-          );
+          setFailure(error);
         },
       }
     );
@@ -190,6 +198,18 @@ export function CreateAcademyStudentDialog({
                 role="student"
                 idPrefix="add-student"
               />
+
+              {failure ? (
+                <InlineFailureAlert
+                  error={failure}
+                  titleKey="academy:members.createStudent.errors.failedTitle"
+                  specificKey={memberAddSpecificKey(
+                    failure,
+                    'academy:members.createStudent',
+                    (key) => isTranslatedString(i18n, key)
+                  )}
+                />
+              ) : null}
 
               <DialogFooter>
                 <Button

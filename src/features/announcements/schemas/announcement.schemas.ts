@@ -26,8 +26,46 @@ export const announcementSchema = z.object({
         count: MAX_ANNOUNCEMENT_BODY_LENGTH,
       })
     ),
-  /** Local `datetime-local` input value; converted to ISO on submit. */
-  scheduledAt: z.string().optional(),
+  /**
+   * Local `datetime-local` input value; converted to ISO on submit.
+   * B4 (UX audit) V05 — a time already past is refused: the publish sweep
+   * would otherwise publish it at once, skipping the publish confirmation.
+   */
+  scheduledAt: z
+    .string()
+    .optional()
+    .refine((value) => !value || !isScheduleInPast(value), {
+      message: 'validation:scheduleInPast',
+    }),
 });
+
+/**
+ * The schema for editing an announcement whose stored time is `unchanged`
+ * (a `datetime-local` value): keeping that time is not a new schedule, so
+ * a title fix on an announcement whose time has passed is not refused.
+ * The server applies the same rule.
+ */
+export function announcementSchemaFor(unchanged?: string) {
+  if (!unchanged) return announcementSchema;
+  return announcementSchema.extend({
+    scheduledAt: z
+      .string()
+      .optional()
+      .refine(
+        (value) => !value || value === unchanged || !isScheduleInPast(value),
+        { message: 'validation:scheduleInPast' }
+      ),
+  });
+}
+
+/** A `datetime-local` value at or before now (a minute's grace for typing). */
+export function isScheduleInPast(
+  value: string,
+  now: Date = new Date()
+): boolean {
+  const at = new Date(value);
+  if (Number.isNaN(at.getTime())) return false;
+  return at.getTime() < now.getTime() - 60_000;
+}
 
 export type AnnouncementFormData = z.infer<typeof announcementSchema>;

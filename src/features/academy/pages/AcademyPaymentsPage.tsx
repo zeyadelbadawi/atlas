@@ -257,11 +257,14 @@ export default function AcademyPaymentsPage(): JSX.Element {
             <StatusBadge
               labelKey="payments:courseOrder.status.refunded"
               tone="neutral"
+              className="whitespace-nowrap"
             />
           ) : (
+            // B4 (UX audit) V33 — one line, never three.
             <StatusBadge
               labelKey={`${K}.status.${row.original.reviewStatus}`}
               tone={getManualReviewStatusTone(row.original.reviewStatus)}
+              className="whitespace-nowrap"
             />
           ),
       },
@@ -298,7 +301,9 @@ export default function AcademyPaymentsPage(): JSX.Element {
           aria-label={t('payments:listFilters.label')}
           className="space-y-3 border-b border-border p-4"
         >
-          <div className="max-w-full overflow-x-auto">
+          {/* B4 (UX audit) V31 — the tabs wrap on a phone instead of
+              scrolling the last one ("Rejected") out of sight. */}
+          <div className="max-w-full">
             <ToggleGroup
               type="single"
               value={filters.tab}
@@ -306,7 +311,7 @@ export default function AcademyPaymentsPage(): JSX.Element {
                 if (value) update({ tab: value as Tab });
               }}
               aria-label={t(`${K}.tabsLabel`)}
-              className="inline-flex w-max justify-start rounded-md bg-muted p-1 text-muted-foreground"
+              className="flex max-w-full flex-wrap justify-start gap-1 rounded-md bg-muted p-1 text-muted-foreground sm:inline-flex"
             >
               {TABS.map((tab) => {
                 const count = countFor(tab);
@@ -341,6 +346,7 @@ export default function AcademyPaymentsPage(): JSX.Element {
               value={filters.search}
               onValueChange={(search) => update({ search })}
               labelKey={`${K}.searchLabel`}
+              placeholderKey={`${K}.searchShort`}
               className="w-full lg:max-w-md lg:flex-1"
             />
             <div className="space-y-1">

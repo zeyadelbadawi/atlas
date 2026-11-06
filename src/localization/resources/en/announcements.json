@@ -55,6 +55,15 @@
       "description": "It will no longer appear in students' feeds.",
       "confirmLabel": "Archive",
       "cancelLabel": "Cancel"
+    },
+    "scheduledFor": "Scheduled for {{date}}",
+    "publishedOn": "Published {{date}}",
+    "notSavedTitle": "The announcement wasn't saved",
+    "publishFailedTitle": "The announcement wasn't published",
+    "archiveFailedTitle": "The announcement wasn't archived",
+    "archiveDraftDialog": {
+      "title": "Archive this announcement?",
+      "description": "It won't be published, and any schedule is cancelled. It stays in this list as Archived."
     }
   },
   "academy": {

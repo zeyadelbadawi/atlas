@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { isDateRangeReversed, ReversedDateRangeAlert } from '@forms';
 import type { AuditCategory } from '@types';
 import {
   EMPTY_AUDIT_FILTERS,
@@ -39,6 +40,8 @@ export function AuditLogFilters({
   idPrefix = 'audit-filters',
 }: AuditLogFiltersProps): JSX.Element {
   const { t } = useTranslation();
+  const datesReversed = isDateRangeReversed(value.from, value.to);
+  const datesErrorId = `${idPrefix}-dates-error`;
   const chips: { key: string; label: string; clear: () => void }[] = [];
   if (value.actor) {
     chips.push({
@@ -113,6 +116,8 @@ export function AuditLogFilters({
             type="date"
             value={value.from ?? ''}
             max={value.to || undefined}
+            aria-invalid={datesReversed || undefined}
+            aria-describedby={datesReversed ? datesErrorId : undefined}
             onChange={(event) =>
               onChange({ ...value, from: event.target.value || undefined })
             }
@@ -125,12 +130,23 @@ export function AuditLogFilters({
             type="date"
             value={value.to ?? ''}
             min={value.from || undefined}
+            aria-invalid={datesReversed || undefined}
+            aria-describedby={datesReversed ? datesErrorId : undefined}
             onChange={(event) =>
               onChange({ ...value, to: event.target.value || undefined })
             }
           />
         </div>
       </div>
+
+      {/* B4 (UX audit) V17 — "From" after "To" says so, with Swap; the
+          list would otherwise just read "No activity". */}
+      {datesReversed ? (
+        <ReversedDateRangeAlert
+          id={datesErrorId}
+          onSwap={() => onChange({ ...value, from: value.to, to: value.from })}
+        />
+      ) : null}
 
       {chips.length > 0 || hasActiveAuditFilters(value) ? (
         <div className="flex flex-wrap items-center gap-2">

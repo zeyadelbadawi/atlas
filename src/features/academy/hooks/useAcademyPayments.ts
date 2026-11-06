@@ -16,6 +16,7 @@ import {
   academyCourseOrderKeys,
   academyCoursePaymentKeys,
   academyPaymentMethodKeys,
+  INLINE_ERRORS_META,
 } from '@services/query';
 import type { ApiError } from '@api';
 import type {
@@ -51,6 +52,9 @@ export function useSaveAcademyPaymentMethod(academyId: string) {
       academyPaymentsService.saveMethod(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(academyPaymentMethodKeys.list(academyId));
     },
@@ -107,6 +111,9 @@ export function useApproveAcademyCoursePayment(academyId: string) {
       academyPaymentsService.approvePayment(academyId, paymentId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: onDecided,
   });
 }
@@ -122,6 +129,9 @@ export function useRejectAcademyCoursePayment(academyId: string) {
       academyPaymentsService.rejectPayment(academyId, paymentId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: onDecided,
   });
 }
@@ -138,6 +148,9 @@ export function useRecordAcademyCoursePaymentRefund(academyId: string) {
       academyPaymentsService.recordRefund(academyId, paymentId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: onDecided,
   });
 }

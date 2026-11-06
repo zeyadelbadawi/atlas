@@ -82,6 +82,11 @@ export default function AcademyMessagesPage(): JSX.Element {
               onSend={send.mutateAsync}
               isSending={send.isPending}
               showLearnerExclusions={draft.type !== 'staff'}
+              audienceIncompleteKey={
+                draft.type === 'staff'
+                  ? 'messaging:composer.chooseRoleToPreview'
+                  : 'messaging:composer.chooseCourseToPreview'
+              }
             />
           </CardContent>
         </Card>

@@ -115,11 +115,16 @@ export function AccountMenu({
           {/* Phones show the first name only; the full greeting from `sm`
               up. Either way the accessible name is the greeting plus what
               the button opens. */}
-          <span className="min-w-0 truncate">
-            <span className="sm:hidden">{firstName}</span>
-            <span className="hidden sm:inline">
-              {t('common:account.welcome', { name: fullName })}
-            </span>
+          {/* B4 (UX audit) — each visible text takes its own direction
+              (`dir="auto"` on the span that shows, never on a parent that
+              also holds the hidden one): in the Arabic header a Latin name
+              was cut from the wrong end ("…h" for Sarah); it keeps its
+              start now, and the Arabic greeting keeps its order. */}
+          <span className="block min-w-[2.5rem] truncate sm:hidden" dir="auto">
+            {firstName}
+          </span>
+          <span className="hidden min-w-0 truncate sm:block" dir="auto">
+            {t('common:account.welcome', { name: fullName })}
           </span>
           <span className="sr-only"> {t('common:account.menuSuffix')}</span>
           <ChevronDown

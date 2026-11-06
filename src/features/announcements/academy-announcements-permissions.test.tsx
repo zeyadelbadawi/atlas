@@ -41,6 +41,12 @@ vi.mock('react-router-dom', () => ({
 
 vi.mock('@app/providers', () => ({
   useConfirmDialog: () => ({ confirm: async () => true }),
+  useToast: () => ({
+    notifySuccess: vi.fn(),
+    notifyError: vi.fn(),
+    notify: vi.fn(),
+    dismissAll: vi.fn(),
+  }),
 }));
 
 const announcements: Announcement[] = [
@@ -72,9 +78,8 @@ vi.mock('./hooks/useAcademyAnnouncements', () => ({
   useArchiveAcademyAnnouncement: () => idleMutation,
 }));
 
-const { default: AcademyAnnouncementsPage } = await import(
-  './pages/AcademyAnnouncementsPage'
-);
+const { default: AcademyAnnouncementsPage } =
+  await import('./pages/AcademyAnnouncementsPage');
 
 afterEach(cleanup);
 
@@ -83,7 +88,7 @@ function renderPage(locale: 'en' | 'ar' = 'en') {
   return render(
     <I18nextProvider i18n={i18n}>
       <AcademyAnnouncementsPage />
-    </I18nextProvider>,
+    </I18nextProvider>
   );
 }
 
@@ -93,7 +98,7 @@ describe('AcademyAnnouncementsPage — controls follow the permission', () => {
     renderPage();
 
     expect(
-      screen.getByRole('button', { name: /new announcement|create/i }),
+      screen.getByRole('button', { name: /new announcement|create/i })
     ).toBeTruthy();
   });
 
@@ -101,7 +106,9 @@ describe('AcademyAnnouncementsPage — controls follow the permission', () => {
     hasPermission.mockImplementation((p) => p === 'announcement.manage');
     renderPage();
 
-    const buttons = screen.getAllByRole('button').map((b) => b.textContent ?? '');
+    const buttons = screen
+      .getAllByRole('button')
+      .map((b) => b.textContent ?? '');
     expect(buttons.join('|').toLowerCase()).toMatch(/edit/);
     expect(buttons.join('|').toLowerCase()).toMatch(/publish/);
   });

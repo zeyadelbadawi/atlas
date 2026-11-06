@@ -26,7 +26,13 @@
     "preview": "Preview recipients",
     "refreshPreview": "Refresh preview",
     "send": "Review and send",
-    "previewFirst": "Preview the recipients first — you will see exactly who receives this before anything is sent."
+    "previewFirst": "Preview the recipients first — you will see exactly who receives this before anything is sent.",
+    "audienceIncomplete": "Finish choosing the recipients above to preview them.",
+    "chooseCourseToPreview": "Tick at least one course above to preview the recipients.",
+    "chooseRoleToPreview": "Tick at least one role above to preview the recipients.",
+    "noRecipients": "Nobody matches these recipients, so there is no one to send to. Choose other recipients.",
+    "overQuota": "This message needs more emails than you have left. Turn off Email, or choose fewer recipients.",
+    "fixAbove": "Fix the subject and message above, then send."
   },
   "editor": {
     "toolbar": "Formatting",
@@ -176,7 +182,10 @@
     "quota": "This message needs {{requested}} emails but only {{remaining}} are left this month. Nothing was sent.",
     "errorTitle": "The message was not sent",
     "error": "Something went wrong. Try again — your message will not be sent twice.",
-    "reference": "Reference: {{id}}"
+    "reference": "Reference: {{id}}",
+    "previewErrorTitle": "The recipient preview couldn't be loaded",
+    "previewNothingSent": "Nothing was sent. Try the preview again.",
+    "notSentTwice": "Try again — your message will not be sent twice."
   },
   "toast": {
     "sentTitle": "Message accepted",

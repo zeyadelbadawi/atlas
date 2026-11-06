@@ -7,6 +7,7 @@
  * backend refuses anything above it with `devicePolicyAboveMaximum`).
  */
 import { z } from 'zod';
+import { validationMessage } from '@/shared/forms/validation-message';
 
 export const WATERMARK_TEXT_MAX_LENGTH = 80;
 export const DEVICE_POLICY_DTO_MAX_DEVICES = 20;
@@ -37,17 +38,21 @@ export function buildDevicePolicySchema(
     platformMaxConcurrentSessions,
     DEVICE_POLICY_DTO_MAX_SESSIONS
   );
+  // B4 (UX audit) V20 — the message states the real range ("from 1 to 5"),
+  // not "the maximum shown".
+  const range = (max: number) =>
+    validationMessage('academy:protection.devices.outOfRangeMax', { max });
   return z.object({
     maxDevices: z.coerce
-      .number({ invalid_type_error: 'academy:protection.devices.outOfRange' })
-      .int('academy:protection.devices.outOfRange')
-      .min(1, 'academy:protection.devices.outOfRange')
-      .max(maxDevices, 'academy:protection.devices.outOfRange'),
+      .number({ invalid_type_error: range(maxDevices) })
+      .int(range(maxDevices))
+      .min(1, range(maxDevices))
+      .max(maxDevices, range(maxDevices)),
     maxConcurrentSessions: z.coerce
-      .number({ invalid_type_error: 'academy:protection.devices.outOfRange' })
-      .int('academy:protection.devices.outOfRange')
-      .min(1, 'academy:protection.devices.outOfRange')
-      .max(maxSessions, 'academy:protection.devices.outOfRange'),
+      .number({ invalid_type_error: range(maxSessions) })
+      .int(range(maxSessions))
+      .min(1, range(maxSessions))
+      .max(maxSessions, range(maxSessions)),
   });
 }
 

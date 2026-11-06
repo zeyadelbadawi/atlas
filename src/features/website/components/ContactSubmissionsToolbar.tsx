@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { SearchInput } from '@components/data-display';
+import { isDateRangeReversed, ReversedDateRangeAlert } from '@forms';
 import { useLanguage } from '@hooks';
 import { formatNumber } from '@utils';
 import type {
@@ -75,9 +76,7 @@ export function ContactSubmissionsToolbar({
   const { t } = useTranslation();
   const { language } = useLanguage();
   // B2 (UX audit) — a reversed range used to be applied without a word.
-  const datesReversed = Boolean(
-    filters.from && filters.to && filters.from > filters.to
-  );
+  const datesReversed = isDateRangeReversed(filters.from, filters.to);
 
   const countFor = (tab: StatusTab): number | undefined =>
     summary ? (tab === 'all' ? summary.total : summary[tab]) : undefined;
@@ -217,21 +216,11 @@ export function ContactSubmissionsToolbar({
             />
           </div>
           {datesReversed ? (
-            <div
-              role="alert"
+            <ReversedDateRangeAlert
               id="contact-submissions-dates-error"
-              className="flex flex-wrap items-center gap-2 text-sm text-destructive sm:basis-full"
-            >
-              <span>{t('validation:dateRangeReversed')}</span>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => onRangeChange(filters.to, filters.from)}
-              >
-                {t('common:actions.swapDates')}
-              </Button>
-            </div>
+              onSwap={() => onRangeChange(filters.to, filters.from)}
+              className="sm:basis-full"
+            />
           ) : null}
         </fieldset>
 

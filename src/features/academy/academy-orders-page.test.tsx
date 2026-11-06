@@ -418,3 +418,58 @@ describe('AcademyCourseOrdersService', () => {
     );
   });
 });
+
+/* B4 (UX audit) — V17, V30, V33. */
+describe('B4 — orders', () => {
+  it('V17 — "From" after "To" says so, and Swap puts them in order', async () => {
+    useAcademyCourseOrders.mockReturnValue(ready(page([])));
+    renderWith(
+      <AcademyOrdersPage />,
+      'en',
+      '/orders?from=2026-10-20&to=2026-10-01'
+    );
+    const alert = screen.getByRole('alert');
+    expect(alert.textContent).toContain('The start date is after the end date');
+    expect(
+      (screen.getByLabelText('From') as HTMLInputElement).getAttribute(
+        'aria-describedby'
+      )
+    ).toBe('academy-orders-dates-error');
+    fireEvent.click(screen.getByRole('button', { name: 'Swap dates' }));
+    await waitFor(() => expect(currentSearch).toContain('from=2026-10-01'));
+    expect(currentSearch).toContain('to=2026-10-20');
+  });
+
+  it('V30 — speaks to the owner, and links an order awaiting review to its payment', () => {
+    useAcademyCourseOrders.mockReturnValue(
+      ready(
+        page([
+          order({
+            status: 'pending_payment',
+            latestPayment: {
+              id: 'pay-9',
+              status: 'pending',
+              reviewStatus: 'pending',
+              methodType: 'manual_bank_transfer',
+              money: { amountMinorUnits: 150000, currency: 'EGP' },
+              createdAt: '2026-09-01T10:05:00.000Z',
+            },
+          }),
+        ])
+      )
+    );
+    const { container } = renderWith(<AcademyOrdersPage />);
+    expect(container.textContent).not.toContain('your organization owner');
+    expect(container.textContent).toContain(
+      'You check manual payment proofs on the Payments page.'
+    );
+    const link = screen.getByTestId('order-review-payment');
+    expect(link.getAttribute('href')).toBe(
+      '/dashboard/academy/academy-1/payments?payment=pay-9'
+    );
+    // V33 — status badges stay on one line.
+    expect(
+      screen.getByText('Awaiting review').closest('span')?.className
+    ).toContain('whitespace-nowrap');
+  });
+});

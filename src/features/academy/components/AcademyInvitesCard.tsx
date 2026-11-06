@@ -10,8 +10,11 @@
  * `fullHost`); without one the dialog shows the token itself and says so,
  * rather than building a link from a guessed domain.
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Copy, Check, Link2, Loader2, Plus, Trash2 } from 'lucide-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
@@ -30,6 +33,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { StatusBadge } from '@components/data-display';
@@ -37,18 +49,30 @@ import { ErrorState } from '@components/feedback';
 import { DataTable } from '@components/table';
 import { useCopyToClipboard, useDateFormatter } from '@hooks';
 import { useConfirmDialog, useToast } from '@app/providers';
+import { useDirtyGuard } from '@features/unsaved-changes';
+import {
+  FormErrorSummary,
+  SaveFailedAlert,
+  hasViolationOn,
+  isFieldViolationError,
+  useFocusFirstViolation,
+  useLabelledViolations,
+  useServerValidation,
+} from '@forms';
 import {
   useAcademyInvites,
   useCreateAcademyInvite,
   useRevokeAcademyInvite,
 } from '../hooks';
+// Its own module, not the barrel: tests that stub the barrel keep it real.
+import { useActionFailureToast } from '../hooks/useActionFailureToast';
 import {
   buildInviteLink,
   getInviteState,
   getInviteStateTone,
-  getRosterErrorKey,
 } from '../utils/academy-roster.utils';
-import type { AcademyInvite, CreatedAcademyInvite } from '@types';
+import type { AcademyInvite, CreatedAcademyInvite, LanguageCode } from '@types';
+import { formatNumber } from '@utils';
 
 export interface AcademyInvitesCardProps {
   readonly academyId: string;
@@ -63,9 +87,12 @@ export function AcademyInvitesCard({
   academyId,
   academyHost,
 }: AcademyInvitesCardProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const fmt = useDateFormatter();
-  const { notifySuccess, notifyError } = useToast();
+  // B4 (UX audit) V25 — counts in the page's digits, as elsewhere.
+  const language = i18n.language as LanguageCode;
+  const { notifySuccess } = useToast();
+  const actionFailed = useActionFailureToast();
   const { confirm } = useConfirmDialog();
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -90,9 +117,7 @@ export function AcademyInvitesCard({
         onSuccess: () =>
           notifySuccess('academy:registration.invites.revoke.success'),
         onError: (err) =>
-          notifyError(
-            getRosterErrorKey(err, 'academy:registration.invites.revoke.failed')
-          ),
+          actionFailed(err, 'academy:registration.invites.revoke.failed'),
       }
     );
   };
@@ -115,7 +140,8 @@ export function AcademyInvitesCard({
       header: t('academy:registration.invites.table.uses'),
       cell: ({ row }) => (
         <span className="tabular-nums">
-          {row.original.usedCount} / {row.original.maxUses}
+          {formatNumber(row.original.usedCount, language)} /{' '}
+          {formatNumber(row.original.maxUses, language)}
         </span>
       ),
     },
@@ -213,6 +239,64 @@ export function AcademyInvitesCard({
 
 /* ------------------------------------------------------------------ */
 
+/** Backend `CreateAcademyInviteDto`: `maxUses` 1–1000, `expiresInDays` 1–365. */
+const INVITE_MAX_USES_LIMIT = 1000;
+const INVITE_MAX_DAYS_LIMIT = 365;
+
+/** Arabic-Indic (٠–٩) and Persian (۰–۹) digits read as Western ones. */
+function toWesternDigits(value: string): string {
+  return value
+    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
+    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0));
+}
+
+/**
+ * A whole number in [1, max] typed as text. "1.5", "-3", "0" and "" are
+ * refused with the limit stated — never rounded, never a silently greyed
+ * button.
+ */
+function wholeNumberIn(max: number, message: string) {
+  return z
+    .string()
+    .transform((value) => toWesternDigits(value).trim())
+    .refine((value) => /^\d+$/.test(value) && Number(value) >= 1, message)
+    .refine((value) => Number(value) <= max, message);
+}
+
+const createInviteSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .refine(
+      (value) => value === '' || z.string().email().safeParse(value).success,
+      'validation:invalidEmail'
+    ),
+  maxUses: wholeNumberIn(
+    INVITE_MAX_USES_LIMIT,
+    'academy:registration.invites.create.maxUsesRange'
+  ),
+  expiresInDays: wholeNumberIn(
+    INVITE_MAX_DAYS_LIMIT,
+    'academy:registration.invites.create.expiresInDaysRange'
+  ),
+});
+
+type CreateInviteFormInput = z.input<typeof createInviteSchema>;
+type CreateInviteFormOutput = z.output<typeof createInviteSchema>;
+
+const INVITE_DEFAULTS: CreateInviteFormInput = {
+  email: '',
+  maxUses: String(DEFAULT_MAX_USES),
+  expiresInDays: String(DEFAULT_EXPIRES_IN_DAYS),
+};
+
+/** Field → label, for server violations and the labels `{{field}}` reads. */
+const INVITE_FIELD_LABELS: Readonly<Record<string, string>> = {
+  email: 'academy:registration.invites.create.emailLabel',
+  maxUses: 'academy:registration.invites.create.maxUsesLabel',
+  expiresInDays: 'academy:registration.invites.create.expiresInDaysLabel',
+};
+
 interface CreateInviteDialogProps {
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
@@ -227,57 +311,68 @@ function CreateInviteDialog({
   academyHost,
 }: CreateInviteDialogProps): JSX.Element {
   const { t } = useTranslation();
-  const { notifyError } = useToast();
   const { copy, hasCopied } = useCopyToClipboard();
   const create = useCreateAcademyInvite(academyId);
-
-  const [email, setEmail] = useState('');
-  const [maxUses, setMaxUses] = useState(String(DEFAULT_MAX_USES));
-  const [expiresInDays, setExpiresInDays] = useState(
-    String(DEFAULT_EXPIRES_IN_DAYS)
-  );
   const [created, setCreated] = useState<CreatedAcademyInvite | null>(null);
 
+  const form = useForm<CreateInviteFormInput, unknown, CreateInviteFormOutput>({
+    resolver: zodResolver(createInviteSchema),
+    defaultValues: INVITE_DEFAULTS,
+  });
+
+  // Server violations (email, maxUses, expiresInDays) land on their fields,
+  // under the dialog's own labels; anything else is one alert in the dialog.
+  const labelled = useLabelledViolations(create.error, INVITE_FIELD_LABELS);
+  useServerValidation(form, labelled);
+  useFocusFirstViolation(form, labelled, INVITE_FIELD_LABELS);
+  const failure =
+    create.error &&
+    !(
+      isFieldViolationError(create.error) &&
+      hasViolationOn(create.error, INVITE_FIELD_LABELS)
+    )
+      ? create.error
+      : null;
+
+  // Typed-in work is protected; the created link is not "unsaved".
+  const dirtyGuard = useDirtyGuard(form.formState.isDirty && !created);
+
+  // Closing clears the draft and the last failure. Read through a ref: a
+  // fresh `reset` identity must not re-run this on every render.
+  const resetCreateRef = useRef(create.reset);
+  resetCreateRef.current = create.reset;
+  const { reset } = form;
   useEffect(() => {
     if (!open) {
-      setEmail('');
-      setMaxUses(String(DEFAULT_MAX_USES));
-      setExpiresInDays(String(DEFAULT_EXPIRES_IN_DAYS));
+      reset(INVITE_DEFAULTS);
+      resetCreateRef.current();
       setCreated(null);
     }
-  }, [open]);
+  }, [open, reset]);
 
-  const parsedMaxUses = Number.parseInt(maxUses, 10);
-  const parsedDays = Number.parseInt(expiresInDays, 10);
-  const isValid =
-    Number.isInteger(parsedMaxUses) &&
-    parsedMaxUses >= 1 &&
-    Number.isInteger(parsedDays) &&
-    parsedDays >= 1;
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen) return onOpenChange(true);
+    void dirtyGuard.requestClose(() => onOpenChange(false));
+  };
 
-  const handleCreate = () => {
-    if (!isValid) return;
+  const onSubmit = (values: CreateInviteFormOutput) => {
     create.mutate(
       {
-        email: email.trim() || undefined,
-        maxUses: parsedMaxUses,
-        expiresInDays: parsedDays,
+        email: values.email || undefined,
+        maxUses: Number(values.maxUses),
+        expiresInDays: Number(values.expiresInDays),
       },
-      {
-        onSuccess: (invite) => setCreated(invite),
-        onError: (err) =>
-          notifyError(
-            getRosterErrorKey(err, 'academy:registration.invites.create.failed')
-          ),
-      }
+      { onSuccess: (invite) => setCreated(invite) }
     );
   };
 
-  const link = created ? buildInviteLink(academyHost, created.token) : undefined;
+  const link = created
+    ? buildInviteLink(academyHost, created.token)
+    : undefined;
   const shareValue = link ?? created?.token ?? '';
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         {created ? (
           <>
@@ -343,73 +438,126 @@ function CreateInviteDialog({
                 {t('academy:registration.invites.create.description')}
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="invite-email">
-                  {t('academy:registration.invites.create.emailLabel')}
-                </Label>
-                <Input
-                  id="invite-email"
-                  type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder={t(
-                    'academy:registration.invites.create.emailPlaceholder'
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                noValidate
+                className="space-y-4"
+                data-testid="invite-create-form"
+              >
+                <FormErrorSummary
+                  form={form}
+                  fieldLabels={INVITE_FIELD_LABELS}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {t('academy:registration.invites.create.emailLabel')}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          dir="ltr"
+                          data-ltr-content
+                          autoComplete="off"
+                          placeholder={t(
+                            'academy:registration.invites.create.emailPlaceholder'
+                          )}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        {t('academy:registration.invites.create.emailHelp')}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
                   )}
                 />
-                <p className="text-xs text-muted-foreground">
-                  {t('academy:registration.invites.create.emailHelp')}
-                </p>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="invite-max-uses">
-                    {t('academy:registration.invites.create.maxUsesLabel')}
-                  </Label>
-                  <Input
-                    id="invite-max-uses"
-                    type="number"
-                    min={1}
-                    inputMode="numeric"
-                    value={maxUses}
-                    onChange={(event) => setMaxUses(event.target.value)}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="maxUses"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t(
+                            'academy:registration.invites.create.maxUsesLabel'
+                          )}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            inputMode="numeric"
+                            autoComplete="off"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t('academy:registration.invites.create.maxUsesHelp')}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="expiresInDays"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t(
+                            'academy:registration.invites.create.expiresInDaysLabel'
+                          )}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            inputMode="numeric"
+                            autoComplete="off"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t(
+                            'academy:registration.invites.create.expiresInDaysHelp'
+                          )}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="invite-expires-days">
-                    {t('academy:registration.invites.create.expiresInDaysLabel')}
-                  </Label>
-                  <Input
-                    id="invite-expires-days"
-                    type="number"
-                    min={1}
-                    inputMode="numeric"
-                    value={expiresInDays}
-                    onChange={(event) => setExpiresInDays(event.target.value)}
+                {failure ? (
+                  <SaveFailedAlert
+                    error={failure}
+                    titleKey="academy:registration.invites.create.failed"
                   />
-                </div>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                disabled={create.isPending}
-              >
-                {t('common:actions.cancel')}
-              </Button>
-              <Button
-                type="button"
-                onClick={handleCreate}
-                disabled={!isValid || create.isPending}
-              >
-                {create.isPending ? (
-                  <Loader2 className="size-4 animate-spin" aria-hidden />
                 ) : null}
-                {t('academy:registration.invites.create.submit')}
-              </Button>
-            </DialogFooter>
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => handleOpenChange(false)}
+                    disabled={create.isPending}
+                  >
+                    {t('common:actions.cancel')}
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={create.isPending}
+                    data-testid="invite-create-submit"
+                  >
+                    {create.isPending ? (
+                      <Loader2 className="size-4 animate-spin" aria-hidden />
+                    ) : null}
+                    {t('academy:registration.invites.create.submit')}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
           </>
         )}
       </DialogContent>

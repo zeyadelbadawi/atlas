@@ -134,7 +134,7 @@ function VideoTierForm({
   readonly data: AcademyVideoTierSettings;
 }): JSX.Element {
   const { t, i18n } = useTranslation();
-  const { notifySuccess, notifyError } = useToast();
+  const { notifySuccess } = useToast();
   const update = useUpdateAcademyVideoTier(academyId);
   const [selected, setSelected] = useState<VideoSecurityTier>(
     data.videoSecurityTier
@@ -153,7 +153,7 @@ function VideoTierForm({
       { videoSecurityTier: selected },
       {
         onSuccess: () => notifySuccess('academy:protection.videoTier.saved'),
-        onError: () => notifyError('academy:protection.videoTier.saveFailed'),
+        // B4 (UX audit) V09 — the failure is the ONE inline message below.
       }
     );
   };

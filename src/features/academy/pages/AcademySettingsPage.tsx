@@ -5,7 +5,7 @@
  * contact information. The internal lifecycle status is not edited here (Task 1): the website publish state is the client-facing status.
  */
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -60,15 +60,25 @@ import { useConfirmDialog } from '@app/providers';
 import { useUnsavedChangesRegistry } from '@features/unsaved-changes';
 import { useAcademyDomain } from '@features/domain';
 import {
+  SaveFailedAlert,
   nameConflictFromError,
+  useFocusFirstViolation,
+  useLabelledViolations,
   useNameConflictError,
   useServerValidation,
 } from '@forms';
+import { normalizeUnknownError } from '@api';
+import type { ApiError } from '@api';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAcademy, useUpdateAcademy } from '../hooks';
 import { DeleteAcademyCard } from '../components/DeleteAcademyCard';
 import { AcademySlugDescription } from '../components/AcademySlugDescription';
 import { academySlugErrorMessage } from '../utils/academy-slug-error.utils';
+import {
+  ACADEMY_DETAILS_FIELD_LABELS,
+  inlineSaveFailure,
+} from '../utils/academy-save-feedback';
+import { toWesternDigits } from '../schemas/academy.schemas';
 import { RegistrationPolicyCard } from '../components/RegistrationPolicyCard';
 import { CommunicationSettingsCard } from '../components/CommunicationSettingsCard';
 import { AcademyInvitesCard } from '../components/AcademyInvitesCard';
@@ -164,16 +174,41 @@ export default function AcademySettingsPage(): JSX.Element {
       : undefined,
   });
 
-  useServerValidation(form, mutationError);
+  // B4 (UX audit) V10 — a field the server refuses is marked under its own
+  // label, with focus there, and nothing else; any other failure is one
+  // inline alert with the real reason (`saveFailure`).
+  const labelledError = useLabelledViolations(
+    mutationError,
+    ACADEMY_DETAILS_FIELD_LABELS
+  );
+  useServerValidation(form, labelledError);
+  useFocusFirstViolation(form, labelledError, ACADEMY_DETAILS_FIELD_LABELS);
+  const [saveFailure, setSaveFailure] = useState<ApiError | null>(null);
   // W4 — academy names are unique platform-wide: a taken name is shown on
   // the name field instead of a generic toast.
   useNameConflictError(form, mutationError);
+  const { confirm } = useConfirmDialog();
   // `save` resolves false after a failure it already reported, so both the
   // Save button and the unsaved-changes dialog's "Save and leave" share it.
   const save = async (
     data: UpdateAcademySettingsFormData
   ): Promise<boolean> => {
     if (!academyId) return false;
+    setSaveFailure(null);
+
+    // B4 (UX audit) V21 — a new address moves the website and locks the
+    // address for 60 days: ask first, saying so.
+    if (academy && data.slug !== academy.slug) {
+      const moveConfirmed = await confirm({
+        titleKey: 'academy:settings.slugConfirm.title',
+        descriptionKey: 'academy:settings.slugConfirm.description',
+        values: { from: academy.slug, to: data.slug },
+        confirmLabelKey: 'academy:settings.slugConfirm.confirm',
+        cancelLabelKey: 'common:actions.cancel',
+        intent: 'default',
+      });
+      if (!moveConfirmed) return false;
+    }
 
     try {
       await updateAcademy({
@@ -186,7 +221,9 @@ export default function AcademySettingsPage(): JSX.Element {
           timezone: data.timezone,
           currency: data.currency,
           contactEmail: data.contactEmail || null,
-          contactPhone: data.contactPhone || null,
+          contactPhone: data.contactPhone
+            ? toWesternDigits(data.contactPhone).trim()
+            : null,
           website: data.website || null,
         },
       });
@@ -213,11 +250,12 @@ export default function AcademySettingsPage(): JSX.Element {
         );
         return false;
       }
-      toast({
-        title: t('academy:settings.error'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+      setSaveFailure(
+        inlineSaveFailure(
+          normalizeUnknownError(error),
+          ACADEMY_DETAILS_FIELD_LABELS
+        )
+      );
       return false;
     }
   };
@@ -246,8 +284,16 @@ export default function AcademySettingsPage(): JSX.Element {
       ? requestedSection
       : 'details'
   );
-  const { confirm } = useConfirmDialog();
   const unsaved = useUnsavedChangesRegistry();
+  // B4 (UX audit) V31 — on a phone the section row scrolls sideways; the
+  // open section is always brought into view.
+  const activeSectionRef = useRef<HTMLButtonElement | null>(null);
+  useEffect(() => {
+    activeSectionRef.current?.scrollIntoView?.({
+      block: 'nearest',
+      inline: 'nearest',
+    });
+  }, [section]);
 
   // Sections unmount when another opens, so unsaved edits would vanish
   // without a navigation the route blocker could see: ask first.
@@ -263,6 +309,7 @@ export default function AcademySettingsPage(): JSX.Element {
       });
       if (!leave) return;
       form.reset();
+      setSaveFailure(null);
     }
     setSection(next);
     setSearchParams(
@@ -329,6 +376,7 @@ export default function AcademySettingsPage(): JSX.Element {
                 <li key={id} className="shrink-0">
                   <button
                     type="button"
+                    ref={active ? activeSectionRef : undefined}
                     onClick={() => void handleSectionChange(id)}
                     aria-current={active ? 'page' : undefined}
                     className={cn(
@@ -369,7 +417,10 @@ export default function AcademySettingsPage(): JSX.Element {
           {section === 'details' && (
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={form.handleSubmit(onSubmit, () =>
+                  setSaveFailure(null)
+                )}
+                noValidate
                 className="space-y-6"
               >
                 {/* General Settings */}
@@ -395,7 +446,7 @@ export default function AcademySettingsPage(): JSX.Element {
                         <FormItem>
                           <FormLabel>{t('academy:create.nameLabel')}</FormLabel>
                           <FormControl>
-                            <Input {...field} />
+                            <Input dir="auto" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -438,7 +489,7 @@ export default function AcademySettingsPage(): JSX.Element {
                             {t('academy:create.descriptionLabel')}
                           </FormLabel>
                           <FormControl>
-                            <Textarea rows={3} {...field} />
+                            <Textarea rows={3} dir="auto" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -597,7 +648,12 @@ export default function AcademySettingsPage(): JSX.Element {
                               {t('academy:create.contactEmailLabel')}
                             </FormLabel>
                             <FormControl>
-                              <Input type="email" {...field} />
+                              <Input
+                                type="email"
+                                dir="ltr"
+                                data-ltr-content
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -613,7 +669,13 @@ export default function AcademySettingsPage(): JSX.Element {
                               {t('academy:create.contactPhoneLabel')}
                             </FormLabel>
                             <FormControl>
-                              <Input type="tel" {...field} />
+                              <Input
+                                type="tel"
+                                dir="ltr"
+                                data-ltr-content
+                                inputMode="tel"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -630,7 +692,12 @@ export default function AcademySettingsPage(): JSX.Element {
                             {t('academy:create.websiteLabel')}
                           </FormLabel>
                           <FormControl>
-                            <Input type="url" {...field} />
+                            <Input
+                              type="url"
+                              dir="ltr"
+                              data-ltr-content
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -649,6 +716,13 @@ export default function AcademySettingsPage(): JSX.Element {
                     aria-label={t('academy:settings.unsavedBar')}
                     className="sticky bottom-4 z-10 flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-background/95 p-3 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/80"
                   >
+                    {saveFailure ? (
+                      <SaveFailedAlert
+                        error={saveFailure}
+                        titleKey="common:form.notSaved"
+                        className="w-full"
+                      />
+                    ) : null}
                     <p className="text-sm font-medium" aria-live="polite">
                       {t('academy:settings.unsavedBar')}
                     </p>
@@ -657,7 +731,10 @@ export default function AcademySettingsPage(): JSX.Element {
                         type="button"
                         variant="outline"
                         className="min-h-11"
-                        onClick={() => form.reset()}
+                        onClick={() => {
+                          form.reset();
+                          setSaveFailure(null);
+                        }}
                         disabled={isPending}
                       >
                         {t('academy:settings.discardButton')}

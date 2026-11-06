@@ -122,9 +122,12 @@ export function MethodLongTextField<T extends FieldValues>({
   dir = 'auto',
   lang,
   rows = 3,
+  maxLength,
   'data-ltr-content': ltrContent,
 }: Omit<MethodFieldProps<T>, 'inputMode'> & {
   readonly rows?: number;
+  /** B4 (UX audit) V14 — shows "120 / 2000 characters" so the limit is known before it is hit. */
+  readonly maxLength?: number;
 }): JSX.Element {
   const { t } = useTranslation();
   return (
@@ -146,12 +149,33 @@ export function MethodLongTextField<T extends FieldValues>({
             />
           </FormControl>
           {helpKey ? <FormDescription>{t(helpKey)}</FormDescription> : null}
+          {maxLength ? (
+            <p
+              className={
+                ((field.value as string | undefined) ?? '').trim().length >
+                maxLength
+                  ? 'text-xs font-medium tabular-nums text-destructive'
+                  : 'text-xs tabular-nums text-muted-foreground'
+              }
+              data-testid={testId ? `${testId}-count` : undefined}
+            >
+              {t('common:form.characterCount', {
+                count: ((field.value as string | undefined) ?? '').trim()
+                  .length,
+                max: maxLength,
+              })}
+            </p>
+          ) : null}
           <FormMessage />
         </FormItem>
       )}
     />
   );
 }
+
+/** `ManualMethodTextsDto`: instructions 2000, reference instructions 1000. */
+export const MANUAL_METHOD_INSTRUCTIONS_MAX = 2000;
+export const MANUAL_METHOD_REFERENCE_MAX = 1000;
 
 /** The `payments:` section whose labels/help a dialog uses. */
 export type ManualMethodSection =
@@ -220,6 +244,7 @@ export function ManualMethodTextsFields<T extends FieldValues>({
           name={path('instructions')}
           labelKey={`payments:${section}.fields.instructions`}
           helpKey={`payments:${section}.fields.instructionsHelp${suffix}`}
+          maxLength={MANUAL_METHOD_INSTRUCTIONS_MAX}
           testId={`${testIdPrefix}-instructions`}
         />
         <MethodLongTextField
@@ -229,6 +254,7 @@ export function ManualMethodTextsFields<T extends FieldValues>({
           helpKey={arabicHelp}
           dir="rtl"
           lang="ar"
+          maxLength={MANUAL_METHOD_INSTRUCTIONS_MAX}
           testId={`${testIdPrefix}-instructions-ar`}
         />
       </div>
@@ -239,6 +265,7 @@ export function ManualMethodTextsFields<T extends FieldValues>({
           labelKey={`payments:${section}.fields.referenceInstructions`}
           helpKey={`payments:${section}.fields.referenceInstructionsHelp${suffix}`}
           rows={2}
+          maxLength={MANUAL_METHOD_REFERENCE_MAX}
           testId={`${testIdPrefix}-reference-instructions`}
         />
         <MethodLongTextField
@@ -249,6 +276,7 @@ export function ManualMethodTextsFields<T extends FieldValues>({
           dir="rtl"
           lang="ar"
           rows={2}
+          maxLength={MANUAL_METHOD_REFERENCE_MAX}
           testId={`${testIdPrefix}-reference-instructions-ar`}
         />
       </div>

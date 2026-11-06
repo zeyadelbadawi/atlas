@@ -37,7 +37,7 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, vars?: Record<string, unknown>) =>
       vars ? `${key}:${Object.values(vars).join(',')}` : key,
-    i18n: { language: 'en', exists: () => true },
+    i18n: { language: 'en', exists: () => true, t: (key: string) => key },
   }),
 }));
 const notifySuccess = vi.fn();
@@ -49,7 +49,8 @@ vi.mock('@app/providers', () => ({
     dismissAll: vi.fn(),
   }),
 }));
-vi.mock('@hooks', () => ({
+vi.mock('@hooks', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
   useDateFormatter: () => ({
     date: () => '1 Nov 2026',
     dateTime: () => '3 Oct 2026 10:00',
@@ -164,16 +165,19 @@ describe('MessageComposer', () => {
     ).toBe(true);
   });
 
-  it('disables sending when the emails exceed the remaining quota', async () => {
-    renderComposer({
+  it('refuses to send when the emails exceed the remaining quota, and says why', async () => {
+    const { onSend } = renderComposer({
       onPreview: vi.fn().mockResolvedValue({ ...PREVIEW, overBy: 2 }),
     });
     const user = await fillDraft();
     await user.click(screen.getByTestId('message-preview-button'));
     expect(screen.queryByTestId('preview-over-quota')).not.toBeNull();
-    expect(
-      (screen.getByTestId('message-send-button') as HTMLButtonElement).disabled
-    ).toBe(true);
+    // B4 (UX audit) V4 — not a silently greyed button: pressing it names
+    // the reason, and nothing opens or sends.
+    await user.click(screen.getByTestId('message-send-button'));
+    expect(screen.getByText('messaging:composer.overQuota')).not.toBeNull();
+    expect(screen.queryByTestId('confirm-send')).toBeNull();
+    expect(onSend).not.toHaveBeenCalled();
   });
 
   it('sends with the previewed count and reuses the idempotency key on retry', async () => {

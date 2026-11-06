@@ -10,7 +10,7 @@
  * driven by the caller's `usePagination` state so the same control works for
  * server-side listings, which is the case Atlas is built for.
  */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   flexRender,
   getCoreRowModel,
@@ -18,7 +18,12 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import type { ColumnDef, SortingState } from '@tanstack/react-table';
-import { ArrowDown, ArrowUp, ChevronsUpDown } from 'lucide-react';
+import {
+  ArrowDown,
+  ArrowLeftRight,
+  ArrowUp,
+  ChevronsUpDown,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   Table,
@@ -34,6 +39,7 @@ import { SkeletonTable } from '@components/loading';
 import { Pagination } from '@components/data-display';
 import type { PaginationState } from '@hooks';
 import { cn } from '@utils';
+import { useHorizontalOverflow } from './useHorizontalOverflow';
 
 export interface DataTableProps<TData> {
   /** Column definitions. Headers must already be localized by the caller. */
@@ -76,6 +82,25 @@ export function DataTable<TData>({
 }: DataTableProps<TData>): JSX.Element {
   const { t } = useTranslation();
   const [sorting, setSorting] = useState<SortingState>([]);
+  // B4 (UX audit) — the box that scrolls is the `<Table>` wrapper.
+  const [scroller, setScroller] = useState<HTMLElement | null>(null);
+  const overflow = useHorizontalOverflow(scroller);
+  const scrollLabel = t('common:table.scrollRegion');
+
+  // A scroll box with hidden columns must be reachable by keyboard
+  // (arrow keys scroll it) and named for assistive technology.
+  useEffect(() => {
+    if (!scroller) return;
+    if (overflow.overflows) {
+      scroller.tabIndex = 0;
+      scroller.setAttribute('role', 'region');
+      scroller.setAttribute('aria-label', scrollLabel);
+    } else {
+      scroller.removeAttribute('tabindex');
+      scroller.removeAttribute('role');
+      scroller.removeAttribute('aria-label');
+    }
+  }, [scroller, overflow.overflows, scrollLabel]);
 
   const table = useReactTable({
     data: data as TData[],
@@ -114,16 +139,38 @@ export function DataTable<TData>({
       className={cn('flex flex-col', className)}
       aria-busy={isBusy || undefined}
     >
+      {overflow.overflows ? (
+        <p className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <ArrowLeftRight className="size-3.5 shrink-0" aria-hidden />
+          {t('common:table.scrollHint')}
+        </p>
+      ) : null}
       {/* Horizontal scrolling is contained so a wide table never stretches
           the page shell. */}
       <div
         className={cn(
-          'w-full overflow-x-auto',
+          'relative w-full overflow-x-auto',
           isBusy &&
-            'opacity-60 transition-opacity motion-reduce:transition-none'
+            'opacity-60 transition-opacity motion-reduce:transition-none',
+          '[&>div]:rounded-sm [&>div]:focus-visible:outline-none [&>div]:focus-visible:ring-2 [&>div]:focus-visible:ring-ring'
         )}
       >
-        <Table>
+        {/* B4 (UX audit) — a shade on each side that has hidden columns. */}
+        {overflow.hiddenStart ? (
+          <div
+            aria-hidden
+            data-testid="table-shade-start"
+            className="pointer-events-none absolute inset-y-0 start-0 z-10 w-6 bg-gradient-to-r from-foreground/10 to-transparent rtl:bg-gradient-to-l"
+          />
+        ) : null}
+        {overflow.hiddenEnd ? (
+          <div
+            aria-hidden
+            data-testid="table-shade-end"
+            className="pointer-events-none absolute inset-y-0 end-0 z-10 w-6 bg-gradient-to-l from-foreground/10 to-transparent rtl:bg-gradient-to-r"
+          />
+        ) : null}
+        <Table ref={(node) => setScroller(node?.parentElement ?? null)}>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-transparent">

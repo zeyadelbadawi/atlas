@@ -4,7 +4,13 @@
  * server re-resolves the email and decides.
  */
 import type { ApiError } from '@api';
-import type { AcademyMemberAddOutcome } from '@types';
+import { toErrorsNamespaceKey } from '@utils';
+import { errorMessageKey } from '@services';
+import type {
+  AcademyMember,
+  AcademyMemberAddOutcome,
+  AcademyMemberRole,
+} from '@types';
 
 /**
  * The add request body. The name is always sent (ATO F5 — the dialog
@@ -52,4 +58,65 @@ export function memberAddErrorKey(
     default:
       return `${copyPrefix}.errors.generic`;
   }
+}
+
+/** Backend keys that only restate the failure kind — they say less than the dialog's own copy. */
+const KIND_ONLY_KEYS: ReadonlySet<string> = new Set([
+  'errors.conflict',
+  'errors.notFound',
+  'errors.forbidden',
+  'errors.internal',
+  'errors.generic',
+]);
+
+/**
+ * B4 (UX audit) — the dialog's own copy for a failed add, only when it says
+ * MORE than the real reason would: the backend's specific message
+ * ("This person is already a member of this academy") is shown as-is
+ * (`null` here), and the kind's copy ("No Atlas account exists for that
+ * email address") replaces only a bare kind. A server error or a lost
+ * connection is never covered by "Please try again" — `null`, so the real
+ * reason shows.
+ */
+export function memberAddSpecificKey(
+  error: Pick<ApiError, 'kind' | 'messageKey' | 'code'>,
+  copyPrefix: string,
+  exists: (key: string) => boolean
+): string | null {
+  if (
+    error.code === 'ENTITLEMENT_LIMIT_REACHED' &&
+    exists(`${copyPrefix}.errors.limitReached`)
+  ) {
+    return `${copyPrefix}.errors.limitReached`;
+  }
+  const kindOnly =
+    KIND_ONLY_KEYS.has(error.messageKey) ||
+    error.messageKey === errorMessageKey(error.kind);
+  if (
+    error.messageKey &&
+    !kindOnly &&
+    exists(toErrorsNamespaceKey(error.messageKey))
+  ) {
+    return null;
+  }
+  const key = memberAddErrorKey(error, copyPrefix);
+  return key.endsWith('.errors.generic') ? null : key;
+}
+
+/**
+ * The role of the team member with this email, from the team list the page
+ * already shows (the owner can see it there anyway). `undefined` when the
+ * list doesn't have them — the callout then names no role.
+ */
+export function existingTeamRole(
+  members:
+    readonly Pick<AcademyMember, 'email' | 'role' | 'status'>[] | undefined,
+  email: string
+): AcademyMemberRole | undefined {
+  const typed = email.trim().toLowerCase();
+  if (!typed || !members) return undefined;
+  return members.find(
+    (member) =>
+      member.status !== 'inactive' && member.email.toLowerCase() === typed
+  )?.role;
 }

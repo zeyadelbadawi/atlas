@@ -9,6 +9,7 @@
  * (`useCurrencyFollowsCountry`). The currency is the default for new course
  * prices; it never converts or rewrites an existing price.
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -42,17 +43,29 @@ import { saveViaForm, currencyOptions, formatCountryName } from '@utils';
 import { CountrySelect } from '@/shared/components/phone';
 import { useAuth, useUnsavedChanges } from '@hooks';
 import {
+  SaveFailedAlert,
   nameConflictFromError,
+  useFocusFirstViolation,
+  useLabelledViolations,
   useNameConflictError,
   useServerValidation,
 } from '@forms';
+import { normalizeUnknownError } from '@api';
+import type { ApiError } from '@api';
+import { useConfirmDialog } from '@app/providers';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAcademy, useUpdateAcademy } from '../hooks';
 import { useCurrencyFollowsCountry } from '../hooks/useCurrencyFollowsCountry';
 import { AcademySlugDescription } from '../components/AcademySlugDescription';
 import { academySlugErrorMessage } from '../utils/academy-slug-error.utils';
+import {
+  ACADEMY_PROFILE_FIELD_ALIASES,
+  ACADEMY_PROFILE_FIELD_LABELS,
+  inlineSaveFailure,
+} from '../utils/academy-save-feedback';
 import type { LanguageCode } from '@types';
 import {
+  toWesternDigits,
   updateAcademyProfileSchema,
   type UpdateAcademyProfileFormData,
 } from '../schemas/academy.schemas';
@@ -110,7 +123,22 @@ export default function AcademyProfilePage(): JSX.Element {
       : undefined
   );
 
-  useServerValidation(form, mutationError);
+  // B4 (UX audit) V10 — server violations land on their fields, under the
+  // form's labels (`address.postalCode` → Postal code), with focus there;
+  // any other failure is one inline alert with the real reason.
+  const labelledError = useLabelledViolations(
+    mutationError,
+    ACADEMY_PROFILE_FIELD_LABELS
+  );
+  useServerValidation(form, labelledError, ACADEMY_PROFILE_FIELD_ALIASES);
+  useFocusFirstViolation(
+    form,
+    labelledError,
+    ACADEMY_PROFILE_FIELD_LABELS,
+    ACADEMY_PROFILE_FIELD_ALIASES
+  );
+  const [saveFailure, setSaveFailure] = useState<ApiError | null>(null);
+  const { confirm } = useConfirmDialog();
   // W4 — academy names are unique platform-wide: a taken name is shown on
   // the name field instead of a generic toast.
   useNameConflictError(form, mutationError);
@@ -118,6 +146,21 @@ export default function AcademyProfilePage(): JSX.Element {
   // Save button and the unsaved-changes dialog's "Save and leave" share it.
   const save = async (data: UpdateAcademyProfileFormData): Promise<boolean> => {
     if (!academyId) return false;
+    setSaveFailure(null);
+
+    // B4 (UX audit) V21 — a new address moves the website and locks the
+    // address for 60 days: ask first, saying so.
+    if (academy && data.slug !== academy.slug) {
+      const moveConfirmed = await confirm({
+        titleKey: 'academy:settings.slugConfirm.title',
+        descriptionKey: 'academy:settings.slugConfirm.description',
+        values: { from: academy.slug, to: data.slug },
+        confirmLabelKey: 'academy:settings.slugConfirm.confirm',
+        cancelLabelKey: 'common:actions.cancel',
+        intent: 'default',
+      });
+      if (!moveConfirmed) return false;
+    }
 
     try {
       await updateAcademy({
@@ -127,13 +170,18 @@ export default function AcademyProfilePage(): JSX.Element {
           slug: data.slug,
           description: data.description || null,
           contactEmail: data.contactEmail || null,
-          contactPhone: data.contactPhone || null,
+          contactPhone: data.contactPhone
+            ? toWesternDigits(data.contactPhone).trim()
+            : null,
           website: data.website || null,
           address: {
-            street: data.street,
-            city: data.city,
-            state: data.state,
-            postalCode: data.postalCode,
+            street: data.street?.trim(),
+            city: data.city?.trim(),
+            state: data.state?.trim(),
+            // Arabic-Indic digits are accepted and sent as 0-9.
+            postalCode: data.postalCode
+              ? toWesternDigits(data.postalCode).trim()
+              : data.postalCode,
             country: data.country || '',
           },
           language: data.language,
@@ -164,11 +212,12 @@ export default function AcademyProfilePage(): JSX.Element {
         );
         return false;
       }
-      toast({
-        title: t('academy:profile.error'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+      setSaveFailure(
+        inlineSaveFailure(
+          normalizeUnknownError(error),
+          ACADEMY_PROFILE_FIELD_LABELS
+        )
+      );
       return false;
     }
   };
@@ -223,7 +272,11 @@ export default function AcademyProfilePage(): JSX.Element {
       />
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form
+          onSubmit={form.handleSubmit(onSubmit, () => setSaveFailure(null))}
+          noValidate
+          className="space-y-6"
+        >
           {/* Basic Information */}
           <Card>
             <CardHeader>
@@ -237,7 +290,7 @@ export default function AcademyProfilePage(): JSX.Element {
                   <FormItem>
                     <FormLabel>{t('academy:create.nameLabel')}</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input dir="auto" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -256,7 +309,9 @@ export default function AcademyProfilePage(): JSX.Element {
                         dir="ltr"
                         data-ltr-content
                         readOnly={!canChangeSlug || slugLocked}
-                        aria-readonly={!canChangeSlug || slugLocked || undefined}
+                        aria-readonly={
+                          !canChangeSlug || slugLocked || undefined
+                        }
                       />
                     </FormControl>
                     <AcademySlugDescription
@@ -278,7 +333,7 @@ export default function AcademyProfilePage(): JSX.Element {
                       {t('academy:create.descriptionLabel')}
                     </FormLabel>
                     <FormControl>
-                      <Textarea rows={3} {...field} />
+                      <Textarea rows={3} dir="auto" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -303,7 +358,12 @@ export default function AcademyProfilePage(): JSX.Element {
                         {t('academy:create.contactEmailLabel')}
                       </FormLabel>
                       <FormControl>
-                        <Input type="email" {...field} />
+                        <Input
+                          type="email"
+                          dir="ltr"
+                          data-ltr-content
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -319,7 +379,13 @@ export default function AcademyProfilePage(): JSX.Element {
                         {t('academy:create.contactPhoneLabel')}
                       </FormLabel>
                       <FormControl>
-                        <Input type="tel" {...field} />
+                        <Input
+                          type="tel"
+                          dir="ltr"
+                          data-ltr-content
+                          inputMode="tel"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -334,7 +400,7 @@ export default function AcademyProfilePage(): JSX.Element {
                   <FormItem>
                     <FormLabel>{t('academy:create.websiteLabel')}</FormLabel>
                     <FormControl>
-                      <Input type="url" {...field} />
+                      <Input type="url" dir="ltr" data-ltr-content {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -356,7 +422,7 @@ export default function AcademyProfilePage(): JSX.Element {
                   <FormItem>
                     <FormLabel>{t('academy:profile.streetLabel')}</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input dir="auto" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -371,7 +437,7 @@ export default function AcademyProfilePage(): JSX.Element {
                     <FormItem>
                       <FormLabel>{t('academy:profile.cityLabel')}</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input dir="auto" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -385,7 +451,7 @@ export default function AcademyProfilePage(): JSX.Element {
                     <FormItem>
                       <FormLabel>{t('academy:profile.stateLabel')}</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input dir="auto" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -403,7 +469,7 @@ export default function AcademyProfilePage(): JSX.Element {
                         {t('academy:profile.postalCodeLabel')}
                       </FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input dir="auto" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -563,6 +629,13 @@ export default function AcademyProfilePage(): JSX.Element {
               </div>
             </CardContent>
           </Card>
+
+          {saveFailure ? (
+            <SaveFailedAlert
+              error={saveFailure}
+              titleKey="common:form.notSaved"
+            />
+          ) : null}
 
           {/* Form Actions */}
           <div className="flex items-center justify-end gap-3">

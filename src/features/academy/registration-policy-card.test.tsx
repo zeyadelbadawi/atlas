@@ -77,6 +77,16 @@ vi.mock('@app/providers', () => ({
   useToast: () => ({ notifySuccess, notifyError }),
 }));
 
+// B4 (UX audit) V07 — what the card reports to the unsaved-changes guard.
+const unsavedReports: boolean[] = [];
+vi.mock('@hooks', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  useUnsavedChanges: ({ isDirty }: { isDirty: boolean }) => {
+    unsavedReports.push(isDirty);
+    return { markSaved: () => undefined };
+  },
+}));
+
 const { RegistrationPolicyCard } =
   await import('./components/RegistrationPolicyCard');
 
@@ -172,9 +182,8 @@ describe('RegistrationPolicyCard', () => {
 
     const alert = await screen.findByRole('alert');
     expect(alert.textContent).toMatch(/role on this academy does not allow/i);
-    expect(notifyError).toHaveBeenCalledWith(
-      'academy:students.errors.insufficientRole'
-    );
+    // B4 (UX audit) V09 — ONE message: the inline alert, no toast too.
+    expect(notifyError).not.toHaveBeenCalled();
     // The generic "could not be saved" copy would have been the wrong
     // answer: the save did not fail, it was refused.
     await waitFor(() =>
@@ -182,5 +191,13 @@ describe('RegistrationPolicyCard', () => {
         screen.queryByText(/registration policy could not be saved/i)
       ).toBeNull()
     );
+  });
+
+  it('B4 V07 — an unsaved choice is reported to the leave guard', async () => {
+    const user = userEvent.setup(USER_EVENT_OPTIONS);
+    renderCard(true);
+    expect(unsavedReports.at(-1)).toBe(false);
+    await user.click(screen.getByRole('radio', { name: /invite only/i }));
+    await waitFor(() => expect(unsavedReports.at(-1)).toBe(true));
   });
 });

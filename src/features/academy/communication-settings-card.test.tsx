@@ -155,9 +155,8 @@ describe('CommunicationSettingsCard', () => {
 
     fireEvent.click(screen.getByRole('radio', { name: /every sign-in/i }));
 
-    expect(notifyError).toHaveBeenCalledWith(
-      'academy:students.errors.insufficientRole'
-    );
+    // B4 (UX audit) V09 — ONE message: the inline alert, no toast too.
+    expect(notifyError).not.toHaveBeenCalled();
     expect(screen.getByRole('alert').textContent).toMatch(
       /role on this academy does not allow/i
     );
@@ -178,5 +177,21 @@ describe('CommunicationSettingsCard', () => {
     expect(radio.hasAttribute('disabled')).toBe(true);
     fireEvent.click(radio);
     expect(mutate).not.toHaveBeenCalled();
+  });
+
+  it('B4 V22 — says why it is read-only FIRST, and the controls look read-only', () => {
+    settings = {
+      ...settings,
+      editable: false,
+      effectiveEmailOtpPolicy: 'new_device',
+    };
+    renderCard(true);
+    const notice = screen.getByTestId('communication-locked');
+    const radio = screen.getByRole('radio', { name: /every sign-in/i });
+    // The explanation comes before the first control in reading order.
+    expect(
+      notice.compareDocumentPosition(radio) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+    expect(radio.closest('[data-locked]')?.className).toContain('opacity-60');
   });
 });

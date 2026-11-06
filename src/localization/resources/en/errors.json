@@ -565,5 +565,8 @@
     "monthRangeTooLong": "Choose at most 36 months.",
     "seasonRangeInvalid": "The season must end after it starts.",
     "hireThresholdsInvalid": "“Hire now” must be at least the “plan a hire” number."
+  },
+  "announcement": {
+    "scheduleInPast": "This time has already passed. Choose a time in the future, or save it as a draft."
   }
 }

@@ -8,7 +8,11 @@
  * Stabilization A2: nobody chooses a password for someone else — the
  * invitee sets their own through the emailed setup link.
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { ApiError } from '@api';
+import { isTranslatedString } from '@utils';
+import { InlineFailureAlert } from './InlineFailureAlert';
 import { useForm } from 'react-hook-form';
 import { useDirtyGuard } from '@features/unsaved-changes';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,8 +32,10 @@ import { useServerValidation } from '@forms';
 import { useAddAcademyManager } from '../hooks';
 import { useAcademyMemberLookup } from '../hooks/useAcademyMemberLookup';
 import { MemberAccountFields, isBlockedByLookup } from './MemberAccountFields';
+import type { AcademyMember } from '@types';
 import {
-  memberAddErrorKey,
+  existingTeamRole,
+  memberAddSpecificKey,
   memberAddOutcomeKey,
   memberAddPayload,
 } from '../utils/member-add.utils';
@@ -42,6 +48,8 @@ export interface AddAcademyManagerDialogProps {
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
   readonly academyId: string;
+  /** The team list on screen, so the "already here" callout names the person's real role. */
+  readonly teamMembers?: readonly AcademyMember[];
 }
 
 const DEFAULT_VALUES: AddAcademyManagerFormData = {
@@ -53,10 +61,13 @@ export function AddAcademyManagerDialog({
   open,
   onOpenChange,
   academyId,
+  teamMembers,
 }: AddAcademyManagerDialogProps): JSX.Element {
-  const { t } = useTranslation();
-  const { notifySuccess, notifyError } = useToast();
+  const { t, i18n } = useTranslation();
+  const { notifySuccess } = useToast();
   const addManager = useAddAcademyManager();
+
+  const [failure, setFailure] = useState<ApiError | null>(null);
 
   const form = useForm<AddAcademyManagerFormData>({
     resolver: zodResolver(addAcademyManagerSchema),
@@ -85,11 +96,13 @@ export function AddAcademyManagerDialog({
     if (nextOpen) return onOpenChange(true);
     void dirtyGuard.requestClose(() => {
       form.reset(DEFAULT_VALUES);
+      setFailure(null);
       onOpenChange(false);
     });
   };
 
   const onSubmit = (data: AddAcademyManagerFormData) => {
+    setFailure(null);
     addManager.mutate(
       { academyId, payload: memberAddPayload(data) },
       {
@@ -103,13 +116,9 @@ export function AddAcademyManagerDialog({
           onOpenChange(false);
         },
         onError: (error) => {
-          // A validation error with real field violations is shown
-          // inline, on the field that actually needs fixing, via
-          // `useServerValidation` above — a generic toast on top of that
-          // would just repeat "something's wrong" without saying what,
-          // exactly the UX gap this fixes. Every other kind (network/
-          // timeout/server/notFound/conflict/forbidden/an edge-case
-          // validation error with no mappable field) still gets a toast.
+          // Field violations are shown on their fields (useServerValidation);
+          // anything else is ONE message inside the dialog, with the real
+          // reason (B4 V09/V26) — no toast under the overlay.
           if (
             error.kind === 'validation' &&
             error.violations &&
@@ -117,8 +126,7 @@ export function AddAcademyManagerDialog({
           ) {
             return;
           }
-
-          notifyError(memberAddErrorKey(error, 'academy:members.addManager'));
+          setFailure(error);
         },
       }
     );
@@ -141,8 +149,21 @@ export function AddAcademyManagerDialog({
               lookup={lookup}
               copyPrefix="academy:members.addManager"
               role="manager"
+              existingRole={existingTeamRole(teamMembers, form.watch('email'))}
               idPrefix="add-manager"
             />
+
+            {failure ? (
+              <InlineFailureAlert
+                error={failure}
+                titleKey="academy:members.addManager.errors.failedTitle"
+                specificKey={memberAddSpecificKey(
+                  failure,
+                  'academy:members.addManager',
+                  (key) => isTranslatedString(i18n, key)
+                )}
+              />
+            ) : null}
 
             <DialogFooter>
               <Button

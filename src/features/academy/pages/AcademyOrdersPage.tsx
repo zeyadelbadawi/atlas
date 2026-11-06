@@ -22,7 +22,7 @@
  *     dimmed and the table is `aria-busy`.
  */
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { ColumnDef } from '@tanstack/react-table';
 import { ShieldOff, ShoppingBag, X } from 'lucide-react';
@@ -30,6 +30,7 @@ import { PageContainer, PageHeader, SectionCard } from '@components/layout';
 import { EmptyState, ErrorState } from '@components/feedback';
 import { SearchInput, StatusBadge } from '@components/data-display';
 import { DataTable } from '@components/table';
+import { isDateRangeReversed, ReversedDateRangeAlert } from '@forms';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -257,6 +258,8 @@ export default function AcademyOrdersPage(): JSX.Element {
     if (total > 0 && page > lastPage) setPage(lastPage);
   }, [orders.data, orders.isPlaceholderData, page, pageSize, setPage]);
 
+  const datesReversed = isDateRangeReversed(filters.from, filters.to);
+
   /** Any filter change returns to page 1 (`setFilters` drops the page). */
   const update = (patch: Partial<OrdersFilterState>) =>
     setFilters({ ...filters, ...patch });
@@ -333,6 +336,7 @@ export default function AcademyOrdersPage(): JSX.Element {
           <StatusBadge
             labelKey={`payments:courseOrder.status.${row.original.status}`}
             tone={getCourseOrderStatusTone(row.original.status)}
+            className="whitespace-nowrap"
           />
         ),
       },
@@ -355,6 +359,7 @@ export default function AcademyOrdersPage(): JSX.Element {
                 <StatusBadge
                   labelKey={`payments:payment.reviewStatus.${payment.reviewStatus}`}
                   tone={getManualReviewStatusTone(payment.reviewStatus)}
+                  className="whitespace-nowrap"
                 />
               ) : (
                 <StatusBadge
@@ -365,6 +370,19 @@ export default function AcademyOrdersPage(): JSX.Element {
               <span className="whitespace-nowrap text-xs text-muted-foreground">
                 {t(`payments:common.methodType.${payment.methodType}`)}
               </span>
+              {/* B4 (UX audit) V30 — straight to the proof waiting for review. */}
+              {payment.reviewStatus === 'pending' ? (
+                <Link
+                  to={`${buildPath(DASHBOARD_ROUTES.academyPayments, {
+                    academyId,
+                  })}?payment=${encodeURIComponent(payment.id)}`}
+                  onClick={(event) => event.stopPropagation()}
+                  className="whitespace-nowrap text-xs font-medium text-primary underline-offset-4 hover:underline"
+                  data-testid="order-review-payment"
+                >
+                  {t('payments:academyOrders.reviewPayment')}
+                </Link>
+              ) : null}
             </div>
           );
         },
@@ -384,13 +402,13 @@ export default function AcademyOrdersPage(): JSX.Element {
           ),
       },
     ],
-    [t, fmt, locale]
+    [t, fmt, locale, academyId]
   );
 
   const header = (
     <PageHeader
       titleKey="payments:academyOrders.title"
-      descriptionKey="payments:academyOrders.description"
+      descriptionKey="payments:academyOrders.descriptionOwner"
     />
   );
 
@@ -441,6 +459,7 @@ export default function AcademyOrdersPage(): JSX.Element {
             value={filters.search}
             onValueChange={(search) => update({ search })}
             labelKey="payments:academyOrders.searchLabel"
+            placeholderKey="payments:academyOrders.searchShort"
             className="w-full lg:max-w-md"
           />
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
@@ -524,6 +543,10 @@ export default function AcademyOrdersPage(): JSX.Element {
                 type="date"
                 value={filters.from}
                 max={filters.to || undefined}
+                aria-invalid={datesReversed || undefined}
+                aria-describedby={
+                  datesReversed ? 'academy-orders-dates-error' : undefined
+                }
                 onChange={(event) => update({ from: event.target.value })}
                 className="w-full sm:w-[160px]"
               />
@@ -540,6 +563,10 @@ export default function AcademyOrdersPage(): JSX.Element {
                 type="date"
                 value={filters.to}
                 min={filters.from || undefined}
+                aria-invalid={datesReversed || undefined}
+                aria-describedby={
+                  datesReversed ? 'academy-orders-dates-error' : undefined
+                }
                 onChange={(event) => update({ to: event.target.value })}
                 className="w-full sm:w-[160px]"
               />
@@ -555,6 +582,14 @@ export default function AcademyOrdersPage(): JSX.Element {
               }))}
               className="w-full sm:w-[190px]"
             />
+            {datesReversed ? (
+              // B4 (UX audit) V17 — "From" after "To" says so, with Swap.
+              <ReversedDateRangeAlert
+                id="academy-orders-dates-error"
+                onSwap={() => update({ from: filters.to, to: filters.from })}
+                className="sm:basis-full"
+              />
+            ) : null}
             {filtered ? (
               <Button
                 type="button"

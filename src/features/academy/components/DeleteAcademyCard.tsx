@@ -48,7 +48,11 @@ import { toast } from '@/hooks/use-toast';
 import { usePermissions } from '@hooks';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useDeleteAcademy } from '../hooks';
+import { SaveFailedAlert } from '@forms';
+import { TextLengthCounter } from './TextLengthCounter';
 import type { Academy } from '@types';
+
+const DELETE_FEEDBACK_MAX_LENGTH = 2000;
 
 /** Mirrors `ACADEMY_ARCHIVE_REASONS` in the backend DTO exactly. */
 const ARCHIVE_REASONS = [
@@ -102,16 +106,10 @@ export function DeleteAcademyCard({
         }),
       });
       navigate(DASHBOARD_ROUTES.academy, { replace: true });
-    } catch (error) {
-      // Left open: closing the dialog would imply it worked.
-      toast({
-        variant: 'destructive',
-        title: t('academy:delete.failedTitle'),
-        description:
-          error instanceof Error
-            ? error.message
-            : t('academy:delete.failedTitle'),
-      });
+    } catch {
+      // Left open: closing the dialog would imply it worked. B4 (UX audit)
+      // V02 — the ONE message is the inline alert below, with the real
+      // reason (never the technical `error.message`).
     }
   }
 
@@ -139,6 +137,7 @@ export function DeleteAcademyCard({
             setConfirmation('');
             setReason('');
             setFeedback('');
+            deleteAcademy.reset();
             setOpen(true);
           }}
         >
@@ -188,9 +187,16 @@ export function DeleteAcademyCard({
               <Textarea
                 id="delete-academy-feedback"
                 value={feedback}
-                maxLength={2000}
+                maxLength={DELETE_FEEDBACK_MAX_LENGTH}
+                dir="auto"
+                aria-describedby="delete-academy-feedback-count"
                 onChange={(event) => setFeedback(event.target.value)}
                 placeholder={t('academy:delete.feedbackPlaceholder')}
+              />
+              <TextLengthCounter
+                id="delete-academy-feedback-count"
+                length={feedback.length}
+                max={DELETE_FEEDBACK_MAX_LENGTH}
               />
             </div>
 
@@ -207,6 +213,13 @@ export function DeleteAcademyCard({
               />
             </div>
           </div>
+
+          {deleteAcademy.error ? (
+            <SaveFailedAlert
+              error={deleteAcademy.error}
+              titleKey="academy:delete.failedTitle"
+            />
+          ) : null}
 
           <DialogFooter>
             <Button

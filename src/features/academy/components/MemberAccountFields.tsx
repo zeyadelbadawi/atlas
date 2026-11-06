@@ -25,6 +25,8 @@ import {
 import { Input } from '@/components/ui/input';
 import type { MemberLookupState } from '../hooks/useAcademyMemberLookup';
 import { MAX_MEMBER_NAME_LENGTH } from '../constants/academy.constants';
+import { getAcademyMemberRoleLabelKey } from '../utils/academy-status.utils';
+import type { AcademyMemberRole } from '@types';
 
 interface MemberAccountFormValues extends FieldValues {
   email: string;
@@ -41,6 +43,13 @@ export interface MemberAccountFieldsProps<
   /** The role, as the "already here" callout words it (`academy:members.lookup.roles.*`). */
   readonly role: 'manager' | 'instructor' | 'student';
   readonly idPrefix: string;
+  /**
+   * B4 (UX audit) — the role the typed person ALREADY has in this academy,
+   * when the team list on screen knows it. The lookup only answers
+   * "already here" (ATO F5), so without this the callout named the
+   * dialog's role ("already a manager" for an instructor).
+   */
+  readonly existingRole?: AcademyMemberRole;
 }
 
 /** Whether the lookup already knows the add cannot succeed (already in this academy). */
@@ -54,10 +63,10 @@ export function MemberAccountFields<TValues extends MemberAccountFormValues>({
   copyPrefix,
   role,
   idPrefix,
+  existingRole,
 }: MemberAccountFieldsProps<TValues>): JSX.Element {
   const { t } = useTranslation();
   const statusId = `${idPrefix}-lookup-status`;
-  const roleLabel = t(`academy:members.lookup.roles.${role}`);
 
   return (
     <>
@@ -89,7 +98,11 @@ export function MemberAccountFields<TValues extends MemberAccountFormValues>({
       />
 
       <div id={statusId} aria-live="polite" className="min-h-0">
-        <LookupCallout lookup={lookup} roleLabel={roleLabel} />
+        <LookupCallout
+          lookup={lookup}
+          isStudent={role === 'student'}
+          existingRole={existingRole}
+        />
       </div>
 
       {isBlockedByLookup(lookup) ? null : (
@@ -120,12 +133,28 @@ export function MemberAccountFields<TValues extends MemberAccountFormValues>({
   );
 }
 
+/** "Already here" in words that are true: a student, or a team member with the role they really have. */
+function alreadyMemberText(
+  t: (key: string, values?: Record<string, string>) => string,
+  isStudent: boolean,
+  existingRole: AcademyMemberRole | undefined
+): string {
+  if (isStudent) return t('academy:members.lookup.alreadyStudent');
+  return existingRole
+    ? t('academy:members.lookup.alreadyOnTeamAs', {
+        role: t(getAcademyMemberRoleLabelKey(existingRole)),
+      })
+    : t('academy:members.lookup.alreadyOnTeam');
+}
+
 function LookupCallout({
   lookup,
-  roleLabel,
+  isStudent,
+  existingRole,
 }: {
   readonly lookup: MemberLookupState;
-  readonly roleLabel: string;
+  readonly isStudent: boolean;
+  readonly existingRole?: AcademyMemberRole;
 }): JSX.Element | null {
   const { t } = useTranslation();
 
@@ -155,7 +184,7 @@ function LookupCallout({
             aria-hidden
           />
           <p className="text-foreground">
-            {t('academy:members.lookup.alreadyMember', { role: roleLabel })}
+            {alreadyMemberText(t, isStudent, existingRole)}
           </p>
         </div>
       );

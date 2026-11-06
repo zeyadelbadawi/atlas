@@ -77,7 +77,8 @@
     "saving": "Saving changes...",
     "success": "Profile updated successfully",
     "error": "Failed to update profile",
-    "unsavedChanges": "You have unsaved profile changes. Are you sure you want to leave?"
+    "unsavedChanges": "You have unsaved profile changes. Are you sure you want to leave?",
+    "postalCodeInvalid": "Use 2 to 20 Latin letters (A–Z), digits, spaces or hyphens, like 11511."
   },
   "settings": {
     "title": "Academy Settings",
@@ -123,7 +124,13 @@
       "dangerDescription": "Permanently delete this academy and everything in it."
     },
     "discardButton": "Discard",
-    "unsavedBar": "You have unsaved changes"
+    "unsavedBar": "You have unsaved changes",
+    "contactPhoneInvalid": "Enter a phone number with 7 to 15 digits, like +20 100 123 4567. Use only digits, spaces, brackets, hyphens and a leading +.",
+    "slugConfirm": {
+      "title": "Change your web address?",
+      "description": "Your website moves from {{from}} to {{to}}. The old address keeps working: it sends visitors to the new one and stays reserved for you. After this change, you can't change the address again for 60 days.",
+      "confirm": "Change address"
+    }
   },
   "branding": {
     "title": "Academy Branding",
@@ -199,7 +206,8 @@
         "userNotFound": "No Atlas account exists for that email address.",
         "alreadyMember": "This person is already a member of this academy.",
         "insufficientRole": "Only the academy owner can add a manager.",
-        "generic": "Could not add this manager. Please try again."
+        "generic": "Could not add this manager. Please try again.",
+        "failedTitle": "The manager wasn't added"
       }
     },
     "addInstructor": {
@@ -215,7 +223,8 @@
         "alreadyMember": "This person is already a member of this academy.",
         "insufficientRole": "Only the academy owner can add an instructor.",
         "limitReached": "You've reached your plan's instructor limit. Upgrade your plan to add more.",
-        "generic": "Could not add this instructor. Please try again."
+        "generic": "Could not add this instructor. Please try again.",
+        "failedTitle": "The instructor wasn't added"
       }
     },
     "createStudent": {
@@ -229,7 +238,8 @@
         "insufficientRole": "Only the academy owner can create a student account.",
         "generic": "Could not create this student account. Please try again.",
         "alreadyMember": "This person is already a student in this academy.",
-        "userNotFound": "Could not create this student account. Reload the page and try again."
+        "userNotFound": "Could not create this student account. Reload the page and try again.",
+        "failedTitle": "The student wasn't added"
       },
       "addButton": "Add student",
       "outcome": {
@@ -269,7 +279,10 @@
         "manager": "a manager",
         "instructor": "an instructor",
         "student": "a student"
-      }
+      },
+      "alreadyStudent": "This person is already a student in this academy.",
+      "alreadyOnTeam": "This person is already on this academy's team. You can see their role in the team list.",
+      "alreadyOnTeamAs": "This person is already on this academy's team, as {{role}}."
     },
     "outcome": {
       "invited": "Invitation sent. They'll get an email to set up their account.",
@@ -283,8 +296,12 @@
       "description": "{{name}} will lose access to this academy straight away, including any courses they teach here. Their account is not deleted, and you can add them back later.",
       "confirm": "Remove from academy",
       "success": "{{name}} was removed from the academy.",
-      "failed": "We couldn't remove this team member. Please try again."
-    }
+      "failed": "We couldn't remove this team member. Please try again.",
+      "failedTitle": "This team member wasn't removed"
+    },
+    "subtitleStudents": "See and manage the learners registered on your academy website.",
+    "noMatch": "No team members match",
+    "noMatchDescription": "Nobody on the team matches this search or role. Check the spelling or clear the filters."
   },
   "students": {
     "title": "Students",
@@ -369,7 +386,9 @@
       "description": "{{name}} will keep their account but lose access to this academy's courses until you unblock them.",
       "reasonLabel": "Reason (optional)",
       "reasonPlaceholder": "Recorded on the membership and visible to your team.",
-      "confirm": "Block student"
+      "confirm": "Block student",
+      "reasonTooLong": "Keep the reason to {{max}} characters or fewer.",
+      "failedTitle": "The student wasn't blocked"
     },
     "reject": {
       "title": "Reject this registration",
@@ -384,7 +403,9 @@
       "noCourses": "There is no course left to enroll this student in.",
       "expiresLabel": "Access expires (optional)",
       "expiresHelp": "Leave empty for access that does not expire.",
-      "confirm": "Enroll"
+      "confirm": "Enroll",
+      "failedTitle": "The student wasn't enrolled",
+      "courseRequired": "Choose the course to enroll them in."
     },
     "revoke": {
       "title": "Revoke access",
@@ -397,7 +418,8 @@
         "suspended": "Suspended",
         "refund": "Refunded"
       },
-      "confirm": "Revoke access"
+      "confirm": "Revoke access",
+      "failedTitle": "Access wasn't revoked"
     },
     "expiry": {
       "title": "Access expiry",
@@ -405,7 +427,10 @@
       "dateLabel": "Expires on",
       "help": "Access ends at the end of the chosen day.",
       "clear": "Remove expiry",
-      "confirm": "Save expiry"
+      "confirm": "Save expiry",
+      "failedTitle": "The expiry wasn't saved",
+      "pastDate": "Choose today or a later date. A date in the past would end their access straight away.",
+      "dateRequired": "Choose the day access ends, or use Remove expiry for access that doesn't end."
     },
     "toasts": {
       "approved": "Student approved",
@@ -426,6 +451,14 @@
       "alreadyEnrolled": "This student is already enrolled in that course.",
       "expiryInPast": "The expiry date must be in the future.",
       "notFound": "That student is no longer on this academy."
+    },
+    "noMatch": "No students match",
+    "noMatchDescription": "No student matches this search or status. Check the spelling or clear the filters.",
+    "searchShort": "Search name or email",
+    "actionFailed": {
+      "approve": "The student wasn't approved",
+      "reject": "The registration wasn't rejected",
+      "unblock": "The student wasn't unblocked"
     }
   },
   "registration": {
@@ -450,7 +483,8 @@
       "ownerOnly": "Only the account owner can change the registration policy.",
       "save": "Save policy",
       "saved": "Registration policy updated",
-      "saveFailed": "The registration policy could not be saved."
+      "saveFailed": "The registration policy could not be saved.",
+      "notChanged": "The registration policy wasn't changed"
     },
     "invites": {
       "title": "Invite links",
@@ -480,7 +514,11 @@
         "maxUsesLabel": "Maximum uses",
         "expiresInDaysLabel": "Valid for (days)",
         "submit": "Create invite",
-        "failed": "The invite could not be created."
+        "failed": "The invite could not be created.",
+        "maxUsesRange": "Enter a whole number from 1 to 1,000.",
+        "expiresInDaysRange": "Enter a whole number of days from 1 to 365.",
+        "maxUsesHelp": "How many people can register with it: 1 to 1,000.",
+        "expiresInDaysHelp": "From 1 to 365 days."
       },
       "created": {
         "title": "Invite created",
@@ -739,7 +777,9 @@
       },
       "save": "Save",
       "saved": "Device limits updated",
-      "saveFailed": "The device limits could not be saved."
+      "saveFailed": "The device limits could not be saved.",
+      "outOfRangeMax": "Enter a whole number from 1 to {{max}}.",
+      "aboveMaximum": "The platform allows at most {{max}}. Choose {{max}} or fewer."
     }
   },
   "revenue": {
@@ -808,7 +848,7 @@
       "noReference": "No reference",
       "empty": {
         "title": "No payouts yet",
-        "description": "Payouts appear here once Atlas settles your course sales. Course payments are currently collected by bank transfer through Atlas; online payment gateways aren't available yet."
+        "description": "Payouts appear here once Atlas Payments settles course sales for you. Today learners pay your academy directly, by bank transfer, InstaPay or mobile wallet, so Atlas holds nothing to pay out."
       },
       "error": {
         "title": "We couldn't load payouts",

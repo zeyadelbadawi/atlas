@@ -35,8 +35,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@app/providers';
-import type { ApiError } from '@api';
-import { toErrorsNamespaceKey } from '@utils';
+import { normalizeUnknownError, type ApiError } from '@api';
+import { useUnsavedChanges } from '@hooks';
+import { useFailureReason } from '@forms';
 import { RichTextEditor } from './RichTextEditor';
 import { PreviewSummary } from './PreviewSummary';
 import { ConfirmSendDialog } from './ConfirmSendDialog';
@@ -69,6 +70,12 @@ export interface MessageComposerProps {
   /** Academy learner audiences also report blocked/pending learners. */
   readonly showLearnerExclusions?: boolean;
   readonly onSent?: (accepted: CampaignAccepted) => void;
+  /**
+   * Why `audience` is `null` (B4 UX audit V28), shown beside the greyed
+   * Preview button — e.g. "Tick at least one course". A generic sentence
+   * is used when the page gives none.
+   */
+  readonly audienceIncompleteKey?: string;
 }
 
 type Notice =
@@ -78,15 +85,21 @@ type Notice =
       readonly remaining: number;
       readonly requested: number;
     }
-  | {
-      readonly kind: 'error';
-      readonly messageKey: string;
-      readonly requestId?: string;
-    };
+  | { readonly kind: 'sendError'; readonly error: ApiError };
+
+/** A failed preview is about the preview, shown beside its button (B4 V03). */
+type PreviewFailure = ApiError | null;
 
 function detailNumber(error: ApiError, key: string): number {
   const value = error.details?.[key];
   return typeof value === 'number' ? value : 0;
+}
+
+/** The API failure as thrown (an `ApiError` or its shape), else normalised. */
+function toApiError(error: unknown): ApiError {
+  return error !== null && typeof error === 'object' && 'kind' in error
+    ? (error as ApiError)
+    : normalizeUnknownError(error);
 }
 
 export function MessageComposer({
@@ -99,9 +112,11 @@ export function MessageComposer({
   isSending,
   showLearnerExclusions = false,
   onSent,
+  audienceIncompleteKey,
 }: MessageComposerProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const { notifySuccess } = useToast();
+  const failureReason = useFailureReason();
   const [subject, setSubject] = useState('');
   const [bodyHtml, setBodyHtml] = useState('');
   const [contentLocale, setContentLocale] = useState<'en' | 'ar'>(
@@ -113,6 +128,7 @@ export function MessageComposer({
   });
   const [preview, setPreview] = useState<CampaignPreview | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
+  const [previewFailure, setPreviewFailure] = useState<PreviewFailure>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [attempted, setAttempted] = useState(false);
   const idempotencyKey = useRef<string | null>(null);
@@ -135,14 +151,21 @@ export function MessageComposer({
     bodyHtml.length <= BODY_HTML_MAX;
   const hasChannel = channels.email || channels.inApp;
 
+  // B4 (UX audit) V08 — leaving with a typed message asks first.
+  const hasDraft = subjectTrimmed.length > 0 || bodyText.length > 0;
+  const { markSaved } = useUnsavedChanges({ isDirty: hasDraft });
+
   // Numbers seen for ANOTHER audience or channel set are not numbers for this one.
   useEffect(() => {
     setPreview(null);
+    setPreviewFailure(null);
   }, [audienceVersion, channels.email, channels.inApp]);
 
-  // A changed draft is a different message: it gets a new idempotency key.
+  // A changed draft is a different message: it gets a new idempotency key,
+  // and a "not sent" alert about the previous one no longer applies.
   useEffect(() => {
     idempotencyKey.current = null;
+    setNotice((current) => (current?.kind === 'sendError' ? null : current));
   }, [
     audienceVersion,
     channels.email,
@@ -154,24 +177,21 @@ export function MessageComposer({
 
   const runPreview = async (): Promise<CampaignPreview | null> => {
     if (!audience || !hasChannel) return null;
+    setPreviewFailure(null);
     try {
       const result = await onPreview({ audience, channels });
       setPreview(result);
       return result;
     } catch (error) {
-      const apiError = error as ApiError;
       setPreview(null);
-      setNotice({
-        kind: 'error',
-        messageKey: apiError.messageKey,
-        requestId: apiError.requestId,
-      });
+      setPreviewFailure(toApiError(error));
       return null;
     }
   };
 
   const handlePreview = async () => {
     setNotice(null);
+    setPreviewFailure(null);
     await runPreview();
   };
 
@@ -183,6 +203,17 @@ export function MessageComposer({
     bodyValid &&
     hasChannel &&
     !isSending;
+
+  /** Why a previewed message can't go yet — named, never just a grey button. */
+  const sendBlockedKey: string | null = !preview
+    ? null
+    : preview.recipientCount === 0
+      ? 'messaging:composer.noRecipients'
+      : channels.email && preview.overBy > 0
+        ? 'messaging:composer.overQuota'
+        : !subjectValid || !bodyValid
+          ? 'messaging:composer.fixAbove'
+          : null;
 
   const handleOpenConfirm = () => {
     setAttempted(true);
@@ -206,6 +237,7 @@ export function MessageComposer({
         ...(confirmLargeAudience ? { confirmLargeAudience: true } : {}),
       });
       setConfirmOpen(false);
+      markSaved();
       notifySuccess(
         'messaging:toast.sentTitle',
         'messaging:toast.sentDescription',
@@ -220,7 +252,7 @@ export function MessageComposer({
       idempotencyKey.current = null;
       onSent?.(accepted);
     } catch (error) {
-      const apiError = error as ApiError;
+      const apiError = toApiError(error);
       if (apiError.code === 'CAMPAIGN_CONFIRMATION_REQUIRED') return;
       setConfirmOpen(false);
       if (apiError.code === 'CAMPAIGN_AUDIENCE_CHANGED') {
@@ -242,11 +274,7 @@ export function MessageComposer({
       }
       // Anything else (network, server, rate limit): keep the key, so trying
       // again cannot create a second message if the first one landed.
-      setNotice({
-        kind: 'error',
-        messageKey: apiError.messageKey,
-        requestId: apiError.requestId,
-      });
+      setNotice({ kind: 'sendError', error: apiError });
     }
   };
 
@@ -258,9 +286,11 @@ export function MessageComposer({
         event.preventDefault();
         handleOpenConfirm();
       }}
-      aria-describedby={notice ? `${idPrefix}-notice` : undefined}
+      aria-describedby={
+        notice && notice.kind !== 'sendError' ? `${idPrefix}-notice` : undefined
+      }
     >
-      {notice ? (
+      {notice && notice.kind !== 'sendError' ? (
         <div id={`${idPrefix}-notice`} role="alert">
           {notice.kind === 'audienceChanged' ? (
             <Alert>
@@ -283,22 +313,7 @@ export function MessageComposer({
                 })}
               </AlertDescription>
             </Alert>
-          ) : (
-            <Alert variant="destructive">
-              <AlertTriangle className="h-4 w-4" aria-hidden="true" />
-              <AlertTitle>{t('messaging:notice.errorTitle')}</AlertTitle>
-              <AlertDescription>
-                {t(toErrorsNamespaceKey(notice.messageKey), {
-                  defaultValue: t('messaging:notice.error'),
-                })}
-                {notice.requestId ? (
-                  <span className="mt-1 block text-xs opacity-80">
-                    {t('messaging:notice.reference', { id: notice.requestId })}
-                  </span>
-                ) : null}
-              </AlertDescription>
-            </Alert>
-          )}
+          ) : null}
         </div>
       ) : null}
 
@@ -431,6 +446,51 @@ export function MessageComposer({
         />
       ) : null}
 
+      {/* B4 (UX audit) V03 — the failure sits next to the button that
+          failed, says WHICH step failed, and gives the real reason (a lost
+          connection reads as one). One message, no toast. */}
+      {previewFailure ? (
+        <Alert
+          variant="destructive"
+          role="alert"
+          data-testid="message-preview-failed"
+        >
+          <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+          <AlertTitle>{t('messaging:notice.previewErrorTitle')}</AlertTitle>
+          <AlertDescription>
+            {failureReason(previewFailure)}{' '}
+            {t('messaging:notice.previewNothingSent')}
+            {previewFailure.requestId ? (
+              <span className="mt-1 block text-xs opacity-80">
+                {t('messaging:notice.reference', {
+                  id: previewFailure.requestId,
+                })}
+              </span>
+            ) : null}
+          </AlertDescription>
+        </Alert>
+      ) : null}
+      {notice?.kind === 'sendError' ? (
+        <Alert
+          variant="destructive"
+          role="alert"
+          data-testid="message-send-failed"
+        >
+          <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+          <AlertTitle>{t('messaging:notice.errorTitle')}</AlertTitle>
+          <AlertDescription>
+            {failureReason(notice.error)} {t('messaging:notice.notSentTwice')}
+            {notice.error.requestId ? (
+              <span className="mt-1 block text-xs opacity-80">
+                {t('messaging:notice.reference', {
+                  id: notice.error.requestId,
+                })}
+              </span>
+            ) : null}
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <Button
           type="button"
@@ -438,6 +498,7 @@ export function MessageComposer({
           className="min-h-11"
           disabled={!audience || !hasChannel || isPreviewing}
           aria-busy={isPreviewing}
+          aria-describedby={!audience ? `${idPrefix}-audience-help` : undefined}
           data-testid="message-preview-button"
           onClick={() => void handlePreview()}
         >
@@ -453,20 +514,41 @@ export function MessageComposer({
         <Button
           type="submit"
           className="min-h-11"
-          disabled={!canSend}
-          aria-describedby={!preview ? `${idPrefix}-send-help` : undefined}
+          // V4 — greyed only before a preview (the hint below says why) or
+          // while sending; any other problem is named when it is pressed.
+          disabled={!preview || isSending}
+          aria-describedby={
+            !preview || sendBlockedKey ? `${idPrefix}-send-help` : undefined
+          }
           data-testid="message-send-button"
         >
           <Send className="me-2 h-4 w-4" aria-hidden="true" />
           {t('messaging:composer.send')}
         </Button>
       </div>
+      {!audience ? (
+        <p
+          id={`${idPrefix}-audience-help`}
+          className="text-end text-xs text-muted-foreground"
+          data-testid="message-audience-help"
+        >
+          {t(audienceIncompleteKey ?? 'messaging:composer.audienceIncomplete')}
+        </p>
+      ) : null}
       {!preview ? (
         <p
           id={`${idPrefix}-send-help`}
           className="text-end text-xs text-muted-foreground"
         >
           {t('messaging:composer.previewFirst')}
+        </p>
+      ) : sendBlockedKey && attempted ? (
+        <p
+          id={`${idPrefix}-send-help`}
+          role="alert"
+          className="text-end text-xs text-destructive"
+        >
+          {t(sendBlockedKey)}
         </p>
       ) : null}
 

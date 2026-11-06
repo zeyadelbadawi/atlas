@@ -10,7 +10,7 @@
  */
 import { useInfiniteQuery, type InfiniteData } from '@tanstack/react-query';
 import { useApiMutation, useApiQuery } from '@/shared/hooks';
-import { messagingKeys } from '@services/query';
+import { messagingKeys, INLINE_ERRORS_META } from '@services/query';
 import type { ApiError } from '@api';
 import {
   academyMessagesService,
@@ -90,6 +90,9 @@ export function useAcademyMessagePreview(academyId: string) {
     mutationFn: (payload) => academyMessagesService.preview(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 
@@ -98,6 +101,9 @@ export function useSendAcademyMessage(academyId: string) {
     mutationFn: (payload) => academyMessagesService.send(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     invalidateKeys: [
       messagingKeys.academyHistory(academyId),
       messagingKeys.academyQuota(academyId),
@@ -110,6 +116,9 @@ export function usePlatformCampaignPreview() {
     mutationFn: (payload) => platformCampaignsService.preview(payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 
@@ -118,6 +127,9 @@ export function useSendPlatformCampaign() {
     mutationFn: (payload) => platformCampaignsService.send(payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     invalidateKeys: [messagingKeys.platformHistory()],
   });
 }

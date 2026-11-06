@@ -22,7 +22,7 @@ import {
   useAcademyBoundMutation,
 } from '@/shared/hooks';
 import type { AcademyScopedVariables } from '@/shared/hooks';
-import { academyKeys } from '@services/query';
+import { academyKeys, INLINE_ERRORS_META } from '@services/query';
 import type { ApiError } from '@api';
 import { academyProtectionService } from '../services/AcademyProtectionService';
 import type {
@@ -66,6 +66,9 @@ export function useUpdateAcademyContentProtection(academyId: string) {
       academyProtectionService.updateContentProtection(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: (data, { academyId }) => {
       queryClient.setQueryData(
         academyKeys.contentProtection(organization?.id, academyId),
@@ -104,6 +107,9 @@ export function useUpdateAcademyVideoTier(academyId: string) {
       academyProtectionService.updateVideoTier(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: (data, { academyId }) => {
       queryClient.setQueryData(
         academyKeys.videoTier(organization?.id, academyId),
@@ -149,6 +155,9 @@ export function useUpdateAcademyDevicePolicy(academyId: string) {
       academyProtectionService.updateDevicePolicy(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: (data, { academyId }) => {
       queryClient.setQueryData(
         academyKeys.devicePolicy(organization?.id, academyId),

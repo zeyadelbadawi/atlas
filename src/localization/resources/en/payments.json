@@ -314,7 +314,10 @@
         "title": "Couldn't load this order",
         "description": "Something went wrong while loading the order."
       }
-    }
+    },
+    "descriptionOwner": "Course purchases from this academy's students. You check manual payment proofs on the Payments page.",
+    "reviewPayment": "Review payment",
+    "searchShort": "Search name, course or order ID"
   },
   "atlasPaymentProvider": {
     "title": "Atlas Payment Provider",
@@ -398,7 +401,10 @@
     },
     "validation": {
       "required": "This field is required.",
-      "tooLong": "This is longer than allowed."
+      "tooLong": "This is longer than allowed.",
+      "tooLongMax": "Keep this to {{count}} characters or fewer.",
+      "tooLongMax_one": "Keep this to {{count}} character or fewer.",
+      "tooLongMax_other": "Keep this to {{count}} characters or fewer."
     }
   },
   "manualMethods": {
@@ -680,7 +686,11 @@
       },
       "doneToast": "Refund recorded. {{learner}} has been told, and their access has ended.",
       "error": "The refund could not be recorded. Please try again.",
-      "recorded": "Refund of {{amount}} recorded on {{when}} by {{who}}."
-    }
+      "recorded": "Refund of {{amount}} recorded on {{when}} by {{who}}.",
+      "failedTitle": "The refund wasn't recorded"
+    },
+    "decisionFailedTitle": "Your decision wasn't saved",
+    "noteTooLong": "Keep this to {{max}} characters or fewer.",
+    "searchShort": "Search name, course or reference"
   }
 }

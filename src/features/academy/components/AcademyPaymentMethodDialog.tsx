@@ -12,7 +12,7 @@
  * Saving a NEW method also turns it on (that is why the owner opened it);
  * saving an existing one keeps its current on/off state.
  */
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,8 +28,9 @@ import {
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@app/providers';
-import { isApiError } from '@api';
-import { toErrorsNamespaceKey } from '@utils';
+import { useDirtyGuard } from '@features/unsaved-changes';
+import { FormErrorSummary, SaveFailedAlert } from '@forms';
+import { ApiError } from '@api';
 import {
   BankTransferDetailsFields,
   InstapayDetailsFields,
@@ -116,6 +117,66 @@ function toPayload(
   }
 }
 
+/** Field → label key, for the error summary (paths under `instructions`). */
+function methodFieldLabels(
+  type: AcademyPaymentMethodType
+): Readonly<Record<string, string>> {
+  const section =
+    type === 'manual_bank_transfer'
+      ? 'bankTransferMethods'
+      : type === 'manual_instapay'
+        ? 'instapayMethods'
+        : 'walletMethods';
+  const entries: Record<string, string> = {
+    bankName: 'payments:bankTransferMethods.fields.bankName',
+    branchName: 'payments:academyMethods.fields.branchName',
+    accountNumber: 'payments:bankTransferMethods.fields.accountNumber',
+    iban: 'payments:bankTransferMethods.fields.iban',
+    swiftCode: 'payments:bankTransferMethods.fields.swiftCode',
+    instapayAddress: 'payments:instapayMethods.fields.instapayAddress',
+    walletProviderName: 'payments:walletMethods.fields.walletProviderName',
+    walletProvider: 'payments:walletMethods.fields.walletProvider',
+    walletNumber: 'payments:walletMethods.fields.walletNumber',
+    accountName: `payments:${section}.fields.accountName`,
+    accountNameAr: 'payments:manualMethods.fields.accountNameAr',
+    instructions: `payments:${section}.fields.instructions`,
+    instructionsAr: 'payments:manualMethods.fields.instructionsAr',
+    referenceInstructions: `payments:${section}.fields.referenceInstructions`,
+    referenceInstructionsAr:
+      'payments:manualMethods.fields.referenceInstructionsAr',
+  };
+  return Object.fromEntries(
+    Object.entries(entries).map(([field, key]) => [
+      `instructions.${field}`,
+      key,
+    ])
+  );
+}
+
+/**
+ * Only the violations this form can show beside a field (`instructions.*`);
+ * one on anything else (`enabled`, `type`) is not dropped — the whole
+ * failure is then the inline alert instead.
+ */
+function fieldViolationsOnly(error: ApiError | null): ApiError | null {
+  if (!error?.violations) return error;
+  const onFields = error.violations.filter((violation) =>
+    violation.field.startsWith('instructions.')
+  );
+  return onFields.length === error.violations.length
+    ? error
+    : new ApiError({
+        kind: error.kind,
+        messageKey: error.messageKey,
+        code: error.code,
+        status: error.status,
+        details: error.details,
+        requestId: error.requestId,
+        retryable: error.retryable,
+        violations: onFields,
+      });
+}
+
 export interface AcademyPaymentMethodDialogProps {
   readonly academyId: string;
   readonly type: AcademyPaymentMethodType | null;
@@ -130,8 +191,8 @@ export function AcademyPaymentMethodDialog({
   method,
   onOpenChange,
 }: AcademyPaymentMethodDialogProps): JSX.Element {
-  const { t, i18n } = useTranslation();
-  const { notifySuccess, notifyError } = useToast();
+  const { t } = useTranslation();
+  const { notifySuccess } = useToast();
   const save = useSaveAcademyPaymentMethod(academyId);
   const open = type !== null;
   const activeType: AcademyPaymentMethodType = type ?? 'manual_bank_transfer';
@@ -140,7 +201,31 @@ export function AcademyPaymentMethodDialog({
     resolver: zodResolver(SCHEMAS[activeType]),
     defaultValues: toFormValues(activeType, method),
   });
-  useManualMethodServerValidation(form, save.error, 'instructions');
+  // B4 (UX audit) V14 — field violations on their fields (and in the
+  // summary); a refusal no field can show — another field, a 500, a lost
+  // connection — is ONE alert inside the dialog, never a toast under it.
+  // Stable for one error: a new object each render would re-run the
+  // server-validation effect (setError → render → new object → …).
+  const fieldError = useMemo(
+    () => fieldViolationsOnly(save.error),
+    [save.error]
+  );
+  useManualMethodServerValidation(form, fieldError, 'instructions');
+  const failure =
+    save.error &&
+    !(
+      save.error.kind === 'validation' &&
+      (fieldError?.violations?.length ?? 0) > 0 &&
+      fieldError?.violations?.length === save.error.violations?.length
+    )
+      ? save.error
+      : null;
+  // V13 — closing with typed details (Escape, outside click, Cancel) asks first.
+  const dirtyGuard = useDirtyGuard(open && form.formState.isDirty);
+  const handleOpenChange = (next: boolean) => {
+    if (next) return onOpenChange(true);
+    void dirtyGuard.requestClose(() => onOpenChange(false));
+  };
 
   // Re-seed on every open, so one method's details never carry into another.
   const { reset } = form;
@@ -163,20 +248,16 @@ export function AcademyPaymentMethodDialog({
       notifySuccess('payments:academyMethods.savedToast', undefined, {
         method: methodName,
       });
+      // Saved: nothing unsaved is left, so close without asking.
+      reset(values);
       onOpenChange(false);
-    } catch (error) {
-      const key = isApiError(error)
-        ? toErrorsNamespaceKey(error.messageKey)
-        : undefined;
-      notifyError(
-        'payments:academyMethods.saveError',
-        key && i18n.exists(key) ? key : undefined
-      );
+    } catch {
+      // Shown by the form (fields, summary) or the inline alert below.
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
@@ -199,6 +280,10 @@ export function AcademyPaymentMethodDialog({
             noValidate
             data-testid="academy-method-form"
           >
+            <FormErrorSummary
+              form={form}
+              fieldLabels={methodFieldLabels(activeType)}
+            />
             {activeType === 'manual_bank_transfer' ? (
               <BankTransferDetailsFields
                 control={form.control}
@@ -216,13 +301,20 @@ export function AcademyPaymentMethodDialog({
               />
             )}
 
+            {failure ? (
+              <SaveFailedAlert
+                error={failure}
+                titleKey="payments:academyMethods.saveError"
+              />
+            ) : null}
+
             <DialogFooter className="gap-2">
               <Button
                 type="button"
                 variant="outline"
                 className="min-h-11 sm:min-h-9"
                 disabled={save.isPending}
-                onClick={() => onOpenChange(false)}
+                onClick={() => handleOpenChange(false)}
               >
                 {t('common:actions.cancel')}
               </Button>

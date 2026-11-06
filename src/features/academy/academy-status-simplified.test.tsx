@@ -64,6 +64,11 @@ vi.mock('@forms', () => ({
   useServerValidation: () => undefined,
   useNameConflictError: () => null,
   nameConflictFromError: () => null,
+  useLabelledViolations: (error: unknown) => error,
+  useFocusFirstViolation: () => undefined,
+  SaveFailedAlert: () => null,
+  isFieldViolationError: () => false,
+  hasViolationOn: () => false,
 }));
 // Task 3 — the dashboard's activity widget reads the audit-log feature.
 vi.mock('@features/audit-log', () => ({
