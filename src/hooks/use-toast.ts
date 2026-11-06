@@ -148,14 +148,16 @@ type Toast = Omit<ToasterToast, 'id'>;
  * header, the reading edge, the app's duration).
  */
 function toast({ title, description, variant }: Toast) {
+  // A string id of our own, so `dismiss(id)` (here or from `useToast`)
+  // matches the sonner toast exactly.
+  const id = genId();
   const options = {
+    id,
     description,
     duration: APP_CONFIG.toastDurationMs,
   };
-  const id =
-    variant === 'destructive'
-      ? sonnerToast.error(title ?? '', options)
-      : sonnerToast(title ?? '', options);
+  if (variant === 'destructive') sonnerToast.error(title ?? '', options);
+  else sonnerToast(title ?? '', options);
 
   const update = (next: ToasterToast) =>
     sonnerToast(next.title ?? title ?? '', {
@@ -165,7 +167,7 @@ function toast({ title, description, variant }: Toast) {
   const dismiss = () => sonnerToast.dismiss(id);
 
   return {
-    id: String(id),
+    id,
     dismiss,
     update,
   };
@@ -187,7 +189,11 @@ function useToast() {
   return {
     ...state,
     toast,
-    dismiss: (toastId?: string) => dispatch({ type: 'DISMISS_TOAST', toastId }),
+    // Toasts render through sonner now (see `toast` above): dismiss there too.
+    dismiss: (toastId?: string) => {
+      dispatch({ type: 'DISMISS_TOAST', toastId });
+      sonnerToast.dismiss(toastId);
+    },
   };
 }
 

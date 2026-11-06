@@ -229,15 +229,24 @@ export function WebsiteNavigationTab({
     queue.current = queue.current.then(async () => {
       const current = latestConfiguration();
       if (current.chromeLocked === true) return;
-      const payload = build(current);
-      if (!payload) return;
       try {
+        // Inside the try: a builder that throws must not leave the queue
+        // rejected, or every later save on this tab would be skipped.
+        const payload = build(current);
+        if (!payload) return;
         await updateConfig.mutateAsync({
           academyId,
           payload: { ...payload, expectedUpdatedAt: current.updatedAt },
         });
       } catch (error) {
-        if (isApiError(error)) reportFailure(error, current);
+        if (isApiError(error)) {
+          reportFailure(error, current);
+        } else {
+          toast({
+            title: t('website:navigation.saveError'),
+            variant: 'destructive',
+          });
+        }
       }
     });
   };
@@ -332,9 +341,8 @@ export function WebsiteNavigationTab({
     });
   };
 
-  const currentCta = configuration.header.cta;
-  /**
-   * Read but never edited here any more.
+  /*
+   * `header.authPages` — read but never edited here any more.
    *
    * Editing Sign In/Sign Up copy used to live in this tab AND on the Pages
    * list, both opening the same `AuthPageCopyDialog` through the same
@@ -346,9 +354,10 @@ export function WebsiteNavigationTab({
    *
    * The VALUE still has to be read, because `header` is a full replace
    * server-side (see below) — dropping it here would delete whatever the
-   * admin set on the Pages list the next time they touched navigation.
+   * admin set on the Pages list the next time they touched navigation —
+   * which is why every header save below carries `authPages` forward from
+   * the latest saved copy.
    */
-  const currentAuthPages = configuration.header.authPages;
 
   /**
    * Clearing the label is the one deliberate way to remove the header CTA
@@ -366,19 +375,25 @@ export function WebsiteNavigationTab({
     ) {
       return;
     }
-    save(() => ({
-      header: label[primaryLocale].trim()
-        ? {
-            cta: {
-              label,
-              pageId: currentCta?.pageId,
-              url: currentCta?.url,
-              authAction: currentCta?.authAction,
-            },
-            authPages: currentAuthPages,
-          }
-        : { authPages: currentAuthPages },
-    }));
+    // Built from the latest saved copy, like every save on this tab: a
+    // target changed a moment ago must not be rebuilt from the copy on screen.
+    save((current) => {
+      const cta = current.header.cta;
+      const authPages = current.header.authPages;
+      return {
+        header: label[primaryLocale].trim()
+          ? {
+              cta: {
+                label,
+                pageId: cta?.pageId,
+                url: cta?.url,
+                authAction: cta?.authAction,
+              },
+              authPages,
+            }
+          : { authPages },
+      };
+    });
   };
 
   /**
@@ -409,21 +424,26 @@ export function WebsiteNavigationTab({
       return;
     }
 
-    const label: LocalizedText = currentCta?.label?.en
-      ? currentCta.label
-      : {
-          en:
-            target.authAction === 'signUp'
-              ? t('website:navigation.ctaTargetSignUp')
-              : target.authAction === 'signIn'
-                ? t('website:navigation.ctaTargetSignIn')
-                : '',
-          ar: currentCta?.label?.ar ?? '',
-        };
-
-    save(() => ({
-      header: { cta: { label, ...target }, authPages: currentAuthPages },
-    }));
+    save((current) => {
+      const cta = current.header.cta;
+      const label: LocalizedText = cta?.label?.en
+        ? cta.label
+        : {
+            en:
+              target.authAction === 'signUp'
+                ? t('website:navigation.ctaTargetSignUp')
+                : target.authAction === 'signIn'
+                  ? t('website:navigation.ctaTargetSignIn')
+                  : '',
+            ar: cta?.label?.ar ?? '',
+          };
+      return {
+        header: {
+          cta: { label, ...target },
+          authPages: current.header.authPages,
+        },
+      };
+    });
   };
 
   const updateFooterCopyright = (value: LocalizedText) => {

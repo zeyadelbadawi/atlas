@@ -111,6 +111,8 @@ function ColorField({
   // word while the bar said "Everything is saved and live."; the field now
   // says what it expects, and keeps the last good colour.
   const [invalid, setInvalid] = useState(false);
+  // Remounts the text input after Clear even when the colour's hex is unchanged.
+  const [clearCount, setClearCount] = useState(0);
   const errorId = `${id}-hex-error`;
   const commit = (text: string) => {
     const trimmed = text.trim();
@@ -145,7 +147,7 @@ function ColorField({
         />
         <Input
           id={`${id}-hex`}
-          key={hex}
+          key={`${hex}-${clearCount}`}
           defaultValue={value ? hex : ''}
           dir="ltr"
           data-ltr-content
@@ -165,7 +167,16 @@ function ColorField({
           }}
         />
         {onClear ? (
-          <Button type="button" variant="ghost" size="sm" onClick={onClear}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setInvalid(false);
+              setClearCount((count) => count + 1);
+              onClear();
+            }}
+          >
             {clearLabel}
           </Button>
         ) : null}

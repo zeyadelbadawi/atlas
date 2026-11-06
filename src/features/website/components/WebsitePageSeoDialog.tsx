@@ -191,7 +191,12 @@ export function WebsitePageSeoDialog({
       onOpenChange={(next) => {
         // Opening is never guarded; only closing can lose work.
         if (next) return onOpenChange(true);
-        void dirtyGuard.requestClose(() => onOpenChange(false));
+        void dirtyGuard.requestClose(() => {
+          // A failed save's alert and field errors don't outlive the dialog.
+          updatePage.reset();
+          form.clearErrors();
+          onOpenChange(false);
+        });
       }}
     >
       <DialogContent className="max-h-[85vh] overflow-y-auto">

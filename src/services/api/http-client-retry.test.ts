@@ -91,23 +91,23 @@ describe('HttpClient transient retry', () => {
   );
 
   it.each([
+    ['get', 502],
+    ['get', null],
     ['put', 503],
     ['put', null],
     ['delete', 502],
     ['delete', 504],
   ])(
-    'replays an idempotent write once after a gateway failure (%s %s)',
+    'replays an idempotent request once after a gateway failure (%s %s)',
     async (method, status) => {
       expect(await run(failure(method, status))).toBe('retried');
       expect(requestSpy).toHaveBeenCalledTimes(1);
     }
   );
 
-  // B2 (UX audit) — one retry layer: the query layer retries reads, and a
-  // plain 500 is not retried at all, so the error shows in seconds.
+  // B2 (UX audit) — a plain 500 is not retried underneath the caller: the
+  // query layer retries reads, a mutation shows its error at once.
   it.each([
-    ['get', 502],
-    ['get', null],
     ['get', 500],
     ['put', 500],
     ['delete', 500],
@@ -116,7 +116,7 @@ describe('HttpClient transient retry', () => {
     expect(requestSpy).not.toHaveBeenCalled();
   });
 
-  it('replays a write at most once', async () => {
+  it('replays a request at most once', async () => {
     const error = failure('put', 503);
     (error.config!.headers as Record<string, unknown>)['X-Retry-Count'] = 1;
     expect(await run(error)).toBe('rejected');

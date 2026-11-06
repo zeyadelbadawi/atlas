@@ -28,8 +28,20 @@ describe('legacy toast()', () => {
 
   it('sends anything else as a plain toast and can dismiss it', () => {
     const handle = toast({ title: 'Saved' });
-    expect(sonner).toHaveBeenCalledWith('Saved', expect.anything());
+    expect(sonner).toHaveBeenCalledWith(
+      'Saved',
+      expect.objectContaining({ id: handle.id })
+    );
     handle.dismiss();
-    expect(sonner.dismiss).toHaveBeenCalledWith('id-1');
+    expect(sonner.dismiss).toHaveBeenCalledWith(handle.id);
+  });
+
+  it('useToast().dismiss(id) dismisses the sonner toast too', async () => {
+    const { useToast } = await import('./use-toast');
+    const { renderHook } = await import('@testing-library/react');
+    const handle = toast({ title: 'Saved' });
+    const { result } = renderHook(() => useToast());
+    result.current.dismiss(handle.id);
+    expect(sonner.dismiss).toHaveBeenCalledWith(handle.id);
   });
 });
