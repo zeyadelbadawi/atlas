@@ -9,6 +9,7 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from '@/hooks/use-toast';
 import { Info } from 'lucide-react';
 import { EmptyState } from '@components/feedback';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -65,8 +66,21 @@ export function WebsiteThemeTab({
     return <EmptyState titleKey="website:theme.noHomePage" />;
   }
 
+  // B2 (UX audit) — the switch is a draft change; say so, so nobody thinks
+  // their live site just changed (or wonders why it didn't).
   const select = (theme: WebsiteThemeDefinition) =>
-    updateConfig.mutate({ academyId, payload: { themeKey: theme.key } });
+    updateConfig.mutate(
+      { academyId, payload: { themeKey: theme.key } },
+      {
+        onSuccess: () =>
+          toast({
+            title: t('website:theme.selectedDraftTitle', {
+              theme: t(theme.nameKey),
+            }),
+            description: t('website:theme.selectedDraftDescription'),
+          }),
+      }
+    );
 
   return (
     <div className="space-y-6">

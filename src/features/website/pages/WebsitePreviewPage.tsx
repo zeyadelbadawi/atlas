@@ -54,14 +54,19 @@ import {
 import {
   PUBLIC_WEBSITE_LOCALES,
   PUBLIC_WEBSITE_LOCALE_DIRECTION,
-  PUBLIC_WEBSITE_LOCALE_LABELS,
   resolveDefaultLocale,
   type PublicWebsiteLocale,
 } from '../constants/locale.constants';
 import type { BreadcrumbItem } from '@types';
+import {
+  contentLocaleLabelKey,
+  useDisplayPageTitle,
+} from '../components/website-display-labels';
 
 export default function WebsitePreviewPage(): JSX.Element {
   const { t } = useTranslation();
+  // B2 (V34) — names in the dashboard's language.
+  const displayTitle = useDisplayPageTitle();
   const { academyId } = useParams<{ academyId: string }>();
   const { hasPermission } = usePermissions();
 
@@ -188,7 +193,7 @@ export default function WebsitePreviewPage(): JSX.Element {
                 <SelectContent>
                   {PUBLIC_WEBSITE_LOCALES.map((locale) => (
                     <SelectItem key={locale} value={locale}>
-                      {PUBLIC_WEBSITE_LOCALE_LABELS[locale]}
+                      {t(contentLocaleLabelKey(locale))}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -205,7 +210,7 @@ export default function WebsitePreviewPage(): JSX.Element {
                 <SelectContent>
                   {pages.map((page) => (
                     <SelectItem key={page.id} value={page.id}>
-                      {page.title}
+                      {displayTitle(page)}
                     </SelectItem>
                   ))}
                 </SelectContent>

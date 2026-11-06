@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@utils';
+import { useMediaQuery } from '@hooks';
 import type {
   ResponsiveVisibility,
   SectionInstance,
@@ -103,6 +104,9 @@ export function SettingsPanel({
   onClose,
 }: SettingsPanelProps): JSX.Element {
   const { t } = useTranslation();
+  // B2 (V31) — on a touch screen the tip says "double-tap", not
+  // "double-click", and leaves out keys a phone doesn't have.
+  const isTouch = useMediaQuery('(pointer: coarse)');
   const [tab, setTab] = useState('content');
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -250,7 +254,11 @@ export function SettingsPanel({
                 className="mt-px size-4 shrink-0 text-primary"
                 aria-hidden
               />
-              {t('website:visualEditor.inline.hint')}
+              {t(
+                isTouch
+                  ? 'website:visualEditor.inline.hintTouch'
+                  : 'website:visualEditor.inline.hint'
+              )}
             </p>
           ) : null}
           <fieldset

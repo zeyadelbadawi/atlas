@@ -15,6 +15,7 @@ import {
   getSectionConfigSchema,
   withRequiredLocale,
 } from '../schemas/website-section.schemas';
+import { collectButtonTargetIssues } from '../components/section-button-issues';
 
 function parse(section: SectionInstance, requiredLocale: PublicWebsiteLocale) {
   return withRequiredLocale(requiredLocale, () =>
@@ -22,14 +23,22 @@ function parse(section: SectionInstance, requiredLocale: PublicWebsiteLocale) {
   );
 }
 
-/** The ids of the sections that would be refused. */
+/**
+ * The ids of the sections that would be refused — or that the editor holds
+ * back itself: a "Web address" button with no address (B2, V20; the panel
+ * says so on the field).
+ */
 export function invalidSectionIds(
   sections: readonly SectionInstance[],
   requiredLocale: PublicWebsiteLocale
 ): ReadonlySet<string> {
   return new Set(
     sections
-      .filter((section) => !parse(section, requiredLocale).success)
+      .filter(
+        (section) =>
+          !parse(section, requiredLocale).success ||
+          collectButtonTargetIssues(section.type, section.config).length > 0
+      )
       .map((section) => section.id)
   );
 }

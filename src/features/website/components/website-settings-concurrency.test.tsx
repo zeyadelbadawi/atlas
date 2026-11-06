@@ -14,6 +14,7 @@ import {
   fireEvent,
   render,
   screen,
+  waitFor,
 } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -25,14 +26,20 @@ import { UnsavedChangesProvider } from '@features/unsaved-changes';
 import type { WebsiteConfiguration, WebsitePage } from '@types';
 import { WebsiteNavigationTab } from './WebsiteNavigationTab';
 import WebsiteSettingsPage from '../pages/WebsiteSettingsPage';
+import { createApiError } from '@services';
 
 const mutate = vi.fn();
+const mutateAsync = vi.fn();
 const invalidate = vi.fn();
 const toast = vi.fn();
 const confirm = vi.fn();
 
 vi.mock('../hooks', () => ({
-  useUpdateWebsiteConfiguration: () => ({ mutate, isPending: false }),
+  useUpdateWebsiteConfiguration: () => ({
+    mutate,
+    mutateAsync,
+    isPending: false,
+  }),
   useWebsiteConfiguration: () => ({
     data: configuration,
     isLoading: false,
@@ -113,6 +120,8 @@ const withClient = (ui: JSX.Element) => (
 
 beforeEach(() => {
   mutate.mockReset();
+  mutateAsync.mockReset();
+  mutateAsync.mockResolvedValue(configuration);
   invalidate.mockReset();
   toast.mockReset();
   confirm.mockReset();
@@ -133,21 +142,27 @@ describe('navigation tab — saves are based on the copy on screen', () => {
       )
     );
 
-  it("carries the copy's updatedAt", () => {
+  it("carries the copy's updatedAt", async () => {
     renderTab();
     fireEvent.click(screen.getByRole('checkbox'));
-    expect(mutate).toHaveBeenCalledTimes(1);
-    expect(mutate.mock.calls[0][0].payload).toMatchObject({
+    await waitFor(() => expect(mutateAsync).toHaveBeenCalledTimes(1));
+    expect(mutateAsync.mock.calls[0][0].payload).toMatchObject({
       expectedUpdatedAt: '2026-10-03T00:00:00.000Z',
       navigation: [expect.objectContaining({ pageId: 'p1' })],
     });
   });
 
-  it('a refused save reloads the latest copy and says why', () => {
+  it('a refused save reloads the latest copy and says why', async () => {
+    mutateAsync.mockRejectedValueOnce(createApiError('conflict'));
     renderTab();
     fireEvent.click(screen.getByRole('checkbox'));
-    act(() => mutate.mock.calls[0][1].onError({ kind: 'conflict' }));
-    expect(invalidate).toHaveBeenCalledWith(['website', 'configuration', 'a1']);
+    await waitFor(() =>
+      expect(invalidate).toHaveBeenCalledWith([
+        'website',
+        'configuration',
+        'a1',
+      ])
+    );
     expect(toast).toHaveBeenCalledWith(
       expect.objectContaining({
         title: expect.stringContaining('Someone else changed these settings'),
@@ -155,14 +170,90 @@ describe('navigation tab — saves are based on the copy on screen', () => {
     );
   });
 
-  it('any other failure is the ordinary save error', () => {
+  it('any other failure says what went wrong, once', async () => {
+    mutateAsync.mockRejectedValueOnce(createApiError('network'));
     renderTab();
     fireEvent.click(screen.getByRole('checkbox'));
-    act(() => mutate.mock.calls[0][1].onError({ kind: 'network' }));
+    await waitFor(() => expect(toast).toHaveBeenCalledTimes(1));
     expect(invalidate).not.toHaveBeenCalled();
-    expect(toast).toHaveBeenCalledWith(
-      expect.objectContaining({ title: 'Failed to save navigation' })
+    expect(toast.mock.calls[0][0]).toMatchObject({
+      title: 'Failed to save navigation',
+      description: expect.any(String),
+    });
+    expect(toast.mock.calls[0][0].description).not.toBe('');
+  });
+
+  // B2 (UX audit) — two quick edits used to race: the second carried the
+  // first's stale updatedAt and was refused as "changed by someone else".
+  it('runs saves one at a time, each on the latest saved copy', async () => {
+    let finishFirst: (value: WebsiteConfiguration) => void = () => {};
+    mutateAsync.mockImplementationOnce(
+      () =>
+        new Promise<WebsiteConfiguration>((resolve) => {
+          finishFirst = resolve;
+        })
     );
+    const client = new QueryClient();
+    render(
+      <QueryClientProvider client={client}>
+        <I18nextProvider i18n={i18n}>
+          <WebsiteNavigationTab
+            academyId="a1"
+            configuration={configuration}
+            pages={[page]}
+          />
+        </I18nextProvider>
+      </QueryClientProvider>
+    );
+    const copyright = document.getElementById(
+      'footer-copyright-en'
+    ) as HTMLInputElement;
+    fireEvent.change(copyright, { target: { value: '© Acme' } });
+    fireEvent.blur(copyright);
+    fireEvent.click(screen.getByRole('checkbox'));
+    await waitFor(() => expect(mutateAsync).toHaveBeenCalledTimes(1));
+    // The second save waits for the first…
+    expect(mutateAsync).toHaveBeenCalledTimes(1);
+    const saved = {
+      ...configuration,
+      updatedAt: '2026-10-03T00:00:05.000Z',
+      footer: {
+        ...configuration.footer,
+        copyrightText: { en: '© Acme', ar: '' },
+      },
+    } as WebsiteConfiguration;
+    client.setQueryData(['website', 'configuration', 'a1'], saved);
+    await act(async () => finishFirst(saved));
+    // …then goes out on the copy the first one produced.
+    await waitFor(() => expect(mutateAsync).toHaveBeenCalledTimes(2));
+    expect(mutateAsync.mock.calls[1][0].payload.expectedUpdatedAt).toBe(
+      '2026-10-03T00:00:05.000Z'
+    );
+  });
+
+  it('an emptied menu label says so on the field and is not sent', async () => {
+    const withItem = {
+      ...configuration,
+      navigation: [
+        { id: 'n1', label: { en: 'About', ar: '' }, pageId: 'p1', order: 0 },
+      ],
+    } as WebsiteConfiguration;
+    render(
+      withClient(
+        <I18nextProvider i18n={i18n}>
+          <WebsiteNavigationTab
+            academyId="a1"
+            configuration={withItem}
+            pages={[page]}
+          />
+        </I18nextProvider>
+      )
+    );
+    const label = document.getElementById('nav-item-n1-en') as HTMLInputElement;
+    fireEvent.change(label, { target: { value: '' } });
+    fireEvent.blur(label);
+    expect(await screen.findByText(/is required/i)).toBeTruthy();
+    expect(mutateAsync).not.toHaveBeenCalled();
   });
 });
 

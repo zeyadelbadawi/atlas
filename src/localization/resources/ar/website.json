@@ -100,7 +100,10 @@
       "createAction": "سؤال شائع جديد",
       "createTitle": "إنشاء سؤال شائع",
       "editTitle": "تعديل سؤال شائع",
-      "empty": "لا توجد أسئلة شائعة بعد"
+      "empty": "لا توجد أسئلة شائعة بعد",
+      "bothLanguagesHint": "اكتب السؤال والإجابة بالإنجليزية والعربية. تُحفظ عناصر المكتبة باللغتين حتى يراها الزوار بأيٍّ منهما.",
+      "createFailedTitle": "لم يُنشأ السؤال الشائع",
+      "saveFailedTitle": "لم تُحفظ تغييراتك"
     },
     "testimonial": {
       "createAction": "رأي جديد",
@@ -512,7 +515,9 @@
     "switchConfirmAction": "تبديل المظهر",
     "currentTheme": "القالب الحالي",
     "selectTheme": "اختيار القالب",
-    "noHomePage": "لم يتم العثور على الصفحة الرئيسية"
+    "noHomePage": "لم يتم العثور على الصفحة الرئيسية",
+    "selectedDraftTitle": "مسودتك تستخدم الآن {{theme}}",
+    "selectedDraftDescription": "يتغيّر موقعك المباشر عند النشر."
   },
   "themes": {
     "modernEducation": {
@@ -659,7 +664,8 @@
     "previewPage": "معاينة هذه الصفحة",
     "visibleState": "ظاهرة",
     "hiddenState": "مخفية",
-    "alwaysVisible": "متاحة دائمًا للزوار"
+    "alwaysVisible": "متاحة دائمًا للزوار",
+    "createFailedTitle": "لم تُنشأ الصفحة"
   },
   "editor": {
     "featuredCoursesTitle": "الدورات المميّزة",
@@ -688,7 +694,7 @@
     "duplicateSection": "تكرار القسم",
     "deleteSection": "حذف القسم",
     "deleteConfirmTitle": "هل تريد حذف هذا القسم؟",
-    "deleteConfirmDescription": "سيتم إزالة هذا القسم ومحتواه من الصفحة. لا يمكن التراجع عن هذا الإجراء.",
+    "deleteConfirmDescription": "سيُزال هذا القسم ومحتواه من مسودة هذه الصفحة، ولن يظهر هذا التغيير على موقعك إلا عند النشر.",
     "noSections": "لا توجد أقسام بعد",
     "livePreview": "معاينة مباشرة",
     "moveUp": "تحريك للأعلى",
@@ -786,7 +792,25 @@
     "sampleHelpVideoReviews": "الآراء النموذجية عناصر مؤقتة لعرض التصميم، ولا تظهر أبدًا في موقعك المباشر. استبدلها بآراء حقيقية من طلابك وأولياء الأمور (بعد موافقتهم)، ثم حدّد كل رأي كرأي حقيقي.",
     "markVideoReviewReal": "هذا رأي حقيقي",
     "fieldInLanguage": "{{field}} — {{language}}",
-    "fieldInOptionalLanguage": "{{field}} — {{language}} (اختياري)"
+    "fieldInOptionalLanguage": "{{field}} — {{language}} (اختياري)",
+    "moreActions": "المزيد",
+    "actionsBlockedByLimits": "اختصر النص المميَّز قبل الحفظ أو النشر.",
+    "nothingToPublish": "لا يوجد جديد للحفظ أو النشر. يرى الزوار هذه الصفحة كما حُفظت.",
+    "nothingToSave": "لا توجد تغييرات لحفظها بعد.",
+    "saveFailedTitle": "لم تُحفظ تغييراتك",
+    "publishFailedTitle": "لم تُنشر هذه الصفحة",
+    "typedOverLimitSummary_zero": "لا توجد نصوص أطول من المسموح.",
+    "typedOverLimitSummary_one": "هذا النص أطول من المسموح. اختصره لتطبيق هذه التغييرات:",
+    "typedOverLimitSummary_two": "نصّان أطول من المسموح. اختصرهما لتطبيق هذه التغييرات:",
+    "typedOverLimitSummary_few": "{{count}} نصوص أطول من المسموح. اختصرها لتطبيق هذه التغييرات:",
+    "typedOverLimitSummary_many": "{{count}} نصًّا أطول من المسموح. اختصرها لتطبيق هذه التغييرات:",
+    "typedOverLimitSummary_other": "{{count}} نص أطول من المسموح. اختصرها لتطبيق هذه التغييرات:",
+    "panelIssuesSummary_zero": "لا توجد مشكلات.",
+    "panelIssuesSummary_one": "أصلِح مشكلة واحدة حتى تُحفظ تغييراتك:",
+    "panelIssuesSummary_two": "أصلِح مشكلتين حتى تُحفظ تغييراتك:",
+    "panelIssuesSummary_few": "أصلِح {{count}} مشكلات حتى تُحفظ تغييراتك:",
+    "panelIssuesSummary_many": "أصلِح {{count}} مشكلةً حتى تُحفظ تغييراتك:",
+    "panelIssuesSummary_other": "أصلِح {{count}} مشكلة حتى تُحفظ تغييراتك:"
   },
   "preview": {
     "title": "المعاينة",
@@ -1174,7 +1198,10 @@
     "signInHint": "يفتح صفحة تسجيل الدخول الخاصة بأكاديميتك.",
     "choosePage": "اختر صفحة",
     "chooseCourse": "اختر دورة",
-    "webAddress": "عنوان الموقع"
+    "webAddress": "عنوان الموقع",
+    "urlRequired": "أدخل عنوان الويب الذي يفتحه هذا الزر، بدءًا بـ https://",
+    "urlInvalid": "أدخل عنوان ويب كاملًا يبدأ بـ https://، مثل https://example.com",
+    "urlHint": "العنوان كاملًا، بدءًا بـ https://"
   },
   "icons": {
     "GraduationCap": "قبعة التخرج",
@@ -2592,7 +2619,19 @@
       "invalid_many": "{{count}} قسمًا يحتاج إلى مراجعتك قبل حفظه",
       "invalid_other": "{{count}} قسم يحتاج إلى مراجعتك قبل حفظه",
       "tooLong": "بعض النصوص أطول من المسموح. اختصرها لحفظ التغييرات.",
-      "readOnly": "يمكنك عرض هذه الصفحة دون تعديلها."
+      "readOnly": "يمكنك عرض هذه الصفحة دون تعديلها.",
+      "invalidShort_zero": "لا توجد أقسام تحتاج إلى مراجعة",
+      "invalidShort_one": "قسم يحتاج إلى مراجعة",
+      "invalidShort_two": "قسمان يحتاجان إلى مراجعة",
+      "invalidShort_few": "{{count}} أقسام تحتاج إلى مراجعة",
+      "invalidShort_many": "{{count}} قسمًا يحتاج إلى مراجعة",
+      "invalidShort_other": "{{count}} قسم يحتاج إلى مراجعة",
+      "tooLongShort": "نص أطول من المسموح",
+      "errorShort": "لم يُحفظ",
+      "offline": "أنت غير متصل بالإنترنت. لم تُحفظ تغييراتك بعد",
+      "offlineShort": "غير متصل",
+      "offlineReason": "تبقى تغييراتك في هذا المحرّر وتُحفظ فور عودة الاتصال. ويمكنك أيضًا الضغط على «حاول مرة أخرى».",
+      "errorReasonUnknown": "لم يكتمل الحفظ. حاول مرة أخرى بعد قليل."
     },
     "badges": {
       "hidden": "مخفي",
@@ -2602,7 +2641,15 @@
     "publish": {
       "button": "نشر",
       "upToDate": "منشورة ومحدّثة",
-      "siteNotLive": "لم يُنشر موقعك بعد. انشره من صفحة الموقع."
+      "siteNotLive": "لم يُنشر موقعك بعد. انشره من صفحة الموقع.",
+      "needsAttention_zero": "أصلِح الأقسام المميَّزة في القائمة قبل النشر.",
+      "needsAttention_one": "أصلِح القسم المميَّز في القائمة قبل النشر.",
+      "needsAttention_two": "أصلِح القسمين المميَّزين في القائمة قبل النشر.",
+      "needsAttention_few": "أصلِح الأقسام الـ{{count}} المميَّزة في القائمة قبل النشر.",
+      "needsAttention_many": "أصلِح الأقسام الـ{{count}} المميَّزة في القائمة قبل النشر.",
+      "needsAttention_other": "أصلِح الأقسام الـ{{count}} المميَّزة في القائمة قبل النشر.",
+      "nothingNew": "لا يوجد جديد للنشر. يرى الزوار هذه الصفحة كما حُفظت.",
+      "showSection": "انتقل إلى القسم"
     },
     "announce": {
       "selected": "تم تحديد {{section}}",
@@ -2673,7 +2720,8 @@
       "limit": "لا يمكن أن يزيد {{field}} عن {{count}} حرفًا.",
       "inPanel": "يتم تعديل {{field}} من اللوحة.",
       "ambiguous": "يظهر هذا النص في أكثر من حقل. عدّله من اللوحة.",
-      "notText": "يتم تعديل هذا الجزء من القسم من اللوحة."
+      "notText": "يتم تعديل هذا الجزء من القسم من اللوحة.",
+      "hintTouch": "نصيحة: انقر مرتين على أي نص في الصفحة لتعديله مكانه، ثم انقر خارجه عند الانتهاء."
     },
     "editIn": "التعديل في المحرر المرئي"
   },
@@ -3213,5 +3261,16 @@
       "sample_many": "ما زال {{count}} عنصرًا نموذجيًا موجودًا. العناصر النموذجية لا تظهر أبدًا في الموقع العام.",
       "sample_other": "ما زال {{count}} عنصر نموذجي موجودًا. العناصر النموذجية لا تظهر أبدًا في الموقع العام."
     }
+  },
+  "form": {
+    "tooLong": "{{field}} أطول من المسموح. اختصره ثم حاول مرة أخرى."
+  },
+  "corePageTitles": {
+    "home": "الرئيسية",
+    "about": "من نحن",
+    "courses": "الدورات",
+    "faqs": "الأسئلة الشائعة",
+    "contact": "تواصل معنا",
+    "courseDetails": "تفاصيل الدورة"
   }
 }

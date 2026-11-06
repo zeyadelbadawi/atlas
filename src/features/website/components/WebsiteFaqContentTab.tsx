@@ -21,6 +21,7 @@ import { Switch } from '@/components/ui/switch';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -37,7 +38,17 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useConfirmDialog } from '@app/providers';
 import { useDisclosure, usePermissions, useUnsavedChanges } from '@hooks';
-import { useServerValidation } from '@forms';
+import {
+  RequiredMark,
+  SaveFailedAlert,
+  hasViolationOn,
+  useFocusFirstViolation,
+  useLabelledViolations,
+  useServerValidation,
+} from '@forms';
+import { useDirtyGuard } from '@features/unsaved-changes';
+import { useEditWebsiteFaqEntry } from '../hooks/useEditWebsiteFaqEntry';
+import { useViolationLimits } from './server-violations';
 import {
   useArchiveWebsiteFaqEntry,
   useCreateWebsiteFaqEntry,
@@ -50,7 +61,11 @@ import {
   faqEntrySchema,
   type FaqEntryFormData,
 } from '../schemas/website-content.schemas';
-import { CONTENT_LIST_PAGE_SIZE } from '../constants/website.constants';
+import {
+  CONTENT_LIST_PAGE_SIZE,
+  MAX_FAQ_ANSWER_LENGTH,
+  MAX_FAQ_QUESTION_LENGTH,
+} from '../constants/website.constants';
 import type { WebsiteContentStatus, WebsiteFaqEntry } from '@types';
 
 const STATUS_TONE: Record<WebsiteContentStatus, StatusTone> = {
@@ -58,6 +73,24 @@ const STATUS_TONE: Record<WebsiteContentStatus, StatusTone> = {
   published: 'success',
   archived: 'warning',
 };
+
+/**
+ * The fields a server refusal names (`question.en`…), their labels and
+ * limits (B2, V10): the API sends `validation:maxLength` without the
+ * number, so the form supplies it.
+ */
+const FAQ_FIELD_LABELS = {
+  'question.en': 'website:content.questionEn',
+  'question.ar': 'website:content.questionAr',
+  'answer.en': 'website:content.answerEn',
+  'answer.ar': 'website:content.answerAr',
+} as const;
+const FAQ_FIELD_LIMITS = {
+  'question.en': MAX_FAQ_QUESTION_LENGTH,
+  'question.ar': MAX_FAQ_QUESTION_LENGTH,
+  'answer.en': MAX_FAQ_ANSWER_LENGTH,
+  'answer.ar': MAX_FAQ_ANSWER_LENGTH,
+} as const;
 
 function FaqEntryDialog({
   academyId,
@@ -72,7 +105,9 @@ function FaqEntryDialog({
 }): JSX.Element {
   const { t } = useTranslation();
   const createEntry = useCreateWebsiteFaqEntry();
-  const updateEntry = useUpdateWebsiteFaqEntry();
+  // B2 (V09) — the dialog's own save shows its failures here, not as a
+  // toast under the overlay.
+  const updateEntry = useEditWebsiteFaqEntry();
   const isPending = createEntry.isPending || updateEntry.isPending;
 
   const form = useForm<FaqEntryFormData>({
@@ -90,7 +125,22 @@ function FaqEntryDialog({
   // closes, and its form used to keep reporting dirty — so the next
   // navigation asked about edits that were already dismissed.
   useUnsavedChanges({ isDirty: open && form.formState.isDirty });
-  useServerValidation(form, createEntry.error ?? updateEntry.error);
+  // B2 (V11) — closing the dialog (Escape, ×, outside) with typed edits
+  // asks first, as the page SEO dialog does.
+  const dirtyGuard = useDirtyGuard(open && form.formState.isDirty);
+  // B2 (V09/V10) — a refused field lands on that field, with its label and
+  // its limit; any other failure is one alert with the real reason.
+  const saveError = createEntry.error ?? updateEntry.error;
+  const violations = useLabelledViolations(
+    useViolationLimits(saveError, FAQ_FIELD_LIMITS),
+    FAQ_FIELD_LABELS
+  );
+  useServerValidation(form, violations);
+  useFocusFirstViolation(form, violations, FAQ_FIELD_LABELS);
+  const saveFailure =
+    saveError && !hasViolationOn(saveError, FAQ_FIELD_LABELS)
+      ? saveError
+      : null;
 
   const onSubmit = (data: FaqEntryFormData) => {
     const onSuccess = () => {
@@ -111,9 +161,15 @@ function FaqEntryDialog({
     <Dialog
       open={open}
       onOpenChange={(next) => {
-        // Closing discards the dialog's edits, as it always did on screen.
-        if (!next) form.reset();
-        onOpenChange(next);
+        if (next) return onOpenChange(true);
+        // Closing discards the dialog's edits — after asking, when there
+        // are any.
+        void dirtyGuard.requestClose(() => {
+          form.reset();
+          createEntry.reset();
+          updateEntry.reset();
+          onOpenChange(false);
+        });
       }}
     >
       <DialogContent className="max-h-[85vh] overflow-y-auto">
@@ -125,6 +181,12 @@ function FaqEntryDialog({
                 : 'website:content.faq.createTitle'
             )}
           </DialogTitle>
+          {/* V19 — the library keeps every entry in both languages (an
+              entry in one language would vanish for visitors in the
+              other), so both are marked required and the reason is said. */}
+          <DialogDescription>
+            {t('website:content.faq.bothLanguagesHint')}
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -134,7 +196,10 @@ function FaqEntryDialog({
                 name="question.en"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('website:content.questionEn')}</FormLabel>
+                    <FormLabel>
+                      {t('website:content.questionEn')}
+                      <RequiredMark />
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} dir="ltr" lang="en" />
                     </FormControl>
@@ -147,7 +212,10 @@ function FaqEntryDialog({
                 name="question.ar"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('website:content.questionAr')}</FormLabel>
+                    <FormLabel>
+                      {t('website:content.questionAr')}
+                      <RequiredMark />
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} dir="rtl" />
                     </FormControl>
@@ -162,7 +230,10 @@ function FaqEntryDialog({
                 name="answer.en"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('website:content.answerEn')}</FormLabel>
+                    <FormLabel>
+                      {t('website:content.answerEn')}
+                      <RequiredMark />
+                    </FormLabel>
                     <FormControl>
                       <Textarea rows={4} {...field} dir="ltr" lang="en" />
                     </FormControl>
@@ -175,7 +246,10 @@ function FaqEntryDialog({
                 name="answer.ar"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('website:content.answerAr')}</FormLabel>
+                    <FormLabel>
+                      {t('website:content.answerAr')}
+                      <RequiredMark />
+                    </FormLabel>
                     <FormControl>
                       <Textarea rows={4} {...field} dir="rtl" />
                     </FormControl>
@@ -184,8 +258,20 @@ function FaqEntryDialog({
                 )}
               />
             </div>
-            {(createEntry.error ?? updateEntry.error) ? (
-              <ErrorState onRetry={form.handleSubmit(onSubmit)} />
+            {saveFailure ? (
+              <SaveFailedAlert
+                error={saveFailure}
+                titleKey={
+                  entry
+                    ? 'website:content.faq.saveFailedTitle'
+                    : 'website:content.faq.createFailedTitle'
+                }
+                onRetry={
+                  saveFailure.kind === 'validation'
+                    ? undefined
+                    : form.handleSubmit(onSubmit)
+                }
+              />
             ) : null}
             <DialogFooter>
               <Button type="submit" disabled={isPending}>

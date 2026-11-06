@@ -82,6 +82,13 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { SaveFailedAlert, useFailureReason } from '@forms';
+import type { ApiError } from '@api';
 import { ErrorState } from '@components/feedback';
 import { useConfirmDialog } from '@app/providers';
 import { useMediaQuery, usePermissions, useUnsavedChanges } from '@hooks';
@@ -113,10 +120,13 @@ import { WebsiteRenderer } from '../renderer';
 import {
   PUBLIC_WEBSITE_LOCALES,
   PUBLIC_WEBSITE_LOCALE_DIRECTION,
-  PUBLIC_WEBSITE_LOCALE_LABELS,
   resolveDefaultLocale,
   type PublicWebsiteLocale,
 } from '../constants/locale.constants';
+import {
+  contentLocaleLabelKey,
+  useDisplayPageTitle,
+} from '../components/website-display-labels';
 import { SECTION_METADATA } from '../sections/section-metadata.registry';
 import { readSaveConflict } from '../utils/save-conflict.utils';
 import { stableJsonKey } from '../utils/stable-json.utils';
@@ -157,6 +167,28 @@ const WIDE_QUERY = '(min-width: 1024px)';
 
 type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 
+/**
+ * B2 (V14) — whether a question is open over the editor: the "Leave
+ * without saving?" dialog (or any confirmation). The autosave waits while
+ * one is: a save landing behind "Leave without saving?" marked the page
+ * clean, the dialog let the navigation through by itself and the edit was
+ * kept although "Leave and discard" was never chosen.
+ */
+function isQuestionOpen(): boolean {
+  return (
+    typeof document !== 'undefined' &&
+    document.querySelector('[role="alertdialog"]') !== null
+  );
+}
+
+/** Whether a failed save was the connection, not the server. */
+function isOffline(error: ApiError | null): boolean {
+  return (
+    error?.kind === 'network' ||
+    (typeof navigator !== 'undefined' && navigator.onLine === false)
+  );
+}
+
 /** Typing in a text field undoes there, not in the page. */
 function isTextInput(target: EventTarget | null): boolean {
   const element = target as HTMLElement | null;
@@ -185,6 +217,7 @@ export default function VisualEditorPage(): JSX.Element {
 
 function VisualEditor(): JSX.Element {
   const { t } = useTranslation();
+  const displayTitle = useDisplayPageTitle();
   const navigate = useNavigate();
   const { academyId, pageId } = useParams<{
     academyId: string;
@@ -273,6 +306,7 @@ function VisualEditor(): JSX.Element {
     readonly PublishCheckIssue[] | null
   >(null);
   const [panelExpanded, setPanelExpanded] = useState(false);
+  const [publishInfoOpen, setPublishInfoOpen] = useState(false);
   const [announcement, setAnnouncement] = useState('');
   // Inline text editing: the canvas frame's document, the config typed on
   // the canvas (for the panel's fields), and a panel field to show.
@@ -310,8 +344,10 @@ function VisualEditor(): JSX.Element {
   useEffect(() => {
     if (!canAutosave) return undefined;
     const timer = window.setTimeout(async () => {
-      // A publish (which saves first) is under way: look again shortly.
-      if (isWorkingRef.current()) {
+      // A publish (which saves first) is under way, or a question is open
+      // over the editor (V14 — "Leave without saving?" must decide what
+      // happens to these edits): look again shortly.
+      if (isWorkingRef.current() || isQuestionOpen()) {
         setRetryTick((n) => n + 1);
         return;
       }
@@ -321,6 +357,14 @@ function VisualEditor(): JSX.Element {
     }, AUTOSAVE_DELAY_MS);
     return () => window.clearTimeout(timer);
   }, [canAutosave, draftKey, retryTick]);
+
+  // V13 — back online after a failed save: save again by itself.
+  useEffect(() => {
+    if (saveState !== 'error') return undefined;
+    const onOnline = () => setRetryTick((n) => n + 1);
+    window.addEventListener('online', onOnline);
+    return () => window.removeEventListener('online', onOnline);
+  }, [saveState]);
 
   useUnsavedChanges({
     isDirty,
@@ -580,6 +624,28 @@ function VisualEditor(): JSX.Element {
     academyId,
     pageId,
   });
+  // B2 (V25) — what stands in the way of publishing, if anything.
+  const publishBlock: 'siteNotLive' | 'attention' | 'upToDate' | null =
+    !isSiteLive
+      ? 'siteNotLive'
+      : attentionIds.size > 0
+        ? 'attention'
+        : !isDirty && !page.hasUnpublishedChanges
+          ? 'upToDate'
+          : null;
+  const firstAttentionId = draftSections.find((section) =>
+    attentionIds.has(section.id)
+  )?.id;
+  const publishBlockText =
+    publishBlock === 'siteNotLive'
+      ? t('website:visualEditor.publish.siteNotLive')
+      : publishBlock === 'attention'
+        ? t('website:visualEditor.publish.needsAttention', {
+            count: attentionIds.size,
+          })
+        : publishBlock === 'upToDate'
+          ? t('website:visualEditor.publish.nothingNew')
+          : '';
 
   const structure = (
     <StructurePanel
@@ -703,7 +769,7 @@ function VisualEditor(): JSX.Element {
           <SelectContent>
             {PUBLIC_WEBSITE_LOCALES.map((locale) => (
               <SelectItem key={locale} value={locale}>
-                {PUBLIC_WEBSITE_LOCALE_LABELS[locale]}
+                {t(contentLocaleLabelKey(locale))}
               </SelectItem>
             ))}
           </SelectContent>
@@ -729,12 +795,12 @@ function VisualEditor(): JSX.Element {
       data-testid="visual-editor"
     >
       {/* ---- Top bar ---- */}
-      <header className="flex h-14 shrink-0 items-center gap-1 border-b border-border px-2 sm:gap-2 sm:px-3">
+      <header className="flex h-14 shrink-0 items-center gap-0.5 border-b border-border px-1 sm:gap-2 sm:px-3">
         <Button
           asChild
           variant="ghost"
           size="icon"
-          className="size-10 shrink-0"
+          className="size-10 shrink-0 md:size-11"
           aria-label={t('website:visualEditor.backToPages')}
           title={t('website:visualEditor.backToPages')}
         >
@@ -759,22 +825,23 @@ function VisualEditor(): JSX.Element {
             }
           >
             <SelectTrigger
-              className="h-9 min-w-0 max-w-[10rem] sm:max-w-[14rem]"
+              className="h-10 min-w-0 max-w-[10rem] sm:max-w-[14rem] md:h-11"
               aria-label={t('website:visualEditor.pageLabel')}
+              data-testid="visual-editor-page-picker"
             >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {pages.map((candidate) => (
                 <SelectItem key={candidate.id} value={candidate.id}>
-                  {candidate.title}
+                  {displayTitle(candidate)}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
-        <div className="ms-auto flex items-center gap-1 sm:gap-2">
+        <div className="ms-auto flex items-center gap-0.5 sm:gap-2">
           {inline.editing ? (
             <span
               className="hidden items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary lg:inline-flex"
@@ -790,6 +857,7 @@ function VisualEditor(): JSX.Element {
             isDirty={isDirty}
             invalidCount={invalidIds.size}
             tooLong={isBlockedByLimits}
+            error={draft.updatePage.error}
             onRetry={() => {
               setSaveState('saving');
               void draft
@@ -803,7 +871,7 @@ function VisualEditor(): JSX.Element {
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="size-10"
+                className="size-10 md:size-11"
                 onClick={undo}
                 disabled={!history.canUndo}
                 aria-label={t('website:visualEditor.actions.undo')}
@@ -815,7 +883,7 @@ function VisualEditor(): JSX.Element {
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="size-10"
+                className="size-10 md:size-11"
                 onClick={redo}
                 disabled={!history.canRedo}
                 aria-label={t('website:visualEditor.actions.redo')}
@@ -830,7 +898,7 @@ function VisualEditor(): JSX.Element {
               type="button"
               variant="ghost"
               size="sm"
-              className="h-10 min-w-10 px-2 md:px-3"
+              className="h-10 min-w-10 px-2 md:h-11 md:min-w-11 md:px-3"
               onClick={() => setHistoryOpen(true)}
               aria-label={t('website:history.button')}
               title={t('website:history.buttonHint')}
@@ -846,14 +914,15 @@ function VisualEditor(): JSX.Element {
             type="button"
             variant={siteOpen ? 'secondary' : 'ghost'}
             size="sm"
-            className="h-9"
+            className="h-10 min-w-10 px-2 md:h-11 md:min-w-11 md:px-3"
             onClick={toggleSite}
             aria-pressed={siteOpen}
+            aria-label={t('website:visualEditor.site.button')}
             title={t('website:visualEditor.site.buttonHint')}
             data-testid="visual-editor-site"
           >
             <Palette className="size-4" aria-hidden />
-            <span className="hidden md:inline">
+            <span className="hidden md:inline" aria-hidden>
               {t('website:visualEditor.site.button')}
             </span>
           </Button>
@@ -861,42 +930,75 @@ function VisualEditor(): JSX.Element {
             asChild
             variant="ghost"
             size="sm"
-            className="hidden xl:inline-flex"
+            className="hidden h-11 xl:inline-flex"
           >
             <Link to={classicPath}>
               {t('website:visualEditor.classicEditor')}
             </Link>
           </Button>
           {canPublish ? (
-            <Button
-              type="button"
-              size="sm"
-              className="h-9"
-              data-testid="visual-editor-publish"
-              onClick={() => void handlePublish()}
-              disabled={
-                !isSiteLive ||
-                (!isDirty && !page.hasUnpublishedChanges) ||
-                attentionIds.size > 0 ||
-                draft.publishPage.isPending
-              }
-              title={
-                !isSiteLive
-                  ? t('website:visualEditor.publish.siteNotLive')
-                  : !isDirty && !page.hasUnpublishedChanges
-                    ? t('website:visualEditor.publish.upToDate')
-                    : undefined
+            // B2 (V25) — never greyed out without a word: while something
+            // stands in the way, a tap says what (a tooltip never shows on
+            // touch) and, for sections to fix, takes the author to the
+            // first one. Only a publish under way truly disables it.
+            <Popover
+              open={publishInfoOpen}
+              onOpenChange={(open) =>
+                setPublishInfoOpen(open && !!publishBlock)
               }
             >
-              {draft.publishPage.isPending ? (
-                <Loader2 className="size-4 animate-spin" aria-hidden />
-              ) : (
-                <UploadCloud className="size-4" aria-hidden />
-              )}
-              <span className="hidden sm:inline">
-                {t('website:visualEditor.publish.button')}
-              </span>
-            </Button>
+              <PopoverTrigger asChild>
+                <Button
+                  type="button"
+                  size="sm"
+                  className={cn(
+                    'h-10 min-w-10 px-2 sm:px-3 md:h-11 md:min-w-11',
+                    publishBlock && 'opacity-60'
+                  )}
+                  data-testid="visual-editor-publish"
+                  aria-label={t('website:visualEditor.publish.button')}
+                  aria-disabled={publishBlock ? true : undefined}
+                  data-blocked={publishBlock ?? undefined}
+                  onClick={(event) => {
+                    if (publishBlock) return;
+                    // Nothing in the way: publish, without the popover.
+                    event.preventDefault();
+                    void handlePublish();
+                  }}
+                  disabled={draft.publishPage.isPending}
+                >
+                  {draft.publishPage.isPending ? (
+                    <Loader2 className="size-4 animate-spin" aria-hidden />
+                  ) : (
+                    <UploadCloud className="size-4" aria-hidden />
+                  )}
+                  <span className="hidden sm:inline" aria-hidden>
+                    {t('website:visualEditor.publish.button')}
+                  </span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                align="end"
+                className="w-72 space-y-3 text-sm"
+                data-testid="visual-editor-publish-reason"
+              >
+                <p role="status">{publishBlockText}</p>
+                {publishBlock === 'attention' && firstAttentionId ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setPublishInfoOpen(false);
+                      setStructureOpen(false);
+                      selectAndReveal(firstAttentionId);
+                    }}
+                  >
+                    {t('website:visualEditor.publish.showSection')}
+                  </Button>
+                ) : null}
+              </PopoverContent>
+            </Popover>
           ) : null}
         </div>
       </header>
@@ -908,8 +1010,10 @@ function VisualEditor(): JSX.Element {
       ) : null}
       {draft.publishPage.error && !publishConflict ? (
         <div className="shrink-0 border-b border-border px-3 py-2">
-          <ErrorState
-            kind={draft.publishPage.error.kind}
+          {/* V16 — one message with the real reason; no toast on top. */}
+          <SaveFailedAlert
+            error={draft.publishPage.error}
+            titleKey="website:editor.publishFailedTitle"
             onRetry={() => void handlePublish()}
           />
         </div>
@@ -1127,6 +1231,12 @@ function VisualEditor(): JSX.Element {
  * Where the draft stands, in one place: saving, saved, waiting for the
  * author (a section to fix, text to shorten), or a failed save with a
  * retry. One polite live region, so a screen reader hears it change.
+ *
+ * B2 (V13, V31) — a short text stays visible at every width (a phone
+ * showed an icon only), and what needs explaining opens in a popover on
+ * tap or click: the real reason a save failed (offline says so, and the
+ * editor saves again once the connection is back), or the full sentence
+ * the bar has no room for.
  */
 function SaveStatus({
   state,
@@ -1134,6 +1244,7 @@ function SaveStatus({
   isDirty,
   invalidCount,
   tooLong,
+  error,
   onRetry,
 }: {
   readonly state: SaveState;
@@ -1141,61 +1252,140 @@ function SaveStatus({
   readonly isDirty: boolean;
   readonly invalidCount: number;
   readonly tooLong: boolean;
+  readonly error: ApiError | null;
   readonly onRetry: () => void;
 }): JSX.Element {
   const { t } = useTranslation();
+  const failureReason = useFailureReason();
   let tone: 'muted' | 'ok' | 'warn' | 'error' = 'muted';
   let icon: JSX.Element | null = null;
   let text: string;
+  /** What the bar shows when space is short; `text` is the full sentence. */
+  let short: string | null = null;
+  /** The explanation the popover gives, when there is one. */
+  let detail: string | null = null;
   if (!canManage) {
     text = t('website:visualEditor.status.readOnly');
   } else if (tooLong && isDirty) {
     tone = 'warn';
-    icon = <AlertCircle className="size-4" aria-hidden />;
+    icon = <AlertCircle className="size-4 shrink-0" aria-hidden />;
     text = t('website:visualEditor.status.tooLong');
+    short = t('website:visualEditor.status.tooLongShort');
+    detail = text;
   } else if (invalidCount > 0 && isDirty) {
     tone = 'warn';
-    icon = <AlertCircle className="size-4" aria-hidden />;
+    icon = <AlertCircle className="size-4 shrink-0" aria-hidden />;
     text = t('website:visualEditor.status.invalid', { count: invalidCount });
+    short = t('website:visualEditor.status.invalidShort', {
+      count: invalidCount,
+    });
+    detail = text;
   } else if (state === 'saving') {
-    icon = <Loader2 className="size-4 animate-spin" aria-hidden />;
+    icon = <Loader2 className="size-4 shrink-0 animate-spin" aria-hidden />;
     text = t('website:visualEditor.status.saving');
   } else if (state === 'error' && isDirty) {
     tone = 'error';
-    icon = <CloudOff className="size-4" aria-hidden />;
-    text = t('website:visualEditor.status.error');
+    icon = <CloudOff className="size-4 shrink-0" aria-hidden />;
+    const offline = isOffline(error);
+    text = offline
+      ? t('website:visualEditor.status.offline')
+      : t('website:visualEditor.status.error');
+    short = offline
+      ? t('website:visualEditor.status.offlineShort')
+      : t('website:visualEditor.status.errorShort');
+    detail = offline
+      ? t('website:visualEditor.status.offlineReason')
+      : error
+        ? failureReason(error)
+        : t('website:visualEditor.status.errorReasonUnknown');
   } else if (isDirty) {
     text = t('website:visualEditor.status.pending');
   } else {
     tone = 'ok';
-    icon = <Check className="size-4" aria-hidden />;
+    icon = <Check className="size-4 shrink-0" aria-hidden />;
     text = t('website:visualEditor.status.saved');
   }
+  const toneClass = cn(
+    tone === 'muted' && 'text-muted-foreground',
+    tone === 'ok' && 'text-emerald-700 dark:text-emerald-400',
+    tone === 'warn' && 'text-amber-700 dark:text-amber-400',
+    tone === 'error' && 'text-destructive'
+  );
+  const showRetry = canManage && state === 'error' && isDirty;
   return (
     <div className="flex min-w-0 items-center gap-1" data-testid="save-status">
-      <span
-        role="status"
-        aria-live="polite"
-        title={text}
-        className={cn(
-          'flex min-w-0 items-center gap-1.5 text-xs',
-          tone === 'muted' && 'text-muted-foreground',
-          tone === 'ok' && 'text-emerald-700 dark:text-emerald-400',
-          tone === 'warn' && 'text-amber-700 dark:text-amber-400',
-          tone === 'error' && 'text-destructive'
-        )}
-        data-state={tone}
-      >
-        {icon}
-        <span className="hidden max-w-[16rem] truncate md:inline">{text}</span>
-        <span className="sr-only md:hidden">{text}</span>
+      {/* The live region: the full sentence, for screen readers. */}
+      <span role="status" aria-live="polite" className="sr-only">
+        {text}
       </span>
-      {canManage && state === 'error' && isDirty ? (
+      {detail ? (
+        <Popover>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              className={cn(
+                'flex h-10 min-w-10 items-center justify-center gap-1.5 rounded-md px-1.5 text-xs font-medium underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                toneClass
+              )}
+              data-state={tone}
+              data-testid="save-status-trigger"
+              aria-label={text}
+              title={text}
+            >
+              {icon}
+              {/* Errors keep a word on a phone; a warning keeps its icon
+                  (the section list marks where), with the count from md. */}
+              <span
+                className={cn(
+                  'whitespace-nowrap',
+                  tone === 'error' ? 'inline' : 'hidden md:inline'
+                )}
+                aria-hidden
+              >
+                {short ?? text}
+              </span>
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            align="end"
+            className="w-72 space-y-3 text-sm"
+            data-testid="save-status-detail"
+          >
+            {tone === 'error' ? (
+              <p className="font-medium text-foreground">{text}</p>
+            ) : null}
+            <p className="text-muted-foreground">{detail}</p>
+            {showRetry ? (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={onRetry}
+              >
+                {t('website:visualEditor.status.retry')}
+              </Button>
+            ) : null}
+          </PopoverContent>
+        </Popover>
+      ) : (
+        <span
+          title={text}
+          className={cn('flex min-w-0 items-center gap-1.5 text-xs', toneClass)}
+          data-state={tone}
+          aria-hidden
+        >
+          {icon}
+          <span className="hidden max-w-[16rem] truncate md:inline">
+            {text}
+          </span>
+        </span>
+      )}
+      {showRetry ? (
         <Button
           type="button"
           variant="link"
           size="sm"
-          className="h-auto px-1 text-xs"
+          className="hidden h-10 px-1 text-xs md:inline-flex"
           onClick={onRetry}
         >
           {t('website:visualEditor.status.retry')}

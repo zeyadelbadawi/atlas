@@ -23,11 +23,17 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
-import { useServerValidation } from '@forms';
+import { SaveFailedAlert, hasViolationOn, useServerValidation } from '@forms';
 import { useAcademy } from '@features/academy';
 import { useUpdateWebsiteConfiguration } from '../hooks';
 import { WebsiteImageField } from './WebsiteImageField';
 import { LocalizedTextField } from './LocalizedTextField';
+import { useLocalizedFormErrors } from './localized-form-errors';
+import {
+  MAX_SEO_DESCRIPTION_LENGTH,
+  MAX_SEO_TITLE_LENGTH,
+  MAX_SITE_TITLE_LENGTH,
+} from '../constants/website.constants';
 import {
   globalSeoSchema,
   type GlobalSeoFormData,
@@ -36,6 +42,20 @@ import { buildOrganizationJsonLd } from '../utils/structured-data.utils';
 import type { LocalizedText, WebsiteConfiguration } from '@types';
 
 const EMPTY_LOCALIZED: LocalizedText = { en: '', ar: '' };
+
+/** The fields a server violation can land on (anything else is one inline message). */
+const SEO_FIELDS = {
+  siteTitle: '',
+  'siteTitle.en': '',
+  'siteTitle.ar': '',
+  metaTitle: '',
+  'metaTitle.en': '',
+  'metaTitle.ar': '',
+  metaDescription: '',
+  'metaDescription.en': '',
+  'metaDescription.ar': '',
+  canonicalBaseUrl: '',
+} as const;
 
 export interface WebsiteSeoTabProps {
   readonly academyId: string;
@@ -47,7 +67,7 @@ export function WebsiteSeoTab({
   configuration,
 }: WebsiteSeoTabProps): JSX.Element {
   const { t } = useTranslation();
-  const updateConfig = useUpdateWebsiteConfiguration();
+  const updateConfig = useUpdateWebsiteConfiguration({ inlineErrors: true });
   const academyQuery = useAcademy(academyId);
   const [ogImage, setOgImage] = useState(configuration.seo.ogImage);
 
@@ -64,6 +84,28 @@ export function WebsiteSeoTab({
   });
 
   useServerValidation(form, updateConfig.error);
+  const { errors } = form.formState;
+  const siteTitleErrors = useLocalizedFormErrors(
+    errors,
+    'siteTitle',
+    'website:seo.siteTitle'
+  );
+  const metaTitleErrors = useLocalizedFormErrors(
+    errors,
+    'metaTitle',
+    'website:seo.metaTitle'
+  );
+  const metaDescriptionErrors = useLocalizedFormErrors(
+    errors,
+    'metaDescription',
+    'website:seo.metaDescription'
+  );
+  // One message per failure: a violation shows on its field; anything else
+  // is one inline alert with the real reason (no toast on top).
+  const saveError =
+    updateConfig.error && !hasViolationOn(updateConfig.error, SEO_FIELDS)
+      ? updateConfig.error
+      : null;
 
   // The share image lives outside the form, so it is compared separately —
   // a new image with no text edits is still unsaved work.
@@ -82,7 +124,6 @@ export function WebsiteSeoTab({
       toast({ title: t('website:seo.saved') });
       return true;
     } catch {
-      toast({ title: t('website:seo.saveError'), variant: 'destructive' });
       return false;
     }
   }
@@ -116,9 +157,10 @@ export function WebsiteSeoTab({
                         labelKey="website:seo.siteTitle"
                         value={field.value}
                         onChange={field.onChange}
+                        maxLength={MAX_SITE_TITLE_LENGTH}
+                        errors={siteTitleErrors}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -133,9 +175,10 @@ export function WebsiteSeoTab({
                         labelKey="website:seo.metaTitle"
                         value={field.value}
                         onChange={field.onChange}
+                        maxLength={MAX_SEO_TITLE_LENGTH}
+                        errors={metaTitleErrors}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -150,10 +193,11 @@ export function WebsiteSeoTab({
                         labelKey="website:seo.metaDescription"
                         value={field.value}
                         onChange={field.onChange}
+                        maxLength={MAX_SEO_DESCRIPTION_LENGTH}
+                        errors={metaDescriptionErrors}
                         multiline
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -212,6 +256,13 @@ export function WebsiteSeoTab({
                   </label>
                 )}
               />
+              {saveError ? (
+                <SaveFailedAlert
+                  error={saveError}
+                  titleKey="common:form.notSaved"
+                  onRetry={() => void form.handleSubmit(onSubmit)()}
+                />
+              ) : null}
               <div className="flex justify-end">
                 <Button type="submit" disabled={updateConfig.isPending}>
                   {updateConfig.isPending ? (

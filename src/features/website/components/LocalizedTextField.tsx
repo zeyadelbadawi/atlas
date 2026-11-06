@@ -45,6 +45,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { cn } from '@utils';
 import type { LocalizedText } from '@types';
+import { RequiredMark } from '@forms';
 import { useWebsiteContentLocale } from './website-content-locale';
 
 const EMPTY: LocalizedText = { en: '', ar: '' };
@@ -218,6 +219,7 @@ export function LocalizedTextField({
           className={cn(
             blocking && 'border-destructive focus-visible:ring-destructive'
           )}
+          aria-required={(required && language === primary) || undefined}
           aria-invalid={blocking || looksWrong || undefined}
           aria-describedby={describedBy || undefined}
           data-field-error={blocking || undefined}
@@ -248,14 +250,20 @@ export function LocalizedTextField({
 
   return (
     <div className="space-y-2 rounded-md border border-border p-3">
-      <p className="text-sm font-medium text-foreground">
-        {fieldLabel}
-        {required ? <span className="text-destructive"> *</span> : null}
-      </p>
+      <p className="text-sm font-medium text-foreground">{fieldLabel}</p>
 
+      {/* B2 (V19) — the mark sits on the language that must be filled (the
+          site's main one), opposite the other's "optional". */}
       {renderLanguage(
         primary,
-        languageLabel(primary),
+        required ? (
+          <>
+            {languageLabel(primary)}
+            <RequiredMark />
+          </>
+        ) : (
+          languageLabel(primary)
+        ),
         null,
         looksWrong[primary]
       )}

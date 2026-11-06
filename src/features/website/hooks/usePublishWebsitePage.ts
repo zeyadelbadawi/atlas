@@ -6,7 +6,7 @@
  * response says so — the same rules as `usePublishWebsite`.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { websiteKeys } from '@services/query';
+import { INLINE_ERRORS_META, websiteKeys } from '@services/query';
 import type { ApiError } from '@api';
 import type { WebsitePage } from '@types';
 import { websiteConfigurationService } from '../services/WebsiteConfigurationService';
@@ -30,6 +30,9 @@ export function usePublishWebsitePage() {
       ),
     showSuccessToast: false,
     showErrorToast: false,
+    // B2 (V16) — both editors show a failed publish inline (or the conflict
+    // dialog): the app-wide toast would only repeat it over the buttons.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, { academyId, pageId }) => {
       await invalidate(websiteKeys.page(academyId, pageId));
       await invalidate(websiteKeys.allPages(academyId));

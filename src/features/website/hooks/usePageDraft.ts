@@ -76,7 +76,8 @@ export function usePageDraft({
   refetchPage,
   prepareSections,
 }: UsePageDraftOptions) {
-  const updatePage = useUpdateWebsitePage();
+  // B2 (V16) — the editors show every failure inline: no toast on top.
+  const updatePage = useUpdateWebsitePage({ inlineErrors: true });
   const publishPage = usePublishWebsitePage();
 
   const [draftSections, setDraftSections] = useState<SectionInstance[]>([]);

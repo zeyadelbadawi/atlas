@@ -51,7 +51,7 @@ const canonicalPathSchema = z
       count: MAX_CANONICAL_PATH_LENGTH,
     })
   )
-  .regex(CANONICAL_PATH_REGEX, 'validation:invalidUrl')
+  .regex(CANONICAL_PATH_REGEX, 'validation:sitePath')
   .optional()
   .or(z.literal(''));
 
@@ -66,20 +66,43 @@ export const pageSeoSchema = z.object({
 });
 export type PageSeoFormData = z.infer<typeof pageSeoSchema>;
 
+/** A full `http(s)://host…` address whose host has a dot (`https://` alone or `https://localhost` is not a site). */
+export function isAbsoluteWebAddress(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return (
+      (url.protocol === 'https:' || url.protocol === 'http:') &&
+      /^[^.]+(\.[^.]+)+$/.test(url.hostname)
+    );
+  } catch {
+    return false;
+  }
+}
+
 export const globalSeoSchema = z.object({
   siteTitle: localizedOptional(MAX_SITE_TITLE_LENGTH).optional(),
   metaTitle: localizedOptional(MAX_SEO_TITLE_LENGTH).optional(),
   metaDescription: localizedOptional(MAX_SEO_DESCRIPTION_LENGTH).optional(),
   robotsIndexable: z.boolean().optional(),
   sitemapEnabled: z.boolean().optional(),
-  /** Deliberately lenient (length-only) — a real, verified domain is out of scope for this prompt; see the field's doc comment in `website.types.ts`. */
+  /**
+   * Not a verified domain (see the field's doc comment in `website.types.ts`),
+   * but it composes every canonical link, so it must be a full http(s)
+   * address with a real host. B2 (UX audit): "not a url", "example.com" and
+   * "ftp://…" used to save with "SEO settings saved".
+   */
   canonicalBaseUrl: z
     .string()
+    .trim()
     .max(
       MAX_CANONICAL_PATH_LENGTH,
       validationMessage('validation:maxLength', {
         count: MAX_CANONICAL_PATH_LENGTH,
       })
+    )
+    .refine(
+      (value) => value === '' || isAbsoluteWebAddress(value),
+      'validation:absoluteUrl'
     )
     .optional(),
 });

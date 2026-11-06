@@ -13,6 +13,7 @@
  * editor.
  */
 import { useEffect, useMemo, useState } from 'react';
+import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -60,7 +61,16 @@ import {
 import { Input } from '@/components/ui/input';
 import { useConfirmDialog } from '@app/providers';
 import { useDisclosure, usePermissions } from '@hooks';
-import { useServerValidation } from '@forms';
+import {
+  RequiredMark,
+  SaveFailedAlert,
+  hasViolationOn,
+  useFocusFirstViolation,
+  useLabelledViolations,
+  useServerValidation,
+} from '@forms';
+import { useErrorText } from '@hooks';
+import { useDirtyGuard } from '@features/unsaved-changes';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAcademy } from '@features/academy';
 import { cn } from '@utils';
@@ -84,6 +94,12 @@ import {
 import { isContentValidationFailure } from '../utils/save-validation.utils';
 import { AuthPageCopyDialog } from '../components/AuthPageCopyDialog';
 import type { AuthPageKey } from '../utils/auth-page-copy.utils';
+import { useViolationLimits } from '../components/server-violations';
+import { useDisplayPageTitle } from '../components/website-display-labels';
+import {
+  MAX_PAGE_SLUG_LENGTH,
+  MAX_PAGE_TITLE_LENGTH,
+} from '../constants/website.constants';
 import { resolveDefaultLocale } from '../constants/locale.constants';
 import {
   BLANK_PAGE,
@@ -106,6 +122,34 @@ import type {
   WebsiteConfiguration,
   WebsitePage,
 } from '@types';
+
+/**
+ * B2 (V19) — one message per empty field: an empty address is "required",
+ * not also "must be at least 2 characters"; the length and format rules
+ * apply once something is typed.
+ */
+const createPageFormSchema = z.object({
+  title: createWebsitePageSchema.shape.title,
+  slug: z
+    .string()
+    .min(1, 'validation:required')
+    .pipe(createWebsitePageSchema.shape.slug),
+});
+
+/** The fields a server refusal can name, and their labels (V09/V10). */
+const PAGE_FIELD_LABELS = {
+  title: 'website:pages.titleLabel',
+  slug: 'website:pages.slugLabel',
+} as const;
+const PAGE_FIELD_LIMITS = {
+  title: MAX_PAGE_TITLE_LENGTH,
+  slug: MAX_PAGE_SLUG_LENGTH,
+} as const;
+/** A refusal of the address itself: shown on the address field. */
+const SLUG_CONFLICT_KEYS: readonly string[] = [
+  'errors.website.slugTaken',
+  'errors.website.slugReserved',
+];
 
 /**
  * "New page": a title and an address, and — CMS phase 3e — how to start:
@@ -135,10 +179,37 @@ function CreatePageDialog({
   const [choice, setChoice] = useState<string>(BLANK_PAGE);
 
   const form = useForm<CreateWebsitePageFormData>({
-    resolver: zodResolver(createWebsitePageSchema),
+    resolver: zodResolver(createPageFormSchema),
     defaultValues: { title: '', slug: '' },
   });
-  useServerValidation(form, createPage.error);
+  const errorText = useErrorText();
+  // B2 (V09) — every failure is shown here, once: a taken or reserved
+  // address on the address field; a refused title/address on its field,
+  // with its label and limit; anything else as one alert with the real
+  // reason. (The hook is `inlineErrors`: no toast under the overlay.)
+  const violations = useLabelledViolations(
+    useViolationLimits(createPage.error, PAGE_FIELD_LIMITS),
+    PAGE_FIELD_LABELS
+  );
+  useServerValidation(form, violations);
+  useFocusFirstViolation(form, violations, PAGE_FIELD_LABELS);
+  const slugConflict =
+    createPage.error !== null &&
+    SLUG_CONFLICT_KEYS.includes(createPage.error.messageKey);
+  const { setError, setFocus } = form;
+  useEffect(() => {
+    if (!slugConflict || !createPage.error) return;
+    setError('slug', {
+      type: 'server',
+      message: errorText(
+        createPage.error.messageKey,
+        'errors:website.slugTaken'
+      ),
+    });
+    setFocus('slug');
+  }, [slugConflict, createPage.error, errorText, setError, setFocus]);
+  // V11 — closing (Escape, ×, outside) asks before discarding typed input.
+  const dirtyGuard = useDirtyGuard(form.formState.isDirty);
 
   const visiblePages = useMemo(
     () => pages.filter((candidate) => candidate.visible),
@@ -193,6 +264,7 @@ function CreatePageDialog({
     setSections([]);
     createPage.reset();
   };
+  const requestClose = () => void dirtyGuard.requestClose(close);
   // A new page opens where pages are edited: the visual editor.
   const openEditor = (page: WebsitePage) => {
     close();
@@ -223,12 +295,19 @@ function CreatePageDialog({
     (createPage.error?.violations ?? []).some((violation) =>
       /^\d/.test(violation.field)
     );
+  const createFailure =
+    createPage.error &&
+    !sectionsRejected &&
+    !slugConflict &&
+    !hasViolationOn(createPage.error, PAGE_FIELD_LABELS)
+      ? createPage.error
+      : null;
 
   return (
     <Dialog
       open={open}
       onOpenChange={(next) => {
-        if (!next) close();
+        if (!next) requestClose();
         else onOpenChange(next);
       }}
     >
@@ -279,9 +358,12 @@ function CreatePageDialog({
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('website:pages.titleLabel')}</FormLabel>
+                    <FormLabel>
+                      {t('website:pages.titleLabel')}
+                      <RequiredMark />
+                    </FormLabel>
                     <FormControl>
-                      <Input {...field} disabled={isBusy} />
+                      <Input {...field} disabled={isBusy} aria-required />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -292,9 +374,17 @@ function CreatePageDialog({
                 name="slug"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('website:pages.slugLabel')}</FormLabel>
+                    <FormLabel>
+                      {t('website:pages.slugLabel')}
+                      <RequiredMark />
+                    </FormLabel>
                     <FormControl>
-                      <Input {...field} disabled={isBusy} dir="ltr" />
+                      <Input
+                        {...field}
+                        disabled={isBusy}
+                        dir="ltr"
+                        aria-required
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -308,8 +398,16 @@ function CreatePageDialog({
                 >
                   {t('website:pageTemplates.sectionsRejected')}
                 </div>
-              ) : createPage.error ? (
-                <ErrorState onRetry={form.handleSubmit(onSubmit)} />
+              ) : createFailure ? (
+                <SaveFailedAlert
+                  error={createFailure}
+                  titleKey="website:pages.createFailedTitle"
+                  onRetry={
+                    createFailure.kind === 'validation'
+                      ? undefined
+                      : form.handleSubmit(onSubmit)
+                  }
+                />
               ) : null}
               <DialogFooter>
                 <Button
@@ -336,6 +434,7 @@ function CreatePageDialog({
 
 export default function WebsitePagesPage(): JSX.Element {
   const { t } = useTranslation();
+  const displayTitle = useDisplayPageTitle();
   const { academyId } = useParams<{ academyId: string }>();
   const { confirm } = useConfirmDialog();
   const { hasPermission } = usePermissions();
@@ -418,7 +517,7 @@ export default function WebsitePagesPage(): JSX.Element {
       descriptionKey: 'website:pages.deleteConfirmDescription',
       confirmLabelKey: 'website:pages.deleteAction',
       intent: 'destructive',
-      values: { title: page.title },
+      values: { title: displayTitle(page) },
     });
     if (!confirmed) return;
     deletePage.mutate({ academyId, pageId: page.id });
@@ -473,7 +572,7 @@ export default function WebsitePagesPage(): JSX.Element {
                   className="flex min-h-11 min-w-0 flex-1 flex-col justify-center text-start"
                 >
                   <span className="truncate font-medium text-foreground">
-                    {page.title}
+                    {displayTitle(page)}
                   </span>
                   <span className="truncate text-sm text-muted-foreground">
                     <bdi dir="ltr">/{page.slug}</bdi>
@@ -506,7 +605,7 @@ export default function WebsitePagesPage(): JSX.Element {
                           (updatePage.isPending && pendingId === page.id)
                         }
                         onCheckedChange={() => toggleVisibility(page)}
-                        aria-label={`${t('website:pages.visibilityToggle')}: ${page.title}`}
+                        aria-label={`${t('website:pages.visibilityToggle')}: ${displayTitle(page)}`}
                       />
                       <span className="hidden w-14 text-xs text-muted-foreground sm:inline">
                         {page.visible
@@ -528,7 +627,7 @@ export default function WebsitePagesPage(): JSX.Element {
                           visual
                             ? 'website:pages.editAria'
                             : 'website:pages.editClassicAria',
-                          { title: page.title }
+                          { title: displayTitle(page) }
                         )}
                         data-testid="website-page-edit"
                       >
@@ -544,7 +643,7 @@ export default function WebsitePagesPage(): JSX.Element {
                           size="icon"
                           className="size-11 sm:size-9"
                           aria-label={t('website:pages.moreActions', {
-                            title: page.title,
+                            title: displayTitle(page),
                           })}
                           data-testid="website-page-more"
                         >

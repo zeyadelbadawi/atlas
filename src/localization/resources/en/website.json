@@ -100,7 +100,10 @@
       "createAction": "New FAQ entry",
       "createTitle": "Create FAQ entry",
       "editTitle": "Edit FAQ entry",
-      "empty": "No FAQ entries yet"
+      "empty": "No FAQ entries yet",
+      "bothLanguagesHint": "Write the question and the answer in English and in Arabic. Library entries are kept in both languages, so visitors see them in either one.",
+      "createFailedTitle": "The FAQ entry wasn’t created",
+      "saveFailedTitle": "Your changes weren’t saved"
     },
     "testimonial": {
       "createAction": "New testimonial",
@@ -512,7 +515,9 @@
     "switchConfirmAction": "Switch theme",
     "currentTheme": "Current theme",
     "selectTheme": "Select theme",
-    "noHomePage": "No Home page found"
+    "noHomePage": "No Home page found",
+    "selectedDraftTitle": "Your draft now uses {{theme}}",
+    "selectedDraftDescription": "Your live website changes when you publish."
   },
   "themes": {
     "modernEducation": {
@@ -659,7 +664,8 @@
     "previewPage": "Preview this page",
     "visibleState": "Visible",
     "hiddenState": "Hidden",
-    "alwaysVisible": "Always available to visitors"
+    "alwaysVisible": "Always available to visitors",
+    "createFailedTitle": "The page wasn’t created"
   },
   "editor": {
     "featuredCoursesTitle": "Courses to feature",
@@ -684,7 +690,7 @@
     "duplicateSection": "Duplicate section",
     "deleteSection": "Delete section",
     "deleteConfirmTitle": "Delete this section?",
-    "deleteConfirmDescription": "This section and its content will be removed from the page. This cannot be undone.",
+    "deleteConfirmDescription": "This section and its content will be removed from the draft of this page. The change reaches your website only when you publish.",
     "noSections": "No sections yet",
     "livePreview": "Live preview",
     "moveUp": "Move up",
@@ -762,7 +768,17 @@
     "sampleHelpVideoReviews": "Sample reviews are placeholders to show the design. They’re never shown on your live website. Replace them with real reviews from your students and parents (with their permission), then mark each one as real.",
     "markVideoReviewReal": "This is a real review",
     "fieldInLanguage": "{{field}} — {{language}}",
-    "fieldInOptionalLanguage": "{{field}} — {{language}} (optional)"
+    "fieldInOptionalLanguage": "{{field}} — {{language}} (optional)",
+    "moreActions": "More",
+    "actionsBlockedByLimits": "Shorten the marked text before saving or publishing.",
+    "nothingToPublish": "Nothing new to save or publish. Visitors already see this page as saved.",
+    "nothingToSave": "No changes to save yet.",
+    "saveFailedTitle": "Your changes weren’t saved",
+    "publishFailedTitle": "This page wasn’t published",
+    "typedOverLimitSummary_one": "This text is too long. Shorten it to apply these changes:",
+    "typedOverLimitSummary_other": "{{count}} texts are too long. Shorten them to apply these changes:",
+    "panelIssuesSummary_one": "Fix {{count}} problem so your changes can be saved:",
+    "panelIssuesSummary_other": "Fix {{count}} problems so your changes can be saved:"
   },
   "preview": {
     "title": "Preview",
@@ -1142,7 +1158,10 @@
     "signInHint": "Opens your academy’s own sign-in page.",
     "choosePage": "Choose a page",
     "chooseCourse": "Choose a course",
-    "webAddress": "Web address"
+    "webAddress": "Web address",
+    "urlRequired": "Enter the web address this button opens, starting with https://",
+    "urlInvalid": "Enter a full web address starting with https://, for example https://example.com",
+    "urlHint": "The full address, starting with https://"
   },
   "icons": {
     "GraduationCap": "Graduation cap",
@@ -2400,7 +2419,15 @@
       "invalid_one": "{{count}} section needs your attention before it can be saved",
       "invalid_other": "{{count}} sections need your attention before they can be saved",
       "tooLong": "Some text is too long. Shorten it to save.",
-      "readOnly": "You can view this page but not change it."
+      "readOnly": "You can view this page but not change it.",
+      "invalidShort_one": "{{count}} section needs attention",
+      "invalidShort_other": "{{count}} sections need attention",
+      "tooLongShort": "Text too long",
+      "errorShort": "Not saved",
+      "offline": "You’re offline. Your changes aren’t saved yet",
+      "offlineShort": "Offline",
+      "offlineReason": "Your changes stay in this editor and are saved as soon as you’re back online. You can also press Try again.",
+      "errorReasonUnknown": "The save didn’t go through. Try again in a moment."
     },
     "badges": {
       "hidden": "Hidden",
@@ -2410,7 +2437,11 @@
     "publish": {
       "button": "Publish",
       "upToDate": "Live and up to date",
-      "siteNotLive": "Your website isn’t published yet. Publish it from the Website page."
+      "siteNotLive": "Your website isn’t published yet. Publish it from the Website page.",
+      "needsAttention_one": "Fix the section marked in the list before publishing.",
+      "needsAttention_other": "Fix the {{count}} sections marked in the list before publishing.",
+      "nothingNew": "Nothing new to publish. Visitors already see this page as saved.",
+      "showSection": "Go to the section"
     },
     "announce": {
       "selected": "{{section}} selected",
@@ -2481,7 +2512,8 @@
       "limit": "{{field}} can be at most {{count}} characters.",
       "inPanel": "{{field}} is edited in the panel.",
       "ambiguous": "This text appears in more than one field. Edit it in the panel.",
-      "notText": "This part of the section is edited in the panel."
+      "notText": "This part of the section is edited in the panel.",
+      "hintTouch": "Tip: double-tap text on the page to edit it there. Tap outside the text when you’re done."
     },
     "editIn": "Edit in visual editor"
   },
@@ -3001,5 +3033,16 @@
       "sample_one": "{{count}} sample item is still here. Samples never appear on the public site.",
       "sample_other": "{{count}} sample items are still here. Samples never appear on the public site."
     }
+  },
+  "form": {
+    "tooLong": "{{field}} is too long. Shorten it and try again."
+  },
+  "corePageTitles": {
+    "home": "Home",
+    "about": "About",
+    "courses": "Courses",
+    "faqs": "FAQs",
+    "contact": "Contact",
+    "courseDetails": "Course Details"
   }
 }

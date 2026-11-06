@@ -24,7 +24,9 @@ import { FolderOpen, ImageOff, Loader2, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useFilePicker } from '@hooks';
-import { isolateNumericExpression } from '@utils';
+import { useFailureReason } from '@forms';
+import { isApiError } from '@api';
+import { formatBytes, isolateNumericExpression } from '@utils';
 import { MediaLibraryDialog, useUploadMediaAsset } from '@features/media';
 import { useImagePreview } from '../theme-assets/useImagePreview';
 import {
@@ -78,8 +80,17 @@ export function WebsiteImageField({
   purpose,
   themeKey,
 }: WebsiteImageFieldProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // The message under the field, already in words (a size, a reason).
   const [error, setError] = useState<string>();
+  // From i18n, not `useLanguage`: this field also renders outside the app's
+  // providers (setup wizard previews, tests).
+  const language = i18n.language === 'ar' ? 'ar' : 'en';
+  const failureReason = useFailureReason();
+  const sizeText = (bytes: number) => {
+    const { value: amount, unitKey } = formatBytes(bytes, language);
+    return `${amount} ${t(unitKey)}`;
+  };
   const contextThemeKey = useContext(WebsiteImageThemeContext);
   const preview = useImagePreview(value, themeKey ?? contextThemeKey);
   // The stored value whose file failed to load (deleted asset, offline):
@@ -93,7 +104,7 @@ export function WebsiteImageField({
     preview.status === 'unavailable' ||
     (previewSrc !== undefined && failedSrc === previewSrc);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
-  const uploadAsset = useUploadMediaAsset();
+  const uploadAsset = useUploadMediaAsset({ inlineErrors: true });
   const isUploading = uploadAsset.isPending;
   const filePicker = useFilePicker({
     accept: ALLOWED_WEBSITE_IMAGE_TYPES.join(','),
@@ -107,12 +118,18 @@ export function WebsiteImageField({
     if (!file) return;
 
     if (file.size > MAX_WEBSITE_IMAGE_FILE_SIZE) {
-      setError('website:common.imageTooLarge');
+      // B2 (UX audit) — "The file is too large." never said the limit.
+      setError(
+        t('validation:imageTooLarge', {
+          size: isolateNumericExpression(sizeText(file.size)),
+          max: isolateNumericExpression(sizeText(MAX_WEBSITE_IMAGE_FILE_SIZE)),
+        })
+      );
       filePicker.clearFiles();
       return;
     }
     if (!ALLOWED_WEBSITE_IMAGE_TYPES.includes(file.type)) {
-      setError('website:common.imageInvalidType');
+      setError(t('website:common.imageInvalidType'));
       filePicker.clearFiles();
       return;
     }
@@ -139,7 +156,20 @@ export function WebsiteImageField({
         .then((asset) => onChange(asset.url))
         // The field keeps its previous value: a failed upload must never
         // look like it worked.
-        .catch(() => setError('website:common.imageUploadFailed'));
+        .catch((uploadError: unknown) => {
+          // The real reason, in this field's terms: a refused type names
+          // the types THIS field accepts, not the media library's list.
+          if (!isApiError(uploadError)) {
+            setError(t('website:common.imageUploadFailed'));
+          } else if (
+            uploadError.messageKey === 'errors.media.unsupportedFileType' ||
+            uploadError.messageKey === 'errors.media.invalidDataUrl'
+          ) {
+            setError(t('website:common.imageInvalidType'));
+          } else {
+            setError(failureReason(uploadError));
+          }
+        });
     };
     reader.readAsDataURL(file);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -253,7 +283,7 @@ export function WebsiteImageField({
       ) : null}
       {error ? (
         <p className="text-sm text-destructive" role="alert">
-          {t(error)}
+          {error}
         </p>
       ) : null}
       {academyId ? (

@@ -51,6 +51,10 @@ export interface ContactSubmissionsToolbarProps {
   readonly onKindChange?: (kind: ContactSubmissionKind | undefined) => void;
   readonly onFromChange: (from: string | undefined) => void;
   readonly onToChange: (to: string | undefined) => void;
+  readonly onRangeChange: (
+    from: string | undefined,
+    to: string | undefined
+  ) => void;
   readonly onSortChange: (sort: ContactSubmissionSortOption) => void;
   readonly onClearFilters: () => void;
 }
@@ -64,11 +68,16 @@ export function ContactSubmissionsToolbar({
   onKindChange,
   onFromChange,
   onToChange,
+  onRangeChange,
   onSortChange,
   onClearFilters,
 }: ContactSubmissionsToolbarProps): JSX.Element {
   const { t } = useTranslation();
   const { language } = useLanguage();
+  // B2 (UX audit) — a reversed range used to be applied without a word.
+  const datesReversed = Boolean(
+    filters.from && filters.to && filters.from > filters.to
+  );
 
   const countFor = (tab: StatusTab): number | undefined =>
     summary ? (tab === 'all' ? summary.total : summary[tab]) : undefined;
@@ -88,7 +97,11 @@ export function ContactSubmissionsToolbar({
             )
           }
         >
-          <TabsList aria-label={t('website:messages.filters.status')}>
+          {/* B2 (UX audit) — wraps at 375 px instead of cutting "Archived" off. */}
+          <TabsList
+            aria-label={t('website:messages.filters.status')}
+            className="h-auto max-w-full flex-wrap justify-start"
+          >
             {STATUS_TABS.map((tab) => {
               const count = countFor(tab);
               return (
@@ -117,7 +130,7 @@ export function ContactSubmissionsToolbar({
           value={filters.search}
           onValueChange={onSearchChange}
           labelKey="website:messages.searchLabel"
-          className="w-full lg:max-w-sm lg:flex-1"
+          className="w-full lg:min-w-[18rem] lg:max-w-sm lg:flex-1"
         />
 
         {onKindChange ? (
@@ -157,7 +170,7 @@ export function ContactSubmissionsToolbar({
           </div>
         ) : null}
 
-        <fieldset className="flex flex-col gap-3 sm:flex-row sm:items-end">
+        <fieldset className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
           <legend className="sr-only">
             {t('website:messages.filters.dateRange')}
           </legend>
@@ -171,6 +184,10 @@ export function ContactSubmissionsToolbar({
             <Input
               id="contact-submissions-from"
               type="date"
+              aria-invalid={datesReversed || undefined}
+              aria-describedby={
+                datesReversed ? 'contact-submissions-dates-error' : undefined
+              }
               value={filters.from ?? ''}
               max={filters.to}
               onChange={(event) =>
@@ -189,12 +206,33 @@ export function ContactSubmissionsToolbar({
             <Input
               id="contact-submissions-to"
               type="date"
+              aria-invalid={datesReversed || undefined}
+              aria-describedby={
+                datesReversed ? 'contact-submissions-dates-error' : undefined
+              }
               value={filters.to ?? ''}
               min={filters.from}
               onChange={(event) => onToChange(event.target.value || undefined)}
               className="w-full sm:w-[160px]"
             />
           </div>
+          {datesReversed ? (
+            <div
+              role="alert"
+              id="contact-submissions-dates-error"
+              className="flex flex-wrap items-center gap-2 text-sm text-destructive sm:basis-full"
+            >
+              <span>{t('validation:dateRangeReversed')}</span>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => onRangeChange(filters.to, filters.from)}
+              >
+                {t('common:actions.swapDates')}
+              </Button>
+            </div>
+          ) : null}
         </fieldset>
 
         <Select

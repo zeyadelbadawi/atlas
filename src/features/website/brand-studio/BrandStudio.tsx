@@ -12,7 +12,7 @@
  * through a polite live region; the preview cross-fade is disabled under
  * reduced motion (`brand-studio.css`).
  */
-import { useId, useRef, type ReactNode } from 'react';
+import { useId, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   CheckCircle2,
@@ -105,7 +105,29 @@ function ColorField({
   readonly onClear?: () => void;
   readonly clearLabel?: string;
 }): JSX.Element {
+  const { t } = useTranslation();
   const hex = value ? tripletToHex(value) : '#000000';
+  // B2 (UX audit) — "zzz", "#12345" or "red" used to be dropped without a
+  // word while the bar said "Everything is saved and live."; the field now
+  // says what it expects, and keeps the last good colour.
+  const [invalid, setInvalid] = useState(false);
+  // Remounts the text input after Clear even when the colour's hex is unchanged.
+  const [clearCount, setClearCount] = useState(0);
+  const errorId = `${id}-hex-error`;
+  const commit = (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed && !value) {
+      setInvalid(false);
+      return;
+    }
+    const triplet = hexToTriplet(trimmed);
+    if (!triplet) {
+      setInvalid(true);
+      return;
+    }
+    setInvalid(false);
+    onChange(triplet);
+  };
   return (
     <div className="space-y-1.5">
       <Label htmlFor={`${id}-hex`}>{label}</Label>
@@ -116,29 +138,54 @@ function ColorField({
           value={hex}
           onChange={(event) => {
             const triplet = hexToTriplet(event.target.value);
-            if (triplet) onChange(triplet);
+            if (triplet) {
+              setInvalid(false);
+              onChange(triplet);
+            }
           }}
           className="size-10 shrink-0 cursor-pointer rounded-md border border-border bg-transparent p-1"
         />
         <Input
           id={`${id}-hex`}
-          key={hex}
+          key={`${hex}-${clearCount}`}
           defaultValue={value ? hex : ''}
           dir="ltr"
           data-ltr-content
           spellCheck={false}
           className="w-28 font-mono uppercase"
-          onBlur={(event) => {
-            const triplet = hexToTriplet(event.target.value);
-            if (triplet) onChange(triplet);
+          aria-invalid={invalid || undefined}
+          aria-describedby={invalid ? errorId : undefined}
+          onChange={() => {
+            if (invalid) setInvalid(false);
+          }}
+          onBlur={(event) => commit(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              commit(event.currentTarget.value);
+            }
           }}
         />
         {onClear ? (
-          <Button type="button" variant="ghost" size="sm" onClick={onClear}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setInvalid(false);
+              setClearCount((count) => count + 1);
+              onClear();
+            }}
+          >
             {clearLabel}
           </Button>
         ) : null}
       </div>
+      {invalid ? (
+        <p id={errorId} role="alert" className="text-sm text-destructive">
+          {t('validation:hexColor')}
+        </p>
+      ) : null}
     </div>
   );
 }

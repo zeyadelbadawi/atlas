@@ -8,7 +8,13 @@
  * - each bilingual input's name carries its field and language.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createI18nInstance } from '@/localization/i18n';
@@ -19,12 +25,17 @@ import { LocalizedTextField } from './LocalizedTextField';
 import { WebsiteContentLocaleProvider } from './website-content-locale';
 
 const mutate = vi.fn();
+const mutateAsync = vi.fn();
 const invalidate = vi.fn();
 const toast = vi.fn();
 let role: string | undefined;
 
 vi.mock('../hooks', () => ({
-  useUpdateWebsiteConfiguration: () => ({ mutate, isPending: false }),
+  useUpdateWebsiteConfiguration: () => ({
+    mutate,
+    mutateAsync,
+    isPending: false,
+  }),
 }));
 vi.mock('@/shared/hooks', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
@@ -72,6 +83,7 @@ function renderTab(config: WebsiteConfiguration, language: 'en' | 'ar' = 'en') {
 
 beforeEach(() => {
   mutate.mockReset();
+  mutateAsync.mockReset();
   invalidate.mockReset();
   toast.mockReset();
   role = undefined;
@@ -129,16 +141,17 @@ describe('header/footer lock', () => {
     expect(mutate.mock.calls[0][0].payload).toEqual({ chromeLocked: false });
   });
 
-  it('translates a save refused because it was locked meanwhile', () => {
-    renderTab(configuration(false));
-    fireEvent.click(screen.getByRole('checkbox'));
-    mutate.mock.calls[0][1].onError(
+  it('translates a save refused because it was locked meanwhile', async () => {
+    mutateAsync.mockRejectedValueOnce(
       createApiError('conflict', {
         code: 'website_chrome_locked',
         messageKey: 'errors.website.chromeLocked',
         details: { areas: 'navigation' },
       })
     );
+    renderTab(configuration(false));
+    fireEvent.click(screen.getByRole('checkbox'));
+    await waitFor(() => expect(toast).toHaveBeenCalled());
     expect(toast).toHaveBeenCalledWith(
       expect.objectContaining({
         title: expect.stringContaining(

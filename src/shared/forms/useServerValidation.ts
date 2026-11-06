@@ -32,6 +32,31 @@ export function isFieldViolationError(error: ApiError | null): boolean {
  * `timeLimitSeconds` on the wire and `timeLimitMinutes` in the form). An
  * unmapped name is used as-is.
  */
+/** `{{count}}` left in a resolved message: a value it needs was not provided. */
+export function hasUnfilledPlaceholder(text: string): boolean {
+  return /\{\{\s*[\w.]+\s*\}\}/.test(text);
+}
+
+/**
+ * What `{{field}}` reads for a server violation the form didn't label.
+ * B2 (UX audit): `question.en` read "En must be…", and an Arabic page got
+ * the API's English field name. The language and list-index segments are
+ * dropped, and a non-English page says "this field" instead of English.
+ */
+export function serverFieldLabel(
+  field: string,
+  language: string | undefined,
+  t: (key: string) => string
+): string {
+  if (!language?.startsWith('en')) return t('validation:thisField');
+  const segments = field
+    .split('.')
+    .filter((segment) => !/^(en|ar|\d+)$/.test(segment));
+  return segments.length > 0
+    ? humanizeFieldName(segments.join('.'))
+    : t('validation:thisField');
+}
+
 export function useServerValidation<TValues extends FieldValues>(
   form: UseFormReturn<TValues>,
   error: ApiError | null,
@@ -61,10 +86,16 @@ export function useServerValidation<TValues extends FieldValues>(
       const messageKey = isTranslatedString(i18n, violation.messageKey)
         ? violation.messageKey
         : 'errors:validation.field';
-      const message = t(messageKey, {
-        field: humanizeFieldName(violation.field),
+      const resolved = t(messageKey, {
+        field: serverFieldLabel(violation.field, i18n.language, t),
         ...violation.values,
       });
+      // B2 (UX audit) — a message whose numbers the server didn't send
+      // ("must be {{count}} characters or fewer") falls back to the generic
+      // field message instead of showing the placeholder.
+      const message = hasUnfilledPlaceholder(resolved)
+        ? t('errors:validation.field')
+        : resolved;
       const field =
         aliases.current?.[violation.field] ??
         (violation.field as Path<TValues>);

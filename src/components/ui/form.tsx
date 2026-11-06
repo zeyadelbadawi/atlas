@@ -146,13 +146,37 @@ const FormDescription = React.forwardRef<
 });
 FormDescription.displayName = 'FormDescription';
 
+/**
+ * `validation:required`, `website:seo.saved` — a catalogue key. A message
+ * that is already text (a server reason translated upstream) may contain a
+ * colon too ("Tip: …"); treating it as a key rendered it EMPTY in
+ * production (missing keys resolve to '').
+ */
+const TRANSLATION_KEY = /^[A-Za-z]+:[\w.-]+$/;
+
+/** The message of an error, or of its first nested child (a localized field's `en`/`ar`). */
+function firstErrorMessage(error: unknown, depth = 0): string | undefined {
+    if (!error || typeof error !== 'object' || depth > 3) return undefined;
+    const { message } = error as { message?: unknown };
+    if (typeof message === 'string' && message) return message;
+    for (const [key, child] of Object.entries(error)) {
+        if (key === 'ref' || key === 'type' || key === 'message') continue;
+        const nested = firstErrorMessage(child, depth + 1);
+        if (nested) return nested;
+    }
+    return undefined;
+}
+
 const FormMessage = React.forwardRef<
     HTMLParagraphElement,
     React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
     const { error, formMessageId } = useFormField();
     const { t } = useTranslation();
-    const rawMessage = error ? String(error?.message) : undefined;
+    // B2 — an object field (`{ en, ar }`) has no message of its own, only
+    // its children do; `String(undefined)` put the word "undefined" on
+    // screen. The first child's message is shown instead.
+    const rawMessage = firstErrorMessage(error);
     // Both Zod schemas and server-mapped violations across this app store
     // their message as a translation key (e.g. "validation:required") —
     // the same "contains a colon => it's an i18n key, otherwise render it
@@ -167,7 +191,7 @@ const FormMessage = React.forwardRef<
     // characters or fewer".
     const parsed = rawMessage ? parseValidationMessage(rawMessage) : null;
     const body = parsed
-        ? parsed.key.includes(':')
+        ? TRANSLATION_KEY.test(parsed.key)
             ? t(parsed.key, {
                   field: t('validation:thisField'),
                   ...parsed.values,

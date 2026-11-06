@@ -81,7 +81,7 @@
     --success-foreground: 0 0% 100%;
     --success-surface: 152 46% 95%;
 
-    --warning: 38 78% 44%;
+    --warning: 38 78% 32%;
     --warning-foreground: 40 60% 99%;
     --warning-surface: 38 82% 95%;
 
@@ -356,7 +356,7 @@
     --success: 152 54% 32%;
     --success-foreground: 0 0% 100%;
     --success-surface: 152 46% 95%;
-    --warning: 38 78% 44%;
+    --warning: 38 78% 32%;
     --warning-foreground: 40 60% 99%;
     --warning-surface: 38 82% 95%;
     --info: 212 62% 40%;

@@ -32,6 +32,18 @@ export default {
       },
     },
     extend: {
+      /*
+        B2 (UX audit) — `@tailwindcss/aspect-ratio` replaces the theme's
+        aspectRatio scale with 1–16 (for its `aspect-w-*` classes), which
+        silently removed Tailwind's own `aspect-video`, `aspect-square` and
+        `aspect-auto`: ~30 boxes across the app had no shape (a social-image
+        preview 22 px tall). The three names are restored here.
+      */
+      aspectRatio: {
+        auto: 'auto',
+        square: '1 / 1',
+        video: '16 / 9',
+      },
       screens: {
         xs: '480px',
         '3xl': '1800px',
