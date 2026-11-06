@@ -249,7 +249,8 @@ export default function AcademyMembersPage(): JSX.Element {
           }),
         // One toast: what didn't happen, and the real reason ("The
         // organization owner can't be removed…", a lost connection…).
-        onError: (err) => actionFailed(err, 'academy:members.remove.failedTitle'),
+        onError: (err) =>
+          actionFailed(err, 'academy:members.remove.failedTitle'),
       }
     );
   }
@@ -327,7 +328,7 @@ export default function AcademyMembersPage(): JSX.Element {
 
         <TabsContent value="team" className="space-y-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
               <CardTitle>{t('academy:members.title')}</CardTitle>
               <div className="flex flex-wrap items-center gap-2">
                 {canAddStudent ? (

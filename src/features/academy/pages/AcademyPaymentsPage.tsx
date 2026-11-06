@@ -345,7 +345,7 @@ export default function AcademyPaymentsPage(): JSX.Element {
             <SearchInput
               value={filters.search}
               onValueChange={(search) => update({ search })}
-              labelKey={`${K}.searchLabel`}
+              labelKey={`${K}.searchShort`}
               className="w-full lg:max-w-md lg:flex-1"
             />
             <div className="space-y-1">

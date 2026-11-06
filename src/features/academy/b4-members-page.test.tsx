@@ -12,7 +12,7 @@ import { AcademyScopeContext } from './scope/academy-scope.context';
 import type { AcademyScopeValue } from './scope/academy-scope.context';
 import type { AcademyStaffRole } from '@types';
 
-let orgRole = 'owner';
+const orgRole = 'owner';
 
 vi.mock('@hooks', async (importOriginal) => {
   const actual = await importOriginal<Record<string, unknown>>();
@@ -147,7 +147,9 @@ describe('Members page — B4', () => {
       )
     ).toBeTruthy();
     expect(screen.queryByText('Manage your academy team members')).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: 'Add student from tab' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Add student from tab' })
+    );
     expect(screen.getByTestId('add-student-dialog')).toBeTruthy();
   });
 });

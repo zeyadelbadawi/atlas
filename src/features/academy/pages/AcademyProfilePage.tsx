@@ -270,7 +270,7 @@ export default function AcademyProfilePage(): JSX.Element {
 
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(onSubmit, () => setSaveFailure(null))}
           noValidate
           className="space-y-6"
         >
@@ -306,7 +306,9 @@ export default function AcademyProfilePage(): JSX.Element {
                         dir="ltr"
                         data-ltr-content
                         readOnly={!canChangeSlug || slugLocked}
-                        aria-readonly={!canChangeSlug || slugLocked || undefined}
+                        aria-readonly={
+                          !canChangeSlug || slugLocked || undefined
+                        }
                       />
                     </FormControl>
                     <AcademySlugDescription
@@ -395,12 +397,7 @@ export default function AcademyProfilePage(): JSX.Element {
                   <FormItem>
                     <FormLabel>{t('academy:create.websiteLabel')}</FormLabel>
                     <FormControl>
-                      <Input
-                        type="url"
-                        dir="ltr"
-                        data-ltr-content
-                        {...field}
-                      />
+                      <Input type="url" dir="ltr" data-ltr-content {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

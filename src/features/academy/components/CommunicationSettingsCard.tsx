@@ -138,117 +138,119 @@ export function CommunicationSettingsCard({
       <div className="space-y-6" aria-busy={update.isPending}>
         {lockedNotice}
         <div
-          className={cn('space-y-6', locked && 'opacity-60 [&_label]:cursor-default')}
+          className={cn(
+            'space-y-6',
+            locked && 'opacity-60 [&_label]:cursor-default'
+          )}
           data-locked={locked || undefined}
         >
-        <fieldset className="space-y-3" disabled={disabled}>
-          <legend className="text-sm font-medium">
-            {t('academy:communication.otpPolicy.label')}
-          </legend>
-          <p className="text-xs text-muted-foreground">
-            {t('academy:communication.otpPolicy.description')}
-          </p>
-          <RadioGroup
-            value={data.emailOtpPolicy}
-            onValueChange={(value) =>
-              save({ emailOtpPolicy: value as AcademyEmailOtpPolicy })
-            }
-            disabled={disabled}
-            aria-label={t('academy:communication.otpPolicy.label')}
-            className="gap-3"
-          >
-            {OTP_POLICIES.map((policy) => (
-              <div
-                key={policy}
-                className="flex items-start gap-3 rounded-lg border border-border p-3"
-              >
-                <RadioGroupItem
-                  value={policy}
-                  id={`email-otp-policy-${policy}`}
-                  className="mt-0.5"
-                />
-                <Label
-                  htmlFor={`email-otp-policy-${policy}`}
-                  className="flex-1 cursor-pointer space-y-1 font-normal"
+          <fieldset className="space-y-3" disabled={disabled}>
+            <legend className="text-sm font-medium">
+              {t('academy:communication.otpPolicy.label')}
+            </legend>
+            <p className="text-xs text-muted-foreground">
+              {t('academy:communication.otpPolicy.description')}
+            </p>
+            <RadioGroup
+              value={data.emailOtpPolicy}
+              onValueChange={(value) =>
+                save({ emailOtpPolicy: value as AcademyEmailOtpPolicy })
+              }
+              disabled={disabled}
+              aria-label={t('academy:communication.otpPolicy.label')}
+              className="gap-3"
+            >
+              {OTP_POLICIES.map((policy) => (
+                <div
+                  key={policy}
+                  className="flex items-start gap-3 rounded-lg border border-border p-3"
                 >
-                  <span className="block text-sm font-medium text-foreground">
-                    {t(
-                      `academy:communication.otpPolicy.options.${policy}.label`
-                    )}
-                  </span>
-                  <span className="block text-xs text-muted-foreground">
-                    {t(
-                      `academy:communication.otpPolicy.options.${policy}.description`
-                    )}
-                  </span>
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
+                  <RadioGroupItem
+                    value={policy}
+                    id={`email-otp-policy-${policy}`}
+                    className="mt-0.5"
+                  />
+                  <Label
+                    htmlFor={`email-otp-policy-${policy}`}
+                    className="flex-1 cursor-pointer space-y-1 font-normal"
+                  >
+                    <span className="block text-sm font-medium text-foreground">
+                      {t(
+                        `academy:communication.otpPolicy.options.${policy}.label`
+                      )}
+                    </span>
+                    <span className="block text-xs text-muted-foreground">
+                      {t(
+                        `academy:communication.otpPolicy.options.${policy}.description`
+                      )}
+                    </span>
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
 
-          {data.emailOtpPolicy === 'off' ? (
-            <Alert role="status">
-              <AlertTriangle className="size-4" aria-hidden />
-              <AlertTitle>
-                {t('academy:communication.otpPolicy.offWarningTitle')}
-              </AlertTitle>
-              <AlertDescription>
-                {t('academy:communication.otpPolicy.offWarning')}
-              </AlertDescription>
-            </Alert>
-          ) : null}
-        </fieldset>
+            {data.emailOtpPolicy === 'off' ? (
+              <Alert role="status">
+                <AlertTriangle className="size-4" aria-hidden />
+                <AlertTitle>
+                  {t('academy:communication.otpPolicy.offWarningTitle')}
+                </AlertTitle>
+                <AlertDescription>
+                  {t('academy:communication.otpPolicy.offWarning')}
+                </AlertDescription>
+              </Alert>
+            ) : null}
+          </fieldset>
 
-        <div className="flex items-start justify-between gap-4">
-          <div className="space-y-0.5">
-            <Label htmlFor="announcement-email-allowed">
-              {t('academy:communication.announcementEmail.label')}
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-0.5">
+              <Label htmlFor="announcement-email-allowed">
+                {t('academy:communication.announcementEmail.label')}
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                {t('academy:communication.announcementEmail.description')}
+              </p>
+            </div>
+            <Switch
+              id="announcement-email-allowed"
+              checked={data.announcementEmailAllowed}
+              onCheckedChange={(checked) =>
+                save({ announcementEmailAllowed: checked })
+              }
+              disabled={disabled}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="learner-digest-default">
+              {t('academy:communication.digestDefault.label')}
             </Label>
             <p className="text-xs text-muted-foreground">
-              {t('academy:communication.announcementEmail.description')}
+              {t('academy:communication.digestDefault.description')}
             </p>
-          </div>
-          <Switch
-            id="announcement-email-allowed"
-            checked={data.announcementEmailAllowed}
-            onCheckedChange={(checked) =>
-              save({ announcementEmailAllowed: checked })
-            }
-            disabled={disabled}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="learner-digest-default">
-            {t('academy:communication.digestDefault.label')}
-          </Label>
-          <p className="text-xs text-muted-foreground">
-            {t('academy:communication.digestDefault.description')}
-          </p>
-          <Select
-            value={data.learnerDigestDefault}
-            onValueChange={(value) =>
-              save({ learnerDigestDefault: value as LearnerDigestFrequency })
-            }
-            disabled={disabled}
-          >
-            <SelectTrigger
-              id="learner-digest-default"
-              className="sm:max-w-xs"
-              aria-label={t('academy:communication.digestDefault.label')}
+            <Select
+              value={data.learnerDigestDefault}
+              onValueChange={(value) =>
+                save({ learnerDigestDefault: value as LearnerDigestFrequency })
+              }
+              disabled={disabled}
             >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {DIGEST_OPTIONS.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {t(`academy:communication.digestDefault.options.${option}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
+              <SelectTrigger
+                id="learner-digest-default"
+                className="sm:max-w-xs"
+                aria-label={t('academy:communication.digestDefault.label')}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {DIGEST_OPTIONS.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {t(`academy:communication.digestDefault.options.${option}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {update.error ? (

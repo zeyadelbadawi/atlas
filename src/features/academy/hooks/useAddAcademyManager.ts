@@ -5,7 +5,11 @@
  * access to an academy (`AcademyService.addAcademyManager`).
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { academyKeys, dashboardOverviewKeys, INLINE_ERRORS_META } from '@services/query';
+import {
+  academyKeys,
+  dashboardOverviewKeys,
+  INLINE_ERRORS_META,
+} from '@services/query';
 import type { ApiError } from '@api';
 import { academyService } from '../services/AcademyService';
 import type { AcademyMemberAddResult, AddAcademyManagerPayload } from '@types';

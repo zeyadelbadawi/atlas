@@ -398,6 +398,19 @@ describe('DevicePolicyCard', () => {
     expect(
       await screen.findByText(/platform allows at most 5\. Choose 5 or fewer/i)
     ).toBeTruthy();
-    expect(screen.queryByRole('alert', { name: /could not be saved/i })).toBeNull();
+    expect(
+      screen.queryByRole('alert', { name: /could not be saved/i })
+    ).toBeNull();
+  });
+});
+
+describe('DevicePolicyCard — B4 V20 server refusal', () => {
+  it('marks the refused field with the real range, once', async () => {
+    failure = createApiError('validation', {
+      violations: [{ field: 'maxDevices', messageKey: 'validation:max' }],
+    });
+    renderOne(<DevicePolicyCard academyId="academy-1" canEdit />);
+    expect(await screen.findByText(/whole number from 1 to 5\./i)).toBeTruthy();
+    expect(screen.queryByText(/could not be saved/i)).toBeNull();
   });
 });

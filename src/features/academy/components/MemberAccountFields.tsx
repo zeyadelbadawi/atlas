@@ -52,7 +52,6 @@ export interface MemberAccountFieldsProps<
   readonly existingRole?: AcademyMemberRole;
 }
 
-
 /** Whether the lookup already knows the add cannot succeed (already in this academy). */
 export function isBlockedByLookup(lookup: MemberLookupState): boolean {
   return lookup.state === 'already_member';

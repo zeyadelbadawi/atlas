@@ -417,7 +417,9 @@ export default function AcademySettingsPage(): JSX.Element {
           {section === 'details' && (
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={form.handleSubmit(onSubmit, () =>
+                  setSaveFailure(null)
+                )}
                 noValidate
                 className="space-y-6"
               >

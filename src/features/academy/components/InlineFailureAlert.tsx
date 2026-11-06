@@ -27,7 +27,11 @@ export function InlineFailureAlert({
   const { t } = useTranslation();
   if (!specificKey) {
     return (
-      <SaveFailedAlert error={error} titleKey={titleKey} className={className} />
+      <SaveFailedAlert
+        error={error}
+        titleKey={titleKey}
+        className={className}
+      />
     );
   }
   return (

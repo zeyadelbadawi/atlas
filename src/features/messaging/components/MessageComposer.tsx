@@ -469,12 +469,15 @@ export function MessageComposer({
         </Alert>
       ) : null}
       {notice?.kind === 'sendError' ? (
-        <Alert variant="destructive" role="alert" data-testid="message-send-failed">
+        <Alert
+          variant="destructive"
+          role="alert"
+          data-testid="message-send-failed"
+        >
           <AlertTriangle className="h-4 w-4" aria-hidden="true" />
           <AlertTitle>{t('messaging:notice.errorTitle')}</AlertTitle>
           <AlertDescription>
-            {failureReason(notice.error)}{' '}
-            {t('messaging:notice.notSentTwice')}
+            {failureReason(notice.error)} {t('messaging:notice.notSentTwice')}
             {notice.error.requestId ? (
               <span className="mt-1 block text-xs opacity-80">
                 {t('messaging:notice.reference', {
@@ -493,9 +496,7 @@ export function MessageComposer({
           className="min-h-11"
           disabled={!audience || !hasChannel || isPreviewing}
           aria-busy={isPreviewing}
-          aria-describedby={
-            !audience ? `${idPrefix}-audience-help` : undefined
-          }
+          aria-describedby={!audience ? `${idPrefix}-audience-help` : undefined}
           data-testid="message-preview-button"
           onClick={() => void handlePreview()}
         >

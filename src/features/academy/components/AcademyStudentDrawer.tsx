@@ -78,8 +78,8 @@ import {
   RevokeEnrollmentDialog,
 } from './AcademyStudentActionDialogs';
 import type { ApiError } from '@api';
-import type { RosterEnrollment } from '@types';
-import { progressCounts } from '@utils';
+import type { LanguageCode, RosterEnrollment } from '@types';
+import { formatNumber, progressCounts } from '@utils';
 import { PhoneNumberDisplay } from '@components/phone';
 
 export interface AcademyStudentDrawerProps {
@@ -105,7 +105,7 @@ export function AcademyStudentDrawer({
   open,
   onOpenChange,
 }: AcademyStudentDrawerProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const fmt = useDateFormatter();
   const { notifySuccess } = useToast();
   const actionFailed = useActionFailureToast();
@@ -359,7 +359,10 @@ export function AcademyStudentDrawer({
                   className="size-3.5 text-muted-foreground"
                   aria-hidden
                 />
-                {data.activeSessionCount}
+                {formatNumber(
+                  data.activeSessionCount,
+                  i18n.language as LanguageCode
+                )}
               </dd>
               {student.blocked && student.blockedReason ? (
                 <>

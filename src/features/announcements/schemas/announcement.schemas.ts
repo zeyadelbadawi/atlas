@@ -40,7 +40,10 @@ export const announcementSchema = z.object({
 });
 
 /** A `datetime-local` value at or before now (a minute's grace for typing). */
-export function isScheduleInPast(value: string, now: Date = new Date()): boolean {
+export function isScheduleInPast(
+  value: string,
+  now: Date = new Date()
+): boolean {
   const at = new Date(value);
   if (Number.isNaN(at.getTime())) return false;
   return at.getTime() < now.getTime() - 60_000;

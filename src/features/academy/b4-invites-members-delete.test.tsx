@@ -70,13 +70,10 @@ vi.mock('@hooks', async (importOriginal) => ({
   usePermissions: () => ({ hasPermission: () => true }),
 }));
 
-const { AcademyInvitesCard } = await import(
-  './components/AcademyInvitesCard'
-);
+const { AcademyInvitesCard } = await import('./components/AcademyInvitesCard');
 const { DeleteAcademyCard } = await import('./components/DeleteAcademyCard');
-const { MemberAccountFields } = await import(
-  './components/MemberAccountFields'
-);
+const { MemberAccountFields } =
+  await import('./components/MemberAccountFields');
 const { existingTeamRole } = await import('./utils/member-add.utils');
 
 const I18N = { en: createI18nInstance('en'), ar: createI18nInstance('ar') };
@@ -189,7 +186,11 @@ describe('Create invite (V01, V12)', () => {
     state.createError = createApiError('validation', {
       messageKey: 'errors.validation.failed',
       violations: [
-        { field: 'maxUses', messageKey: 'validation:max', values: { max: 1000 } },
+        {
+          field: 'maxUses',
+          messageKey: 'validation:max',
+          values: { max: 1000 },
+        },
       ],
     });
     view.rerender(tree(<AcademyInvitesCard academyId="a-1" />));
@@ -240,7 +241,9 @@ describe('Add manager — the "already here" callout (V11)', () => {
     language: 'en' | 'ar' = 'en'
   ) {
     function Harness() {
-      const form = useForm({ defaultValues: { email: 'x@example.com', name: '' } });
+      const form = useForm({
+        defaultValues: { email: 'x@example.com', name: '' },
+      });
       return (
         <Form {...form}>
           <MemberAccountFields
@@ -303,15 +306,18 @@ describe('Delete academy (V02)', () => {
   it.each([
     ['server', 'Something failed on our side'],
     ['network', 'Check your connection'],
-  ] as const)('a %s failure is one inline message with the real reason', (kind, text) => {
-    state.deleteError = createApiError(kind);
-    wrap(<DeleteAcademyCard academy={ACADEMY} />);
-    fireEvent.click(screen.getByTestId('open-delete-academy'));
-    const alert = screen.getByTestId('save-failed');
-    expect(alert.textContent).toContain('The academy could not be deleted');
-    expect(alert.textContent).toContain(text);
-    // Never the technical message.
-    expect(alert.textContent).not.toMatch(/\[server\]|\[network\]|errors\./);
-    expect(state.notifyError).not.toHaveBeenCalled();
-  });
+  ] as const)(
+    'a %s failure is one inline message with the real reason',
+    (kind, text) => {
+      state.deleteError = createApiError(kind);
+      wrap(<DeleteAcademyCard academy={ACADEMY} />);
+      fireEvent.click(screen.getByTestId('open-delete-academy'));
+      const alert = screen.getByTestId('save-failed');
+      expect(alert.textContent).toContain('The academy could not be deleted');
+      expect(alert.textContent).toContain(text);
+      // Never the technical message.
+      expect(alert.textContent).not.toMatch(/\[server\]|\[network\]|errors\./);
+      expect(state.notifyError).not.toHaveBeenCalled();
+    }
+  );
 });

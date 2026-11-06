@@ -109,7 +109,8 @@ export function memberAddSpecificKey(
  * list doesn't have them — the callout then names no role.
  */
 export function existingTeamRole(
-  members: readonly Pick<AcademyMember, 'email' | 'role' | 'status'>[] | undefined,
+  members:
+    readonly Pick<AcademyMember, 'email' | 'role' | 'status'>[] | undefined,
   email: string
 ): AcademyMemberRole | undefined {
   const typed = email.trim().toLowerCase();

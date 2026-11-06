@@ -42,9 +42,8 @@ vi.mock('@app/providers', () => ({
   }),
 }));
 
-const { AnnouncementManagerPanel } = await import(
-  './components/AnnouncementManagerPanel'
-);
+const { AnnouncementManagerPanel } =
+  await import('./components/AnnouncementManagerPanel');
 
 const I18N = { en: createI18nInstance('en'), ar: createI18nInstance('ar') };
 
@@ -105,7 +104,9 @@ function panel(options: Options = {}): ReactNode {
 }
 
 function fill(title: string, body: string, scheduledAt?: string) {
-  fireEvent.change(screen.getByLabelText('Title'), { target: { value: title } });
+  fireEvent.change(screen.getByLabelText('Title'), {
+    target: { value: title },
+  });
   fireEvent.change(screen.getByLabelText('Message'), {
     target: { value: body },
   });
@@ -126,8 +127,12 @@ afterEach(() => {
 describe('schedule in the past (V05)', () => {
   it('the rule allows a minute for typing', () => {
     const now = new Date('2026-11-06T10:00:00Z');
-    expect(isScheduleInPast(toLocalInput(new Date('2026-11-03T10:00:00Z')), now)).toBe(true);
-    expect(isScheduleInPast(toLocalInput(new Date('2026-11-07T10:00:00Z')), now)).toBe(false);
+    expect(
+      isScheduleInPast(toLocalInput(new Date('2026-11-03T10:00:00Z')), now)
+    ).toBe(true);
+    expect(
+      isScheduleInPast(toLocalInput(new Date('2026-11-07T10:00:00Z')), now)
+    ).toBe(false);
   });
 
   it('refuses a time three days ago, with a message, and sends nothing', async () => {
@@ -155,7 +160,9 @@ describe('schedule in the past (V05)', () => {
       ],
     });
     const onCreate = vi.fn().mockRejectedValue(error);
-    const view = render(panel({ isCreateOpen: true, onCreate, language: 'ar' }));
+    const view = render(
+      panel({ isCreateOpen: true, onCreate, language: 'ar' })
+    );
     fireEvent.change(screen.getByLabelText('العنوان'), {
       target: { value: 'امتحان' },
     });
@@ -168,7 +175,9 @@ describe('schedule in the past (V05)', () => {
       panel({ isCreateOpen: true, onCreate, saveError: error, language: 'ar' })
     );
     expect(
-      await screen.findByText('اختر وقتًا في المستقبل، أو اتركه فارغًا لحفظ مسودة.')
+      await screen.findByText(
+        'اختر وقتًا في المستقبل، أو اتركه فارغًا لحفظ مسودة.'
+      )
     ).toBeTruthy();
     expect(screen.queryByTestId('save-failed')).toBeNull();
     expect(state.notifyError).not.toHaveBeenCalled();
@@ -218,7 +227,10 @@ describe('the list (V16)', () => {
     render(
       panel({
         announcements: [
-          item({ status: 'scheduled', scheduledAt: '2026-12-01T09:00:00.000Z' }),
+          item({
+            status: 'scheduled',
+            scheduledAt: '2026-12-01T09:00:00.000Z',
+          }),
         ],
       })
     );

@@ -76,3 +76,65 @@ the past where the past does damage.
 - Real slug, currency or timezone change: out of bounds for the audit.
 - Bulk actions, CSV import, role change, payment-method delete: not in the app.
 - Video settings tab beyond its baseline; 768 px.
+
+## Fixes
+
+### Shared root causes
+- **One message per failure (V09, V26)** — every academy, announcement and messaging mutation
+  hook named in the table had `showErrorToast: false` without `INLINE_ERRORS_META`, so the
+  app-wide reporter toasted a second time. They all mark their errors inline now; row actions
+  show ONE toast with the action's title and the real reason (a lost connection says so),
+  dialogs and cards show ONE inline alert. A test checks the meta on 22 academy hooks.
+- **Tables at 375 px (V24)** — `DataTable` shades the side with hidden columns, says "Scroll
+  sideways to see every column." above the table, and makes the scroll box a named,
+  keyboard-reachable region.
+- **Reversed date ranges (V17)** — `ReversedDateRangeAlert` in `@forms` (from the website
+  Messages filters) with "Swap dates", now on Orders and the Activity log too.
+- **Header name (V31)** — a Latin name in the Arabic header keeps its start ("Sarah", not "…h").
+- **Backend (atlas-backend#103)** — contact phone needs 7+ digits (no letters), street ≤200,
+  city/state/country ≤100, postal code 2–20 letters/digits/spaces/hyphens; an announcement
+  scheduled more than a minute in the past is refused on `scheduledAt`. A past access expiry
+  was already refused (`errors.enrollment.expiryInPast`) — it now shows on the date field.
+
+### Per finding
+- **V01 / V12** Invite dialog: email checked; uses 1–1,000 and days 1–365, whole numbers, the
+  limits stated up front and in each message ("1.5" refused, not rounded); server violations
+  on their fields; any other failure one inline alert; Create never greyed; Escape asks.
+- **V02** Delete academy: one inline alert with the real reason — no `[server] errors.internal`.
+- **V03** Messages: a failed preview says the preview failed and nothing was sent, next to the
+  buttons; a failed send keeps "not sent" with the reason; no raw codes, no toast.
+- **V04** Contact phone and address checked on the client with the same limits as the server;
+  Profile maps `address.*` violations onto its fields.
+- **V05** A schedule in the past is refused with "This time has already passed…".
+- **V06** Expiry/enroll dates before today refused; the server's reason shows on the field.
+- **V07 / V08** Registration policy and the message composer warn before leaving with changes.
+- **V10** Academy details and Profile: a field 400 marks only the field; 409/500/abort are one
+  inline alert with the real reason ("changed elsewhere — reload", "connection").
+- **V11** "Already on this academy's team, as Instructor" — the person's real role; Arabic
+  rewritten.
+- **V13 / V14 / V15 / V19** Payment method, announcement and payment-review dialogs ask before
+  discarding typed text; error summary in the payment-method dialog; counters with the real
+  limits (2,000 / 1,000); no silent cut.
+- **V16** Cards say when ("Scheduled for …"); drafts and scheduled announcements can be
+  archived (the backend has no delete; archive cancels the schedule).
+- **V18** Block reason: 500-character counter, refusal past it, failure with the reason.
+- **V20** Devices: "Enter a whole number from 1 to 2" with the real number; a server violation
+  marks the field.
+- **V21** Changing the address (slug) asks first: from → to, old address redirects, 60-day lock.
+- **V22** The read-only explanation is at the top and the controls look read-only.
+- **V23** Revenue copy: learners pay the academy directly; Atlas holds nothing to pay out.
+- **V25 (partly)** `dir="auto"` on user text; `dir="ltr"` on email, phone, URL; counts through
+  `formatNumber`. Native date inputs follow the browser locale.
+- **V27–V30, V33, V34** Search-empty copy, visible reasons next to disabled buttons, owner copy on
+  Orders with "Review payment" links, badges that don't wrap, per-tab subtitles and "Add
+  student" on the Students tab.
+- **V31 (rest)** Drawer actions wrap, the active settings section scrolls into view, payment tabs
+  wrap, shorter search placeholders.
+- **V32** Resolved by V09: dialog failures are inline in the dialog, so no toast covers its title.
+
+### Not changed here, with reason
+- **Mixed digit styles in Arabic** — dates print Western digits, `formatNumber` prints
+  Arabic-Indic; choosing one app-wide is a separate decision.
+- **Three copies of the failure-toast helper** (course, academy, announcements) — moving them
+  into `@hooks` is a follow-up cleanup.
+- **Deleting a draft announcement** needs a backend endpoint; archive covers it.

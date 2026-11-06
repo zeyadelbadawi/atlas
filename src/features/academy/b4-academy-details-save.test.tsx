@@ -54,10 +54,13 @@ vi.mock('@hooks', async (importOriginal) => ({
   useUnsavedChanges: () => ({ markSaved: () => undefined }),
 }));
 vi.mock('@app/providers', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('@app/providers')>()),
+  ...(await importOriginal<Record<string, unknown>>()),
   useConfirmDialog: () => ({ confirm: state.confirm }),
 }));
-vi.mock('@/hooks/use-toast', () => ({ toast: state.toast, useToast: () => ({}) }));
+vi.mock('@/hooks/use-toast', () => ({
+  toast: state.toast,
+  useToast: () => ({}),
+}));
 vi.mock('./hooks', () => ({
   useAcademy: () => ({
     data: ACADEMY,
@@ -72,9 +75,8 @@ vi.mock('./hooks', () => ({
   }),
 }));
 
-const { default: AcademyProfilePage } = await import(
-  './pages/AcademyProfilePage'
-);
+const { default: AcademyProfilePage } =
+  await import('./pages/AcademyProfilePage');
 
 beforeAll(() => {
   if (!('ResizeObserver' in globalThis)) {
@@ -162,7 +164,9 @@ describe('Academy Profile — checks before sending (V04)', () => {
     render(page('ar'));
     fireEvent.change(input('contactPhone'), { target: { value: '12' } });
     fireEvent.click(screen.getByRole('button', { name: /حفظ/ }));
-    expect(await screen.findByText(/أدخل رقم هاتف من 7 إلى 15 رقمًا/)).toBeTruthy();
+    expect(
+      await screen.findByText(/أدخل رقم هاتف من 7 إلى 15 رقمًا/)
+    ).toBeTruthy();
   });
 
   it('description and names follow their content’s direction (V25)', () => {
@@ -196,16 +200,19 @@ describe('Academy Profile — failed saves (V10)', () => {
     ['conflict', 'Reload the page to see the latest version'],
     ['network', 'Check your connection'],
     ['server', 'Something failed on our side'],
-  ] as const)('a %s is one inline message with the real reason', async (kind, text) => {
-    state.update.mockRejectedValue(createApiError(kind));
-    render(page());
-    fireEvent.change(input('city'), { target: { value: 'Cairo' } });
-    submit();
-    const alert = await screen.findByTestId('save-failed');
-    expect(alert.textContent).toContain("Your changes weren't saved");
-    expect(alert.textContent).toContain(text);
-    expect(state.toast).not.toHaveBeenCalled();
-  });
+  ] as const)(
+    'a %s is one inline message with the real reason',
+    async (kind, text) => {
+      state.update.mockRejectedValue(createApiError(kind));
+      render(page());
+      fireEvent.change(input('city'), { target: { value: 'Cairo' } });
+      submit();
+      const alert = await screen.findByTestId('save-failed');
+      expect(alert.textContent).toContain("Your changes weren't saved");
+      expect(alert.textContent).toContain(text);
+      expect(state.toast).not.toHaveBeenCalled();
+    }
+  );
 });
 
 describe('changing the web address (V21)', () => {

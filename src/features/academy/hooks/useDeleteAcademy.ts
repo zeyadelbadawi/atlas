@@ -10,7 +10,9 @@ import { useApiMutation, useInvalidate } from '@/shared/hooks';
 import {
   academyKeys,
   dashboardOverviewKeys,
-  tenantKeys, INLINE_ERRORS_META } from '@services/query';
+  tenantKeys,
+  INLINE_ERRORS_META,
+} from '@services/query';
 import type { ApiError } from '@api';
 import { academyService } from '../services/AcademyService';
 

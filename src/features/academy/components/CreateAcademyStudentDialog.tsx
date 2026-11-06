@@ -203,8 +203,10 @@ export function CreateAcademyStudentDialog({
                 <InlineFailureAlert
                   error={failure}
                   titleKey="academy:members.createStudent.errors.failedTitle"
-                  specificKey={memberAddSpecificKey(failure, 'academy:members.createStudent', (key) =>
-                    isTranslatedString(i18n, key)
+                  specificKey={memberAddSpecificKey(
+                    failure,
+                    'academy:members.createStudent',
+                    (key) => isTranslatedString(i18n, key)
                   )}
                 />
               ) : null}

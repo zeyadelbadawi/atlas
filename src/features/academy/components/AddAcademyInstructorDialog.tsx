@@ -156,8 +156,10 @@ export function AddAcademyInstructorDialog({
               <InlineFailureAlert
                 error={failure}
                 titleKey="academy:members.addInstructor.errors.failedTitle"
-                specificKey={memberAddSpecificKey(failure, 'academy:members.addInstructor', (key) =>
-                  isTranslatedString(i18n, key)
+                specificKey={memberAddSpecificKey(
+                  failure,
+                  'academy:members.addInstructor',
+                  (key) => isTranslatedString(i18n, key)
                 )}
               />
             ) : null}

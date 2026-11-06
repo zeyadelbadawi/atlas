@@ -67,7 +67,8 @@ function maxText(max: number) {
 const postalCodeSchema = z
   .string()
   .refine(
-    (value) => value.trim() === '' || ACADEMY_POSTAL_CODE_PATTERN.test(value.trim()),
+    (value) =>
+      value.trim() === '' || ACADEMY_POSTAL_CODE_PATTERN.test(value.trim()),
     'academy:profile.postalCodeInvalid'
   )
   .optional();

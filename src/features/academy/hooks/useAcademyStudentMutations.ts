@@ -11,7 +11,10 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation, useAcademyBoundMutation } from '@/shared/hooks';
 import type { AcademyScopedVariables } from '@/shared/hooks';
-import { invalidateRoster as invalidateRosterQueries, INLINE_ERRORS_META } from '@services/query';
+import {
+  invalidateRoster as invalidateRosterQueries,
+  INLINE_ERRORS_META,
+} from '@services/query';
 import type { ApiError } from '@api';
 import { academyRosterService } from '../services/AcademyRosterService';
 import type {

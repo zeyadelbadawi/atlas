@@ -21,11 +21,8 @@ vi.mock('@features/course', () => ({
   }),
 }));
 
-const {
-  BlockStudentDialog,
-  EnrollStudentDialog,
-  EnrollmentExpiryDialog,
-} = await import('./components/AcademyStudentActionDialogs');
+const { BlockStudentDialog, EnrollStudentDialog, EnrollmentExpiryDialog } =
+  await import('./components/AcademyStudentActionDialogs');
 
 const I18N = { en: createI18nInstance('en'), ar: createI18nInstance('ar') };
 
@@ -194,7 +191,9 @@ describe('Block reason (V18)', () => {
     const alert = screen.getByTestId('save-failed');
     expect(alert.textContent).toContain("The student wasn't blocked");
     expect(alert.textContent).toContain('Something failed on our side');
-    expect(alert.textContent).not.toContain('That action could not be completed');
+    expect(alert.textContent).not.toContain(
+      'That action could not be completed'
+    );
   });
 
   it('a roster refusal keeps its own words', () => {

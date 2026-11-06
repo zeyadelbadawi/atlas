@@ -15,7 +15,9 @@ import { LIVE_LIST_QUERY_OPTIONS } from '@config';
 import {
   academyCourseOrderKeys,
   academyCoursePaymentKeys,
-  academyPaymentMethodKeys, INLINE_ERRORS_META } from '@services/query';
+  academyPaymentMethodKeys,
+  INLINE_ERRORS_META,
+} from '@services/query';
 import type { ApiError } from '@api';
 import type {
   AcademyCoursePaymentDetail,

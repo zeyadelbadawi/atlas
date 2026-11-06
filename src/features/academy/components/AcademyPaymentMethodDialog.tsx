@@ -146,7 +146,10 @@ function methodFieldLabels(
       'payments:manualMethods.fields.referenceInstructionsAr',
   };
   return Object.fromEntries(
-    Object.entries(entries).map(([field, key]) => [`instructions.${field}`, key])
+    Object.entries(entries).map(([field, key]) => [
+      `instructions.${field}`,
+      key,
+    ])
   );
 }
 

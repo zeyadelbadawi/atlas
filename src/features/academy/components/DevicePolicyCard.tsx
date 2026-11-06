@@ -53,13 +53,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { ErrorState } from '@components/feedback';
 import { useToast } from '@app/providers';
-import {
-  hasViolationOn,
-  isFieldViolationError,
-  useFocusFirstViolation,
-  useLabelledViolations,
-  useServerValidation,
-} from '@forms';
+import { hasViolationOn, isFieldViolationError } from '@forms';
 import { useAcademyDevicePolicy, useUpdateAcademyDevicePolicy } from '../hooks';
 import {
   buildDevicePolicySchema,
@@ -198,43 +192,57 @@ function DevicePolicyForm({
     save(values);
   };
 
-  // B4 (UX audit) V20 — a refused number is marked on its field (with the
-  // form's label); anything else is the ONE inline message below.
-  const labelledError = useLabelledViolations(
-    update.error,
-    DEVICE_FIELD_LABELS
-  );
-  useServerValidation(form, labelledError);
-  useFocusFirstViolation(form, labelledError, DEVICE_FIELD_LABELS);
+  // B4 (UX audit) V20 — a refused number is marked on its field with the
+  // real range ("from 1 to 5", the form's own limit — the server's message
+  // may carry no number); anything else is the ONE inline message below.
   const aboveMaximum =
     update.error?.messageKey === 'errors.academy.devicePolicyAboveMaximum';
   useEffect(() => {
-    if (!aboveMaximum) return;
-    form.setError(
-      'maxDevices',
-      {
-        type: 'server',
-        message: t('academy:protection.devices.aboveMaximum', {
-          max: maxDevices,
-        }),
-      },
-      { shouldFocus: true }
+    const error = update.error;
+    if (!error) return;
+    const limits = {
+      maxDevices,
+      maxConcurrentSessions: maxSessions,
+    } as const;
+    const refused = (Object.keys(limits) as (keyof typeof limits)[]).filter(
+      (name) =>
+        (name === 'maxDevices' && aboveMaximum) ||
+        (isFieldViolationError(error) &&
+          error.violations?.some((violation) => violation.field === name))
     );
-  }, [aboveMaximum, form, maxDevices, t]);
+    refused.forEach((name, index) => {
+      form.setError(
+        name,
+        {
+          type: 'server',
+          message:
+            name === 'maxDevices' && aboveMaximum
+              ? t('academy:protection.devices.aboveMaximum', {
+                  max: maxDevices,
+                })
+              : t('academy:protection.devices.outOfRangeMax', {
+                  max: limits[name],
+                }),
+        },
+        { shouldFocus: index === 0 }
+      );
+    });
+  }, [update.error, aboveMaximum, form, maxDevices, maxSessions, t]);
   const fieldHandled =
     aboveMaximum ||
     (!!update.error &&
       isFieldViolationError(update.error) &&
       hasViolationOn(update.error, DEVICE_FIELD_LABELS));
 
-  const inlineError = update.error && !fieldHandled
-    ? protectionErrorMessage(
-        t,
-        i18n,
-        update.error,
-        'academy:protection.devices.saveFailed'
-      )
-    : null;
+  const inlineError =
+    update.error && !fieldHandled
+      ? protectionErrorMessage(
+          t,
+          i18n,
+          update.error,
+          'academy:protection.devices.saveFailed'
+        )
+      : null;
 
   return (
     <Form {...form}>

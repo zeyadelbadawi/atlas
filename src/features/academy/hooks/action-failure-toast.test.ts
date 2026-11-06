@@ -31,7 +31,6 @@ vi.mock('@tanstack/react-query', async (importOriginal) => ({
   useQueryClient: () => ({}),
 }));
 
-
 const i18n = createI18nInstance('en');
 const exists = (key: string) => isTranslatedString(i18n, key);
 
@@ -44,9 +43,13 @@ describe('actionFailureDescription', () => {
   });
 
   it('offline says nothing was changed', () => {
-    const offline = actionFailureDescription(createApiError('network'), exists, {
-      online: false,
-    });
+    const offline = actionFailureDescription(
+      createApiError('network'),
+      exists,
+      {
+        online: false,
+      }
+    );
     expect(offline.descriptionKey).toBe(
       'common:connectivity.actionNeedsConnection.description'
     );
@@ -68,8 +71,12 @@ describe('actionFailureDescription', () => {
 describe('memberAddSpecificKey (V26)', () => {
   const prefix = 'academy:members.createStudent';
   it('lets the real reason through for a 500 or an abort', () => {
-    expect(memberAddSpecificKey(createApiError('server'), prefix, exists)).toBeNull();
-    expect(memberAddSpecificKey(createApiError('network'), prefix, exists)).toBeNull();
+    expect(
+      memberAddSpecificKey(createApiError('server'), prefix, exists)
+    ).toBeNull();
+    expect(
+      memberAddSpecificKey(createApiError('network'), prefix, exists)
+    ).toBeNull();
   });
   it('keeps the dialog copy for a bare conflict', () => {
     expect(
@@ -107,8 +114,7 @@ describe('roster, settings and member hooks mark their errors inline (V09)', () 
     ] as const;
     for (const name of names) {
       const hook = (hooks as Record<string, unknown>)[name] as
-        | ((id: string) => unknown)
-        | undefined;
+        ((id: string) => unknown) | undefined;
       expect(hook, name).toBeTypeOf('function');
       captured.length = 0;
       hook?.('aca-1');

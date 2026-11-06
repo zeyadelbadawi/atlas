@@ -30,6 +30,12 @@ export const ACADEMY_PROFILE_FIELD_LABELS: Readonly<Record<string, string>> = {
   'address.state': 'academy:profile.stateLabel',
   'address.postalCode': 'academy:profile.postalCodeLabel',
   'address.country': 'academy:create.countryLabel',
+  // The same fields without the `address.` prefix, as the form names them.
+  street: 'academy:profile.streetLabel',
+  city: 'academy:profile.cityLabel',
+  state: 'academy:profile.stateLabel',
+  postalCode: 'academy:profile.postalCodeLabel',
+  country: 'academy:create.countryLabel',
 };
 
 /** `address.postalCode` on the wire is `postalCode` in the Profile form. */

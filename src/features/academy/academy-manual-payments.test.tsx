@@ -510,7 +510,9 @@ describe('AcademyPaymentsPage', () => {
     renderWith(<AcademyPaymentsPage />, 'en', '/x?payment=pay-1');
     expect(screen.queryByTestId('academy-payment-refund')).toBeNull();
     const recorded = screen.getByTestId('academy-payment-refund-recorded');
-    expect(recorded.textContent).toMatch(/Refund of .* recorded on .* by Owner/);
+    expect(recorded.textContent).toMatch(
+      /Refund of .* recorded on .* by Owner/
+    );
     expect(recorded.textContent).toContain('Sent back by InstaPay');
   });
 
@@ -690,8 +692,11 @@ describe('B4 — payment method dialog and review sheet', () => {
     });
     await waitFor(() => expect(confirm).toHaveBeenCalled());
     expect(
-      (screen.getByTestId('academy-payment-reject-reason') as HTMLTextAreaElement)
-        .value
+      (
+        screen.getByTestId(
+          'academy-payment-reject-reason'
+        ) as HTMLTextAreaElement
+      ).value
     ).toBe('Amount did not match');
   });
 });

@@ -458,7 +458,7 @@ export default function AcademyOrdersPage(): JSX.Element {
           <SearchInput
             value={filters.search}
             onValueChange={(search) => update({ search })}
-            labelKey="payments:academyOrders.searchLabel"
+            labelKey="payments:academyOrders.searchShort"
             className="w-full lg:max-w-md"
           />
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">

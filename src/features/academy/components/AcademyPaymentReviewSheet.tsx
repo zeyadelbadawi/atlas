@@ -116,9 +116,7 @@ export function AcademyPaymentReviewSheet({
   // B4 (UX audit) V19 — a failed decision or refund is ONE message, inline
   // next to the button that failed (a toast covered the sheet's title on a
   // phone and named no reason), and a typed note survives Escape.
-  const [decisionFailure, setDecisionFailure] = useState<ApiError | null>(
-    null
-  );
+  const [decisionFailure, setDecisionFailure] = useState<ApiError | null>(null);
   const [refundFailure, setRefundFailure] = useState<ApiError | null>(null);
   const [noteTooLong, setNoteTooLong] = useState<'reason' | 'refund' | null>(
     null
@@ -640,7 +638,10 @@ export function AcademyPaymentReviewSheet({
                 )}
               </section>
             ) : payment.refund ? (
-              <Alert role="status" data-testid="academy-payment-refund-recorded">
+              <Alert
+                role="status"
+                data-testid="academy-payment-refund-recorded"
+              >
                 <AlertDescription>
                   <span className="block font-medium">
                     {t(`${K}.refund.recorded`, {
@@ -650,10 +651,7 @@ export function AcademyPaymentReviewSheet({
                     })}
                   </span>
                   {payment.refund.note ? (
-                    <span
-                      className="mt-1 block whitespace-pre-wrap"
-                      dir="auto"
-                    >
+                    <span className="mt-1 block whitespace-pre-wrap" dir="auto">
                       {payment.refund.note}
                     </span>
                   ) : null}
@@ -694,7 +692,8 @@ export function AcademyPaymentReviewSheet({
                       max={MAX_PAYMENT_REVIEW_NOTES_LENGTH}
                     />
                     {noteTooLong === 'refund' &&
-                    refundNote.trim().length > MAX_PAYMENT_REVIEW_NOTES_LENGTH ? (
+                    refundNote.trim().length >
+                      MAX_PAYMENT_REVIEW_NOTES_LENGTH ? (
                       <p role="alert" className="text-sm text-destructive">
                         {t(`${K}.noteTooLong`, {
                           max: MAX_PAYMENT_REVIEW_NOTES_LENGTH,
@@ -717,7 +716,10 @@ export function AcademyPaymentReviewSheet({
                         data-testid="academy-payment-refund-confirm"
                       >
                         {recordRefund.isPending ? (
-                          <Loader2 className="size-4 animate-spin" aria-hidden />
+                          <Loader2
+                            className="size-4 animate-spin"
+                            aria-hidden
+                          />
                         ) : (
                           <Undo2 className="size-4" aria-hidden />
                         )}

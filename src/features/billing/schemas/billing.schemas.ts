@@ -74,9 +74,12 @@ export type RejectPaymentFormData = z.infer<typeof rejectPaymentSchema>;
 const BANK_FIELD_REQUIRED = 'payments:bankTransferMethods.validation.required';
 /** B4 (UX audit) V14 — "longer than allowed" now states the limit. */
 function tooLong(max: number): string {
-  return validationMessage('payments:bankTransferMethods.validation.tooLongMax', {
-    count: max,
-  });
+  return validationMessage(
+    'payments:bankTransferMethods.validation.tooLongMax',
+    {
+      count: max,
+    }
+  );
 }
 
 /** `/^[A-Za-z0-9 -]+$/` — letters, digits, spaces and hyphens. */
@@ -88,11 +91,7 @@ export const SWIFT_CODE_PATTERN =
   /^[A-Za-z]{6}[A-Za-z0-9]{2}([A-Za-z0-9]{3})?$/;
 
 function requiredText(max: number) {
-  return z
-    .string()
-    .trim()
-    .min(1, BANK_FIELD_REQUIRED)
-    .max(max, tooLong(max));
+  return z.string().trim().min(1, BANK_FIELD_REQUIRED).max(max, tooLong(max));
 }
 
 /** An optional text: blank is allowed and means "not set". */

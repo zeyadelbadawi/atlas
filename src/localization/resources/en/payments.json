@@ -316,7 +316,8 @@
       }
     },
     "descriptionOwner": "Course purchases from this academy's students. You check manual payment proofs on the Payments page.",
-    "reviewPayment": "Review payment"
+    "reviewPayment": "Review payment",
+    "searchShort": "Search name, course or order ID"
   },
   "atlasPaymentProvider": {
     "title": "Atlas Payment Provider",
@@ -689,6 +690,7 @@
       "failedTitle": "The refund wasn't recorded"
     },
     "decisionFailedTitle": "Your decision wasn't saved",
-    "noteTooLong": "Keep this to {{max}} characters or fewer."
+    "noteTooLong": "Keep this to {{max}} characters or fewer.",
+    "searchShort": "Search name, course or reference"
   }
 }

@@ -83,7 +83,7 @@ vi.mock('@forms', () => ({
 }));
 // B4 (UX audit) V21 — a changed slug asks first; these tests never change it.
 vi.mock('@app/providers', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('@app/providers')>()),
+  ...(await importOriginal<Record<string, unknown>>()),
   useConfirmDialog: () => ({ confirm: vi.fn().mockResolvedValue(true) }),
 }));
 vi.mock('@/hooks/use-toast', () => ({ toast: vi.fn(), useToast: () => ({}) }));

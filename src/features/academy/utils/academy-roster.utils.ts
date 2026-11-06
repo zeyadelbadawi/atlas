@@ -237,6 +237,9 @@ export function todayDateInput(now: Date = new Date()): string {
  * access the moment it is saved. Today is allowed: access then ends at the
  * end of today (`dateInputToIso`).
  */
-export function isPastDateInput(value: string, now: Date = new Date()): boolean {
+export function isPastDateInput(
+  value: string,
+  now: Date = new Date()
+): boolean {
   return Boolean(value) && value < todayDateInput(now);
 }

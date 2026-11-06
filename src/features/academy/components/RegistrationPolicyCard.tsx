@@ -67,7 +67,8 @@ export function RegistrationPolicyCard({
     if (data) setSelected(data.registrationPolicy);
   }, [data]);
 
-  const isDirty = !!data && selected !== null && selected !== data.registrationPolicy;
+  const isDirty =
+    !!data && selected !== null && selected !== data.registrationPolicy;
 
   const markSavedRef = useRef<() => void>(() => undefined);
   // B4 (UX audit) V07 — leaving with an unsaved choice asks first (and the

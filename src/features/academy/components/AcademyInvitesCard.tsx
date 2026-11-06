@@ -71,7 +71,8 @@ import {
   getInviteState,
   getInviteStateTone,
 } from '../utils/academy-roster.utils';
-import type { AcademyInvite, CreatedAcademyInvite } from '@types';
+import type { AcademyInvite, CreatedAcademyInvite, LanguageCode } from '@types';
+import { formatNumber } from '@utils';
 
 export interface AcademyInvitesCardProps {
   readonly academyId: string;
@@ -86,8 +87,10 @@ export function AcademyInvitesCard({
   academyId,
   academyHost,
 }: AcademyInvitesCardProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const fmt = useDateFormatter();
+  // B4 (UX audit) V25 — counts in the page's digits, as elsewhere.
+  const language = i18n.language as LanguageCode;
   const { notifySuccess } = useToast();
   const actionFailed = useActionFailureToast();
   const { confirm } = useConfirmDialog();
@@ -137,7 +140,8 @@ export function AcademyInvitesCard({
       header: t('academy:registration.invites.table.uses'),
       cell: ({ row }) => (
         <span className="tabular-nums">
-          {row.original.usedCount} / {row.original.maxUses}
+          {formatNumber(row.original.usedCount, language)} /{' '}
+          {formatNumber(row.original.maxUses, language)}
         </span>
       ),
     },
@@ -311,12 +315,10 @@ function CreateInviteDialog({
   const create = useCreateAcademyInvite(academyId);
   const [created, setCreated] = useState<CreatedAcademyInvite | null>(null);
 
-  const form = useForm<CreateInviteFormInput, unknown, CreateInviteFormOutput>(
-    {
-      resolver: zodResolver(createInviteSchema),
-      defaultValues: INVITE_DEFAULTS,
-    }
-  );
+  const form = useForm<CreateInviteFormInput, unknown, CreateInviteFormOutput>({
+    resolver: zodResolver(createInviteSchema),
+    defaultValues: INVITE_DEFAULTS,
+  });
 
   // Server violations (email, maxUses, expiresInDays) land on their fields,
   // under the dialog's own labels; anything else is one alert in the dialog.
@@ -364,7 +366,9 @@ function CreateInviteDialog({
     );
   };
 
-  const link = created ? buildInviteLink(academyHost, created.token) : undefined;
+  const link = created
+    ? buildInviteLink(academyHost, created.token)
+    : undefined;
   const shareValue = link ?? created?.token ?? '';
 
   return (
@@ -479,7 +483,9 @@ function CreateInviteDialog({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {t('academy:registration.invites.create.maxUsesLabel')}
+                          {t(
+                            'academy:registration.invites.create.maxUsesLabel'
+                          )}
                         </FormLabel>
                         <FormControl>
                           <Input
