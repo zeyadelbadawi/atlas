@@ -364,9 +364,11 @@
   background-color: var(--mn-day-soft);
 }
 
-/* Outlined numerals (filled where text stroke isn't supported). */
+/* Outlined numerals (filled where text stroke isn't supported). B10 (UX
+   audit) V30 — Latin only: an outlined Arabic-Indic digit is a thin ring
+   around a small shape and reads as a stray mark, so Arabic is filled. */
 @supports (-webkit-text-stroke-width: 1px) {
-  [data-theme-pack='manara'] .mnh-step-no {
+  [data-theme-pack='manara'] .mnh-step-no:not(:lang(ar)) {
     color: transparent;
     -webkit-text-stroke: 2px var(--mn-env-text, var(--mn-text));
   }
@@ -448,6 +450,8 @@
 }
 
 [data-theme-pack='manara'] .mnh-track-link {
+  /* B10 V04 — the name is sized to its tile, not to the viewport. */
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -460,9 +464,17 @@
   text-decoration: none;
 }
 
+/* B10 (UX audit) V04 — a track name never splits mid-word ("Developme /
+   nt"): the size follows the tile's own width (four tiles a row from
+   1280 px are narrower than three at 1024 px), so a long word such as
+   "Development" (~7.2em in the display face) fits its line; a word that
+   still cannot fit hyphenates (by the page's language) or, failing that,
+   breaks only as the last resort, never at any letter. */
 [data-theme-pack='manara'] .mnh-track-name {
-  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem);
+  font-size: min(clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem), 13.5cqi);
   line-height: 1.1;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 [data-theme-pack='manara'] .mnh-track-foot {

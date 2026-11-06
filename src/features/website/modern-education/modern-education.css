@@ -162,6 +162,32 @@ a.t1-footer-social:hover {
   }
 }
 
+/* B10 (UX audit) V06 — the shared sign-in / sign-up form in Theme 1's
+   controls: 44 px tall with the control radius, as every Theme 1 action
+   and field is, and text links with a 24 px target. The form's markup is
+   shared and unchanged. */
+.t1-auth-form {
+  --radius-sm: var(--t1-radius-control);
+  --radius-md: var(--t1-radius-control);
+  --radius-lg: var(--t1-radius-card);
+}
+.t1-auth-form
+  :is(
+    input:not([type='checkbox'], [type='radio'], [type='hidden']),
+    button[type='submit']
+  ) {
+  min-block-size: 2.75rem;
+}
+:where(.t1-auth-form) a {
+  display: inline-block;
+  padding-block: 0.25rem;
+}
+/* B10 V07 — a text link in the form ("Forgot password?") takes the link
+   role (≥ 4.5:1 on the page), not the CTA fill the shared form reads. */
+.t1-auth-form .text-primary {
+  color: var(--website-link);
+}
+
 /* ------------------------------------------------------------------ */
 /* Sections (Phase 5): rhythm, tones, type, actions, cards, media.      */
 /* ------------------------------------------------------------------ */
@@ -654,6 +680,29 @@ a.t1-footer-social:hover {
   outline: 2px solid var(--website-focus);
   outline-offset: 2px;
 }
+/* B10 (UX audit) V26 — the catalog toolbar's divider spans the content,
+   not the bleed: inset by the toolbar's own padding (px-4 / sm:px-6 /
+   lg:px-8), so it ends where the cards do. */
+[data-t1-catalog-toolbar]::after {
+  content: '';
+  position: absolute;
+  inset-inline: 1rem;
+  inset-block-end: 0;
+  block-size: 1px;
+  background-color: var(--website-border);
+  pointer-events: none;
+}
+@media (min-width: 640px) {
+  [data-t1-catalog-toolbar]::after {
+    inset-inline: 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  [data-t1-catalog-toolbar]::after {
+    inset-inline: 2rem;
+  }
+}
+
 /* B9 (UX audit) V11 — a long category name wraps inside its chip instead
    of widening the page; the count stays whole beside it. */
 .t1-filter-chip {
@@ -806,6 +855,11 @@ a.t1-footer-social:hover {
  * Theme 1 — Arabic line spacing (Arabic only: `:lang(ar)`; English is
  * unchanged).
  *
+ * B10 (UX audit) V09 — and only where the text runs right to left
+ * (`:dir(rtl)`, inside `:where` so no rule gains weight): a Latin title
+ * marked `dir="auto"` on an Arabic page resolves left to right and keeps
+ * its Latin line height instead of the Arabic one.
+ *
  * Theme 1 sets Arabic headings in Readex Pro, whose ink is about 1.45 em
  * for typical text (1.8 em fully vowelled), and running text in Rubik
  * (about 1.3 em). Its Latin line-heights — 1.08–1.35 for headings, and
@@ -829,30 +883,31 @@ a.t1-footer-social:hover {
  * the theme sized on purpose.
  */
 :where([data-theme-pack='modern-education'])
-  :where(p, li, blockquote, dd, figcaption):lang(ar) {
+  :where(p, li, blockquote, dd, figcaption):lang(ar):where(:dir(rtl)) {
   line-height: 1.85;
 }
 
 :where([data-theme-pack='modern-education'])
-  :where(h1, h2, h3, h4, h5, h6):lang(ar) {
+  :where(h1, h2, h3, h4, h5, h6):lang(ar):where(:dir(rtl)) {
   line-height: 1.7;
 }
 
 /* Tailwind's size and leading utilities load after this stylesheet, so
    these weigh one class more than a utility. */
 :where([data-theme-pack='modern-education'])
-  :is(.leading-normal, .leading-relaxed):lang(ar),
+  :is(.leading-normal, .leading-relaxed):lang(ar):where(:dir(rtl)),
 :where([data-theme-pack='modern-education'])
   :where(p, li, blockquote, dd, figcaption):is(
     [class*='text-xs'],
     [class*='text-sm'],
     [class*='text-base'],
     [class*='text-lg']
-  ):lang(ar) {
+  ):lang(ar):where(:dir(rtl)) {
   line-height: 1.85;
 }
 
-:where([data-theme-pack='modern-education']) button[aria-expanded]:lang(ar),
+:where([data-theme-pack='modern-education'])
+  button[aria-expanded]:lang(ar):where(:dir(rtl)),
 :where([data-theme-pack='modern-education'])
   :is(
     [class*='text-xl'],
@@ -864,22 +919,24 @@ a.t1-footer-social:hover {
     .leading-none,
     .leading-tight,
     .leading-snug
-  ):lang(ar) {
+  ):lang(ar):where(:dir(rtl)) {
   line-height: 1.7;
 }
 
 /* Display and titles (Readex Pro). */
-[data-theme-pack='modern-education'] :is(.t1-display, .t1-title):lang(ar) {
+[data-theme-pack='modern-education']
+  :is(.t1-display, .t1-title):lang(ar):where(:dir(rtl)) {
   line-height: 1.7;
 }
 
 /* Eyebrows. */
-[data-theme-pack='modern-education'] :is(.t1-eyebrow):lang(ar) {
+[data-theme-pack='modern-education']
+  :is(.t1-eyebrow):lang(ar):where(:dir(rtl)) {
   line-height: 1.6;
 }
 
 /* Running text. */
-[data-theme-pack='modern-education'] :is(.t1-lead):lang(ar) {
+[data-theme-pack='modern-education'] :is(.t1-lead):lang(ar):where(:dir(rtl)) {
   line-height: 1.85;
 }
 

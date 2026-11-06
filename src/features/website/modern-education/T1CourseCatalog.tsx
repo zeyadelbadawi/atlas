@@ -226,11 +226,14 @@ export function T1CourseCatalog({
         description={resolveLocalizedText(config.description, locale)}
       />
 
-      {/* The toolbar stays under the sticky header while the list scrolls. */}
+      {/* The toolbar stays under the sticky header while the list scrolls.
+          Its ground bleeds to the container's edge (so cards scroll under
+          it, not beside it); its divider stays on the content's width
+          (`modern-education.css`, B10 V26). */}
       {noCourses ? null : (
         <div
           data-t1-catalog-toolbar=""
-          className="sticky top-[var(--t1-header-height)] z-20 -mx-4 mb-6 border-b border-[var(--website-border)] bg-[var(--website-background)] px-4 pb-4 pt-3 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
+          className="sticky top-[var(--t1-header-height)] z-20 -mx-4 mb-6 bg-[var(--website-background)] px-4 pb-4 pt-3 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
         >
           {categoryList.length >= 2 ? (
             <div

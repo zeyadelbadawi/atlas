@@ -24,6 +24,27 @@
   opacity: 1;
 }
 
+/* B10 (UX audit) V18 — a select draws its own chevron in the field's ink,
+   as Atelier's and Manara's do, instead of the platform's rounded one. */
+select.rw-input {
+  appearance: none;
+  padding-inline-end: 2.25rem;
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-size: 6px 6px;
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 12px) 50%;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+select.rw-input:dir(rtl) {
+  background-position:
+    12px 50%,
+    18px 50%;
+}
+
 .rws-actions,
 .rwh-hero-actions {
   display: flex;
@@ -36,7 +57,8 @@
 /* ------------------------------------------------------------------ */
 
 .rwh-hero {
-  padding-block: clamp(2.5rem, 1.5rem + 5vw, 6.5rem) clamp(3.5rem, 2rem + 6vw, 8rem);
+  padding-block: clamp(2.5rem, 1.5rem + 5vw, 6.5rem)
+    clamp(3.5rem, 2rem + 6vw, 8rem);
 }
 
 .rwh-hero .rw-columns {
@@ -657,18 +679,38 @@ a.rwl-index-row:hover .rwl-index-name {
   overflow-wrap: anywhere;
 }
 
-/* The open row is marked by a bar and its title in brand ink. */
+/* The open row is marked by a bar and its title in brand ink. B10 (UX
+   audit) V20 — the row's mark is a line chevron (where the row's sheet
+   opens: below it on phones, beside it from 1024 px), not an empty and a
+   filled square, which read as a checkbox. */
 .rwx-row-mark {
-  inline-size: 0.75rem;
-  block-size: 0.75rem;
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  margin-inline: 0.25rem;
   align-self: center;
-  border: 1px solid var(--rw-env-rule-strong);
-  transition: background-color var(--rw-fast) ease;
+  /* Physical sides on purpose: the rotation below aims the corner. */
+  border-right: 1.5px solid var(--rw-env-rule-strong);
+  border-bottom: 1.5px solid var(--rw-env-rule-strong);
+  transform: translateY(-25%) rotate(45deg);
+  transition:
+    transform var(--rw-fast) var(--rw-ease),
+    border-color var(--rw-fast);
 }
 
 .rwx-row[aria-expanded='true'] .rwx-row-mark {
-  background: var(--rw-env-marker);
   border-color: var(--rw-env-marker);
+  transform: translateY(25%) rotate(225deg);
+}
+
+@media (min-width: 1024px) {
+  .rwx-row-mark,
+  .rwx-row[aria-expanded='true'] .rwx-row-mark {
+    transform: rotate(-45deg);
+  }
+  .rwx-row-mark:dir(rtl),
+  .rwx-row[aria-expanded='true'] .rwx-row-mark:dir(rtl) {
+    transform: rotate(135deg);
+  }
 }
 
 .rwx-row[aria-expanded='true'] .rwx-row-title {

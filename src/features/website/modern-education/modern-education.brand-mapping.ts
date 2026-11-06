@@ -191,14 +191,25 @@ export function resolveModernEducationTokens(
 
   // Theme 1 caps every canvas colour at its own chroma limit; the engine's
   // border may carry a little more tint, so it is re-solved here at the
-  // cap, keeping its 3:1 boundary against the background.
+  // cap. It keeps its 3:1 boundary against the background AND, as painted,
+  // against the soft surface band: page heroes set their search field on
+  // that band (B10 UX audit V08 — 2.85:1 there before).
   const rawBorder = tripletToOklch(roles.border);
+  const isBoundary = (candidate: HslTriplet) =>
+    contrastRatio(candidate, roles.background) >= 3 &&
+    renderedContrast(candidate, roles.background) >= 3 &&
+    renderedContrast(candidate, roles.surface) >= 3;
   const border =
-    rawBorder.C <= MODERN_EDUCATION_NEUTRAL_CHROMA_CAP
+    rawBorder.C <= MODERN_EDUCATION_NEUTRAL_CHROMA_CAP &&
+    isBoundary(roles.border)
       ? roles.border
       : (solveLightness(
-          { ...rawBorder, C: MODERN_EDUCATION_NEUTRAL_CHROMA_CAP },
-          (candidate) => contrastRatio(candidate, roles.background) >= 3
+          {
+            ...rawBorder,
+            C: Math.min(MODERN_EDUCATION_NEUTRAL_CHROMA_CAP, rawBorder.C),
+          },
+          isBoundary,
+          'darker'
         ) ?? roles.border);
 
   const divider = oklchToTriplet({

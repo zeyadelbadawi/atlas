@@ -449,6 +449,16 @@ describe('T1CourseCatalog', () => {
     });
   });
 
+  it('B10 V26: the toolbar bleeds its ground but draws no border box of its own (the divider is inset in CSS)', () => {
+    courses = [course('c1')];
+    const { container } = wrap(
+      <T1CourseCatalog config={CATALOG} academyId="a1" pages={PAGES} />
+    );
+    const toolbar = container.querySelector('[data-t1-catalog-toolbar]')!;
+    expect(toolbar.className).toContain('-mx-4');
+    expect(toolbar.className).not.toMatch(/\bborder-b\b/);
+  });
+
   it('an Academy with no courses yet: no filters to use, just the launching-soon panel', () => {
     const { container } = wrap(
       <T1CourseCatalog config={CATALOG} academyId="a1" pages={PAGES} />

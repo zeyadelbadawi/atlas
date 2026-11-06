@@ -43,12 +43,17 @@
  * One Arabic file for every weight (plan §3): Arabic hierarchy is set by
  * size and colour, never by a synthesised bold, and the page carries one
  * Arabic download instead of two.
+ *
+ * Its weight range matches the Latin face's (100 700) exactly: Chromium
+ * groups a family's faces by their descriptors before `unicode-range`, so a
+ * different range made it a rival face that never served a glyph, and
+ * Arabic fell back to a system font (B10 V02).
  */
 @font-face {
   font-family: 'Riwaq Sans';
   font-style: normal;
   font-display: swap;
-  font-weight: 100 900;
+  font-weight: 100 700;
   src: url('../../../assets/fonts/ibm-plex-sans-arabic-400.woff2')
     format('woff2');
   unicode-range:
@@ -74,6 +79,10 @@
 /* ------------------------------------------------------------------ */
 
 .website-theme-scope[data-theme-pack='riwaq'] {
+  /* B10 V22 — the footer's ground, continued under the phone's bottom bar
+     (`WebsiteChrome`). */
+  --website-footer-surface: var(--rw-deep);
+
   --rw-font:
     'Riwaq Sans', 'Riwaq Fallback', 'Segoe UI', Tahoma, system-ui, sans-serif;
 
@@ -332,13 +341,26 @@ a[href='#main-content'] {
   padding-block: calc(var(--rw-rhythm) * 0.6 * var(--ws-space, 1));
 }
 
-/* Two bands on the same ground read as one surface: halve the seam. */
+/* Two bands on the same ground read as one surface: halve the seam (B10
+   UX audit V12 — on every ground, not only the deep one). The same pair
+   also in the dashboard preview, where each section sits in a box-less
+   anchor (`WebsitePreviewContext`). */
+.rw-band[data-ground='porcelain'] + .rw-band[data-ground='porcelain'],
+.rw-band[data-ground='stone'] + .rw-band[data-ground='stone'],
 .rw-band[data-ground='deep'] + .rw-band[data-ground='deep'],
-/* The same pair in the dashboard preview, where each section sits in a
-   box-less anchor (`WebsitePreviewContext`). */
+.rw-band[data-ground='brand'] + .rw-band[data-ground='brand'],
+[data-preview-section]:has(> .rw-band[data-ground='porcelain'])
+  + [data-preview-section]
+  > .rw-band[data-ground='porcelain'],
+[data-preview-section]:has(> .rw-band[data-ground='stone'])
+  + [data-preview-section]
+  > .rw-band[data-ground='stone'],
 [data-preview-section]:has(> .rw-band[data-ground='deep'])
   + [data-preview-section]
-  > .rw-band[data-ground='deep'] {
+  > .rw-band[data-ground='deep'],
+[data-preview-section]:has(> .rw-band[data-ground='brand'])
+  + [data-preview-section]
+  > .rw-band[data-ground='brand'] {
   padding-block-start: 0;
 }
 
@@ -464,20 +486,22 @@ a[href='#main-content'] {
   pointer-events: none;
 }
 
-/* A ledger: cells share their rules (1px seams, never doubled). */
+/* A ledger: cells share their rules (1px seams, never doubled). B10 (UX
+   audit) V19 — each cell draws its own rule (an outline over the 1px gap
+   it shares with its neighbours), so a row a cell short ends with the
+   last cell instead of a shaded empty one. */
 .rw-ledger {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
   gap: 1px;
-  background: var(--rw-env-rule);
-  border: 1px solid var(--rw-env-rule);
   margin: 0;
-  padding: 0;
+  padding: 1px;
   list-style: none;
 }
 
 .rw-ledger > * {
   background: var(--rw-env-bg);
+  outline: 1px solid var(--rw-env-rule);
   padding: clamp(1.25rem, 1rem + 1vw, 2rem);
   min-inline-size: 0;
 }

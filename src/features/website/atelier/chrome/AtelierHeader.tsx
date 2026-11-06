@@ -242,14 +242,19 @@ export function AtelierHeader({
       <div className="at-container atp-header-bar">
         {brandMark}
 
+        {/* B10 (UX audit) V03 — the bar shows its navigation from 1280 px,
+            where it fits on one line in both languages (measured: ~1145 px
+            needed); below that the menu holds it. Links never break, and
+            the list still wraps past half the bar, so a long navigation
+            stays reachable rather than running off the edge. */}
         <nav
           aria-label={t('website:chrome.primaryNavigation')}
-          className="hidden min-w-0 lg:block"
+          className="hidden max-w-[50%] shrink-0 xl:block"
         >
           <ul className="atp-nav-list">{navLinks('bar')}</ul>
         </nav>
 
-        <div className="hidden shrink-0 items-center gap-6 lg:flex">
+        <div className="hidden shrink-0 items-center gap-6 whitespace-nowrap xl:flex">
           {languageSwitcher}
           {authState ? (
             <WebsiteAccountMenu
@@ -266,7 +271,7 @@ export function AtelierHeader({
           )}
         </div>
 
-        <div className="flex shrink-0 items-center gap-1 lg:hidden">
+        <div className="flex shrink-0 items-center gap-1 xl:hidden">
           {authState ? null : primaryButton('min-h-11 px-4 text-sm')}
           <Sheet open={menu.isOpen} onOpenChange={menu.setOpen}>
             <SheetTrigger asChild>

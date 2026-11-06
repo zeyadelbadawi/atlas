@@ -2,6 +2,11 @@
  * Manara — Arabic line spacing (Arabic only: `:lang(ar)`; English is
  * unchanged).
  *
+ * B10 (UX audit) V09 — and only where the text runs right to left
+ * (`:dir(rtl)`, inside `:where` so no rule gains weight): a Latin title
+ * marked `dir="auto"` on an Arabic page resolves left to right and keeps
+ * its Latin line height instead of the Arabic one.
+ *
  * Alexandria's Arabic reaches far above and below the line: the ink of
  * typical text is about 1.6 em tall (2 em fully vowelled), against about
  * 1 em for its Latin, and Rubik's Arabic is about 1.3 em. The Latin
@@ -25,29 +30,31 @@
  * the theme sized on purpose.
  */
 :where([data-theme-pack='manara'])
-  :where(p, li, blockquote, dd, figcaption):lang(ar) {
+  :where(p, li, blockquote, dd, figcaption):lang(ar):where(:dir(rtl)) {
   line-height: 1.85;
 }
 
-:where([data-theme-pack='manara']) :where(h1, h2, h3, h4, h5, h6):lang(ar) {
+:where([data-theme-pack='manara'])
+  :where(h1, h2, h3, h4, h5, h6):lang(ar):where(:dir(rtl)) {
   line-height: 1.6;
 }
 
 /* Tailwind's size and leading utilities load after this stylesheet, so
    these weigh one class more than a utility. */
 :where([data-theme-pack='manara'])
-  :is(.leading-normal, .leading-relaxed):lang(ar),
+  :is(.leading-normal, .leading-relaxed):lang(ar):where(:dir(rtl)),
 :where([data-theme-pack='manara'])
   :where(p, li, blockquote, dd, figcaption):is(
     [class*='text-xs'],
     [class*='text-sm'],
     [class*='text-base'],
     [class*='text-lg']
-  ):lang(ar) {
+  ):lang(ar):where(:dir(rtl)) {
   line-height: 1.85;
 }
 
-:where([data-theme-pack='manara']) button[aria-expanded]:lang(ar),
+:where([data-theme-pack='manara'])
+  button[aria-expanded]:lang(ar):where(:dir(rtl)),
 :where([data-theme-pack='manara'])
   :is(
     [class*='text-xl'],
@@ -59,7 +66,7 @@
     .leading-none,
     .leading-tight,
     .leading-snug
-  ):lang(ar) {
+  ):lang(ar):where(:dir(rtl)) {
   line-height: 1.6;
 }
 
@@ -76,15 +83,15 @@
     .mnp-menu-link,
     .mnp-footer-name,
     .mnp-poster-name
-  ):lang(ar) {
+  ):lang(ar):where(:dir(rtl)) {
   line-height: 1.6;
 }
 
-[data-theme-pack='manara'] .mn-subtitle:lang(ar) {
+[data-theme-pack='manara'] .mn-subtitle:lang(ar):where(:dir(rtl)) {
   line-height: 1.75;
 }
 
-[data-theme-pack='manara'] .mn-label:lang(ar) {
+[data-theme-pack='manara'] .mn-label:lang(ar):where(:dir(rtl)) {
   line-height: 1.6;
 }
 
@@ -95,12 +102,12 @@
     .mnh-about-lead,
     .mnp-bold-list > li,
     textarea.mn-input
-  ):lang(ar) {
+  ):lang(ar):where(:dir(rtl)) {
   line-height: 1.85;
 }
 
 /* Buttons: a label that wraps (a narrow sidebar, a long translation) needs
    room for its marks; a one-line button grows by about 2px. */
-[data-theme-pack='manara'] :is(.mn-btn, .mn-pill):lang(ar) {
+[data-theme-pack='manara'] :is(.mn-btn, .mn-pill):lang(ar):where(:dir(rtl)) {
   line-height: 1.45;
 }

@@ -15,7 +15,7 @@ export function ModernEducationAuthFrame({
 }: ThemeAuthFrameProps): JSX.Element {
   return (
     <div className="mx-auto grid w-full max-w-[var(--website-container-width)] items-stretch gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-10">
-      <div className="min-w-0">{children}</div>
+      <div className="t1-auth-form min-w-0">{children}</div>
       <div
         aria-hidden
         className="relative hidden overflow-hidden rounded-[var(--t1-radius-card)] bg-[var(--website-ink)] lg:block"

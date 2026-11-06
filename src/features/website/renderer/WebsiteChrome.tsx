@@ -242,10 +242,14 @@ function LoadedWebsiteChrome({
             )}
 
             {showBottomNav && ThemeFooter ? (
-              // Continues the footer surface under the fixed bar.
+              // Continues the footer surface under the fixed bar. B10 (UX
+              // audit) V22 — the footer's own ground: a theme whose footer
+              // is not the soft surface (a dark one) names it in
+              // `--website-footer-surface`.
               <div
                 aria-hidden
-                className="h-16 shrink-0 bg-[var(--website-surface)] md:hidden"
+                data-footer-continuation=""
+                className="h-16 shrink-0 bg-[var(--website-footer-surface,var(--website-surface))] md:hidden"
               />
             ) : null}
 

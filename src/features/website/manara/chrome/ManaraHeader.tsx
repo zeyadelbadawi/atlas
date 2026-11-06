@@ -248,14 +248,20 @@ export function ManaraHeader({
       <div className="mn-container mnp-header-bar">
         {brandMark}
 
+        {/* B10 (UX audit) V03 — the bar shows its navigation from 1280 px,
+            where it fits on one line in both languages (Arabic needs the
+            most); below that the menu holds it. The navigation and the
+            actions keep their width and the name takes the squeeze; the
+            list still wraps past half the bar, so a long navigation stays
+            reachable rather than running off the edge. */}
         <nav
           aria-label={t('website:chrome.primaryNavigation')}
-          className="hidden min-w-0 lg:block"
+          className="hidden max-w-[50%] shrink-0 xl:block"
         >
           <ul className="mnp-nav">{navLinks('bar')}</ul>
         </nav>
 
-        <div className="hidden shrink-0 items-center gap-2 lg:flex">
+        <div className="hidden shrink-0 items-center gap-2 whitespace-nowrap xl:flex">
           {languageSwitcher()}
           {authState ? (
             <WebsiteAccountMenu
@@ -272,7 +278,7 @@ export function ManaraHeader({
           )}
         </div>
 
-        <div className="flex shrink-0 items-center gap-1 lg:hidden">
+        <div className="flex shrink-0 items-center gap-1 xl:hidden">
           {authState ? null : joinButton('px-3.5 text-sm')}
           <Sheet open={menu.isOpen} onOpenChange={menu.setOpen}>
             <SheetTrigger asChild>

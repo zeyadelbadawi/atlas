@@ -149,6 +149,11 @@ describe.each(Object.entries(IDENTITY_MATRIX))(
         contrastRatio(t.border, r.background),
         'border boundary'
       ).toBeGreaterThanOrEqual(3);
+      // B10 V08 — page heroes set their search field on the surface band.
+      expect(
+        contrastRatio(t.border, r.surface),
+        'border boundary on the surface band'
+      ).toBeGreaterThanOrEqual(3);
       expect(tripletToOklch(t.divider).C, 'divider').toBeLessThanOrEqual(
         MODERN_EDUCATION_NEUTRAL_CHROMA_CAP + 0.002
       );

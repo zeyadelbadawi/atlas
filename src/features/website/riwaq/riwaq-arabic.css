@@ -2,6 +2,11 @@
  * Riwaq — Arabic line spacing (Arabic only: `:lang(ar)`; English is
  * unchanged).
  *
+ * B10 (UX audit) V09 — and only where the text runs right to left
+ * (`:dir(rtl)`, inside `:where` so no rule gains weight): a Latin title
+ * marked `dir="auto"` on an Arabic page resolves left to right and keeps
+ * its Latin line height instead of the Arabic one.
+ *
  * IBM Plex Sans Arabic's ink is about 1.35 em for typical text and about
  * 1.75 em fully vowelled, against about 1 em for its Latin. The display
  * sizes need more air than the Latin values (1.02–1.3) give, so every role
@@ -24,29 +29,31 @@
  * the theme sized on purpose.
  */
 :where([data-theme-pack='riwaq'])
-  :where(p, li, blockquote, dd, figcaption):lang(ar) {
+  :where(p, li, blockquote, dd, figcaption):lang(ar):where(:dir(rtl)) {
   line-height: 1.85;
 }
 
-:where([data-theme-pack='riwaq']) :where(h1, h2, h3, h4, h5, h6):lang(ar) {
+:where([data-theme-pack='riwaq'])
+  :where(h1, h2, h3, h4, h5, h6):lang(ar):where(:dir(rtl)) {
   line-height: 1.55;
 }
 
 /* Tailwind's size and leading utilities load after this stylesheet, so
    these weigh one class more than a utility. */
 :where([data-theme-pack='riwaq'])
-  :is(.leading-normal, .leading-relaxed):lang(ar),
+  :is(.leading-normal, .leading-relaxed):lang(ar):where(:dir(rtl)),
 :where([data-theme-pack='riwaq'])
   :where(p, li, blockquote, dd, figcaption):is(
     [class*='text-xs'],
     [class*='text-sm'],
     [class*='text-base'],
     [class*='text-lg']
-  ):lang(ar) {
+  ):lang(ar):where(:dir(rtl)) {
   line-height: 1.85;
 }
 
-:where([data-theme-pack='riwaq']) button[aria-expanded]:lang(ar),
+:where([data-theme-pack='riwaq'])
+  button[aria-expanded]:lang(ar):where(:dir(rtl)),
 :where([data-theme-pack='riwaq'])
   :is(
     [class*='text-xl'],
@@ -58,12 +65,12 @@
     .leading-none,
     .leading-tight,
     .leading-snug
-  ):lang(ar) {
+  ):lang(ar):where(:dir(rtl)) {
   line-height: 1.55;
 }
 
 /* Display: the page headline. */
-[data-theme-pack='riwaq'] :is(.rw-display):lang(ar) {
+[data-theme-pack='riwaq'] :is(.rw-display):lang(ar):where(:dir(rtl)) {
   line-height: 1.45;
 }
 
@@ -75,28 +82,30 @@
     .rwx-row-title,
     .rwc-wordmark,
     .rwc-foot-name
-  ):lang(ar) {
+  ):lang(ar):where(:dir(rtl)) {
   line-height: 1.5;
 }
 
 /* Subtitles, questions, quotations and spec rows. */
 [data-theme-pack='riwaq']
-  :is(.rw-subtitle, .rwq-question, .rwt-text p, .rw-specs > li):lang(ar) {
+  :is(.rw-subtitle, .rwq-question, .rwt-text p, .rw-specs > li):lang(ar):where(
+    :dir(rtl)
+  ) {
   line-height: 1.6;
 }
 
 /* Labels. */
-[data-theme-pack='riwaq'] :is(.rw-label):lang(ar) {
+[data-theme-pack='riwaq'] :is(.rw-label):lang(ar):where(:dir(rtl)) {
   line-height: 1.6;
 }
 
 /* Running text. */
-[data-theme-pack='riwaq'] :is(.rw-lead):lang(ar) {
+[data-theme-pack='riwaq'] :is(.rw-lead):lang(ar):where(:dir(rtl)) {
   line-height: 1.85;
 }
 
 /* Buttons: a label that wraps (a narrow sidebar, a long translation) needs
    room for its marks; a one-line button grows by about 2px. */
-[data-theme-pack='riwaq'] :is(.rw-btn):lang(ar) {
+[data-theme-pack='riwaq'] :is(.rw-btn):lang(ar):where(:dir(rtl)) {
   line-height: 1.45;
 }

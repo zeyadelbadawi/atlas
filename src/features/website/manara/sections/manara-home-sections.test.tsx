@@ -536,6 +536,32 @@ describe('ManaraFeatures', () => {
 });
 
 describe('ManaraSteps', () => {
+  it('B10 V30: Arabic numbers its steps in Arabic-Indic digits without a leading zero', () => {
+    const { container } = wrap(
+      <ManaraSteps
+        config={{
+          title: lt('Start', 'ابدأ'),
+          items: [1, 2, 3].map((n) => ({
+            id: String(n),
+            title: lt(`Step ${n}`, `الخطوة ${n}`),
+          })),
+        }}
+        academyId="a1"
+        pages={PAGES}
+      />,
+      'ar'
+    );
+    expect(
+      [...container.querySelectorAll('.mnh-step-no')].map(
+        (node) => node.textContent
+      )
+    ).toEqual(['١', '٢', '٣']);
+    // The spoken label carries the same number.
+    expect(
+      container.querySelector('.mnh-step .mn-sr-only')?.textContent
+    ).toContain('١');
+  });
+
   it('is a soft track of outlined numerals with a beam, and nothing when empty', () => {
     const { container } = wrap(
       <ManaraSteps
