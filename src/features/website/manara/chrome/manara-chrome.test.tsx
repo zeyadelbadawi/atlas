@@ -170,7 +170,9 @@ describe('ManaraHeader', () => {
         .getAttribute('aria-current')
     ).toBeNull();
     expect(within(nav).getByRole('button', { name: 'FAQs' })).toBeTruthy();
-    expect(within(nav).getByRole('button', { name: 'My Learn' })).toBeTruthy();
+    expect(
+      within(nav).getByRole('button', { name: 'My learning' })
+    ).toBeTruthy();
     courses.click();
     expect(onNavigate).toHaveBeenCalledWith('p-courses');
   });

@@ -105,7 +105,20 @@ function renderWith(node: JSX.Element, language: 'en' | 'ar' = 'en') {
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
+  // B7 — the checkout keeps its step for the tab; `useFilePicker` appends
+  // its hidden input to <body>.
+  window.sessionStorage.clear();
+  document
+    .querySelectorAll('input[type="file"]')
+    .forEach((input) => input.remove());
 });
+
+/** B7 — the proof file goes through the app's own file button. */
+function chooseProofFile(file: File) {
+  fireEvent.click(screen.getByTestId('checkout-proof-choose'));
+  const input = document.querySelector<HTMLInputElement>('input[type="file"]');
+  fireEvent.change(input!, { target: { files: [file] } });
+}
 
 function payment(
   over: Partial<LearnerCoursePayment> = {}
@@ -353,9 +366,7 @@ describe('CourseCheckoutPage with an academy’s own methods', () => {
       target: { value: ' TRX-9 ' },
     });
     const file = new File(['x'], 'receipt.png', { type: 'image/png' });
-    fireEvent.change(screen.getByTestId('checkout-proof-file'), {
-      target: { files: [file] },
-    });
+    chooseProofFile(file);
     fireEvent.click(screen.getByTestId('checkout-submit-proof'));
     await waitFor(() =>
       expect(submitProof).toHaveBeenCalledWith({
@@ -375,19 +386,19 @@ describe('CourseCheckoutPage with an academy’s own methods', () => {
     await screen.findByTestId('checkout-method-manual_instapay');
     fireEvent.click(screen.getByRole('radio'));
     fireEvent.click(screen.getByText('Continue'));
-    const input = await screen.findByTestId('checkout-proof-file');
-    fireEvent.change(input, {
-      target: { files: [new File(['x'], 'a.gif', { type: 'image/gif' })] },
-    });
+    await screen.findByTestId('checkout-proof-choose');
+    chooseProofFile(new File(['x'], 'a.gif', { type: 'image/gif' }));
     expect(
       screen
         .getAllByRole('alert')
         .some((node) => node.textContent?.includes('PNG, JPG or PDF'))
     ).toBe(true);
-    expect(
-      (screen.getByTestId('checkout-submit-proof') as HTMLButtonElement)
-        .disabled
-    ).toBe(true);
+    // B7 — not greyed: pressed, it says a file is needed, and sends nothing.
+    fireEvent.click(screen.getByTestId('checkout-submit-proof'));
+    expect(screen.getByTestId('checkout-proof-file-error').textContent).toMatch(
+      /Choose the receipt file first/
+    );
+    expect(submitProof).not.toHaveBeenCalled();
   });
 
   it('says "under review" instead of opening a second payment', async () => {

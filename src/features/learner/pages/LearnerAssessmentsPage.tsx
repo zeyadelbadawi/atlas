@@ -100,7 +100,10 @@ function AssessmentList({
             className="flex flex-wrap items-start gap-3 rounded-lg border border-border bg-card p-3"
           >
             <div className="min-w-0 flex-1">
-              <h3 className="truncate text-sm font-medium text-foreground">
+              <h3
+                dir="auto"
+                className="text-start truncate text-sm font-medium text-foreground"
+              >
                 <Link
                   to={href}
                   className="rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -128,6 +131,7 @@ function AssessmentList({
                 <span className="whitespace-nowrap text-sm font-semibold tabular-nums text-foreground">
                   {t('learning:learnerDashboard.assessments.score', {
                     score: item.score,
+                    max: 100,
                   })}
                 </span>
               ) : null}
@@ -160,11 +164,11 @@ export default function LearnerAssessmentsPage(): JSX.Element {
         onValueChange={(value) => setTab(value as AssessmentTab)}
         className="space-y-6"
       >
-        <TabsList className="grid w-full grid-cols-2 sm:w-auto sm:inline-grid">
-          <TabsTrigger value="quizzes">
+        <TabsList className="h-auto sm:h-10 grid w-full grid-cols-2 sm:w-auto sm:inline-grid">
+          <TabsTrigger className="min-h-11 sm:min-h-0" value="quizzes">
             {t('learning:learnerDashboard.assessments.tabs.quizzes')}
           </TabsTrigger>
-          <TabsTrigger value="assignments">
+          <TabsTrigger className="min-h-11 sm:min-h-0" value="assignments">
             {t('learning:learnerDashboard.assessments.tabs.assignments')}
           </TabsTrigger>
         </TabsList>

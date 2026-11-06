@@ -6,7 +6,7 @@
  * immediately from the fresh server response.
  */
 import { useApiMutation, useAuth, useInvalidate } from '@/shared/hooks';
-import { progressKeys } from '@services/query';
+import { INLINE_ERRORS_META, progressKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { progressService } from '../services/ProgressService';
 import type { CompleteLessonPayload, CourseProgress } from '@types';
@@ -19,6 +19,7 @@ export function useCompleteLesson(courseId: string) {
     mutationFn: (payload) => progressService.completeLesson(courseId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(progressKeys.course(user?.id, courseId));
     },

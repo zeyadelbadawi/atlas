@@ -3,7 +3,7 @@
  *
  *  - A chunk that could not be loaded (a tab left open across a deploy):
  *    React.lazy cached the failure, so re-rendering can never help; the
- *    boundary says Atlas was updated and its button reloads the page.
+ *    boundary says the site was updated and its button reloads the page.
  *    Offline, it waits for the connection and reloads then.
  *  - Any other error: "Try again" REMOUNTS the section (and resets failed
  *    queries), so a transient failure recovers in place; a section that
@@ -74,7 +74,7 @@ describe('error boundary recovery', () => {
         }
       />
     );
-    expect(screen.getByText('Atlas was updated')).toBeTruthy();
+    expect(screen.getByText('This site was updated')).toBeTruthy();
     await userEvent.click(screen.getByRole('button', { name: 'Reload' }));
     expect(reload).toHaveBeenCalledTimes(1);
   });

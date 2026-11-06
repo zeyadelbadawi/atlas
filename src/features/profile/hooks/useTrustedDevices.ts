@@ -42,6 +42,7 @@ export function useRevokeTrustedDevice() {
     },
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 
@@ -56,5 +57,6 @@ export function useRevokeOtherTrustedDevices() {
     },
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

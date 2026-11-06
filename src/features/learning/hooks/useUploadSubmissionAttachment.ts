@@ -17,6 +17,7 @@ import type {
   SubmissionAttachmentUpload,
   UploadMediaAssetPayload,
 } from '@types';
+import { INLINE_ERRORS_META } from '@services/query';
 
 export interface UploadSubmissionAttachmentVariables {
   readonly courseId: string;
@@ -38,5 +39,6 @@ export function useUploadSubmissionAttachment() {
       ),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

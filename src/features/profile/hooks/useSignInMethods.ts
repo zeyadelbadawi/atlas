@@ -5,7 +5,7 @@
  */
 import { useApiMutation, useApiQuery, useInvalidate } from '@/shared/hooks';
 import { authenticationService } from '@services/identity';
-import { authKeys } from '@services/query';
+import { INLINE_ERRORS_META, authKeys } from '@services/query';
 import type { ApiError } from '@api';
 import type { SignInMethods } from '@types';
 
@@ -30,5 +30,6 @@ export function useUnlinkGoogle() {
     },
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

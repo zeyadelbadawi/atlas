@@ -213,7 +213,7 @@ describe('V13 / V26 — the cancel dialog', () => {
     });
     const alert = screen.getByTestId('save-failed');
     expect(alert.textContent).toContain("We couldn't cancel that");
-    expect(alert.textContent).toContain('Atlas could not reach the server');
+    expect(alert.textContent).toContain("We couldn't reach the server");
     expect(
       (screen.getByTestId('cancellation-feedback') as HTMLTextAreaElement).value
     ).toBe('Too pricey for us');

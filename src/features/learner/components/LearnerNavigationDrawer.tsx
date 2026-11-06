@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
+import { cn } from '@utils';
 import { useLearnerSurface } from '../context/LearnerSurface.context';
 import { LearnerNavigationList } from './LearnerNavigationList';
 
@@ -37,7 +38,8 @@ export function LearnerNavigationDrawer({
         type="button"
         variant="outline"
         size="sm"
-        className={className}
+        // B7 (UX audit) — 44 px on touch widths.
+        className={cn('h-11 sm:h-9', className)}
         aria-expanded={isOpen}
         onClick={() => setIsOpen(true)}
       >

@@ -16,7 +16,7 @@
  * looking, rather than in a corner.
  */
 import { useApiMutation, useApiQuery, useAuth, useInvalidate } from '@hooks';
-import { learnerKeys } from '@services/query';
+import { INLINE_ERRORS_META, learnerKeys } from '@services/query';
 import type { ApiError } from '@api';
 import type {
   LearnerDevicesResponse,
@@ -50,6 +50,7 @@ export function useRemoveLearnerDevice() {
     mutationFn: (deviceId) => learnerDashboardService.removeDevice(deviceId),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       // The whole learner subtree, not just the devices key: removing the
       // device this browser is using ends its own learning session too,
@@ -78,6 +79,7 @@ export function useSessionTakeover() {
     mutationFn: (payload) => learnerDashboardService.takeoverSession(payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(learnerKeys.all);
     },

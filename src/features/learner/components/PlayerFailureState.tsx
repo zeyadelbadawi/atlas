@@ -21,12 +21,18 @@ import {
   type PlayerFailure,
 } from '../utils/player-failure.utils';
 
+/*
+ * B7 (UX audit) — `unavailable` is not here: the server answers the same
+ * for an activity outside the learner's enrolment however often it is
+ * asked, so "Try again" only repeated the refusal. It keeps the course
+ * outline link. A server fault (`server`) is retryable and says so.
+ */
 const RETRYABLE: ReadonlySet<PlayerFailure['kind']> = new Set([
   'network',
+  'server',
   'expired',
   'processing',
   'rateLimited',
-  'unavailable',
   'unknown',
 ]);
 
@@ -83,7 +89,13 @@ export function PlayerFailureState({
   return (
     <div className="space-y-3">
       <ErrorState
-        kind={failure.kind === 'network' ? 'network' : 'unknown'}
+        kind={
+          failure.kind === 'network'
+            ? 'network'
+            : failure.kind === 'server'
+              ? 'server'
+              : 'unknown'
+        }
         titleKey={playerFailureTitleKey(failure.kind)}
         descriptionKey={playerFailureDescriptionKey(failure.kind)}
         onRetry={canRetry ? onRetry : undefined}

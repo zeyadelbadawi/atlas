@@ -59,7 +59,9 @@ export function Breadcrumbs({
               ) : (
                 <Link
                   to={item.path}
-                  className="rounded-sm transition-colors duration-fast ease-standard hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  // B7 (UX audit) — the hit area is 44 px tall without
+                  // making the trail taller (padding, cancelled by margin).
+                  className="-my-3 inline-block rounded-sm py-3 transition-colors duration-fast ease-standard hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
                   {label}
                 </Link>

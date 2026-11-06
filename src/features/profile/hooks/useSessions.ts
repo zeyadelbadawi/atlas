@@ -71,6 +71,7 @@ export function useRevokeSession() {
     // the failed row looking untouched with no explanation attached to it.
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 
@@ -88,5 +89,6 @@ export function useRevokeOtherSessions() {
     },
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

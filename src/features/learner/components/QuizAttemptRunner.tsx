@@ -235,7 +235,9 @@ export function QuizAttemptRunner({
     serverNow,
     deadlineAt,
     enabled: true,
-    onExpired: () => void finalize(),
+    // A failed final submit is already said by the parent; nothing is left
+    // to reject into the void (B7, UX audit).
+    onExpired: () => void finalize().catch(() => undefined),
     onAnnounce: (seconds) => setAnnouncement(seconds),
   });
 
@@ -322,11 +324,16 @@ export function QuizAttemptRunner({
       intent: 'default',
     });
     if (!confirmed) return;
-    await autosave.flush();
-    await onSubmit(
-      toAnswerList(questions, answers),
-      autosave.currentRevision()
-    );
+    try {
+      await autosave.flush();
+      await onSubmit(
+        toAnswerList(questions, answers),
+        autosave.currentRevision()
+      );
+    } catch {
+      // B7 (UX audit) — the failure is on screen (`submitError`); an
+      // unhandled rejection here only reached the console.
+    }
   };
 
   const goTo = (index: number) => {

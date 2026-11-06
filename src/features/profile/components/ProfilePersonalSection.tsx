@@ -9,7 +9,7 @@
  * mutation writes it (a real email change is a verification flow no
  * contract defines yet — documented here rather than invented).
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -43,6 +43,8 @@ import {
 } from '@forms';
 import { RequiredMark, SaveFailedAlert } from '@forms';
 import type { CurrentUser } from '@types';
+import type { ApiError } from '@api';
+import type { FieldViolation } from '@types';
 
 /** `UpdateProfileDto.name` — `@MaxLength(100)` on "first last". */
 const NAME_MAX_LENGTH = 100;
@@ -59,6 +61,45 @@ const FIELD_VIOLATIONS = {
 
 const fullName = (first: string, last: string): string =>
   `${first} ${last}`.trim();
+
+/**
+ * B7 (UX audit, V25) — the API's single `name` refused without a usable
+ * message ("Check this field" on First name, no limit): said in the form's
+ * own words, with the real limit, on the field the person most likely needs
+ * to change (the longer one). A server length message that carries its
+ * number ("Your full name must be 100 characters or fewer") is kept as is.
+ */
+export function relabelNameViolations(
+  error: ApiError | null,
+  values: { readonly firstName: string; readonly lastName: string }
+): ApiError | null {
+  const needsWords = (violation: FieldViolation) =>
+    violation.field === 'name' &&
+    !(
+      /(maxLength|minLength)$/.test(violation.messageKey) &&
+      violation.values?.count !== undefined
+    );
+  if (!error?.violations?.some(needsWords)) return error;
+  const field =
+    values.firstName.trim().length >= values.lastName.trim().length
+      ? 'firstName'
+      : 'lastName';
+  const violations = error.violations.map((violation) =>
+    needsWords(violation)
+      ? {
+          ...violation,
+          field,
+          messageKey: 'profile:errors.nameTooLong',
+          values: { ...violation.values, count: NAME_MAX_LENGTH },
+        }
+      : violation
+  );
+  return Object.assign(
+    Object.create(Object.getPrototypeOf(error) as object) as ApiError,
+    error,
+    { violations }
+  );
+}
 
 // B1 (UX audit, V08) — the backend's length limit is checked before
 // sending, with the number in the message, instead of a 400 that only ever
@@ -131,8 +172,14 @@ export function ProfilePersonalSection({
   // B1 (V08) — every other violation lands on its field, labelled in the
   // page's language. A name clash is already placed above; it is not
   // applied twice.
+  // Once per failure (a new object each render would re-apply it forever).
+  const relabelled = useMemo(
+    () => relabelNameViolations(updateProfile.error, form.getValues()),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [updateProfile.error]
+  );
   const violations = useLabelledViolations(
-    nameConflictFromError(updateProfile.error) ? null : updateProfile.error,
+    nameConflictFromError(updateProfile.error) ? null : relabelled,
     {
       name: 'profile:fields.fullName',
       firstName: 'profile:fields.firstName',

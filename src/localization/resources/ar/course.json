@@ -1062,7 +1062,22 @@
     "referenceLabel": "مرجع التحويل (اختياري)",
     "referenceHelp": "رقم العملية أو المرجع من البنك أو المحفظة، ويساعد الأكاديمية في العثور على دفعتك.",
     "proofFileHelp": "PNG أو JPG أو PDF، حتى 10 ميجابايت.",
-    "notAdmittedTitle": "لا يمكنك شراء الدورات هنا الآن"
+    "notAdmittedTitle": "لا يمكنك شراء الدورات هنا الآن",
+    "chooseMethod": "اختر طريقة الدفع أولًا.",
+    "alreadyEnrolledTitle": "أنت مسجّل بالفعل",
+    "alreadyEnrolledDescription": "أنت مسجّل في هذه الدورة بالفعل، فلا يوجد ما تدفعه. افتحها لمتابعة التعلّم.",
+    "freeTitle": "هذه الدورة مجانية",
+    "openCoursePage": "فتح صفحة الدورة",
+    "orderFailedTitle": "تعذّر بدء طلبك",
+    "methodsFailedTitle": "تعذّر تحميل طرق الدفع",
+    "paymentFailedTitle": "تعذّر بدء الدفع",
+    "loading": "جارٍ تحميل طلبك",
+    "orderReference": "مرجع الطلب",
+    "paymentReference": "مرجع الدفعة",
+    "payBefore": "ادفع وارفع الإثبات قبل {{when}}.",
+    "changeFile": "اختيار ملف آخر",
+    "proofNoteText": "ملاحظة للأكاديمية",
+    "referenceText": "مرجع التحويل"
   },
   "form": {
     "characterCount": "عدد الأحرف: {{counter}}"

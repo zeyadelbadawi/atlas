@@ -8,6 +8,7 @@
  * plan mandates for a timeout, and every branch ends with a way forward:
  * Continue to the next activity, and Retake only when allowed and useful.
  */
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -50,16 +51,59 @@ function disclosureKey(policy: Quiz['settings']['showScore']): string {
   return `learning:quiz.results.withheld.${policy}`;
 }
 
+/**
+ * B7 (UX audit) — the options the learner chose, and the right ones, BY
+ * LABEL. The results payload carries option ids only; the labels come from
+ * the quiz itself (`quiz.questions`). Only when a label is unknown (an older
+ * server, a question since removed) does the line fall back to a count.
+ */
+function optionLabels(
+  ids: readonly string[] | undefined,
+  labels: ReadonlyMap<string, string> | undefined
+): string[] | null {
+  if (!ids || ids.length === 0 || !labels) return null;
+  const named = ids.map((id) => labels.get(id));
+  return named.every((label): label is string => typeof label === 'string')
+    ? named
+    : null;
+}
+
+function OptionList({
+  labels,
+  testId,
+}: {
+  readonly labels: readonly string[];
+  readonly testId: string;
+}): JSX.Element {
+  return (
+    <span data-testid={testId}>
+      {labels.map((label, index) => (
+        <span key={`${index}-${label}`}>
+          {index > 0 ? <span aria-hidden> · </span> : null}
+          <bdi dir="auto" className="font-medium text-foreground">
+            {label}
+          </bdi>
+        </span>
+      ))}
+    </span>
+  );
+}
+
 function AnswerLine({
   question,
   language,
+  labels,
 }: {
   readonly question: QuizResultQuestion;
   readonly language: LanguageCode;
+  /** Option id → label for this question, from the quiz. */
+  readonly labels?: ReadonlyMap<string, string>;
 }): JSX.Element {
   const { t } = useTranslation();
   const isText = question.type === 'short_answer' || question.type === 'essay';
   const yours = question.yourAnswer;
+  const chosen = optionLabels(yours?.selectedOptionIds, labels);
+  const correct = optionLabels(question.correctOptionIds, labels);
 
   return (
     <div className="mt-2 space-y-1 text-sm">
@@ -70,11 +114,17 @@ function AnswerLine({
         {!question.answered ? (
           t('learning:quiz.results.notAnswered')
         ) : isText ? (
-          <span className="whitespace-pre-line">{yours?.text}</span>
+          <span dir="auto" className="whitespace-pre-line">
+            {yours?.text}
+          </span>
         ) : (yours?.selectedOptionIds ?? []).length > 0 ? (
-          t('learning:quiz.results.optionsSelected', {
-            count: yours?.selectedOptionIds?.length ?? 0,
-          })
+          chosen ? (
+            <OptionList labels={chosen} testId="quiz-result-chosen" />
+          ) : (
+            t('learning:quiz.results.optionsSelected', {
+              count: yours?.selectedOptionIds?.length ?? 0,
+            })
+          )
         ) : (
           t('learning:quiz.results.notAnswered')
         )}
@@ -84,19 +134,35 @@ function AnswerLine({
           <span className="font-medium text-foreground">
             {t('learning:quiz.results.acceptedAnswers')}:
           </span>{' '}
-          {question.acceptedAnswers.join(' · ')}
+          <OptionList
+            labels={question.acceptedAnswers}
+            testId="quiz-result-accepted"
+          />
         </p>
       ) : null}
       {question.correctOptionIds && !isText ? (
         <p className="text-muted-foreground">
-          {t('learning:quiz.results.correctOptionsCount', {
-            count: question.correctOptionIds.length,
-          })}
+          {correct ? (
+            <>
+              <span className="font-medium text-foreground">
+                {t('learning:quiz.results.correctAnswer', {
+                  count: correct.length,
+                })}
+                :
+              </span>{' '}
+              <OptionList labels={correct} testId="quiz-result-correct" />
+            </>
+          ) : (
+            t('learning:quiz.results.correctOptionsCount', {
+              count: question.correctOptionIds.length,
+            })
+          )}
         </p>
       ) : null}
       {typeof question.pointsAwarded === 'number' ? (
         <p className="tabular-nums text-muted-foreground">
           {t('learning:quiz.results.pointsAwarded', {
+            count: question.points,
             awarded: formatNumber(question.pointsAwarded, language),
             total: formatNumber(question.points, language),
           })}
@@ -107,7 +173,9 @@ function AnswerLine({
           <span className="font-medium">
             {t('learning:quiz.results.explanation')}:
           </span>{' '}
-          <span className="whitespace-pre-line">{question.explanation}</span>
+          <span dir="auto" className="whitespace-pre-line">
+            {question.explanation}
+          </span>
         </p>
       ) : null}
     </div>
@@ -127,6 +195,19 @@ export function QuizResultsView({
   const { t, i18n } = useTranslation();
   const fmt = useDateFormatter();
   const language = i18n.language as LanguageCode;
+
+  // Option id → label per question (B7): what the learner chose and what
+  // was right are named, not counted.
+  const optionLabelsByQuestion = useMemo(() => {
+    const map = new Map<string, ReadonlyMap<string, string>>();
+    for (const question of quiz.questions ?? []) {
+      map.set(
+        question.id,
+        new Map((question.options ?? []).map((o) => [o.id, o.label]))
+      );
+    }
+    return map;
+  }, [quiz.questions]);
 
   const scoreShown =
     results.disclosure.score && typeof results.score === 'number';
@@ -224,6 +305,7 @@ export function QuizResultsView({
                 {typeof results.pointsEarned === 'number' &&
                 typeof results.pointsTotal === 'number'
                   ? ` (${t('learning:quiz.results.pointsAwarded', {
+                      count: results.pointsTotal,
                       awarded: formatNumber(results.pointsEarned, language),
                       total: formatNumber(results.pointsTotal, language),
                     })})`
@@ -366,7 +448,11 @@ export function QuizResultsView({
                       >
                         {question.prompt}
                       </p>
-                      <AnswerLine question={question} language={language} />
+                      <AnswerLine
+                        question={question}
+                        language={language}
+                        labels={optionLabelsByQuestion.get(question.questionId)}
+                      />
                       {question.relatedLessonId && lessonHref ? (
                         <Link
                           to={lessonHref(question.relatedLessonId)}

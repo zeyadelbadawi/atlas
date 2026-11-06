@@ -1179,7 +1179,7 @@
     "label": "Mobile navigation",
     "home": "Home",
     "courses": "Courses",
-    "myLearning": "My Learn",
+    "myLearning": "My learning",
     "profile": "Profile"
   },
   "renderer": {
@@ -1477,7 +1477,7 @@
     "footerNavigation": "Footer",
     "learning": "Learning",
     "browseCourses": "Browse courses",
-    "myLearn": "My Learn",
+    "myLearn": "My learning",
     "certificates": "My certificates",
     "createAccount": "Create an account",
     "help": "Help",

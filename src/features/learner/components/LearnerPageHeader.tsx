@@ -39,6 +39,11 @@ export interface LearnerPageHeaderProps {
    * `/my/courses/:courseId`. Never linked: it is the current page.
    */
   readonly trailing?: BreadcrumbItem;
+  /**
+   * B7 — crumbs between the section and `trailing` (the course on its
+   * checkout: Courses › course › Checkout). Linked when they carry a path.
+   */
+  readonly ancestors?: readonly BreadcrumbItem[];
   readonly actions?: ReactNode;
 }
 
@@ -48,6 +53,7 @@ export function LearnerPageHeader({
   title,
   descriptionKey,
   trailing,
+  ancestors = [],
   actions,
 }: LearnerPageHeaderProps): JSX.Element {
   const { buildHref } = useLearnerSurface();
@@ -71,6 +77,7 @@ export function LearnerPageHeader({
             ...(trailing ? { path: buildHref(item.path) } : {}),
           },
         ]),
+    ...(trailing ? ancestors : []),
     ...(trailing ? [trailing] : []),
   ];
 

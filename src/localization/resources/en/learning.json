@@ -199,7 +199,8 @@
       },
       "timerNote": "The clock starts when you press Start and keeps running even if you close this page. When it reaches zero, the answers you have saved are submitted automatically.",
       "attemptsLeft": "{{count}} attempt left",
-      "attemptsLeft_other": "{{count}} attempts left"
+      "attemptsLeft_other": "{{count}} attempts left",
+      "lockedHint": "This quiz isn't open to you yet — the notice above says what unlocks it."
     },
     "integrity": {
       "disclosureTitle": "What is recorded during this quiz",
@@ -208,7 +209,7 @@
       "disclosureWarn": "You will be warned each time one is recorded. The limit is {{count}}; reaching it flags the attempt for review.",
       "disclosureStrict": "You will be warned each time one is recorded. When {{count}} have been recorded, the quiz is submitted automatically with the answers you have saved.",
       "disclosureFullscreen": "This quiz opens in full screen when you press Start. If you leave full screen, the questions are hidden until you return — your answers and the timer are kept — and leaving is recorded. If your browser can’t use full screen, you can still take the quiz; your instructor will see that it wasn’t available.",
-      "disclosureHonest": "Atlas never uses your camera or microphone, never records your screen or what you type, and sees nothing outside this page. Nothing is blocked.",
+      "disclosureHonest": "This quiz never uses your camera or microphone, never records your screen or what you type, and sees nothing outside this page. Nothing is blocked.",
       "acknowledge": "I understand what is recorded during this quiz.",
       "bannerTitle": "An event was recorded",
       "bannerWarn": "{{count}} event has been recorded on this attempt. Stay on this page until you submit.",
@@ -220,7 +221,8 @@
       "dialogWarnConsequence": "Your reviewer will see the record alongside your answers.",
       "dialogStrictConsequence": "{{count}} more and the quiz is submitted automatically with the answers you have saved.",
       "dialogStrictConsequence_other": "{{count}} more and the quiz is submitted automatically with the answers you have saved.",
-      "continue": "Continue quiz"
+      "continue": "Continue quiz",
+      "acknowledgeFirst": "Tick the box above to confirm you've read how this quiz is monitored, then start."
     },
     "runner": {
       "saving": "Saving…",
@@ -256,7 +258,9 @@
       "points": "{{count}} point",
       "points_other": "{{count}} points",
       "flag": "Flag",
-      "unflag": "Unflag"
+      "unflag": "Unflag",
+      "saveFailed": "Not saved — retrying",
+      "selectAll": "Select all that apply."
     },
     "results": {
       "withheld": {
@@ -278,7 +282,6 @@
       "acceptedAnswers": "Accepted answers",
       "correctOptionsCount": "{{count}} correct option",
       "correctOptionsCount_other": "{{count}} correct options",
-      "pointsAwarded": "{{awarded}} of {{total}} points",
       "explanation": "Explanation",
       "timeRanOutTitle": "Time ran out",
       "timeRanOut": "Time ran out. Your answers were submitted automatically.",
@@ -302,7 +305,11 @@
       },
       "reviewLesson": "Review the lesson",
       "historyTitle": "Your attempts",
-      "continue": "Continue to the next activity"
+      "continue": "Continue to the next activity",
+      "correctAnswer_one": "Correct answer",
+      "correctAnswer_other": "Correct answers",
+      "pointsAwarded_one": "{{awarded}} of {{total}} point",
+      "pointsAwarded_other": "{{awarded}} of {{total}} points"
     },
     "fullscreen": {
       "gateTitle": "Return to full screen to continue",
@@ -342,7 +349,7 @@
     "loadFailed": "Failed to load this assignment",
     "attachmentTooLarge": "Attachment must be smaller than 10MB.",
     "attachmentInvalidType": "Attachment must be a PDF or an image (JPG, PNG, GIF or WebP). Save Word documents as PDF first.",
-    "attachmentUploadError": "Failed to upload the attachment. Please try again.",
+    "attachmentUploadError": "The file wasn't uploaded.",
     "noInstructions": "The academy has not added instructions.",
     "noDueDate": "No due date",
     "latePolicy": {
@@ -371,7 +378,7 @@
       "awaitingGrading": "Waiting for a reviewer to grade it. You will be notified."
     },
     "grade": {
-      "score": "Score: {{score}}",
+      "score": "Score: {{score}} / {{max}}",
       "gradedNoScore": "Graded",
       "feedback": "Feedback",
       "at": "Graded on {{date}}"
@@ -379,8 +386,9 @@
     "draft": {
       "saving": "Saving draft…",
       "saved": "Draft saved",
-      "failed": "Draft not saved — check your connection",
-      "unsaved": "Unsaved changes"
+      "failed": "Draft not saved on the server — your text is kept on this device",
+      "unsaved": "Unsaved changes",
+      "tooLong": "Too long to save — shorten it to {{max}} characters"
     },
     "pastDue": {
       "title": "The due date has passed",
@@ -393,7 +401,8 @@
       "lateDescription": "The due date has passed, so this submission will be marked late. Your reviewer will see exactly what is in the form now.",
       "cancel": "Keep editing"
     },
-    "removeAttachment": "Remove"
+    "removeAttachment": "Remove",
+    "notSubmitted": "Your assignment wasn't submitted"
   },
   "completion": {
     "title": "Course completion",
@@ -414,7 +423,7 @@
     "quizPassed": "passed with {{score}}%",
     "quizPending": "awaiting grading",
     "quizNotPassed": "not passed yet",
-    "assignmentGraded": "graded {{score}}",
+    "assignmentGraded": "graded {{score}} / {{max}}",
     "assignmentGradedNoScore": "graded",
     "assignmentSubmitted": "submitted, awaiting grading",
     "assignmentNotSubmitted": "not submitted yet",
@@ -567,7 +576,7 @@
         }
       },
       "loading": "Loading your assessments",
-      "score": "Score {{score}}",
+      "score": "Score {{score}} / {{max}}",
       "state": {
         "not_started": "Not started",
         "in_progress": "In progress",
@@ -621,7 +630,7 @@
           "reasonHint": "Up to {{max}} characters. Shared with the academy.",
           "confirm": "Record refund and end access",
           "pending": "Recording refund…",
-          "moneyNote": "Atlas records your refund; it doesn't move money. The {{amount}} itself is returned to you separately by bank transfer, the same way you paid."
+          "moneyNote": "This site records your refund; it doesn't move money. The {{amount}} itself is returned to you separately by bank transfer, the same way you paid."
         },
         "errors": {
           "notFound": "We couldn't find this order. Refresh the page and try again.",
@@ -638,7 +647,16 @@
         "loadFailed": "Couldn't load the refund details.",
         "retry": "Try again",
         "contactAcademy": "Paid to the academy directly. For a refund, contact the academy."
-      }
+      },
+      "reference": "Ref.",
+      "awaitingUntil": "Waiting for your payment — pay and upload your proof before {{when}}, or the order expires.",
+      "awaitingNoTime": "Waiting for your payment.",
+      "continuePayment": "Continue payment",
+      "endedExplain": {
+        "expired": "This order expired before a payment was confirmed, so it can't be paid any more. You can buy the course again.",
+        "cancelled": "This order was cancelled before a payment was confirmed. You can buy the course again."
+      },
+      "buyAgain": "Buy again"
     },
     "notifications": {
       "title": "Notifications",
@@ -675,7 +693,8 @@
         "currentDescription": "“{{device}}” is the device you are using right now. Removing it ends this learning session, and this browser will register again the next time you open a lesson."
       },
       "limitReached": "Limit reached",
-      "removeFailed": "The device could not be removed. Check your connection and try again."
+      "removeFailed": "The device wasn't removed.",
+      "addedOn": "Added {{when}}"
     },
     "profile": {
       "title": "Profile",
@@ -750,7 +769,8 @@
     "durationLabel": "Duration",
     "progress": {
       "label": "Progress through {{course}}",
-      "summary": "{{completed}} of {{total}} activities complete"
+      "summary_one": "{{completed}} of {{total}} activity complete",
+      "summary_other": "{{completed}} of {{total}} activities complete"
     },
     "curriculum": {
       "label": "Course contents",
@@ -801,7 +821,7 @@
       "lastActivity": "That was the last activity in this course.",
       "undo": "Undo",
       "watchMoreHint": "Keep watching — this lesson can be completed once you have watched enough of it.",
-      "failed": "That could not be saved. Check your connection and try again.",
+      "failed": "Your progress wasn't saved.",
       "externalNotTracked": "Watching on YouTube cannot be tracked, so this lesson cannot be completed automatically. Ask the academy to allow marking it complete yourself."
     },
     "autoAdvance": {
@@ -852,9 +872,10 @@
     },
     "deviceLimit": {
       "title": "You have reached your device limit",
-      "description": "You can learn on {{limit}} devices. Remove one you no longer use to free a slot.",
       "descriptionNoLimit": "You are using all of your device slots. Remove one you no longer use to free a slot.",
-      "noDevices": "No devices are registered on this account yet."
+      "noDevices": "No devices are registered on this account yet.",
+      "description_one": "You can learn on {{limit}} device. Remove one you no longer use to free a slot.",
+      "description_other": "You can learn on {{limit}} devices. Remove one you no longer use to free a slot."
     },
     "takeover": {
       "title": "You are already learning on another device",
@@ -862,13 +883,14 @@
       "descriptionSince": "“{{device}}” has been learning since {{since}}. Continuing here ends that session.",
       "unknownDevice": "Another device",
       "confirm": "Continue here",
-      "cancel": "Keep learning there"
+      "cancel": "Keep learning there",
+      "failed": "We couldn't move your learning session to this device. Try again."
     },
     "protection": {
       "title": "What is actually protecting this lesson",
       "tier": {
-        "normal": "Self-managed delivery",
-        "premium": "Platform-managed delivery"
+        "normal": "Standard delivery",
+        "premium": "Streaming-service delivery"
       },
       "badge": {
         "external": "Not hosted by the academy",
@@ -964,6 +986,10 @@
       "locked": {
         "title": "This activity is locked",
         "description": "Finish the item before it in the course to unlock this one. The course outline shows what comes first."
+      },
+      "server": {
+        "title": "Something went wrong on the academy's side",
+        "description": "The lesson couldn't be loaded because of a problem on the server, not your connection. Try again in a moment."
       }
     },
     "nextLocked": "Next, “{{title}}”, is locked: {{reason}}",
@@ -980,7 +1006,10 @@
       "backToCourse": "See what's left"
     },
     "finishCourse": "Finish course",
-    "finishing": "Finishing…"
+    "finishing": "Finishing…",
+    "sequenceFailed": {
+      "title": "The course outline couldn't be loaded"
+    }
   },
   "completePage": {
     "fallbackTitle": "Course",
@@ -1033,7 +1062,7 @@
       "keepMine": "Keep my version",
       "useTheirs": "Use the other version",
       "queuedTitle": "Submission waiting to send",
-      "queuedDescription": "You pressed Submit at {{time}} while offline. It will be sent automatically when you're back online — it hasn't reached your instructor yet, and the due date is checked when it arrives.",
+      "queuedDescription": "You pressed Submit at {{time}}, but it couldn't reach the server. It will be sent automatically as soon as it can — it hasn't reached your instructor yet, and the due date is checked when it arrives.",
       "notSentTitle": "Submission not sent",
       "conflictDescription": "Your submission changed since you pressed Submit (for example, from another device), so this one wasn't sent. Review the current submission and submit again if needed.",
       "failedDescription": "The academy didn't accept this submission. Review the assignment and try again.",

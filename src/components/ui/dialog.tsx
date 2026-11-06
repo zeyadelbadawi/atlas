@@ -1,9 +1,24 @@
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { cn } from '../../lib/utils';
 import { usePortalContainer } from '@/components/ui/portal-container';
+
+/**
+ * B7 (UX audit) — the close button's name in the page's language ("Close"
+ * was read in English on Arabic pages). Its hit area is widened to 44 px
+ * by an `::after` on the button, without moving the 16 px icon.
+ */
+function CloseLabel(): JSX.Element {
+    const { t } = useTranslation();
+    return (
+        <span className="sr-only">
+            {t('common:actions.close', { defaultValue: 'Close' })}
+        </span>
+    );
+}
 
 const Dialog = DialogPrimitive.Root;
 
@@ -43,9 +58,9 @@ const DialogContent = React.forwardRef<
             {...props}
         >
             {children}
-            <DialogPrimitive.Close className="absolute end-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+            <DialogPrimitive.Close className="absolute end-4 top-4 rounded-sm opacity-70 after:absolute after:-inset-3.5 after:content-[''] ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
                 <X className="h-4 w-4" />
-                <span className="sr-only">Close</span>
+                <CloseLabel />
             </DialogPrimitive.Close>
         </DialogPrimitive.Content>
     </DialogPortal>

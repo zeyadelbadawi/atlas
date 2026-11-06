@@ -49,8 +49,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { useConfirmDialog } from '@app/providers';
-import { useAuth, useDateFormatter, useFilePicker } from '@hooks';
-import { isApiError, normalizeUnknownError } from '@api';
+import { useAuth, useDateFormatter, useErrorText, useFilePicker } from '@hooks';
+import { isApiError, normalizeUnknownError, type ApiError } from '@api';
+import { SaveFailedAlert } from '@forms';
 import {
   deleteAssignmentDraft,
   discardOutboxEntry,
@@ -94,7 +95,33 @@ export interface AssignmentActivityViewProps {
 }
 
 type DraftState =
-  'idle' | 'dirty' | 'saving' | 'saved' | 'failed' | 'local' | 'conflict';
+  | 'idle'
+  | 'dirty'
+  | 'saving'
+  | 'saved'
+  | 'failed'
+  | 'local'
+  | 'conflict'
+  | 'tooLong';
+
+/** Server field names of a submit/upload refusal, by where they are shown (B7). */
+const RESPONSE_FIELDS = new Set(['response']);
+const ATTACHMENT_FIELDS = new Set([
+  'attachmentAssetId',
+  'attachmentUrl',
+  'fileData',
+  'dataUrl',
+  'fileName',
+  'mimeType',
+  'sizeBytes',
+]);
+
+/** Whether `a` is a later timestamp than `b` (a missing `b` is "never"). */
+function isAfter(a: string | null | undefined, b: string | null | undefined) {
+  if (!a) return false;
+  if (!b) return true;
+  return Date.parse(a) > Date.parse(b);
+}
 
 interface DraftConflict {
   readonly response: string;
@@ -135,6 +162,7 @@ export function AssignmentActivityView({
   const { t, i18n } = useTranslation();
   const language = i18n.language as LanguageCode;
   const fmt = useDateFormatter();
+  const errorText = useErrorText();
   const { confirm } = useConfirmDialog();
   const assignmentId = item.id;
   const { user } = useAuth();
@@ -154,7 +182,10 @@ export function AssignmentActivityView({
   const [draftState, setDraftState] = useState<DraftState>('idle');
   const [editing, setEditing] = useState(false);
   const [attachmentError, setAttachmentError] = useState<string | undefined>();
-  const [submitError, setSubmitError] = useState<string | undefined>();
+  /** A refusal of the text itself (empty, too long, a server `response` violation). */
+  const [responseError, setResponseError] = useState<string | undefined>();
+  /** Any other failed submit: ONE alert with the real reason (B7). */
+  const [submitFailure, setSubmitFailure] = useState<ApiError | null>(null);
   const debounceRef = useRef<number | null>(null);
   const seededRef = useRef<string | null>(null);
   /** The server `draftSavedAt` the text on screen is based on (compare-and-set base). */
@@ -193,13 +224,19 @@ export function AssignmentActivityView({
     const seedKey = `${assignmentId}:${submission?.id ?? 'none'}:${submission?.draftSavedAt ?? ''}`;
     if (seededRef.current === seedKey) return;
     seededRef.current = seedKey;
-    const draft = submission?.draftResponse;
-    setResponse(
-      draft ??
-        (submission?.status === 'submitted' ? '' : (submission?.response ?? ''))
-    );
+    const submitted = submission?.status === 'submitted';
+    /*
+     * B7 (UX audit, V16) — a resubmission starts from what was SUBMITTED
+     * (text and attachment), not from an older draft: a server draft only
+     * wins when it was saved after the submission.
+     */
+    const draftIsNewer =
+      !submitted ||
+      isAfter(submission?.draftSavedAt, submission?.submittedAt ?? null);
+    const draft = draftIsNewer ? submission?.draftResponse : undefined;
+    setResponse(draft ?? submission?.response ?? '');
     setAttachment(
-      submission?.attachment && submission.status !== 'submitted'
+      submission?.attachment
         ? {
             assetId: submission.attachment.assetId,
             fileName: submission.attachment.fileName,
@@ -211,19 +248,26 @@ export function AssignmentActivityView({
     baseRef.current = submission?.draftSavedAt ?? null;
 
     // Text typed on this device that the server never confirmed (offline,
-    // closed tab) wins over an older server draft.
+    // closed tab) wins over an older server draft — but never over a
+    // submission made after it: that local copy is stale and is dropped.
     if (!userId) return;
-    const serverText = draft ?? '';
-    const serverSavedAt = submission?.draftSavedAt
-      ? Date.parse(submission.draftSavedAt)
-      : 0;
+    const serverText = draft ?? submission?.response ?? '';
+    const serverSavedAt = Math.max(
+      submission?.draftSavedAt ? Date.parse(submission.draftSavedAt) : 0,
+      submitted && submission?.submittedAt
+        ? Date.parse(submission.submittedAt)
+        : 0
+    );
     void loadAssignmentDraft(userId, courseId, assignmentId).then((local) => {
       if (!local || seededRef.current !== seedKey) return;
-      if (
-        !local.synced &&
-        local.response !== serverText &&
-        local.updatedAt > serverSavedAt
-      ) {
+      if (local.pendingSubmit) return;
+      if (local.updatedAt <= serverSavedAt) {
+        if (submitted) {
+          void deleteAssignmentDraft(userId, courseId, assignmentId);
+        }
+        return;
+      }
+      if (!local.synced && local.response !== serverText) {
         setResponse(local.response);
         setRestoredLocal(true);
         setDraftState('local');
@@ -253,6 +297,13 @@ export function AssignmentActivityView({
       keepLocal(nextResponse, false);
       if (debounceRef.current !== null)
         window.clearTimeout(debounceRef.current);
+      // B7 — the server refuses more than the limit; say so instead of
+      // sending a draft that can only fail (the text is kept on the device).
+      if (nextResponse.length > MAX_ASSIGNMENT_RESPONSE_LENGTH) {
+        debounceRef.current = null;
+        setDraftState('tooLong');
+        return;
+      }
       debounceRef.current = window.setTimeout(() => {
         debounceRef.current = null;
         setDraftState('saving');
@@ -359,10 +410,19 @@ export function AssignmentActivityView({
         setAttachment(next);
         scheduleDraft(response, next);
       } catch (error) {
+        // B7 — a refusal of the file names what is wrong with it; any other
+        // failure says the upload failed and why.
+        const violation = isApiError(error)
+          ? error.violations?.find((v) => ATTACHMENT_FIELDS.has(v.field))
+          : undefined;
         setAttachmentError(
-          apiErrorMessage(t, i18n, error, {
-            fallbackKey: 'learning:assignment.attachmentUploadError',
-          })
+          violation
+            ? errorText(
+                violation.messageKey,
+                'learning:assignment.attachmentInvalidType',
+                violation.values
+              )
+            : `${t('learning:assignment.attachmentUploadError')} ${apiErrorMessage(t, i18n, error)}`
         );
       } finally {
         filePicker.clearFiles();
@@ -381,11 +441,25 @@ export function AssignmentActivityView({
   const pastDue = dueAt !== null && Date.now() > dueAt;
   const blockedByDue = pastDue && assignment?.latePolicy === 'block';
 
+  const responseLabel = t('learning:assignment.responseLabel');
+
   const handleSubmit = async () => {
-    setSubmitError(undefined);
+    setResponseError(undefined);
+    setSubmitFailure(null);
     const hasContent = response.trim().length > 0 || !!attachment;
     if (!hasContent) {
-      setSubmitError(t('errors:assignment.responseRequired'));
+      setResponseError(t('errors:assignment.responseRequired'));
+      return;
+    }
+    // B7 (UX audit, V10) — refused before sending, with the real limit; the
+    // text is never cut.
+    if (response.trim().length > MAX_ASSIGNMENT_RESPONSE_LENGTH) {
+      setResponseError(
+        t('validation:maxLength', {
+          field: responseLabel,
+          count: MAX_ASSIGNMENT_RESPONSE_LENGTH,
+        })
+      );
       return;
     }
     const confirmed = await confirm({
@@ -463,11 +537,36 @@ export function AssignmentActivityView({
           return;
         }
       }
-      setSubmitError(
-        apiErrorMessage(t, i18n, error, {
-          fallbackKey: 'learning:assignment.submitError',
-        })
+      // B7 (UX audit, V11) — a refusal of the text or the file lands on
+      // that field; anything else is ONE alert with the real reason.
+      const failure = normalizeUnknownError(error);
+      const onResponse = failure.violations?.find((v) =>
+        RESPONSE_FIELDS.has(v.field)
       );
+      const onAttachment = failure.violations?.find((v) =>
+        ATTACHMENT_FIELDS.has(v.field)
+      );
+      if (onResponse) {
+        setResponseError(
+          errorText(onResponse.messageKey, 'validation:maxLength', {
+            field: responseLabel,
+            count: MAX_ASSIGNMENT_RESPONSE_LENGTH,
+            ...(onResponse.values ?? {}),
+          })
+        );
+        return;
+      }
+      if (onAttachment) {
+        setAttachmentError(
+          errorText(
+            onAttachment.messageKey,
+            'learning:assignment.attachmentInvalidType',
+            onAttachment.values
+          )
+        );
+        return;
+      }
+      setSubmitFailure(failure);
     }
   };
 
@@ -512,21 +611,26 @@ export function AssignmentActivityView({
 
   const step = timelineStep(submission);
   const isLocked = item.state === 'locked';
+  const tooLong = response.length > MAX_ASSIGNMENT_RESPONSE_LENGTH;
 
   const draftLabel =
     draftState === 'local'
       ? t('learning:offline.assignment.savedOnDevice')
       : draftState === 'conflict'
         ? t('learning:offline.assignment.conflictShort')
-        : draftState === 'saving'
-          ? t('learning:assignment.draft.saving')
-          : draftState === 'saved'
-            ? t('learning:assignment.draft.saved')
-            : draftState === 'failed'
-              ? t('learning:assignment.draft.failed')
-              : draftState === 'dirty'
-                ? t('learning:assignment.draft.unsaved')
-                : '';
+        : draftState === 'tooLong'
+          ? t('learning:assignment.draft.tooLong', {
+              max: formatNumber(MAX_ASSIGNMENT_RESPONSE_LENGTH, language),
+            })
+          : draftState === 'saving'
+            ? t('learning:assignment.draft.saving')
+            : draftState === 'saved'
+              ? t('learning:assignment.draft.saved')
+              : draftState === 'failed'
+                ? t('learning:assignment.draft.failed')
+                : draftState === 'dirty'
+                  ? t('learning:assignment.draft.unsaved')
+                  : '';
 
   const queuedNotice = queuedSubmit ? (
     <Alert
@@ -583,7 +687,10 @@ export function AssignmentActivityView({
         <h2 className="font-display text-base font-semibold text-foreground">
           {t('learning:assignment.instructionsTitle')}
         </h2>
-        <p className="mt-1 whitespace-pre-line text-sm text-muted-foreground">
+        <p
+          dir="auto"
+          className="mt-1 whitespace-pre-line text-start text-sm text-muted-foreground"
+        >
           {assignment.instructions ||
             assignment.description ||
             t('learning:assignment.noInstructions')}
@@ -687,7 +794,10 @@ export function AssignmentActivityView({
             </p>
           ) : null}
           {submission?.response ? (
-            <p className="whitespace-pre-line text-sm text-foreground">
+            <p
+              dir="auto"
+              className="whitespace-pre-line text-start text-sm text-foreground"
+            >
               {submission.response}
             </p>
           ) : (
@@ -737,6 +847,7 @@ export function AssignmentActivityView({
                 {typeof submission.grade.score === 'number'
                   ? t('learning:assignment.grade.score', {
                       score: formatNumber(submission.grade.score, language),
+                      max: formatNumber(100, language),
                     })
                   : t('learning:assignment.grade.gradedNoScore')}
               </p>
@@ -745,7 +856,7 @@ export function AssignmentActivityView({
                   <span className="font-medium">
                     {t('learning:assignment.grade.feedback')}:
                   </span>{' '}
-                  {submission.grade.feedback}
+                  <bdi dir="auto">{submission.grade.feedback}</bdi>
                 </p>
               ) : null}
               {submission.grade.gradedAt ? (
@@ -843,7 +954,9 @@ export function AssignmentActivityView({
                   aria-live="polite"
                   className={cn(
                     'text-xs',
-                    draftState === 'failed' || draftState === 'conflict'
+                    draftState === 'failed' ||
+                      draftState === 'conflict' ||
+                      draftState === 'tooLong'
                       ? 'text-destructive'
                       : 'text-muted-foreground'
                   )}
@@ -851,21 +964,47 @@ export function AssignmentActivityView({
                   {draftLabel}
                 </span>
               </div>
+              {/* No `maxLength`: a paste past the limit was cut silently
+                  (B7, V10). The counter turns red and Submit says why. */}
               <Textarea
                 id="assignment-response"
                 rows={8}
+                dir="auto"
                 value={response}
-                maxLength={MAX_ASSIGNMENT_RESPONSE_LENGTH}
                 placeholder={t('learning:assignment.responsePlaceholder')}
+                aria-invalid={responseError || tooLong ? true : undefined}
+                aria-describedby="assignment-response-count assignment-response-error"
                 onChange={(event) => {
                   setResponse(event.target.value);
+                  if (responseError) setResponseError(undefined);
                   scheduleDraft(event.target.value, attachment);
                 }}
               />
-              <p className="text-end text-xs tabular-nums text-muted-foreground">
-                {formatNumber(response.length, language)} /{' '}
-                {formatNumber(MAX_ASSIGNMENT_RESPONSE_LENGTH, language)}
+              <p
+                id="assignment-response-count"
+                className={cn(
+                  'text-end text-xs tabular-nums',
+                  tooLong
+                    ? 'font-medium text-destructive'
+                    : 'text-muted-foreground'
+                )}
+                data-testid="assignment-response-count"
+              >
+                {t('common:form.characterCount', {
+                  count: response.length,
+                  max: MAX_ASSIGNMENT_RESPONSE_LENGTH,
+                })}
               </p>
+              {responseError ? (
+                <p
+                  id="assignment-response-error"
+                  role="alert"
+                  className="text-sm text-destructive"
+                  data-testid="assignment-response-error"
+                >
+                  {responseError}
+                </p>
+              ) : null}
             </div>
 
             <div className="space-y-2">
@@ -922,10 +1061,12 @@ export function AssignmentActivityView({
               ) : null}
             </div>
 
-            {submitError ? (
-              <p role="alert" className="text-sm text-destructive">
-                {submitError}
-              </p>
+            {submitFailure ? (
+              <SaveFailedAlert
+                error={submitFailure}
+                titleKey="learning:assignment.notSubmitted"
+                onRetry={() => void handleSubmit()}
+              />
             ) : null}
 
             <div className="flex flex-wrap items-center gap-3 border-t border-border pt-4">

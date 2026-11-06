@@ -44,11 +44,18 @@ export function QuizQuestionCard({
   const language = i18n.language as LanguageCode;
   const selected = answer?.selectedOptionIds ?? [];
   const headingId = `quiz-question-${question.id}-heading`;
+  const hintId = `quiz-question-${question.id}-hint`;
+  const multiple = question.type === 'multiple_choice';
 
   let control: JSX.Element;
   if (question.type === 'multiple_choice') {
     control = (
-      <div role="group" aria-labelledby={headingId} className="space-y-2">
+      <div
+        role="group"
+        aria-labelledby={headingId}
+        aria-describedby={hintId}
+        className="space-y-2"
+      >
         {question.options.map((option) => {
           const inputId = `${question.id}-${option.id}`;
           const checked = selected.includes(option.id);
@@ -62,8 +69,10 @@ export function QuizQuestionCard({
                 checked && 'border-primary bg-accent'
               )}
             >
+              {/* Square, never round: a round box reads as "pick one" (B7). */}
               <Checkbox
                 id={inputId}
+                className="rounded-[0.1875rem]"
                 checked={checked}
                 disabled={disabled}
                 onCheckedChange={(next) =>
@@ -194,6 +203,16 @@ export function QuizQuestionCard({
           >
             {question.prompt}
           </h3>
+          {/* B7 (UX audit) — said before the options, not discovered. */}
+          {multiple ? (
+            <p
+              id={hintId}
+              className="mt-1 text-sm text-muted-foreground"
+              data-testid="quiz-select-all-hint"
+            >
+              {t('learning:quiz.runner.selectAll')}
+            </p>
+          ) : null}
         </div>
         <Button
           type="button"

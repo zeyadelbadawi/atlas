@@ -88,7 +88,7 @@ const NETWORK = (): ApiError => createApiError('network');
 const SERVER_TEXT =
   'Something failed on our side. We are looking into it — please try again shortly.';
 const NETWORK_TEXT =
-  'Atlas could not reach the server. Check your connection and try again.';
+  "We couldn't reach the server. Check your connection and try again.";
 
 beforeEach(() => {
   reporter.mockReset();

@@ -11,7 +11,13 @@
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CloudOff, Loader2, Save, TimerIcon } from 'lucide-react';
+import {
+  AlertTriangle,
+  CloudOff,
+  Loader2,
+  Save,
+  TimerIcon,
+} from 'lucide-react';
 import { cn, formatNumber } from '@utils';
 import type { LanguageCode } from '@types';
 import type { AutosaveState } from '../hooks/useQuizAutosave';
@@ -27,6 +33,14 @@ export interface QuizAttemptHeaderProps {
   /** The threshold just crossed, in seconds; announced once. */
   readonly announcement: number | null;
 }
+
+/**
+ * The height of the academy theme's sticky header, whichever theme is
+ * mounted (modern-education, atelier, manara set these on their root); 0
+ * where no theme header sticks.
+ */
+export const ACADEMY_HEADER_OFFSET =
+  'var(--t1-header-height, var(--at-header-height, var(--mn-header-height, 0px)))';
 
 function minutesOrSeconds(seconds: number): {
   count: number;
@@ -70,6 +84,10 @@ export function QuizAttemptHeader({
   } else if (saveState === 'offline') {
     saveLabel = t('learning:quiz.runner.offline');
     SaveIcon = CloudOff;
+  } else if (saveState === 'failed') {
+    // B7 — the server answered with a fault: not "offline".
+    saveLabel = t('learning:quiz.runner.saveFailed');
+    SaveIcon = AlertTriangle;
   } else if (saveState === 'dirty') {
     saveLabel = t('learning:quiz.runner.unsaved');
   } else if (lastSavedAt) {
@@ -100,7 +118,10 @@ export function QuizAttemptHeader({
 
   return (
     <div
-      className="sticky top-0 z-10 -mx-1 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-md border border-border bg-card/95 px-3 py-2 text-sm backdrop-blur supports-[backdrop-filter]:bg-card/80"
+      // B7 (UX audit) — sticks BELOW the academy's own sticky header (each
+      // theme publishes its height), not underneath it.
+      style={{ top: ACADEMY_HEADER_OFFSET }}
+      className="sticky z-10 -mx-1 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-md border border-border bg-card/95 px-3 py-2 text-sm backdrop-blur supports-[backdrop-filter]:bg-card/80"
       data-testid="quiz-attempt-header"
     >
       <div className="flex items-center gap-2">
@@ -155,7 +176,9 @@ export function QuizAttemptHeader({
         aria-live="polite"
         className={cn(
           'flex items-center gap-1.5',
-          saveState === 'offline' ? 'text-destructive' : 'text-muted-foreground'
+          saveState === 'offline' || saveState === 'failed'
+            ? 'text-destructive'
+            : 'text-muted-foreground'
         )}
         data-testid="quiz-save-state"
       >

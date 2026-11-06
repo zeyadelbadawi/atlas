@@ -34,6 +34,8 @@ export interface AssessmentActivityViewProps {
   readonly item: CourseSequenceItem;
   /** Move to the next activity (the results screen's primary action). */
   readonly onContinue?: () => void;
+  /** B7 — a quiz attempt started or ended (the player hides its own Previous/Next meanwhile). */
+  readonly onQuizAttemptRunningChange?: (running: boolean) => void;
   readonly continueLabel?: string;
   /** Player href for a lesson, so a reviewed question can link to the lesson it came from. */
   readonly lessonHref?: (lessonId: string) => string;
@@ -43,6 +45,7 @@ export function AssessmentActivityView({
   courseId,
   item,
   onContinue,
+  onQuizAttemptRunningChange,
   continueLabel,
   lessonHref,
 }: AssessmentActivityViewProps): JSX.Element {
@@ -64,6 +67,7 @@ export function AssessmentActivityView({
           courseId={courseId}
           item={item}
           onContinue={onContinue}
+          onAttemptRunningChange={onQuizAttemptRunningChange}
           continueLabel={continueLabel}
           lessonHref={lessonHref}
         />

@@ -9,6 +9,7 @@ import { useApiMutation } from '@/shared/hooks';
 import type { ApiError } from '@api';
 import { quizService } from '../services/QuizService';
 import type { SaveQuizAnswersPayload, SaveQuizAnswersResponse } from '@types';
+import { INLINE_ERRORS_META } from '@services/query';
 
 export interface SaveQuizAnswersVariables {
   readonly attemptId: string;
@@ -25,5 +26,6 @@ export function useSaveQuizAnswers(courseId: string, quizId: string) {
       quizService.saveQuizAnswers(courseId, quizId, attemptId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

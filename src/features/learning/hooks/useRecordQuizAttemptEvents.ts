@@ -12,6 +12,7 @@ import type {
   RecordQuizAttemptEventsPayload,
   RecordQuizAttemptEventsResponse,
 } from '@types';
+import { INLINE_ERRORS_META } from '@services/query';
 
 export interface RecordQuizAttemptEventsVariables {
   readonly attemptId: string;
@@ -28,5 +29,6 @@ export function useRecordQuizAttemptEvents(courseId: string, quizId: string) {
       quizService.recordQuizAttemptEvents(courseId, quizId, attemptId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

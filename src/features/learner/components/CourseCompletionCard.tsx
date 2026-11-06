@@ -223,6 +223,7 @@ export function CourseCompletionCard({
                   ? typeof assignment.score === 'number'
                     ? t('learning:completion.assignmentGraded', {
                         score: formatNumber(assignment.score, language),
+                        max: formatNumber(100, language),
                       })
                     : t('learning:completion.assignmentGradedNoScore')
                   : assignment.submitted

@@ -36,13 +36,16 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@components/feedback';
 import { useDateFormatter } from '@hooks';
 import { formatMoney } from '@features/billing';
+import { LEARNER_ROUTES, buildPath } from '@app/routes/route-paths';
+import { useLearnerSurface } from '../context/LearnerSurface.context';
+import { shortReference } from '../utils/learner-payment.utils';
 import { LANGUAGES } from '@localization';
 import { LearnerPageHeader } from '../components/LearnerPageHeader';
 import { LearnerSectionPlaceholder } from '../components/LearnerSectionPlaceholder';
 import { RefundDetails, RequestRefundDialog } from '../components/CourseRefund';
 import { useLearnerPurchases, useRequestCourseOrderRefund } from '../hooks';
 import { refundEligibility } from '../utils/course-refund.utils';
-import { hasMessageKey } from '@utils';
+import { hasMessageKey, isolateText } from '@utils';
 import type { CourseOrder, CourseOrderStatus, LanguageCode } from '@types';
 
 /** One refund attempt: the order and the key every retry of it reuses. */
@@ -82,6 +85,9 @@ export default function LearnerPurchasesPage(): JSX.Element {
   const language = i18n.language as LanguageCode;
   const locale = LANGUAGES[language].locale;
   const { orders, isLoading, error, refetch } = useLearnerPurchases();
+  const { buildHref } = useLearnerSurface();
+  const checkoutHref = (courseId: string) =>
+    buildHref(buildPath(LEARNER_ROUTES.courseCheckout, { courseId }));
   const requestRefund = useRequestCourseOrderRefund();
   const [attempt, setAttempt] = useState<RefundAttempt | null>(null);
   const [reason, setReason] = useState('');
@@ -187,7 +193,7 @@ export default function LearnerPurchasesPage(): JSX.Element {
             />
             <span>
               {t('learning:learnerDashboard.purchases.refund.done', {
-                course: completedCourse,
+                course: isolateText(completedCourse),
               })}
             </span>
           </p>
@@ -208,13 +214,26 @@ export default function LearnerPurchasesPage(): JSX.Element {
               />
 
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-foreground">
+                <p
+                  dir="auto"
+                  className="truncate text-start text-sm font-medium text-foreground"
+                >
                   {order.snapshot.course.title}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {t('learning:learnerDashboard.purchases.placedOn', {
                     when: fmt.date(order.createdAt),
                   })}
+                  {' · '}
+                  {/* B7 — the reference the academy's Orders list shows. */}
+                  {t('learning:learnerDashboard.purchases.reference')}{' '}
+                  <span
+                    className="font-mono"
+                    dir="ltr"
+                    data-testid="purchase-order-reference"
+                  >
+                    {shortReference(order.id)}
+                  </span>
                 </p>
               </div>
 
@@ -268,6 +287,49 @@ export default function LearnerPurchasesPage(): JSX.Element {
                     'learning:learnerDashboard.purchases.refund.contactAcademy'
                   )}
                 </p>
+              ) : order.status === 'draft' ||
+                order.status === 'pending_payment' ? (
+                // B7 (UX audit, V13) — awaiting payment says until when, and
+                // leads back to the SAME order's payment.
+                <div
+                  className="flex w-full flex-wrap items-center justify-between gap-2 ps-7"
+                  data-testid="purchase-awaiting"
+                >
+                  <p className="text-xs text-muted-foreground">
+                    {Date.parse(order.expiresAt) > Date.now()
+                      ? t('learning:learnerDashboard.purchases.awaitingUntil', {
+                          when: fmt.dateTime(order.expiresAt),
+                        })
+                      : t('learning:learnerDashboard.purchases.awaitingNoTime')}
+                  </p>
+                  <Button asChild size="sm" className="h-11 sm:h-9">
+                    <a href={checkoutHref(order.courseId)}>
+                      {t('learning:learnerDashboard.purchases.continuePayment')}
+                    </a>
+                  </Button>
+                </div>
+              ) : order.status === 'expired' || order.status === 'cancelled' ? (
+                // B7 (V13) — what "Expired" means, and the way to buy again.
+                <div
+                  className="flex w-full flex-wrap items-center justify-between gap-2 ps-7"
+                  data-testid="purchase-ended"
+                >
+                  <p className="text-xs text-muted-foreground">
+                    {t(
+                      `learning:learnerDashboard.purchases.endedExplain.${order.status}`
+                    )}
+                  </p>
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="outline"
+                    className="h-11 sm:h-9"
+                  >
+                    <a href={checkoutHref(order.courseId)}>
+                      {t('learning:learnerDashboard.purchases.buyAgain')}
+                    </a>
+                  </Button>
+                </div>
               ) : order.status === 'refunded' ? (
                 <div className="w-full ps-7">
                   <RefundDetails orderId={order.id} locale={locale} />

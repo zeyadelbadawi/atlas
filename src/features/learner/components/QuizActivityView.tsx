@@ -54,6 +54,8 @@ export interface QuizActivityViewProps {
   readonly onContinue?: () => void;
   readonly continueLabel?: string;
   readonly lessonHref?: (lessonId: string) => string;
+  /** B7 — told when an attempt starts running and when it stops. */
+  readonly onAttemptRunningChange?: (running: boolean) => void;
 }
 
 const TERMINAL_SUBMIT_KEYS = [
@@ -74,6 +76,7 @@ export function QuizActivityView({
   onContinue,
   continueLabel,
   lessonHref,
+  onAttemptRunningChange,
 }: QuizActivityViewProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
@@ -183,12 +186,13 @@ export function QuizActivityView({
         await refreshAttempts();
         return;
       }
+      // B7 (UX audit) — said once, in the runner; never rethrown, which
+      // left an uncaught promise rejection behind every failed submit.
       setSubmitError(
         apiErrorMessage(t, i18n, error, {
           fallbackKey: 'learning:quiz.submitError',
         })
       );
-      throw error;
     }
   };
 
@@ -196,6 +200,22 @@ export function QuizActivityView({
     if (openAttempt) setFinishedAttemptId(openAttempt.id);
     await refreshAttempts();
   };
+
+  /*
+   * B7 — the player hides its own Previous/Next while the runner (which has
+   * Previous/Next between questions) is on screen.
+   */
+  const running =
+    !!openAttempt &&
+    !resultsAttemptId &&
+    sessionQuery.data?.status === 'in_progress';
+  useEffect(() => {
+    onAttemptRunningChange?.(running);
+  }, [running, onAttemptRunningChange]);
+  useEffect(
+    () => () => onAttemptRunningChange?.(false),
+    [onAttemptRunningChange]
+  );
 
   /* ---------- render ---------- */
 

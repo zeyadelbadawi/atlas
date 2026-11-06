@@ -52,6 +52,9 @@ export function QuizIntroCard({
 
   const integrityOn = settings.integrityMode !== 'off';
   const [acknowledged, setAcknowledged] = useState(!integrityOn);
+  // B7 (UX audit, V19) — Start is not greyed for a missing acknowledgement:
+  // pressed, it says what is missing and moves to the box.
+  const [ackMissing, setAckMissing] = useState(false);
 
   // A voided attempt is given back to the learner: the server does not
   // count it toward the allowance, so neither does "attempts left".
@@ -66,7 +69,9 @@ export function QuizIntroCard({
   // `maxAttempts` only when talking to an older server that omits it.
   // `null` means unlimited; `undefined` means "unknown / unlimited".
   const effectiveAllowance =
-    quiz.attemptsAllowed !== undefined ? quiz.attemptsAllowed : (quiz.maxAttempts ?? null);
+    quiz.attemptsAllowed !== undefined
+      ? quiz.attemptsAllowed
+      : (quiz.maxAttempts ?? null);
   const attemptsLeft =
     effectiveAllowance === null
       ? null
@@ -126,7 +131,15 @@ export function QuizIntroCard({
     value: t(`learning:quiz.intro.gradingPolicies.${settings.gradingPolicy}`),
   });
 
-  const startDisabled = !canStart || isStarting || !acknowledged;
+  const startDisabled = !canStart || isStarting;
+  const handleStart = () => {
+    if (!acknowledged) {
+      setAckMissing(true);
+      document.getElementById('quiz-integrity-ack')?.focus();
+      return;
+    }
+    onStart();
+  };
 
   return (
     <div className="space-y-4">
@@ -188,7 +201,14 @@ export function QuizIntroCard({
               <Checkbox
                 id="quiz-integrity-ack"
                 checked={acknowledged}
-                onCheckedChange={(next) => setAcknowledged(next === true)}
+                onCheckedChange={(next) => {
+                  setAcknowledged(next === true);
+                  if (next === true) setAckMissing(false);
+                }}
+                aria-invalid={ackMissing ? true : undefined}
+                aria-describedby={
+                  ackMissing ? 'quiz-integrity-ack-error' : undefined
+                }
               />
               <Label htmlFor="quiz-integrity-ack" className="text-sm leading-5">
                 {t('learning:quiz.integrity.acknowledge')}
@@ -198,9 +218,26 @@ export function QuizIntroCard({
         </Alert>
       ) : null}
 
+      {ackMissing ? (
+        <p
+          id="quiz-integrity-ack-error"
+          role="alert"
+          className="text-sm text-destructive"
+          data-testid="quiz-ack-missing"
+        >
+          {t('learning:quiz.integrity.acknowledgeFirst')}
+        </p>
+      ) : null}
+
       {blockedReason ? (
         <p role="status" className="text-sm text-muted-foreground">
           {blockedReason}
+        </p>
+      ) : !canStart ? (
+        // A locked quiz: the reason is in the lock notice above; the
+        // greyed button says where to look.
+        <p role="status" className="text-sm text-muted-foreground">
+          {t('learning:quiz.intro.lockedHint')}
         </p>
       ) : null}
 
@@ -212,7 +249,7 @@ export function QuizIntroCard({
 
       <div className="flex flex-wrap items-center gap-3">
         <Button
-          onClick={onStart}
+          onClick={handleStart}
           disabled={startDisabled}
           data-testid="quiz-start"
         >

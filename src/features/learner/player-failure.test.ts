@@ -148,9 +148,13 @@ describe('player failure classification', () => {
     expect(classifyPlayerFailure(createApiError('timeout')).kind).toBe(
       'network'
     );
+  });
+
+  it('B7 — a server fault is its own failure, never "check your connection"', () => {
     expect(
       classifyPlayerFailure(createApiError('server', { status: 502 })).kind
-    ).toBe('network');
+    ).toBe('server');
+    expect(isAccessRevokedFailure('server')).toBe(false);
   });
 
   it('separates failures that must interrupt playback from those that must not', () => {

@@ -42,6 +42,7 @@ import { useLearnerPayments } from '../hooks/useCourseCheckout';
 import {
   learnerPaymentState,
   type LearnerPaymentDisplayState,
+  shortReference,
 } from '../utils/learner-payment.utils';
 import { courseOrderService } from '../services/CourseOrderService';
 
@@ -159,6 +160,18 @@ export default function LearnerPaymentsPage(): JSX.Element {
                       ),
                       when: fmt.date(payment.createdAt),
                     })}
+                  </p>
+                  {/* B7 (UX audit, V12) — the order this payment is for, by
+                      the reference the academy sees. */}
+                  <p className="text-xs text-muted-foreground">
+                    {t('learning:learnerDashboard.purchases.reference')}{' '}
+                    <span
+                      className="font-mono"
+                      dir="ltr"
+                      data-testid="learner-payment-order-reference"
+                    >
+                      {shortReference(payment.courseOrderId)}
+                    </span>
                   </p>
                 </div>
                 <div className="flex flex-col items-end gap-1.5">

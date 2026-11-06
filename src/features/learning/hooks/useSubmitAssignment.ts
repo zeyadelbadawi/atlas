@@ -5,6 +5,7 @@
  */
 import { useApiMutation, useAuth, useInvalidate } from '@/shared/hooks';
 import {
+  INLINE_ERRORS_META,
   assignmentKeys,
   completionKeys,
   learnerKeys,
@@ -30,6 +31,7 @@ export function useSubmitAssignment(courseId: string, assignmentId: string) {
       assignmentService.submitAssignment(courseId, assignmentId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(
         assignmentKeys.submission(user?.id, courseId, assignmentId)
