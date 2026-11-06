@@ -10,6 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
+import { AtlasDialogProvider } from '@app/providers/dialog/DialogProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createI18nInstance } from '@/localization/i18n';
 import { IdentityContext } from '@app/providers/identity/identity.context';
@@ -54,22 +55,24 @@ function renderCheckout(search: string) {
       }
     >
       <I18nextProvider i18n={createI18nInstance('en')}>
-        <ToastContext.Provider value={toastValue}>
-          <IdentityContext.Provider value={identity}>
-            <MemoryRouter
-              initialEntries={[
-                `/dashboard/tenant/billing/checkout/plan_subscription/growth${search}`,
-              ]}
-            >
-              <Routes>
-                <Route
-                  path="/dashboard/tenant/billing/checkout/:targetType/:targetKey"
-                  element={<CheckoutPage />}
-                />
-              </Routes>
-            </MemoryRouter>
-          </IdentityContext.Provider>
-        </ToastContext.Provider>
+        <AtlasDialogProvider>
+          <ToastContext.Provider value={toastValue}>
+            <IdentityContext.Provider value={identity}>
+              <MemoryRouter
+                initialEntries={[
+                  `/dashboard/tenant/billing/checkout/plan_subscription/growth${search}`,
+                ]}
+              >
+                <Routes>
+                  <Route
+                    path="/dashboard/tenant/billing/checkout/:targetType/:targetKey"
+                    element={<CheckoutPage />}
+                  />
+                </Routes>
+              </MemoryRouter>
+            </IdentityContext.Provider>
+          </ToastContext.Provider>
+        </AtlasDialogProvider>
       </I18nextProvider>
     </QueryClientProvider>
   );
@@ -117,22 +120,24 @@ function renderPayment(search: string) {
       }
     >
       <I18nextProvider i18n={createI18nInstance('en')}>
-        <ToastContext.Provider value={toastValue}>
-          <IdentityContext.Provider value={identity}>
-            <MemoryRouter
-              initialEntries={[
-                `/dashboard/tenant/billing/payments/pay-1${search}`,
-              ]}
-            >
-              <Routes>
-                <Route
-                  path="/dashboard/tenant/billing/payments/:paymentId"
-                  element={<PaymentDetailsPage />}
-                />
-              </Routes>
-            </MemoryRouter>
-          </IdentityContext.Provider>
-        </ToastContext.Provider>
+        <AtlasDialogProvider>
+          <ToastContext.Provider value={toastValue}>
+            <IdentityContext.Provider value={identity}>
+              <MemoryRouter
+                initialEntries={[
+                  `/dashboard/tenant/billing/payments/pay-1${search}`,
+                ]}
+              >
+                <Routes>
+                  <Route
+                    path="/dashboard/tenant/billing/payments/:paymentId"
+                    element={<PaymentDetailsPage />}
+                  />
+                </Routes>
+              </MemoryRouter>
+            </IdentityContext.Provider>
+          </ToastContext.Provider>
+        </AtlasDialogProvider>
       </I18nextProvider>
     </QueryClientProvider>
   );

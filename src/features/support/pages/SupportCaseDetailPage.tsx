@@ -9,10 +9,17 @@
  * The reply box is hidden on a CLOSED ticket rather than shown and
  * rejected: the backend returns 409 for a reply to a closed case, and a
  * box that always fails is worse than no box plus an explanation.
+ *
+ * B5 (UX audit) — the reply has the server's limit
+ * (`MAX_SUPPORT_REPLY_BODY_LENGTH`, 5,000) with a counter and is never cut
+ * silently; leaving with a typed reply asks first; a failed send is ONE
+ * inline message with the real reason (the hook marks its errors inline).
+ * The customer can't close a ticket: the API has no endpoint for it.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDateFormatter } from '@hooks';
+import { useDateFormatter, useUnsavedChanges } from '@hooks';
+import { SaveFailedAlert, hasViolationOn, useFailureReason } from '@forms';
 import { useParams } from 'react-router-dom';
 import { Loader2, Send } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
@@ -31,6 +38,9 @@ import { SupportAttachmentField } from '../components/SupportAttachmentField';
 import { SupportAttachmentImage } from '../components/SupportAttachmentImage';
 import type { BreadcrumbItem, SupportAttachmentInput } from '@types';
 
+/** Backend `MAX_SUPPORT_REPLY_BODY_LENGTH`. */
+export const SUPPORT_REPLY_MAX = 5000;
+
 export default function SupportCaseDetailPage(): JSX.Element {
   const fmt = useDateFormatter();
   const { t } = useTranslation();
@@ -38,9 +48,16 @@ export default function SupportCaseDetailPage(): JSX.Element {
   const [reply, setReply] = useState('');
   /** P53 — see `CreateSupportCaseDialog` for why this is local state, not form state. */
   const [attachment, setAttachment] = useState<SupportAttachmentInput>();
+  const [replyProblem, setReplyProblem] = useState<'empty' | 'tooLong' | null>(
+    null
+  );
 
   const { data, isLoading, error, refetch } = useMySupportCase(caseId ?? '');
   const postReply = useReplyToMySupportCase();
+  const failureReason = useFailureReason();
+  const { markSaved } = useUnsavedChanges({
+    isDirty: reply.trim() !== '' || attachment !== undefined,
+  });
 
   const breadcrumbs: readonly BreadcrumbItem[] = [
     { labelKey: 'support:center.title', path: DASHBOARD_ROUTES.support },
@@ -79,16 +96,40 @@ export default function SupportCaseDetailPage(): JSX.Element {
     // also disabled, but a keyboard repeat or a double click can fire twice
     // before React re-renders, and sending the same image twice would put
     // two copies in the thread and two objects in storage.
-    if (!body || postReply.isPending) return;
-    await postReply.mutateAsync({
-      caseId: data.id,
-      payload: attachment ? { body, attachment } : { body },
-    });
+    if (postReply.isPending) return;
+    if (!body) return setReplyProblem('empty');
+    if (body.length > SUPPORT_REPLY_MAX) return setReplyProblem('tooLong');
+    setReplyProblem(null);
+    try {
+      await postReply.mutateAsync({
+        caseId: data.id,
+        payload: attachment ? { body, attachment } : { body },
+      });
+    } catch {
+      // Shown below the box, once; the typed reply is kept.
+      return;
+    }
     // Cleared only after the server accepted it — clearing optimistically
     // would lose the message (and the chosen image) if the request failed.
+    markSaved();
     setReply('');
     setAttachment(undefined);
   };
+
+  const replyLength = reply.trim().length;
+  const serverBodyError =
+    postReply.error && hasViolationOn(postReply.error, { body: 'body' })
+      ? failureReason(postReply.error)
+      : null;
+  const replyError =
+    replyProblem === 'empty'
+      ? t('support:detail.replyEmpty')
+      : replyProblem === 'tooLong'
+        ? t('validation:maxLength', {
+            field: t('support:detail.replyField'),
+            count: SUPPORT_REPLY_MAX,
+          })
+        : serverBodyError;
 
   return (
     <PageContainer>
@@ -172,30 +213,66 @@ export default function SupportCaseDetailPage(): JSX.Element {
             rows={4}
             dir="auto"
             value={reply}
-            maxLength={5000}
             placeholder={t('support:detail.replyPlaceholder')}
-            onChange={(event) => setReply(event.target.value)}
+            onChange={(event) => {
+              setReply(event.target.value);
+              setReplyProblem(null);
+              // Editing answers the last refusal: no stale message stays.
+              if (postReply.error) postReply.reset();
+            }}
+            aria-invalid={replyError ? true : undefined}
+            aria-describedby="support-reply-count support-reply-error"
           />
+          <p
+            id="support-reply-count"
+            data-testid="support-reply-count"
+            className={
+              replyLength > SUPPORT_REPLY_MAX
+                ? 'text-xs font-medium tabular-nums text-destructive'
+                : 'text-xs tabular-nums text-muted-foreground'
+            }
+          >
+            {t('common:form.characterCount', {
+              count: replyLength,
+              max: SUPPORT_REPLY_MAX,
+            })}
+          </p>
+          {replyError ? (
+            <p
+              id="support-reply-error"
+              role="alert"
+              data-testid="support-reply-error"
+              className="text-sm text-destructive"
+            >
+              {replyError}
+            </p>
+          ) : null}
           <SupportAttachmentField
             value={attachment}
             onChange={setAttachment}
             disabled={postReply.isPending}
           />
-          {postReply.error ? (
-            <p className="text-sm text-destructive">
-              {t('support:detail.replyFailed')}
-            </p>
+          {postReply.error && !serverBodyError ? (
+            <SaveFailedAlert
+              error={postReply.error}
+              titleKey="support:detail.replyNotSent"
+              onRetry={() => void handleSend()}
+            />
           ) : null}
           <div className="flex justify-end">
             <Button
               data-testid="send-reply"
-              disabled={!reply.trim() || postReply.isPending}
+              disabled={postReply.isPending}
               onClick={() => void handleSend()}
             >
               {postReply.isPending ? (
                 <Loader2 className="size-4 animate-spin" aria-hidden />
               ) : (
-                <Send className={cn('size-4', MIRROR_IN_RTL)} strokeWidth={2} aria-hidden />
+                <Send
+                  className={cn('size-4', MIRROR_IN_RTL)}
+                  strokeWidth={2}
+                  aria-hidden
+                />
               )}
               {t('support:detail.send')}
             </Button>

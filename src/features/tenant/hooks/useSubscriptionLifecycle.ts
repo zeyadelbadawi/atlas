@@ -77,6 +77,8 @@ export function useCancelTrial() {
     onSuccess: invalidate,
     showSuccessToast: false,
     showErrorToast: false,
+    // B5 (UX audit) — the cancel dialog shows the failure itself.
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 
@@ -94,6 +96,8 @@ export function useCancelSubscription() {
     onSuccess: invalidate,
     showSuccessToast: false,
     showErrorToast: false,
+    // B5 (UX audit) — the cancel dialog shows the failure itself.
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 

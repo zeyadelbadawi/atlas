@@ -16,6 +16,12 @@
  *   neither                                 -> just no sessions yet
  *
  * A dead "Add" button with no explanation is the thing this avoids.
+ *
+ * B5 (UX audit) — each row says when (date, start–end time, duration);
+ * Publish asks first (it creates the Zoom meeting and notifies enrolled
+ * students); a session that hasn't happened can be cancelled, also after
+ * asking (the API's only cancel: `status: 'cancelled'`, which cancels the
+ * meeting and notifies the students).
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,8 +30,10 @@ import { AlertCircle, Plus, Radio, Video } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
-import { formatDate } from '@utils';
+import { useConfirmDialog } from '@app/providers';
+import { formatDate, formatNumber } from '@utils';
 import {
+  useCancelLiveSession,
   useCourseLiveSessions,
   useCreateLiveSession,
   useLiveSessionsStatus,
@@ -54,6 +62,19 @@ function toIso(localValue: string): string {
   return new Date(localValue).toISOString();
 }
 
+/** Statuses a host may still cancel: the session hasn't happened yet. */
+const CANCELLABLE = new Set(['draft', 'scheduled']);
+
+/** Whole minutes between start and end, or `undefined` when unreadable. */
+export function sessionMinutes(session: LiveSession): number | undefined {
+  const minutes = Math.round(
+    (new Date(session.scheduledEndAt).getTime() -
+      new Date(session.scheduledStartAt).getTime()) /
+      60_000
+  );
+  return Number.isFinite(minutes) && minutes > 0 ? minutes : undefined;
+}
+
 export function LiveSessionCurriculumBlock({
   academyId,
   courseId,
@@ -69,6 +90,8 @@ export function LiveSessionCurriculumBlock({
   const createSession = useCreateLiveSession(academyId, courseId);
   const updateSession = useUpdateLiveSession(academyId, courseId);
   const publishSession = usePublishLiveSession(academyId, courseId);
+  const cancelSession = useCancelLiveSession(academyId, courseId);
+  const { confirm } = useConfirmDialog();
 
   // Never render a half-answer: while the add-on state is unknown, showing
   // either an "install the add-on" notice or a working Add button would be
@@ -79,7 +102,7 @@ export function LiveSessionCurriculumBlock({
   const addOnUsable = status?.addOn.usable === true;
 
   const sessions = (sessionsQuery.data ?? []).filter(
-    (session) => session.sectionId === sectionId,
+    (session) => session.sectionId === sectionId
   );
 
   // Nothing to show and nothing to offer — stay out of the way entirely
@@ -97,15 +120,55 @@ export function LiveSessionCurriculumBlock({
       recordingEnabled: data.recordingEnabled,
     };
 
-    if (dialog?.mode === 'edit') {
-      await updateSession.mutateAsync({
-        liveSessionId: dialog.session.id,
-        input: payload,
-      });
-    } else {
-      await createSession.mutateAsync({ ...payload, sectionId });
+    // B5 (UX audit) — a refusal is shown in the dialog (its fields or one
+    // inline alert); it must not escape as an unhandled rejection.
+    try {
+      if (dialog?.mode === 'edit') {
+        await updateSession.mutateAsync({
+          liveSessionId: dialog.session.id,
+          input: payload,
+        });
+      } else {
+        await createSession.mutateAsync({ ...payload, sectionId });
+      }
+      setDialog(null);
+    } catch {
+      // The dialog stays open with the reason.
     }
-    setDialog(null);
+  };
+
+  const openDialog = (next: DialogState): void => {
+    createSession.reset();
+    updateSession.reset();
+    setDialog(next);
+  };
+
+  const handlePublish = async (session: LiveSession): Promise<void> => {
+    const confirmed = await confirm({
+      titleKey: 'liveSessions:publish.confirmTitle',
+      descriptionKey: 'liveSessions:publish.confirmDescription',
+      confirmLabelKey: 'liveSessions:publish.action',
+      values: {
+        title: session.title,
+        when: formatDate(session.scheduledStartAt, language, 'dateTime'),
+      },
+    });
+    if (!confirmed) return;
+    // The hook shows one toast with the reason on failure.
+    publishSession.mutate({ liveSessionId: session.id });
+  };
+
+  const handleCancelSession = async (session: LiveSession): Promise<void> => {
+    const confirmed = await confirm({
+      titleKey: 'liveSessions:cancel.confirmTitle',
+      descriptionKey: 'liveSessions:cancel.confirmDescription',
+      confirmLabelKey: 'liveSessions:cancel.confirm',
+      cancelLabelKey: 'liveSessions:cancel.keep',
+      intent: 'destructive',
+      values: { title: session.title },
+    });
+    if (!confirmed) return;
+    cancelSession.mutate({ liveSessionId: session.id });
   };
 
   return (
@@ -115,7 +178,7 @@ export function LiveSessionCurriculumBlock({
           {sessions.map((session) => (
             <li
               key={session.id}
-              className="flex items-center gap-3 rounded-lg border border-border bg-card p-3"
+              className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card p-3"
             >
               <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground">
                 <Radio className="size-4" strokeWidth={1.75} aria-hidden />
@@ -125,10 +188,38 @@ export function LiveSessionCurriculumBlock({
                 <p className="truncate text-sm font-medium text-foreground">
                   {session.title}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p
+                  className="text-xs text-muted-foreground"
+                  data-testid={`live-session-when-${session.id}`}
+                >
                   {/* Centralized formatter, so Arabic dates and RTL are
-                      handled the same way as everywhere else in Atlas. */}
-                  {formatDate(session.scheduledStartAt, language, 'short')}
+                      handled the same way as everywhere else in Atlas.
+                      B5 — the time and length, not only the day. */}
+                  {t('liveSessions:row.when', {
+                    date: formatDate(
+                      session.scheduledStartAt,
+                      language,
+                      'short'
+                    ),
+                    start: formatDate(
+                      session.scheduledStartAt,
+                      language,
+                      'time'
+                    ),
+                    end: formatDate(session.scheduledEndAt, language, 'time'),
+                  })}
+                  {sessionMinutes(session) !== undefined ? (
+                    <>
+                      {' · '}
+                      {t('liveSessions:row.duration', {
+                        count: sessionMinutes(session),
+                        formatted: formatNumber(
+                          sessionMinutes(session) ?? 0,
+                          language
+                        ),
+                      })}
+                    </>
+                  ) : null}
                 </p>
               </div>
 
@@ -163,9 +254,7 @@ export function LiveSessionCurriculumBlock({
                     variant="default"
                     size="sm"
                     disabled={publishSession.isPending}
-                    onClick={() =>
-                      void publishSession.mutateAsync({ liveSessionId: session.id })
-                    }
+                    onClick={() => void handlePublish(session)}
                   >
                     {t('liveSessions:publish.action')}
                   </Button>
@@ -179,10 +268,22 @@ export function LiveSessionCurriculumBlock({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setDialog({ mode: 'edit', session })}
+                onClick={() => openDialog({ mode: 'edit', session })}
               >
                 {t('common:actions.edit')}
               </Button>
+              {CANCELLABLE.has(session.status) ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-destructive hover:text-destructive"
+                  disabled={cancelSession.isPending}
+                  onClick={() => void handleCancelSession(session)}
+                  data-testid={`live-session-cancel-${session.id}`}
+                >
+                  {t('liveSessions:cancel.action')}
+                </Button>
+              ) : null}
             </li>
           ))}
         </ol>
@@ -193,7 +294,7 @@ export function LiveSessionCurriculumBlock({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setDialog({ mode: 'create' })}
+            onClick={() => openDialog({ mode: 'create' })}
           >
             <Plus className="size-4" strokeWidth={2} aria-hidden />
             {t('liveSessions:addToUnit')}
@@ -237,7 +338,11 @@ export function LiveSessionCurriculumBlock({
         }
         isPending={createSession.isPending || updateSession.isPending}
         onSubmit={handleSubmit}
-        error={createSession.error ?? updateSession.error}
+        error={
+          (dialog?.mode === 'edit'
+            ? updateSession.error
+            : createSession.error) ?? null
+        }
         recordingQuota={status?.recordingQuota}
       />
     </div>

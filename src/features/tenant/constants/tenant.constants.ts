@@ -28,9 +28,13 @@ export const DEFAULT_TRIAL_POLICY: TrialPolicy = Object.freeze({
   durationDays: 14,
 });
 
-/** Default grace-period configuration: 3 days after trial/subscription lapse. */
+/**
+ * Grace period after a paid period lapses unpaid — mirrors the backend's
+ * `GRACE_PERIOD_DAYS` (src/plans/queue/subscription-sweep.types.ts), which
+ * decides it; this copy was 3 and disagreed (B5 UX audit).
+ */
 export const GRACE_PERIOD_CONFIG = Object.freeze({
-  durationDays: 3,
+  durationDays: 7,
 });
 
 /** Every resource limit key, in display order. */

@@ -37,6 +37,7 @@ import { getSubscriptionStatusTone } from '../utils/subscription-status.utils';
 import { PlanComparisonDialog } from '../components/PlanComparisonDialog';
 import { SubscriptionGiftDetails } from '../components/SubscriptionGiftDetails';
 import { ScheduledPlanChangeNotice } from '../components/ScheduledPlanChangeNotice';
+import { SubscriptionBillingDetails } from '../components/SubscriptionBillingDetails';
 import { PriceChangeNotice } from '../components/PriceChangeNotice';
 import { FoundingMembershipNotice } from '../components/FoundingMembershipNotice';
 import {
@@ -174,11 +175,9 @@ export default function TenantSubscriptionPage(): JSX.Element {
               </p>
             ) : null}
 
-            {subscription.cancelAtPeriodEnd ? (
-              <p className="font-medium text-warning">
-                {t('tenant:subscription.cancelAtPeriodEnd')}
-              </p>
-            ) : null}
+            {/* B5 (UX audit) — price, cycle, the next payment date and
+                what happens if it isn't paid (payments are manual). */}
+            <SubscriptionBillingDetails subscription={subscription} />
 
             {/* B0-BIL-04 — a smaller plan bought mid-period waits for the
                 end of the period already paid for. */}
@@ -285,6 +284,7 @@ export default function TenantSubscriptionPage(): JSX.Element {
         plans={planCatalogQuery.data}
         isLoading={planCatalogQuery.isLoading}
         currentPlanKey={subscription.plan.key}
+        currentStatus={subscription.status}
         onSelectPlan={(plan) => {
           setComparisonOpen(false);
           navigate(

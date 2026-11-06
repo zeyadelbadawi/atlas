@@ -12,7 +12,7 @@
 import { keepPreviousData } from '@tanstack/react-query';
 import { useApiMutation, useApiQuery } from '@/shared/hooks';
 import { LIVE_LIST_QUERY_OPTIONS } from '@config';
-import { customerRequestKeys } from '@services/query';
+import { customerRequestKeys, INLINE_ERRORS_META } from '@services/query';
 import type { ApiError } from '@api';
 import type { PaginatedResult } from '@types';
 import { customerRequestService } from '../services/CustomerRequestService';
@@ -68,6 +68,9 @@ export function useCreateCustomerRequest() {
     invalidateKeys: [customerRequestKeys.all],
     showSuccessToast: false,
     showErrorToast: false,
+    // B5 (UX audit) — the caller shows the failure once (inline or one
+    // toast with the real reason); the app-wide reporter must not repeat it.
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 
@@ -88,6 +91,9 @@ export function useReplyToCustomerRequest() {
     invalidateKeys: [customerRequestKeys.all],
     showSuccessToast: false,
     showErrorToast: false,
+    // B5 (UX audit) — the caller shows the failure once (inline or one
+    // toast with the real reason); the app-wide reporter must not repeat it.
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 
@@ -107,5 +113,8 @@ export function useCancelCustomerRequest() {
     invalidateKeys: [customerRequestKeys.all],
     showSuccessToast: false,
     showErrorToast: false,
+    // B5 (UX audit) — the caller shows the failure once (inline or one
+    // toast with the real reason); the app-wide reporter must not repeat it.
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

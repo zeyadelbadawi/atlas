@@ -36,7 +36,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@components/data-display';
 import { PlanGiftOffer } from './PlanGiftOffer';
-import { cn } from '@utils';
+import { cn, formatCurrency } from '@utils';
 import { isFeatureEnabled } from '@config';
 import {
   PLAN_FEATURE_KEYS,
@@ -48,7 +48,61 @@ import {
   resolvePlanDescription,
   resolvePlanName,
 } from '../utils/plan-text.utils';
-import type { LanguageCode, Plan } from '@types';
+import type { LanguageCode, Plan, TenantSubscriptionStatus } from '@types';
+
+/**
+ * B5 (UX audit) — "Monthly: EGP 699 · Yearly: EGP 6,990" from the plan's
+ * own catalog pricing, so the cards can be compared on price too. Nothing
+ * when the plan has no usable price.
+ */
+function PlanPriceLine({
+  plan,
+  locale,
+}: {
+  readonly plan: Plan;
+  readonly locale: LanguageCode;
+}): JSX.Element | null {
+  const { t } = useTranslation();
+  const pricing = plan.pricing;
+  if (!hasUsablePricing(plan) || !pricing?.currency) return null;
+  const cycle = pricing.billingCycle ?? 'monthly';
+  const parts = [
+    `${formatCurrency(pricing.amount!, locale, pricing.currency)} / ${t(
+      `payments:common.billingCycleShort.${cycle}`
+    )}`,
+  ];
+  if (
+    cycle === 'monthly' &&
+    typeof pricing.yearlyAmount === 'number' &&
+    Number.isFinite(pricing.yearlyAmount)
+  ) {
+    parts.push(
+      `${formatCurrency(pricing.yearlyAmount, locale, pricing.currency)} / ${t(
+        'payments:common.billingCycleShort.yearly'
+      )}`
+    );
+  }
+  return (
+    <p
+      className="text-sm font-semibold text-foreground"
+      data-atlas-numeric="true"
+      data-testid={`plan-price-${plan.key}`}
+    >
+      {parts.map((part, index) => (
+        <span key={part}>
+          {index > 0 ? (
+            <span className="mx-1 font-normal text-muted-foreground">
+              {t('tenant:planComparison.priceOr')}
+            </span>
+          ) : null}
+          <span dir="ltr" data-ltr-content className="whitespace-nowrap">
+            {part}
+          </span>
+        </span>
+      ))}
+    </p>
+  );
+}
 
 /**
  * "Fail safely" defense-in-depth (never the source of truth — the backend
@@ -116,6 +170,31 @@ export interface PlanComparisonDialogProps {
    * server-side at payment approval.
    */
   readonly giftAvailable?: boolean;
+  /**
+   * B5 (UX audit) — the status of the subscription on `currentPlanKey`.
+   * With `onSelectPlan`, the current plan's card offers what checking it
+   * out really does: an active (or lapsing) plan is paid for one more
+   * period, added after the current one ends; a trial or an ended plan is
+   * bought. Without it the current plan has no action.
+   */
+  readonly currentStatus?: TenantSubscriptionStatus;
+}
+
+/** What checking out the current plan does, by its status. */
+function currentPlanAction(
+  status: TenantSubscriptionStatus | undefined
+): 'renew' | 'buy' | null {
+  if (!status) return null;
+  if (status === 'active' || status === 'grace_period') return 'renew';
+  if (
+    status === 'trialing' ||
+    status === 'trial_expired' ||
+    status === 'expired' ||
+    status === 'cancelled'
+  ) {
+    return 'buy';
+  }
+  return null;
 }
 
 export function PlanComparisonDialog({
@@ -128,6 +207,7 @@ export function PlanComparisonDialog({
   onStartTrial,
   notice,
   giftAvailable,
+  currentStatus,
 }: PlanComparisonDialogProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const unlimitedLabel = t('tenant:common.unlimited');
@@ -143,6 +223,7 @@ export function PlanComparisonDialog({
     ? [...plans].sort((a, b) => a.displayOrder - b.displayOrder)
     : undefined;
   const NoticeIcon = notice?.icon ?? Info;
+  const currentAction = onSelectPlan ? currentPlanAction(currentStatus) : null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -210,6 +291,7 @@ export function PlanComparisonDialog({
                         {resolvePlanDescription(plan, locale)}
                       </p>
                     ) : null}
+                    <PlanPriceLine plan={plan} locale={locale} />
                   </div>
 
                   <div className="space-y-1.5 text-sm">
@@ -268,6 +350,37 @@ export function PlanComparisonDialog({
                     />
                   ) : null}
 
+                  {plan.key === currentPlanKey &&
+                  currentAction &&
+                  onSelectPlan &&
+                  plan.status === 'active' &&
+                  hasUsablePricing(plan) ? (
+                    <div className="mt-auto flex flex-col gap-2">
+                      <p
+                        className="text-xs text-muted-foreground"
+                        data-testid={`current-plan-note-${plan.key}`}
+                      >
+                        {t(
+                          currentAction === 'renew'
+                            ? 'tenant:planComparison.renewNote'
+                            : 'tenant:planComparison.buyCurrentNote'
+                        )}
+                      </p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => onSelectPlan(plan)}
+                        data-testid={`current-plan-action-${plan.key}`}
+                      >
+                        {t(
+                          currentAction === 'renew'
+                            ? 'tenant:planComparison.payNextPeriod'
+                            : 'tenant:planComparison.buyCurrentPlan'
+                        )}
+                      </Button>
+                    </div>
+                  ) : null}
+
                   {plan.key !== currentPlanKey ? (
                     <div className="mt-auto flex flex-col gap-2">
                       {/*
@@ -299,16 +412,23 @@ export function PlanComparisonDialog({
                       ) : null}
 
                       {onSelectPlan ? (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          disabled={
-                            plan.status !== 'active' || !hasUsablePricing(plan)
-                          }
-                          onClick={() => onSelectPlan(plan)}
-                        >
-                          {t('tenant:planComparison.selectPlan')}
-                        </Button>
+                        plan.status === 'active' && hasUsablePricing(plan) ? (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => onSelectPlan(plan)}
+                          >
+                            {t('tenant:planComparison.selectPlan')}
+                          </Button>
+                        ) : (
+                          /* B5 (UX audit) — say why instead of a greyed button. */
+                          <p
+                            className="text-xs text-muted-foreground"
+                            data-testid={`plan-not-for-sale-${plan.key}`}
+                          >
+                            {t('tenant:planComparison.notForSale')}
+                          </p>
+                        )
                       ) : null}
                     </div>
                   ) : null}

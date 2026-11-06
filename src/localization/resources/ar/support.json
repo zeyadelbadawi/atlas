@@ -41,7 +41,10 @@
     "unassigned": "غير مُسندة",
     "conversationTitle": "المحادثة",
     "sendReply": "إرسال الرد",
-    "statusUpdated": "تم تحديث حالة التذكرة."
+    "statusUpdated": "تم تحديث حالة التذكرة.",
+    "replyField": "ردّك",
+    "replyEmpty": "اكتب ردّك أولًا.",
+    "replyNotSent": "لم يُرسل ردّك"
   },
   "center": {
     "title": "الدعم",
@@ -64,8 +67,9 @@
     "submit": "إرسال التذكرة",
     "failed": "تعذّر إرسال التذكرة. يرجى مراجعة البيانات والمحاولة مرة أخرى.",
     "subjectTooLong": "اجعل العنوان {{count}} حرفًا أو أقل.",
-    "descriptionTooLong": "اجعل الوصف {{count}} حرفًا أو أقل. أرفق ملفًا للتفاصيل الأطول.",
-    "characterCount": "{{count}} / {{max}} حرفًا"
+    "descriptionTooLong": "اجعل الوصف في حدود {{count}} حرفًا أو أقل. يمكنك إضافة المزيد في رد بعد فتح التذكرة.",
+    "characterCount": "{{count}} / {{max}} حرفًا",
+    "notSubmitted": "لم تُرسل تذكرتك"
   },
   "attachment": {
     "label": "صورة (اختياري)",

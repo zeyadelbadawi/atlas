@@ -32,8 +32,16 @@ import {
 } from '../hooks';
 import { formatLimitValue, getDaysRemaining } from '../utils/entitlement.utils';
 import { getSubscriptionStatusTone } from '../utils/subscription-status.utils';
-import { resolvePlanDescription, resolvePlanName } from '../utils/plan-text.utils';
-import { cn, isCustomerVisibleLimitKey, MIRROR_IN_RTL } from '@utils';
+import {
+  resolvePlanDescription,
+  resolvePlanName,
+} from '../utils/plan-text.utils';
+import {
+  cn,
+  formatDate,
+  isCustomerVisibleLimitKey,
+  MIRROR_IN_RTL,
+} from '@utils';
 import { SetupChecklistCard } from '@features/onboarding';
 import type { LanguageCode } from '@types';
 
@@ -170,6 +178,11 @@ export default function TenantDashboardPage(): JSX.Element {
                 {t('tenant:dashboard.trialDaysRemaining', {
                   count: getDaysRemaining(subscription.trialEndsAt),
                 })}
+                {/* B5 (UX audit) — the end date, not only a countdown. */}
+                {' · '}
+                {t('tenant:subscription.billing.trialEndsOn', {
+                  date: formatDate(subscription.trialEndsAt, language, 'short'),
+                })}
               </p>
             ) : subscription.status === 'grace_period' &&
               subscription.graceEndsAt ? (
@@ -191,7 +204,11 @@ export default function TenantDashboardPage(): JSX.Element {
               onClick={() => navigate(DASHBOARD_ROUTES.tenantSubscription)}
             >
               {t('tenant:dashboard.viewSubscription')}
-              <ChevronRight className={cn('size-4', MIRROR_IN_RTL)} strokeWidth={2} aria-hidden />
+              <ChevronRight
+                className={cn('size-4', MIRROR_IN_RTL)}
+                strokeWidth={2}
+                aria-hidden
+              />
             </Button>
           </CardContent>
         </Card>
@@ -208,7 +225,11 @@ export default function TenantDashboardPage(): JSX.Element {
               onClick={() => navigate(DASHBOARD_ROUTES.tenantUsage)}
             >
               {t('tenant:dashboard.viewUsage')}
-              <ChevronRight className={cn('size-4', MIRROR_IN_RTL)} strokeWidth={2} aria-hidden />
+              <ChevronRight
+                className={cn('size-4', MIRROR_IN_RTL)}
+                strokeWidth={2}
+                aria-hidden
+              />
             </Button>
           </div>
           {usage ? (
@@ -261,7 +282,11 @@ export default function TenantDashboardPage(): JSX.Element {
               onClick={() => navigate(DASHBOARD_ROUTES.tenantAddOns)}
             >
               {t('tenant:dashboard.viewAddOns')}
-              <ChevronRight className={cn('size-4', MIRROR_IN_RTL)} strokeWidth={2} aria-hidden />
+              <ChevronRight
+                className={cn('size-4', MIRROR_IN_RTL)}
+                strokeWidth={2}
+                aria-hidden
+              />
             </Button>
           </CardHeader>
           <CardContent>

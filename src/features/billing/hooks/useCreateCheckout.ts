@@ -9,6 +9,7 @@
  * generated once per attempt (see `generateIdempotencyKey`).
  */
 import { useApiMutation } from '@/shared/hooks';
+import { INLINE_ERRORS_META } from '@services/query';
 import type { ApiError } from '@api';
 import { checkoutService } from '../services/CheckoutService';
 import type { Checkout, CreateCheckoutPayload } from '@types';
@@ -24,5 +25,7 @@ export function useCreateCheckout() {
       checkoutService.createCheckout(organizationId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B5 (UX audit) — the page shows this failure itself; no toast repeats it.
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

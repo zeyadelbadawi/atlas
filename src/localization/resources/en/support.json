@@ -41,7 +41,10 @@
     "unassigned": "Unassigned",
     "conversationTitle": "Conversation",
     "sendReply": "Send reply",
-    "statusUpdated": "Ticket status updated."
+    "statusUpdated": "Ticket status updated.",
+    "replyField": "Your reply",
+    "replyEmpty": "Write your reply first.",
+    "replyNotSent": "Your reply wasn't sent"
   },
   "center": {
     "title": "Support",
@@ -64,8 +67,9 @@
     "submit": "Submit ticket",
     "failed": "Your ticket could not be submitted. Please check the details and try again.",
     "subjectTooLong": "Keep the subject to {{count}} characters or fewer.",
-    "descriptionTooLong": "Keep the description to {{count}} characters or fewer. Attach a file for longer details.",
-    "characterCount": "{{count}} / {{max}} characters"
+    "descriptionTooLong": "Keep the description to {{count}} characters or fewer. You can add more in a reply once the ticket is open.",
+    "characterCount": "{{count}} / {{max}} characters",
+    "notSubmitted": "Your ticket wasn't submitted"
   },
   "attachment": {
     "label": "Image (optional)",

@@ -250,7 +250,8 @@
     "providerReconnectRequired": "This academy's Zoom connection needs to be renewed. Ask your organization owner to reconnect.",
     "authorizationInvalid": "That Zoom authorization has expired or was already used. Press Connect Zoom to start again.",
     "accountAlreadyConnected": "That Zoom account is already connected to another academy. Connect a different Zoom account, or disconnect it from the other academy first.",
-    "authorizationFailed": "We couldn't finish connecting to Zoom. Please try again."
+    "authorizationFailed": "We couldn't finish connecting to Zoom. Please try again.",
+    "startInPast": "This start time has already passed. Choose a time in the future."
   },
   "addOns": {
     "comingSoon": "This add-on isn’t available yet, so it can’t be installed.",
@@ -305,7 +306,8 @@
     "invalidTransition": "The request can't move to that status from where it is now. Refresh to see its current status.",
     "nothingToUpdate": "Choose a new status or assignee first.",
     "invalidAssignee": "That person can't be assigned. Choose a Platform Owner.",
-    "duplicateRoutingType": "Each request type can have only one inbox."
+    "duplicateRoutingType": "Each request type can have only one inbox.",
+    "invalidDomain": "Enter a domain like myacademy.com — no https:// and no spaces."
   },
   "mutation": {
     "failed": "That action could not be completed. Please try again.",

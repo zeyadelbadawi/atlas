@@ -19,7 +19,12 @@
  * incomplete, never broken.
  */
 import { resolveLocalizedText } from '@features/website';
-import type { LanguageCode, Plan } from '@types';
+import type {
+  LanguageCode,
+  Plan,
+  PlanPricingMetadata,
+  SubscriptionBillingCycle,
+} from '@types';
 
 /** A plan's name in the active language, falling back to its English catalog name. */
 export function resolvePlanName(plan: Plan, locale: LanguageCode): string {
@@ -27,9 +32,30 @@ export function resolvePlanName(plan: Plan, locale: LanguageCode): string {
 }
 
 /** A plan's description in the active language. Empty when the plan has none at all. */
-export function resolvePlanDescription(plan: Plan, locale: LanguageCode): string {
+export function resolvePlanDescription(
+  plan: Plan,
+  locale: LanguageCode
+): string {
   return resolveLocalizedText(
     plan.descriptionLocalized ?? plan.description,
     locale
   );
+}
+
+/**
+ * B5 (UX audit) — a plan's catalog price (major units) for one billing
+ * cycle, or `undefined` when there is none. The same rule the backend's
+ * checkout pricing applies: a yearly cycle on a monthly plan is priced
+ * from `yearlyAmount`; otherwise `amount`.
+ */
+export function planCyclePrice(
+  pricing: PlanPricingMetadata | undefined,
+  cycle: SubscriptionBillingCycle
+): number | undefined {
+  if (!pricing?.currency) return undefined;
+  if (cycle === 'yearly' && pricing.billingCycle === 'monthly') {
+    return pricing.yearlyAmount;
+  }
+  if (pricing.billingCycle && pricing.billingCycle !== cycle) return undefined;
+  return pricing.amount;
 }
