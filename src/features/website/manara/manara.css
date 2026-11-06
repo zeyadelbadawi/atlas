@@ -65,6 +65,10 @@
 /* ------------------------------------------------------------------ */
 
 .website-theme-scope[data-theme-pack='manara'] {
+  /* B10 V22 — the footer's ground, continued under the phone's bottom bar
+     (`WebsiteChrome`). */
+  --website-footer-surface: var(--mn-night);
+
   --mn-font-display:
     'Manara Display', 'Readex Pro', 'Rubik', 'Segoe UI', system-ui, sans-serif;
 
@@ -237,6 +241,48 @@
   --mn-env-card: var(--mn-day);
   --mn-env-card-raised: var(--mn-day-soft);
   --mn-env-em: var(--mn-brand-text);
+}
+
+/* B10 (UX audit) V12 — two blocks on the same ground in a row share one
+   gap, not two (as Theme 1's sections do); the second also in the
+   dashboard preview, where each section sits in a box-less anchor
+   (`WebsitePreviewContext`). */
+[data-theme-pack='manara']
+  .mn-block[data-env='day']
+  + .mn-block[data-env='day'],
+[data-theme-pack='manara']
+  .mn-block[data-env='soft']
+  + .mn-block[data-env='soft'],
+[data-theme-pack='manara']
+  .mn-block[data-env='night']
+  + .mn-block[data-env='night'],
+[data-theme-pack='manara']
+  .mn-block[data-env='block']
+  + .mn-block[data-env='block'],
+[data-theme-pack='manara']
+  .mn-block[data-env='accent']
+  + .mn-block[data-env='accent'],
+[data-theme-pack='manara']
+  [data-preview-section]:has(> .mn-block[data-env='day'])
+  + [data-preview-section]
+  > .mn-block[data-env='day'],
+[data-theme-pack='manara']
+  [data-preview-section]:has(> .mn-block[data-env='soft'])
+  + [data-preview-section]
+  > .mn-block[data-env='soft'],
+[data-theme-pack='manara']
+  [data-preview-section]:has(> .mn-block[data-env='night'])
+  + [data-preview-section]
+  > .mn-block[data-env='night'],
+[data-theme-pack='manara']
+  [data-preview-section]:has(> .mn-block[data-env='block'])
+  + [data-preview-section]
+  > .mn-block[data-env='block'],
+[data-theme-pack='manara']
+  [data-preview-section]:has(> .mn-block[data-env='accent'])
+  + [data-preview-section]
+  > .mn-block[data-env='accent'] {
+  padding-block-start: 0;
 }
 
 [data-theme-pack='manara'] .mn-block[data-env='soft'] {

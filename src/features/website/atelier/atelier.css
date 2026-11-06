@@ -19,11 +19,20 @@
 /* Display face: Fraunces (Latin) + Markazi Text (Arabic) as one family */
 /* ------------------------------------------------------------------ */
 
+/*
+ * Every upright face of the family declares the SAME weight range (100 900):
+ * Chromium groups faces by their descriptors before it looks at
+ * `unicode-range`, so faces with different ranges become rival candidates
+ * and only one of them serves the text. With the Arabic face at 300–900 it
+ * won every weight, and Latin fell back to the system serif (B10 V01).
+ * One range keeps them one segmented face, split by script. Markazi's own
+ * axis (400–700) clamps the request; nothing is synthesised.
+ */
 @font-face {
   font-family: 'Atelier Display';
   font-style: normal;
   font-display: swap;
-  font-weight: 300 900;
+  font-weight: 100 900;
   src: url('../../../assets/fonts/markazi-text-arabic.woff2')
     format('woff2-variations');
   unicode-range:
@@ -76,6 +85,10 @@
 /* ------------------------------------------------------------------ */
 
 .website-theme-scope[data-theme-pack='atelier'] {
+  /* B10 V22 — the footer's ground, continued under the phone's bottom bar
+     (`WebsiteChrome`). */
+  --website-footer-surface: var(--atelier-paper-deep);
+
   --at-font-display:
     'Atelier Display', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
 
@@ -254,6 +267,40 @@
   isolation: isolate;
 }
 [data-theme-pack='atelier'] .at-chapter[data-flush-top] {
+  padding-block-start: 0;
+}
+/* B10 (UX audit) V12 — two chapters on the same ground in a row share one
+   gap, not two (as Theme 1's sections do); the second also in the
+   dashboard preview, where each section sits in a box-less anchor
+   (`WebsitePreviewContext`). */
+[data-theme-pack='atelier']
+  .at-chapter[data-env='paper']
+  + .at-chapter[data-env='paper'],
+[data-theme-pack='atelier']
+  .at-chapter[data-env='deep']
+  + .at-chapter[data-env='deep'],
+[data-theme-pack='atelier']
+  .at-chapter[data-env='ink']
+  + .at-chapter[data-env='ink'],
+[data-theme-pack='atelier']
+  .at-chapter[data-env='brand']
+  + .at-chapter[data-env='brand'],
+[data-theme-pack='atelier']
+  [data-preview-section]:has(> .at-chapter[data-env='paper'])
+  + [data-preview-section]
+  > .at-chapter[data-env='paper'],
+[data-theme-pack='atelier']
+  [data-preview-section]:has(> .at-chapter[data-env='deep'])
+  + [data-preview-section]
+  > .at-chapter[data-env='deep'],
+[data-theme-pack='atelier']
+  [data-preview-section]:has(> .at-chapter[data-env='ink'])
+  + [data-preview-section]
+  > .at-chapter[data-env='ink'],
+[data-theme-pack='atelier']
+  [data-preview-section]:has(> .at-chapter[data-env='brand'])
+  + [data-preview-section]
+  > .at-chapter[data-env='brand'] {
   padding-block-start: 0;
 }
 

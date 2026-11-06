@@ -22,6 +22,7 @@ import {
   ManaraPill,
   ManaraSectionHeader,
   formatManaraIndex,
+  formatManaraNumber,
 } from '../manara-parts';
 import { stagger, toParagraphs } from './manara-section-helpers';
 import '../manara-sections.css';
@@ -41,10 +42,7 @@ export function ManaraAbout({
   const hasImage = !!config.image;
   return (
     <ManaraBlock labelledBy={headingId}>
-      <div
-        data-ws-columns=""
-        className="grid gap-10 lg:grid-cols-12 lg:gap-10"
-      >
+      <div data-ws-columns="" className="grid gap-10 lg:grid-cols-12 lg:gap-10">
         <div
           className={cn(
             'mnh-about min-w-0',
@@ -357,30 +355,36 @@ export function ManaraSteps({
         style={{ '--mnh-steps': items.length } as CSSProperties}
       >
         <span aria-hidden className="mn-rule mnh-steps-beam" />
-        {items.map((item, index) => (
-          <li key={item.id} className="mnh-step">
-            <Reveal delayMs={stagger(index)} className="mnh-step-body">
-              <span
-                aria-hidden
-                className="mn-numeral mnh-step-no"
-                data-atlas-numeric="true"
-              >
-                {formatManaraIndex(index, locale)}
-              </span>
-              <span className="mn-sr-only">
-                {t('website:manara.home.steps.stepLabel', {
-                  number: formatManaraIndex(index, locale),
-                })}
-              </span>
-              <h3 className="mn-subtitle mnh-item-title">{item.title}</h3>
-              {item.description ? (
-                <p className="mn-body mn-muted mnh-item-text">
-                  {item.description}
-                </p>
-              ) : null}
-            </Reveal>
-          </li>
-        ))}
+        {items.map((item, index) => {
+          // B10 (UX audit) V30 — Arabic-Indic digits without the leading
+          // zero (٠ is a dot: "٠١" read as a stray shape); Latin keeps 01.
+          const number =
+            locale === 'ar'
+              ? formatManaraNumber(index + 1, locale)
+              : formatManaraIndex(index, locale);
+          return (
+            <li key={item.id} className="mnh-step">
+              <Reveal delayMs={stagger(index)} className="mnh-step-body">
+                <span
+                  aria-hidden
+                  className="mn-numeral mnh-step-no"
+                  data-atlas-numeric="true"
+                >
+                  {number}
+                </span>
+                <span className="mn-sr-only">
+                  {t('website:manara.home.steps.stepLabel', { number })}
+                </span>
+                <h3 className="mn-subtitle mnh-item-title">{item.title}</h3>
+                {item.description ? (
+                  <p className="mn-body mn-muted mnh-item-text">
+                    {item.description}
+                  </p>
+                ) : null}
+              </Reveal>
+            </li>
+          );
+        })}
       </ol>
     </ManaraBlock>
   );

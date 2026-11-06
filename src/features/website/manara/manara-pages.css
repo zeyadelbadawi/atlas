@@ -543,6 +543,39 @@
   }
 }
 
+/* B10 (UX audit) V06 — the shared sign-in / sign-up form, in Manara's
+   voice: the heading in the display face (800) at the subtitle size,
+   controls 44 px tall with Manara's radius, and text links with a 24 px
+   target. The form's markup is shared and unchanged. */
+[data-theme-pack='manara'] .mnp-auth-form {
+  --radius-sm: var(--mn-radius);
+  --radius-md: var(--mn-radius);
+  --radius-lg: var(--mn-radius-lg);
+}
+[data-theme-pack='manara'] .mnp-auth-form h1 {
+  font-family: var(--mn-font-display);
+  font-size: var(--mn-subtitle);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+[data-theme-pack='manara'] .mnp-auth-form h1:lang(ar) {
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+[data-theme-pack='manara']
+  .mnp-auth-form
+  :is(
+    input:not([type='checkbox'], [type='radio'], [type='hidden']),
+    button[type='submit']
+  ) {
+  min-block-size: 2.75rem;
+}
+:where([data-theme-pack='manara'] .mnp-auth-form) a {
+  display: inline-block;
+  padding-block: 0.25rem;
+}
+
 /* ------------------------------------------------------------------ */
 /* Banner block (pageHeader, page intro)                                */
 /* ------------------------------------------------------------------ */
@@ -731,7 +764,9 @@
   min-block-size: 2.75rem;
   padding: 0.5rem 1rem;
   border-radius: 999px;
-  border: 2px solid var(--mn-line);
+  /* B10 (UX audit) V14 — the pill's fill is the page's own, so its border
+     is its only edge: the 3:1 field boundary, not the 1.26:1 hairline. */
+  border: 2px solid var(--mn-input-border);
   background: var(--mn-env-card, var(--mn-day));
   color: var(--mn-text);
   font-family: var(--mn-font-display);

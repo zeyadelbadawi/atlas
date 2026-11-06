@@ -2,6 +2,11 @@
  * Atelier — Arabic line spacing (Arabic only: `:lang(ar)`; English is
  * unchanged).
  *
+ * B10 (UX audit) V09 — and only where the text runs right to left
+ * (`:dir(rtl)`, inside `:where` so no rule gains weight): a Latin title
+ * marked `dir="auto"` on an Arabic page resolves left to right and keeps
+ * its Latin line height instead of the Arabic one.
+ *
  * Atelier's display face sets Arabic in Markazi Text, whose ink is about
  * 1.1 em for plain text but about 1.5 em once a hamza or shadda stacks on
  * a tall letter; its running text is Rubik (about 1.3 em). The Latin
@@ -25,29 +30,31 @@
  * the theme sized on purpose.
  */
 :where([data-theme-pack='atelier'])
-  :where(p, li, blockquote, dd, figcaption):lang(ar) {
+  :where(p, li, blockquote, dd, figcaption):lang(ar):where(:dir(rtl)) {
   line-height: 1.85;
 }
 
-:where([data-theme-pack='atelier']) :where(h1, h2, h3, h4, h5, h6):lang(ar) {
+:where([data-theme-pack='atelier'])
+  :where(h1, h2, h3, h4, h5, h6):lang(ar):where(:dir(rtl)) {
   line-height: 1.6;
 }
 
 /* Tailwind's size and leading utilities load after this stylesheet, so
    these weigh one class more than a utility. */
 :where([data-theme-pack='atelier'])
-  :is(.leading-normal, .leading-relaxed):lang(ar),
+  :is(.leading-normal, .leading-relaxed):lang(ar):where(:dir(rtl)),
 :where([data-theme-pack='atelier'])
   :where(p, li, blockquote, dd, figcaption):is(
     [class*='text-xs'],
     [class*='text-sm'],
     [class*='text-base'],
     [class*='text-lg']
-  ):lang(ar) {
+  ):lang(ar):where(:dir(rtl)) {
   line-height: 1.85;
 }
 
-:where([data-theme-pack='atelier']) button[aria-expanded]:lang(ar),
+:where([data-theme-pack='atelier'])
+  button[aria-expanded]:lang(ar):where(:dir(rtl)),
 :where([data-theme-pack='atelier'])
   :is(
     [class*='text-xl'],
@@ -59,7 +66,7 @@
     .leading-none,
     .leading-tight,
     .leading-snug
-  ):lang(ar) {
+  ):lang(ar):where(:dir(rtl)) {
   line-height: 1.6;
 }
 
@@ -80,7 +87,7 @@
     .atp-overlay-link,
     .atp-colophon-name,
     .atp-row-title
-  ):lang(ar) {
+  ):lang(ar):where(:dir(rtl)) {
   line-height: 1.45;
 }
 
@@ -91,12 +98,12 @@
     .ath-hero-subtitle,
     .ath-lede-first,
     .ath-faq-question
-  ):lang(ar) {
+  ):lang(ar):where(:dir(rtl)) {
   line-height: 1.55;
 }
 
 /* Labels. */
-[data-theme-pack='atelier'] :is(.at-label):lang(ar) {
+[data-theme-pack='atelier'] :is(.at-label):lang(ar):where(:dir(rtl)) {
   line-height: 1.6;
 }
 
@@ -108,6 +115,6 @@
     .ath-index-text,
     .ath-faq-answer,
     textarea.atp-field
-  ):lang(ar) {
+  ):lang(ar):where(:dir(rtl)) {
   line-height: 1.85;
 }

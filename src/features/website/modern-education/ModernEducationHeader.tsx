@@ -163,7 +163,7 @@ export function ModernEducationHeader({
   const navLinkClass = (variant: 'bar' | 'sheet', current: boolean) =>
     variant === 'bar'
       ? cn(
-          't1-nav-link text-[0.9375rem] font-medium',
+          't1-nav-link whitespace-nowrap text-[0.9375rem] font-medium',
           current
             ? 'text-[var(--website-foreground)]'
             : 'text-[var(--website-foreground-muted)] hover:text-[var(--website-foreground)]'
@@ -352,16 +352,21 @@ export function ModernEducationHeader({
       >
         {brandMark}
 
+        {/* B10 (UX audit) V03 — one line from 1024 px in both languages:
+            links never break, the navigation and the actions keep their
+            width and the name takes the squeeze (two lines at most). The
+            list still wraps past half the bar, so a long navigation stays
+            reachable rather than running off the edge. */}
         <nav
           aria-label={t('website:chrome.primaryNavigation')}
-          className="hidden min-w-0 lg:block"
+          className="hidden max-w-[50%] shrink-0 lg:block"
         >
           <ul className="flex flex-wrap items-center gap-x-7 gap-y-1">
             {navLinks('bar')}
           </ul>
         </nav>
 
-        <div className="hidden items-center gap-5 lg:flex">
+        <div className="hidden shrink-0 items-center gap-5 whitespace-nowrap lg:flex">
           {languageSwitcher(
             'text-sm font-medium text-[var(--website-foreground-muted)] hover:text-[var(--website-foreground)]'
           )}
