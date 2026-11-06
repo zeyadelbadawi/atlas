@@ -55,6 +55,8 @@ site and the public academy sites are out of scope for now.
 | B6 | Instructor area: courses, students, assessments, grading, quiz results, discussions, announcements, analytics | 19–20 Nov |
 | B7 | Learner area in the dashboard: my courses, player, quizzes, assignments, discussions, live sessions, results, notifications, search | 21–22 Nov |
 | B8 | Platform Owner console (`/dashboard/platform/*`), checked first against the DL-29 workstream | 23–25 Nov |
+| B9 | Academy public website in all four themes (modern-education, atelier, manara, riwaq): every page type and section, header/menu, language switch, academy-host auth and contact forms, RTL, 375–1440 px | after B8 |
+| B10 | UI design audit of the four website themes: each theme's type scale, spacing, colour, radius and elevation, cross-theme consistency, visual hierarchy and composition, contrast (`ui-ux-pro-max`, `design-critique`, `accessibility-review`) | after B9 |
 
 ## How a batch runs
 

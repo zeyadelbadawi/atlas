@@ -43,7 +43,7 @@ import { LearnerSectionPlaceholder } from '../components/LearnerSectionPlacehold
 import { useLearnerSurface } from '../context/LearnerSurface.context';
 import { useLearnerOverview } from '../hooks';
 import { learnerAssessmentStateLabel } from '../utils/assessment-state.utils';
-import { learningStateOf, progressCounts } from '@utils';
+import { isolateText, learningStateOf, progressCounts } from '@utils';
 import { PhoneNumberPrompt } from '@features/profile';
 
 export default function LearnerOverviewPage(): JSX.Element {
@@ -158,7 +158,10 @@ export default function LearnerOverviewPage(): JSX.Element {
                     />
 
                     <div className="min-w-0 flex-1">
-                      <h3 className="truncate font-display text-sm font-semibold text-foreground">
+                      <h3
+                        dir="auto"
+                        className="text-start truncate font-display text-sm font-semibold text-foreground"
+                      >
                         <Link
                           to={courseHref}
                           dir="auto"
@@ -171,7 +174,7 @@ export default function LearnerOverviewPage(): JSX.Element {
                         {item.nextItemTitle
                           ? t(
                               'learning:learnerDashboard.overview.continue.nextIs',
-                              { title: item.nextItemTitle }
+                              { title: isolateText(item.nextItemTitle) }
                             )
                           : t(
                               progressCounts(item).unit === 'items'
@@ -227,7 +230,10 @@ export default function LearnerOverviewPage(): JSX.Element {
                   aria-hidden
                 />
                 <div className="min-w-0 flex-1">
-                  <h3 className="truncate text-sm font-medium text-foreground">
+                  <h3
+                    dir="auto"
+                    className="text-start truncate text-sm font-medium text-foreground"
+                  >
                     <Link
                       to={buildHref(
                         buildPath(LEARNER_ROUTES.playerActivity, {
@@ -240,7 +246,10 @@ export default function LearnerOverviewPage(): JSX.Element {
                       {deadline.title}
                     </Link>
                   </h3>
-                  <p className="truncate text-xs text-muted-foreground">
+                  <p
+                    dir="auto"
+                    className="text-start truncate text-xs text-muted-foreground"
+                  >
                     {deadline.courseTitle}
                   </p>
                 </div>
@@ -284,7 +293,10 @@ export default function LearnerOverviewPage(): JSX.Element {
                   aria-hidden
                 />
                 <div className="min-w-0 flex-1">
-                  <h3 className="truncate text-sm font-medium text-foreground">
+                  <h3
+                    dir="auto"
+                    className="text-start truncate text-sm font-medium text-foreground"
+                  >
                     <Link
                       to={buildHref(
                         buildPath(LEARNER_ROUTES.playerActivity, {
@@ -298,7 +310,7 @@ export default function LearnerOverviewPage(): JSX.Element {
                     </Link>
                   </h3>
                   <p className="truncate text-xs text-muted-foreground">
-                    {result.courseTitle} ·{' '}
+                    <bdi>{result.courseTitle}</bdi> ·{' '}
                     {learnerAssessmentStateLabel(result.status, t)}
                   </p>
                 </div>
@@ -306,6 +318,7 @@ export default function LearnerOverviewPage(): JSX.Element {
                   <span className="whitespace-nowrap text-sm font-semibold tabular-nums text-foreground">
                     {t('learning:learnerDashboard.assessments.score', {
                       score: result.score,
+                      max: 100,
                     })}
                   </span>
                 ) : null}

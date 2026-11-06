@@ -138,7 +138,7 @@ describe.each(THEMES)('%s footer', (_name, Footer) => {
     // catalogue is not repeated — Quick Links already has Courses.
     expect(
       within(nav)
-        .getAllByRole('link', { name: 'My Learn' })[0]
+        .getAllByRole('link', { name: 'My learning' })[0]
         .getAttribute('href')
     ).toBe('/sign-in?returnTo=%2Fmy');
     expect(
@@ -222,7 +222,7 @@ describe.each(THEMES)('%s footer', (_name, Footer) => {
     const nav = footerNav();
     expect(
       within(nav)
-        .getAllByRole('link', { name: 'My Learn' })[0]
+        .getAllByRole('link', { name: 'My learning' })[0]
         .getAttribute('href')
     ).toBe('/my');
     expect(

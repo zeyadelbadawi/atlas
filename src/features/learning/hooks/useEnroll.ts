@@ -6,7 +6,11 @@
  * relationship through the abstract service contract.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { enrollmentKeys, learnerKeys } from '@services/query';
+import {
+  INLINE_ERRORS_META,
+  enrollmentKeys,
+  learnerKeys,
+} from '@services/query';
 import type { ApiError } from '@api';
 import { enrollmentService } from '../services/EnrollmentService';
 import type { CreateEnrollmentPayload, Enrollment } from '@types';
@@ -18,6 +22,7 @@ export function useEnroll() {
     mutationFn: (payload) => enrollmentService.createEnrollment(payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(enrollmentKeys.all);
       // The `/my` dashboard lists enrolled courses from its own overview

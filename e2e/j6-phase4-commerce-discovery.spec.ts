@@ -432,7 +432,8 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
     await expect(page.getByText('Payment method', { exact: true })).toBeVisible({
       timeout: 30_000,
     });
-    await expect(page.getByText(paidCourseTitle)).toBeVisible();
+    // The title is in the breadcrumb (Courses › course › Checkout) too.
+    await expect(page.getByTestId('checkout-order-summary').getByText(paidCourseTitle)).toBeVisible();
     // Selected by KEY, not display name: `seedPaymentMethod` sets
     // `displayName` to its label, so two catalog rows seeded by
     // different runs share a name and a name-based locator matches
@@ -441,12 +442,12 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
     await page.getByRole('button', { name: 'Continue' }).click();
 
     await expect(page.getByText('Upload payment proof')).toBeVisible({ timeout: 30_000 });
-    await page.getByLabel('Proof of payment').setInputFiles({
+    await page.getByTestId('checkout-proof-file').setInputFiles({
       name: 'proof.png',
       mimeType: 'image/png',
       buffer: TINY_PNG,
     });
-    await page.getByLabel('Note (optional)').fill('Transfer reference J6');
+    await page.getByTestId('checkout-proof-note').fill('Transfer reference J6');
     await page.getByRole('button', { name: 'Submit for review' }).click();
 
     await expect(page.getByText('Payment submitted')).toBeVisible({ timeout: 30_000 });

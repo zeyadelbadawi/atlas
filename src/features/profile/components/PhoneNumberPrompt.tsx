@@ -103,7 +103,9 @@ export function PhoneNumberPrompt({
           setDismissed(true);
         }}
         aria-label={t('profile:phone.prompt.dismiss')}
-        className="rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        // B7 (UX audit) — 44 px on touch widths, the compact 28 px where a
+        // pointer is the norm.
+        className="inline-flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-accent sm:size-7 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <X className="size-4" aria-hidden />
       </button>

@@ -161,9 +161,13 @@ export default function LearnerCoursesPage(): JSX.Element {
         className="space-y-6 lg:space-y-8"
       >
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <TabsList>
+          <TabsList className="h-auto sm:h-10">
             {(['all', 'inProgress', 'completed'] as const).map((value) => (
-              <TabsTrigger key={value} value={value}>
+              <TabsTrigger
+                className="min-h-11 sm:min-h-0"
+                key={value}
+                value={value}
+              >
                 {t(`learning:learnerDashboard.courses.filters.${value}`)}
                 {counts ? (
                   <span className="ms-1.5 tabular-nums">({counts[value]})</span>

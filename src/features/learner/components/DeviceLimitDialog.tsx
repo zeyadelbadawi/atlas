@@ -8,10 +8,14 @@
  * problem, not solved it — so the devices, their labels and when each was
  * last used are shown here, in the dialog that blocked them.
  *
- * REMOVAL HAPPENS HERE TOO. One click, on the row it belongs to, and the
- * player retries the grant on its own afterwards — because this is the
- * one case where an automatic retry is right: the learner has just done
- * the thing that makes the refusal go away.
+ * REMOVAL HAPPENS HERE TOO, on the row it belongs to — after the same
+ * confirmation the Devices page asks (B7, UX audit: it used to act on the
+ * first click) — and the player retries the grant on its own afterwards,
+ * because this is the one case where an automatic retry is right: the
+ * learner has just done the thing that makes the refusal go away.
+ *
+ * TWO "CHROME ON LINUX" ROWS ARE TOLD APART by when each was added and last
+ * used; the browser in use is marked "This device".
  *
  * THE CURRENT DEVICE IS MARKED AND NOT OFFERED FOR REMOVAL from inside
  * the player: removing the browser you are learning on, from the screen
@@ -30,7 +34,9 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useConfirmDialog } from '@app/providers';
 import { useDateFormatter } from '@hooks';
+import { isolateText } from '@utils';
 import type { LearnerDeviceResponse } from '@types';
 
 export interface DeviceLimitDialogProps {
@@ -57,6 +63,20 @@ export function DeviceLimitDialog({
 }: DeviceLimitDialogProps): JSX.Element {
   const { t } = useTranslation();
   const fmt = useDateFormatter();
+  const { confirm } = useConfirmDialog();
+
+  const askToRemove = async (device: LearnerDeviceResponse) => {
+    const confirmed = await confirm({
+      titleKey: 'learning:learnerDashboard.devices.confirmRemove.title',
+      descriptionKey:
+        'learning:learnerDashboard.devices.confirmRemove.description',
+      values: { device: isolateText(device.label) },
+      confirmLabelKey: 'learning:learnerDashboard.devices.remove',
+      cancelLabelKey: 'common:actions.cancel',
+      intent: 'default',
+    });
+    if (confirmed) onRemove(device.id);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -68,9 +88,10 @@ export function DeviceLimitDialog({
           </DialogTitle>
           <DialogDescription>
             {maxDevices !== undefined
-              ? // `limit`, not `count`: `count` drives i18next's plural
-                // selection, and this sentence is not pluralised on it.
+              ? // B7 — pluralised on the limit (Arabic "على جهازين", not
+                // "على 2 أجهزة"); `limit` is what the sentence prints.
                 t('learning:player.deviceLimit.description', {
+                  count: maxDevices,
                   limit: maxDevices,
                 })
               : t('learning:player.deviceLimit.descriptionNoLimit')}
@@ -99,12 +120,20 @@ export function DeviceLimitDialog({
                 className="flex items-center gap-3 rounded-md border border-border p-3"
               >
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-foreground">
+                  <p
+                    dir="auto"
+                    className="truncate text-start text-sm font-medium text-foreground"
+                  >
                     {device.label}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {t('learning:learnerDashboard.devices.lastSeen', {
                       when: fmt.dateTime(device.lastSeenAt),
+                    })}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {t('learning:learnerDashboard.devices.addedOn', {
+                      when: fmt.date(device.createdAt),
                     })}
                   </p>
                 </div>
@@ -117,7 +146,8 @@ export function DeviceLimitDialog({
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => onRemove(device.id)}
+                    className="h-11 sm:h-9"
+                    onClick={() => void askToRemove(device)}
                     disabled={removingDeviceId === device.id}
                   >
                     {removingDeviceId === device.id ? (

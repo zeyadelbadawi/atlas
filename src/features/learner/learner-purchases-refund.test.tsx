@@ -43,6 +43,11 @@ vi.mock('./hooks', () => ({
     useCourseOrderRefund(orderId) as unknown,
 }));
 
+// B7 — "Continue payment" and "Buy again" link through the surface's hrefs.
+vi.mock('./context/LearnerSurface.context', () => ({
+  useLearnerSurface: () => ({ buildHref: (path: string) => path }),
+}));
+
 // The header reads the learner surface context; its own tests cover it.
 vi.mock('./components/LearnerPageHeader', () => ({
   LearnerPageHeader: () => <h1>Purchases</h1>,
@@ -339,9 +344,13 @@ describe('LearnerPurchasesPage refunds', () => {
       );
     });
     expect(screen.queryByRole('alertdialog')).toBeNull();
+    // B7 — the course name is bidi-isolated inside the sentence (U+2068/9).
     expect(
       screen.getByText(
-        'Refund recorded. Your access to “Network Security 101” has ended. The payment itself is returned separately by bank transfer.'
+        (_content, node) =>
+          node?.tagName === 'SPAN' &&
+          node.textContent?.replace(/[\u2068\u2069]/g, '') ===
+            'Refund recorded. Your access to “Network Security 101” has ended. The payment itself is returned separately by bank transfer.'
       )
     ).toBeTruthy();
   });

@@ -158,7 +158,7 @@ export function PlayerShell({
     <div className="mx-auto w-full max-w-content px-4 py-4 sm:px-6 lg:px-8">
       {/* Where am I, and how do I get out. */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Button variant="ghost" size="sm" asChild className="-ms-2">
+        <Button variant="ghost" size="sm" asChild className="-ms-2 h-11 sm:h-9">
           <Link to={backHref}>
             <ChevronLeft className={cn('size-4', MIRROR_IN_RTL)} aria-hidden />
             <span dir="auto" className="max-w-[16rem] truncate">
@@ -170,7 +170,11 @@ export function PlayerShell({
         {/* Below the rail breakpoint the curriculum lives in a drawer. */}
         <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
           <SheetTrigger asChild>
-            <Button variant="outline" size="sm" className="lg:hidden">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-11 sm:h-9 lg:hidden"
+            >
               <ListTree className="size-4" aria-hidden />
               {t('learning:player.curriculum.open')}
             </Button>
@@ -194,9 +198,12 @@ export function PlayerShell({
       <div className="mt-3 space-y-1.5">
         <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
           <span>
+            {/* B7 — i18next plural on the total (Arabic "نشاط" agrees
+                with it), one digit style for both numbers. */}
             {t('learning:player.progress.summary', {
-              completed: completedCount,
-              total: totalCount,
+              count: totalCount,
+              completed: formatNumber(completedCount, language),
+              total: formatNumber(totalCount, language),
             })}
           </span>
           <span className="tabular-nums">
@@ -243,7 +250,10 @@ export function PlayerShell({
                   </span>
                 ) : null}
               </p>
-              <h1 className="mt-1 font-display text-xl font-semibold text-foreground">
+              <h1
+                dir="auto"
+                className="mt-1 text-start font-display text-xl font-semibold text-foreground"
+              >
                 {title}
               </h1>
             </div>

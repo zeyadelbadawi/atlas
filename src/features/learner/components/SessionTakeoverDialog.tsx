@@ -34,6 +34,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useDateFormatter } from '@hooks';
+import { isolateText } from '@utils';
 import type { SessionConflictDetails } from '@types';
 
 export interface SessionTakeoverDialogProps {
@@ -57,8 +58,10 @@ export function SessionTakeoverDialog({
   const { t } = useTranslation();
   const fmt = useDateFormatter();
 
-  const deviceLabel =
-    conflict?.deviceLabel ?? t('learning:player.takeover.unknownDevice');
+  // B7 — a Latin device name keeps its own direction inside Arabic «».
+  const deviceLabel = conflict?.deviceLabel
+    ? isolateText(conflict.deviceLabel)
+    : t('learning:player.takeover.unknownDevice');
   const since = conflict?.since ? fmt.dateTime(conflict.since) : null;
 
   return (

@@ -9,6 +9,7 @@ import { useApiMutation } from '@/shared/hooks';
 import type { ApiError } from '@api';
 import { assignmentService } from '../services/AssignmentService';
 import type { AssignmentSubmission, SaveAssignmentDraftPayload } from '@types';
+import { INLINE_ERRORS_META } from '@services/query';
 
 export function useSaveAssignmentDraft(courseId: string, assignmentId: string) {
   return useApiMutation<
@@ -20,5 +21,6 @@ export function useSaveAssignmentDraft(courseId: string, assignmentId: string) {
       assignmentService.saveDraft(courseId, assignmentId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

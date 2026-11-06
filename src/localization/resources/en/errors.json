@@ -5,7 +5,7 @@
   },
   "network": {
     "title": "Connection problem",
-    "description": "Atlas could not reach the server. Check your connection and try again."
+    "description": "We couldn't reach the server. Check your connection and try again."
   },
   "timeout": {
     "title": "The request took too long",
@@ -54,12 +54,12 @@
   },
   "boundary": {
     "title": "This section could not be displayed",
-    "description": "The rest of Atlas is still working. Try reloading this section.",
-    "updatedTitle": "Atlas was updated",
-    "updatedDescription": "A newer version of Atlas is available. Reload to continue — you will stay on this page.",
+    "description": "The rest of the page is still working. Try reloading this section.",
+    "updatedTitle": "This site was updated",
+    "updatedDescription": "A newer version of this site is available. Reload to continue — you will stay on this page.",
     "offlineTitle": "You're offline",
-    "offlineDescription": "This part of Atlas could not be loaded without a connection. It will load as soon as you are back online.",
-    "persistentDescription": "This section keeps failing. Reloading Atlas usually fixes it; your other work is not affected.",
+    "offlineDescription": "This part of the site could not be loaded without a connection. It will load as soon as you are back online.",
+    "persistentDescription": "This section keeps failing. Reloading the page usually fixes it; your other work is not affected.",
     "reload": "Reload"
   },
   "errorReference": "Reference: {{requestId}}",

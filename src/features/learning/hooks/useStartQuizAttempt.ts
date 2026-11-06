@@ -4,7 +4,7 @@
  * Mutation hook that starts a new quiz attempt.
  */
 import { useApiMutation, useAuth, useInvalidate } from '@/shared/hooks';
-import { quizKeys } from '@services/query';
+import { INLINE_ERRORS_META, quizKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { quizService } from '../services/QuizService';
 import type { QuizAttempt } from '@types';
@@ -17,6 +17,7 @@ export function useStartQuizAttempt(courseId: string, quizId: string) {
     mutationFn: () => quizService.startQuizAttempt(courseId, quizId),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(quizKeys.attempts(user?.id, courseId, quizId));
     },

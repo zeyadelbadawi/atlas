@@ -15,7 +15,12 @@
  * cached enrollment state are now stale too.
  */
 import { useApiMutation, useApiQuery, useInvalidate } from '@hooks';
-import { courseOrderKeys, enrollmentKeys, learnerKeys } from '@services/query';
+import {
+  INLINE_ERRORS_META,
+  courseOrderKeys,
+  enrollmentKeys,
+  learnerKeys,
+} from '@services/query';
 import type { ApiError } from '@api';
 import type {
   CourseOrderRefund,
@@ -57,6 +62,7 @@ export function useRequestCourseOrderRefund() {
       }),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await Promise.all([
         invalidate(courseOrderKeys.all),

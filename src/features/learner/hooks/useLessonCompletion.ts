@@ -26,7 +26,7 @@ import { useQueryClient, type QueryClient } from '@tanstack/react-query';
 import { useApiMutation, useAuth } from '@hooks';
 import { normalizeUnknownError, type ApiError } from '@api';
 import type { CourseProgress, CourseSequenceResponse } from '@types';
-import { learnerKeys } from '@services/query';
+import { INLINE_ERRORS_META, learnerKeys } from '@services/query';
 import {
   newClientOpId,
   queueLessonOp,
@@ -122,6 +122,7 @@ function useLessonOp(courseId: string, action: 'complete' | 'undo') {
       }),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (outcome) => {
       if (!outcome.queued) await refreshCourseProgress();
     },

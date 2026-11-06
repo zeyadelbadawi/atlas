@@ -150,6 +150,11 @@ test('J44 device-limit dialog: removing a device lets this browser continue as o
         /\/learning\/devices\//.test(r.url())
     );
     await remove.first().click();
+    // B7 — removal asks first, as the Devices page does.
+    await c
+      .getByRole('alertdialog')
+      .getByRole('button', { name: /remove|terminate|delete/i })
+      .click();
     expect((await removed).status()).toBe(204);
     await expect(dialog).toBeHidden({ timeout: 20_000 });
     await expect.poll(() => grants.length, { timeout: 20_000 }).toBe(2);

@@ -12,7 +12,11 @@ import {
   useAuth,
   useInvalidate,
 } from '@/shared/hooks';
-import { courseReviewKeys, publicWebsiteKeys } from '@services/query';
+import {
+  INLINE_ERRORS_META,
+  courseReviewKeys,
+  publicWebsiteKeys,
+} from '@services/query';
 import type { ApiError } from '@api';
 import { courseReviewService } from '../services/CourseReviewService';
 import type {
@@ -75,6 +79,7 @@ export function useSubmitMyReview(
           ),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: invalidateSurfaces,
   });
 }
@@ -89,6 +94,7 @@ export function useDeleteMyReview(
     mutationFn: () => courseReviewService.deleteMyReview(courseId),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: invalidateSurfaces,
   });
 }

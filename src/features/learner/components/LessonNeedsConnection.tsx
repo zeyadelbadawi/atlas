@@ -11,13 +11,28 @@
 import { WifiOff } from 'lucide-react';
 import { EmptyState } from '@components/feedback';
 
-export function LessonNeedsConnection(): JSX.Element {
+export interface LessonNeedsConnectionProps {
+  /**
+   * B7 (UX audit) — offered when the browser reports a connection but the
+   * request did not get through: trying again can then work.
+   */
+  readonly onRetry?: () => void;
+}
+
+export function LessonNeedsConnection({
+  onRetry,
+}: LessonNeedsConnectionProps = {}): JSX.Element {
   return (
     <div data-offline-state="needs-connection">
       <EmptyState
         icon={WifiOff}
         titleKey="learning:offline.lesson.needsConnectionTitle"
         descriptionKey="learning:offline.lesson.needsConnectionDescription"
+        primaryAction={
+          onRetry
+            ? { labelKey: 'common:actions.retry', onAction: onRetry }
+            : undefined
+        }
       />
     </div>
   );

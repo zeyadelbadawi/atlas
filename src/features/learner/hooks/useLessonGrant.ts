@@ -40,7 +40,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useApiQuery, useAuth } from '@hooks';
-import { learnerKeys } from '@services/query';
+import { INLINE_ERRORS_META, learnerKeys } from '@services/query';
 import type { LessonContentGrant } from '@types';
 import type { ApiError } from '@api';
 import { lessonContentService } from '../services/LessonContentService';
@@ -138,6 +138,11 @@ export function useLessonGrant(
     // stop in a background tab is how the credential dies while the audio
     // is playing.
     refetchIntervalInBackground: true,
+    // B7 (UX audit) — the player renders every failure of this read itself
+    // (`PlayerFailureState`, or nothing at all for a transient refresh
+    // failure behind a playing video), so the app-wide reporter must not
+    // add a "Server error" toast on top.
+    meta: { [INLINE_ERRORS_META]: true },
   });
 
   const { data, error, isFetching, isPending, refetch } = query;

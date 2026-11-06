@@ -32,6 +32,12 @@ import type { SessionConflictDetails } from '@types';
 export const PLAYER_FAILURE_KINDS = [
   /** The request never reached a server, or it timed out. Retryable, and not the learner's fault. */
   'network',
+  /**
+   * B7 (UX audit) — the server answered with a fault of its own (5xx).
+   * NOT a connection problem: the learner's connection worked, so telling
+   * them to check it sends them to fix the wrong thing. Retryable.
+   */
+  'server',
   /** The grant's credential ran out and a refresh could not replace it. */
   'expired',
   /** Enrolment revoked, refunded or expired — the course is gone, not the lesson. */
@@ -172,7 +178,7 @@ export function classifyPlayerFailure(
     };
   }
 
-  if (error.kind === 'server') return { kind: 'network' };
+  if (error.kind === 'server') return { kind: 'server' };
 
   return { kind: 'unknown' };
 }

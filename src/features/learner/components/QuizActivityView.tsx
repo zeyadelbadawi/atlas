@@ -25,7 +25,7 @@
  * request says why (auto-submitted, reason timeout). Anything else is
  * shown as the specific sentence for its message key.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@components/feedback';
@@ -54,6 +54,8 @@ export interface QuizActivityViewProps {
   readonly onContinue?: () => void;
   readonly continueLabel?: string;
   readonly lessonHref?: (lessonId: string) => string;
+  /** B7 — told when an attempt starts running and when it stops. */
+  readonly onAttemptRunningChange?: (running: boolean) => void;
 }
 
 const TERMINAL_SUBMIT_KEYS = [
@@ -74,6 +76,7 @@ export function QuizActivityView({
   onContinue,
   continueLabel,
   lessonHref,
+  onAttemptRunningChange,
 }: QuizActivityViewProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
@@ -183,12 +186,13 @@ export function QuizActivityView({
         await refreshAttempts();
         return;
       }
+      // B7 (UX audit) — said once, in the runner; never rethrown, which
+      // left an uncaught promise rejection behind every failed submit.
       setSubmitError(
         apiErrorMessage(t, i18n, error, {
           fallbackKey: 'learning:quiz.submitError',
         })
       );
-      throw error;
     }
   };
 
@@ -196,6 +200,23 @@ export function QuizActivityView({
     if (openAttempt) setFinishedAttemptId(openAttempt.id);
     await refreshAttempts();
   };
+
+  /*
+   * B7 — the player hides its own Previous/Next while the runner (which has
+   * Previous/Next between questions) is on screen.
+   */
+  const running =
+    !!openAttempt &&
+    !resultsAttemptId &&
+    sessionQuery.data?.status === 'in_progress';
+  // The latest callback through a ref, so a new callback identity never
+  // reports `false` while an attempt is still running; `false` only on unmount.
+  const runningCallbackRef = useRef(onAttemptRunningChange);
+  runningCallbackRef.current = onAttemptRunningChange;
+  useEffect(() => {
+    runningCallbackRef.current?.(running);
+  }, [running]);
+  useEffect(() => () => runningCallbackRef.current?.(false), []);
 
   /* ---------- render ---------- */
 

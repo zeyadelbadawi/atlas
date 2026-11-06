@@ -95,7 +95,12 @@ export function CurriculumSidebar({
                   </span>
 
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm">{item.title}</span>
+                    <span
+                      dir="auto"
+                      className="text-start block truncate text-sm"
+                    >
+                      {item.title}
+                    </span>
                     <span className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
                       <StateIcon className="size-3" aria-hidden />
                       {t(sequenceStateLabelKey(item.state))}

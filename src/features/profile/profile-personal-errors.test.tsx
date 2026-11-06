@@ -207,7 +207,7 @@ describe('ProfilePersonalSection — validation and failures', () => {
         messageKey: 'errors.network',
         retryable: true,
       }),
-      'Atlas could not reach the server',
+      "We couldn't reach the server",
     ],
   ])(
     'after %s, says once that nothing was saved, with the real reason',

@@ -76,7 +76,10 @@ export function ResourcesPanel({
                   ) : (
                     <Download className="size-4 shrink-0" aria-hidden />
                   )}
-                  <span className="min-w-0 flex-1 truncate">
+                  <span
+                    dir="auto"
+                    className="text-start min-w-0 flex-1 truncate"
+                  >
                     {resource.title}
                   </span>
                   {isExternal ? (

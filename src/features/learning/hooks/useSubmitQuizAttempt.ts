@@ -7,6 +7,7 @@
  */
 import { useApiMutation, useAuth, useInvalidate } from '@/shared/hooks';
 import {
+  INLINE_ERRORS_META,
   completionKeys,
   learnerKeys,
   progressKeys,
@@ -30,6 +31,7 @@ export function useSubmitQuizAttempt(courseId: string, quizId: string) {
       quizService.submitQuizAttempt(courseId, quizId, attemptId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(quizKeys.attempts(user?.id, courseId, quizId));
       // A passed quiz can change the course's completion state, unlock

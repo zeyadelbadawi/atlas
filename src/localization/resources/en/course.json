@@ -1054,7 +1054,22 @@
     "referenceLabel": "Transfer reference (optional)",
     "referenceHelp": "The transaction or reference number from your bank or wallet. It helps the academy find your payment.",
     "proofFileHelp": "PNG, JPG or PDF, up to 10 MB.",
-    "notAdmittedTitle": "You can't buy courses here yet"
+    "notAdmittedTitle": "You can't buy courses here yet",
+    "chooseMethod": "Choose a payment method first.",
+    "alreadyEnrolledTitle": "You're already enrolled",
+    "alreadyEnrolledDescription": "You're already enrolled in this course, so there is nothing to pay. Open it to carry on learning.",
+    "freeTitle": "This course is free",
+    "openCoursePage": "Open the course page",
+    "orderFailedTitle": "We couldn't start your order",
+    "methodsFailedTitle": "We couldn't load the payment methods",
+    "paymentFailedTitle": "We couldn't start your payment",
+    "loading": "Loading your order",
+    "orderReference": "Order reference",
+    "paymentReference": "Payment reference",
+    "payBefore": "Pay and upload your proof before {{when}}.",
+    "changeFile": "Choose another file",
+    "proofNoteText": "Note for the academy",
+    "referenceText": "Transfer reference"
   },
   "form": {
     "characterCount": "{{counter}} characters"

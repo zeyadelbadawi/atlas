@@ -38,7 +38,7 @@
  * an authenticated JSON request gets to `sendBeacon`.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { isApiError } from '@api';
+import { isApiError, normalizeUnknownError } from '@api';
 import type { QuizAnswer, SaveQuizAnswersResponse } from '@types';
 import { useSaveQuizAnswers } from '@features/learning';
 import { deleteQuizJournal, saveQuizJournal } from '@services/offline';
@@ -84,7 +84,13 @@ export function rebaseAnswers(
   return merged;
 }
 
-export type AutosaveState = 'idle' | 'dirty' | 'saving' | 'saved' | 'offline';
+/**
+ * `offline` — the save never reached the server (no connection);
+ * `failed` — the server answered with a fault (B7, UX audit: a 500 was
+ * shown as "Offline"). Both keep the answers and retry.
+ */
+export type AutosaveState =
+  'idle' | 'dirty' | 'saving' | 'saved' | 'offline' | 'failed';
 
 /** Message keys the server uses to say "this attempt no longer accepts answers". */
 const TERMINAL_MESSAGE_KEYS: ReadonlySet<string> = new Set([
@@ -234,7 +240,10 @@ export function useQuizAutosave({
         // Anything else is retried: keep the answers, back off, try again.
         pendingRef.current = pendingRef.current ?? answers;
         failuresRef.current += 1;
-        setState('offline');
+        const kind = normalizeUnknownError(error).kind;
+        setState(
+          kind === 'network' || kind === 'timeout' ? 'offline' : 'failed'
+        );
         const delay =
           RETRY_DELAYS_MS[
             Math.min(failuresRef.current - 1, RETRY_DELAYS_MS.length - 1)

@@ -22,3 +22,12 @@ export function learnerPaymentState(
   if (payment.awaitingProof) return 'awaitingProof';
   return 'closed';
 }
+
+/**
+ * B7 (UX audit, V12) — the short reference of an order or payment: the same
+ * first eight characters the academy's Orders list shows, so a learner and
+ * the academy can name the same order.
+ */
+export function shortReference(id: string): string {
+  return id.slice(0, 8);
+}

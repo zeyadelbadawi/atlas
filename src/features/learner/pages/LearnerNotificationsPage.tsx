@@ -89,11 +89,14 @@ export default function LearnerNotificationsPage(): JSX.Element {
           goToFirstPage();
         }}
       >
-        <TabsList aria-label={t('notifications:filters.status')}>
-          <TabsTrigger value="all">
+        <TabsList
+          className="h-auto sm:h-10"
+          aria-label={t('notifications:filters.status')}
+        >
+          <TabsTrigger className="min-h-11 sm:min-h-0" value="all">
             {t('notifications:filters.all')}
           </TabsTrigger>
-          <TabsTrigger value="unread">
+          <TabsTrigger className="min-h-11 sm:min-h-0" value="unread">
             {t('notifications:filters.unread')}
             {summaryQuery.data ? (
               <Badge

@@ -9,7 +9,11 @@ import {
   useAcademyBoundMutation,
 } from '@/shared/hooks';
 import type { AcademyScopedVariables } from '@/shared/hooks';
-import { certificateKeys, completionKeys } from '@services/query';
+import {
+  INLINE_ERRORS_META,
+  certificateKeys,
+  completionKeys,
+} from '@services/query';
 import type { ApiError } from '@api';
 import { certificateService } from '../services/CertificateService';
 import type {
@@ -65,6 +69,7 @@ export function useMyCertificateDownload() {
       certificateService.getMyCertificateDownload(certificateId),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 
@@ -142,6 +147,7 @@ export function useRevokeCertificate(academyId: string) {
       certificateService.revoke(academyId, certificateId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: refresh,
   });
 
@@ -162,6 +168,7 @@ export function useRegenerateCertificate(academyId: string) {
       certificateService.regenerate(academyId, certificateId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: refresh,
   });
 
@@ -182,6 +189,7 @@ export function useIssueCertificate(academyId: string) {
       certificateService.issueManually(academyId, enrollmentId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: refresh,
   });
 
@@ -213,6 +221,7 @@ export function useUpdateCertificateTemplate(academyId: string) {
       certificateService.updateTemplate(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, { academyId }) => {
       await invalidate(certificateKeys.template(academyId));
     },

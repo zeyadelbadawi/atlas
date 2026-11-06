@@ -95,7 +95,7 @@ describe('My Learn is always in the navigation', () => {
     '%s: signed out, it asks to sign in and comes back to My Learn',
     (_label, themeKey, Header) => {
       renderHeader(themeKey, Header);
-      const links = screen.getAllByRole('link', { name: 'My Learn' });
+      const links = screen.getAllByRole('link', { name: 'My learning' });
       expect(links.length).toBeGreaterThan(0);
       for (const link of links) {
         expect(link.getAttribute('href')).toBe('/sign-in?returnTo=%2Fmy');
@@ -109,7 +109,7 @@ describe('My Learn is always in the navigation', () => {
       renderHeader(themeKey, Header, {
         authState: { name: 'Mona', myLearningHref: '/my' },
       });
-      for (const link of screen.getAllByRole('link', { name: 'My Learn' })) {
+      for (const link of screen.getAllByRole('link', { name: 'My learning' })) {
         expect(link.getAttribute('href')).toBe('/my');
       }
     }
@@ -153,7 +153,7 @@ describe('the signed-in account menu', () => {
       const menu = await screen.findByRole('menu');
       const items = within(menu).getAllByRole('menuitem');
       expect(items.map((item) => item.textContent)).toEqual([
-        'My Learn',
+        'My learning',
         'My Courses',
         'Profile & settings',
         'Sign out',
@@ -183,7 +183,9 @@ describe('phones and tablets', () => {
     });
     await user.click(screen.getByRole('button', { name: 'Open menu' }));
     const sheet = await screen.findByRole('dialog');
-    expect(within(sheet).getByRole('link', { name: 'My Learn' })).toBeTruthy();
+    expect(
+      within(sheet).getByRole('link', { name: 'My learning' })
+    ).toBeTruthy();
     const account = within(sheet).getByTestId('website-account-sheet');
     expect(
       within(account).getByRole('link', { name: 'My Courses' })

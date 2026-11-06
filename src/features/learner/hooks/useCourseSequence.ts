@@ -14,7 +14,7 @@
  * pointing at a lock.
  */
 import { useApiQuery, useAuth } from '@hooks';
-import { learnerKeys } from '@services/query';
+import { INLINE_ERRORS_META, learnerKeys } from '@services/query';
 import type { CourseSequenceResponse } from '@types';
 import { lessonContentService } from '../services/LessonContentService';
 
@@ -34,5 +34,8 @@ export function useCourseSequence(
     queryFn: () => lessonContentService.getSequence(courseId),
     enabled: enabled && !!user?.id && !!courseId,
     refetchOnWindowFocus: true,
+    // B7 (UX audit) — both readers (the course outline and the player)
+    // render this read's failure themselves, with a retry.
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

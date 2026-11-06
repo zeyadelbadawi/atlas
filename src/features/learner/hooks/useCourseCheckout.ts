@@ -7,7 +7,11 @@
  * caller's orders so `/my/purchases` reflects the new pending order.
  */
 import { useApiMutation, useApiQuery, useInvalidate } from '@/shared/hooks';
-import { courseOrderKeys, learnerCoursePaymentKeys } from '@services/query';
+import {
+  INLINE_ERRORS_META,
+  courseOrderKeys,
+  learnerCoursePaymentKeys,
+} from '@services/query';
 import type { ApiError } from '@api';
 import { courseOrderService } from '../services/CourseOrderService';
 import type {
@@ -59,6 +63,8 @@ export function useCourseOrderPaymentMethods(orderId: string | undefined) {
     queryKey: courseOrderKeys.paymentMethods(orderId),
     queryFn: () => courseOrderService.getPaymentMethods(orderId!),
     enabled: !!orderId,
+    // B7 — the checkout shows this read's failure itself, with a retry.
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 
@@ -73,6 +79,7 @@ export function useCreateCourseOrder() {
       courseOrderService.createOrder(courseId, { idempotencyKey }),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(courseOrderKeys.all);
     },
@@ -85,6 +92,7 @@ export function useCreateCoursePayment(orderId: string) {
       courseOrderService.createPayment(orderId, { methodKey }),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 
@@ -106,6 +114,7 @@ export function useSubmitCourseOrderProof(orderId: string) {
     },
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, variables) => {
       await invalidate(courseOrderKeys.payment(orderId, variables.paymentId));
       await invalidate(courseOrderKeys.all);

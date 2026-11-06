@@ -310,7 +310,7 @@ describe('CreateCustomerRequestDialog', () => {
     // reason; no toast on top of it.
     const failure = await screen.findByTestId('save-failed');
     expect(failure.textContent).toContain("Your request wasn't sent");
-    expect(failure.textContent).toContain('Atlas could not reach the server');
+    expect(failure.textContent).toContain("We couldn't reach the server");
     expect(notify).not.toHaveBeenCalledWith(
       expect.objectContaining({ intent: 'error' })
     );

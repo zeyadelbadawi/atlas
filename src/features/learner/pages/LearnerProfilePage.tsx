@@ -73,12 +73,14 @@ export default function LearnerProfilePage(): JSX.Element {
       {header}
 
       <Tabs defaultValue="personal" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 sm:w-auto sm:inline-grid">
-          <TabsTrigger value="personal">
+        <TabsList className="h-auto sm:h-10 grid w-full grid-cols-3 sm:w-auto sm:inline-grid">
+          <TabsTrigger className="min-h-11 sm:min-h-0" value="personal">
             {t('profile:tabs.personal')}
           </TabsTrigger>
-          <TabsTrigger value="account">{t('profile:tabs.account')}</TabsTrigger>
-          <TabsTrigger value="preferences">
+          <TabsTrigger className="min-h-11 sm:min-h-0" value="account">
+            {t('profile:tabs.account')}
+          </TabsTrigger>
+          <TabsTrigger className="min-h-11 sm:min-h-0" value="preferences">
             {t('profile:tabs.preferences')}
           </TabsTrigger>
         </TabsList>

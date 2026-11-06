@@ -43,7 +43,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { MIRROR_IN_RTL, cn } from '@utils';
+import { MIRROR_IN_RTL, cn, isolateText } from '@utils';
 import type { CourseSequenceItem, LanguageCode } from '@types';
 import {
   formatSequenceOrdinal,
@@ -180,7 +180,7 @@ export function PlayerActionBar({
                 // option for ordinal plural selection, so an interpolation
                 // variable of that name is read as a flag and dropped.
                 position: formatSequenceOrdinal(next, language),
-                title: next.title,
+                title: isolateText(next.title),
               })}
             </span>
           ) : (
@@ -311,7 +311,7 @@ export function PlayerActionBar({
       {!isFinal && next?.state === 'locked' ? (
         <p className="text-xs text-muted-foreground">
           {t('learning:player.nextLocked', {
-            title: next.title,
+            title: isolateText(next.title),
             reason: next.lockReason
               ? t(sequenceLockReasonKey(next.lockReason))
               : t('learning:player.lock.genericReason'),

@@ -33,13 +33,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CloudUpload, GraduationCap } from 'lucide-react';
+import { CloudUpload, GraduationCap, ListTree } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { buildPath, LEARNER_ROUTES } from '@app/routes/route-paths';
 import { useAuth } from '@hooks';
+import { apiErrorMessage, isolateText } from '@utils';
 import { useConnectivity } from '@app/providers/offline/useOfflineState';
 import type { CourseSequenceItem, LanguageCode } from '@types';
 import { useLearnerSurface } from '../context/LearnerSurface.context';
@@ -67,6 +68,7 @@ import {
 } from '../hooks/useLessonCompletion';
 import { useLessonGrant } from '../hooks/useLessonGrant';
 import { usePlaybackHeartbeat } from '../hooks/usePlaybackHeartbeat';
+import { classifyPlayerFailure } from '../utils/player-failure.utils';
 import {
   findSequenceNeighbours,
   formatSequenceOrdinal,
@@ -166,6 +168,8 @@ export default function LearnerPlayerPage(): JSX.Element {
 
   const [hasFinishedPlaying, setHasFinishedPlaying] = useState(false);
   useEffect(() => setHasFinishedPlaying(false), [currentId]);
+  const [quizAttemptRunning, setQuizAttemptRunning] = useState(false);
+  useEffect(() => setQuizAttemptRunning(false), [currentId]);
   // A stale failure from the previous activity must not follow the
   // learner to the next one.
   const resetCompletion = completeLesson.reset;
@@ -212,7 +216,14 @@ export default function LearnerPlayerPage(): JSX.Element {
           // correct move rather than a speculative retry.
           refresh();
         },
-        onError: () => setTakeoverError(t('errors:conflict.description')),
+        // B7 (UX audit) — the real reason. "Reload the page to see the
+        // latest version" was said for every failure, a 500 included.
+        onError: (error) =>
+          setTakeoverError(
+            apiErrorMessage(t, i18n, error, {
+              fallbackKey: 'learning:player.takeover.failed',
+            })
+          ),
       }
     );
   };
@@ -366,7 +377,11 @@ export default function LearnerPlayerPage(): JSX.Element {
       />
     );
   } else if (noLiveGrant && (offlineLesson.checked || isOffline)) {
-    content = <LessonNeedsConnection />;
+    // Online but the request never got through (B7): the same honest
+    // state, with a way to try again — offline, retrying cannot help.
+    content = (
+      <LessonNeedsConnection onRetry={isOffline ? undefined : refresh} />
+    );
   } else if (failure) {
     content = (
       <PlayerFailureState
@@ -402,11 +417,12 @@ export default function LearnerPlayerPage(): JSX.Element {
         courseId={courseId}
         item={current}
         onContinue={next ? () => goTo(next) : undefined}
+        onQuizAttemptRunningChange={setQuizAttemptRunning}
         continueLabel={
           next
             ? t('learning:player.completion.nextIs', {
                 position: formatSequenceOrdinal(next, language),
-                title: next.title,
+                title: isolateText(next.title),
               })
             : undefined
         }
@@ -419,6 +435,16 @@ export default function LearnerPlayerPage(): JSX.Element {
     );
   } else if (sequenceQuery.isLoading || lessonOnActivityRoute) {
     content = <Skeleton className="h-48 w-full" />;
+  } else if (!isLessonRoute && sequenceQuery.error) {
+    // B7 (UX audit) — the outline itself could not be read: say why
+    // (server fault, connection) with a retry, not "cannot be opened".
+    content = (
+      <PlayerFailureState
+        failure={classifyPlayerFailure(sequenceQuery.error)}
+        onRetry={() => void sequenceQuery.refetch()}
+        courseId={courseId}
+      />
+    );
   } else {
     /*
      * An id that is in neither the sequence nor a grant. Honest rather
@@ -428,7 +454,6 @@ export default function LearnerPlayerPage(): JSX.Element {
     content = (
       <PlayerFailureState
         failure={{ kind: 'unavailable' }}
-        onRetry={() => void sequenceQuery.refetch()}
         courseId={courseId}
       />
     );
@@ -464,7 +489,10 @@ export default function LearnerPlayerPage(): JSX.Element {
           grant ? <ProtectionReport protection={grant.protection} /> : null
         }
         actionBar={
-          items.length > 0 || isLessonRoute ? (
+          // B7 (UX audit) — while a quiz attempt runs, the quiz has its own
+          // Previous/Next between questions; a second row leaving the quiz
+          // under it read as the same buttons twice.
+          (items.length > 0 || isLessonRoute) && !quizAttemptRunning ? (
             <PlayerActionBar
               previous={previous}
               next={next}
@@ -494,7 +522,13 @@ export default function LearnerPlayerPage(): JSX.Element {
               }
               errorMessage={
                 completeLesson.error || undoCompletion.error
-                  ? t('learning:player.completion.failed')
+                  ? // B7 — what did not happen, then the real reason
+                    // (a server fault is not "check your connection").
+                    `${t('learning:player.completion.failed')} ${apiErrorMessage(
+                      t,
+                      i18n,
+                      completeLesson.error ?? undoCompletion.error
+                    )}`
                   : undefined
               }
             />
@@ -534,6 +568,25 @@ export default function LearnerPlayerPage(): JSX.Element {
           </Alert>
         ) : null}
 
+        {isLessonRoute && sequenceQuery.error ? (
+          // The lesson plays from its own grant; only the outline beside
+          // it is missing — said, with a retry, never an empty rail.
+          <Alert role="status" data-testid="player-sequence-failed">
+            <ListTree className="size-4" aria-hidden />
+            <AlertTitle>{t('learning:player.sequenceFailed.title')}</AlertTitle>
+            <AlertDescription className="space-y-2">
+              <p>{apiErrorMessage(t, i18n, sequenceQuery.error)}</p>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => void sequenceQuery.refetch()}
+              >
+                {t('common:actions.retry')}
+              </Button>
+            </AlertDescription>
+          </Alert>
+        ) : null}
+
         {content}
       </PlayerShell>
 
@@ -558,7 +611,7 @@ export default function LearnerPlayerPage(): JSX.Element {
         }
         errorMessage={
           removeDevice.error
-            ? t('learning:learnerDashboard.devices.removeFailed')
+            ? `${t('learning:learnerDashboard.devices.removeFailed')} ${apiErrorMessage(t, i18n, removeDevice.error)}`
             : undefined
         }
       />

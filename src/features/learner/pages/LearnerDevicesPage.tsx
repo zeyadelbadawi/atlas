@@ -49,7 +49,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@components/feedback';
 import { useDateFormatter } from '@hooks';
 import { readErrorKind } from '../utils/read-error-kind';
-import { formatCountryName } from '@utils';
+import { apiErrorMessage, formatCountryName, isolateText } from '@utils';
 import type { LanguageCode } from '@types';
 import { LearnerPageHeader } from '../components/LearnerPageHeader';
 import { LearnerSectionPlaceholder } from '../components/LearnerSectionPlaceholder';
@@ -160,7 +160,10 @@ export default function LearnerDevicesPage(): JSX.Element {
                     className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card p-3"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-foreground">
+                      <p
+                        dir="auto"
+                        className="text-start truncate text-sm font-medium text-foreground"
+                      >
                         {device.label}
                       </p>
                       <p className="text-xs text-muted-foreground">
@@ -232,7 +235,10 @@ export default function LearnerDevicesPage(): JSX.Element {
                       className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card p-3"
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-foreground">
+                        <p
+                          dir="auto"
+                          className="text-start truncate text-sm font-medium text-foreground"
+                        >
                           {session.deviceLabel ??
                             t('learning:player.takeover.unknownDevice')}
                         </p>
@@ -277,11 +283,11 @@ export default function LearnerDevicesPage(): JSX.Element {
               {pendingRemoval?.current
                 ? t(
                     'learning:learnerDashboard.devices.confirmRemove.currentDescription',
-                    { device: pendingRemoval?.label ?? '' }
+                    { device: isolateText(pendingRemoval?.label ?? '') }
                   )
                 : t(
                     'learning:learnerDashboard.devices.confirmRemove.description',
-                    { device: pendingRemoval?.label ?? '' }
+                    { device: isolateText(pendingRemoval?.label ?? '') }
                   )}
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -289,9 +295,12 @@ export default function LearnerDevicesPage(): JSX.Element {
           {/* A failed removal is said here, where the learner is looking,
               and the dialog stays open so they can try again or give up —
               never a silent close that leaves the row in place. */}
+          {/* B7 — what did not happen, then the real reason (a server
+              fault is not "check your connection"). */}
           {removeDevice.error ? (
             <p role="alert" className="text-sm text-destructive">
-              {t('learning:learnerDashboard.devices.removeFailed')}
+              {t('learning:learnerDashboard.devices.removeFailed')}{' '}
+              {apiErrorMessage(t, i18n, removeDevice.error)}
             </p>
           ) : null}
 
