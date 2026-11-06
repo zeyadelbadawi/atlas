@@ -177,7 +177,9 @@
     "noComponents": {
       "title": "No components reported",
       "description": "The health endpoint answered without any component checks."
-    }
+    },
+    "overallUnchecked_one": "{{count}} component couldn't be checked; see its status below.",
+    "overallUnchecked_other": "{{count}} components couldn't be checked; see their status below."
   },
   "alerts": {
     "title": "Alerts",

@@ -54,6 +54,9 @@ function OverallBanner({
   const { t } = useTranslation();
   const spec = badgeSpec({ kind: 'overall', value: data.overall });
   const Icon = spec.icon;
+  const unchecked = data.components.filter(
+    (component) => component.status === 'unknown'
+  ).length;
   return (
     <section
       aria-labelledby="obs-overall-title"
@@ -76,6 +79,19 @@ function OverallBanner({
               `platformObservability:health.overallDescription.${data.overall}`
             )}
           </p>
+          {/* B8 (UX audit) V33 — "All systems operational" counts only the
+              components that answered; say how many couldn't be checked,
+              so it never stands beside "Status unknown" unexplained. */}
+          {unchecked > 0 ? (
+            <p
+              className="text-sm text-muted-foreground"
+              data-testid="obs-overall-unchecked"
+            >
+              {t('platformObservability:health.overallUnchecked', {
+                count: unchecked,
+              })}
+            </p>
+          ) : null}
         </div>
       </div>
       {/* Announces a change of overall state without making the heading a live region. */}

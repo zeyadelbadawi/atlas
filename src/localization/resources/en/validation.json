@@ -77,5 +77,6 @@
   "maxItems": "You can add up to {{count}} items. Remove some to continue.",
   "maxItems_one": "You can add only {{count}} item. Remove the others to continue.",
   "maxItems_other": "You can add up to {{count}} items. Remove some to continue.",
-  "scheduleInPast": "Choose a time in the future, or leave it empty to save a draft."
+  "scheduleInPast": "Choose a time in the future, or leave it empty to save a draft.",
+  "integerRange": "{{field}} must be a whole number from {{min}} to {{max}}."
 }

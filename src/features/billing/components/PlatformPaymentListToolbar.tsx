@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { SearchInput } from '@components/data-display';
+import { isDateRangeReversed, ReversedDateRangeAlert } from '@forms';
 import {
   PLATFORM_PAYMENT_METHOD_OPTIONS,
   PLATFORM_PAYMENT_SORT_OPTIONS,
@@ -90,6 +91,10 @@ export function PlatformPaymentListToolbar({
   const set = (patch: Partial<PlatformPaymentListState>) =>
     onChange({ ...value, ...patch });
   const all = t('payments:listFilters.all');
+  // B8 (UX audit) V22 — "From" after "To" says so, with Swap, as the audit
+  // log does; the queue would otherwise just read "No payments".
+  const datesReversed = isDateRangeReversed(value.from, value.to);
+  const datesErrorId = `${idPrefix}-dates-error`;
 
   return (
     <div
@@ -166,6 +171,8 @@ export function PlatformPaymentListToolbar({
             type="date"
             value={value.from}
             max={value.to || undefined}
+            aria-invalid={datesReversed || undefined}
+            aria-describedby={datesReversed ? datesErrorId : undefined}
             onChange={(event) => set({ from: event.target.value })}
             className="w-full sm:w-[160px]"
           />
@@ -182,6 +189,8 @@ export function PlatformPaymentListToolbar({
             type="date"
             value={value.to}
             min={value.from || undefined}
+            aria-invalid={datesReversed || undefined}
+            aria-describedby={datesReversed ? datesErrorId : undefined}
             onChange={(event) => set({ to: event.target.value })}
             className="w-full sm:w-[160px]"
           />
@@ -211,6 +220,12 @@ export function PlatformPaymentListToolbar({
           </Button>
         ) : null}
       </div>
+      {datesReversed ? (
+        <ReversedDateRangeAlert
+          id={datesErrorId}
+          onSwap={() => set({ from: value.to, to: value.from })}
+        />
+      ) : null}
     </div>
   );
 }

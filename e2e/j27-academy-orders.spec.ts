@@ -375,7 +375,7 @@ test.describe('J27 — Academy Orders and Platform payment lists @critical', () 
 
     await page
       .getByRole('searchbox', {
-        name: 'Search by organization, reference or payment ID',
+        name: 'Search by checkout ID, payer reference, payment ID or organization',
       })
       .fill(orgName);
     await expect(page).toHaveURL(/[?&]search=/);

@@ -177,15 +177,16 @@
       "subtitle": "Configure whether new organizations receive a free trial, and for how long.",
       "unsavedChanges": "You have unsaved changes to the trial policy.",
       "success": "Trial policy updated",
-      "error": "Failed to update trial policy",
+      "error": "The trial policy wasn't saved",
       "formTitle": "Free trial",
       "enabledLabel": "Enable free trial",
       "enabledDescription": "When off, new organizations subscribe directly without a trial period.",
       "durationDaysLabel": "Trial duration (days)",
-      "durationDaysHelp": "Number of days a new organization's trial lasts.",
-      "durationDaysDisabledHelp": "Ignored while the free trial is disabled.",
+      "durationDaysHelp": "Number of days a new organization's trial lasts: 1 to 365.",
+      "durationDaysDisabledHelp": "Ignored while the free trial is off, but still 1 to 365 days so it's ready when you turn it on.",
       "saving": "Saving…",
-      "saveButton": "Save changes"
+      "saveButton": "Save changes",
+      "durationDaysRange": "Enter a whole number of days from {{min}} to {{max}}."
     }
   },
   "trial": {

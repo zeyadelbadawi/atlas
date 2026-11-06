@@ -22,9 +22,20 @@
  *    A monthly plan may also carry an optional whole-year price
  *    (`pricing.yearlyAmount`, 2 Oct 2026): only when it is set can a
  *    customer choose yearly billing, and they are charged exactly it.
+ *
+ * B8 (UX audit) — the form checks every value as the server does
+ * (`planEditorSchema`) and says what is wrong under the field, named by its
+ * label in the page's language; a server refusal lands on the same field
+ * (`useServerValidation`, its paths mapped onto the form's); a limit is a
+ * number or the Unlimited switch; Escape, the X and Cancel ask before
+ * discarding edits; a save says what happened.
  */
 import { useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useForm } from 'react-hook-form';
+import type { Path } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import {
   Dialog,
@@ -40,8 +51,22 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useDateFormatter } from '@hooks';
-import { formatNumber } from '@utils';
-import { PLAN_FEATURE_KEYS, PLAN_LIMIT_KEYS } from '@features/tenant';
+import { useToast } from '@app/providers';
+import { useDirtyGuard } from '@features/unsaved-changes';
+import {
+  FormErrorSummary,
+  SaveFailedAlert,
+  fieldErrorText,
+  useLabelledViolations,
+  useServerValidation,
+} from '@forms';
+import { cn, formatCurrency, formatNumber } from '@utils';
+import {
+  PLAN_FEATURE_KEYS,
+  PLAN_LIMIT_KEYS,
+  STORAGE_LIMIT_KEYS,
+} from '@features/tenant';
+import type { ApiError } from '@api';
 import {
   usePreviewLimitImpact,
   useUpdatePlan,
@@ -51,26 +76,29 @@ import {
   draftToLimits,
   withUneditedLimits,
   findReducedLimitKeys,
-  isCompleteDraft,
-  limitsToDraft,
 } from '../utils/plan-limit-changes.utils';
 import type { LimitDraft } from '../utils/plan-limit-changes.utils';
 import {
   DEFAULT_MONTHLY_EMAILS,
-  isValidMonthlyEmailsInput,
   withMonthlyEmails,
 } from '../utils/monthly-emails.utils';
 import {
-  GIFTED_DAYS_MAX,
-  GIFTED_DAYS_MIN,
   giftedDaysInputToPayload,
   giftedDaysToInput,
-  isValidGiftedDaysInput,
 } from '../utils/gifted-days.utils';
-import type { LanguageCode, Plan, PlanFeatures, PlanLimitImpact } from '@types';
-
-/** The backend's ceiling for `pricing.yearlyAmount` (`PlanPricingDto`). */
-const MAX_YEARLY_AMOUNT = 10_000_000;
+import {
+  numberText,
+  planEditorSchema,
+  wholeNumber,
+  type PlanEditorValues,
+} from '../schemas/plan-editor.schema';
+import type {
+  LanguageCode,
+  Plan,
+  PlanFeatures,
+  PlanLimitImpact,
+  PlanLimitKey,
+} from '@types';
 
 /**
  * Only the current feature keys, each a real boolean. A plan row (or a
@@ -87,11 +115,180 @@ function pickPlanFeatures(raw: unknown): PlanFeatures {
   ) as unknown as PlanFeatures;
 }
 
-/** Empty (no yearly option) or a whole number from 0 to the ceiling. */
-function isValidYearlyAmount(value: string): boolean {
-  const trimmed = value.trim();
-  if (trimmed === '') return true;
-  return /^\d+$/.test(trimmed) && Number(trimmed) <= MAX_YEARLY_AMOUNT;
+/** The form's starting values: the saved plan's own. */
+function toFormValues(plan: Plan | null): PlanEditorValues {
+  const limits: Record<string, string> = {};
+  const unlimited: Record<string, boolean> = {};
+  for (const key of PLAN_LIMIT_KEYS) {
+    const value = plan?.limits[key];
+    unlimited[key] = value === UNLIMITED;
+    limits[key] = value === UNLIMITED ? '' : String(value ?? 0);
+  }
+  const emails = plan?.limits.monthlyEmails;
+  return {
+    amount:
+      plan?.pricing?.amount !== undefined ? String(plan.pricing.amount) : '',
+    currency: plan?.pricing?.currency ?? 'EGP',
+    yearlyAmount:
+      plan?.pricing?.yearlyAmount !== undefined
+        ? String(plan.pricing.yearlyAmount)
+        : '',
+    trialEligible: plan?.trialEligible ?? false,
+    trialDays: plan?.trialDurationDays ? String(plan.trialDurationDays) : '',
+    giftedMonthly: giftedDaysToInput(plan?.giftedDaysMonthly),
+    giftedYearly: giftedDaysToInput(plan?.giftedDaysYearly),
+    limits,
+    unlimited,
+    monthlyEmails:
+      emails === undefined || emails === UNLIMITED ? '' : String(emails),
+    monthlyEmailsUnlimited: emails === UNLIMITED,
+    features: pickPlanFeatures(plan?.features) as unknown as Record<
+      string,
+      boolean
+    >,
+  };
+}
+
+/** The editor's limits as the draft the reduction check reads. */
+function toLimitDraft(values: PlanEditorValues): LimitDraft {
+  const draft: LimitDraft = {};
+  for (const key of PLAN_LIMIT_KEYS) {
+    draft[key] = values.unlimited[key]
+      ? UNLIMITED
+      : numberText(values.limits[key]);
+  }
+  return draft;
+}
+
+/** The API's field paths → the form's (`useServerValidation` aliases). */
+const SERVER_FIELD_ALIASES: Readonly<Record<string, Path<PlanEditorValues>>> = {
+  'pricing.amount': 'amount',
+  'pricing.currency': 'currency',
+  'pricing.yearlyAmount': 'yearlyAmount',
+  trialDurationDays: 'trialDays',
+  giftedDaysMonthly: 'giftedMonthly',
+  giftedDaysYearly: 'giftedYearly',
+  'limits.monthlyEmails': 'monthlyEmails',
+};
+
+/** Label keys by the API's field path, so a server message names the field. */
+const SERVER_FIELD_LABELS: Readonly<Record<string, string>> = {
+  'pricing.amount': 'platform:planAdmin.editor.amount',
+  'pricing.currency': 'platform:planAdmin.editor.currency',
+  'pricing.yearlyAmount': 'platform:planAdmin.editor.yearlyAmount',
+  trialDurationDays: 'platform:planAdmin.editor.trialDays',
+  giftedDaysMonthly: 'platform:planAdmin.editor.giftMonthly',
+  giftedDaysYearly: 'platform:planAdmin.editor.giftYearly',
+  'limits.monthlyEmails': 'platform:planAdmin.editor.monthlyEmails',
+  ...Object.fromEntries(
+    PLAN_LIMIT_KEYS.map((key) => [
+      `limits.${key}`,
+      `tenant:common.limits.${key}`,
+    ])
+  ),
+};
+
+/** Label keys by the FORM's field path, for the error summary. */
+const FORM_FIELD_LABELS: Readonly<Record<string, string>> = {
+  amount: 'platform:planAdmin.editor.amount',
+  currency: 'platform:planAdmin.editor.currency',
+  yearlyAmount: 'platform:planAdmin.editor.yearlyAmount',
+  trialDays: 'platform:planAdmin.editor.trialDays',
+  giftedMonthly: 'platform:planAdmin.editor.giftMonthly',
+  giftedYearly: 'platform:planAdmin.editor.giftYearly',
+  monthlyEmails: 'platform:planAdmin.editor.monthlyEmails',
+  ...Object.fromEntries(
+    PLAN_LIMIT_KEYS.map((key) => [
+      `limits.${key}`,
+      `tenant:common.limits.${key}`,
+    ])
+  ),
+};
+
+/** A violation on one of the form's fields (by its API path). */
+function isOnField(field: string): boolean {
+  return field in SERVER_FIELD_ALIASES || field in SERVER_FIELD_LABELS;
+}
+
+/** Server values (`{ min: 1, max: 1000000 }`) as the page writes numbers. */
+function useLocalizedViolations(
+  error: ApiError | null,
+  language: LanguageCode
+): ApiError | null {
+  return useMemo(() => {
+    if (!error?.violations?.length) return error;
+    const violations = error.violations.map((violation) =>
+      violation.values
+        ? {
+            ...violation,
+            values: Object.fromEntries(
+              Object.entries(violation.values).map(([key, value]) => [
+                key,
+                typeof value === 'number'
+                  ? formatNumber(value, language)
+                  : value,
+              ])
+            ),
+          }
+        : violation
+    );
+    return Object.assign(
+      Object.create(Object.getPrototypeOf(error) as object) as ApiError,
+      error,
+      { violations }
+    );
+  }, [error, language]);
+}
+
+interface PlanFieldProps {
+  readonly id: string;
+  readonly label: string;
+  readonly help?: ReactNode;
+  readonly error?: string;
+  readonly children: (aria: {
+    readonly 'aria-invalid': boolean | undefined;
+    readonly 'aria-describedby': string | undefined;
+  }) => ReactNode;
+  readonly className?: string;
+}
+
+/** Label, control, help and the field's own message, wired together. */
+function PlanField({
+  id,
+  label,
+  help,
+  error,
+  children,
+  className,
+}: PlanFieldProps): JSX.Element {
+  const describedBy =
+    [help ? `${id}-help` : null, error ? `${id}-error` : null]
+      .filter(Boolean)
+      .join(' ') || undefined;
+  return (
+    <div className={cn('space-y-1.5', className)}>
+      <Label htmlFor={id}>{label}</Label>
+      {children({
+        'aria-invalid': error ? true : undefined,
+        'aria-describedby': describedBy,
+      })}
+      {help ? (
+        <p id={`${id}-help`} className="text-xs text-muted-foreground">
+          {help}
+        </p>
+      ) : null}
+      {error ? (
+        <p
+          id={`${id}-error`}
+          role="alert"
+          className="text-sm font-medium text-destructive"
+          data-testid={`${id}-error`}
+        >
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
 }
 
 export interface PlanEditorDialogProps {
@@ -104,147 +301,253 @@ export function PlanEditorDialog({
   onOpenChange,
 }: PlanEditorDialogProps): JSX.Element {
   const { t, i18n } = useTranslation();
+  const language = i18n.language as LanguageCode;
   const fmt = useDateFormatter();
+  const { notifySuccess } = useToast();
   const updatePlan = useUpdatePlan();
   const previewImpact = usePreviewLimitImpact();
-
-  const [limits, setLimits] = useState<LimitDraft>({});
-  const [features, setFeatures] = useState<PlanFeatures>(() =>
-    pickPlanFeatures({})
-  );
-  const [amount, setAmount] = useState('');
-  const [currency, setCurrency] = useState('EGP');
-  const [yearlyAmount, setYearlyAmount] = useState('');
-  const [trialEligible, setTrialEligible] = useState(false);
-  const [trialDays, setTrialDays] = useState('');
-  const [giftedMonthly, setGiftedMonthly] = useState('');
-  const [giftedYearly, setGiftedYearly] = useState('');
-  // W3-compose — optional per-academy monthly email allowance. Blank keeps
-  // the platform default (50); a number or `unlimited` is saved as is.
-  const [monthlyEmails, setMonthlyEmails] = useState('');
-  const [impact, setImpact] = useState<PlanLimitImpact | null>(null);
-  const [confirmed, setConfirmed] = useState(false);
-
-  // Re-seed whenever a different plan is opened; a stale draft would carry
-  // one plan's limits into another's editor.
-  useEffect(() => {
-    if (!plan) return;
-    setLimits(limitsToDraft(plan.limits, PLAN_LIMIT_KEYS));
-    setMonthlyEmails(
-      plan.limits.monthlyEmails === undefined
-        ? ''
-        : String(plan.limits.monthlyEmails)
-    );
-    setFeatures(pickPlanFeatures(plan.features));
-    setAmount(
-      plan.pricing?.amount !== undefined ? String(plan.pricing.amount) : ''
-    );
-    setCurrency(plan.pricing?.currency ?? 'EGP');
-    setYearlyAmount(
-      plan.pricing?.yearlyAmount !== undefined
-        ? String(plan.pricing.yearlyAmount)
-        : ''
-    );
-    setTrialEligible(plan.trialEligible);
-    setTrialDays(plan.trialDurationDays ? String(plan.trialDurationDays) : '');
-    setGiftedMonthly(giftedDaysToInput(plan.giftedDaysMonthly));
-    setGiftedYearly(giftedDaysToInput(plan.giftedDaysYearly));
-    setImpact(null);
-    setConfirmed(false);
-  }, [plan]);
-
-  /** Which limits the draft LOWERS — the only ones worth an impact check. */
-  const reducedLimitKeys = useMemo(
-    () =>
-      plan
-        ? findReducedLimitKeys(
-            plan.limits,
-            draftToLimits(limits, PLAN_LIMIT_KEYS),
-            PLAN_LIMIT_KEYS
-          )
-        : [],
-    [plan, limits]
-  );
-
-  // A blank or non-numeric limit must not be saveable: it reaches the API
-  // as null and, before `draftToLimits` returned NaN for it, reached the
-  // database as a real limit of 0.
-  const isComplete = useMemo(
-    () => isCompleteDraft(limits, PLAN_LIMIT_KEYS),
-    [limits]
-  );
 
   // A yearly price is offered only beside a MONTHLY price — a plan priced
   // per year has no second price to add.
   const billingCycle = plan?.pricing?.billingCycle ?? 'monthly';
   const offersYearlyPrice = billingCycle === 'monthly';
-  const yearlyAmountValid =
-    !offersYearlyPrice || isValidYearlyAmount(yearlyAmount);
+  const priced = plan?.pricing?.amount !== undefined;
+  const currencyForFloor = plan?.pricing?.currency ?? 'EGP';
 
-  // W8 — blank/0 (no gift) or 5..15. The server enforces the same range.
-  const giftedMonthlyValid = isValidGiftedDaysInput(giftedMonthly);
-  const giftedYearlyValid = isValidGiftedDaysInput(giftedYearly);
-  const giftedValid = giftedMonthlyValid && giftedYearlyValid;
+  const schema = useMemo(
+    () =>
+      planEditorSchema({
+        priced,
+        offersYearly: offersYearlyPrice,
+        limitKeys: PLAN_LIMIT_KEYS,
+        formatNumber: (value) => formatNumber(value, language),
+        formatPrice: (value) => {
+          try {
+            return formatCurrency(value, language, currencyForFloor);
+          } catch {
+            return formatNumber(value, language);
+          }
+        },
+      }),
+    [priced, offersYearlyPrice, language, currencyForFloor]
+  );
 
-  const monthlyEmailsValid = isValidMonthlyEmailsInput(monthlyEmails);
+  const form = useForm<PlanEditorValues>({
+    resolver: zodResolver(schema),
+    mode: 'onChange',
+    defaultValues: toFormValues(plan),
+  });
+  const { register, reset, watch, setValue, formState } = form;
 
+  const [impact, setImpact] = useState<PlanLimitImpact | null>(null);
+  const [confirmed, setConfirmed] = useState(false);
+
+  // Re-seed whenever a different plan is opened; a stale draft would carry
+  // one plan's limits into another's editor.
+  const resetUpdate = updatePlan.reset;
+  const resetPreview = previewImpact.reset;
+  useEffect(() => {
+    if (!plan) return;
+    reset(toFormValues(plan));
+    setImpact(null);
+    setConfirmed(false);
+    resetUpdate();
+    resetPreview();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [plan, reset]);
+
+  // The server's refusal of a field lands on that field, its message
+  // naming the field's label in the page's language (V07).
+  const labelled = useLabelledViolations(
+    updatePlan.error ?? null,
+    SERVER_FIELD_LABELS
+  );
+  const saveError = useLocalizedViolations(labelled, language);
+  useServerValidation(form, saveError, SERVER_FIELD_ALIASES);
+  const previewLabelled = useLabelledViolations(
+    previewImpact.error ?? null,
+    SERVER_FIELD_LABELS
+  );
+  const previewError = useLocalizedViolations(previewLabelled, language);
+  useServerValidation(form, previewError, SERVER_FIELD_ALIASES);
+
+  const guard = useDirtyGuard(formState.isDirty);
+  const requestClose = () => {
+    if (updatePlan.isPending) return;
+    void guard.requestClose(() => onOpenChange(false));
+  };
+
+  const values = watch();
+  const limitDraft = toLimitDraft(values);
+
+  /** Which limits the draft LOWERS — the only ones worth an impact check. */
+  const reducedLimitKeys = plan
+    ? findReducedLimitKeys(
+        plan.limits,
+        draftToLimits(limitDraft, PLAN_LIMIT_KEYS),
+        PLAN_LIMIT_KEYS
+      )
+    : [];
   const hasReduction = reducedLimitKeys.length > 0;
   // A reduction must be checked and then explicitly confirmed. Everything
   // else saves directly.
   const needsConfirmation = hasReduction && !confirmed;
 
-  const handleCheckImpact = async (): Promise<void> => {
-    if (!plan) return;
-    const result = await previewImpact.mutateAsync({
-      key: plan.key,
-      limits: draftToLimits(limits, PLAN_LIMIT_KEYS),
-    });
-    setImpact(result);
+  const invalidateImpact = () => {
+    setImpact(null);
+    setConfirmed(false);
   };
 
-  const handleSave = async (): Promise<void> => {
+  const handleCheckImpact = async (): Promise<void> => {
     if (!plan) return;
-    await updatePlan.mutateAsync({
-      key: plan.key,
-      payload: {
-        expectedVersion: plan.version,
-        limits: withMonthlyEmails(
-          withUneditedLimits(
-            draftToLimits(limits, PLAN_LIMIT_KEYS),
-            plan.limits,
-            PLAN_LIMIT_KEYS,
-            ['monthlyEmails']
+    try {
+      const result = await previewImpact.mutateAsync({
+        key: plan.key,
+        limits: draftToLimits(limitDraft, PLAN_LIMIT_KEYS),
+      });
+      setImpact(result);
+    } catch {
+      // Shown in the reduction panel (or on the limit it names), once.
+    }
+  };
+
+  const handleSave = async (submitted: PlanEditorValues): Promise<void> => {
+    if (!plan || needsConfirmation) return;
+    const amount = wholeNumber(submitted.amount);
+    const yearly = wholeNumber(submitted.yearlyAmount);
+    const trial = wholeNumber(submitted.trialDays);
+    const editedLimits = draftToLimits(
+      toLimitDraft(submitted),
+      PLAN_LIMIT_KEYS
+    );
+    const emails = submitted.monthlyEmailsUnlimited
+      ? UNLIMITED
+      : numberText(submitted.monthlyEmails);
+    const limits = withMonthlyEmails(
+      withUneditedLimits(editedLimits, plan.limits, PLAN_LIMIT_KEYS, [
+        'monthlyEmails',
+      ]),
+      emails
+    );
+    const pricing =
+      amount !== null
+        ? {
+            amount,
+            currency: submitted.currency.trim().toUpperCase(),
+            billingCycle,
+            // Omitted when empty: the plan then has no yearly option.
+            ...(offersYearlyPrice && yearly !== null
+              ? { yearlyAmount: yearly }
+              : {}),
+          }
+        : undefined;
+    try {
+      await updatePlan.mutateAsync({
+        key: plan.key,
+        payload: {
+          expectedVersion: plan.version,
+          limits,
+          features: pickPlanFeatures(submitted.features),
+          pricing,
+          trialEligible: submitted.trialEligible,
+          // Empty means "fall back to the platform default", which the
+          // backend expresses as null — not 0, which would mean a
+          // zero-day trial.
+          trialDurationDays: submitted.trialEligible
+            ? trial
+            : (plan.trialDurationDays ?? null),
+          giftedDaysMonthly: giftedDaysInputToPayload(
+            numberText(submitted.giftedMonthly)
           ),
-          monthlyEmails
-        ),
-        features: pickPlanFeatures(features),
-        pricing: amount
-          ? {
-              amount: Number(amount),
-              currency: currency.toUpperCase(),
-              billingCycle,
-              // Omitted when empty: the plan then has no yearly option.
-              ...(offersYearlyPrice && yearlyAmount.trim() !== ''
-                ? { yearlyAmount: Number(yearlyAmount.trim()) }
-                : {}),
-            }
-          : undefined,
-        trialEligible,
-        // Empty means "fall back to the platform default", which the
-        // backend expresses as null — not 0, which would mean a zero-day
-        // trial.
-        trialDurationDays: trialDays ? Number(trialDays) : null,
-        giftedDaysMonthly: giftedDaysInputToPayload(giftedMonthly),
-        giftedDaysYearly: giftedDaysInputToPayload(giftedYearly),
-      },
-    });
+          giftedDaysYearly: giftedDaysInputToPayload(
+            numberText(submitted.giftedYearly)
+          ),
+        },
+      });
+    } catch {
+      // Shown in the dialog, once: on its field, as "reload", or inline.
+      return;
+    }
+    // B8 (UX audit) V08 — say what the save did. A price or limit change
+    // reaches every paying organization on the plan (the server emails
+    // their owners); anything else changes only the catalog.
+    const reachesSubscribers =
+      JSON.stringify(pricing ?? null) !==
+        JSON.stringify(
+          plan.pricing
+            ? {
+                amount: plan.pricing.amount,
+                currency: plan.pricing.currency,
+                billingCycle: plan.pricing.billingCycle ?? billingCycle,
+                ...(offersYearlyPrice && plan.pricing.yearlyAmount !== undefined
+                  ? { yearlyAmount: plan.pricing.yearlyAmount }
+                  : {}),
+              }
+            : null
+        ) ||
+      PLAN_LIMIT_KEYS.some((key) => limits[key] !== plan.limits[key]) ||
+      limits.monthlyEmails !== plan.limits.monthlyEmails;
+    notifySuccess(
+      'platform:planAdmin.editor.savedTitle',
+      reachesSubscribers
+        ? 'platform:planAdmin.editor.savedNotified'
+        : 'platform:planAdmin.editor.savedCatalogOnly',
+      { plan: plan.name }
+    );
+    reset(submitted);
     onOpenChange(false);
   };
 
   const isStale = updatePlan.error?.kind === 'conflict';
+  // A refusal no field shows (5xx, lost connection, a feature violation…).
+  const showSaveFailure =
+    updatePlan.error &&
+    !isStale &&
+    updatePlan.error.kind !== 'cancelled' &&
+    !(updatePlan.error.violations ?? []).some((v) => isOnField(v.field));
+  const showPreviewFailure =
+    previewImpact.error &&
+    previewImpact.error.kind !== 'cancelled' &&
+    !(previewImpact.error.violations ?? []).some((v) => isOnField(v.field));
+
+  const errorOf = (name: string, labelKey: string): string | undefined => {
+    const parts = name.split('.');
+    let node: unknown = formState.errors;
+    for (const part of parts) {
+      node =
+        node && typeof node === 'object'
+          ? (node as Record<string, unknown>)[part]
+          : undefined;
+    }
+    const message =
+      node && typeof node === 'object'
+        ? (node as { message?: unknown }).message
+        : undefined;
+    return typeof message === 'string'
+      ? fieldErrorText(t, message, t(labelKey))
+      : undefined;
+  };
+
+  const unitFor = (key: PlanLimitKey): string | undefined =>
+    STORAGE_LIMIT_KEYS.includes(key) ? t('common:units.gigabytes') : undefined;
+
+  const unmeasurable = impact
+    ? new Intl.ListFormat(language, { type: 'conjunction' }).format(
+        impact.unmeasurableLimitKeys.map((key) =>
+          i18n.exists(`tenant:common.limits.${key}`)
+            ? t(`tenant:common.limits.${key}`)
+            : key
+        )
+      )
+    : '';
 
   return (
-    <Dialog open={plan !== null} onOpenChange={onOpenChange}>
+    <Dialog
+      open={plan !== null}
+      onOpenChange={(open) => {
+        if (!open) requestClose();
+      }}
+    >
       <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle dir="auto">
@@ -255,16 +558,25 @@ export function PlanEditorDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {isStale ? (
-          <Alert variant="destructive">
-            <AlertTitle>{t('platform:planAdmin.editor.staleTitle')}</AlertTitle>
-            <AlertDescription>
-              {t('platform:planAdmin.editor.staleDescription')}
-            </AlertDescription>
-          </Alert>
-        ) : null}
+        <form
+          id="plan-editor-form"
+          noValidate
+          onSubmit={(event) => void form.handleSubmit(handleSave)(event)}
+          className="space-y-6"
+        >
+          <FormErrorSummary form={form} fieldLabels={FORM_FIELD_LABELS} />
 
-        <div className="space-y-6">
+          {isStale ? (
+            <Alert variant="destructive">
+              <AlertTitle>
+                {t('platform:planAdmin.editor.staleTitle')}
+              </AlertTitle>
+              <AlertDescription>
+                {t('platform:planAdmin.editor.staleDescription')}
+              </AlertDescription>
+            </Alert>
+          ) : null}
+
           {/* ---------- pricing ---------- */}
           <section className="space-y-3">
             <h3 className="text-sm font-semibold">
@@ -278,71 +590,70 @@ export function PlanEditorDialog({
               {t('platform:planAdmin.editor.subscriberNotice')}
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label htmlFor="plan-amount">
-                  {t('platform:planAdmin.editor.amount')}
-                </Label>
-                <Input
-                  id="plan-amount"
-                  data-testid="plan-amount"
-                  inputMode="numeric"
-                  dir="ltr"
-                  data-ltr-content
-                  value={amount}
-                  onChange={(event) => setAmount(event.target.value)}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="plan-currency">
-                  {t('platform:planAdmin.editor.currency')}
-                </Label>
-                <Input
-                  id="plan-currency"
-                  data-testid="plan-currency"
-                  dir="ltr"
-                  data-ltr-content
-                  maxLength={3}
-                  value={currency}
-                  onChange={(event) => setCurrency(event.target.value)}
-                />
-              </div>
+              <PlanField
+                id="plan-amount"
+                label={t('platform:planAdmin.editor.amount')}
+                help={t('platform:planAdmin.editor.amountHelp')}
+                error={errorOf('amount', 'platform:planAdmin.editor.amount')}
+              >
+                {(aria) => (
+                  <Input
+                    id="plan-amount"
+                    data-testid="plan-amount"
+                    inputMode="numeric"
+                    dir="ltr"
+                    data-ltr-content
+                    autoComplete="off"
+                    {...aria}
+                    {...register('amount')}
+                  />
+                )}
+              </PlanField>
+              <PlanField
+                id="plan-currency"
+                label={t('platform:planAdmin.editor.currency')}
+                error={errorOf(
+                  'currency',
+                  'platform:planAdmin.editor.currency'
+                )}
+              >
+                {(aria) => (
+                  <Input
+                    id="plan-currency"
+                    data-testid="plan-currency"
+                    dir="ltr"
+                    data-ltr-content
+                    autoComplete="off"
+                    maxLength={3}
+                    {...aria}
+                    {...register('currency')}
+                  />
+                )}
+              </PlanField>
             </div>
             {offersYearlyPrice ? (
-              <div className="space-y-1.5">
-                <Label htmlFor="plan-yearly-amount">
-                  {t('platform:planAdmin.editor.yearlyAmount')}
-                </Label>
-                <Input
-                  id="plan-yearly-amount"
-                  data-testid="plan-yearly-amount"
-                  inputMode="numeric"
-                  dir="ltr"
-                  data-ltr-content
-                  aria-invalid={!yearlyAmountValid}
-                  aria-describedby="plan-yearly-amount-help"
-                  value={yearlyAmount}
-                  onChange={(event) => setYearlyAmount(event.target.value)}
-                />
-                <p
-                  id="plan-yearly-amount-help"
-                  className="text-xs text-muted-foreground"
-                >
-                  {t('platform:planAdmin.editor.yearlyAmountHelp')}
-                </p>
-                {!yearlyAmountValid ? (
-                  <p
-                    className="text-sm font-medium text-destructive"
-                    data-testid="plan-yearly-amount-error"
-                  >
-                    {t('platform:planAdmin.editor.yearlyAmountInvalid', {
-                      max: formatNumber(
-                        MAX_YEARLY_AMOUNT,
-                        i18n.language as LanguageCode
-                      ),
-                    })}
-                  </p>
-                ) : null}
-              </div>
+              <PlanField
+                id="plan-yearly-amount"
+                label={t('platform:planAdmin.editor.yearlyAmount')}
+                help={t('platform:planAdmin.editor.yearlyAmountHelp')}
+                error={errorOf(
+                  'yearlyAmount',
+                  'platform:planAdmin.editor.yearlyAmount'
+                )}
+              >
+                {(aria) => (
+                  <Input
+                    id="plan-yearly-amount"
+                    data-testid="plan-yearly-amount"
+                    inputMode="numeric"
+                    dir="ltr"
+                    data-ltr-content
+                    autoComplete="off"
+                    {...aria}
+                    {...register('yearlyAmount')}
+                  />
+                )}
+              </PlanField>
             ) : null}
             <p className="text-xs text-muted-foreground">
               {t('platform:planAdmin.editor.pricingNote')}
@@ -361,31 +672,41 @@ export function PlanEditorDialog({
               <Switch
                 id="plan-trial-eligible"
                 data-testid="plan-trial-eligible"
-                checked={trialEligible}
-                onCheckedChange={setTrialEligible}
+                checked={values.trialEligible}
+                onCheckedChange={(checked) =>
+                  setValue('trialEligible', checked, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
               />
             </div>
-            {trialEligible ? (
-              <div className="space-y-1.5">
-                <Label htmlFor="plan-trial-days">
-                  {t('platform:planAdmin.editor.trialDays')}
-                </Label>
-                <Input
-                  id="plan-trial-days"
-                  data-testid="plan-trial-days"
-                  inputMode="numeric"
-                  dir="ltr"
-                  data-ltr-content
-                  placeholder={t(
-                    'platform:planAdmin.editor.trialDaysPlaceholder'
-                  )}
-                  value={trialDays}
-                  onChange={(event) => setTrialDays(event.target.value)}
-                />
-                <p className="text-xs text-muted-foreground">
-                  {t('platform:planAdmin.editor.trialDaysHelp')}
-                </p>
-              </div>
+            {values.trialEligible ? (
+              <PlanField
+                id="plan-trial-days"
+                label={t('platform:planAdmin.editor.trialDays')}
+                help={t('platform:planAdmin.editor.trialDaysHelp')}
+                error={errorOf(
+                  'trialDays',
+                  'platform:planAdmin.editor.trialDays'
+                )}
+              >
+                {(aria) => (
+                  <Input
+                    id="plan-trial-days"
+                    data-testid="plan-trial-days"
+                    inputMode="numeric"
+                    dir="ltr"
+                    data-ltr-content
+                    autoComplete="off"
+                    placeholder={t(
+                      'platform:planAdmin.editor.trialDaysPlaceholder'
+                    )}
+                    {...aria}
+                    {...register('trialDays')}
+                  />
+                )}
+              </PlanField>
             ) : null}
           </section>
 
@@ -402,68 +723,44 @@ export function PlanEditorDialog({
                 [
                   {
                     id: 'plan-gifted-monthly',
+                    name: 'giftedMonthly',
                     label: 'giftMonthly',
                     help: 'giftMonthlyHelp',
-                    value: giftedMonthly,
-                    set: setGiftedMonthly,
-                    valid: giftedMonthlyValid,
                   },
                   {
                     id: 'plan-gifted-yearly',
+                    name: 'giftedYearly',
                     label: 'giftYearly',
                     help: 'giftYearlyHelp',
-                    value: giftedYearly,
-                    set: setGiftedYearly,
-                    valid: giftedYearlyValid,
                   },
                 ] as const
               ).map((field) => (
-                <div key={field.id} className="space-y-1.5">
-                  <Label htmlFor={field.id}>
-                    {t(`platform:planAdmin.editor.${field.label}`)}
-                  </Label>
-                  <Input
-                    id={field.id}
-                    data-testid={field.id}
-                    type="number"
-                    inputMode="numeric"
-                    min={0}
-                    max={GIFTED_DAYS_MAX}
-                    step={1}
-                    dir="ltr"
-                    data-ltr-content
-                    placeholder={t('platform:planAdmin.editor.giftPlaceholder')}
-                    aria-invalid={!field.valid}
-                    aria-describedby={`${field.id}-help${field.valid ? '' : ` ${field.id}-error`}`}
-                    value={field.value}
-                    onChange={(event) => field.set(event.target.value)}
-                  />
-                  <p
-                    id={`${field.id}-help`}
-                    className="text-xs text-muted-foreground"
-                  >
-                    {t(`platform:planAdmin.editor.${field.help}`)}
-                  </p>
-                  {!field.valid ? (
-                    <p
-                      id={`${field.id}-error`}
-                      role="alert"
-                      className="text-sm font-medium text-destructive"
-                      data-testid={`${field.id}-error`}
-                    >
-                      {t('platform:planAdmin.editor.giftInvalid', {
-                        min: formatNumber(
-                          GIFTED_DAYS_MIN,
-                          i18n.language as LanguageCode
-                        ),
-                        max: formatNumber(
-                          GIFTED_DAYS_MAX,
-                          i18n.language as LanguageCode
-                        ),
-                      })}
-                    </p>
-                  ) : null}
-                </div>
+                <PlanField
+                  key={field.id}
+                  id={field.id}
+                  label={t(`platform:planAdmin.editor.${field.label}`)}
+                  help={t(`platform:planAdmin.editor.${field.help}`)}
+                  error={errorOf(
+                    field.name,
+                    `platform:planAdmin.editor.${field.label}`
+                  )}
+                >
+                  {(aria) => (
+                    <Input
+                      id={field.id}
+                      data-testid={field.id}
+                      inputMode="numeric"
+                      dir="ltr"
+                      data-ltr-content
+                      autoComplete="off"
+                      placeholder={t(
+                        'platform:planAdmin.editor.giftPlaceholder'
+                      )}
+                      {...aria}
+                      {...register(field.name)}
+                    />
+                  )}
+                </PlanField>
               ))}
             </div>
           </section>
@@ -473,63 +770,129 @@ export function PlanEditorDialog({
             <h3 className="text-sm font-semibold">
               {t('platform:planAdmin.editor.limitsTitle')}
             </h3>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {PLAN_LIMIT_KEYS.map((key) => (
-                <div key={key} className="space-y-1.5">
-                  <Label htmlFor={`plan-limit-${key}`}>
-                    {t(`tenant:common.limits.${key}`)}
-                  </Label>
-                  <Input
-                    id={`plan-limit-${key}`}
-                    data-testid={`plan-limit-${key}`}
-                    dir="ltr"
-                    data-ltr-content
-                    value={limits[key] ?? ''}
-                    onChange={(event) => {
-                      setLimits((prev) => ({
-                        ...prev,
-                        [key]: event.target.value,
-                      }));
-                      // Any limit edit invalidates a previous impact check.
-                      setImpact(null);
-                      setConfirmed(false);
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
             <p className="text-xs text-muted-foreground">
               {t('platform:planAdmin.editor.limitsHelp')}
             </p>
-            <div className="space-y-1.5 sm:max-w-xs">
-              <Label htmlFor="plan-limit-monthlyEmails">
-                {t('platform:planAdmin.editor.monthlyEmails')}
-              </Label>
-              <Input
-                id="plan-limit-monthlyEmails"
-                data-testid="plan-limit-monthlyEmails"
-                dir="ltr"
-                data-ltr-content
-                inputMode="numeric"
-                placeholder={String(DEFAULT_MONTHLY_EMAILS)}
-                value={monthlyEmails}
-                aria-invalid={!monthlyEmailsValid}
-                aria-describedby="plan-limit-monthlyEmails-help"
-                onChange={(event) => setMonthlyEmails(event.target.value)}
-              />
-              <p
-                id="plan-limit-monthlyEmails-help"
-                className={
-                  monthlyEmailsValid
-                    ? 'text-xs text-muted-foreground'
-                    : 'text-xs text-destructive'
-                }
-              >
-                {t('platform:planAdmin.editor.monthlyEmailsHelp', {
-                  count: DEFAULT_MONTHLY_EMAILS,
-                })}
-              </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {PLAN_LIMIT_KEYS.map((key) => {
+                const id = `plan-limit-${key}`;
+                const isUnlimited = Boolean(values.unlimited[key]);
+                const unit = unitFor(key);
+                const field = register(`limits.${key}`, {
+                  // Any limit edit invalidates a previous impact check.
+                  onChange: invalidateImpact,
+                });
+                return (
+                  <PlanField
+                    key={key}
+                    id={id}
+                    label={
+                      unit
+                        ? t('platform:planAdmin.editor.limitWithUnit', {
+                            label: t(`tenant:common.limits.${key}`),
+                            unit,
+                          })
+                        : t(`tenant:common.limits.${key}`)
+                    }
+                    error={
+                      isUnlimited
+                        ? undefined
+                        : errorOf(
+                            `limits.${key}`,
+                            `tenant:common.limits.${key}`
+                          )
+                    }
+                  >
+                    {(aria) => (
+                      <div className="flex items-center gap-3">
+                        <Input
+                          id={id}
+                          data-testid={id}
+                          inputMode="numeric"
+                          dir="ltr"
+                          data-ltr-content
+                          autoComplete="off"
+                          disabled={isUnlimited}
+                          placeholder={
+                            isUnlimited
+                              ? t('platform:planAdmin.editor.unlimited')
+                              : undefined
+                          }
+                          className="min-w-0 flex-1"
+                          {...aria}
+                          {...field}
+                        />
+                        <label className="flex shrink-0 items-center gap-2 text-sm">
+                          <Switch
+                            data-testid={`${id}-unlimited`}
+                            checked={isUnlimited}
+                            onCheckedChange={(checked) => {
+                              setValue(`unlimited.${key}`, checked, {
+                                shouldDirty: true,
+                                shouldValidate: true,
+                              });
+                              invalidateImpact();
+                            }}
+                          />
+                          {t('platform:planAdmin.editor.unlimited')}
+                        </label>
+                      </div>
+                    )}
+                  </PlanField>
+                );
+              })}
             </div>
+            <PlanField
+              id="plan-limit-monthlyEmails"
+              className="sm:max-w-md"
+              label={t('platform:planAdmin.editor.monthlyEmails')}
+              help={t('platform:planAdmin.editor.monthlyEmailsHelp', {
+                count: DEFAULT_MONTHLY_EMAILS,
+              })}
+              error={
+                values.monthlyEmailsUnlimited
+                  ? undefined
+                  : errorOf(
+                      'monthlyEmails',
+                      'platform:planAdmin.editor.monthlyEmails'
+                    )
+              }
+            >
+              {(aria) => (
+                <div className="flex items-center gap-3">
+                  <Input
+                    id="plan-limit-monthlyEmails"
+                    data-testid="plan-limit-monthlyEmails"
+                    dir="ltr"
+                    data-ltr-content
+                    inputMode="numeric"
+                    autoComplete="off"
+                    disabled={values.monthlyEmailsUnlimited}
+                    placeholder={
+                      values.monthlyEmailsUnlimited
+                        ? t('platform:planAdmin.editor.unlimited')
+                        : String(DEFAULT_MONTHLY_EMAILS)
+                    }
+                    className="min-w-0 flex-1"
+                    {...aria}
+                    {...register('monthlyEmails')}
+                  />
+                  <label className="flex shrink-0 items-center gap-2 text-sm">
+                    <Switch
+                      data-testid="plan-limit-monthlyEmails-unlimited"
+                      checked={values.monthlyEmailsUnlimited}
+                      onCheckedChange={(checked) =>
+                        setValue('monthlyEmailsUnlimited', checked, {
+                          shouldDirty: true,
+                          shouldValidate: true,
+                        })
+                      }
+                    />
+                    {t('platform:planAdmin.editor.unlimited')}
+                  </label>
+                </div>
+              )}
+            </PlanField>
           </section>
 
           {/* ---------- features ---------- */}
@@ -552,9 +915,11 @@ export function PlanEditorDialog({
                   <Switch
                     id={`plan-feature-${key}`}
                     data-testid={`plan-feature-${key}`}
-                    checked={!!features[key]}
+                    checked={!!values.features[key]}
                     onCheckedChange={(checked) =>
-                      setFeatures((prev) => ({ ...prev, [key]: checked }))
+                      setValue(`features.${key}`, checked, {
+                        shouldDirty: true,
+                      })
                     }
                   />
                 </div>
@@ -573,19 +938,27 @@ export function PlanEditorDialog({
                 <p>{t('platform:planAdmin.editor.reductionDescription')}</p>
 
                 {impact === null ? (
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    data-testid="plan-check-impact"
-                    disabled={previewImpact.isPending}
-                    onClick={() => void handleCheckImpact()}
-                  >
-                    {previewImpact.isPending ? (
-                      <Loader2 className="size-4 animate-spin" aria-hidden />
+                  <>
+                    {showPreviewFailure && previewImpact.error ? (
+                      <SaveFailedAlert
+                        error={previewImpact.error}
+                        titleKey="platform:planAdmin.editor.impactFailed"
+                      />
                     ) : null}
-                    {t('platform:planAdmin.editor.checkImpact')}
-                  </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      data-testid="plan-check-impact"
+                      disabled={previewImpact.isPending}
+                      onClick={() => void handleCheckImpact()}
+                    >
+                      {previewImpact.isPending ? (
+                        <Loader2 className="size-4 animate-spin" aria-hidden />
+                      ) : null}
+                      {t('platform:planAdmin.editor.checkImpact')}
+                    </Button>
+                  </>
                 ) : (
                   <div className="space-y-2" data-testid="plan-impact-result">
                     {/* P61 — say plainly who this edit cannot reach. A
@@ -616,11 +989,12 @@ export function PlanEditorDialog({
                         </p>
                         <ul className="space-y-1 text-sm">
                           {impact.affected.slice(0, 10).map((row) => (
-                            <li
-                              key={`${row.organizationId}-${row.limitKey}`}
-                              dir="auto"
-                            >
-                              {row.organizationName} —{' '}
+                            <li key={`${row.organizationId}-${row.limitKey}`}>
+                              {/* B8 (UX audit) V27 — the organization's
+                                  name keeps its own direction, so an
+                                  Arabic name never flips the line. */}
+                              <bdi>{row.organizationName}</bdi>
+                              {' — '}
                               {t(`tenant:common.limits.${row.limitKey}`)}:{' '}
                               <span dir="ltr" data-ltr-content>
                                 {row.currentUsage} / {row.proposedLimit}
@@ -648,9 +1022,12 @@ export function PlanEditorDialog({
                       </p>
                     ) : null}
                     {impact.unmeasurableLimitKeys.length > 0 ? (
-                      <p className="text-xs">
+                      <p
+                        className="text-xs"
+                        data-testid="plan-impact-unmeasurable"
+                      >
                         {t('platform:planAdmin.editor.impactUnmeasurable', {
-                          keys: impact.unmeasurableLimitKeys.join(', '),
+                          keys: unmeasurable,
                         })}
                       </p>
                     ) : null}
@@ -676,37 +1053,32 @@ export function PlanEditorDialog({
               </AlertDescription>
             </Alert>
           ) : null}
-        </div>
 
-        {!isComplete ? (
-          <Alert variant="destructive" data-testid="plan-incomplete-limits">
-            <AlertDescription>
-              {t('platform:planAdmin.editor.incompleteLimits')}
-            </AlertDescription>
-          </Alert>
-        ) : null}
+          {showSaveFailure && updatePlan.error ? (
+            <SaveFailedAlert
+              error={updatePlan.error}
+              titleKey="platform:planAdmin.editor.saveFailed"
+            />
+          ) : null}
+        </form>
 
         <DialogFooter>
           <Button
             type="button"
             variant="outline"
             disabled={updatePlan.isPending}
-            onClick={() => onOpenChange(false)}
+            onClick={requestClose}
           >
             {t('common:actions.cancel')}
           </Button>
+          {/* Never disabled without a reason on screen: only while saving,
+              or while a lowered limit's impact (explained just above) still
+              needs checking and confirming. */}
           <Button
-            type="button"
+            type="submit"
+            form="plan-editor-form"
             data-testid="plan-save"
-            disabled={
-              updatePlan.isPending ||
-              needsConfirmation ||
-              !isComplete ||
-              !yearlyAmountValid ||
-              !giftedValid ||
-              !monthlyEmailsValid
-            }
-            onClick={() => void handleSave()}
+            disabled={updatePlan.isPending || needsConfirmation}
           >
             {updatePlan.isPending ? (
               <Loader2 className="size-4 animate-spin" aria-hidden />

@@ -10,8 +10,8 @@
  */
 import { keepPreviousData } from '@tanstack/react-query';
 import { useApiMutation, useApiQuery } from '@/shared/hooks';
+import { INLINE_ERRORS_META, customerRequestKeys } from '@services/query';
 import { LIVE_LIST_QUERY_OPTIONS } from '@config';
-import { customerRequestKeys } from '@services/query';
 import type { ApiError } from '@api';
 import type { PaginatedResult } from '@types';
 import { platformCustomerRequestService } from '../services/PlatformCustomerRequestService';
@@ -81,6 +81,7 @@ export function useUpdatePlatformCustomerRequest() {
     invalidateKeys: [customerRequestKeys.all],
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 
@@ -100,6 +101,7 @@ export function usePostTeamCustomerRequestMessage() {
     invalidateKeys: [customerRequestKeys.all],
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 
@@ -121,5 +123,6 @@ export function useUpdateCustomerRequestRouting() {
     invalidateKeys: [customerRequestKeys.routing()],
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

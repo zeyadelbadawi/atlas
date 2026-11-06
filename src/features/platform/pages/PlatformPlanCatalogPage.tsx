@@ -32,7 +32,12 @@ import { StatusBadge } from '@components/data-display';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
-import { usePlanCatalog, useAddOnCatalog } from '@features/tenant';
+import {
+  localizedAddOnText,
+  resolvePlanName,
+  usePlanCatalog,
+  useAddOnCatalog,
+} from '@features/tenant';
 import { Button } from '@/components/ui/button';
 import { PlanEditorDialog } from '../components/PlanEditorDialog';
 import { PlanHistoryPanel } from '../components/PlanHistoryPanel';
@@ -71,6 +76,15 @@ export default function PlatformPlanCatalogPage(): JSX.Element {
             <CardTitle className="text-base">
               {t('platform:planCatalog.plansTitle')}
             </CardTitle>
+            {/* B8 (UX audit) V25 — say why some plans are missing: the
+                list is the customer catalog; the API has no list of
+                hidden plans or subscriber counts. */}
+            <p
+              className="text-sm text-muted-foreground"
+              data-testid="plan-catalog-hidden-note"
+            >
+              {t('platform:planCatalog.hiddenPlansNote')}
+            </p>
           </CardHeader>
           <CardContent>
             {plansQuery.isLoading ? (
@@ -95,9 +109,13 @@ export default function PlatformPlanCatalogPage(): JSX.Element {
                     data-testid={`plan-row-${plan.key}`}
                   >
                     <div className="min-w-0">
-                      <p className="font-medium text-foreground">{plan.name}</p>
+                      {/* B8 (UX audit) V26 — the plan's name in the page's
+                          language (its own Arabic name when it has one). */}
+                      <p className="font-medium text-foreground" dir="auto">
+                        {resolvePlanName(plan, language)}
+                      </p>
                       {plan.description ? (
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-muted-foreground" dir="auto">
                           {plan.description}
                         </p>
                       ) : null}
@@ -192,13 +210,25 @@ export default function PlatformPlanCatalogPage(): JSX.Element {
                     key={addOn.id}
                     className="flex items-center justify-between gap-3 py-3"
                   >
-                    <div>
-                      <p className="font-medium text-foreground">
-                        {addOn.name}
+                    <div className="min-w-0">
+                      <p className="font-medium text-foreground" dir="auto">
+                        {localizedAddOnText(
+                          t,
+                          i18n,
+                          addOn.key,
+                          'name',
+                          addOn.name
+                        )}
                       </p>
                       {addOn.description ? (
-                        <p className="text-xs text-muted-foreground">
-                          {addOn.description}
+                        <p className="text-xs text-muted-foreground" dir="auto">
+                          {localizedAddOnText(
+                            t,
+                            i18n,
+                            addOn.key,
+                            'description',
+                            addOn.description
+                          )}
                         </p>
                       ) : null}
                     </div>

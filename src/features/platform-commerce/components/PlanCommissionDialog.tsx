@@ -33,6 +33,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@app/providers';
 import { apiErrorMessage } from '@utils';
+import { hasViolationOn, useServerValidation } from '@forms';
 import { useUpdatePlanCommission } from '../hooks';
 import {
   commissionRateSchema,
@@ -65,6 +66,10 @@ export function PlanCommissionDialog({
   const form = useForm<CommissionRateFormData>({
     resolver: zodResolver(commissionRateSchema),
     defaultValues: { percent: '' },
+  });
+  // B8 (UX audit) V29 — the server's range refusal lands on the field.
+  useServerValidation(form, updatePlan.error ?? null, {
+    commissionBasisPoints: 'percent',
   });
 
   const { reset: resetForm } = form;
@@ -144,7 +149,10 @@ export function PlanCommissionDialog({
                 </FormItem>
               )}
             />
-            {updatePlan.error ? (
+            {updatePlan.error &&
+            !hasViolationOn(updatePlan.error, {
+              commissionBasisPoints: 'percent',
+            }) ? (
               <Alert variant="destructive" role="alert">
                 <AlertDescription>
                   {apiErrorMessage(t, i18n, updatePlan.error)}

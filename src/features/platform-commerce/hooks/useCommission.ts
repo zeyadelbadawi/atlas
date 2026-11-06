@@ -6,7 +6,7 @@
  * either of those changes every cached organization answer too.
  */
 import { useApiMutation, useApiQuery, useInvalidate } from '@/shared/hooks';
-import { platformCommissionKeys } from '@services/query';
+import { INLINE_ERRORS_META, platformCommissionKeys } from '@services/query';
 import type { ApiError } from '@api';
 import type {
   AtlasCommissionConfig,
@@ -35,6 +35,7 @@ export function useUpdateGlobalCommission() {
     mutationFn: (payload) => platformCommissionService.updateGlobal(payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(platformCommissionKeys.all);
     },
@@ -65,6 +66,7 @@ export function useUpdatePlanCommission() {
       platformCommissionService.updatePlan(planKey, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(platformCommissionKeys.all);
     },
@@ -95,6 +97,7 @@ export function useUpdateOrganizationCommission() {
       platformCommissionService.updateOrganization(organizationId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(platformCommissionKeys.all);
     },

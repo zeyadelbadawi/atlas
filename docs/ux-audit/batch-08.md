@@ -76,3 +76,57 @@ key.
 - Real payment decisions (no payments locally); every write answered by the test by design.
 - Baseline only: course payment detail, mark payout paid, founding email, growth spend, launch
   checklist, blog editor, email compose, watermarks, Zoom, observability alerts. 768 px.
+
+## Fixes
+
+### Shared root causes
+- **Server violations reach the person (atlas-backend#108)** — the backend's DTO→violation
+  converter dropped every custom message and its numbers; constraints can now name their own
+  violation, one per field, with its range or format (IBAN, SWIFT, account, wallet, InstaPay,
+  prices, days, commission). The frontend translates every new key in English and Arabic and puts
+  each violation under its field with the field's own label (V07, V15).
+- **One message per failure (V03, V14)** — 26 Platform Owner mutation hooks and 2 reads mark their
+  errors inline (`INLINE_ERRORS_META`, checked by a test listing them); each screen shows one
+  message with the real reason.
+- **Object-valued keys (V06)** — a key that names a `{ title, description }` group now reads its
+  sentence everywhere (i18n `returnedObjectHandler`); "returned an object instead of string" can't
+  reach the screen.
+- **Leaving with typed data (V11, V12, V15, V20)** — Escape, the X and Cancel ask before discarding.
+
+### Per finding
+- **V01** Approve asks first (amount, organization, plan, activates at once, can't be undone) and
+  confirms; a decided payment says approved/rejected on its date, shows the notes and links back.
+- **V02** The detail shows the Checkout ID, payment ID, payer reference, upload time and receiving
+  account; the list has a Checkout ID column; search matches the checkout id, payer reference and
+  organization (backend) and says so.
+- **V03** A 409 says someone else reviewed it and reloads, no Try again; a 400 marks its field.
+- **V04 / V09 / V10 / V23 / V28** The plan editor checks what the server checks: whole numbers,
+  price 1–1,000,000, yearly up to 10,000,000 and not below the monthly price, trial 1–365, limits
+  0 or more with an "Unlimited" switch, Arabic digits accepted, units shown; nothing invalid is sent.
+  The trial policy is 1–365 (0 refused: switching trials off is its own control).
+- **V05** Change plan requires a plan, shows the current plan and price, says no payment is taken
+  and the organization isn't emailed; refusals land on the plan field.
+- **V08** The save message says whether paying organizations are being emailed.
+- **V13** Trial or grace end shown; roles, plan names and dates translated and formatted.
+- **V16** Disabling the last method of a kind asks first and says checkout stops offering it.
+- **V17** Account numbers and IBAN wrap, monospace, with a copy button.
+- **V18** The provider page explains Manual Transfer is the built-in default; disabled buttons say why.
+- **V19** "Subject" shows the subject; the requester is its own field.
+- **V21** Closing a case asks first; one message per failure.
+- **V22** From after To is refused with the shared alert and a Swap button.
+- **V24** Long names and emails are cut with the full value on hover.
+- **V26 / V27** Seeded provider, method and add-on names translated; unmeasured limits a
+  translated list; organization names isolated.
+- **V29** The commission range is checked before the decimals; reported in percent.
+- **V30 / V31** Stored media in human sizes; a missing proof says it's no longer available.
+- **V33** Health and uptime say "Not measured yet" instead of a fixed 100%; the banner counts the
+  components that couldn't be checked.
+
+### Not changed, with reason
+- **V01 reviewer name** — the API doesn't return who reviewed; the date is the payment's last update.
+- **V08 count** — the API doesn't return how many organizations are emailed (History has it).
+- **V25** — the API has no list of all plans and no subscriber counts; plan create/archive and
+  add-on price editing don't exist in the backend.
+- **V32 (partly)** — native date inputs show the browser's format.
+- **Subscription proofs** have no payer reference input (only course-order proofs do) — a separate
+  feature.

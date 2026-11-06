@@ -22,6 +22,13 @@ import {
 } from '../utils/gifted-days.utils';
 import { withUneditedLimits } from '../utils/plan-limit-changes.utils';
 
+// The plan's switches sit inside a form now (Radix measures them).
+globalThis.ResizeObserver ??= class {
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+} as unknown as typeof ResizeObserver;
+
 const updateMutateAsync = vi.fn();
 
 vi.mock('../hooks/usePlatformPlans', () => ({
@@ -29,12 +36,20 @@ vi.mock('../hooks/usePlatformPlans', () => ({
     mutateAsync: updateMutateAsync,
     isPending: false,
     error: null,
+    reset: vi.fn(),
   }),
   usePreviewLimitImpact: () => ({
     mutateAsync: vi.fn(),
     isPending: false,
     error: null,
+    reset: vi.fn(),
   }),
+}));
+
+vi.mock('@app/providers', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  useToast: () => ({ notifySuccess: vi.fn(), notifyError: vi.fn() }),
+  useConfirmDialog: () => ({ confirm: vi.fn(() => Promise.resolve(true)) }),
 }));
 
 const { PlanEditorDialog } = await import('./PlanEditorDialog');
@@ -133,7 +148,7 @@ describe('PlanEditorDialog — gifted setup days', () => {
   });
 
   it.each(['4', '16'])(
-    'shows an inline error for %s and blocks saving',
+    'shows an inline error for %s and refuses to save',
     async (value) => {
       renderEditor(
         planWith({ giftedDaysMonthly: null, giftedDaysYearly: null })
@@ -142,7 +157,7 @@ describe('PlanEditorDialog — gifted setup days', () => {
       expect(monthly.value).toBe('');
       fireEvent.change(monthly, { target: { value } });
 
-      const error = screen.getByTestId('plan-gifted-monthly-error');
+      const error = await screen.findByTestId('plan-gifted-monthly-error');
       expect(error.textContent).toContain('5');
       expect(error.textContent).toContain('15');
       expect(error.getAttribute('role')).toBe('alert');
@@ -150,8 +165,10 @@ describe('PlanEditorDialog — gifted setup days', () => {
       expect(monthly.getAttribute('aria-describedby')).toContain(
         'plan-gifted-monthly-error'
       );
-      expect(saveButton().disabled).toBe(true);
+      // B8 (UX audit) V4 — Save stays available and refuses with the
+      // message on screen; nothing is sent.
       fireEvent.click(saveButton());
+      await screen.findByTestId('plan-gifted-monthly-error');
       expect(updateMutateAsync).not.toHaveBeenCalled();
     }
   );

@@ -8,6 +8,7 @@
  * range every commission DTO enforces. Messages are translation keys.
  */
 import { z } from 'zod';
+import { normalizeDigits } from '@utils';
 import {
   MAX_BASIS_POINTS,
   percentToBasisPoints,
@@ -95,19 +96,29 @@ export type MarkPayoutPaidFormData = z.infer<typeof markPayoutPaidSchema>;
  * A percentage typed by a person: 0–100, at most two decimals (bp
  * precision). Kept as a string in the form so an empty field is
  * distinguishable from 0 and the input never fights the user's typing.
+ *
+ * B8 (UX audit) V29 — the RANGE is checked before the decimals: "-5" or
+ * "250" used to read "up to two decimal places" (the format regex refused
+ * the minus sign or the third digit first) instead of "between 0 and 100".
+ * Arabic digits count as digits.
  */
 export const percentageField = z
   .string()
-  .trim()
-  .min(1, 'platformCommerce:validation.percentRequired')
-  .regex(/^\d{1,3}(\.\d{1,2})?$/, 'platformCommerce:validation.percentFormat')
-  .refine(
-    (value) => {
-      const bp = percentToBasisPoints(Number(value));
-      return bp >= 0 && bp <= MAX_BASIS_POINTS;
-    },
-    { message: 'platformCommerce:validation.percentRange' }
-  );
+  .transform((value) => normalizeDigits(value).trim())
+  .superRefine((value, ctx) => {
+    const fail = (message: string) =>
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message });
+    if (value === '')
+      return fail('platformCommerce:validation.percentRequired');
+    // Any plain decimal number, signed or not — so its range can be judged.
+    if (!/^[-+]?\d+(\.\d+)?$/.test(value))
+      return fail('platformCommerce:validation.percentFormat');
+    const bp = percentToBasisPoints(Number(value));
+    if (Number(value) < 0 || bp > MAX_BASIS_POINTS)
+      return fail('platformCommerce:validation.percentRange');
+    if (!/^\+?\d{1,3}(\.\d{1,2})?$/.test(value))
+      return fail('platformCommerce:validation.percentFormat');
+  });
 
 export const commissionRateSchema = z.object({ percent: percentageField });
 export type CommissionRateFormData = z.infer<typeof commissionRateSchema>;

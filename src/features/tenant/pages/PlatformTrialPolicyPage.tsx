@@ -7,6 +7,11 @@
  * (see `Reports/ARCHITECTURE.md`, Prompt 6). Access is gated by
  * `requiredRoles: ['platform_owner']` on the route/nav entry, the same
  * pattern already used for Settings/Billing/Analytics.
+ *
+ * B8 (UX audit) V14/V23 — the length is a whole number from 1 to 365 (the
+ * server's range), checked here with the range named; a refused field is
+ * said on the field only, anything else in ONE inline alert (the hook
+ * marks its errors inline).
  */
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
@@ -31,12 +36,22 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useUnsavedChanges } from '@hooks';
 import { saveViaForm } from '@utils';
-import { useServerValidation } from '@forms';
+import {
+  RequiredMark,
+  SaveFailedAlert,
+  hasViolationOn,
+  useLabelledViolations,
+  useServerValidation,
+} from '@forms';
 import { useTrialPolicy, useUpdateTrialPolicy } from '../hooks';
 import {
   updateTrialPolicySchema,
   type UpdateTrialPolicyFormData,
 } from '../schemas/tenant.schemas';
+
+const FIELD_LABELS = {
+  durationDays: 'tenant:platformAdmin.trialPolicy.durationDaysLabel',
+} as const;
 
 export default function PlatformTrialPolicyPage(): JSX.Element {
   const { t } = useTranslation();
@@ -51,18 +66,26 @@ export default function PlatformTrialPolicyPage(): JSX.Element {
   const form = useForm<UpdateTrialPolicyFormData>({
     resolver: zodResolver(updateTrialPolicySchema),
     values: policy
-      ? { enabled: policy.enabled, durationDays: policy.durationDays }
+      ? { enabled: policy.enabled, durationDays: String(policy.durationDays) }
       : undefined,
   });
 
-  useServerValidation(form, mutationError);
+  const labelledError = useLabelledViolations(
+    mutationError ?? null,
+    FIELD_LABELS
+  );
+  useServerValidation(form, labelledError);
   const enabled = form.watch('enabled');
 
   // Resolves false after a failure it already reported, so the Save button
   // and the unsaved-changes dialog's "Save and leave" share it.
   async function onSubmit(data: UpdateTrialPolicyFormData): Promise<boolean> {
+    const parsed = updateTrialPolicySchema.parse(data);
     try {
-      await updateTrialPolicy(data);
+      await updateTrialPolicy({
+        enabled: parsed.enabled,
+        durationDays: Number(parsed.durationDays),
+      });
       form.reset(data);
       toast({
         title: t('tenant:platformAdmin.trialPolicy.success'),
@@ -70,11 +93,7 @@ export default function PlatformTrialPolicyPage(): JSX.Element {
       });
       return true;
     } catch {
-      toast({
-        title: t('tenant:platformAdmin.trialPolicy.error'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+      // Shown once: on the field, or in the alert above Save.
       return false;
     }
   }
@@ -115,7 +134,11 @@ export default function PlatformTrialPolicyPage(): JSX.Element {
       />
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form
+          noValidate
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6"
+        >
           <Card>
             <CardHeader>
               <CardTitle>
@@ -158,21 +181,14 @@ export default function PlatformTrialPolicyPage(): JSX.Element {
                   <FormItem>
                     <FormLabel>
                       {t('tenant:platformAdmin.trialPolicy.durationDaysLabel')}
+                      <RequiredMark />
                     </FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
-                        min={0}
-                        step={1}
-                        disabled={!enabled}
+                        inputMode="numeric"
+                        dir="ltr"
+                        autoComplete="off"
                         {...field}
-                        onChange={(event) =>
-                          field.onChange(
-                            event.target.value === ''
-                              ? 0
-                              : Number(event.target.value)
-                          )
-                        }
                       />
                     </FormControl>
                     <FormDescription>
@@ -188,6 +204,15 @@ export default function PlatformTrialPolicyPage(): JSX.Element {
               />
             </CardContent>
           </Card>
+
+          {mutationError &&
+          mutationError.kind !== 'cancelled' &&
+          !hasViolationOn(mutationError, FIELD_LABELS) ? (
+            <SaveFailedAlert
+              error={mutationError}
+              titleKey="tenant:platformAdmin.trialPolicy.error"
+            />
+          ) : null}
 
           <div className="flex items-center justify-end gap-3">
             <Button type="submit" disabled={isPending}>

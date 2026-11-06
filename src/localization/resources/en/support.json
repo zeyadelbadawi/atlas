@@ -44,7 +44,15 @@
     "statusUpdated": "Ticket status updated.",
     "replyField": "Your reply",
     "replyEmpty": "Write your reply first.",
-    "replyNotSent": "Your reply wasn't sent"
+    "replyNotSent": "Your reply wasn't sent",
+    "requester": "Requester",
+    "replySent": "Reply sent.",
+    "statusNotChanged": "The status wasn't changed",
+    "closeConfirm": {
+      "title": "Close this case?",
+      "description": "The requester can no longer reply to a closed case; if they still need help they will have to open a new one.",
+      "confirm": "Close case"
+    }
   },
   "center": {
     "title": "Support",

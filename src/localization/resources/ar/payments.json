@@ -231,14 +231,43 @@
     "rejectTitle": "الرفض",
     "notesRequiredLabel": "سبب الرفض",
     "rejectAction": "رفض الدفعة",
-    "searchLabel": "ابحث باسم المؤسسة أو المرجع أو رقم الدفعة",
+    "searchLabel": "ابحث برقم عملية الدفع أو مرجع التحويل أو رقم الدفعة أو اسم المؤسسة",
     "planColumn": "الخطة",
     "planWithCycle": "{{plan}} · {{cycle}}",
     "addOnPlan": "إضافة: {{name}}",
     "plan": "الخطة",
     "billingCycle": "دورة الفوترة",
     "unknownOrganization": "المؤسسة غير متاحة",
-    "noPlan": "لا توجد خطة مسجلة"
+    "noPlan": "لا توجد خطة مسجلة",
+    "checkoutId": "رقم عملية الدفع (Checkout ID)",
+    "paymentId": "رقم الدفعة",
+    "payerReference": "مرجع التحويل لدى الدافع",
+    "uploadedAt": "تاريخ رفع الإثبات",
+    "receivingAccount": "حُوِّل إلى",
+    "approveConfirm": {
+      "title": "الموافقة على هذه الدفعة؟",
+      "description": "سيُقبل مبلغ {{amount}} من {{organization}} ويُفعَّل اشتراك المؤسسة فورًا. لا يمكن التراجع عن ذلك.",
+      "descriptionWithPlan": "سيُقبل مبلغ {{amount}} من {{organization}} وتُفعَّل لها {{plan}} فورًا. لا يمكن التراجع عن ذلك.",
+      "confirm": "نعم، وافق"
+    },
+    "approvedToast": {
+      "title": "تمت الموافقة على الدفعة",
+      "description": "قُبل مبلغ {{amount}} من {{organization}}، واشتراكها مفعّل الآن."
+    },
+    "rejectedToast": {
+      "title": "رُفضت الدفعة",
+      "description": "يمكن لـ {{organization}} رؤية سبب الرفض في دفعتها."
+    },
+    "approveFailed": "لم تتم الموافقة على الدفعة",
+    "rejectFailed": "لم يتم رفض الدفعة",
+    "decidedElsewhere": "راجع شخص آخر هذه الدفعة بينما كانت مفتوحة لديك. تظهر الآن بقراره.",
+    "reviewed": {
+      "approved": "تمت الموافقة على هذه الدفعة في {{date}}. لم يعد بالإمكان الموافقة عليها أو رفضها.",
+      "rejected": "رُفضت هذه الدفعة في {{date}}. لم يعد بالإمكان الموافقة عليها أو رفضها.",
+      "notRequired": "هذه الدفعة لا تحتاج إلى مراجعة يدوية.",
+      "notes": "ملاحظات المراجِع:"
+    },
+    "backToList": "العودة إلى مراجعة المدفوعات"
   },
   "listFilters": {
     "label": "عوامل التصفية",
@@ -408,6 +437,12 @@
       "configured": "مُعد",
       "verified": "تم التحقق",
       "disabled": "معطّل"
+    },
+    "effectiveManualDescription": "تتم معالجة مدفوعات اشتراك أطلس عبر {{provider}}، وهو الخيار الافتراضي المدمج: تدفع المؤسسات إلى الحسابات أدناه وتراجع أنت كل دفعة. لا يحتاج إلى إعداد، لذا يبقى نشطًا ما دام لم يُضبط ويُفعَّل مزوّد آخر.",
+    "testNeedsConfig": "احفظ إعدادات هذا المزوّد أولًا، ثم اختبره.",
+    "enableNeedsVerified": "يلزم اختبار اتصال ناجح قبل إمكانية التفعيل.",
+    "providers": {
+      "atlas_manual": "التحويل اليدوي"
     }
   },
   "bankTransferMethods": {
@@ -489,7 +524,9 @@
       "referenceInstructionsAr": "تعليمات مرجع الدفع (بالعربية)",
       "arabicHelp": "اختياري. يُعرض بدلًا من النص الإنجليزي للعملاء الذين يستخدمون أطلس بالعربية.",
       "arabicHelpLearner": "اختياري. يُعرض بدلًا من النص الإنجليزي للمتعلمين الذين يتصفحون أكاديميتك بالعربية."
-    }
+    },
+    "disableLastTitle": "تعطيل {{name}}؟",
+    "disableLastDescription": "هذه هي طريقة {{kind}} الوحيدة المفعّلة، لذا ستتوقف صفحة الدفع عن عرض {{kind}} حتى تفعّل طريقة أخرى. لا تتأثر المدفوعات التي تمت بالفعل."
   },
   "walletMethods": {
     "title": "المحافظ الإلكترونية",

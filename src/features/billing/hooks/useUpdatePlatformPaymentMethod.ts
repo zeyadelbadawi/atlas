@@ -7,7 +7,11 @@
  * method changes what Organizations are offered at checkout.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { paymentMethodKeys, platformPaymentMethodKeys } from '@services/query';
+import {
+  INLINE_ERRORS_META,
+  paymentMethodKeys,
+  platformPaymentMethodKeys,
+} from '@services/query';
 import type { ApiError } from '@api';
 import type {
   PlatformPaymentMethod,
@@ -32,6 +36,7 @@ export function useUpdatePlatformPaymentMethod() {
       platformPaymentMethodService.updatePaymentMethod(methodId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(platformPaymentMethodKeys.lists());
       await invalidate(paymentMethodKeys.all);

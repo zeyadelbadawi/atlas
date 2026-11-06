@@ -51,9 +51,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
-import { apiErrorMessage } from '@utils';
+import { apiErrorMessage, formatBytes } from '@utils';
 import { useDeleteUserAsPlatformOwner, useUserDeletionPlan } from '../hooks';
-import type { DeletionPlanLine, DeletionTreatment } from '@types';
+import type { DeletionPlanLine, DeletionTreatment, LanguageCode } from '@types';
 
 export interface DeleteUserDialogProps {
   readonly open: boolean;
@@ -307,15 +307,27 @@ export function DeleteUserDialog({
 
 /** One group of records, with the treatment it actually receives. */
 function ImpactRow({ line }: { readonly line: DeletionPlanLine }): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { Icon, className } = TREATMENT_PRESENTATION[line.treatment];
+  // B8 (UX audit) V30 — stored media reads as a size ("6 MB"), not a
+  // seven-digit byte count.
+  const size =
+    line.key === 'mediaBytes'
+      ? formatBytes(line.count, i18n.language as LanguageCode)
+      : null;
 
   return (
     <li className="flex items-start gap-2.5 text-sm">
       <Icon className={`mt-0.5 size-4 shrink-0 ${className}`} aria-hidden />
       <span className="min-w-0 flex-1">
         <span className="text-foreground">
-          {t(`platform:users.delete.plan.${line.key}`, { count: line.count })}
+          {size
+            ? t('platform:users.delete.plan.mediaSize', {
+                size: `${size.value} ${t(size.unitKey)}`,
+              })
+            : t(`platform:users.delete.plan.${line.key}`, {
+                count: line.count,
+              })}
         </span>
         {line.examples && line.examples.length > 0 ? (
           <span className="block text-xs text-muted-foreground">

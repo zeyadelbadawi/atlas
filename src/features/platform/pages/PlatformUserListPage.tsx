@@ -16,7 +16,7 @@ import { StatusBadge } from '@components/data-display';
 import { DataTable } from '@components/table';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { usePagination, useSearch } from '@hooks';
+import { useDateFormatter, usePagination, useSearch } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { usePlatformUsers } from '../hooks';
 import { getPlatformUserStatusTone } from '../utils/platform-status.utils';
@@ -24,7 +24,8 @@ import type { PlatformUserSummary } from '@types';
 import { PhoneNumberDisplay } from '@components/phone';
 
 export default function PlatformUserListPage(): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const fmt = useDateFormatter();
   const navigate = useNavigate();
   const {
     query: searchQuery,
@@ -61,9 +62,23 @@ export default function PlatformUserListPage(): JSX.Element {
         accessorKey: 'name',
         header: t('platform:users.table.name'),
         cell: ({ row }) => (
-          <div>
-            <p className="font-medium">{row.original.name}</p>
-            <p className="text-xs text-muted-foreground">
+          // B8 (UX audit) V24 — a long unbroken name or email is cut with
+          // an ellipsis (the whole value on hover) instead of pushing every
+          // other column off-screen.
+          <div className="min-w-0 max-w-[16rem] sm:max-w-xs">
+            <p
+              className="truncate font-medium"
+              dir="auto"
+              title={row.original.name}
+              data-testid="platform-user-name"
+            >
+              {row.original.name}
+            </p>
+            <p
+              className="truncate text-xs text-muted-foreground"
+              dir="ltr"
+              title={row.original.email}
+            >
               {row.original.email}
             </p>
             {row.original.phone ? (
@@ -101,9 +116,7 @@ export default function PlatformUserListPage(): JSX.Element {
         cell: ({ row }) => (
           <span className="text-muted-foreground">
             {row.original.lastSignInAt
-              ? new Date(row.original.lastSignInAt).toLocaleDateString(
-                  i18n.language
-                )
+              ? fmt.date(row.original.lastSignInAt)
               : '—'}
           </span>
         ),
@@ -113,12 +126,12 @@ export default function PlatformUserListPage(): JSX.Element {
         header: t('platform:users.table.createdAt'),
         cell: ({ row }) => (
           <span className="text-muted-foreground">
-            {new Date(row.original.createdAt).toLocaleDateString(i18n.language)}
+            {fmt.date(row.original.createdAt)}
           </span>
         ),
       },
     ],
-    [t, i18n.language]
+    [t, fmt]
   );
 
   return (

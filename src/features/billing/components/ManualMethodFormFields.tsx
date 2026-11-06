@@ -8,7 +8,7 @@
  * regardless of the console's own language, and sit beside their English
  * counterpart on wide screens (a logical grid, so it mirrors in RTL).
  */
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type {
   Control,
@@ -28,7 +28,8 @@ import { AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useServerValidation } from '@forms';
+import { SaveFailedAlert, useServerValidation } from '@forms';
+import { useDirtyGuard } from '@features/unsaved-changes';
 import { ApiError, isApiError } from '@api';
 import type { ManualInstructionTexts } from '@types';
 
@@ -363,4 +364,74 @@ export function useManualMethodServerValidation<T extends FieldValues>(
     });
   }, [error, detailsKey]);
   useServerValidation(form, mapped);
+}
+
+/** Every leaf path of the form's values (`instructions.iban`, …). */
+function leafPaths(value: unknown, prefix = ''): string[] {
+  if (value === null || typeof value !== 'object' || Array.isArray(value))
+    return prefix ? [prefix] : [];
+  return Object.entries(value as Record<string, unknown>).flatMap(
+    ([key, child]) => leafPaths(child, prefix ? `${prefix}.${key}` : key)
+  );
+}
+
+/** The request's details object, as the server names it, per method type. */
+const DETAILS_PREFIXES = [
+  'instructions.',
+  'walletInstructions.',
+  'instapayInstructions.',
+];
+
+/**
+ * B8 (UX audit) V06/V15 — the ONE message a failed save shows. A violation
+ * that `useManualMethodServerValidation` put on a field is said there only
+ * (no toast repeats it); anything else — a 409, a server error, a lost
+ * connection — is one inline alert with the real reason, and the dialog
+ * stays open with everything typed.
+ */
+export function ManualMethodSaveFailure<T extends FieldValues>({
+  form,
+  error,
+  titleKey,
+}: {
+  readonly form: UseFormReturn<T>;
+  readonly error: ApiError | null;
+  readonly titleKey: string;
+}): JSX.Element | null {
+  if (!error || error.kind === 'cancelled') return null;
+  const fields = new Set(leafPaths(form.getValues()));
+  const onField = (field: string): boolean => {
+    if (fields.has(field)) return true;
+    const prefix = DETAILS_PREFIXES.find((p) => field.startsWith(p));
+    return prefix
+      ? fields.has(`instructions.${field.slice(prefix.length)}`)
+      : false;
+  };
+  const violations = error.violations ?? [];
+  if (
+    error.kind === 'validation' &&
+    violations.length > 0 &&
+    violations.every((violation) => onField(violation.field))
+  )
+    return null;
+  return <SaveFailedAlert error={error} titleKey={titleKey} />;
+}
+
+/**
+ * B8 (UX audit) V15 — Escape, the X, an outside click and Cancel ask
+ * before discarding typed details (`useDirtyGuard`); a clean form closes
+ * at once.
+ */
+export function useGuardedDialogClose(
+  isDirty: boolean,
+  onOpenChange: (open: boolean) => void
+): (open: boolean) => void {
+  const guard = useDirtyGuard(isDirty);
+  return useCallback(
+    (open: boolean) => {
+      if (open) onOpenChange(true);
+      else void guard.requestClose(() => onOpenChange(false));
+    },
+    [guard, onOpenChange]
+  );
 }

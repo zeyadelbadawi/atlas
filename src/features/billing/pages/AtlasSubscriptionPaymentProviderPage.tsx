@@ -26,7 +26,8 @@
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDateFormatter } from '@hooks';
+import { useDateFormatter, useErrorText } from '@hooks';
+import { errorMessageKey, normalizeUnknownError } from '@services';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -72,7 +73,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
-import { useServerValidation } from '@forms';
+import { hasViolationOn, useServerValidation } from '@forms';
 import {
   useAtlasSubscriptionPaymentProviderConfig,
   useAvailableAtlasSubscriptionPaymentProviders,
@@ -113,9 +114,23 @@ function statusTone(
   return 'neutral';
 }
 
+/** The built-in provider every Atlas install runs on until another is enabled. */
+const MANUAL_PROVIDER_KEY = 'atlas_manual';
+
 export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
   const fmt = useDateFormatter();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const errorText = useErrorText();
+  /** B8 (UX audit) V14 — the real reason in the one toast a failure shows. */
+  const reasonOf = (error: unknown): string => {
+    const failure = normalizeUnknownError(error);
+    return errorText(failure.messageKey, errorMessageKey(failure.kind));
+  };
+  /** B8 (UX audit) V26 — Atlas's own providers by name in the page's language. */
+  const providerName = (key: string | null | undefined, fallback: string) => {
+    const translationKey = `payments:atlasPaymentProvider.providers.${key ?? ''}`;
+    return key && i18n.exists(translationKey) ? t(translationKey) : fallback;
+  };
 
   const {
     data: config,
@@ -165,9 +180,18 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
       });
       form.setValue('configJson', '');
       toast({ title: t('payments:atlasPaymentProvider.saveSuccess') });
-    } catch {
+    } catch (error) {
+      // A refused field is said on the field only.
+      if (
+        hasViolationOn(normalizeUnknownError(error), {
+          configJson: 'configJson',
+          config: 'config',
+        })
+      )
+        return;
       toast({
         title: t('payments:atlasPaymentProvider.saveError'),
+        description: reasonOf(error),
         variant: 'destructive',
       });
     }
@@ -183,9 +207,10 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
         description: result.lastTestResult?.message,
         variant: result.lastTestResult?.success ? undefined : 'destructive',
       });
-    } catch {
+    } catch (error) {
       toast({
         title: t('payments:atlasPaymentProvider.testError'),
+        description: reasonOf(error),
         variant: 'destructive',
       });
     }
@@ -195,9 +220,10 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
     try {
       await setEnabled(true);
       toast({ title: t('payments:atlasPaymentProvider.enableSuccess') });
-    } catch {
+    } catch (error) {
       toast({
         title: t('payments:atlasPaymentProvider.enableError'),
+        description: reasonOf(error),
         variant: 'destructive',
       });
     }
@@ -207,9 +233,10 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
     try {
       await setEnabled(false);
       toast({ title: t('payments:atlasPaymentProvider.disableSuccess') });
-    } catch {
+    } catch (error) {
       toast({
         title: t('payments:atlasPaymentProvider.disableError'),
+        description: reasonOf(error),
         variant: 'destructive',
       });
     }
@@ -259,10 +286,22 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
               )}
               {t('payments:atlasPaymentProvider.effectiveTitle')}
             </CardTitle>
-            <CardDescription>
-              {t('payments:atlasPaymentProvider.effectiveDescription', {
-                provider: config.effectiveProviderDisplayName,
-              })}
+            {/* B8 (UX audit) V18 — Manual Transfer is the built-in
+                default, so it is active even while no other provider is
+                configured or enabled; say so instead of showing "Currently
+                active" beside "Not configured" with no link between them. */}
+            <CardDescription data-testid="atlas-provider-effective">
+              {t(
+                config.effectiveProviderKey === MANUAL_PROVIDER_KEY
+                  ? 'payments:atlasPaymentProvider.effectiveManualDescription'
+                  : 'payments:atlasPaymentProvider.effectiveDescription',
+                {
+                  provider: providerName(
+                    config.effectiveProviderKey,
+                    config.effectiveProviderDisplayName
+                  ),
+                }
+              )}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -324,7 +363,10 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
                           key={provider.providerKey}
                           value={provider.providerKey}
                         >
-                          {provider.displayName}
+                          {providerName(
+                            provider.providerKey,
+                            provider.displayName
+                          )}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -370,11 +412,24 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
                 )}
 
                 <div className="flex flex-wrap justify-end gap-2">
+                  {config.status === 'not_configured' ? (
+                    <p
+                      id="atlas-provider-test-reason"
+                      className="basis-full text-end text-xs text-muted-foreground"
+                    >
+                      {t('payments:atlasPaymentProvider.testNeedsConfig')}
+                    </p>
+                  ) : null}
                   <Button
                     type="button"
                     variant="outline"
                     onClick={onTestConnection}
                     disabled={isTesting || config.status === 'not_configured'}
+                    aria-describedby={
+                      config.status === 'not_configured'
+                        ? 'atlas-provider-test-reason'
+                        : undefined
+                    }
                   >
                     {isTesting ? (
                       <Loader2 className="size-4 animate-spin" aria-hidden />
@@ -426,15 +481,30 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
                   </AlertDialogContent>
                 </AlertDialog>
               ) : (
-                <Button
-                  onClick={onEnable}
-                  disabled={isTogglingEnabled || config.status !== 'verified'}
-                >
-                  {isTogglingEnabled ? (
-                    <Loader2 className="size-4 animate-spin" aria-hidden />
+                <div className="flex flex-col items-end gap-1">
+                  <Button
+                    onClick={onEnable}
+                    disabled={isTogglingEnabled || config.status !== 'verified'}
+                    aria-describedby={
+                      config.status !== 'verified'
+                        ? 'atlas-provider-enable-reason'
+                        : undefined
+                    }
+                  >
+                    {isTogglingEnabled ? (
+                      <Loader2 className="size-4 animate-spin" aria-hidden />
+                    ) : null}
+                    {t('payments:atlasPaymentProvider.enable')}
+                  </Button>
+                  {config.status !== 'verified' ? (
+                    <p
+                      id="atlas-provider-enable-reason"
+                      className="text-xs text-muted-foreground"
+                    >
+                      {t('payments:atlasPaymentProvider.enableNeedsVerified')}
+                    </p>
                   ) : null}
-                  {t('payments:atlasPaymentProvider.enable')}
-                </Button>
+                </div>
               )}
             </div>
           </CardContent>

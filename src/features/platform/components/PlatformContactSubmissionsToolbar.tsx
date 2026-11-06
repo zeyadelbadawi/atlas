@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { SearchInput } from '@components/data-display';
+import { isDateRangeReversed, ReversedDateRangeAlert } from '@forms';
 import { useLanguage } from '@hooks';
 import { formatNumber } from '@utils';
 import type {
@@ -57,6 +58,8 @@ export interface PlatformContactSubmissionsToolbarProps {
   ) => void;
   readonly onFromChange: (from: string | undefined) => void;
   readonly onToChange: (to: string | undefined) => void;
+  /** Swaps "From" and "To" in one update (V22). */
+  readonly onSwapDates: () => void;
   readonly onSortChange: (sort: PlatformContactSortOption) => void;
   readonly onClearFilters: () => void;
 }
@@ -70,11 +73,17 @@ export function PlatformContactSubmissionsToolbar({
   onTopicChange,
   onFromChange,
   onToChange,
+  onSwapDates,
   onSortChange,
   onClearFilters,
 }: PlatformContactSubmissionsToolbarProps): JSX.Element {
   const { t } = useTranslation();
   const { language } = useLanguage();
+
+  // B8 (UX audit) V22 — "From" after "To" says so, with Swap, as the audit
+  // log does; the list would otherwise just read "No enquiries".
+  const datesReversed = isDateRangeReversed(filters.from, filters.to);
+  const datesErrorId = 'platform-contact-dates-error';
 
   const countFor = (tab: StatusTab): number | undefined =>
     summary ? (tab === 'all' ? summary.total : summary[tab]) : undefined;
@@ -178,6 +187,8 @@ export function PlatformContactSubmissionsToolbar({
               type="date"
               value={filters.from ?? ''}
               max={filters.to}
+              aria-invalid={datesReversed || undefined}
+              aria-describedby={datesReversed ? datesErrorId : undefined}
               onChange={(event) =>
                 onFromChange(event.target.value || undefined)
               }
@@ -196,6 +207,8 @@ export function PlatformContactSubmissionsToolbar({
               type="date"
               value={filters.to ?? ''}
               min={filters.from}
+              aria-invalid={datesReversed || undefined}
+              aria-describedby={datesReversed ? datesErrorId : undefined}
               onChange={(event) => onToChange(event.target.value || undefined)}
               className="w-full sm:w-[160px]"
             />
@@ -235,6 +248,9 @@ export function PlatformContactSubmissionsToolbar({
           </Button>
         ) : null}
       </div>
+      {datesReversed ? (
+        <ReversedDateRangeAlert id={datesErrorId} onSwap={onSwapDates} />
+      ) : null}
     </div>
   );
 }

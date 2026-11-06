@@ -201,7 +201,13 @@
     "noComponents": {
       "title": "لم يتم الإبلاغ عن أي مكوّنات",
       "description": "استجابت نقطة فحص السلامة دون أي فحوص للمكوّنات."
-    }
+    },
+    "overallUnchecked_zero": "لا توجد مكوّنات تعذّر فحصها.",
+    "overallUnchecked_one": "تعذّر فحص مكوّن واحد؛ اطّلع على حالته أدناه.",
+    "overallUnchecked_two": "تعذّر فحص مكوّنين؛ اطّلع على حالتهما أدناه.",
+    "overallUnchecked_few": "تعذّر فحص {{count}} مكوّنات؛ اطّلع على حالتها أدناه.",
+    "overallUnchecked_many": "تعذّر فحص {{count}} مكوّنًا؛ اطّلع على حالتها أدناه.",
+    "overallUnchecked_other": "تعذّر فحص {{count}} مكوّن؛ اطّلع على حالتها أدناه."
   },
   "alerts": {
     "title": "التنبيهات",

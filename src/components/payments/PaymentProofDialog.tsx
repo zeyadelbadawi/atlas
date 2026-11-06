@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Download, ExternalLink, Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { normalizeUnknownError } from '@services';
 import {
   Dialog,
   DialogContent,
@@ -37,9 +38,24 @@ export interface PaymentProofDialogProps {
   readonly subject?: string;
 }
 
+/**
+ * B8 (UX audit) V31 — why the proof didn't load, so a missing file is not
+ * blamed on the connection: only a real network failure mentions it; a
+ * missing file (404) says so and offers no retry; anything else is the
+ * server's side.
+ */
+type ProofFailure = 'missing' | 'network' | 'other';
+
+function proofFailureOf(error: unknown): ProofFailure {
+  const { kind } = normalizeUnknownError(error);
+  if (kind === 'notFound') return 'missing';
+  if (kind === 'network' || kind === 'timeout') return 'network';
+  return 'other';
+}
+
 type ProofState =
   | { readonly status: 'loading' }
-  | { readonly status: 'error' }
+  | { readonly status: 'error'; readonly reason: ProofFailure }
   | { readonly status: 'ready'; readonly url: string; readonly type: string };
 
 export function PaymentProofDialog({
@@ -64,8 +80,9 @@ export function PaymentProofDialog({
         created = URL.createObjectURL(blob);
         setState({ status: 'ready', url: created, type: blob.type });
       })
-      .catch(() => {
-        if (!cancelled) setState({ status: 'error' });
+      .catch((error: unknown) => {
+        if (!cancelled)
+          setState({ status: 'error', reason: proofFailureOf(error) });
       });
     return () => {
       cancelled = true;
@@ -115,17 +132,25 @@ export function PaymentProofDialog({
         ) : state.status === 'error' ? (
           <div className="space-y-3" role="alert">
             <p className="text-sm text-destructive">
-              {t('common:paymentProof.error')}
+              {t(
+                state.reason === 'missing'
+                  ? 'common:paymentProof.missing'
+                  : state.reason === 'network'
+                    ? 'common:paymentProof.error'
+                    : 'common:paymentProof.serverError'
+              )}
             </p>
-            <Button
-              type="button"
-              variant="outline"
-              className="min-h-11 sm:min-h-9"
-              onClick={() => setAttempt((n) => n + 1)}
-            >
-              <RefreshCw className="size-4" aria-hidden />
-              {t('common:actions.retry')}
-            </Button>
+            {state.reason === 'missing' ? null : (
+              <Button
+                type="button"
+                variant="outline"
+                className="min-h-11 sm:min-h-9"
+                onClick={() => setAttempt((n) => n + 1)}
+              >
+                <RefreshCw className="size-4" aria-hidden />
+                {t('common:actions.retry')}
+              </Button>
+            )}
           </div>
         ) : (
           <div className="space-y-3">

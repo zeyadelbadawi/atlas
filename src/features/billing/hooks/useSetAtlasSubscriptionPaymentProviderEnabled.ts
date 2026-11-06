@@ -4,7 +4,10 @@
  * variable flips which endpoint is called — see the service).
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { atlasSubscriptionPaymentProviderKeys } from '@services/query';
+import {
+  INLINE_ERRORS_META,
+  atlasSubscriptionPaymentProviderKeys,
+} from '@services/query';
 import type { ApiError } from '@api';
 import type { AtlasSubscriptionPaymentProviderConfig } from '@types';
 import { atlasSubscriptionPaymentProviderService } from '../services/AtlasSubscriptionPaymentProviderService';
@@ -21,6 +24,7 @@ export function useSetAtlasSubscriptionPaymentProviderEnabled() {
       atlasSubscriptionPaymentProviderService.setEnabled(enabled),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(atlasSubscriptionPaymentProviderKeys.config());
     },

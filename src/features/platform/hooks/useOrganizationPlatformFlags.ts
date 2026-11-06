@@ -6,6 +6,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation, useApiQuery } from '@/shared/hooks';
 import {
+  INLINE_ERRORS_META,
   platformOrganizationKeys,
   platformSubscriptionKeys,
 } from '@services/query';
@@ -20,6 +21,8 @@ export function useOrganizationPlatformFlags(organizationId: string) {
     queryKey: platformOrganizationKeys.flags(organizationId),
     queryFn: () => platformOrganizationFlagsService.get(organizationId),
     enabled: !!organizationId,
+    // The card says why it couldn't load; no second toast.
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 
@@ -39,5 +42,6 @@ export function useSetOrganizationInternal(organizationId: string) {
     },
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

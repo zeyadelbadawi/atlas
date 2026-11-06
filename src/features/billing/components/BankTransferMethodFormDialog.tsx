@@ -41,8 +41,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
-import { toErrorsNamespaceKey } from '@utils';
-import { isApiError } from '@api';
 import type {
   BankTransferInstructionsPayload,
   PlatformPaymentMethod,
@@ -60,6 +58,8 @@ import {
   PlaceholderDetailsNotice,
   toTextsFormValues,
   toTextsPayload,
+  ManualMethodSaveFailure,
+  useGuardedDialogClose,
   useManualMethodServerValidation,
 } from './ManualMethodFormFields';
 
@@ -132,7 +132,7 @@ export function BankTransferMethodFormDialog({
   method,
   onOpenChange,
 }: BankTransferMethodFormDialogProps): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const isEdit = method !== undefined;
 
   const createMethod = useCreateBankTransferMethod();
@@ -153,11 +153,17 @@ export function BankTransferMethodFormDialog({
     if (open) reset(toFormValues(method));
   }, [open, method, reset]);
 
-  const errorDescription = (error: unknown): string | undefined => {
-    if (!isApiError(error)) return undefined;
-    const key = toErrorsNamespaceKey(error.messageKey);
-    return i18n.exists(key) ? t(key) : undefined;
-  };
+  // A previous attempt's failure is not this one's: clear it on open.
+  const resetMutation = activeMutation.reset;
+  useEffect(() => {
+    if (open) resetMutation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  const requestOpenChange = useGuardedDialogClose(
+    form.formState.isDirty,
+    onOpenChange
+  );
 
   const onSubmit = async (values: BankTransferMethodFormData) => {
     const instructions = toInstructionsPayload(values.instructions);
@@ -182,16 +188,10 @@ export function BankTransferMethodFormDialog({
         toast({ title: t('payments:bankTransferMethods.createSuccess') });
       }
       onOpenChange(false);
-    } catch (error) {
-      toast({
-        title: t(
-          method
-            ? 'payments:bankTransferMethods.updateError'
-            : 'payments:bankTransferMethods.createError'
-        ),
-        description: errorDescription(error),
-        variant: 'destructive',
-      });
+    } catch {
+      // B8 (UX audit) V06/V15 — the failure is shown ONCE, in the dialog
+      // (a field violation on its field, anything else in one alert);
+      // the dialog stays open with everything typed.
     }
   };
 
@@ -252,7 +252,7 @@ export function BankTransferMethodFormDialog({
   );
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={requestOpenChange}>
       <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
@@ -337,12 +337,22 @@ export function BankTransferMethodFormDialog({
               </p>
             ) : null}
 
+            <ManualMethodSaveFailure
+              form={form}
+              error={activeMutation.error ?? null}
+              titleKey={
+                isEdit
+                  ? 'payments:bankTransferMethods.updateError'
+                  : 'payments:bankTransferMethods.createError'
+              }
+            />
+
             <DialogFooter>
               <Button
                 type="button"
                 variant="outline"
                 disabled={activeMutation.isPending}
-                onClick={() => onOpenChange(false)}
+                onClick={() => requestOpenChange(false)}
               >
                 {t('common:actions.cancel')}
               </Button>

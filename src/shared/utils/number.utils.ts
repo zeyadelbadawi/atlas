@@ -123,3 +123,14 @@ export function formatBytes(
 export function clamp(value: number, minimum: number, maximum: number): number {
   return Math.min(Math.max(value, minimum), maximum);
 }
+
+/**
+ * Arabic-Indic (٠–٩) and Extended Arabic-Indic (۰–۹) digits → ASCII, so a
+ * number typed on an Arabic keyboard is read as the number it is (B8).
+ */
+export function normalizeDigits(value: string): string {
+  return value.replace(/[٠-٩۰-۹]/g, (digit) => {
+    const code = digit.charCodeAt(0);
+    return String(code >= 0x06f0 ? code - 0x06f0 : code - 0x0660);
+  });
+}
