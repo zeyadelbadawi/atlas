@@ -23,9 +23,28 @@
  */
 
 /* ------------------------------------------------------------------ */
-/* Faces: IBM Plex Sans (Latin, variable) + IBM Plex Sans Arabic (400)  */
+/* Faces: IBM Plex Sans (Latin, variable) + IBM Plex Sans Arabic        */
+/* (Regular 400, Medium 500, Bold 700)                                  */
 /* ------------------------------------------------------------------ */
 
+/*
+ * Both typefaces are SIL OFL 1.1 (src/assets/fonts/OFL-IBMPlexSans.txt,
+ * OFL-IBMPlexSansArabic.txt), self-hosted unmodified from `@fontsource`
+ * (the Arabic Medium and Bold files from @fontsource/ibm-plex-sans-arabic
+ * 5.3.0, as the Regular).
+ *
+ * Two families, one per script, named in that order in `--rw-font`: Latin
+ * text is set in `Riwaq Sans` and Arabic text, which no `Riwaq Sans` face
+ * covers (`unicode-range`), falls through to `Riwaq Sans Arabic`.
+ * Chromium groups a family's faces by their descriptors before
+ * `unicode-range`, so one family holding both scripts must give every face
+ * the same weight range or one script falls back to a system font (B10
+ * V02). With a family per script, each script's weights resolve on their
+ * own: the Latin variable file serves 100–700, and Arabic text set at 500
+ * or 700 gets Plex Sans Arabic's own Medium or Bold (B10 V29) rather than
+ * the Regular at every weight — synthesis stays off. The Arabic faces split
+ * the range in three bands, so a semibold (600) takes the Medium.
+ */
 @font-face {
   font-family: 'Riwaq Sans';
   font-style: normal;
@@ -39,22 +58,38 @@
     U+2215, U+FEFF, U+FFFD;
 }
 
-/*
- * One Arabic file for every weight (plan §3): Arabic hierarchy is set by
- * size and colour, never by a synthesised bold, and the page carries one
- * Arabic download instead of two.
- *
- * Its weight range matches the Latin face's (100 700) exactly: Chromium
- * groups a family's faces by their descriptors before `unicode-range`, so a
- * different range made it a rival face that never served a glyph, and
- * Arabic fell back to a system font (B10 V02).
- */
 @font-face {
-  font-family: 'Riwaq Sans';
+  font-family: 'Riwaq Sans Arabic';
   font-style: normal;
   font-display: swap;
-  font-weight: 100 700;
+  font-weight: 100 450;
   src: url('../../../assets/fonts/ibm-plex-sans-arabic-400.woff2')
+    format('woff2');
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1,
+    U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF,
+    U+FE70-FE74, U+FE76-FEFC;
+}
+
+@font-face {
+  font-family: 'Riwaq Sans Arabic';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 451 600;
+  src: url('../../../assets/fonts/ibm-plex-sans-arabic-500.woff2')
+    format('woff2');
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1,
+    U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF,
+    U+FE70-FE74, U+FE76-FEFC;
+}
+
+@font-face {
+  font-family: 'Riwaq Sans Arabic';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 601 700;
+  src: url('../../../assets/fonts/ibm-plex-sans-arabic-700.woff2')
     format('woff2');
   unicode-range:
     U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1,
@@ -84,16 +119,21 @@
   --website-footer-surface: var(--rw-deep);
 
   --rw-font:
-    'Riwaq Sans', 'Riwaq Fallback', 'Segoe UI', Tahoma, system-ui, sans-serif;
+    'Riwaq Sans', 'Riwaq Sans Arabic', 'Riwaq Fallback', 'Segoe UI', Tahoma,
+    system-ui, sans-serif;
 
-  /* Type scale: fluid, clamped at both ends (390 → 1440). */
-  --rw-display: clamp(2.5rem, 1.15rem + 5.2vw, 5.5rem);
-  --rw-display-compact: clamp(2.125rem, 1rem + 4vw, 4.25rem);
-  --rw-title: clamp(1.875rem, 1.3rem + 2.3vw, 3.25rem);
-  --rw-subtitle: clamp(1.25rem, 1.1rem + 0.55vw, 1.625rem);
-  --rw-figure: clamp(3.25rem, 1.9rem + 5.6vw, 7rem);
-  --rw-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.3125rem);
-  --rw-body: clamp(1rem, 0.97rem + 0.12vw, 1.0625rem);
+  /* Type scale: fluid, clamped at both ends (390 → 1440). Every fluid
+     size in the theme is one of these steps (B10 V25); smallest first. */
+  --rw-body: clamp(1rem, 0.97rem + 0.12vw, 1.0625rem); /* 16 → 17 */
+  --rw-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.3125rem); /* 17 → 20 */
+  --rw-heading-s: clamp(1.125rem, 1rem + 0.5vw, 1.375rem); /* 18 → 22 */
+  --rw-subtitle: clamp(1.25rem, 1.1rem + 0.55vw, 1.625rem); /* 20 → 25.5 */
+  --rw-heading-m: clamp(1.375rem, 1.1rem + 1.2vw, 2.25rem); /* 22 → 35 */
+  --rw-heading-l: clamp(2rem, 1.5rem + 1.8vw, 3.25rem); /* 32 → 50 */
+  --rw-title: clamp(1.875rem, 1.3rem + 2.3vw, 3.25rem); /* 30 → 52 */
+  --rw-display-compact: clamp(2.125rem, 1rem + 4vw, 4.25rem); /* 34 → 68 */
+  --rw-display: clamp(2.5rem, 1.15rem + 5.2vw, 5.5rem); /* 40 → 88 */
+  --rw-figure: clamp(3.25rem, 1.9rem + 5.6vw, 7rem); /* 52 → 111 */
   --rw-measure: 62ch;
 
   /* The colonnade: 4 / 8 / 12 columns, drawn as rules. */
@@ -152,7 +192,8 @@
    visually hidden text alone downloads the app's body face. */
 a[href='#main-content'] {
   font-family:
-    'Riwaq Sans', 'Riwaq Fallback', 'Segoe UI', Tahoma, system-ui, sans-serif;
+    'Riwaq Sans', 'Riwaq Sans Arabic', 'Riwaq Fallback', 'Segoe UI', Tahoma,
+    system-ui, sans-serif;
 }
 
 .rw-display,

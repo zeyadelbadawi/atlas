@@ -47,7 +47,7 @@ export function CourseFallbackPattern({
         <rect width="100%" height="100%" fill={`url(#${patternId})`} />
       </svg>
       <span
-        className="relative flex size-20 items-center justify-center rounded-3xl bg-[var(--website-background)] font-display text-4xl font-bold text-[var(--website-icon-fg)] shadow-[var(--t1-shadow-rest)]"
+        className="relative flex size-20 items-center justify-center rounded-[var(--t1-radius-card)] bg-[var(--website-background)] font-display text-4xl font-bold text-[var(--website-icon-fg)] shadow-[var(--t1-shadow-rest)]"
         dir="auto"
       >
         {title.trim().charAt(0).toUpperCase()}
@@ -263,10 +263,10 @@ export function T1CourseCardSkeleton(): JSX.Element {
     <div aria-hidden className="t1-card flex h-full flex-col overflow-hidden">
       <div className="aspect-[16/9] animate-pulse bg-[var(--website-surface-muted)] motion-reduce:animate-none" />
       <div className="space-y-3 p-6">
-        <div className="h-3 w-1/4 rounded bg-[var(--website-surface-muted)]" />
-        <div className="h-5 w-4/5 rounded bg-[var(--website-surface-muted)]" />
-        <div className="h-4 w-full rounded bg-[var(--website-surface-muted)]" />
-        <div className="h-4 w-2/3 rounded bg-[var(--website-surface-muted)]" />
+        <div className="h-3 w-1/4 rounded-[var(--t1-radius-small)] bg-[var(--website-surface-muted)]" />
+        <div className="h-5 w-4/5 rounded-[var(--t1-radius-small)] bg-[var(--website-surface-muted)]" />
+        <div className="h-4 w-full rounded-[var(--t1-radius-small)] bg-[var(--website-surface-muted)]" />
+        <div className="h-4 w-2/3 rounded-[var(--t1-radius-small)] bg-[var(--website-surface-muted)]" />
       </div>
     </div>
   );

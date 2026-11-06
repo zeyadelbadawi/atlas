@@ -74,7 +74,7 @@
 }
 
 .rwc-wordmark {
-  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  font-size: var(--rw-lead);
   font-weight: 500;
   letter-spacing: -0.01em;
   line-height: 1.2;
@@ -218,12 +218,6 @@
   border-block-end: 1px solid var(--rw-rule);
 }
 
-.rwc-sheet-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
 .rwc-sheet-link {
   display: flex;
   align-items: center;
@@ -271,13 +265,6 @@
   padding-block: clamp(3.5rem, 2.5rem + 4vw, 6rem) 2rem;
 }
 
-.rwc-foot-id,
-.rwc-foot-cols,
-.rwc-foot-legal {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
-}
-
 .rwc-foot-id {
   display: grid;
   gap: 1.25rem;
@@ -294,7 +281,7 @@
 
 .rwc-foot-name {
   margin: 0;
-  font-size: clamp(1.375rem, 1.15rem + 0.9vw, 2rem);
+  font-size: var(--rw-heading-m);
   font-weight: 300;
   line-height: 1.15;
   letter-spacing: -0.015em;
@@ -303,7 +290,7 @@
 }
 
 .rwc-foot-name[data-length='long'] {
-  font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.625rem);
+  font-size: var(--rw-subtitle);
 }
 
 .rwc-foot-desc {
@@ -579,13 +566,6 @@ a.rwc-foot-social-link:hover {
     clamp(3rem, 2rem + 4vw, 6rem);
 }
 
-.rwp-plate-rail,
-.rwp-plate-body,
-.rwp-plate-window {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
-}
-
 .rwp-plate-body {
   display: grid;
   gap: 1.25rem;
@@ -609,13 +589,6 @@ a.rwc-foot-social-link:hover {
 /* ------------------------------------------------------------------ */
 /* Programme sheets (catalogue, related)                                */
 /* ------------------------------------------------------------------ */
-
-.rwp-sheets {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-block-start: 1px solid var(--rw-env-rule-strong);
-}
 
 .rwp-sheet {
   display: grid;
@@ -697,12 +670,6 @@ a.rwp-sheet:hover .rwp-sheet-title {
 /* ------------------------------------------------------------------ */
 /* Faceted catalogue                                                    */
 /* ------------------------------------------------------------------ */
-
-.rwp-catalog-aside,
-.rwp-catalog-main {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
-}
 
 .rwp-catalog-aside {
   display: none;
@@ -850,12 +817,6 @@ a.rwp-sheet:hover .rwp-sheet-title {
 /* Contact                                                              */
 /* ------------------------------------------------------------------ */
 
-.rwp-contact-info,
-.rwp-form {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
-}
-
 .rwp-contact-info {
   display: grid;
   gap: 1.25rem;
@@ -935,12 +896,6 @@ a.rwp-sheet:hover .rwp-sheet-title {
   align-items: center;
 }
 
-.rwp-system-window,
-.rwp-system-copy {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
-}
-
 .rwp-system-copy {
   display: grid;
   gap: 1.25rem;
@@ -993,13 +948,6 @@ a.rwp-sheet:hover .rwp-sheet-title {
   padding-block: clamp(2rem, 1.25rem + 3.5vw, 5rem);
 }
 
-.rwp-dossier-head,
-.rwp-dossier-aside,
-.rwp-dossier-window {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
-}
-
 .rwp-dossier-head {
   display: grid;
   gap: 1.25rem;
@@ -1008,7 +956,7 @@ a.rwp-sheet:hover .rwp-sheet-title {
 }
 
 .rwp-dossier-title {
-  font-size: clamp(2.25rem, 1.3rem + 3.6vw, 4.5rem);
+  font-size: var(--rw-display-compact);
 }
 
 .rwp-dossier-aside {
@@ -1028,13 +976,6 @@ a.rwp-sheet:hover .rwp-sheet-title {
 
 .rwp-dossier-body {
   padding-block: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
-}
-
-.rwp-index,
-.rwp-dossier-main,
-.rwp-enrol {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
 }
 
 .rwp-index {
@@ -1118,12 +1059,6 @@ a.rwp-sheet:hover .rwp-sheet-title {
   color: var(--rw-ink);
 }
 
-.rwp-syllabus {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
 .rwp-syllabus-section + .rwp-syllabus-section {
   margin-block-start: 1rem;
 }
@@ -1142,12 +1077,6 @@ a.rwp-sheet:hover .rwp-sheet-title {
 
 .rwp-syllabus-title {
   overflow-wrap: anywhere;
-}
-
-.rwp-lessons {
-  margin: 0;
-  padding: 0;
-  list-style: none;
 }
 
 .rwp-lessons > li {
@@ -1169,7 +1098,7 @@ a.rwp-sheet:hover .rwp-sheet-title {
 
 .rwp-enrol-price {
   margin: 0;
-  font-size: clamp(1.75rem, 1.4rem + 1vw, 2.25rem);
+  font-size: var(--rw-heading-m);
   font-weight: 300;
   color: var(--rw-brand-ink);
 }

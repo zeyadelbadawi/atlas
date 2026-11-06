@@ -407,7 +407,7 @@ export function T1Gallery({
           </DialogTitle>
           {current ? (
             <>
-              <div className="flex max-h-[75vh] justify-center overflow-hidden rounded-2xl bg-[var(--website-surface-muted)]">
+              <div className="flex max-h-[75vh] justify-center overflow-hidden rounded-[var(--t1-radius-card)] bg-[var(--website-surface-muted)]">
                 <ThemeImage
                   value={current.value}
                   alt={current.alt}

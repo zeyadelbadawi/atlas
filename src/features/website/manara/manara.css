@@ -72,13 +72,26 @@
   --mn-font-display:
     'Manara Display', 'Readex Pro', 'Rubik', 'Segoe UI', system-ui, sans-serif;
 
-  /* Type scale: fluid, clamped at both ends (390 → 1440). */
-  --mn-display: clamp(2.25rem, 1.15rem + 4.7vw, 4.5rem);
-  --mn-display-compact: clamp(1.875rem, 1rem + 3.7vw, 3.5rem);
-  --mn-title: clamp(1.75rem, 1.2rem + 2.3vw, 2.75rem);
-  --mn-subtitle: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
-  --mn-numeral: clamp(3.5rem, 2rem + 6.4vw, 6rem);
-  --mn-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  /* Type scale: fluid, clamped at both ends (390 → 1440). Every fluid
+     size in the theme is one of these steps (B10 V25); smallest first. */
+  --mn-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem); /* 17 → 20 */
+  --mn-heading-s: clamp(1.125rem, 1rem + 0.5vw, 1.375rem); /* 18 → 22 */
+  --mn-subtitle: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem); /* 20 → 24 */
+  --mn-heading-m: clamp(1.375rem, 1.1rem + 0.9vw, 1.875rem); /* 22 → 30 */
+  --mn-heading-l: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem); /* 24 → 36 */
+  --mn-title: clamp(1.75rem, 1.2rem + 2.3vw, 2.75rem); /* 28 → 44 */
+  --mn-figure: clamp(2rem, 1.6rem + 1.6vw, 3rem); /* 32 → 48 */
+  --mn-figure-l: clamp(2.5rem, 1.8rem + 2.5vw, 3.5rem); /* 40 → 56 */
+  /* B10 V17 — a long headline's step: 64px from 1280 (was 56, too close
+     to the 44px section titles), down to 30px on phones as before; the
+     fit rule (plan §3.14) still steps a long headline down from display. */
+  --mn-display-compact: clamp(1.875rem, 0.944rem + 3.82vw, 4rem); /* 30 → 64 */
+  --mn-display: clamp(2.25rem, 1.15rem + 4.7vw, 4.5rem); /* 37 → 72 */
+  --mn-poster: clamp(2.75rem, 1.5rem + 5.5vw, 6rem); /* 46 → 96 */
+  --mn-numeral: clamp(3.5rem, 2rem + 6.4vw, 6rem); /* 57 → 96 */
+  /* Ornaments (a glyph, the 404 figure): artwork set in type. */
+  --mn-ornament: clamp(6rem, 4rem + 8vw, 12rem);
+  --mn-ornament-xl: clamp(6rem, 2rem + 22vw, 18rem);
   --mn-measure: 60ch;
 
   /* Rhythm, grid and shapes. */

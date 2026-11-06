@@ -345,6 +345,42 @@ describe('T1PageHeader', () => {
     expect(container.querySelector('[data-faq-no-match]')).toBeTruthy();
   });
 
+  // B10 V23 — the art at the hero's end is the theme's own photograph for
+  // the page, decorative and lazy, in the box the art always had.
+  it("Courses: the art is the theme's catalog photograph, decorative and lazy, on the brand shape", () => {
+    const { container } = wrap(
+      <T1PageHeader
+        config={{ title: lt('Find your next course'), search: 'courses' }}
+        academyId="a1"
+        pages={PAGES}
+      />
+    );
+    const art = container.querySelector('[data-t1-page-art]')!;
+    expect(art.getAttribute('aria-hidden')).toBe('true');
+    expect(art.className).toContain('h-64 w-80');
+    expect(art.querySelector('.t1-shape')).toBeTruthy();
+    expect(art.querySelector('.t1-icon-tile')).toBeNull();
+    const img = art.querySelector('img')!;
+    expect(img.getAttribute('src')).toContain('courses-launching');
+    expect(img.getAttribute('alt')).toBe('');
+    expect(img.getAttribute('loading')).toBe('lazy');
+    expect(img.style.objectPosition).toBe('50% 50%');
+  });
+
+  it('a photograph that is not released leaves the brand shape on its own', () => {
+    const custom = {
+      id: 'p-x',
+      slug: 'team',
+      title: 'Team',
+      sections: [],
+    } as unknown as WebsitePage;
+    const { container } = wrap(<T1PageIntro page={custom} navigation={[]} />);
+    const art = container.querySelector('[data-t1-page-art]')!;
+    expect(art.querySelector('.t1-shape')).toBeTruthy();
+    expect(art.querySelector('img')).toBeNull();
+    expect(art.querySelector('[data-image-placeholder]')).toBeNull();
+  });
+
   it('the FAQ filter ignores case and Arabic diacritics and letter variants', () => {
     expect(matchesFaqFilter('Can I learn on my PHONE?', 'phone')).toBe(true);
     expect(matchesFaqFilter('هل يمكنني التعلّم؟', 'التعلم')).toBe(true);

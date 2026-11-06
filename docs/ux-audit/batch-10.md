@@ -112,8 +112,11 @@ fixed or was already fixed; 8 Low items are left, each with its reason.
 - **V15** fixed — FAQ questions set at the display weight 380 (Arabic 500), not the global h3 600.
 - **V16** fixed — Atelier's RTL rules also match when `dir` sits above the theme scope (and only where
   text runs RTL): Arabic nav 15 px, no tracking, no uppercase (was 12 px / 0.16em).
-- **V17** left — the 56 px h1 is Manara's fit rule stepping a long headline down (plan §3.14); changing
-  the compact step or the title size is a type-scale decision the plan doesn't make.
+- **V17** fixed (owner decision) — a long hero headline's step (`--mn-display-compact`) is 64 px from 1280
+  (was 56), fluid down to 30 px on phones as before; the fit rule still steps a long headline down from the
+  72 px display size (48 characters, plan §3.14). EN hero h1/h2 64/44 = 1.45× at 1280 and 1440 (was
+  56/44 = 1.27×; the starter headline now wraps to 4 lines at 1280, 3 at 1440); 54/43 at 1024; 375 and the
+  short AR headline (72/44) unchanged. The course title (`mnp-course-title`) uses the same step: 64 px.
 - **V18** fixed — Riwaq selects draw their own chevron (as Atelier's and Manara's), mirrored in RTL.
 - **V19** fixed — ledger cells draw their own 1 px rule (outline over the shared gap): a short row ends
   with the last cell, no shaded empty cell.
@@ -124,18 +127,49 @@ fixed or was already fixed; 8 Low items are left, each with its reason.
 - **V22** fixed — the strip under the footer above the phone bar takes `--website-footer-surface` (the
   footer's own ground: Atelier deep, Manara night, Riwaq deep; Theme 1 unchanged). The "empty strip"
   above the course-page footer did not reproduce in a live viewport (full-page capture artefact).
-- **V23** left — the page-header art (blob + icon tile) needs a design decision on its replacement.
-- **V24** left — consolidating Theme 1's radius set is a token redesign (no target set in the plan).
-- **V25** left — collapsing per-theme one-off `clamp()` sizes into a scale is a token redesign.
+- **V23** fixed (owner decision) — the art at an inner page hero's end is one of the theme's own
+  photographs (`ThemeImage`, lazy, the manifest's focal point, `alt=""` through a new `decorative` option)
+  on the brand shape: Courses `courses-launching`, Contact `gallery-2`, About (intro) `about-story`, FAQs
+  (intro) `gallery-4`, custom pages `gallery-3`. No icon tile. Same box (320×256 at 1024 px, 352×288
+  at 1280 px) and hero heights unchanged (Courses 516 / Contact 448 px at 1280 EN); an unreleased or
+  failed photograph leaves the brand shape alone.
+- **V24** fixed (owner decision) — Theme 1 has four radii: `--t1-radius-small` 8, `-control` 12, `-card` 20
+  and `-pill` (full). 6 and 14 → 8 / 12, 10 → 12, 24 and 28 → 20, `rounded`/`-xl`/`-2xl`/`-3xl` and
+  literal px mapped to the tokens, and the app's `--radius-*` variables re-pointed inside the theme so
+  shared blocks (legal links, shared sections) follow. Radii measured on 7 pages × EN/AR: 2, 6, 8, 10, 12,
+  14, 19, 20, 24, 28, full → 8, 12, 20, full, plus a card's inner photo at 19 (concentric inside its 1 px
+  border) and the shared phone field's 2 px flag.
+- **V25** fixed (owner decision) — every fluid font size in Atelier, Manara and Riwaq is a named step of the
+  theme's scale (custom properties on the theme scope, smallest first; no `font-size: clamp()` outside
+  it), each one-off snapped to the nearest step: Atelier's 24 (4 of them the cinematic stages' fits, now
+  `min(step, Nsvh)`) onto 9 steps, 5 new (`--at-heading-s/m/l`, `--at-display-s`, `--at-figure`);
+  Manara's 20 onto 11, 6 new (`--mn-heading-s/m/l`, `--mn-figure`, `--mn-figure-l`, `--mn-poster`);
+  Riwaq's 11 onto 9, 3 new (`--rw-heading-s/m/l`). The 404 figures and the quote glyph are named ornament
+  sizes. Atelier's 11 px category counts and placeholder labels → 12 px, its small-print floor
+  (`--at-small`, which its 12 px labels use too). Measured on 4 pages × EN/AR × 375/1280:
+  198 / 102 / 70 of 3342 / 2978 / 3278 text elements change size, most by ≤ 2 px; the largest are Atelier
+  category names 66→70 (36→40 on phones), Riwaq's enrol title 59→67, Manara's countdown 77→72 (44→36 on
+  phones); no horizontal scroll.
 - **V26** fixed — the catalog toolbar's divider is inset by the toolbar's own padding (32 px each side
   at 1024+), its ground still bleeds.
-- **V27** left — the cinematic scroll scenes' length and the dark-arch viewport are the plan's
-  composition; shortening them is a design decision.
+- **V27** fixed (owner decision) — each pinned scene has half its scroll (opening 170 → 85svh, method
+  40 → 20svh a step, ink 150 → 75svh): with motion the Home is 18% taller than without (9,867 vs
+  8,356 px at 1280 EN; was 11,890, +42%; AR +16%, was +38%). The ink now covers the stage by the time it
+  pins and the title and figures rise straight away, so no viewport is only dark ink. Reduced motion and
+  the static fallbacks are unchanged.
 - **V28** fixed — under 640 px the curriculum leader goes and the lesson count sits under the title:
   Arabic title one line in 227 px (was 3 lines in ~70 px).
-- **V29** left — only `ibm-plex-sans-arabic-400.woff2` is in the repo; no heavier Arabic file to add
-  without a new download.
+- **V29** fixed (owner decision) — IBM Plex Sans Arabic Medium and Bold added
+  (`@fontsource/ibm-plex-sans-arabic` 5.3.0, OFL 1.1 as the Regular, 45.3 / 44.3 kB) in their own family,
+  `Riwaq Sans Arabic` (bands 100–450 / 451–600 / 601–700), named after `Riwaq Sans` (Latin, 100–700), so
+  no family mixes scripts with different weight ranges (V02). Arabic headlines are Bold, Arabic titles
+  Medium; names, labels and
+  subtitles (500) get the Medium file. Chromium `getPlatformFontsForNode`, AR Home and About: h1 →
+  IBMPlexSansArabic-Bold, h2/h3 → IBMPlexSansArabic-Medium, body → Regular; the Latin file downloads once.
+  Riwaq stylesheet 55,928 B (was 55,984; repeated rules merged to fit the 56,000 B budget); fonts 4 files,
+  each ≤ 50 kB.
 - **V30** fixed — Arabic steps are numbered ١ ٢ ٣ (no leading zero) and filled, not outlined.
-- **V31** left — starter-page composition (feature split before steps) is content design.
+- **V31** fixed (owner decision) — the feature split's benefits are a list with a check mark each, not
+  numbered (`ul`, no `t1-number`); the steps after it are Home's only numbered list.
 - **V32** fixed — the catalog search field keeps 15rem; on phones the button moves under it: field
   291 px for a 228 px placeholder (was 169 px).

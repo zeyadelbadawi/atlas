@@ -133,6 +133,17 @@ describe('ThemeImage', () => {
     expect(img.style.backgroundImage).toContain('data:image/webp');
   });
 
+  it('keeps a decorative picture out of the accessibility tree (empty alt, not the theme description)', () => {
+    const { container } = render(
+      <ThemeImage
+        value="theme-asset:modern-education/about-story"
+        alt=""
+        decorative
+      />
+    );
+    expect(container.querySelector('img')!.getAttribute('alt')).toBe('');
+  });
+
   it('loads a page-leading theme asset eagerly at high priority when asked', () => {
     const { container } = render(
       <ThemeImage

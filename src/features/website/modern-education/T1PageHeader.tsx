@@ -8,11 +8,11 @@
  *     band's lower edge, so the page flows into its Story section instead
  *     of stopping at a heading.
  *   - **`search: 'courses'` (Courses):** title, lead, the catalog search
- *     and a live summary of the catalog, with the brand composition at the
+ *     and a live summary of the catalog, with the page's photograph at the
  *     logical end.
  *   - **`search: 'faq'` (FAQs):** a centred title with the question filter.
- *   - **Otherwise (Contact, custom pages):** title and lead with the brand
- *     composition at the logical end.
+ *   - **Otherwise (Contact, custom pages):** title and lead with the page's
+ *     photograph at the logical end.
  *
  * `T1PageIntro` gives an existing page with no hero section one drawn from
  * its navigation label (Decision 3: presentation only, no data written).
@@ -20,15 +20,7 @@
 import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useInRouterContext } from 'react-router-dom';
-import {
-  GraduationCap,
-  HelpCircle,
-  Layers,
-  MessageCircle,
-  Search,
-  Sparkles,
-  type LucideIcon,
-} from 'lucide-react';
+import { Layers, Search } from 'lucide-react';
 import { cn } from '@utils';
 import {
   usePublicCourseCategories,
@@ -46,32 +38,47 @@ import {
 } from '../utils/catalog-url.utils';
 import type { SectionRenderProps } from '../theme-packs/theme-pack.types';
 import type { WebsiteNavigationItem, WebsitePage } from '@types';
+import { ThemeImage } from '../theme-assets';
 import { BrandShapePage, T1Heading, T1Media, formatT1Number } from './t1-parts';
 import { setFaqFilter } from './t1-faq-filter';
 import { useT1Navigate } from './t1-navigation';
 
-const PAGE_ICONS: Partial<Record<string, LucideIcon>> = {
-  about: Sparkles,
-  courses: GraduationCap,
-  faqs: HelpCircle,
-  contact: MessageCircle,
+/**
+ * B10 V23 — each inner page's art is one of the theme's own photographs
+ * (`theme-assets/manifests/modern-education.manifest.ts`), chosen by the
+ * core page it opens; a custom page takes a neutral study detail.
+ */
+const PAGE_ART: Partial<Record<string, string>> = {
+  about: 'theme-asset:modern-education/about-story',
+  courses: 'theme-asset:modern-education/courses-launching',
+  faqs: 'theme-asset:modern-education/gallery-4',
+  contact: 'theme-asset:modern-education/gallery-2',
 };
+const DEFAULT_PAGE_ART = 'theme-asset:modern-education/gallery-3';
 
-/** The decorative composition at a hero's logical end (`brand-shape-page`). */
-function PageArt({ Icon }: { readonly Icon: LucideIcon }): JSX.Element {
+/**
+ * The decorative photograph at a hero's logical end, on the brand shape
+ * (`brand-shape-page`). The title and lead say everything, so the picture
+ * is skipped by assistive technology (`alt=""`). It loads lazily, framed
+ * from the manifest's focal point, in the box the art always had (the
+ * hero's height never depends on it); a photograph that is not released or
+ * fails to load leaves the brand shape on its own.
+ */
+function PageArt({ asset }: { readonly asset: string }): JSX.Element {
   return (
     <div
       aria-hidden
+      data-t1-page-art=""
       className="relative hidden h-64 w-80 shrink-0 lg:block xl:h-72 xl:w-[22rem]"
     >
-      <BrandShapePage className="inset-0 size-full" />
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="t1-card flex size-32 items-center justify-center rounded-[28px] shadow-[var(--t1-shadow-lift)]">
-          <span className="t1-icon-tile size-16 rounded-2xl">
-            <Icon className="size-8" strokeWidth={1.75} />
-          </span>
-        </div>
-      </div>
+      <BrandShapePage className="-end-6 -top-6 h-[calc(100%+1.5rem)] w-[calc(100%+1.5rem)]" />
+      <ThemeImage
+        value={asset}
+        alt=""
+        decorative
+        sizes="(min-width: 1280px) 352px, 320px"
+        className="relative block size-full rounded-[var(--t1-radius-card)] object-cover shadow-[var(--t1-shadow-lift)]"
+      />
     </div>
   );
 }
@@ -222,7 +229,7 @@ function StandardHero({
   eyebrow,
   title,
   description,
-  Icon,
+  art,
   children,
   landmark = true,
   headingLevel = 'h1',
@@ -231,7 +238,8 @@ function StandardHero({
   readonly eyebrow?: string;
   readonly title: string;
   readonly description?: string;
-  readonly Icon: LucideIcon;
+  /** The page's photograph (`PAGE_ART`). */
+  readonly art: string;
   readonly children?: React.ReactNode;
   /**
    * A named region (default). The fallback intro isn't one: on an existing
@@ -265,7 +273,7 @@ function StandardHero({
           {description ? <p className="t1-lead">{description}</p> : null}
           {children}
         </div>
-        <PageArt Icon={Icon} />
+        <PageArt asset={art} />
       </div>
     </Root>
   );
@@ -290,8 +298,8 @@ export function T1PageHeader({
   const title = resolveLocalizedText(config.title, locale);
   const description = resolveLocalizedText(config.description, locale);
   const search = config.search ?? 'none';
-  // The core page this hero opens, for its icon (the section's own config
-  // object is shared with the page it belongs to).
+  // The core page this hero opens, for its photograph (the section's own
+  // config object is shared with the page it belongs to).
   const owner = pages.find((page) =>
     page.sections.some((section) => section.config === config)
   );
@@ -328,7 +336,7 @@ export function T1PageHeader({
             value={config.image}
             alt={resolveLocalizedText(config.imageAlt, locale)}
             sizes="(min-width: 1280px) 1216px, 100vw"
-            className="mt-10 aspect-[4/3] rounded-[24px] shadow-[var(--t1-shadow-lift)] md:mt-14 md:aspect-[16/9] lg:mt-16 lg:aspect-[21/9]"
+            className="mt-10 aspect-[4/3] rounded-[var(--t1-radius-card)] shadow-[var(--t1-shadow-lift)] md:mt-14 md:aspect-[16/9] lg:mt-16 lg:aspect-[21/9]"
           />
         </div>
       </section>
@@ -370,10 +378,10 @@ export function T1PageHeader({
   }
 
   /* Courses, Contact and custom pages. */
-  const Icon =
-    (search === 'courses' ? GraduationCap : undefined) ??
-    (owner?.coreType ? PAGE_ICONS[owner.coreType] : undefined) ??
-    Sparkles;
+  const art =
+    (search === 'courses' ? PAGE_ART.courses : undefined) ??
+    (owner?.coreType ? PAGE_ART[owner.coreType] : undefined) ??
+    DEFAULT_PAGE_ART;
   return (
     <StandardHero
       headingLevel={headingLevel}
@@ -381,7 +389,7 @@ export function T1PageHeader({
       eyebrow={eyebrow}
       title={title}
       description={description}
-      Icon={Icon}
+      art={art}
     >
       {search === 'courses' && resolveCatalogHref(pages) ? (
         <div className="space-y-4 pt-2">
@@ -424,7 +432,7 @@ export function T1PageIntro({
       headingId={headingId}
       title={title}
       description={lead || undefined}
-      Icon={(page.coreType && PAGE_ICONS[page.coreType]) || Sparkles}
+      art={(page.coreType && PAGE_ART[page.coreType]) || DEFAULT_PAGE_ART}
       landmark={false}
     />
   );

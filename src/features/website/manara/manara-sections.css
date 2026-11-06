@@ -34,7 +34,7 @@
 }
 
 [data-theme-pack='manara'] .mnh-item-title {
-  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  font-size: var(--mn-heading-s);
   overflow-wrap: anywhere;
 }
 
@@ -216,7 +216,7 @@
 }
 
 [data-theme-pack='manara'] .mnh-about-lead {
-  font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem);
+  font-size: var(--mn-heading-m);
   font-weight: 600;
   line-height: 1.45;
   max-inline-size: 40ch;
@@ -263,7 +263,7 @@
 }
 
 [data-theme-pack='manara'] .mnh-point-no {
-  font-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem);
+  font-size: var(--mn-title);
   line-height: 1.1;
   color: var(--mn-env-link, var(--mn-brand-text));
 }
@@ -357,7 +357,7 @@
   grid-row: span 2;
   justify-self: center;
   padding-block: 0.25rem;
-  font-size: clamp(2.5rem, 1.8rem + 2.5vw, 3.5rem);
+  font-size: var(--mn-figure-l);
   line-height: 1;
   color: var(--mn-env-text, var(--mn-text));
   /* The numeral sits on the beam: its ground breaks the line behind it. */
@@ -471,7 +471,7 @@
    still cannot fit hyphenates (by the page's language) or, failing that,
    breaks only as the last resort, never at any letter. */
 [data-theme-pack='manara'] .mnh-track-name {
-  font-size: min(clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem), 13.5cqi);
+  font-size: min(var(--mn-heading-l), 13.5cqi);
   line-height: 1.1;
   overflow-wrap: break-word;
   hyphens: auto;
@@ -529,7 +529,7 @@
 }
 
 [data-theme-pack='manara'] .mnh-course-title {
-  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  font-size: var(--mn-heading-s);
   transition: color var(--mn-fast) var(--mn-ease);
 }
 
@@ -629,7 +629,7 @@
 
 [data-theme-pack='manara'] .mnh-teacher-name {
   display: block;
-  font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+  font-size: var(--mn-subtitle);
   line-height: 1.2;
 }
 
@@ -665,7 +665,7 @@
 /* Two tiles share a phone's width: the numeral steps down a little. */
 [data-theme-pack='manara'] .mnh-score-value .mn-numeral {
   display: block;
-  font-size: clamp(2.75rem, 1.5rem + 5.5vw, 6rem);
+  font-size: var(--mn-poster);
 }
 
 [data-theme-pack='manara'] .mnh-score-label {
@@ -688,7 +688,7 @@
   inset-block-start: -0.75rem;
   inset-inline-start: -0.25rem;
   font-family: var(--mn-font-display);
-  font-size: clamp(6rem, 4rem + 8vw, 12rem);
+  font-size: var(--mn-ornament);
   font-weight: 900;
   line-height: 1;
   color: var(--mn-beam-soft);
@@ -704,7 +704,7 @@
 
 [data-theme-pack='manara'] .mnh-quote-text {
   font-family: var(--mn-font-display);
-  font-size: clamp(1.5rem, 1.1rem + 1.8vw, 2.75rem);
+  font-size: var(--mn-title);
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.01em;
@@ -827,7 +827,7 @@
 }
 
 [data-theme-pack='manara'] .mnh-faq-question {
-  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  font-size: var(--mn-heading-s);
   text-wrap: pretty;
 }
 

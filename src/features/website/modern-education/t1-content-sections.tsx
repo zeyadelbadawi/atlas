@@ -5,6 +5,7 @@
  * existing Theme 1 academies have on Home (Decision 3).
  */
 import { useId } from 'react';
+import { CheckCircle2 } from 'lucide-react';
 import { cn } from '@utils';
 import { resolveFeatureIcon } from '../utils/feature-icons';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
@@ -136,7 +137,7 @@ export function T1Features({
 }
 
 /* ------------------------------------------------------------------ */
-/* Why us — image + numbered benefits (featureSplit)                    */
+/* Why us — image + benefits (featureSplit)                             */
 /* ------------------------------------------------------------------ */
 
 export function T1FeatureSplit({
@@ -168,7 +169,9 @@ export function T1FeatureSplit({
         {description ? <p className="t1-lead">{description}</p> : null}
       </div>
       {items.length > 0 ? (
-        <ol
+        // B10 V31 — benefits are not a sequence: a check mark each, so the
+        // numbered steps that follow on Home are the page's only numbers.
+        <ul
           className={cn(
             'grid gap-6',
             !hasImage && 'md:grid-cols-2 lg:grid-cols-3'
@@ -177,10 +180,12 @@ export function T1FeatureSplit({
           {items.map((item, index) => (
             <li key={item.id}>
               <Reveal delayMs={stagger(index)} className="flex gap-4">
-                <span className="t1-number" aria-hidden>
-                  {formatT1Number(index + 1, locale)}
-                </span>
-                <div className="min-w-0 pt-2">
+                <CheckCircle2
+                  className="mt-0.5 size-6 shrink-0 text-[var(--website-link)]"
+                  strokeWidth={1.75}
+                  aria-hidden
+                />
+                <div className="min-w-0">
                   <h3 className="break-words font-semibold text-[var(--website-foreground)]">
                     {item.title}
                   </h3>
@@ -193,7 +198,7 @@ export function T1FeatureSplit({
               </Reveal>
             </li>
           ))}
-        </ol>
+        </ul>
       ) : null}
       {hasSectionButtons(config) ? (
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">

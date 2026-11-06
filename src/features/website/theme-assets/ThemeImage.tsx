@@ -57,6 +57,12 @@ export interface ThemeImageProps {
    * broken-image icon. When this value fails too, `fallback`.
    */
   readonly errorValue?: string;
+  /**
+   * A decorative picture beside text that already says everything (a page
+   * header's art): its `alt` stays empty instead of taking the theme's own
+   * description, so assistive technology skips it.
+   */
+  readonly decorative?: boolean;
 }
 
 export function ThemeImage({
@@ -69,6 +75,7 @@ export function ThemeImage({
   loading,
   priority = false,
   errorValue,
+  decorative = false,
 }: ThemeImageProps): JSX.Element | null {
   const { locale } = usePublicWebsiteLocale();
   // Whether `value` failed to load (an uploaded image or a theme asset); a
@@ -86,6 +93,7 @@ export function ThemeImage({
         fallback={fallback}
         loading={loading}
         priority={priority}
+        decorative={decorative}
       />
     ) : (
       <>{fallback}</>
@@ -146,7 +154,7 @@ export function ThemeImage({
       <img
         ref={ref}
         src={asset.src}
-        alt={alt || asset.alt[locale]}
+        alt={decorative ? '' : alt || asset.alt[locale]}
         width={asset.width}
         height={asset.height}
         loading={eager ? 'eager' : 'lazy'}

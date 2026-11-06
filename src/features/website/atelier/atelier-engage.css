@@ -125,7 +125,7 @@
 }
 [data-theme-pack='atelier'] .atx-price {
   font-family: var(--at-font-display);
-  font-size: clamp(2rem, 1.6rem + 1.4vw, 3rem);
+  font-size: var(--at-heading-l);
   font-weight: 340;
   line-height: 1.05;
   letter-spacing: -0.02em;
@@ -193,7 +193,7 @@
   border-inline-start: 1px solid var(--atelier-ink-hairline);
 }
 [data-theme-pack='atelier'] .atx-timer-value {
-  font-size: clamp(2.5rem, 1.2rem + 5.5vw, 6.5rem);
+  font-size: var(--at-display);
   letter-spacing: -0.03em;
 }
 [data-theme-pack='atelier'] [dir='rtl'] .atx-timer-value,

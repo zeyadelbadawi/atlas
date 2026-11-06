@@ -69,9 +69,21 @@
   line-height: 1.55;
 }
 
+/*
+ * B10 V29 — Arabic headings in Plex Sans Arabic's own weights: the page
+ * headline Bold, section titles Medium (the Latin display is Light and its
+ * titles Regular; Arabic letterforms at those weights read flat beside
+ * them, and synthesis is off). Names, labels and subtitles already ask for
+ * 500 and now get the Medium file.
+ */
+
 /* Display: the page headline. */
 [data-theme-pack='riwaq'] :is(.rw-display):lang(ar):where(:dir(rtl)) {
   line-height: 1.45;
+  font-weight: 700;
+}
+[data-theme-pack='riwaq'] .rw-title:lang(ar):where(:dir(rtl)) {
+  font-weight: 500;
 }
 
 /* Titles, names and figures. */

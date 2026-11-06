@@ -1381,10 +1381,12 @@ describe('theme packs: each site gets only its own theme', () => {
         `Riwaq stylesheet is not smaller than ${theme}'s`
       );
     }
+    // The Latin variable file and the Arabic Regular, Medium and Bold (B10
+    // V29: Arabic headings in their own weights); each within budget.
     const fonts = readdirSync(join(DIST, 'assets')).filter((file) =>
       /^ibm-plex-sans-[\w-]+\.woff2$/.test(file)
     );
-    assert.equal(fonts.length, 2, fonts.join(', '));
+    assert.equal(fonts.length, 4, fonts.join(', '));
     for (const font of fonts) {
       const bytes = size(join('assets', font));
       assert.ok(bytes <= 50_000, `${font} ${bytes} B > 50 kB`);

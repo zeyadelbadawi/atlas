@@ -407,6 +407,18 @@ describe('T1FeatureSplit', () => {
     expect(screen.getAllByRole('listitem')).toHaveLength(3);
   });
 
+  // B10 V31 — benefits are not a sequence: marked, not numbered, so the
+  // steps that follow on Home are the page's only numbered list.
+  it('marks the benefits with a check, not a number', () => {
+    const { container } = wrap(
+      <T1FeatureSplit config={config} academyId="a1" pages={PAGES} />
+    );
+    expect(container.querySelector('ol')).toBeNull();
+    expect(container.querySelector('ul')).toBeTruthy();
+    expect(container.querySelector('.t1-number')).toBeNull();
+    expect(container.querySelectorAll('li svg[aria-hidden]')).toHaveLength(3);
+  });
+
   it('without an image, lays the benefits out as a text section', () => {
     const { container } = wrap(
       <T1FeatureSplit

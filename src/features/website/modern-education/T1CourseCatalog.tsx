@@ -321,7 +321,7 @@ export function T1CourseCatalog({
                   <SheetContent
                     side="bottom"
                     dir={direction}
-                    className="rounded-t-[24px] bg-[var(--website-background)] px-5 pb-8 pt-6 text-[var(--website-foreground)]"
+                    className="rounded-t-[var(--t1-radius-card)] bg-[var(--website-background)] px-5 pb-8 pt-6 text-[var(--website-foreground)]"
                   >
                     <SheetTitle className="font-display text-lg font-bold">
                       {t('website:theme1.catalog.filters')}
