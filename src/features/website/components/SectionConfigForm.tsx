@@ -67,7 +67,6 @@ import { PublicWebsiteLocaleProvider } from '../renderer/PublicWebsiteLocaleCont
 import {
   PUBLIC_WEBSITE_LOCALES,
   PUBLIC_WEBSITE_LOCALE_DIRECTION,
-  PUBLIC_WEBSITE_LOCALE_LABELS,
   resolveDefaultLocale,
   type PublicWebsiteLocale,
 } from '../constants/locale.constants';
@@ -89,6 +88,9 @@ import {
   MAX_SELECTED_COURSES,
 } from '../constants/website.constants';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
+import { stableJsonKey } from '../utils/stable-json.utils';
+import { collectButtonTargetIssues } from './section-button-issues';
+import { contentLocaleLabelKey } from './website-display-labels';
 import { useCourses } from '@features/course';
 import { getWebsiteTheme } from '../themes/website-theme.registry';
 import { EMPTY_LOCALIZED_TEXT } from '../utils/localized-text.utils';
@@ -163,6 +165,12 @@ export interface SectionConfigFormProps<TType extends SectionType> {
   readonly variant?: 'dialog' | 'panel';
   /** The section's config as currently typed, on every change (`'panel'`). */
   readonly onDraftChange?: (config: SectionConfigMap[TType]) => void;
+  /**
+   * The dialog: whether the form holds edits not applied yet, whenever
+   * that changes — the page editor asks before a close discards them
+   * (B2, V11).
+   */
+  readonly onDirtyChange?: (dirty: boolean) => void;
   /**
    * The panel only: the section's config as changed somewhere else — the
    * visual editor's inline text editing on the canvas. Taken in as the
@@ -308,6 +316,31 @@ function resolveIssueField(
   }
 
   return { labelKeys: ['website:editor.sectionSettings'], language };
+}
+
+/** The value at a dot path (`items.1.title.en`) inside a config. */
+function valueAtPath(root: unknown, path: string): unknown {
+  return path.split('.').reduce<unknown>((value, part) => {
+    if (value === null || typeof value !== 'object') return undefined;
+    return (value as Record<string, unknown>)[part];
+  }, root);
+}
+
+/** A copy of `root` with `value` at a dot path (arrays stay arrays). */
+function withValueAtPath(root: unknown, path: string, value: unknown): unknown {
+  const [head, ...rest] = path.split('.');
+  const next = (current: unknown) =>
+    rest.length > 0 ? withValueAtPath(current, rest.join('.'), value) : value;
+  if (Array.isArray(root)) {
+    const copy = [...root];
+    copy[Number(head)] = next(root[Number(head)]);
+    return copy;
+  }
+  const object =
+    root !== null && typeof root === 'object'
+      ? (root as Record<string, unknown>)
+      : {};
+  return { ...object, [head]: next(object[head]) };
 }
 
 interface LibraryOption {
@@ -753,10 +786,13 @@ function ScalarField({
   academyId,
   sectionType,
   revealErrors = false,
+  required = false,
 }: {
   readonly descriptor: SectionFieldDescriptor;
   /** Where the value lives in the section config, e.g. `title` or `items.2.title`. */
   readonly path: string;
+  /** A bilingual field the site's main language must fill (B2, V19). */
+  readonly required?: boolean;
   readonly errorFor: FieldErrorLookup;
   readonly value: unknown;
   readonly onChange: (value: unknown) => void;
@@ -807,6 +843,7 @@ function ScalarField({
         value={value as Partial<LocalizedText> | undefined}
         onChange={onChange}
         multiline={descriptor.kind === 'longText'}
+        required={required}
         maxLength={descriptor.maxLength}
         errors={localizedErrors(
           errorFor,
@@ -1018,6 +1055,7 @@ export function SectionConfigForm<TType extends SectionType>({
   previewSectionId,
   variant = 'dialog',
   onDraftChange,
+  onDirtyChange,
   externalConfig,
 }: SectionConfigFormProps<TType>): JSX.Element {
   const isPanel = variant === 'panel';
@@ -1045,6 +1083,14 @@ export function SectionConfigForm<TType extends SectionType>({
     reportedDraftRef.current = next;
     setDraft(next);
   }, [externalConfig]);
+  // B2 (V11) — the dialog reports unapplied edits, so a close can ask.
+  const initialKey = useMemo(() => stableJsonKey(initialDraft), [initialDraft]);
+  const isDirty = draft !== initialDraft && stableJsonKey(draft) !== initialKey;
+  const onDirtyChangeRef = useRef(onDirtyChange);
+  onDirtyChangeRef.current = onDirtyChange;
+  useEffect(() => {
+    onDirtyChangeRef.current?.(isDirty);
+  }, [isDirty]);
   const fields = schema.fields.filter((field) =>
     isOfferedFor(field, configuration.themeKey)
   );
@@ -1070,13 +1116,15 @@ export function SectionConfigForm<TType extends SectionType>({
   const formRef = useRef<HTMLDivElement>(null);
   const summaryRef = useRef<HTMLDivElement>(null);
   const issues = useMemo(() => {
-    const own = collectSectionIssues(type, draft, requiredLocale).filter(
-      (issue) => attempted || isOverLimitIssue(issue)
-    );
+    const own = [
+      ...collectSectionIssues(type, draft, requiredLocale),
+      // B2 (V20) — a "Web address" button needs its address.
+      ...collectButtonTargetIssues(type, draft),
+    ].filter((issue) => attempted || isOverLimitIssue(issue));
     if (draft !== initialDraft || !serverIssues?.length) return own;
     const known = new Set(own.map((issue) => issue.path));
     return [...own, ...serverIssues.filter((issue) => !known.has(issue.path))];
-  }, [type, draft, initialDraft, attempted, serverIssues]);
+  }, [type, draft, initialDraft, attempted, serverIssues, requiredLocale]);
 
   const messageFor = (
     issue: SectionContentIssue,
@@ -1089,10 +1137,48 @@ export function SectionConfigForm<TType extends SectionType>({
         ? t('website:editor.shortenText')
         : t('website:editor.shortenTo', { count: limit });
     }
-    return issue.messageKey.startsWith('validation:') &&
+    // B2 (V20) — say what a web address has to look like.
+    if (issue.messageKey === 'validation:invalidUrl') {
+      return t('website:buttons.urlInvalid');
+    }
+    return (issue.messageKey.startsWith('validation:') ||
+      issue.messageKey.startsWith('website:')) &&
       i18n.exists(issue.messageKey)
       ? t(issue.messageKey, { field: t(labelKey) })
       : t('website:editor.fieldInvalid');
+  };
+
+  /*
+   * B2 (V19) — which bilingual fields must be filled in the site's main
+   * language: the schema decides (the same check Apply runs), so the mark
+   * can never disagree with the save. Asked once per field, by emptying it.
+   */
+  const requiredCache = useMemo(
+    () => new Map<string, boolean>(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [type, requiredLocale]
+  );
+  const isLocalizedRequired = (
+    descriptor: SectionFieldDescriptor,
+    path: string
+  ): boolean => {
+    if (
+      !(descriptor.kind === 'text' || descriptor.kind === 'longText') ||
+      !descriptor.localized
+    ) {
+      return false;
+    }
+    const cacheKey = path.replace(/\.\d+\./g, '.#.');
+    const cached = requiredCache.get(cacheKey);
+    if (cached !== undefined) return cached;
+    const probe = withValueAtPath(draft, path, { en: '', ar: '' });
+    const required = collectSectionIssues(type, probe, requiredLocale).some(
+      (issue) =>
+        issue.path === `${path}.${requiredLocale}` &&
+        issue.messageKey === 'validation:required'
+    );
+    requiredCache.set(cacheKey, required);
+    return required;
   };
 
   const errorFor: FieldErrorLookup = (path, labelKey, maxLength) => {
@@ -1132,6 +1218,26 @@ export function SectionConfigForm<TType extends SectionType>({
       text: `${name}: ${messageFor(issue, field.labelKeys[field.labelKeys.length - 1], field.maxLength)}`,
     };
   });
+
+  /*
+   * B2 (V18) — the summary's heading says what the author can do here.
+   * Text saved before a limit tightened keeps its own explanation (the
+   * site still shows it); text typed over the limit just now is simply
+   * too long; and the visual editor's panel has no Apply — its changes
+   * save once nothing needs fixing.
+   */
+  const onlyStoredOverLimit = issues.every(
+    (issue) =>
+      isOverLimitIssue(issue) &&
+      valueAtPath(initialDraft, issue.path) === valueAtPath(draft, issue.path)
+  );
+  const summaryHeading = onlyStoredOverLimit
+    ? t('website:editor.overLimitSummary', { count: summary.length })
+    : isPanel
+      ? t('website:editor.panelIssuesSummary', { count: summary.length })
+      : attempted
+        ? t('website:editor.fieldIssuesSummary', { count: summary.length })
+        : t('website:editor.typedOverLimitSummary', { count: summary.length });
 
   // After a refused Apply, take the author to the first field to fix.
   useEffect(() => {
@@ -1239,7 +1345,11 @@ export function SectionConfigForm<TType extends SectionType>({
     const result = withRequiredLocale(requiredLocale, () =>
       getSectionConfigSchema(type).safeParse(draft)
     );
-    if (!result.success) {
+    if (
+      !result.success ||
+      // B2 (V20) — a "Web address" button with no address isn't applied.
+      collectButtonTargetIssues(type, draft).length > 0
+    ) {
       setAttempted(true);
       setFocusRequest((count) => count + 1);
       return;
@@ -1262,15 +1372,7 @@ export function SectionConfigForm<TType extends SectionType>({
               data-testid="section-form-issues"
               className="space-y-1 rounded-md border border-destructive/50 bg-destructive/5 p-3 text-sm"
             >
-              <p className="font-medium text-destructive">
-                {attempted
-                  ? t('website:editor.fieldIssuesSummary', {
-                      count: summary.length,
-                    })
-                  : t('website:editor.overLimitSummary', {
-                      count: summary.length,
-                    })}
-              </p>
+              <p className="font-medium text-destructive">{summaryHeading}</p>
               <ul className="list-disc space-y-0.5 ps-5 text-xs text-foreground">
                 {summary.map((entry) => (
                   <li key={entry.key}>{entry.text}</li>
@@ -1321,6 +1423,7 @@ export function SectionConfigForm<TType extends SectionType>({
                 key={field.key}
                 descriptor={field}
                 path={field.key}
+                required={isLocalizedRequired(field, field.key)}
                 errorFor={errorFor}
                 value={draft[field.key]}
                 onChange={(value) => setField(field.key, value)}
@@ -1402,6 +1505,10 @@ export function SectionConfigForm<TType extends SectionType>({
                       key={field.key}
                       descriptor={field}
                       path={`${schema.repeatable!.key}.${index}.${field.key}`}
+                      required={isLocalizedRequired(
+                        field,
+                        `${schema.repeatable!.key}.${index}.${field.key}`
+                      )}
                       errorFor={errorFor}
                       value={item[field.key]}
                       onChange={(value) => updateItem(index, field.key, value)}
@@ -1485,7 +1592,7 @@ export function SectionConfigForm<TType extends SectionType>({
                         : 'px-2.5 py-1 text-muted-foreground hover:text-foreground'
                     }
                   >
-                    {PUBLIC_WEBSITE_LOCALE_LABELS[candidate]}
+                    {t(contentLocaleLabelKey(candidate))}
                   </button>
                 ))}
               </div>

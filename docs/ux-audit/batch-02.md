@@ -85,7 +85,7 @@ on Escape.
 - **Audit-log email scrub (backend, found by B3 V01)** — linear time: a long string no longer
   freezes the API.
 
-### Settings, visual identity, messages, domain (mine)
+### Settings, visual identity, messages, domain
 - **V03** SEO: per-language limits with counters and "Shorten to N"; server `metaTitle.en`
   violations under that language; a failure is one inline "Your changes weren't saved" with the
   real reason — no toast (both the website SEO tab and the page "Edit SEO" dialog).
@@ -109,6 +109,37 @@ on Escape.
 - **V27** Messages: status tabs wrap at 375 px; the search keeps room for its placeholder; the
   message column no longer pushes the table past the card.
 - **V29** Choosing a theme confirms it changed the draft and goes live on publish.
+
+### Page editor, visual editor, pages and FAQ dialogs
+- **V01** "Add section" is bounded to the room on screen and scrolls inside (1280×900: top 8 px,
+  791 px tall; 375: 374 px).
+- **V02** `PageHeader` actions wrap onto their own row and never exceed the page; the title keeps
+  its room. The page editor's SEO and History moved into one "More" menu. AR 1280: no sideways
+  scroll.
+- **V09** New page: a taken or reserved address shows on the address field with focus; any other
+  failure is one `SaveFailedAlert` inside the dialog — no toast under the overlay. Same for FAQ.
+- **V10** A server limit with no number uses the form's own limit (or a count-free message);
+  labels are the form's ("Question (English) must be 200 characters or fewer").
+- **V11** The section, New page and FAQ dialogs ask before discarding typed edits.
+- **V13** Visual-editor save status keeps a short visible word at 375, opens the real reason with
+  Try again, says "Offline" for network failures and retries when the connection returns.
+- **V14** Autosave waits while a confirmation dialog is open: "Leave and discard" discards.
+- **V15** A refusal that names no section shows the real reason instead of an empty list.
+- **V16** Save and publish failures are each one inline alert in both editors.
+- **V18** Freshly typed over-limit text: "This text is too long. Shorten it to apply these
+  changes:"; the stored-over-limit wording stays for old content; the panel says "Fix N problems
+  so your changes can be saved:".
+- **V19** Required fields in the site's main language carry the required mark (from the same
+  check Apply runs); New page shows one message per empty field. **Partly:** FAQ entries still
+  require both languages — the backend schema does; changing it is a separate backend change.
+- **V20** A web-address button needs its address ("Enter the web address this button opens,
+  starting with https://"); a malformed one gets an example; `javascript:` stays refused.
+- **V25** Greyed Save/Publish show a visible reason; visual-editor Publish always has a name and,
+  when blocked, opens the reason with "Go to the section".
+- **V30** Deleting a section says it leaves the draft and goes live on publish.
+- **V31** Short status with the full sentence in a popover; "double-tap" on touch; 40 px header
+  targets at 375, 44 px from md.
+- **V34** Content-language selects and default core-page names are translated in Arabic.
 
 ### Not changed, with reason
 - **V12** previews are `inert` and `aria-hidden`: 200 Tab presses never entered them and

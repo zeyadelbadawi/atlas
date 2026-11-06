@@ -35,6 +35,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import {
   History,
   Loader2,
+  MoreHorizontal,
   MousePointerClick,
   Save,
   Search,
@@ -53,6 +54,14 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { SaveFailedAlert } from '@forms';
+import { useDirtyGuard } from '@features/unsaved-changes';
 import { useConfirmDialog } from '@app/providers';
 import { useDisclosure, useUnsavedChanges, usePermissions } from '@hooks';
 import { useAcademy } from '@features/academy';
@@ -89,6 +98,10 @@ import {
   type PublicWebsiteLocale,
 } from '../constants/locale.constants';
 import { SECTION_METADATA } from '../sections';
+import {
+  contentLocaleLabelKey,
+  useDisplayPageTitle,
+} from '../components/website-display-labels';
 import { useEditingPresence } from '../hooks/useEditingPresence';
 import { EditingPresenceBanner } from '../components/EditingPresenceBanner';
 import { SaveConflictDialog } from '../components/SaveConflictDialog';
@@ -181,6 +194,11 @@ function WebsitePageEditor(): JSX.Element {
   const [breakpoint, setBreakpoint] = useState<PreviewBreakpoint>(
     initialPreviewBreakpoint
   );
+  // B2 (V11) — whether the open section dialog holds edits not yet applied:
+  // closing it (Escape, ×, outside, Cancel) asks before discarding them.
+  const [sectionDirty, setSectionDirty] = useState(false);
+  const sectionGuard = useDirtyGuard(sectionDirty);
+  const displayTitle = useDisplayPageTitle();
   // CMS phase 3e — the section whose looks are being chosen, if any.
   const [looksOf, setLooksOf] = useState<SectionType | null>(null);
   const seoDialog = useDisclosure();
@@ -337,7 +355,7 @@ function WebsitePageEditor(): JSX.Element {
         academyId: academyId ?? '',
       }),
     },
-    { labelKey: 'website:editor.title', label: page.title },
+    { labelKey: 'website:editor.title', label: displayTitle(page) },
   ];
 
   const handleToggleEnabled = (id: string) =>
@@ -389,7 +407,16 @@ function WebsitePageEditor(): JSX.Element {
     setSelectedId(added.id);
   };
 
+  /** Closes the section dialog; with unapplied edits, asks first (V11). */
+  const closeSectionDialog = () => {
+    void sectionGuard.requestClose(() => {
+      setSectionDirty(false);
+      setSelectedId(undefined);
+    });
+  };
+
   const handleSaveSectionConfig = (config: SectionInstance['config']) => {
+    setSectionDirty(false);
     if (selectedId) {
       clearServerIssues(selectedId);
       setDraftSections((prev) =>
@@ -442,6 +469,42 @@ function WebsitePageEditor(): JSX.Element {
   const showPublishPage = canPublish && isSiteLive;
   const isBusy = updatePage.isPending || publishPage.isPending;
   const publishConflict = readSaveConflict(publishPage.error);
+  const isPublishDisabled =
+    (!isDirty && !page.hasUnpublishedChanges) ||
+    isBusy ||
+    (isDirty && isBlockedByLimits);
+  // B2 (V25) — a greyed-out Save or Publish says why, next to it (a
+  // tooltip never shows on touch).
+  const actionHint = isBusy
+    ? null
+    : isBlockedByLimits
+      ? t('website:editor.actionsBlockedByLimits')
+      : !isDirty && (!showPublishPage || !page.hasUnpublishedChanges)
+        ? t(
+            showPublishPage
+              ? 'website:editor.nothingToPublish'
+              : 'website:editor.nothingToSave'
+          )
+        : null;
+  // One message per failed save (V15, V16): sections the server named are
+  // listed (no retry — the same content fails the same way); any other
+  // refusal or failure is one inline alert with the real reason. A stale
+  // version has the conflict dialog; over-limit text has its own notice.
+  const saveError =
+    updatePage.error &&
+    updatePage.error.kind !== 'conflict' &&
+    !(
+      isContentValidationFailure(updatePage.error) &&
+      (updatePage.error.violations ?? []).every(isOverLimitIssue)
+    )
+      ? updatePage.error
+      : null;
+  const rejected =
+    saveError && isContentValidationFailure(saveError)
+      ? rejectedSections(saveError.violations, draftSections).filter(
+          (entry) => entry.type !== undefined
+        )
+      : [];
 
   return (
     <PageContainer fullWidth>
@@ -450,110 +513,151 @@ function WebsitePageEditor(): JSX.Element {
 
         <PageHeader
           titleKey="website:editor.title"
-          title={page.title}
+          title={displayTitle(page)}
           descriptionKey="website:editor.subtitle"
           breadcrumbs={breadcrumbs}
           actions={
             canManage ? (
-              <div className="flex flex-wrap items-center gap-2">
-                {page.coreType !== 'courseDetails' ? (
-                  <Button asChild variant="secondary">
-                    <Link
-                      to={buildPath(DASHBOARD_ROUTES.websiteVisualEditor, {
-                        academyId,
-                        pageId,
-                      })}
-                      title={t('website:visualEditor.openHint')}
-                    >
-                      <MousePointerClick
-                        className="size-4"
-                        strokeWidth={2}
-                        aria-hidden
-                      />
-                      {t('website:visualEditor.editIn')}
-                    </Link>
-                  </Button>
-                ) : null}
-                <Select
-                  value={previewLocale}
-                  onValueChange={(value) =>
-                    setPreviewLocale(value as PublicWebsiteLocale)
-                  }
-                >
-                  <SelectTrigger
-                    className="w-32"
-                    aria-label={t('website:preview.localeLabel')}
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PUBLIC_WEBSITE_LOCALES.map((locale) => (
-                      <SelectItem key={locale} value={locale}>
-                        {PUBLIC_WEBSITE_LOCALE_LABELS[locale]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={seoDialog.open}
-                >
-                  <Search className="size-4" strokeWidth={2} aria-hidden />
-                  {t('website:editor.seoAction')}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={historyDialog.open}
-                  title={t('website:history.buttonHint')}
-                  data-testid="website-page-history"
-                >
-                  <History className="size-4" strokeWidth={2} aria-hidden />
-                  {t('website:history.button')}
-                </Button>
-                <Button
-                  type="button"
-                  variant={showPublishPage ? 'outline' : 'default'}
-                  data-testid="website-save-page"
-                  onClick={() => void handleSaveDraft()}
-                  disabled={!isDirty || isBusy || isBlockedByLimits}
-                >
-                  {updatePage.isPending && !publishPage.isPending ? (
-                    <Loader2 className="size-4 animate-spin" aria-hidden />
-                  ) : (
-                    <Save className="size-4" strokeWidth={2} aria-hidden />
-                  )}
-                  {showPublishPage
-                    ? t('website:editor.saveDraft')
-                    : t('website:editor.saveChanges')}
-                </Button>
-                {/* One page goes live without republishing the site — only
-                    while the site is live (publishing the site publishes
-                    every page anyway). Unsaved edits are saved first, in
-                    the same click. */}
-                {showPublishPage ? (
-                  <Button
-                    type="button"
-                    data-testid="website-publish-page"
-                    onClick={() => void handlePublishPage()}
-                    disabled={
-                      (!isDirty && !page.hasUnpublishedChanges) ||
-                      isBusy ||
-                      (isDirty && isBlockedByLimits)
+              <div className="flex flex-col gap-1.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  {page.coreType !== 'courseDetails' ? (
+                    <Button asChild variant="secondary">
+                      <Link
+                        to={buildPath(DASHBOARD_ROUTES.websiteVisualEditor, {
+                          academyId,
+                          pageId,
+                        })}
+                        title={t('website:visualEditor.openHint')}
+                      >
+                        <MousePointerClick
+                          className="size-4"
+                          strokeWidth={2}
+                          aria-hidden
+                        />
+                        {t('website:visualEditor.editIn')}
+                      </Link>
+                    </Button>
+                  ) : null}
+                  <Select
+                    value={previewLocale}
+                    onValueChange={(value) =>
+                      setPreviewLocale(value as PublicWebsiteLocale)
                     }
                   >
-                    {publishPage.isPending ? (
+                    <SelectTrigger
+                      className="w-32"
+                      aria-label={t('website:preview.localeLabel')}
+                      data-testid="website-editor-preview-locale"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PUBLIC_WEBSITE_LOCALES.map((locale) => (
+                        <SelectItem key={locale} value={locale}>
+                          {t(contentLocaleLabelKey(locale))}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {/* B2 (V02) — the two occasional actions share one menu,
+                      so the header's actions fit one row in either
+                      language. */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        data-testid="website-page-more"
+                      >
+                        <MoreHorizontal
+                          className="size-4"
+                          strokeWidth={2}
+                          aria-hidden
+                        />
+                        {t('website:editor.moreActions')}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      // The dialog opened from the menu takes focus; giving
+                      // it back to the trigger would pull it out again.
+                      onCloseAutoFocus={(event) => event.preventDefault()}
+                    >
+                      <DropdownMenuItem onSelect={seoDialog.open}>
+                        <Search
+                          className="size-4"
+                          strokeWidth={2}
+                          aria-hidden
+                        />
+                        {t('website:editor.seoAction')}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onSelect={historyDialog.open}
+                        data-testid="website-page-history"
+                      >
+                        <History
+                          className="size-4"
+                          strokeWidth={2}
+                          aria-hidden
+                        />
+                        {t('website:history.button')}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <Button
+                    type="button"
+                    variant={showPublishPage ? 'outline' : 'default'}
+                    data-testid="website-save-page"
+                    onClick={() => void handleSaveDraft()}
+                    disabled={!isDirty || isBusy || isBlockedByLimits}
+                    aria-describedby={
+                      actionHint ? 'website-page-action-hint' : undefined
+                    }
+                  >
+                    {updatePage.isPending && !publishPage.isPending ? (
                       <Loader2 className="size-4 animate-spin" aria-hidden />
                     ) : (
-                      <UploadCloud
-                        className="size-4"
-                        strokeWidth={2}
-                        aria-hidden
-                      />
+                      <Save className="size-4" strokeWidth={2} aria-hidden />
                     )}
-                    {t('website:editor.publishPageAction')}
+                    {showPublishPage
+                      ? t('website:editor.saveDraft')
+                      : t('website:editor.saveChanges')}
                   </Button>
+                  {/* One page goes live without republishing the site — only
+                      while the site is live (publishing the site publishes
+                      every page anyway). Unsaved edits are saved first, in
+                      the same click. */}
+                  {showPublishPage ? (
+                    <Button
+                      type="button"
+                      data-testid="website-publish-page"
+                      onClick={() => void handlePublishPage()}
+                      disabled={isPublishDisabled}
+                      aria-describedby={
+                        actionHint ? 'website-page-action-hint' : undefined
+                      }
+                    >
+                      {publishPage.isPending ? (
+                        <Loader2 className="size-4 animate-spin" aria-hidden />
+                      ) : (
+                        <UploadCloud
+                          className="size-4"
+                          strokeWidth={2}
+                          aria-hidden
+                        />
+                      )}
+                      {t('website:editor.publishPageAction')}
+                    </Button>
+                  ) : null}
+                </div>
+                {actionHint ? (
+                  <p
+                    id="website-page-action-hint"
+                    data-testid="website-page-action-hint"
+                    className="text-xs text-muted-foreground"
+                  >
+                    {actionHint}
+                  </p>
                 ) : null}
               </div>
             ) : undefined
@@ -595,8 +699,10 @@ function WebsitePageEditor(): JSX.Element {
               }}
             />
           ) : (
-            <ErrorState
-              kind={publishPage.error.kind}
+            // B2 (V16) — one message with the real reason, no toast.
+            <SaveFailedAlert
+              error={publishPage.error}
+              titleKey="website:editor.publishFailedTitle"
               onRetry={() => void handlePublishPage()}
             />
           )
@@ -640,14 +746,8 @@ function WebsitePageEditor(): JSX.Element {
             </AlertDescription>
           </Alert>
         ) : null}
-        {updatePage.error &&
-        updatePage.error.kind !== 'conflict' &&
-        // Over-limit refusals are explained by the notice above.
-        !(
-          isContentValidationFailure(updatePage.error) &&
-          (updatePage.error.violations ?? []).every(isOverLimitIssue)
-        ) ? (
-          isContentValidationFailure(updatePage.error) ? (
+        {saveError ? (
+          rejected.length > 0 ? (
             /*
               The server said exactly which sections it refused, so say so.
               And no Retry: resubmitting the same invalid content fails the
@@ -665,21 +765,26 @@ function WebsitePageEditor(): JSX.Element {
                   style: 'long',
                   type: 'conjunction',
                 }).format(
-                  rejectedSections(
-                    updatePage.error.violations,
-                    draftSections
-                  ).map(({ index, type }) =>
-                    type
-                      ? `${index + 1}. ${t(`website:sections.${type}.label`)}`
-                      : String(index + 1)
+                  rejected.map(
+                    ({ index, type }) =>
+                      `${index + 1}. ${t(`website:sections.${type}.label`)}`
                   )
                 ),
               }}
             />
           ) : (
-            <ErrorState
-              kind={updatePage.error.kind}
-              onRetry={() => void handleSaveDraft()}
+            // B2 (V15/V16) — a refusal no section explains, or any other
+            // failure: one inline message with the real reason. A refused
+            // payload would fail again unchanged, so only a failure that
+            // can pass on a second try offers Try again.
+            <SaveFailedAlert
+              error={saveError}
+              titleKey="website:editor.saveFailedTitle"
+              onRetry={
+                isContentValidationFailure(saveError)
+                  ? undefined
+                  : () => void handleSaveDraft()
+              }
             />
           )
         ) : null}
@@ -730,7 +835,9 @@ function WebsitePageEditor(): JSX.Element {
 
       <Dialog
         open={!!selectedSection}
-        onOpenChange={(open) => !open && setSelectedId(undefined)}
+        onOpenChange={(open) => {
+          if (!open) closeSectionDialog();
+        }}
       >
         <DialogContent className="max-h-[90vh] max-w-6xl overflow-y-auto">
           {selectedSection ? (
@@ -741,6 +848,7 @@ function WebsitePageEditor(): JSX.Element {
                 </DialogTitle>
               </DialogHeader>
               <SectionConfigForm
+                key={selectedSection.id}
                 type={selectedSection.type}
                 academyId={academyId}
                 initialConfig={selectedSection.config}
@@ -748,7 +856,8 @@ function WebsitePageEditor(): JSX.Element {
                 configuration={configuration}
                 isSaving={false}
                 onSave={handleSaveSectionConfig}
-                onCancel={() => setSelectedId(undefined)}
+                onCancel={closeSectionDialog}
+                onDirtyChange={setSectionDirty}
                 serverIssues={serverIssuesById[selectedSection.id]}
                 renderPagePreview={(config, locale) =>
                   sectionPagePreview(selectedSection.id, config, locale)

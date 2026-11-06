@@ -139,8 +139,9 @@ function renderPage() {
   return screen.getByTestId('create-page-dialog');
 }
 
+// The labels carry the required mark (B2, V19): matched by their start.
 const field = (dialog: HTMLElement, name: string) =>
-  within(dialog).getByLabelText(name) as HTMLInputElement;
+  within(dialog).getByLabelText(new RegExp(`^${name}`)) as HTMLInputElement;
 
 beforeEach(() => {
   existingPages = [

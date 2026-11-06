@@ -20,6 +20,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/hooks/use-toast';
+import { useFailureReason } from '@forms';
 import { Link } from 'react-router-dom';
 import { Check, ExternalLink, Search, X } from 'lucide-react';
 import {
@@ -89,7 +90,10 @@ export function SiteSettingsPanel({
   onClose,
 }: SiteSettingsPanelProps): JSX.Element {
   const { t } = useTranslation();
-  const updateConfig = useUpdateWebsiteConfiguration();
+  // B2 — the panel says itself why a theme change failed (one message,
+  // with the reason), so the app-wide toast stays quiet.
+  const updateConfig = useUpdateWebsiteConfiguration({ inlineErrors: true });
+  const failureReason = useFailureReason();
   const [pendingTheme, setPendingTheme] =
     useState<WebsiteThemeDefinition | null>(null);
   const [seoOpen, setSeoOpen] = useState(false);
@@ -108,9 +112,10 @@ export function SiteSettingsPanel({
     updateConfig.mutate(
       { academyId, payload: { themeKey: theme.key } },
       {
-        onError: () =>
+        onError: (error) =>
           toast({
             title: t('website:visualEditor.site.themeSaveError'),
+            description: failureReason(error),
             variant: 'destructive',
           }),
       }

@@ -61,6 +61,7 @@ import {
   type CountryCode,
 } from '@/shared/components/phone';
 import { cn } from '@utils';
+import { RequiredMark } from '@forms';
 import { useCourses } from '@features/course';
 import {
   LocalizedTextField,
@@ -77,6 +78,7 @@ import {
   resolveLocalizedText,
 } from '../utils/localized-text.utils';
 import { resolvePagePath } from '../utils/link-resolution.utils';
+import { useDisplayPageTitle } from './website-display-labels';
 import {
   SECTION_BUTTON_SLOTS,
   type LocalizedText,
@@ -452,12 +454,18 @@ export function CtaFieldEditor({
   readonly inList?: boolean;
 }): JSX.Element {
   const { t } = useTranslation();
+  const displayTitle = useDisplayPageTitle();
   const fieldId = useId();
   const linkType = inferLinkType(value);
   const urlValue = value?.url ?? '';
-  const urlError =
-    (urlValue && !isSafeExternalUrl(urlValue)) ||
-    Boolean(errorFor(`${path}.url`, labelKey));
+  // B2 (V20) — what is wrong and how to fix it: an address that isn't a
+  // full, safe web address (checked as typed), or — after Apply — none
+  // at all on a "Web address" button.
+  const urlMessage =
+    urlValue && !isSafeExternalUrl(urlValue)
+      ? t('website:buttons.urlInvalid')
+      : errorFor(`${path}.url`, 'website:buttons.webAddress');
+  const urlError = Boolean(urlMessage);
   const courses = usePublishedCourses(academyId);
   const label = value?.label ?? EMPTY_LOCALIZED_TEXT;
 
@@ -530,7 +538,7 @@ export function CtaFieldEditor({
             <SelectContent>
               {pages.map((page) => (
                 <SelectItem key={page.id} value={page.id}>
-                  {page.title}
+                  {displayTitle(page)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -567,6 +575,7 @@ export function CtaFieldEditor({
         <div className="space-y-1.5">
           <Label htmlFor={`${fieldId}-url`}>
             {t('website:buttons.webAddress')}
+            <RequiredMark />
           </Label>
           <Input
             id={`${fieldId}-url`}
@@ -575,8 +584,11 @@ export function CtaFieldEditor({
             dir="ltr"
             data-ltr-content
             placeholder="https://example.com"
+            aria-required
             aria-invalid={urlError || undefined}
-            aria-describedby={urlError ? `${fieldId}-url-error` : undefined}
+            aria-describedby={
+              urlError ? `${fieldId}-url-error` : `${fieldId}-url-hint`
+            }
             data-field-error={urlError || undefined}
             value={urlValue}
             onChange={(event) =>
@@ -587,10 +599,21 @@ export function CtaFieldEditor({
             }
           />
           {urlError ? (
-            <p id={`${fieldId}-url-error`} className="text-xs text-destructive">
-              {t('validation:invalidUrl')}
+            <p
+              id={`${fieldId}-url-error`}
+              className="text-xs text-destructive"
+              data-testid="cta-url-error"
+            >
+              {urlMessage}
             </p>
-          ) : null}
+          ) : (
+            <p
+              id={`${fieldId}-url-hint`}
+              className="text-xs text-muted-foreground"
+            >
+              {t('website:buttons.urlHint')}
+            </p>
+          )}
         </div>
       ) : null}
 
@@ -671,6 +694,7 @@ function useDestination(
   readonly text: string;
 } | null {
   const { t } = useTranslation();
+  const displayTitle = useDisplayPageTitle();
   const courses = usePublishedCourses(academyId);
   return (cta) => {
     const type = inferLinkType(cta);
@@ -689,7 +713,7 @@ function useDestination(
       case 'page': {
         const page = pages.find((candidate) => candidate.id === cta.pageId);
         return page && resolvePagePath(page) !== undefined
-          ? { Icon, text: page.title }
+          ? { Icon, text: displayTitle(page) }
           : null;
       }
       case 'course': {

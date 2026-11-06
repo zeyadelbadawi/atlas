@@ -28,10 +28,10 @@ import {
 } from './schemas/website.schemas';
 import { ContactSubmissionsToolbar } from './components/ContactSubmissionsToolbar';
 
-let uiLanguage: 'en' | 'ar' = 'en';
+const ui = vi.hoisted(() => ({ language: 'en' as 'en' | 'ar' }));
 vi.mock('@hooks', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
-  useLanguage: () => ({ language: uiLanguage, isRtl: uiLanguage === 'ar' }),
+  useLanguage: () => ({ language: ui.language, isRtl: ui.language === 'ar' }),
 }));
 
 afterEach(cleanup);
@@ -137,7 +137,10 @@ describe('FormMessage (V03)', () => {
 });
 
 describe('messages date range (V22)', () => {
-  const props = {
+  const props: Omit<
+    Parameters<typeof ContactSubmissionsToolbar>[0],
+    'filters' | 'onRangeChange'
+  > = {
     hasFilters: true,
     summary: undefined,
     onSearchChange: vi.fn(),
@@ -155,7 +158,7 @@ describe('messages date range (V22)', () => {
       render(
         <I18nextProvider i18n={createI18nInstance(language)}>
           <ContactSubmissionsToolbar
-            {...(props as never)}
+            {...props}
             filters={
               {
                 from: '2026-12-31',
@@ -187,7 +190,7 @@ describe('messages date range (V22)', () => {
     render(
       <I18nextProvider i18n={createI18nInstance('en')}>
         <ContactSubmissionsToolbar
-          {...(props as never)}
+          {...props}
           filters={
             {
               from: '2026-01-01',

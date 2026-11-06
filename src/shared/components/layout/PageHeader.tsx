@@ -42,8 +42,14 @@ export function PageHeader({
     <header className={cn('space-y-3', className)}>
       {breadcrumbs ? <Breadcrumbs items={breadcrumbs} /> : null}
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0 space-y-1">
+      {/*
+        B2 (V02) — the actions wrap onto their own row when they don't fit
+        beside the title, instead of squeezing it to one word per line (or
+        pushing the page sideways). The title keeps a readable minimum
+        width; with room to spare the layout is the same as before.
+      */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+        <div className="min-w-0 space-y-1 sm:flex-[1_1_20rem]">
           <h1 className="font-display text-2xl font-semibold leading-snug tracking-tight text-foreground">
             {title ?? t(titleKey, values ?? {})}
           </h1>
@@ -55,7 +61,7 @@ export function PageHeader({
         </div>
 
         {actions ? (
-          <div className="flex shrink-0 flex-wrap items-center gap-2">
+          <div className="flex max-w-full shrink-0 flex-wrap items-center gap-2">
             {actions}
           </div>
         ) : null}

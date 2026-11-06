@@ -248,7 +248,12 @@ export function SectionTree({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="start"
-            className="w-64"
+            // B2 (V01) — 21 section types are taller than any screen: the
+            // menu is bounded by the room Radix measures on the chosen side
+            // and scrolls inside, instead of starting above the viewport.
+            collisionPadding={8}
+            className="max-h-[var(--radix-dropdown-menu-content-available-height)] w-64 overflow-y-auto overscroll-contain"
+            data-testid="add-section-menu"
             // The request dialog takes focus when it opens from this menu;
             // returning focus to the trigger would pull it back out.
             onCloseAutoFocus={(event) => {
