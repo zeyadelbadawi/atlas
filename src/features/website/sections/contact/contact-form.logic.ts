@@ -202,9 +202,10 @@ export function classifyContactFailure(error: unknown): ContactFailure {
             minutes: Math.max(1, Math.ceil(apiError.retryAfterSeconds / 60)),
           }
         : { kind: 'rateLimited' };
+    // Only a real connection failure is blamed on the connection (the same
+    // rule as `isConnectionFailure`).
     case 'network':
     case 'timeout':
-    case 'cancelled':
       return { kind: 'network' };
     case 'notFound':
       return { kind: 'unavailable' };

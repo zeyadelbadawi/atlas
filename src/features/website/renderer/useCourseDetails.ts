@@ -23,6 +23,8 @@ import { DEV_OVERRIDE_PARAM } from '@features/public-website';
 import { learningStateOf } from '@utils';
 import { isApiError } from '@api';
 import { useEnrollment, useEnroll } from '@features/learning';
+import { useInvalidate } from '@/shared/hooks';
+import { enrollmentKeys } from '@services/query';
 import type { PublicWebsiteLocale } from '@types';
 import { usePublicWebsiteDefaultLocale } from './PublicWebsiteLocaleContext';
 import { publicWebsiteLocalePrefix } from '../constants/locale.constants';
@@ -131,6 +133,7 @@ export function useCourseDetails(
     enabled: isAuthenticated,
   });
   const { mutateAsync: enroll, isPending: isEnrolling } = useEnroll();
+  const { invalidate } = useInvalidate();
   const [enrollError, setEnrollError] = useState<CourseEnrollFailure | null>(
     null
   );
@@ -158,7 +161,13 @@ export function useCourseDetails(
       // One message, on the page (`CourseEnrollError`), with the real
       // reason — the academy's rejection of this learner's registration
       // included (the API's own `registrationRejected` sentence).
-      setEnrollError(classifyEnrollFailure(error));
+      const failure = classifyEnrollFailure(error);
+      setEnrollError(failure);
+      // The cached enrolment still says "not enrolled": refresh it, so the
+      // page's own action becomes Continue too.
+      if (failure.kind === 'alreadyEnrolled') {
+        void invalidate(enrollmentKeys.all);
+      }
     }
   };
 
@@ -218,7 +227,12 @@ export function useCourseDetails(
     hasStarted: isEnrolled && learningState !== 'not_started',
     isFree,
     isEnrolling,
-    enrollError,
+    // Once the refreshed enrolment shows it, the page's own action says
+    // Continue: "already enrolled" would only repeat it.
+    enrollError:
+      isEnrolled && enrollError?.kind === 'alreadyEnrolled'
+        ? null
+        : enrollError,
     handleEnroll,
     continueToCourse,
     action,

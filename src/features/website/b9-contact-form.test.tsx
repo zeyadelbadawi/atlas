@@ -163,6 +163,10 @@ describe('contact rules (shared by every theme)', () => {
     expect(classifyContactFailure(createApiError('network')).kind).toBe(
       'network'
     );
+    // A cancelled request is not the visitor's connection.
+    expect(classifyContactFailure(createApiError('cancelled')).kind).toBe(
+      'server'
+    );
   });
 
   it('keeps the details sentence only when there are details (owner text always)', () => {

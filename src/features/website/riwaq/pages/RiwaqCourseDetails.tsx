@@ -530,6 +530,13 @@ export function RiwaqCourseDetails({
       <div data-riwaq-purchase-bar="" data-purchase-bar="" data-above-nav={showBar ? '' : undefined} className="rwp-bar" data-ground="porcelain">
         <p className="rwp-bar-price rw-num">{price}</p>
         {actionButton('rwp-bar-action')}
+        {/* A failed enrolment says why here too: the aside is hidden. */}
+        <CourseEnrollError
+          error={enrollError}
+          onContinue={continueToCourse}
+          className="rwp-error rwp-bar-error"
+          actionClassName="rw-btn rw-btn-line"
+        />
       </div>
       {/* Its room is at the bottom of the footer (`WebsiteChrome`). */}
     </article>

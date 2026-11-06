@@ -222,10 +222,11 @@ function LoadedWebsiteChrome({
                 linkRenderer={linkRenderer}
                 // The platform attribution is handed to the theme's footer as
                 // a finished element: the theme places it, it can't change it.
-                // B9 — on the public site the legal links share that line.
+                // B9 — the legal links share that line, in the preview too, so
+                // the builder lays the footer out exactly as the site does.
                 attribution={
                   <>
-                    {linkRenderer ? <WebsiteLegalLinks /> : null}
+                    <WebsiteLegalLinks />
                     <AtlasPlatformAttribution className="shrink-0" />
                   </>
                 }

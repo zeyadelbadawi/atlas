@@ -540,7 +540,8 @@ a.rwc-foot-social-link:hover {
 }
 
 .rwp-plate {
-  padding-block: clamp(2.5rem, 1.5rem + 4.5vw, 6rem) clamp(3rem, 2rem + 4vw, 6rem);
+  padding-block: clamp(2.5rem, 1.5rem + 4.5vw, 6rem)
+    clamp(3rem, 2rem + 4vw, 6rem);
 }
 
 .rwp-plate-rail,
@@ -1150,8 +1151,9 @@ a.rwp-sheet:hover .rwp-sheet-title {
   z-index: 30;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.5rem 1rem;
   min-block-size: calc(3.75rem + env(safe-area-inset-bottom));
   padding-block: 0.625rem calc(0.625rem + env(safe-area-inset-bottom));
   padding-inline: var(--rw-gutter);
@@ -1183,6 +1185,12 @@ a.rwp-sheet:hover .rwp-sheet-title {
 
 .rwp-bar-action {
   min-block-size: 2.75rem;
+}
+
+/* A failed enrolment, on its own line under the price and the action. */
+.rwp-bar .rwp-bar-error {
+  flex-basis: 100%;
+  font-size: 0.875rem;
 }
 
 .rwp-bar-space {

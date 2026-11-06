@@ -715,6 +715,13 @@ export function T1CourseDetails({
           </p>
           {actionButton('min-h-11')}
         </div>
+        {/* A failed enrolment says why here too: the aside is hidden. */}
+        <CourseEnrollError
+          error={enrollError}
+          onContinue={continueToCourse}
+          className="mx-auto mt-2 max-w-3xl text-sm font-medium text-[var(--website-error)]"
+          actionClassName="t1-btn-secondary"
+        />
       </div>
       {/* Its room is at the bottom of the footer (`WebsiteChrome`). */}
     </article>

@@ -748,7 +748,7 @@
 /* B9 (UX audit) V11 — a name longer than the screen wraps inside its pill
    instead of being cut at the rail's edge; the count stays whole. */
 [data-theme-pack='manara'] .mnp-filter-pill {
-  max-inline-size: calc(100vw - 2.5rem);
+  max-inline-size: min(100%, calc(100vw - 2.5rem));
   white-space: normal;
   overflow-wrap: anywhere;
   text-align: start;
@@ -1126,8 +1126,9 @@
   z-index: 30;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.5rem 1rem;
   min-block-size: calc(3.75rem + env(safe-area-inset-bottom));
   padding-block: 0.625rem calc(0.625rem + env(safe-area-inset-bottom));
   padding-inline: var(--mn-gutter);
@@ -1156,6 +1157,12 @@
   font-weight: 800;
   font-variant-numeric: lining-nums tabular-nums;
   white-space: nowrap;
+}
+/* A failed enrolment, on its own line under the price and the action; the
+   bar's night ground takes its own text tone (the error red is for paper). */
+[data-theme-pack='manara'] .mnp-bar .mnp-bar-error {
+  flex-basis: 100%;
+  color: var(--mn-night-text);
 }
 [data-theme-pack='manara'] .mnp-bar-space {
   block-size: calc(5rem + env(safe-area-inset-bottom));

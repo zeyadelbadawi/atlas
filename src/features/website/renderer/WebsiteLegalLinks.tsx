@@ -6,8 +6,9 @@
  * `/terms` or `/privacy-policy`), and Cookie Preferences, so a choice made
  * on the banner can be changed later.
  *
- * Public site only: previews show no legal row. The links inherit the
- * footer's colour, so each theme's footer ground keeps its contrast.
+ * Rendered in the builder preview too, so the preview's footer has the same
+ * height as the site's (J50). The links inherit the footer's colour, so each
+ * theme's footer ground keeps its contrast.
  */
 import { useTranslation } from 'react-i18next';
 import { platformLegalHref, useOptionalCookieConsent } from '@features/legal';

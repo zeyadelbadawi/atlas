@@ -4,7 +4,8 @@
  * and a page records the groups it draws, so the browser can load them
  * before hydrating.
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { act, render, waitFor } from '@testing-library/react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MODERN_EDUCATION_PACK } from '../modern-education/modern-education.pack';
 import { ATELIER_PACK } from '../atelier/atelier.pack';
@@ -95,5 +96,35 @@ describe('section groups', () => {
     expect(isSectionGroupKey('riwaq:engage')).toBe(true);
     expect(isSectionGroupKey('riwaq:nope')).toBe(false);
     expect(isSectionGroupKey('toString')).toBe(false);
+  });
+});
+
+describe('a section group that cannot load', () => {
+  it('keeps the room while loading, then gives it back', async () => {
+    vi.resetModules();
+    // A fresh copy of the registry, so no real group is replaced.
+    const fresh = await import('./section-groups');
+    let fail!: (error: Error) => void;
+    const Section = fresh.sectionGroup(
+      'riwaq:enrol',
+      () =>
+        new Promise((_, reject) => {
+          fail = reject;
+        })
+    )('RiwaqAnnouncementBar');
+    const { container } = render(
+      <Section
+        academyId="a1"
+        pages={[]}
+        config={{ text: { en: 'Open', ar: '' } } as never}
+      />
+    );
+    expect(container.querySelector('[data-deferred-section]')).toBeTruthy();
+    await act(async () => {
+      fail(new Error('not a chunk error: no retries'));
+    });
+    await waitFor(() =>
+      expect(container.querySelector('[data-deferred-section]')).toBeNull()
+    );
   });
 });

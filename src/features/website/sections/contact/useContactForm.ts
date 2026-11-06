@@ -175,6 +175,9 @@ export function useContactForm(academyId: string) {
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    // The press's blur has run by now; a later keyboard-only visit (Send
+    // another message) must check each field as it is left again.
+    pressedSubmit.current = false;
     void send();
   };
   const retry = () => void send();

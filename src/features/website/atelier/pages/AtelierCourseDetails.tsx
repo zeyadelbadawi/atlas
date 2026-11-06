@@ -646,6 +646,13 @@ export function AtelierCourseDetails({
           </p>
           {actionButton('min-h-11')}
         </div>
+        {/* A failed enrolment says why here too: the aside is hidden. */}
+        <CourseEnrollError
+          error={enrollError}
+          onContinue={continueToCourse}
+          className="atp-error mx-auto mt-3 max-w-3xl text-sm"
+          actionClassName="at-btn-ghost"
+        />
       </div>
       {/* Its room is at the bottom of the footer (`WebsiteChrome`). */}
     </article>

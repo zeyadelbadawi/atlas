@@ -353,9 +353,15 @@ describe('ManaraCourseDetails', () => {
       busy: true,
     };
     wrap(page());
-    expect(screen.getByRole('alert').textContent).toContain(
-      "We couldn't enroll you"
-    );
+    // The panel and the phone bar (one of them hidden per width) each say it.
+    const alerts = screen.getAllByRole('alert');
+    expect(alerts).toHaveLength(2);
+    for (const alert of alerts) {
+      expect(alert.textContent).toContain("We couldn't enroll you");
+    }
+    expect(
+      alerts.some((alert) => alert.closest('[data-manara-purchase-bar]'))
+    ).toBe(true);
     for (const button of screen.getAllByRole('button', {
       name: 'Enroll for free',
     })) {

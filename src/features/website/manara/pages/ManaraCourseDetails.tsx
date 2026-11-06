@@ -650,6 +650,13 @@ export function ManaraCourseDetails({
           {price}
         </p>
         {actionButton('min-h-11')}
+        {/* A failed enrolment says why here too: the aside is hidden. */}
+        <CourseEnrollError
+          error={enrollError}
+          onContinue={continueToCourse}
+          className="mnp-error mnp-bar-error text-sm"
+          actionClassName="mn-btn mn-btn-outline"
+        />
       </div>
       {/* Its room is at the bottom of the footer (`WebsiteChrome`). */}
     </article>

@@ -21,13 +21,14 @@
  *     slot uses (`media-variants.ts`). The `<img>` keeps the original as
  *     its `src`, for browsers that pick neither source.
  */
-import { useState, type CSSProperties, type ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import {
   isThemeAssetReference,
   resolveThemeAsset,
 } from './resolve-theme-asset';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { mediaVariantSrcSet } from './media-variants';
+import { useImageFailure } from './useImageFailure';
 
 export interface ThemeImageProps {
   readonly value: string | undefined;
@@ -50,10 +51,10 @@ export interface ThemeImageProps {
    */
   readonly priority?: boolean;
   /**
-   * B9 (UX audit) V15 — what to draw when an uploaded image (a URL, not a
-   * theme asset) fails to load: this value instead (a course card's theme
-   * fallback photograph), else `fallback`, else nothing — never the
-   * browser's broken-image icon.
+   * B9 (UX audit) V15 — what to draw when the image fails to load (before
+   * or after hydration): this value instead (a course card's theme fallback
+   * photograph), else `fallback`, else nothing — never the browser's
+   * broken-image icon. When this value fails too, `fallback`.
    */
   readonly errorValue?: string;
 }
@@ -70,29 +71,30 @@ export function ThemeImage({
   errorValue,
 }: ThemeImageProps): JSX.Element | null {
   const { locale } = usePublicWebsiteLocale();
-  // The URL that failed to load; a new `value` is tried afresh.
-  const [failed, setFailed] = useState<string>();
+  // Whether `value` failed to load (an uploaded image or a theme asset); a
+  // new `value` is tried afresh.
+  const { failed, ref, onError } = useImageFailure(value);
   if (!value) return <>{fallback}</>;
+  if (failed) {
+    return errorValue && errorValue !== value ? (
+      <ThemeImage
+        value={errorValue}
+        alt={alt}
+        className={className}
+        style={style}
+        sizes={sizes}
+        fallback={fallback}
+        loading={loading}
+        priority={priority}
+      />
+    ) : (
+      <>{fallback}</>
+    );
+  }
   if (!isThemeAssetReference(value)) {
-    if (failed === value) {
-      return errorValue && errorValue !== value ? (
-        <ThemeImage
-          value={errorValue}
-          alt={alt}
-          className={className}
-          style={style}
-          sizes={sizes}
-          fallback={fallback}
-          loading={loading}
-          priority={priority}
-        />
-      ) : (
-        <>{fallback}</>
-      );
-    }
-    const onError = () => setFailed(value);
     const image = loading ? (
       <img
+        ref={ref}
         src={value}
         alt={alt}
         loading={loading}
@@ -104,6 +106,7 @@ export function ThemeImage({
       />
     ) : (
       <img
+        ref={ref}
         src={value}
         alt={alt}
         className={className}
@@ -141,12 +144,14 @@ export function ThemeImage({
         />
       ))}
       <img
+        ref={ref}
         src={asset.src}
         alt={alt || asset.alt[locale]}
         width={asset.width}
         height={asset.height}
         loading={eager ? 'eager' : 'lazy'}
         decoding="async"
+        onError={onError}
         // React 18 forwards the lowercase attribute unchanged.
         {...{ fetchpriority: eager ? 'high' : 'auto' }}
         className={className}

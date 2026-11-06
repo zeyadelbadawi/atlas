@@ -30,6 +30,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useState,
   useSyncExternalStore,
 } from 'react';
 import type { SectionType } from '@types';
@@ -185,15 +186,17 @@ function deferredSection<TType extends SectionType>(
     useContext(SectionGroupUsageContext)?.add(group);
     const read = () => loaded.get(group);
     const module = useSyncExternalStore(subscribe, read, read);
+    // The chunk failed after every retry: the room is given back.
+    const [loadFailed, setLoadFailed] = useState(false);
     useEffect(() => {
-      if (!module) loadSectionGroup(group).catch(() => undefined);
+      if (!module) loadSectionGroup(group).catch(() => setLoadFailed(true));
     }, [module]);
     // B9 (UX audit) V20 — while the group's chunk arrives (a page reached
     // in the browser; server-rendered pages load it before hydrating), the
     // section keeps a typical section's room, so the footer and the
     // sections below don't jump twice as it appears.
     if (!module) {
-      return (
+      return loadFailed ? null : (
         <div
           aria-hidden
           data-deferred-section={exportName}

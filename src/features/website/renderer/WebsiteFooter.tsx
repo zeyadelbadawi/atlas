@@ -53,7 +53,7 @@ export function FooterLegalLine({
 }: {
   readonly copyright: ReactNode;
   readonly className?: string;
-  /** B9 — the public site's legal links (Terms, Privacy, Cookie Preferences). */
+  /** B9 — the legal links (Terms, Privacy, Cookie Preferences), shown on the site and in its preview alike. */
   readonly legal?: boolean;
 }): JSX.Element {
   return (
@@ -138,7 +138,7 @@ export function WebsiteFooter({
           className={`${container} flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-between sm:text-start`}
         >
           <FooterLegalLine
-            legal={!!linkRenderer}
+            legal
             copyright={
               <p className="text-sm text-muted-foreground">{copyright}</p>
             }
@@ -183,7 +183,7 @@ export function WebsiteFooter({
             ))}
           </div>
           <FooterLegalLine
-            legal={!!linkRenderer}
+            legal
             className="sm:justify-center"
             copyright={
               <p className="text-xs text-muted-foreground">{copyright}</p>
@@ -235,7 +235,7 @@ export function WebsiteFooter({
         className={`${container} mt-8 flex flex-col items-center gap-3 border-t border-border pt-6 text-center sm:flex-row sm:justify-between sm:text-start`}
       >
         <FooterLegalLine
-          legal={!!linkRenderer}
+          legal
           copyright={
             <p className="text-xs text-muted-foreground">{copyright}</p>
           }

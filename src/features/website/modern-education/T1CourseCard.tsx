@@ -7,13 +7,14 @@
  *   cards stays aligned.
  * On the public site the whole card is one link.
  */
-import { useId, useState } from 'react';
+import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PlayCircle, Star, UserRound } from 'lucide-react';
 import { cn } from '@utils';
 import { formatCoursePricing } from '@features/course';
 import type { Course } from '@types';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
+import { useImageFailure } from '../theme-assets/useImageFailure';
 
 /** A thumbnail-less course's media: brand-tinted dot pattern + its initial. */
 export function CourseFallbackPattern({
@@ -68,16 +69,17 @@ export function T1CourseThumbnail({
   readonly title: string;
   readonly loading?: 'lazy';
 }): JSX.Element {
-  const [failed, setFailed] = useState<string>();
-  if (!src || failed === src) return <CourseFallbackPattern title={title} />;
+  const image = useImageFailure(src);
+  if (!src || image.failed) return <CourseFallbackPattern title={title} />;
   return (
     <img
+      ref={image.ref}
       src={src}
       alt=""
       loading={loading}
       decoding="async"
       className="size-full object-cover"
-      onError={() => setFailed(src)}
+      onError={image.onError}
     />
   );
 }

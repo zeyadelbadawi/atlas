@@ -337,6 +337,50 @@ describe('V15 broken images fall back', () => {
     expect(container.querySelector('img')).toBeNull();
   });
 
+  it('when the fallback photograph fails too, the designed placeholder', () => {
+    const { container } = render(
+      wrap(
+        <ThemeImage
+          value="https://cdn.example/missing.jpg"
+          errorValue="theme-asset:atelier/course-fallback"
+          alt=""
+          fallback={<span data-testid="placeholder" />}
+        />
+      )
+    );
+    act(() => {
+      fireEvent.error(container.querySelector('img')!);
+    });
+    const photograph = container.querySelector('img');
+    expect(photograph).toBeTruthy();
+    act(() => {
+      fireEvent.error(photograph!);
+    });
+    expect(screen.getByTestId('placeholder')).toBeTruthy();
+    expect(container.querySelector('img')).toBeNull();
+  });
+
+  it('an image that failed before hydration (complete, no pixels) falls back on mount', () => {
+    const proto = HTMLImageElement.prototype;
+    const complete = vi.spyOn(proto, 'complete', 'get').mockReturnValue(true);
+    const width = vi.spyOn(proto, 'naturalWidth', 'get').mockReturnValue(0);
+    try {
+      const { container } = render(
+        wrap(
+          <T1CourseThumbnail
+            src="https://cdn.example/missing.jpg"
+            title="React"
+          />
+        )
+      );
+      expect(container.querySelector('img')).toBeNull();
+      expect(container.querySelector('[aria-hidden] svg')).toBeTruthy();
+    } finally {
+      complete.mockRestore();
+      width.mockRestore();
+    }
+  });
+
   it('Modern Education: the course pattern replaces a broken thumbnail', () => {
     const { container } = render(
       wrap(
