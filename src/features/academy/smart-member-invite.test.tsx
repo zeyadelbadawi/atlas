@@ -246,7 +246,9 @@ describe('smart member invitation — lookup', () => {
     await user.type(screen.getByLabelText('Email address'), 'here@example.com');
     expect(
       await screen.findByText(
-        'This person is already a manager in this academy.'
+        // B4 (UX audit) V11 — the dialog's role ("a manager") was not
+        // theirs; without the team list the callout names no role.
+        "This person is already on this academy's team. You can see their role in the team list."
       )
     ).toBeTruthy();
     expect(screen.queryByLabelText('Full name')).toBeNull();

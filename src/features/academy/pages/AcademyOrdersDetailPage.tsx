@@ -8,7 +8,7 @@
  * of another academy (rendered as "not found", never as an error to retry).
  */
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { ReactNode } from 'react';
@@ -123,10 +123,25 @@ export default function AcademyOrdersDetailPage(): JSX.Element {
         enableSorting: false,
         header: t('payments:academyOrders.detail.paymentColumns.review'),
         cell: ({ row }) => (
-          <StatusBadge
-            labelKey={`payments:payment.reviewStatus.${row.original.reviewStatus}`}
-            tone={getManualReviewStatusTone(row.original.reviewStatus)}
-          />
+          <div className="flex flex-col items-start gap-1">
+            <StatusBadge
+              labelKey={`payments:payment.reviewStatus.${row.original.reviewStatus}`}
+              tone={getManualReviewStatusTone(row.original.reviewStatus)}
+              className="whitespace-nowrap"
+            />
+            {/* B4 (UX audit) V30 — straight to the proof waiting for review. */}
+            {row.original.reviewStatus === 'pending' ? (
+              <Link
+                to={`${buildPath(DASHBOARD_ROUTES.academyPayments, {
+                  academyId,
+                })}?payment=${encodeURIComponent(row.original.id)}`}
+                className="whitespace-nowrap text-xs font-medium text-primary underline-offset-4 hover:underline"
+                data-testid="order-detail-review-payment"
+              >
+                {t('payments:academyOrders.reviewPayment')}
+              </Link>
+            ) : null}
+          </div>
         ),
       },
       {
@@ -152,7 +167,7 @@ export default function AcademyOrdersDetailPage(): JSX.Element {
           ),
       },
     ],
-    [t, fmt, locale]
+    [t, fmt, locale, academyId]
   );
 
   const header = (

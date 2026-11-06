@@ -16,7 +16,7 @@ import {
 } from '@/shared/hooks';
 import type { AcademyScopedVariables } from '@/shared/hooks';
 import { LIVE_LIST_QUERY_OPTIONS } from '@config';
-import { academyKeys } from '@services/query';
+import { academyKeys, INLINE_ERRORS_META } from '@services/query';
 import type { ApiError } from '@api';
 import { academyRosterService } from '../services/AcademyRosterService';
 import type {
@@ -59,6 +59,9 @@ export function useCreateAcademyInvite(academyId: string) {
       academyRosterService.createInvite(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, { academyId }) => {
       await invalidate(academyKeys.invites(organization?.id, academyId));
     },
@@ -80,6 +83,9 @@ export function useRevokeAcademyInvite(academyId: string) {
       academyRosterService.revokeInvite(academyId, inviteId),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, { academyId }) => {
       await invalidate(academyKeys.invites(organization?.id, academyId));
     },

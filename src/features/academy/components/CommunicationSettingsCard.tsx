@@ -18,7 +18,7 @@
  * switch rather than a set of fields that only make sense together.
  */
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, MailWarning, Mails } from 'lucide-react';
+import { AlertTriangle, Lock, Mails } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -44,7 +44,9 @@ import {
   useAcademyCommunicationSettings,
   useUpdateAcademyCommunicationSettings,
 } from '../hooks';
-import { getRosterErrorKey } from '../utils/academy-roster.utils';
+import { getRosterSpecificKey } from '../utils/academy-roster.utils';
+import { cn } from '@utils';
+import { InlineFailureAlert } from './InlineFailureAlert';
 import type {
   AcademyEmailOtpPolicy,
   LearnerDigestFrequency,
@@ -75,7 +77,7 @@ export function CommunicationSettingsCard({
   canEdit,
 }: CommunicationSettingsCardProps): JSX.Element {
   const { t } = useTranslation();
-  const { notifySuccess, notifyError } = useToast();
+  const { notifySuccess } = useToast();
   const { data, isLoading, error, refetch } =
     useAcademyCommunicationSettings(academyId);
   const update = useUpdateAcademyCommunicationSettings(academyId);
@@ -83,8 +85,7 @@ export function CommunicationSettingsCard({
   const save = (payload: UpdateAcademyCommunicationSettingsPayload): void => {
     update.mutate(payload, {
       onSuccess: () => notifySuccess('academy:communication.saved'),
-      onError: (err) =>
-        notifyError(getRosterErrorKey(err, 'academy:communication.saveFailed')),
+      // B4 (UX audit) V09 — the failure is the ONE inline message below.
     });
   };
 
@@ -92,9 +93,6 @@ export function CommunicationSettingsCard({
   // per-academy override exists server-side; shown, never offered to save.
   const readOnly = data?.editable === false;
   const disabled = !canEdit || update.isPending || readOnly;
-  const inlineErrorKey = update.error
-    ? getRosterErrorKey(update.error, 'academy:communication.saveFailed')
-    : null;
 
   const renderBody = (): JSX.Element => {
     if (isLoading) {
@@ -112,8 +110,37 @@ export function CommunicationSettingsCard({
       return <ErrorState kind={error?.kind} onRetry={() => refetch()} />;
     }
 
+    // B4 (UX audit) V22 — why nothing here can be changed is said FIRST,
+    // and the controls look read-only (not just ignore clicks).
+    const lockedNotice = readOnly ? (
+      <Alert role="status" data-testid="communication-locked">
+        <Lock className="size-4" aria-hidden />
+        <AlertDescription>
+          {t('academy:communication.readOnlyNotice', {
+            policy: t(
+              `academy:communication.otpPolicy.options.${data.effectiveEmailOtpPolicy ?? 'new_device'}.label`,
+              { defaultValue: data.effectiveEmailOtpPolicy ?? '' }
+            ),
+          })}
+        </AlertDescription>
+      </Alert>
+    ) : !canEdit ? (
+      <Alert role="status" data-testid="communication-locked">
+        <Lock className="size-4" aria-hidden />
+        <AlertDescription>
+          {t('academy:communication.ownerOnly')}
+        </AlertDescription>
+      </Alert>
+    ) : null;
+    const locked = readOnly || !canEdit;
+
     return (
       <div className="space-y-6" aria-busy={update.isPending}>
+        {lockedNotice}
+        <div
+          className={cn('space-y-6', locked && 'opacity-60 [&_label]:cursor-default')}
+          data-locked={locked || undefined}
+        >
         <fieldset className="space-y-3" disabled={disabled}>
           <legend className="text-sm font-medium">
             {t('academy:communication.otpPolicy.label')}
@@ -222,26 +249,14 @@ export function CommunicationSettingsCard({
           </Select>
         </div>
 
-        {readOnly ? (
-          <p className="text-xs text-muted-foreground" role="status">
-            {t('academy:communication.readOnlyNotice', {
-              policy: t(
-                `academy:communication.otpPolicy.options.${data.effectiveEmailOtpPolicy ?? 'new_device'}.label`,
-                { defaultValue: data.effectiveEmailOtpPolicy ?? '' }
-              ),
-            })}
-          </p>
-        ) : !canEdit ? (
-          <p className="text-xs text-muted-foreground">
-            {t('academy:communication.ownerOnly')}
-          </p>
-        ) : null}
+        </div>
 
-        {inlineErrorKey ? (
-          <Alert variant="destructive" role="alert">
-            <MailWarning className="size-4" aria-hidden />
-            <AlertDescription>{t(inlineErrorKey)}</AlertDescription>
-          </Alert>
+        {update.error ? (
+          <InlineFailureAlert
+            error={update.error}
+            titleKey="common:form.notSaved"
+            specificKey={getRosterSpecificKey(update.error)}
+          />
         ) : null}
       </div>
     );

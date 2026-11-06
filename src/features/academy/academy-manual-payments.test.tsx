@@ -29,6 +29,7 @@ import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { createI18nInstance } from '@/localization/i18n';
 import { createApiError } from '@api';
+import type { ApiError } from '@api';
 import type { ApiClient } from '@services';
 import type {
   AcademyCoursePayment,
@@ -62,6 +63,7 @@ vi.mock('@app/providers', () => ({
 
 const useAcademyPaymentMethods = vi.fn();
 const saveMutateAsync = vi.fn();
+const saveState: { error: ApiError | null } = { error: null };
 const useAcademyCoursePayments = vi.fn();
 const useAcademyCoursePayment = vi.fn();
 const approveMutate = vi.fn();
@@ -73,7 +75,7 @@ vi.mock('./hooks', () => ({
   useSaveAcademyPaymentMethod: () => ({
     mutateAsync: saveMutateAsync,
     isPending: false,
-    error: null,
+    error: saveState.error,
     reset: vi.fn(),
   }),
   useAcademyCoursePayments: (id: string, query: unknown) =>
@@ -211,6 +213,7 @@ afterEach(() => {
   cleanup();
   vi.clearAllMocks();
   params.academyId = 'academy-1';
+  saveState.error = null;
 });
 
 describe('AcademyPaymentMethodsPage', () => {
@@ -574,5 +577,121 @@ describe('AcademyPaymentsService', () => {
     const call = (client.get as ReturnType<typeof vi.fn>).mock.calls[0];
     expect(call[0]).toBe('academies/a1/course-payments');
     expect(call[1].params).toMatchObject({ reviewStatus: 'pending' });
+  });
+});
+
+/* B4 (UX audit) — V13, V14, V19. */
+describe('B4 — payment method dialog and review sheet', () => {
+  async function openBankSetup() {
+    useAcademyPaymentMethods.mockReturnValue(ready([]));
+    const view = renderWith(<AcademyPaymentMethodsPage />);
+    fireEvent.click(screen.getByTestId('academy-method-bank-setup'));
+    const form = await screen.findByTestId('academy-method-form');
+    return { view, form };
+  }
+
+  it('V14 — an empty submit lists every problem at the top', async () => {
+    const { form } = await openBankSetup();
+    fireEvent.click(within(form).getByTestId('academy-method-save'));
+    expect(
+      await within(form).findByText(/Fix these \d+ problems to continue/)
+    ).toBeTruthy();
+    expect(saveMutateAsync).not.toHaveBeenCalled();
+  });
+
+  it('V14 — the 2,000-character limit is stated, with a counter', async () => {
+    const { form } = await openBankSetup();
+    const field = within(form).getByTestId('academy-bank-instructions');
+    expect(
+      within(form).getByTestId('academy-bank-instructions-count').textContent
+    ).toBe('0 / 2000 characters');
+    fireEvent.change(field, { target: { value: 'x'.repeat(2100) } });
+    expect(
+      within(form).getByTestId('academy-bank-instructions-count').textContent
+    ).toBe('2100 / 2000 characters');
+    fireEvent.click(within(form).getByTestId('academy-method-save'));
+    expect(
+      await within(form).findByText('Keep this to 2000 characters or fewer.')
+    ).toBeTruthy();
+  });
+
+  it('V14 — a refusal no field can show is one alert inside the dialog, no toast', async () => {
+    const { view } = await openBankSetup();
+    saveState.error = createApiError('validation', {
+      violations: [{ field: 'enabled', messageKey: 'validation:invalid' }],
+    });
+    view.rerender(
+      <I18nextProvider i18n={createI18nInstance('en')}>
+        <MemoryRouter initialEntries={['/x']}>
+          <AcademyPaymentMethodsPage />
+        </MemoryRouter>
+      </I18nextProvider>
+    );
+    const alert = await screen.findByTestId('save-failed');
+    expect(alert.textContent).toMatch(/not valid/);
+    expect(notifyError).not.toHaveBeenCalled();
+  });
+
+  it('V13 — Escape with typed bank details asks first', async () => {
+    confirm.mockResolvedValue(false);
+    const { form } = await openBankSetup();
+    fireEvent.change(within(form).getByTestId('academy-bank-bank-name'), {
+      target: { value: 'National Bank' },
+    });
+    fireEvent.keyDown(form, { key: 'Escape' });
+    await waitFor(() => expect(confirm).toHaveBeenCalled());
+    expect(screen.getByTestId('academy-method-form')).toBeTruthy();
+  });
+
+  it('V19 — a failed approve says so inline with the real reason; no toast', async () => {
+    useAcademyCoursePayments.mockReturnValue(ready(listPage([payment()])));
+    useAcademyCoursePayment.mockReturnValue(ready(payment()));
+    confirm.mockResolvedValue(true);
+    approveMutate.mockImplementation((_vars, options) =>
+      options.onError(createApiError('network'))
+    );
+    renderWith(<AcademyPaymentsPage />, 'en', '/x?payment=pay-1');
+    fireEvent.click(screen.getByTestId('academy-payment-approve'));
+    const alert = await screen.findByTestId('save-failed');
+    expect(alert.textContent).toContain("Your decision wasn't saved");
+    expect(alert.textContent).toContain('Check your connection');
+    expect(notifyError).not.toHaveBeenCalled();
+  });
+
+  it('V19 — the reject reason states its 1,000 limit and is never cut silently', async () => {
+    useAcademyCoursePayments.mockReturnValue(ready(listPage([payment()])));
+    useAcademyCoursePayment.mockReturnValue(ready(payment()));
+    confirm.mockResolvedValue(true);
+    renderWith(<AcademyPaymentsPage />, 'en', '/x?payment=pay-1');
+    fireEvent.click(screen.getByTestId('academy-payment-reject'));
+    expect(screen.getByText('0 / 1000 characters')).toBeTruthy();
+    fireEvent.change(screen.getByTestId('academy-payment-reject-reason'), {
+      target: { value: 'y'.repeat(1100) },
+    });
+    expect(screen.getByText('1100 / 1000 characters')).toBeTruthy();
+    fireEvent.click(screen.getByTestId('academy-payment-reject-confirm'));
+    expect(
+      await screen.findByText('Keep this to 1000 characters or fewer.')
+    ).toBeTruthy();
+    expect(rejectMutate).not.toHaveBeenCalled();
+  });
+
+  it('V19 — Escape with a typed reject reason asks first', async () => {
+    useAcademyCoursePayments.mockReturnValue(ready(listPage([payment()])));
+    useAcademyCoursePayment.mockReturnValue(ready(payment()));
+    confirm.mockResolvedValue(false);
+    renderWith(<AcademyPaymentsPage />, 'en', '/x?payment=pay-1');
+    fireEvent.click(screen.getByTestId('academy-payment-reject'));
+    fireEvent.change(screen.getByTestId('academy-payment-reject-reason'), {
+      target: { value: 'Amount did not match' },
+    });
+    fireEvent.keyDown(screen.getByTestId('academy-payment-reject-reason'), {
+      key: 'Escape',
+    });
+    await waitFor(() => expect(confirm).toHaveBeenCalled());
+    expect(
+      (screen.getByTestId('academy-payment-reject-reason') as HTMLTextAreaElement)
+        .value
+    ).toBe('Amount did not match');
   });
 });

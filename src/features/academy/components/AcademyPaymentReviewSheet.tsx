@@ -45,6 +45,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { StatusBadge } from '@components/data-display';
 import { useConfirmDialog, useToast } from '@app/providers';
+import { useDirtyGuard } from '@features/unsaved-changes';
+import type { ApiError } from '@api';
+import { InlineFailureAlert } from './InlineFailureAlert';
+import { TextLengthCounter } from './TextLengthCounter';
 import { useDateFormatter } from '@hooks';
 import { hasMessageKey } from '@utils';
 import {
@@ -109,6 +113,20 @@ export function AcademyPaymentReviewSheet({
   const recordRefund = useRecordAcademyCoursePaymentRefund(academyId);
   const [refunding, setRefunding] = useState(false);
   const [refundNote, setRefundNote] = useState('');
+  // B4 (UX audit) V19 — a failed decision or refund is ONE message, inline
+  // next to the button that failed (a toast covered the sheet's title on a
+  // phone and named no reason), and a typed note survives Escape.
+  const [decisionFailure, setDecisionFailure] = useState<ApiError | null>(
+    null
+  );
+  const [refundFailure, setRefundFailure] = useState<ApiError | null>(null);
+  const [noteTooLong, setNoteTooLong] = useState<'reason' | 'refund' | null>(
+    null
+  );
+  const dirtyGuard = useDirtyGuard(
+    (rejecting && reason.trim() !== '') ||
+      (refunding && refundNote.trim() !== '')
+  );
 
   const isImage = payment?.proof?.mimeType.startsWith('image/') ?? false;
   const proof = useAcademyPaymentProof(
@@ -131,6 +149,9 @@ export function AcademyPaymentReviewSheet({
     setAlreadyReviewed(false);
     setRefunding(false);
     setRefundNote('');
+    setDecisionFailure(null);
+    setRefundFailure(null);
+    setNoteTooLong(null);
   };
 
   const canRecordRefund =
@@ -140,6 +161,11 @@ export function AcademyPaymentReviewSheet({
 
   const onRecordRefund = async () => {
     if (!payment) return;
+    if (refundNote.trim().length > MAX_PAYMENT_REVIEW_NOTES_LENGTH) {
+      setNoteTooLong('refund');
+      return;
+    }
+    setRefundFailure(null);
     const confirmed = await confirm({
       titleKey: `${K}.refund.confirm.title`,
       descriptionKey: `${K}.refund.confirm.description`,
@@ -169,7 +195,7 @@ export function AcademyPaymentReviewSheet({
             resetLocal();
             return;
           }
-          notifyError(`${K}.refund.error`);
+          setRefundFailure(error);
         },
       }
     );
@@ -186,6 +212,7 @@ export function AcademyPaymentReviewSheet({
 
   const onApprove = async () => {
     if (!payment) return;
+    setDecisionFailure(null);
     const confirmed = await confirm({
       titleKey: `${K}.confirmApprove.title`,
       descriptionKey: `${K}.confirmApprove.description`,
@@ -207,7 +234,7 @@ export function AcademyPaymentReviewSheet({
           resetLocal();
         },
         onError: (error) => {
-          if (!onConflict(error)) notifyError(`${K}.decisionError`);
+          if (!onConflict(error)) setDecisionFailure(error);
         },
       }
     );
@@ -215,6 +242,11 @@ export function AcademyPaymentReviewSheet({
 
   const onReject = async () => {
     if (!payment) return;
+    if (reason.trim().length > MAX_PAYMENT_REVIEW_NOTES_LENGTH) {
+      setNoteTooLong('reason');
+      return;
+    }
+    setDecisionFailure(null);
     const confirmed = await confirm({
       titleKey: `${K}.confirmReject.title`,
       descriptionKey: `${K}.confirmReject.description`,
@@ -237,7 +269,7 @@ export function AcademyPaymentReviewSheet({
           resetLocal();
         },
         onError: (error) => {
-          if (!onConflict(error)) notifyError(`${K}.decisionError`);
+          if (!onConflict(error)) setDecisionFailure(error);
         },
       }
     );
@@ -247,8 +279,11 @@ export function AcademyPaymentReviewSheet({
     <Sheet
       open={open}
       onOpenChange={(next) => {
-        if (!next) resetLocal();
-        onOpenChange(next);
+        if (next) return onOpenChange(true);
+        void dirtyGuard.requestClose(() => {
+          resetLocal();
+          onOpenChange(false);
+        });
       }}
     >
       <SheetContent
@@ -503,6 +538,12 @@ export function AcademyPaymentReviewSheet({
                 <p className="text-sm text-muted-foreground">
                   {t(`${K}.decisionHint`)}
                 </p>
+                {decisionFailure ? (
+                  <InlineFailureAlert
+                    error={decisionFailure}
+                    titleKey={`${K}.decisionFailedTitle`}
+                  />
+                ) : null}
                 {rejecting ? (
                   <div className="space-y-2">
                     <Label htmlFor="academy-payment-reject-reason">
@@ -512,10 +553,10 @@ export function AcademyPaymentReviewSheet({
                       id="academy-payment-reject-reason"
                       rows={3}
                       value={reason}
-                      maxLength={MAX_PAYMENT_REVIEW_NOTES_LENGTH}
                       onChange={(event) => setReason(event.target.value)}
                       placeholder={t(`${K}.reasonPlaceholder`)}
-                      aria-describedby="academy-payment-reject-help"
+                      aria-describedby="academy-payment-reject-help academy-payment-reject-count"
+                      aria-invalid={noteTooLong === 'reason' || undefined}
                       dir="auto"
                       data-testid="academy-payment-reject-reason"
                     />
@@ -525,6 +566,19 @@ export function AcademyPaymentReviewSheet({
                     >
                       {t(`${K}.reasonHelp`)}
                     </p>
+                    <TextLengthCounter
+                      id="academy-payment-reject-count"
+                      length={reason.trim().length}
+                      max={MAX_PAYMENT_REVIEW_NOTES_LENGTH}
+                    />
+                    {noteTooLong === 'reason' &&
+                    reason.trim().length > MAX_PAYMENT_REVIEW_NOTES_LENGTH ? (
+                      <p role="alert" className="text-sm text-destructive">
+                        {t(`${K}.noteTooLong`, {
+                          max: MAX_PAYMENT_REVIEW_NOTES_LENGTH,
+                        })}
+                      </p>
+                    ) : null}
                     <div className="flex flex-wrap gap-2">
                       <Button
                         type="button"
@@ -622,9 +676,9 @@ export function AcademyPaymentReviewSheet({
                       id="academy-payment-refund-note"
                       rows={3}
                       value={refundNote}
-                      maxLength={MAX_PAYMENT_REVIEW_NOTES_LENGTH}
                       onChange={(event) => setRefundNote(event.target.value)}
-                      aria-describedby="academy-payment-refund-help"
+                      aria-describedby="academy-payment-refund-help academy-payment-refund-count"
+                      aria-invalid={noteTooLong === 'refund' || undefined}
                       dir="auto"
                       data-testid="academy-payment-refund-note"
                     />
@@ -634,6 +688,25 @@ export function AcademyPaymentReviewSheet({
                     >
                       {t(`${K}.refund.noteHelp`)}
                     </p>
+                    <TextLengthCounter
+                      id="academy-payment-refund-count"
+                      length={refundNote.trim().length}
+                      max={MAX_PAYMENT_REVIEW_NOTES_LENGTH}
+                    />
+                    {noteTooLong === 'refund' &&
+                    refundNote.trim().length > MAX_PAYMENT_REVIEW_NOTES_LENGTH ? (
+                      <p role="alert" className="text-sm text-destructive">
+                        {t(`${K}.noteTooLong`, {
+                          max: MAX_PAYMENT_REVIEW_NOTES_LENGTH,
+                        })}
+                      </p>
+                    ) : null}
+                    {refundFailure ? (
+                      <InlineFailureAlert
+                        error={refundFailure}
+                        titleKey={`${K}.refund.failedTitle`}
+                      />
+                    ) : null}
                     <div className="flex flex-wrap gap-2">
                       <Button
                         type="button"

@@ -183,7 +183,9 @@ describe('AcademyRevenuePage', () => {
 
     expect(screen.getByText('No payouts yet')).toBeTruthy();
     expect(
-      screen.getByText(/online payment gateways aren't available yet/)
+      // B4 (UX audit) V23 — the same truth as the sales card: learners pay
+      // the academy directly; Atlas holds nothing.
+      screen.getByText(/learners pay your academy directly/)
     ).toBeTruthy();
     expect(
       screen.getByText('Nothing is awaiting payout right now.')

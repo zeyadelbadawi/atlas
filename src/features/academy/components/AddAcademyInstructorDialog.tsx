@@ -11,7 +11,11 @@
  * component so the Manager flow (already verified end-to-end) is never at
  * risk from Instructor-specific changes.
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { ApiError } from '@api';
+import { isTranslatedString } from '@utils';
+import { InlineFailureAlert } from './InlineFailureAlert';
 import { useForm } from 'react-hook-form';
 import { useDirtyGuard } from '@features/unsaved-changes';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -31,8 +35,10 @@ import { useServerValidation } from '@forms';
 import { useAddAcademyInstructor } from '../hooks';
 import { useAcademyMemberLookup } from '../hooks/useAcademyMemberLookup';
 import { MemberAccountFields, isBlockedByLookup } from './MemberAccountFields';
+import type { AcademyMember } from '@types';
 import {
-  memberAddErrorKey,
+  existingTeamRole,
+  memberAddSpecificKey,
   memberAddOutcomeKey,
   memberAddPayload,
 } from '../utils/member-add.utils';
@@ -45,6 +51,8 @@ export interface AddAcademyInstructorDialogProps {
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
   readonly academyId: string;
+  /** The team list on screen, so the "already here" callout names the person's real role. */
+  readonly teamMembers?: readonly AcademyMember[];
 }
 
 const DEFAULT_VALUES: AddAcademyInstructorFormData = {
@@ -56,10 +64,13 @@ export function AddAcademyInstructorDialog({
   open,
   onOpenChange,
   academyId,
+  teamMembers,
 }: AddAcademyInstructorDialogProps): JSX.Element {
-  const { t } = useTranslation();
-  const { notifySuccess, notifyError } = useToast();
+  const { t, i18n } = useTranslation();
+  const { notifySuccess } = useToast();
   const addInstructor = useAddAcademyInstructor();
+
+  const [failure, setFailure] = useState<ApiError | null>(null);
 
   const form = useForm<AddAcademyInstructorFormData>({
     resolver: zodResolver(addAcademyInstructorSchema),
@@ -84,11 +95,13 @@ export function AddAcademyInstructorDialog({
     if (nextOpen) return onOpenChange(true);
     void dirtyGuard.requestClose(() => {
       form.reset(DEFAULT_VALUES);
+      setFailure(null);
       onOpenChange(false);
     });
   };
 
   const onSubmit = (data: AddAcademyInstructorFormData) => {
+    setFailure(null);
     addInstructor.mutate(
       { academyId, payload: memberAddPayload(data) },
       {
@@ -102,6 +115,9 @@ export function AddAcademyInstructorDialog({
           onOpenChange(false);
         },
         onError: (error) => {
+          // Field violations are shown on their fields (useServerValidation);
+          // anything else is ONE message inside the dialog, with the real
+          // reason (B4 V09/V26) — no toast under the overlay.
           if (
             error.kind === 'validation' &&
             error.violations &&
@@ -109,16 +125,7 @@ export function AddAcademyInstructorDialog({
           ) {
             return;
           }
-
-          // Phase 2 — a plan-limit rejection also arrives as `kind:
-          // 'conflict'` (the same HTTP 409 an "already a member" collision
-          // uses), distinguished by its own stable `code` rather than
-          // conflated with that unrelated message.
-          const key =
-            error.code === 'ENTITLEMENT_LIMIT_REACHED'
-              ? 'academy:members.addInstructor.errors.limitReached'
-              : memberAddErrorKey(error, 'academy:members.addInstructor');
-          notifyError(key);
+          setFailure(error);
         },
       }
     );
@@ -141,8 +148,19 @@ export function AddAcademyInstructorDialog({
               lookup={lookup}
               copyPrefix="academy:members.addInstructor"
               role="instructor"
+              existingRole={existingTeamRole(teamMembers, form.watch('email'))}
               idPrefix="add-instructor"
             />
+
+            {failure ? (
+              <InlineFailureAlert
+                error={failure}
+                titleKey="academy:members.addInstructor.errors.failedTitle"
+                specificKey={memberAddSpecificKey(failure, 'academy:members.addInstructor', (key) =>
+                  isTranslatedString(i18n, key)
+                )}
+              />
+            ) : null}
 
             <DialogFooter>
               <Button

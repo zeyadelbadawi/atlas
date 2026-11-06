@@ -25,7 +25,8 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
-import { useUnsavedChanges } from '@hooks';
+import { useDateFormatter, useUnsavedChanges } from '@hooks';
+import { useDirtyGuard } from '@features/unsaved-changes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Plus } from 'lucide-react';
 import { ErrorState, EmptyState } from '@components/feedback';
@@ -51,9 +52,17 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from '@/hooks/use-toast';
-import { useServerValidation } from '@forms';
-import { useConfirmDialog } from '@app/providers';
+import {
+  SaveFailedAlert,
+  hasViolationOn,
+  isFieldViolationError,
+  useFocusFirstViolation,
+  useLabelledViolations,
+  useServerValidation,
+} from '@forms';
+import { useConfirmDialog, useToast } from '@app/providers';
+import { normalizeUnknownError } from '@api';
+import { useActionFailureToast } from '../hooks/useActionFailureToast';
 import {
   announcementSchema,
   type AnnouncementFormData,
@@ -92,6 +101,13 @@ function getStatusTone(status: AnnouncementStatus) {
       return 'neutral' as const;
   }
 }
+
+/** API field → label key: server violations land on these fields. */
+const ANNOUNCEMENT_FIELD_LABELS: Readonly<Record<string, string>> = {
+  title: 'announcements:manage.titleLabel',
+  body: 'announcements:manage.bodyLabel',
+  scheduledAt: 'announcements:manage.scheduledAtLabel',
+};
 
 export interface AnnouncementManagerPanelProps {
   readonly announcements: readonly Announcement[];
@@ -141,13 +157,17 @@ export function AnnouncementManagerPanel({
   onCreateOpenChange,
 }: AnnouncementManagerPanelProps): JSX.Element {
   const { t } = useTranslation();
+  const fmt = useDateFormatter();
   const { confirm } = useConfirmDialog();
+  const { notifySuccess } = useToast();
+  const actionFailed = useActionFailureToast();
 
   const [editing, setEditing] = useState<Announcement | null>(null);
+  // B4 (UX audit) — a failed save no field can show: one alert in the dialog.
+  const [saveFailure, setSaveFailure] = useState<ApiError | null>(null);
   const dialogOpen = isCreateOpen || editing !== null;
 
-  const setDialogOpen = (open: boolean) => {
-    if (open) return;
+  const closeDialog = () => {
     // One close path for both modes, so the form never reopens still
     // holding the previous announcement's values.
     setEditing(null);
@@ -155,6 +175,7 @@ export function AnnouncementManagerPanel({
     // The form stays mounted while the dialog is closed; resetting it here
     // keeps a closed dialog from blocking the next navigation.
     form.reset({ title: '', body: '', scheduledAt: '' });
+    setSaveFailure(null);
   };
 
   const form = useForm<AnnouncementFormData>({
@@ -168,7 +189,21 @@ export function AnnouncementManagerPanel({
   // and counting it then made the next sidebar click ask about nothing.
   useUnsavedChanges({ isDirty: dialogOpen && form.formState.isDirty });
 
-  useServerValidation(form, saveError);
+  // V15 — Escape, an outside click or Cancel with typed work asks first.
+  const dirtyGuard = useDirtyGuard(dialogOpen && form.formState.isDirty);
+  const setDialogOpen = (open: boolean) => {
+    if (open) return;
+    void dirtyGuard.requestClose(closeDialog);
+  };
+
+  // V05 — `scheduledAt` refused by the server (in the past) lands on the
+  // schedule field under its own label, as title/body violations do.
+  const labelledError = useLabelledViolations(
+    saveError,
+    ANNOUNCEMENT_FIELD_LABELS
+  );
+  useServerValidation(form, labelledError);
+  useFocusFirstViolation(form, labelledError, ANNOUNCEMENT_FIELD_LABELS);
 
   useEffect(() => {
     if (dialogOpen) {
@@ -195,6 +230,7 @@ export function AnnouncementManagerPanel({
     const scheduledAt = data.scheduledAt
       ? new Date(data.scheduledAt).toISOString()
       : undefined;
+    setSaveFailure(null);
 
     try {
       if (editing) {
@@ -209,17 +245,20 @@ export function AnnouncementManagerPanel({
       } else {
         await onCreate({ title: data.title, body: data.body, scheduledAt });
       }
-      toast({
-        title: t('announcements:manage.saveSuccess'),
-        description: t('common:states.success.description'),
-      });
-      setDialogOpen(false);
-    } catch {
-      toast({
-        title: t('announcements:manage.saveError'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+      notifySuccess('announcements:manage.saveSuccess');
+      // Saved: nothing is unsaved, so close without asking.
+      closeDialog();
+    } catch (error) {
+      const failure = normalizeUnknownError(error);
+      // A field violation is already on its field; anything else is ONE
+      // alert inside the dialog with the real reason.
+      if (
+        isFieldViolationError(failure) &&
+        hasViolationOn(failure, ANNOUNCEMENT_FIELD_LABELS)
+      ) {
+        return;
+      }
+      setSaveFailure(failure);
     }
   };
 
@@ -235,19 +274,26 @@ export function AnnouncementManagerPanel({
 
     try {
       await onPublish(announcement.id);
-      toast({ title: t('announcements:manage.publishSuccess') });
-    } catch {
-      toast({
-        title: t('announcements:manage.publishError'),
-        variant: 'destructive',
-      });
+      notifySuccess('announcements:manage.publishSuccess');
+    } catch (error) {
+      actionFailed(
+        normalizeUnknownError(error),
+        'announcements:manage.publishFailedTitle'
+      );
     }
   };
 
   const handleArchive = async (announcement: Announcement) => {
+    // V16 — a draft or scheduled announcement can be taken off the list's
+    // way too (the backend has archive, no delete): it is never published.
+    const unpublished = announcement.status !== 'published';
     const confirmed = await confirm({
-      titleKey: 'announcements:manage.archiveDialog.title',
-      descriptionKey: 'announcements:manage.archiveDialog.description',
+      titleKey: unpublished
+        ? 'announcements:manage.archiveDraftDialog.title'
+        : 'announcements:manage.archiveDialog.title',
+      descriptionKey: unpublished
+        ? 'announcements:manage.archiveDraftDialog.description'
+        : 'announcements:manage.archiveDialog.description',
       confirmLabelKey: 'announcements:manage.archiveDialog.confirmLabel',
       cancelLabelKey: 'announcements:manage.archiveDialog.cancelLabel',
       intent: 'destructive',
@@ -256,12 +302,12 @@ export function AnnouncementManagerPanel({
 
     try {
       await onArchive(announcement.id);
-      toast({ title: t('announcements:manage.archiveSuccess') });
-    } catch {
-      toast({
-        title: t('announcements:manage.archiveError'),
-        variant: 'destructive',
-      });
+      notifySuccess('announcements:manage.archiveSuccess');
+    } catch (error) {
+      actionFailed(
+        normalizeUnknownError(error),
+        'announcements:manage.archiveFailedTitle'
+      );
     }
   };
 
@@ -285,10 +331,13 @@ export function AnnouncementManagerPanel({
         <div className="space-y-3">
           {announcements.map((announcement) => (
             <Card key={announcement.id}>
-              <CardContent className="flex items-start justify-between gap-3 pt-6">
-                <div className="min-w-0 flex-1 space-y-1">
+              <CardContent className="flex flex-wrap items-start justify-between gap-3 pt-6">
+                <div className="min-w-0 flex-1 basis-60 space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="font-display text-base font-semibold text-foreground">
+                    <h3
+                      className="font-display text-base font-semibold text-foreground"
+                      dir="auto"
+                    >
                       {announcement.title}
                     </h3>
                     <StatusBadge
@@ -296,12 +345,34 @@ export function AnnouncementManagerPanel({
                       tone={getStatusTone(announcement.status)}
                     />
                   </div>
-                  <p className="line-clamp-2 text-sm text-muted-foreground">
+                  {/* V16 — "Scheduled" says when. */}
+                  {announcement.status === 'scheduled' &&
+                  announcement.scheduledAt ? (
+                    <p
+                      className="text-xs text-muted-foreground"
+                      data-testid="announcement-scheduled-for"
+                    >
+                      {t('announcements:manage.scheduledFor', {
+                        date: fmt.dateTime(announcement.scheduledAt),
+                      })}
+                    </p>
+                  ) : announcement.status === 'published' &&
+                    announcement.publishedAt ? (
+                    <p className="text-xs text-muted-foreground">
+                      {t('announcements:manage.publishedOn', {
+                        date: fmt.dateTime(announcement.publishedAt),
+                      })}
+                    </p>
+                  ) : null}
+                  <p
+                    className="line-clamp-2 text-sm text-muted-foreground"
+                    dir="auto"
+                  >
                     {announcement.body}
                   </p>
                 </div>
                 {canManage ? (
-                  <div className="flex shrink-0 items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     {announcement.status === 'draft' ||
                     announcement.status === 'scheduled' ? (
                       <>
@@ -320,7 +391,7 @@ export function AnnouncementManagerPanel({
                         </Button>
                       </>
                     ) : null}
-                    {announcement.status === 'published' ? (
+                    {announcement.status !== 'archived' ? (
                       <Button
                         variant="outline"
                         size="sm"
@@ -348,7 +419,11 @@ export function AnnouncementManagerPanel({
           </DialogHeader>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              noValidate
+              className="space-y-4"
+            >
               <FormField
                 control={form.control}
                 name="title"
@@ -358,7 +433,7 @@ export function AnnouncementManagerPanel({
                       {t('announcements:manage.titleLabel')}
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input dir="auto" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -372,7 +447,7 @@ export function AnnouncementManagerPanel({
                   <FormItem>
                     <FormLabel>{t('announcements:manage.bodyLabel')}</FormLabel>
                     <FormControl>
-                      <Textarea rows={5} {...field} />
+                      <Textarea rows={5} dir="auto" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -391,7 +466,11 @@ export function AnnouncementManagerPanel({
                       </span>
                     </FormLabel>
                     <FormControl>
-                      <Input type="datetime-local" {...field} />
+                      <Input
+                        type="datetime-local"
+                        min={toDateTimeLocalValue(new Date().toISOString())}
+                        {...field}
+                      />
                     </FormControl>
                     <FormDescription>
                       {t('announcements:manage.scheduledAtHelp')}
@@ -400,6 +479,13 @@ export function AnnouncementManagerPanel({
                   </FormItem>
                 )}
               />
+
+              {saveFailure ? (
+                <SaveFailedAlert
+                  error={saveFailure}
+                  titleKey="announcements:manage.notSavedTitle"
+                />
+              ) : null}
 
               <DialogFooter>
                 <Button

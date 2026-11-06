@@ -41,6 +41,12 @@ vi.mock('react-router-dom', () => ({
 
 vi.mock('@app/providers', () => ({
   useConfirmDialog: () => ({ confirm: async () => true }),
+  useToast: () => ({
+    notifySuccess: vi.fn(),
+    notifyError: vi.fn(),
+    notify: vi.fn(),
+    dismissAll: vi.fn(),
+  }),
 }));
 
 const announcements: Announcement[] = [

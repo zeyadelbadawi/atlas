@@ -6,7 +6,7 @@
  * backend contract owns that.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { announcementKeys } from '@services/query';
+import { announcementKeys, INLINE_ERRORS_META } from '@services/query';
 import type { ApiError } from '@api';
 import { announcementService } from '../services/AnnouncementService';
 import type { Announcement } from '@types';
@@ -19,6 +19,9 @@ export function usePublishAnnouncement(courseId: string) {
       announcementService.publishAnnouncement(courseId, announcementId),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(announcementKeys.all);
     },

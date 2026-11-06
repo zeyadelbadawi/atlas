@@ -176,6 +176,27 @@ export function getRosterErrorKey(
 }
 
 /**
+ * B4 (UX audit) — the roster's own copy for a refusal it names, or `null`
+ * when the failure is something else (a server error, a lost connection):
+ * then the real reason is shown instead of "That action could not be
+ * completed. Please try again."
+ */
+export function getRosterSpecificKey(
+  error: Pick<ApiError, 'kind' | 'messageKey'> | null | undefined
+): string | null {
+  if (!error) return null;
+  const key = getRosterErrorKey(error, '');
+  return key === '' ? null : key;
+}
+
+/** The backend refused an expiry date in the past (on the date field, not a toast). */
+export function isExpiryInPastError(
+  error: Pick<ApiError, 'messageKey'> | null | undefined
+): boolean {
+  return error?.messageKey === 'errors.enrollment.expiryInPast';
+}
+
+/**
  * The link a learner opens to register with an invite. Built only from a
  * backend-resolved host (canonical host / subdomain `fullHost`) — never a
  * guessed root domain. Without a host the caller shows the raw token.
@@ -204,4 +225,18 @@ export function isoToDateInput(iso?: string | null): string {
   if (Number.isNaN(date.getTime())) return '';
   const pad = (n: number) => String(n).padStart(2, '0');
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+/** Today as an `<input type="date">` value (local date). */
+export function todayDateInput(now: Date = new Date()): string {
+  return isoToDateInput(now.toISOString());
+}
+
+/**
+ * B4 (UX audit) V06 — an access end date before today ends the learner's
+ * access the moment it is saved. Today is allowed: access then ends at the
+ * end of today (`dateInputToIso`).
+ */
+export function isPastDateInput(value: string, now: Date = new Date()): boolean {
+  return Boolean(value) && value < todayDateInput(now);
 }

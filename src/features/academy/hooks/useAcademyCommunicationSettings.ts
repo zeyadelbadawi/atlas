@@ -15,7 +15,7 @@ import {
   useAuth,
 } from '@/shared/hooks';
 import type { AcademyScopedVariables } from '@/shared/hooks';
-import { academyKeys } from '@services/query';
+import { academyKeys, INLINE_ERRORS_META } from '@services/query';
 import type { ApiError } from '@api';
 import { academyCommunicationSettingsService } from '../services/AcademyCommunicationSettingsService';
 import type {
@@ -82,6 +82,9 @@ export function useUpdateAcademyCommunicationSettings(academyId: string) {
     },
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
   });
 
   return useAcademyBoundMutation(mutation, academyId);

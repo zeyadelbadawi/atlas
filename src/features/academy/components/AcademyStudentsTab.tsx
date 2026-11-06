@@ -11,7 +11,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ColumnDef } from '@tanstack/react-table';
+import { GraduationCap } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -41,6 +43,8 @@ import { PhoneNumberDisplay } from '@components/phone';
 
 export interface AcademyStudentsTabProps {
   readonly academyId: string;
+  /** Opens Add student; shown on this tab too when the viewer may add (B4 V34). */
+  readonly onAddStudent?: () => void;
 }
 
 type StatusFilterValue = AcademyRosterStatusFilter | 'all';
@@ -85,6 +89,7 @@ function initialsOf(name: string): string {
 
 export function AcademyStudentsTab({
   academyId,
+  onAddStudent,
 }: AcademyStudentsTabProps): JSX.Element {
   const { t } = useTranslation();
   const fmt = useDateFormatter();
@@ -214,6 +219,8 @@ export function AcademyStudentsTab({
     [t, fmt]
   );
 
+  const isFiltering = search.trim() !== '' || status !== 'all';
+
   const openStudent = (student: AcademyRosterStudent) => {
     setSelectedUserId(student.userId);
     setIsDrawerOpen(true);
@@ -225,7 +232,7 @@ export function AcademyStudentsTab({
         <SearchInput
           value={search}
           onValueChange={setSearch}
-          labelKey="academy:students.searchPlaceholder"
+          labelKey="academy:students.searchShort"
           className="flex-1 sm:max-w-sm"
         />
         <Select
@@ -266,6 +273,17 @@ export function AcademyStudentsTab({
             ))}
           </SelectContent>
         </Select>
+        {onAddStudent ? (
+          <Button
+            type="button"
+            className="sm:ms-auto"
+            onClick={onAddStudent}
+            data-testid="students-add"
+          >
+            <GraduationCap className="size-4" strokeWidth={2} aria-hidden />
+            {t('academy:members.createStudent.triggerButton')}
+          </Button>
+        ) : null}
       </div>
 
       {error ? (
@@ -276,8 +294,14 @@ export function AcademyStudentsTab({
           data={students}
           isLoading={isLoading}
           pagination={pagination}
-          emptyTitleKey="academy:students.empty"
-          emptyDescriptionKey="academy:students.emptyDescription"
+          emptyTitleKey={
+            isFiltering ? 'academy:students.noMatch' : 'academy:students.empty'
+          }
+          emptyDescriptionKey={
+            isFiltering
+              ? 'academy:students.noMatchDescription'
+              : 'academy:students.emptyDescription'
+          }
           getRowId={(student) => student.userId}
           onRowSelect={openStudent}
         />

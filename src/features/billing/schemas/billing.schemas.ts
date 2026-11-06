@@ -72,7 +72,12 @@ export type RejectPaymentFormData = z.infer<typeof rejectPaymentSchema>;
  * `useServerValidation`.
  */
 const BANK_FIELD_REQUIRED = 'payments:bankTransferMethods.validation.required';
-const BANK_FIELD_TOO_LONG = 'payments:bankTransferMethods.validation.tooLong';
+/** B4 (UX audit) V14 — "longer than allowed" now states the limit. */
+function tooLong(max: number): string {
+  return validationMessage('payments:bankTransferMethods.validation.tooLongMax', {
+    count: max,
+  });
+}
 
 /** `/^[A-Za-z0-9 -]+$/` — letters, digits, spaces and hyphens. */
 export const BANK_ACCOUNT_NUMBER_PATTERN = /^[A-Za-z0-9 -]+$/;
@@ -87,12 +92,12 @@ function requiredText(max: number) {
     .string()
     .trim()
     .min(1, BANK_FIELD_REQUIRED)
-    .max(max, BANK_FIELD_TOO_LONG);
+    .max(max, tooLong(max));
 }
 
 /** An optional text: blank is allowed and means "not set". */
 function optionalText(max: number) {
-  return z.string().trim().max(max, BANK_FIELD_TOO_LONG);
+  return z.string().trim().max(max, tooLong(max));
 }
 
 function optionalPattern(pattern: RegExp, message: string) {
@@ -117,7 +122,7 @@ const manualMethodTextsShape = {
 
 export const bankTransferMethodSchema = z.object({
   displayName: requiredText(80),
-  description: z.string().trim().max(300, BANK_FIELD_TOO_LONG),
+  description: z.string().trim().max(300, tooLong(300)),
   instructions: z.object({
     bankName: requiredText(120),
     accountNumber: requiredText(64).refine(
@@ -147,7 +152,7 @@ export const INSTAPAY_ADDRESS_PATTERN = /^[A-Za-z0-9._-]{2,64}@instapay$/i;
 export const walletMethodSchema = z
   .object({
     displayName: requiredText(80),
-    description: z.string().trim().max(300, BANK_FIELD_TOO_LONG),
+    description: z.string().trim().max(300, tooLong(300)),
     instructions: z.object({
       // Blank until the Platform Owner picks one — never a guessed provider.
       walletProvider: z
@@ -182,7 +187,7 @@ export type WalletMethodFormData = z.infer<typeof walletMethodSchema>;
 
 export const instapayMethodSchema = z.object({
   displayName: requiredText(80),
-  description: z.string().trim().max(300, BANK_FIELD_TOO_LONG),
+  description: z.string().trim().max(300, tooLong(300)),
   instructions: z.object({
     instapayAddress: z
       .string()

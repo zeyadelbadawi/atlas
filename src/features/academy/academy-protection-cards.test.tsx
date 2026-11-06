@@ -382,19 +382,22 @@ describe('DevicePolicyCard', () => {
     fireEvent.click(screen.getByRole('button', { name: /^save$/i }));
 
     expect(
-      await screen.findByText(/whole number between 1 and the maximum/i)
+      // B4 (UX audit) V20 — the real range, not "the maximum shown".
+      await screen.findByText(/whole number from 1 to 5\./i)
     ).toBeTruthy();
     expect(mutateDevices).not.toHaveBeenCalled();
   });
 
-  it('explains the above-maximum refusal in words', () => {
+  it('explains the above-maximum refusal on the field, with the number', async () => {
     failure = createApiError('validation', {
       messageKey: 'errors.academy.devicePolicyAboveMaximum',
     });
     renderOne(<DevicePolicyCard academyId="academy-1" canEdit />);
 
-    expect(screen.getByRole('alert').textContent).toMatch(
-      /higher than the platform allows/i
-    );
+    // B4 (UX audit) V20 — on the field it is about, once (no alert too).
+    expect(
+      await screen.findByText(/platform allows at most 5\. Choose 5 or fewer/i)
+    ).toBeTruthy();
+    expect(screen.queryByRole('alert', { name: /could not be saved/i })).toBeNull();
   });
 });

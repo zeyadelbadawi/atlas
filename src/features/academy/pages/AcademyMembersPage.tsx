@@ -51,7 +51,8 @@ import {
   useAcademyMembers,
   useRemoveAcademyMember,
 } from '../hooks';
-import { getRosterErrorKey } from '../utils/academy-roster.utils';
+// Its own module, not the barrel: tests that stub the barrel keep it real.
+import { useActionFailureToast } from '../hooks/useActionFailureToast';
 import { AddAcademyManagerDialog } from '../components/AddAcademyManagerDialog';
 import { AddAcademyInstructorDialog } from '../components/AddAcademyInstructorDialog';
 import { CreateAcademyStudentDialog } from '../components/CreateAcademyStudentDialog';
@@ -69,7 +70,8 @@ export default function AcademyMembersPage(): JSX.Element {
   const fmt = useDateFormatter();
   const { t } = useTranslation();
   const { organization, user } = useAuth();
-  const { notifySuccess, notifyError } = useToast();
+  const { notifySuccess } = useToast();
+  const actionFailed = useActionFailureToast();
   const { confirm } = useConfirmDialog();
   const removeMember = useRemoveAcademyMember();
   // Removing staff is Organization-Owner-only (backend-enforced); the
@@ -130,6 +132,7 @@ export default function AcademyMembersPage(): JSX.Element {
   }, [membersData]);
 
   const members = membersData?.items ?? [];
+  const isFiltering = searchQuery.trim() !== '' || roleFilter !== 'all';
 
   const filteredMembers = members.filter((member) => {
     const matchesSearch =
@@ -244,12 +247,9 @@ export default function AcademyMembersPage(): JSX.Element {
           notifySuccess('academy:members.remove.success', undefined, {
             name: member.name,
           }),
-        onError: (err) =>
-          notifyError(
-            err.messageKey === 'errors.academy.cannotRemoveOrganizationOwner'
-              ? 'errors:academy.cannotRemoveOrganizationOwner'
-              : getRosterErrorKey(err, 'academy:members.remove.failed')
-          ),
+        // One toast: what didn't happen, and the real reason ("The
+        // organization owner can't be removed…", a lost connection…).
+        onError: (err) => actionFailed(err, 'academy:members.remove.failedTitle'),
       }
     );
   }
@@ -294,7 +294,11 @@ export default function AcademyMembersPage(): JSX.Element {
       <PageHeader
         title={academy.name}
         titleKey="academy:members.title"
-        descriptionKey="academy:members.subtitle"
+        descriptionKey={
+          activeTab === 'students'
+            ? 'academy:members.subtitleStudents'
+            : 'academy:members.subtitle'
+        }
         breadcrumbs={breadcrumbs}
       />
 
@@ -311,11 +315,11 @@ export default function AcademyMembersPage(): JSX.Element {
         className="mt-4 space-y-4"
       >
         <TabsList>
-          <TabsTrigger value="team">
+          <TabsTrigger value="team" className="gap-2">
             <Users className="size-4" strokeWidth={2} aria-hidden />
             {t('academy:members.tabs.team')}
           </TabsTrigger>
-          <TabsTrigger value="students">
+          <TabsTrigger value="students" className="gap-2">
             <GraduationCap className="size-4" strokeWidth={2} aria-hidden />
             {t('academy:members.tabs.students')}
           </TabsTrigger>
@@ -377,6 +381,7 @@ export default function AcademyMembersPage(): JSX.Element {
                   <Input
                     type="search"
                     placeholder={t('academy:members.searchPlaceholder')}
+                    aria-label={t('academy:members.searchPlaceholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="ps-9"
@@ -423,8 +428,19 @@ export default function AcademyMembersPage(): JSX.Element {
                   data={filteredMembers}
                   isLoading={isLoadingMembers}
                   pagination={pagination}
-                  emptyTitleKey="academy:members.emptyState"
-                  emptyDescriptionKey="academy:members.emptyStateDescription"
+                  // B4 (UX audit) V27 — a search or role filter with no match
+                  // says so; "doesn't have any members yet" is only true
+                  // for a truly empty team.
+                  emptyTitleKey={
+                    isFiltering
+                      ? 'academy:members.noMatch'
+                      : 'academy:members.emptyState'
+                  }
+                  emptyDescriptionKey={
+                    isFiltering
+                      ? 'academy:members.noMatchDescription'
+                      : 'academy:members.emptyStateDescription'
+                  }
                   getRowId={(member) => member.id}
                 />
               )}
@@ -439,7 +455,12 @@ export default function AcademyMembersPage(): JSX.Element {
             issuing it for every visitor to the team table would be a
             request nobody asked for.
           */}
-          <AcademyStudentsTab academyId={academyId ?? ''} />
+          <AcademyStudentsTab
+            academyId={academyId ?? ''}
+            onAddStudent={
+              canAddStudent ? () => setIsCreateStudentOpen(true) : undefined
+            }
+          />
         </TabsContent>
       </Tabs>
 
@@ -447,11 +468,13 @@ export default function AcademyMembersPage(): JSX.Element {
         open={isAddManagerOpen}
         onOpenChange={setIsAddManagerOpen}
         academyId={academyId ?? ''}
+        teamMembers={members}
       />
       <AddAcademyInstructorDialog
         open={isAddInstructorOpen}
         onOpenChange={setIsAddInstructorOpen}
         academyId={academyId ?? ''}
+        teamMembers={members}
       />
       <CreateAcademyStudentDialog
         open={isCreateStudentOpen}

@@ -62,6 +62,11 @@ vi.mock('@forms', () => ({
   useServerValidation: () => undefined,
   useNameConflictError: () => null,
   nameConflictFromError: () => null,
+  useLabelledViolations: (error: unknown) => error,
+  useFocusFirstViolation: () => undefined,
+  SaveFailedAlert: () => null,
+  isFieldViolationError: () => false,
+  hasViolationOn: () => false,
 }));
 vi.mock('@/hooks/use-toast', () => ({ toast: vi.fn(), useToast: () => ({}) }));
 vi.mock('./hooks', () => ({

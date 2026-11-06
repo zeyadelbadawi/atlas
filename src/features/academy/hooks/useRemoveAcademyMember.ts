@@ -5,7 +5,7 @@
  * (`AcademyService.removeAcademyMember`, Organization Owner only).
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { academyKeys, dashboardOverviewKeys } from '@services/query';
+import { academyKeys, dashboardOverviewKeys, INLINE_ERRORS_META } from '@services/query';
 import type { ApiError } from '@api';
 import { academyService } from '../services/AcademyService';
 
@@ -23,6 +23,9 @@ export function useRemoveAcademyMember() {
     // The page shows its own contextual success/error toast.
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(academyKeys.all);
       await invalidate(dashboardOverviewKeys.overviews());

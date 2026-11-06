@@ -5,7 +5,7 @@
  * (`AcademyService.addAcademyInstructor`).
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { academyKeys, dashboardOverviewKeys } from '@services/query';
+import { academyKeys, dashboardOverviewKeys, INLINE_ERRORS_META } from '@services/query';
 import type { ApiError } from '@api';
 import { academyService } from '../services/AcademyService';
 import type {
@@ -30,6 +30,9 @@ export function useAddAcademyInstructor() {
       academyService.addAcademyInstructor(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(academyKeys.all);
       // The dashboard's member counts live outside the academy tree.

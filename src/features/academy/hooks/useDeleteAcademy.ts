@@ -10,8 +10,7 @@ import { useApiMutation, useInvalidate } from '@/shared/hooks';
 import {
   academyKeys,
   dashboardOverviewKeys,
-  tenantKeys,
-} from '@services/query';
+  tenantKeys, INLINE_ERRORS_META } from '@services/query';
 import type { ApiError } from '@api';
 import { academyService } from '../services/AcademyService';
 
@@ -31,6 +30,9 @@ export function useDeleteAcademy() {
     // generic toast would be a second message for one event.
     showSuccessToast: false,
     showErrorToast: false,
+    // B4 (UX audit) — the caller shows the one message; the app-wide
+    // reporter must not add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(academyKeys.all);
       await invalidate(tenantKeys.all);

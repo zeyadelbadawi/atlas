@@ -60,11 +60,13 @@ import {
   useUnblockAcademyStudent,
   useUpdateRosterEnrollmentExpiry,
 } from '../hooks';
+// Its own module, not the barrel: tests that stub the barrel keep it real.
+import { useActionFailureToast } from '../hooks/useActionFailureToast';
 import {
   getRosterEnrollmentLabelKey,
   getRosterEnrollmentTone,
-  getRosterErrorKey,
   getRosterSourceLabelKey,
+  getRosterSpecificKey,
   getRosterStatusLabelKey,
   getRosterStatusTone,
   isRejectedRegistration,
@@ -105,7 +107,8 @@ export function AcademyStudentDrawer({
 }: AcademyStudentDrawerProps): JSX.Element {
   const { t } = useTranslation();
   const fmt = useDateFormatter();
-  const { notifySuccess, notifyError } = useToast();
+  const { notifySuccess } = useToast();
+  const actionFailed = useActionFailureToast();
   const { confirm } = useConfirmDialog();
 
   const [isBlockOpen, setIsBlockOpen] = useState(false);
@@ -135,7 +138,11 @@ export function AcademyStudentDrawer({
   const revoke = useRevokeRosterEnrollment(academyId);
   const updateExpiry = useUpdateRosterEnrollmentExpiry(academyId);
 
-  const fail = (err: ApiError) => notifyError(getRosterErrorKey(err));
+  // B4 (UX audit) — a drawer action (approve, reject, unblock) shows ONE
+  // toast: what didn't happen and the real reason. Dialog actions show
+  // their failure inside the dialog instead (`error` below).
+  const failed = (titleKey: string) => (err: ApiError) =>
+    actionFailed(err, titleKey, getRosterSpecificKey(err));
 
   const student = data?.student;
   const canManage = data?.viewerScope === 'academy';
@@ -156,7 +163,7 @@ export function AcademyStudentDrawer({
       { userId },
       {
         onSuccess: () => notifySuccess('academy:students.toasts.approved'),
-        onError: fail,
+        onError: failed('academy:students.actionFailed.approve'),
       }
     );
   };
@@ -176,7 +183,7 @@ export function AcademyStudentDrawer({
       { userId },
       {
         onSuccess: () => notifySuccess('academy:students.toasts.rejected'),
-        onError: fail,
+        onError: failed('academy:students.actionFailed.reject'),
       }
     );
   };
@@ -187,7 +194,7 @@ export function AcademyStudentDrawer({
       { userId },
       {
         onSuccess: () => notifySuccess('academy:students.toasts.unblocked'),
-        onError: fail,
+        onError: failed('academy:students.actionFailed.unblock'),
       }
     );
   };
@@ -201,7 +208,6 @@ export function AcademyStudentDrawer({
           notifySuccess('academy:students.toasts.blocked');
           setIsBlockOpen(false);
         },
-        onError: fail,
       }
     );
   };
@@ -218,7 +224,6 @@ export function AcademyStudentDrawer({
           notifySuccess('academy:students.toasts.enrolled');
           setIsEnrollOpen(false);
         },
-        onError: fail,
       }
     );
   };
@@ -238,7 +243,6 @@ export function AcademyStudentDrawer({
           notifySuccess('academy:students.toasts.revoked');
           setRevokeTarget(null);
         },
-        onError: fail,
       }
     );
   };
@@ -256,7 +260,6 @@ export function AcademyStudentDrawer({
           );
           setExpiryTarget(null);
         },
-        onError: fail,
       }
     );
   };
@@ -419,7 +422,10 @@ export function AcademyStudentDrawer({
                     variant="outline"
                     className="text-destructive"
                     disabled={isActing}
-                    onClick={() => setIsBlockOpen(true)}
+                    onClick={() => {
+                      block.reset();
+                      setIsBlockOpen(true);
+                    }}
                   >
                     <Ban className="size-4" aria-hidden />
                     {t('academy:students.actions.block')}
@@ -433,7 +439,10 @@ export function AcademyStudentDrawer({
                   aria-describedby={
                     needsApproval ? 'student-approve-before-enroll' : undefined
                   }
-                  onClick={() => setIsEnrollOpen(true)}
+                  onClick={() => {
+                    enroll.reset();
+                    setIsEnrollOpen(true);
+                  }}
                 >
                   <BookPlus className="size-4" aria-hidden />
                   {t('academy:students.actions.enroll')}
@@ -507,7 +516,7 @@ export function AcademyStudentDrawer({
                           enrollment.status === 'completed' ||
                           !!enrollment.completedAt) &&
                         !enrollment.revokedAt ? (
-                          <div className="flex shrink-0 flex-wrap gap-1">
+                          <div className="flex max-w-full flex-wrap gap-1">
                             {/* P64 Phase 3 §E.6 — manual issuance for an
                                 active or completed enrollment. The
                                 dialog owns the mutation and its copy. */}
@@ -532,7 +541,10 @@ export function AcademyStudentDrawer({
                                   type="button"
                                   size="sm"
                                   variant="ghost"
-                                  onClick={() => setExpiryTarget(enrollment)}
+                                  onClick={() => {
+                                    updateExpiry.reset();
+                                    setExpiryTarget(enrollment);
+                                  }}
                                 >
                                   {t('academy:students.actions.setExpiry')}
                                 </Button>
@@ -541,7 +553,10 @@ export function AcademyStudentDrawer({
                                   size="sm"
                                   variant="ghost"
                                   className="text-destructive"
-                                  onClick={() => setRevokeTarget(enrollment)}
+                                  onClick={() => {
+                                    revoke.reset();
+                                    setRevokeTarget(enrollment);
+                                  }}
                                 >
                                   {t('academy:students.actions.revoke')}
                                 </Button>
@@ -702,6 +717,7 @@ export function AcademyStudentDrawer({
             open={isBlockOpen}
             onOpenChange={setIsBlockOpen}
             isPending={block.isPending}
+            error={block.error}
             studentName={student.name}
             onConfirm={handleBlock}
           />
@@ -709,6 +725,7 @@ export function AcademyStudentDrawer({
             open={isEnrollOpen}
             onOpenChange={setIsEnrollOpen}
             isPending={enroll.isPending}
+            error={enroll.error}
             academyId={academyId}
             studentName={student.name}
             enrolledCourseIds={activeCourseIds}
@@ -718,6 +735,7 @@ export function AcademyStudentDrawer({
             open={revokeTarget !== null}
             onOpenChange={(next) => !next && setRevokeTarget(null)}
             isPending={revoke.isPending}
+            error={revoke.error}
             courseTitle={revokeTarget?.courseTitle ?? ''}
             onConfirm={handleRevoke}
           />
@@ -725,6 +743,7 @@ export function AcademyStudentDrawer({
             open={expiryTarget !== null}
             onOpenChange={(next) => !next && setExpiryTarget(null)}
             isPending={updateExpiry.isPending}
+            error={updateExpiry.error}
             courseTitle={expiryTarget?.courseTitle ?? ''}
             currentExpiresAt={expiryTarget?.expiresAt}
             onConfirm={handleExpiry}
