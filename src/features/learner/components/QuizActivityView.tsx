@@ -25,7 +25,7 @@
  * request says why (auto-submitted, reason timeout). Anything else is
  * shown as the specific sentence for its message key.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@components/feedback';
@@ -209,13 +209,14 @@ export function QuizActivityView({
     !!openAttempt &&
     !resultsAttemptId &&
     sessionQuery.data?.status === 'in_progress';
+  // The latest callback through a ref, so a new callback identity never
+  // reports `false` while an attempt is still running; `false` only on unmount.
+  const runningCallbackRef = useRef(onAttemptRunningChange);
+  runningCallbackRef.current = onAttemptRunningChange;
   useEffect(() => {
-    onAttemptRunningChange?.(running);
-  }, [running, onAttemptRunningChange]);
-  useEffect(
-    () => () => onAttemptRunningChange?.(false),
-    [onAttemptRunningChange]
-  );
+    runningCallbackRef.current?.(running);
+  }, [running]);
+  useEffect(() => () => runningCallbackRef.current?.(false), []);
 
   /* ---------- render ---------- */
 

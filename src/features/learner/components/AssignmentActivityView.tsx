@@ -445,6 +445,7 @@ export function AssignmentActivityView({
 
   const handleSubmit = async () => {
     setResponseError(undefined);
+    setAttachmentError(undefined);
     setSubmitFailure(null);
     const hasContent = response.trim().length > 0 || !!attachment;
     if (!hasContent) {
@@ -1055,7 +1056,11 @@ export function AssignmentActivityView({
                     : t('learning:assignment.uploadAttachment')}
               </Button>
               {attachmentError ? (
-                <p role="alert" className="text-sm text-destructive">
+                <p
+                  role="alert"
+                  className="text-sm text-destructive"
+                  data-testid="assignment-attachment-error"
+                >
                   {attachmentError}
                 </p>
               ) : null}

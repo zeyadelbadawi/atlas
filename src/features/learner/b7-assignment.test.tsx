@@ -170,6 +170,33 @@ describe('V11 — server refusals land on their fields, the rest is one alert', 
     expect(screen.queryByTestId('save-failed')).toBeNull();
   });
 
+  it('a new submit clears the previous attachment refusal', async () => {
+    submitMutate.mockRejectedValueOnce(
+      createApiError('validation', {
+        status: 400,
+        violations: [
+          {
+            field: 'fileData',
+            messageKey: 'learning:assignment.attachmentInvalidType',
+          },
+        ],
+      })
+    );
+    submitMutate.mockRejectedValueOnce(
+      createApiError('conflict', {
+        status: 409,
+        messageKey: 'errors.assignment.alreadySubmitted',
+      })
+    );
+    renderView();
+    fireEvent.change(textarea(), { target: { value: 'My answer' } });
+    fireEvent.click(screen.getByTestId('assignment-submit'));
+    await screen.findByTestId('assignment-attachment-error');
+    fireEvent.click(screen.getByTestId('assignment-submit'));
+    await screen.findByTestId('save-failed');
+    expect(screen.queryByTestId('assignment-attachment-error')).toBeNull();
+  });
+
   it('a 409 is ONE alert with the real reason and Try again', async () => {
     submitMutate.mockRejectedValue(
       createApiError('conflict', {
