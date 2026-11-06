@@ -100,16 +100,32 @@ export {
   resolvePageSeo,
   resolveCourseSeo,
   resolveBlogPostSeo,
+  localizedPublicPath,
+  buildHreflangAlternates,
+  buildXDefaultPath,
 } from './utils/seo-resolution.utils';
+export {
+  derivePageDescription,
+  composeSeoDescription,
+  collectPageFaqItems,
+  truncateForSnippet,
+} from './utils/seo-content.utils';
+export type { PageFaqItem } from './utils/seo-content.utils';
 export type { SeoFallback } from './utils/seo-resolution.utils';
 export { publicPageName } from './utils/page-name.utils';
 export {
   buildOrganizationJsonLd,
+  buildWebSiteJsonLd,
   buildCourseJsonLd,
+  buildCourseListJsonLd,
+  buildFaqPageJsonLd,
   buildArticleJsonLd,
   buildBreadcrumbJsonLd,
+  organizationJsonLdId,
+  isoDuration,
 } from './utils/structured-data.utils';
 export { buildSitemapEntries } from './utils/sitemap.utils';
+export { hslTripletToHex } from './utils/color.utils';
 export type { BuildSitemapEntriesInput } from './utils/sitemap.utils';
 
 // Phase 6 (Bilingual Academy Websites) — `@features/public-website`'s

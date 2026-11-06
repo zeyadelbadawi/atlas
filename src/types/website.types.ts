@@ -75,6 +75,10 @@ export interface WebsiteSeoConfig {
   readonly robotsIndexable?: boolean;
   readonly sitemapEnabled?: boolean;
   readonly canonicalBaseUrl?: string;
+  /** The `content` of Google Search Console's `<meta name="google-site-verification">` (HTML-tag method), shown on the home page. */
+  readonly googleSiteVerification?: string;
+  /** The `content` of Bing Webmaster Tools' `<meta name="msvalidate.01">`, shown on the home page. */
+  readonly bingSiteVerification?: string;
 }
 
 export interface WebsiteNavigationItem {

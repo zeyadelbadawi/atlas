@@ -53,29 +53,139 @@ export interface ResolvedSeoMetadata {
   /** Phase 6 — which locale this resolution is for; every title/description field above is already resolved to this locale (falling back to English when the Arabic side is blank). */
   readonly locale: PublicWebsiteLocale;
   readonly hreflangAlternates: readonly HreflangAlternate[];
+  /** The `hreflang="x-default"` path: the site's default-language URL of this page. Absent when the page has no alternates (a not-found page). */
+  readonly xDefaultPath?: string;
 }
 
-/** https://schema.org/Organization — built from the existing Academy record only. */
+/** A schema.org node another node can point at by `@id` alone. */
+export interface JsonLdReference {
+  readonly '@id': string;
+}
+
+/** https://schema.org/PostalAddress */
+export interface PostalAddressJsonLd {
+  readonly '@type': 'PostalAddress';
+  readonly streetAddress?: string;
+  readonly addressLocality?: string;
+  readonly addressRegion?: string;
+  readonly postalCode?: string;
+  readonly addressCountry: string;
+}
+
+/**
+ * https://schema.org/EducationalOrganization — the Academy (Google:
+ * "use the most specific schema.org subtype of Organization"), built from
+ * its published identity only. `@id` (`<origin>/#organization`) lets every
+ * other node name it without repeating it.
+ */
 export interface OrganizationJsonLd {
   readonly '@context': 'https://schema.org';
-  readonly '@type': 'Organization';
+  readonly '@type': 'EducationalOrganization';
+  readonly '@id'?: string;
   readonly name: string;
+  readonly url?: string;
   readonly description?: string;
   readonly logo?: string;
+  readonly image?: string;
   readonly email?: string;
   readonly telephone?: string;
+  readonly address?: PostalAddressJsonLd;
+  readonly sameAs?: readonly string[];
+}
+
+/** https://schema.org/WebSite — the site name search engines show (home page only, per Google's site-name guidance). */
+export interface WebSiteJsonLd {
+  readonly '@context': 'https://schema.org';
+  readonly '@type': 'WebSite';
+  readonly '@id': string;
+  readonly name: string;
+  readonly url: string;
+  readonly inLanguage: readonly string[];
+  readonly publisher: JsonLdReference;
+}
+
+/** https://schema.org/Person — a course's instructor. */
+export interface PersonJsonLd {
+  readonly '@type': 'Person';
+  readonly name: string;
+  readonly image?: string;
+}
+
+/** https://schema.org/Offer — what enrolling costs, as the course page states it. */
+export interface OfferJsonLd {
+  readonly '@type': 'Offer';
+  readonly category: 'Free' | 'Paid';
+  readonly price: number;
+  readonly priceCurrency?: string;
+  readonly url: string;
+  readonly availability: 'https://schema.org/InStock';
+}
+
+/** https://schema.org/CourseInstance — the course as it runs: online, self-paced, its workload and instructors. */
+export interface CourseInstanceJsonLd {
+  readonly '@type': 'CourseInstance';
+  readonly courseMode: 'Online';
+  readonly courseWorkload?: string;
+  readonly instructor?: readonly PersonJsonLd[];
+}
+
+/** https://schema.org/AggregateRating — only from approved reviews the page itself shows. */
+export interface AggregateRatingJsonLd {
+  readonly '@type': 'AggregateRating';
+  readonly ratingValue: number;
+  readonly reviewCount: number;
+  readonly bestRating: 5;
+  readonly worstRating: 1;
 }
 
 /** https://schema.org/Course — built from the existing Course domain only, never a duplicated projection stored in the CMS. */
 export interface CourseJsonLd {
   readonly '@context': 'https://schema.org';
   readonly '@type': 'Course';
+  readonly '@id'?: string;
   readonly name: string;
   readonly description?: string;
+  readonly url?: string;
+  readonly image?: string;
+  readonly inLanguage?: string;
+  readonly educationalLevel?: string;
+  readonly teaches?: readonly string[];
+  readonly coursePrerequisites?: readonly string[];
   readonly provider: {
-    readonly '@type': 'Organization';
+    readonly '@type': 'EducationalOrganization';
+    readonly '@id'?: string;
     readonly name: string;
+    readonly url?: string;
   };
+  readonly offers?: readonly OfferJsonLd[];
+  readonly hasCourseInstance?: readonly CourseInstanceJsonLd[];
+  readonly aggregateRating?: AggregateRatingJsonLd;
+}
+
+/** https://schema.org/ItemList — the course catalog: one `ListItem` per course page (Google "Course list" summary page). */
+export interface ItemListJsonLd {
+  readonly '@context': 'https://schema.org';
+  readonly '@type': 'ItemList';
+  readonly itemListElement: ReadonlyArray<{
+    readonly '@type': 'ListItem';
+    readonly position: number;
+    readonly url: string;
+    readonly name?: string;
+  }>;
+}
+
+/** https://schema.org/FAQPage — the FAQs page's own visible questions and answers. */
+export interface FaqPageJsonLd {
+  readonly '@context': 'https://schema.org';
+  readonly '@type': 'FAQPage';
+  readonly mainEntity: ReadonlyArray<{
+    readonly '@type': 'Question';
+    readonly name: string;
+    readonly acceptedAnswer: {
+      readonly '@type': 'Answer';
+      readonly text: string;
+    };
+  }>;
 }
 
 /** https://schema.org/Article — built from an existing `BlogPost` (`@features/blog`) only. */

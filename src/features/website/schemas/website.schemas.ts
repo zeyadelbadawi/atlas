@@ -79,6 +79,28 @@ export function isAbsoluteWebAddress(value: string): boolean {
   }
 }
 
+/**
+ * A search-engine ownership token (Google Search Console's
+ * `google-site-verification`, Bing's `msvalidate.01`). The owner may paste
+ * the whole `<meta ... content="…">` tag those tools hand out; only its
+ * `content` is kept. Letters, digits, `-` and `_` only (never markup).
+ */
+export function normalizeSiteVerificationToken(value: unknown): unknown {
+  if (typeof value !== 'string') return value;
+  const trimmed = value.trim();
+  const content = /content\s*=\s*["']([^"']*)["']/i.exec(trimmed);
+  return (content ? content[1] : trimmed).trim();
+}
+
+const siteVerificationToken = z.preprocess(
+  normalizeSiteVerificationToken,
+  z
+    .string()
+    .max(128, validationMessage('validation:maxLength', { count: 128 }))
+    .regex(/^[A-Za-z0-9_-]*$/, 'validation:invalid')
+    .optional()
+);
+
 export const globalSeoSchema = z.object({
   siteTitle: localizedOptional(MAX_SITE_TITLE_LENGTH).optional(),
   metaTitle: localizedOptional(MAX_SEO_TITLE_LENGTH).optional(),
@@ -105,6 +127,8 @@ export const globalSeoSchema = z.object({
       'validation:absoluteUrl'
     )
     .optional(),
+  googleSiteVerification: siteVerificationToken,
+  bingSiteVerification: siteVerificationToken,
 });
 export type GlobalSeoFormData = z.infer<typeof globalSeoSchema>;
 

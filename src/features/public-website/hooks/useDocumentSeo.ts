@@ -39,10 +39,18 @@ import {
 
 const MANAGED_ATTR = 'data-atlas-seo';
 
+/** Search-engine ownership checks the Academy Owner pasted in (Website → SEO). Rendered on the home page only, where Search Console and Bing Webmaster Tools look for them. */
+export interface SiteVerificationTokens {
+  /** `<meta name="google-site-verification">` (Google Search Console, URL-prefix property). */
+  readonly google?: string;
+  /** `<meta name="msvalidate.01">` (Bing Webmaster Tools). */
+  readonly bing?: string;
+}
+
 export interface UseDocumentSeoOptions {
   readonly seo: ResolvedSeoMetadata;
   readonly siteTitle?: string;
-  /** Absolute canonical URL — built by the caller from `window.location.origin` (the real hostname the visitor is actually on), never an invented domain. */
+  /** Absolute canonical URL — on the Academy's canonical host (`resolveCanonicalOrigin`), never an invented domain. */
   readonly canonicalUrl?: string;
   /** Plain schema.org objects (`OrganizationJsonLd`, `CourseJsonLd`, ...) — each emitted as its own `<script type="application/ld+json">`. Typed as `unknown` only because it accepts a union of several distinct JSON-LD interfaces; every entry is still real, typed Atlas data produced by `@features/website`'s structured-data builders, never an arbitrary/untyped value. */
   readonly structuredData?: readonly unknown[];
@@ -50,25 +58,129 @@ export interface UseDocumentSeoOptions {
   readonly faviconHref?: string;
   /** The locale this render is for — sets `<html lang>`/`<html dir>` and is used to build each hreflang alternate's absolute URL from `seo.hreflangAlternates`' paths. */
   readonly locale: PublicWebsiteLocale;
+  /** `og:site_name` — the Academy's site name. */
+  readonly siteName?: string;
+  /** `<meta name="theme-color">` (a `#rrggbb` colour: the Academy's brand). */
+  readonly themeColor?: string;
+  /** `<link rel="apple-touch-icon">` (an absolute or same-origin PNG). */
+  readonly appleTouchIconHref?: string;
+  readonly verification?: SiteVerificationTokens;
+  /**
+   * The page does not exist (unknown path, a course that is not public):
+   * `noindex`, no canonical or alternates, and the server renderer answers
+   * with HTTP 404 instead of a soft 404.
+   */
+  readonly notFound?: boolean;
 }
 
-function upsertMeta(
-  attr: 'name' | 'property',
-  key: string,
-  content: string | undefined
-): void {
-  const existing = document.head.querySelector(
-    `meta[${attr}="${key}"][${MANAGED_ATTR}]`
+/** `og:locale` values (language_TERRITORY, as the Open Graph protocol asks). */
+const OG_LOCALE: Record<PublicWebsiteLocale, string> = {
+  en: 'en_US',
+  ar: 'ar_AR',
+};
+
+type SeoHeadTag =
+  | {
+      readonly tag: 'meta';
+      readonly attr: 'name' | 'property';
+      readonly key: string;
+      readonly content: string;
+    }
+  | {
+      readonly tag: 'link';
+      readonly rel: string;
+      readonly href: string;
+      readonly hreflang?: string;
+    }
+  | { readonly tag: 'ld'; readonly json: unknown };
+
+/** A verification token as Search Console / Bing hand it out: letters, digits, `-` and `_` only. */
+const VERIFICATION_TOKEN = /^[A-Za-z0-9_-]{1,128}$/;
+
+/**
+ * Every managed head tag (except `<title>` and the favicon), in order — the
+ * ONE list both the server-rendered head and the browser effect write, so
+ * the two can never drift.
+ */
+export function buildSeoHeadTags({
+  seo,
+  canonicalUrl,
+  structuredData,
+  locale,
+  siteName,
+  themeColor,
+  appleTouchIconHref,
+  verification,
+  notFound,
+}: UseDocumentSeoOptions): readonly SeoHeadTag[] {
+  const tags: SeoHeadTag[] = [];
+  const meta = (attr: 'name' | 'property', key: string, content?: string) => {
+    if (content) tags.push({ tag: 'meta', attr, key, content });
+  };
+  const indexable = seo.indexable && !notFound;
+  meta('name', 'description', seo.description);
+  meta(
+    'name',
+    'robots',
+    indexable ? 'index,follow,max-image-preview:large' : 'noindex,nofollow'
   );
-  if (!content) {
-    existing?.remove();
-    return;
+  // Ownership checks work on a noindex page too, so an owner can verify
+  // before letting search engines in.
+  if (!notFound) {
+    if (verification?.google && VERIFICATION_TOKEN.test(verification.google))
+      meta('name', 'google-site-verification', verification.google);
+    if (verification?.bing && VERIFICATION_TOKEN.test(verification.bing))
+      meta('name', 'msvalidate.01', verification.bing);
   }
-  const tag = existing ?? document.createElement('meta');
-  tag.setAttribute(attr, key);
-  tag.setAttribute('content', content);
-  tag.setAttribute(MANAGED_ATTR, 'true');
-  if (!existing) document.head.appendChild(tag);
+  meta('name', 'theme-color', themeColor);
+  meta('property', 'og:site_name', siteName);
+  meta('property', 'og:title', seo.ogTitle);
+  meta('property', 'og:description', seo.ogDescription);
+  meta('property', 'og:type', 'website');
+  meta('property', 'og:locale', OG_LOCALE[locale]);
+  const pageUrl = notFound ? undefined : canonicalUrl;
+  if (pageUrl) {
+    for (const alternate of seo.hreflangAlternates) {
+      if (alternate.locale !== locale)
+        meta('property', 'og:locale:alternate', OG_LOCALE[alternate.locale]);
+    }
+  }
+  meta('property', 'og:image', seo.ogImage);
+  meta('property', 'og:url', pageUrl);
+  meta('name', 'twitter:card', seo.ogImage ? 'summary_large_image' : 'summary');
+  meta('name', 'twitter:title', seo.ogTitle);
+  meta('name', 'twitter:description', seo.ogDescription);
+  meta('name', 'twitter:image', seo.ogImage);
+  if (appleTouchIconHref) {
+    tags.push({
+      tag: 'link',
+      rel: 'apple-touch-icon',
+      href: appleTouchIconHref,
+    });
+  }
+  if (pageUrl) {
+    tags.push({ tag: 'link', rel: 'canonical', href: pageUrl });
+    const origin = new URL(pageUrl).origin;
+    for (const alternate of seo.hreflangAlternates) {
+      tags.push({
+        tag: 'link',
+        rel: 'alternate',
+        hreflang: alternate.locale,
+        href: `${origin}${alternate.path}`,
+      });
+    }
+    if (seo.xDefaultPath && seo.hreflangAlternates.length > 0) {
+      tags.push({
+        tag: 'link',
+        rel: 'alternate',
+        hreflang: 'x-default',
+        href: `${origin}${seo.xDefaultPath}`,
+      });
+    }
+  }
+  for (const entry of structuredData ?? [])
+    tags.push({ tag: 'ld', json: entry });
+  return tags;
 }
 
 /**
@@ -111,150 +223,86 @@ function safeJson(value: unknown): string {
  * values, the same `data-atlas-seo` marker, so the browser's effect adopts
  * them instead of adding a second copy.
  */
-export function renderSeoHeadHtml({
-  seo,
-  siteTitle,
-  canonicalUrl,
-  structuredData,
-  faviconHref,
-}: UseDocumentSeoOptions): string {
-  const tags: string[] = [];
+export function renderSeoHeadHtml(options: UseDocumentSeoOptions): string {
+  const { seo, siteTitle, faviconHref } = options;
+  const html: string[] = [];
   if (faviconHref) {
-    tags.push(
+    html.push(
       `<link rel="icon" href="${escapeAttribute(faviconHref)}" ${ACADEMY_FAVICON_ATTR}="true">`
     );
   }
-  const title = composeDocumentTitle(seo.title, siteTitle);
-  tags.push(`<title>${escapeText(title)}</title>`);
-  const meta = (attr: 'name' | 'property', key: string, content?: string) => {
-    if (content) {
-      tags.push(
-        `<meta ${attr}="${key}" content="${escapeAttribute(content)}" ${MANAGED_ATTR}="true">`
+  html.push(
+    `<title>${escapeText(composeDocumentTitle(seo.title, siteTitle))}</title>`
+  );
+  for (const tag of buildSeoHeadTags(options)) {
+    if (tag.tag === 'meta') {
+      html.push(
+        `<meta ${tag.attr}="${tag.key}" content="${escapeAttribute(tag.content)}" ${MANAGED_ATTR}="true">`
       );
-    }
-  };
-  meta('name', 'description', seo.description);
-  meta('name', 'robots', seo.indexable ? 'index,follow' : 'noindex,nofollow');
-  meta('property', 'og:title', seo.ogTitle);
-  meta('property', 'og:description', seo.ogDescription);
-  meta('property', 'og:type', 'website');
-  meta('property', 'og:image', seo.ogImage);
-  meta('property', 'og:url', canonicalUrl);
-  meta('name', 'twitter:card', seo.ogImage ? 'summary_large_image' : 'summary');
-  meta('name', 'twitter:title', seo.ogTitle);
-  meta('name', 'twitter:description', seo.ogDescription);
-  meta('name', 'twitter:image', seo.ogImage);
-  if (canonicalUrl) {
-    tags.push(
-      `<link rel="canonical" href="${escapeAttribute(canonicalUrl)}" ${MANAGED_ATTR}="true">`
-    );
-    const origin = new URL(canonicalUrl).origin;
-    for (const alternate of seo.hreflangAlternates) {
-      tags.push(
-        `<link rel="alternate" hreflang="${escapeAttribute(alternate.locale)}" href="${escapeAttribute(`${origin}${alternate.path}`)}" ${MANAGED_ATTR}="true">`
+    } else if (tag.tag === 'link') {
+      const hreflang = tag.hreflang
+        ? ` hreflang="${escapeAttribute(tag.hreflang)}"`
+        : '';
+      html.push(
+        `<link rel="${tag.rel}"${hreflang} href="${escapeAttribute(tag.href)}" ${MANAGED_ATTR}="true">`
+      );
+    } else {
+      html.push(
+        `<script type="application/ld+json" ${MANAGED_ATTR}="true">${safeJson(tag.json)}</script>`
       );
     }
   }
-  for (const entry of structuredData ?? []) {
-    tags.push(
-      `<script type="application/ld+json" ${MANAGED_ATTR}="true">${safeJson(entry)}</script>`
-    );
-  }
-  return tags.join('');
+  return html.join('');
 }
 
-export function useDocumentSeo({
-  seo,
-  siteTitle,
-  canonicalUrl,
-  structuredData,
-  faviconHref,
-  locale,
-}: UseDocumentSeoOptions): void {
+function appendTag(tag: SeoHeadTag): void {
+  let node: HTMLElement;
+  if (tag.tag === 'meta') {
+    node = document.createElement('meta');
+    node.setAttribute(tag.attr, tag.key);
+    node.setAttribute('content', tag.content);
+  } else if (tag.tag === 'link') {
+    const link = document.createElement('link');
+    link.rel = tag.rel;
+    if (tag.hreflang) link.hreflang = tag.hreflang;
+    link.href = tag.href;
+    node = link;
+  } else {
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    // `textContent`, never `innerHTML`/`dangerouslySetInnerHTML` — this
+    // is never HTML-parsed, so a value inside the entry cannot break out
+    // of the script tag or execute.
+    script.textContent = JSON.stringify(tag.json);
+    node = script;
+  }
+  node.setAttribute(MANAGED_ATTR, 'true');
+  document.head.appendChild(node);
+}
+
+export function useDocumentSeo(options: UseDocumentSeoOptions): void {
+  const { seo, siteTitle, locale } = options;
   usePublicWebsiteDocumentDirection(locale);
 
   const titleBaseline = useContext(AcademyTitleBaselineContext);
   const collector = useContext(SeoHeadCollectorContext);
-  if (collector) {
-    collector.current = {
-      seo,
-      siteTitle,
-      canonicalUrl,
-      structuredData,
-      faviconHref,
-      locale,
-    };
-  }
+  if (collector) collector.current = options;
+
+  // Everything the head shows, as one comparable value: the effect runs
+  // again only when what it writes changes.
+  const tagsKey = JSON.stringify(buildSeoHeadTags(options));
 
   useEffect(() => {
     // A server-rendered page arrives with these tags already in the head
-    // (Reports/SSR_ARCHITECTURE_ANALYSIS.md §4 #6). Meta and canonical tags
-    // are reused below; the list-like ones are replaced, never duplicated.
+    // (Reports/SSR_ARCHITECTURE_ANALYSIS.md §4 #6): they are replaced by the
+    // same list, never duplicated.
     document.head
-      .querySelectorAll(
-        `link[rel="alternate"][${MANAGED_ATTR}], script[type="application/ld+json"][${MANAGED_ATTR}]`
-      )
+      .querySelectorAll(`[${MANAGED_ATTR}]`)
       .forEach((node) => node.remove());
 
     const previousTitle = document.title;
     document.title = composeDocumentTitle(seo.title, siteTitle);
-
-    upsertMeta('name', 'description', seo.description);
-    upsertMeta(
-      'name',
-      'robots',
-      seo.indexable ? 'index,follow' : 'noindex,nofollow'
-    );
-
-    upsertMeta('property', 'og:title', seo.ogTitle);
-    upsertMeta('property', 'og:description', seo.ogDescription);
-    upsertMeta('property', 'og:type', 'website');
-    if (seo.ogImage) upsertMeta('property', 'og:image', seo.ogImage);
-    if (canonicalUrl) upsertMeta('property', 'og:url', canonicalUrl);
-
-    upsertMeta(
-      'name',
-      'twitter:card',
-      seo.ogImage ? 'summary_large_image' : 'summary'
-    );
-    upsertMeta('name', 'twitter:title', seo.ogTitle);
-    upsertMeta('name', 'twitter:description', seo.ogDescription);
-    if (seo.ogImage) upsertMeta('name', 'twitter:image', seo.ogImage);
-
-    let canonicalLink: HTMLLinkElement | null = null;
-    if (canonicalUrl) {
-      canonicalLink =
-        document.head.querySelector<HTMLLinkElement>(
-          `link[rel="canonical"][${MANAGED_ATTR}]`
-        ) ?? document.createElement('link');
-      canonicalLink.rel = 'canonical';
-      canonicalLink.href = canonicalUrl;
-      canonicalLink.setAttribute(MANAGED_ATTR, 'true');
-      if (!canonicalLink.isConnected) document.head.appendChild(canonicalLink);
-    }
-
-    if (canonicalUrl) {
-      const origin = new URL(canonicalUrl).origin;
-      seo.hreflangAlternates.forEach((alternate) => {
-        const link = document.createElement('link');
-        link.rel = 'alternate';
-        link.hreflang = alternate.locale;
-        link.href = `${origin}${alternate.path}`;
-        link.setAttribute(MANAGED_ATTR, 'true');
-        document.head.appendChild(link);
-      });
-    }
-
-    (structuredData ?? []).forEach((entry) => {
-      const script = document.createElement('script');
-      script.type = 'application/ld+json';
-      script.setAttribute(MANAGED_ATTR, 'true');
-      // `textContent`, never `innerHTML`/`dangerouslySetInnerHTML` — this
-      // is never HTML-parsed, so a value inside `entry` cannot break out
-      // of the script tag or execute.
-      script.textContent = JSON.stringify(entry);
-      document.head.appendChild(script);
-    });
+    (JSON.parse(tagsKey) as SeoHeadTag[]).forEach(appendTag);
 
     return () => {
       // On an Academy's site the title to fall back to is the Academy's
@@ -264,13 +312,5 @@ export function useDocumentSeo({
         .querySelectorAll(`[${MANAGED_ATTR}]`)
         .forEach((node) => node.remove());
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    seo,
-    siteTitle,
-    canonicalUrl,
-    locale,
-    titleBaseline,
-    JSON.stringify(structuredData),
-  ]);
+  }, [seo.title, siteTitle, titleBaseline, tagsKey]);
 }

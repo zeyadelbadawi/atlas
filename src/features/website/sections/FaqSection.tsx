@@ -12,12 +12,7 @@
  * (`usePublicWebsiteLocale`), not the dashboard chrome's own
  * `i18n.language` — see `PublicWebsiteLocaleContext`'s own doc comment.
  */
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
+import { FaqDisclosureList } from '../primitives/FaqDisclosureList';
 import { Button } from '@/components/ui/button';
 import { useFaqLibraryEntries } from '../hooks';
 import {
@@ -89,16 +84,13 @@ export function FaqSection({
           {title}
         </h2>
       ) : null}
-      <Accordion type="single" collapsible className="mx-auto max-w-2xl">
-        {allItems.map((item) => (
-          <AccordionItem key={item.id} value={item.id}>
-            <AccordionTrigger className="text-start">
-              {item.question}
-            </AccordionTrigger>
-            <AccordionContent>{item.answer}</AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
+      {/* Every answer is in the page's HTML (hidden until opened), so
+          search and answer engines read it — Radix's accordion left it out. */}
+      <FaqDisclosureList
+        className="mx-auto max-w-2xl"
+        triggerClassName="text-start"
+        items={allItems}
+      />
       {config.cta && ctaLabel ? (
         <div className="mt-8 flex justify-center">
           {ctaHref ? (

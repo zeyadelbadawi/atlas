@@ -7,12 +7,7 @@
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SearchX } from 'lucide-react';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
+import { FaqDisclosureList } from '../primitives/FaqDisclosureList';
 import { useFaqLibraryEntries } from '../hooks';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
@@ -33,22 +28,19 @@ function FaqList({
   readonly items: readonly FaqEntry[];
 }): JSX.Element {
   return (
-    <Accordion type="single" collapsible className="space-y-3">
-      {items.map((item) => (
-        <AccordionItem
-          key={item.id}
-          value={item.id}
-          className="t1-card border px-5 md:px-6"
-        >
-          <AccordionTrigger className="t1-faq-trigger min-h-14 gap-4 py-5 text-start text-base font-semibold text-[var(--website-foreground)] hover:no-underline md:text-lg [&>svg]:size-5 [&>svg]:text-[var(--website-link)] motion-reduce:[&>svg]:transition-none">
-            {item.question}
-          </AccordionTrigger>
-          <AccordionContent className="pb-5 text-base leading-relaxed text-[var(--website-foreground-muted)]">
-            <p className="whitespace-pre-line">{item.answer}</p>
-          </AccordionContent>
-        </AccordionItem>
-      ))}
-    </Accordion>
+    // Every answer is in the page's HTML (hidden until opened), so search
+    // and answer engines read it — Radix's accordion left it out.
+    <FaqDisclosureList
+      className="space-y-3"
+      itemClassName="t1-card border px-5 md:px-6"
+      triggerClassName="t1-faq-trigger min-h-14 gap-4 py-5 text-start text-base font-semibold text-[var(--website-foreground)] hover:no-underline md:text-lg [&>svg]:size-5 [&>svg]:text-[var(--website-link)] motion-reduce:[&>svg]:transition-none"
+      contentClassName="pb-5 text-base leading-relaxed text-[var(--website-foreground-muted)]"
+      items={items.map((item) => ({
+        id: item.id,
+        question: item.question,
+        answer: <p className="whitespace-pre-line">{item.answer}</p>,
+      }))}
+    />
   );
 }
 

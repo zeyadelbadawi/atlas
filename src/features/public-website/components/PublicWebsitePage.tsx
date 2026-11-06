@@ -24,6 +24,15 @@ import {
   buildBreadcrumbJsonLd,
   buildOrganizationJsonLd,
   buildCourseJsonLd,
+  buildCourseListJsonLd,
+  buildFaqPageJsonLd,
+  buildWebSiteJsonLd,
+  collectPageFaqItems,
+  composeSeoDescription,
+  derivePageDescription,
+  hslTripletToHex,
+  localizedPublicPath,
+  PUBLIC_WEBSITE_LOCALES,
   resolvePagePath,
   resolvePageSeo,
   resolveCourseSeo,
@@ -35,9 +44,15 @@ import {
 } from '@features/website';
 import { useDocumentSeo } from '../hooks/useDocumentSeo';
 import { composeDocumentTitle } from '../hooks/useAcademyDocumentTitle';
-import { academyFaviconHref } from '../hooks/useAcademyFavicon';
 import { resolveCanonicalOrigin } from '../utils/canonical-redirect.utils';
-import { usePublicCourse } from '@hooks';
+import { useAcademyIdentity, usePublicCourse } from '@hooks';
+import { useListedPublicCourses } from '../hooks/useListedPublicCourses';
+import {
+  absoluteImageUrl,
+  academyIconHref,
+  academyMonogramIconHref,
+  academyOgImageUrl,
+} from '../utils/academy-brand-images.utils';
 import { resolvePathToPage } from '../utils/page-resolution.utils';
 import { useAuth, useRequestLocation, useSignOut } from '@hooks';
 import {
@@ -45,7 +60,7 @@ import {
   usePublicWebsiteHrefBuilder,
 } from '../utils/public-website-link-renderer';
 import type { PublicWebsiteDataState } from '../hooks/usePublicWebsiteData';
-import type { PublicWebsiteLocale } from '@types';
+import type { Course, PublicWebsiteLocale } from '@types';
 import { LEARNER_ROUTES } from '@app/routes/route-paths';
 
 export interface PublicWebsitePageProps {
@@ -127,18 +142,31 @@ export function PublicWebsitePage({
   const pageName = page
     ? publicPageName(page, configuration.navigation, locale, t)
     : t('website:public.pageNotFound.title');
+  // The Academy's public identity (description, contact, address) — the
+  // same cached read the footer makes, so no extra request.
+  const { data: identity } = useAcademyIdentity(academy.academyId);
+  // SEO/AEO/GEO pass — with no meta description of the owner's own, a page
+  // describes itself with its own opening sentence (hero / page header),
+  // topped up with the Academy's description, never the bare name.
   const fallback = {
     title: pageName || academy.academyName,
-    description: academy.academyName,
+    description: composeSeoDescription({
+      pageText: page ? derivePageDescription(page, locale) : undefined,
+      academyDescription: identity?.description,
+      generic: t('website:public.seo.defaultDescription', {
+        academyName: academy.academyName,
+      }),
+    }),
   };
   // A course that doesn't exist here (unknown, unpublished or not public —
   // the public endpoint's 404, returned as `null`) renders a "not found"
   // page, which search engines must not index.
   const isMissingCourse = isCourseDetailsPage && course === null;
+  const notFound = !page || isMissingCourse;
   const resolvedSeo =
     isCourseDetailsPage && course
       ? resolveCourseSeo(course, configuration, fallback, locale, defaultLocale)
-      : page
+      : page && !isMissingCourse
         ? resolvePageSeo(page, configuration, fallback, locale, defaultLocale)
         : {
             title: fallback.title,
@@ -165,17 +193,21 @@ export function PublicWebsitePage({
           ogTitle: composeDocumentTitle(resolvedSeo.title, siteTitle),
         }
       : resolvedSeo;
-  const seo = isMissingCourse
+  const baseSeo = isMissingCourse
     ? {
         ...namedSeo,
         title: t('website:public.pageNotFound.title'),
+        ogTitle: composeDocumentTitle(
+          t('website:public.pageNotFound.title'),
+          siteTitle
+        ),
         indexable: false,
       }
     : namedSeo;
 
   const pagePath =
     isCourseDetailsPage && course
-      ? (seo.canonicalPath ?? unprefixedPathname)
+      ? (baseSeo.canonicalPath ?? unprefixedPathname)
       : page
         ? (resolvePagePath(page) ?? unprefixedPathname)
         : unprefixedPathname;
@@ -189,33 +221,128 @@ export function PublicWebsitePage({
     requestLocation.origin,
     academy.canonicalHost
   );
-  const canonicalUrl = `${canonicalOrigin}${withLocale(pagePath)}`;
+  const localizedUrl = (path: string): string =>
+    `${canonicalOrigin}${localizedPublicPath(path, locale, defaultLocale)}`;
+  const canonicalUrl = localizedUrl(pagePath);
 
-  const structuredData = page
-    ? [
-        buildOrganizationJsonLd({
-          name: academy.academyName,
-          logo: academy.academyLogo,
-        }),
-        buildBreadcrumbJsonLd([
-          { name: academy.academyName, path: canonicalOrigin },
-          {
-            name: isCourseDetailsPage && course ? course.title : page.title,
-            path: canonicalUrl,
-          },
-        ]),
-        ...(isCourseDetailsPage && course
-          ? [buildCourseJsonLd(course, { name: academy.academyName })]
-          : []),
-      ]
-    : undefined;
+  // Every page has a picture to share: the owner's, the course's, else the
+  // Academy's generated card (absolute, on the canonical host).
+  const seo = {
+    ...baseSeo,
+    ogImage:
+      absoluteImageUrl(baseSeo.ogImage, canonicalOrigin) ??
+      academyOgImageUrl(academy, canonicalOrigin),
+  };
 
+  const homePage = pages.find((candidate) => candidate.coreType === 'home');
+  const coursesPage = pages.find(
+    (candidate) => candidate.coreType === 'courses' && candidate.visible
+  );
+  const homeName = homePage
+    ? publicPageName(homePage, configuration.navigation, locale, t) ||
+      academy.academyName
+    : academy.academyName;
+  const isHome = page?.coreType === 'home';
+  const listedCourses = useListedPublicCourses(
+    academy.academyId,
+    page?.coreType === 'courses'
+  );
+  const courseUrl = (listed: Course): string =>
+    localizedUrl(`/courses/${encodeURIComponent(listed.slug || listed.id)}`);
+  const organization = buildOrganizationJsonLd({
+    name: academy.academyName,
+    origin: canonicalOrigin,
+    description: identity?.description,
+    logo: absoluteImageUrl(
+      identity?.logoUrl ?? academy.academyLogo,
+      canonicalOrigin
+    ),
+    contactEmail: identity?.contactEmail,
+    contactPhone: identity?.contactPhone,
+    address: identity?.address,
+    sameAs: (configuration.footer?.socialLinks ?? [])
+      .map((link) => link.url ?? '')
+      .filter(Boolean),
+  });
+  const breadcrumb = (trail: ReadonlyArray<{ name: string; url: string }>) =>
+    buildBreadcrumbJsonLd([
+      { name: homeName, path: localizedUrl('/') },
+      ...trail.map((crumb) => ({ name: crumb.name, path: crumb.url })),
+    ]);
+  const faqPage =
+    page?.coreType === 'faqs'
+      ? buildFaqPageJsonLd(collectPageFaqItems(page, locale))
+      : undefined;
+
+  const structuredData = notFound
+    ? undefined
+    : isCourseDetailsPage && course
+      ? [
+          breadcrumb([
+            ...(coursesPage
+              ? [
+                  {
+                    name: publicPageName(
+                      coursesPage,
+                      configuration.navigation,
+                      locale,
+                      t
+                    ),
+                    url: localizedUrl('/courses'),
+                  },
+                ]
+              : []),
+            { name: course.title, url: canonicalUrl },
+          ]),
+          buildCourseJsonLd(
+            course,
+            { name: academy.academyName },
+            { url: canonicalUrl, origin: canonicalOrigin }
+          ),
+        ]
+      : isHome
+        ? [
+            organization,
+            buildWebSiteJsonLd({
+              name: siteTitle,
+              origin: canonicalOrigin,
+              languages: PUBLIC_WEBSITE_LOCALES,
+            }),
+          ]
+        : [
+            ...(page?.coreType === 'about' ? [organization] : []),
+            breadcrumb([{ name: pageName, url: canonicalUrl }]),
+            ...(page?.coreType === 'courses' && listedCourses.length > 0
+              ? [
+                  buildCourseListJsonLd(
+                    listedCourses.map((listed) => ({
+                      url: courseUrl(listed),
+                      name: listed.title,
+                    }))
+                  ),
+                ]
+              : []),
+            ...(faqPage ? [faqPage] : []),
+          ];
+
+  const primaryColor = configuration.brand?.primaryColor;
   useDocumentSeo({
     seo,
     siteTitle,
+    siteName: siteTitle,
     canonicalUrl,
     structuredData,
-    faviconHref: academyFaviconHref(academy),
+    faviconHref: academyIconHref(academy),
+    appleTouchIconHref: academyMonogramIconHref(academy, 180),
+    themeColor: primaryColor ? hslTripletToHex(primaryColor) : undefined,
+    // Search Console / Bing Webmaster Tools look for these on the home page.
+    verification: isHome
+      ? {
+          google: configuration.seo.googleSiteVerification,
+          bing: configuration.seo.bingSiteVerification,
+        }
+      : undefined,
+    notFound,
     locale,
   });
 
@@ -286,7 +413,11 @@ export function PublicWebsitePage({
         configuration={configuration}
         pages={pages}
         page={page}
-        previewCourseId={courseId}
+        // The course's own id once it has loaded: a course reached at its
+        // slug URL (the canonical one search engines are sent to) enrols,
+        // reviews and opens the learner area by id, exactly as one reached
+        // at its id URL does.
+        previewCourseId={course?.id ?? courseId}
         locale={locale}
         onNavigate={onNavigate}
         linkRenderer={linkRenderer}

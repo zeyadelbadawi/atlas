@@ -55,6 +55,8 @@ const SEO_FIELDS = {
   'metaDescription.en': '',
   'metaDescription.ar': '',
   canonicalBaseUrl: '',
+  googleSiteVerification: '',
+  bingSiteVerification: '',
 } as const;
 
 export interface WebsiteSeoTabProps {
@@ -80,6 +82,8 @@ export function WebsiteSeoTab({
       robotsIndexable: configuration.seo.robotsIndexable ?? true,
       sitemapEnabled: configuration.seo.sitemapEnabled ?? true,
       canonicalBaseUrl: configuration.seo.canonicalBaseUrl ?? '',
+      googleSiteVerification: configuration.seo.googleSiteVerification ?? '',
+      bingSiteVerification: configuration.seo.bingSiteVerification ?? '',
     },
   });
 
@@ -230,6 +234,38 @@ export function WebsiteSeoTab({
                   </FormItem>
                 )}
               />
+              {(
+                [
+                  ['googleSiteVerification', 'google-site-verification'],
+                  ['bingSiteVerification', 'msvalidate.01'],
+                ] as const
+              ).map(([name, metaName]) => (
+                <FormField
+                  key={name}
+                  control={form.control}
+                  name={name}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t(`website:seo.${name}`)}</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          value={field.value ?? ''}
+                          dir="ltr"
+                          data-ltr-content
+                          autoComplete="off"
+                          spellCheck={false}
+                          placeholder={`<meta name="${metaName}" content="…">`}
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground">
+                        {t('website:seo.siteVerificationHelp')}
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ))}
               <FormField
                 control={form.control}
                 name="robotsIndexable"
@@ -278,6 +314,18 @@ export function WebsiteSeoTab({
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">
+            {t('website:seo.searchEngines')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3 text-sm text-muted-foreground">
+          <p>{t('website:seo.searchEnginesHelp')}</p>
+          <p>{t('website:seo.searchEnginesSteps')}</p>
+        </CardContent>
+      </Card>
+
       {academyQuery.data ? (
         <Card>
           <CardHeader>
@@ -294,11 +342,15 @@ export function WebsiteSeoTab({
               dir="ltr"
             >
               {JSON.stringify(
-                // The same fields the public page publishes
-                // (`PublicWebsitePage`): the academy's name and logo.
+                // The fields the published home page gives search engines
+                // (`PublicWebsitePage`): the academy's name, logo,
+                // description and contact details.
                 buildOrganizationJsonLd({
                   name: academyQuery.data.name,
                   logo: academyQuery.data.logo,
+                  description: academyQuery.data.description,
+                  contactEmail: academyQuery.data.contactEmail,
+                  contactPhone: academyQuery.data.contactPhone,
                 }),
                 null,
                 2

@@ -145,11 +145,21 @@ export interface SsrOptions {
 
 export type SsrOutcome = 'ready' | 'unpublished';
 
+/**
+ * Marks a page that is "not found" (an unknown path, a course that is not
+ * public) in its own HTML, so a cached copy is answered with the same
+ * HTTP 404 as a fresh render. Page content can never produce it: markup
+ * escapes `<` and the hydration data writes it as `\u003c`.
+ */
+export const NOT_FOUND_MARKER = '<!--atlas:not-found-->';
+
 export type SsrResult =
   | {
       readonly kind: 'html';
       readonly html: string;
       readonly outcome: SsrOutcome;
+      /** 404 for a page that does not exist (no soft 404s), else 200. */
+      readonly status: 200 | 404;
       readonly cache: 'hit' | 'miss' | 'bypass';
       readonly cacheKey?: string;
       /** The Academy the page belongs to (its edge cache tag). */
@@ -552,6 +562,7 @@ export async function renderPublicWebsitePage(
             kind: 'html',
             html: cached,
             outcome: state.status,
+            status: cached.includes(NOT_FOUND_MARKER) ? 404 : 200,
             cache: 'hit',
             cacheKey,
             academyId: state.academy.academyId,
@@ -602,12 +613,14 @@ export async function renderPublicWebsitePage(
         );
       if (failedQuery) return pass('a public query failed');
 
+      const notFound =
+        state.status === 'ready' && seoCollector.current?.notFound === true;
       const html = buildSsrDocument(options.template, {
         locale,
         direction: locale === 'ar' ? 'rtl' : 'ltr',
-        headHtml: seoCollector.current
-          ? renderSeoHeadHtml(seoCollector.current)
-          : '',
+        headHtml:
+          (notFound ? NOT_FOUND_MARKER : '') +
+          (seoCollector.current ? renderSeoHeadHtml(seoCollector.current) : ''),
         preloadHtml:
           options.preloadHtml +
           (usesLocaleFonts(themePackUsage)
@@ -633,6 +646,7 @@ export async function renderPublicWebsitePage(
         kind: 'html',
         html,
         outcome: state.status,
+        status: notFound ? 404 : 200,
         cache: cacheKey && options.cache ? 'miss' : 'bypass',
         cacheKey,
         academyId: state.academy.academyId,

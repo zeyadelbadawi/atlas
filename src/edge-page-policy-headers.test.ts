@@ -38,6 +38,40 @@ describe('page policy headers (Caddyfile)', () => {
     );
   });
 
+  it('marks an academy site’s sign-in, account and learner pages noindex, in either language prefix', () => {
+    const match = /@private_page path_regexp private_page (\S+)/.exec(snippet);
+    expect(match).not.toBeNull();
+    const pattern = new RegExp(match![1]);
+    for (const path of [
+      '/sign-in',
+      '/ar/sign-up',
+      '/en/forgot-password',
+      '/reset-password',
+      '/verify-email',
+      '/auth/google/return',
+      '/my',
+      '/my/courses/abc',
+      '/ar/my-learning',
+      '/my-account/settings',
+    ]) {
+      expect(path).toMatch(pattern);
+    }
+    for (const path of [
+      '/',
+      '/ar',
+      '/courses',
+      '/about',
+      '/my-story',
+      '/ar/faqs',
+      '/signing',
+    ]) {
+      expect(path).not.toMatch(pattern);
+    }
+    expect(snippet).toMatch(
+      /header @private_page \{\s*X-Robots-Tag "noindex, nofollow"\s*defer\s*\}/
+    );
+  });
+
   it.each([
     ['platform and academy subdomains', 'atlass.dpdns.org, *.atlass.dpdns.org'],
     ['connected custom domains', ':443'],

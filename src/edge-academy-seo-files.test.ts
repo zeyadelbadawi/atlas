@@ -32,10 +32,10 @@ describe('academy robots.txt and sitemap.xml routing (Caddyfile)', () => {
     ['academy subdomains', platform],
     ['connected custom domains', customDomains],
   ])(
-    '%s send both files to the backend generator with the visitor host',
+    '%s send robots, sitemap, llms.txt, llms-full.txt and the IndexNow key to the backend generator with the visitor host',
     (_name, block) => {
       expect(block).toMatch(
-        /@academy_seo_files \{[^}]*path \/robots\.txt \/sitemap\.xml/
+        /@academy_seo_files \{[^}]*path \/robots\.txt \/sitemap\.xml \/llms\.txt \/llms-full\.txt \/indexnow-key\.txt/
       );
       expect(block).toContain('rewrite * /api/v1/public/websites/host{path}');
       expect(block).toContain('header_up X-Forwarded-Host {host}');

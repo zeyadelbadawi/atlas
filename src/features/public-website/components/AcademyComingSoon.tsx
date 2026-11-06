@@ -32,7 +32,7 @@ import { useTranslation } from 'react-i18next';
 import { AtlasSiteLink } from '@components/branding';
 import type { HostnameResolution, ResolvedSeoMetadata } from '@types';
 import { useDocumentSeo } from '../hooks/useDocumentSeo';
-import { academyFaviconHref } from '../hooks/useAcademyFavicon';
+import { academyIconHref } from '../utils/academy-brand-images.utils';
 import {
   PUBLIC_WEBSITE_LOCALE_DIRECTION,
   WebsiteComingSoon,
@@ -94,7 +94,7 @@ export function AcademyComingSoon({
   useDocumentSeo({
     seo,
     siteTitle: academy.academyName,
-    faviconHref: academyFaviconHref(academy),
+    faviconHref: academyIconHref(academy),
     locale,
   });
 
@@ -182,7 +182,9 @@ export function AcademyComingSoon({
         <div className="mx-auto h-px w-16 bg-[hsl(214_20%_88%)]" />
 
         <p className="text-xs text-[hsl(222_10%_58%)]">
-          <AtlasSiteLink>{t('publicWebsite:comingSoon.attribution')}</AtlasSiteLink>
+          <AtlasSiteLink>
+            {t('publicWebsite:comingSoon.attribution')}
+          </AtlasSiteLink>
         </p>
       </div>
     </main>

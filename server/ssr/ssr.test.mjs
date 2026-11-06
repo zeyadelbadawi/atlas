@@ -298,7 +298,10 @@ function route(url) {
       return [200, live.categories];
     case 'courses': {
       if (!id) return [200, paginate(live.courses, url.searchParams)];
-      const course = live.courses.find((candidate) => candidate.id === id);
+      // The public API takes a course's id or its slug (the canonical URL).
+      const course = live.courses.find(
+        (candidate) => candidate.id === id || candidate.slug === id
+      );
       if (!course) return [404, NOT_FOUND];
       if (!sub) return [200, course];
       if (sub === 'curriculum')
@@ -544,7 +547,10 @@ describe('server-rendered public pages', () => {
     const result = await get(handler, ALPHA, '/');
     assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
     assert.equal(result.headers['X-Robots-Tag'], undefined);
-    assert.match(result.body, /name="robots" content="index,follow"/);
+    assert.match(
+      result.body,
+      /name="robots" content="index,follow,max-image-preview:large"/
+    );
   });
 
   it('emits no Suspense boundary on a public page (hydrated in one pass)', async () => {
@@ -859,16 +865,18 @@ describe('size budget (inline images)', () => {
     );
   });
 
-  it('a page carries an inline logo four times and an inline section image twice', async () => {
+  it('a page carries an inline logo three times and an inline section image twice', async () => {
     const big = await makeHandler({ maxHtmlBytes: Infinity });
     const logo = inlineImage(20_000);
     state.academies[ALPHA_ID].resolve.academyLogo = logo;
     const withLogo = await get(big, ALPHA, '/');
     assert.equal(withLogo.headers['X-Atlas-SSR'], 'render');
+    // Not in the JSON-LD: a `data:` image is no URL a crawler can fetch,
+    // so the Organization names no logo rather than inlining it again.
     assert.equal(
       occurrences(withLogo.body, logo),
-      4,
-      'JSON-LD, header, footer and hydration data'
+      3,
+      'header, footer and hydration data'
     );
 
     resetState();
@@ -1718,11 +1726,13 @@ describe('Arabic as the default language', () => {
     assert.match(result.body, /<html lang="ar" dir="rtl">/);
     assert.match(markupOf(result.body), /Beta builds careers ع/);
     assert.equal(canonicalOf(result.body), `https://${BETA}/`);
-    // Home's alternates use its slug path (`/home`, pre-existing behaviour
-    // on every site); the site's default language is the unprefixed one.
+    // Home's alternates are its served URLs (`/` and the bare prefix, never
+    // `/home`, a duplicate of `/`); the site's default language is the
+    // unprefixed one, and x-default.
     assert.deepEqual(alternates(result.body), [
-      `en https://${BETA}/en/home`,
-      `ar https://${BETA}/home`,
+      `en https://${BETA}/en`,
+      `ar https://${BETA}/`,
+      `x-default https://${BETA}/`,
     ]);
     assert.equal(payloadOf(result.body).locale, 'ar');
   });
@@ -1730,7 +1740,7 @@ describe('Arabic as the default language', () => {
   it('serves English under /en, with the same reciprocal alternates', async () => {
     arabicDefault();
     for (const [path, canonical] of [
-      ['/en', `https://${BETA}/en/`],
+      ['/en', `https://${BETA}/en`],
       ['/en/about', `https://${BETA}/en/about`],
     ]) {
       const result = await get(handler, BETA, path);
@@ -1743,14 +1753,16 @@ describe('Arabic as the default language', () => {
     assert.match(markupOf(home.body), /Beta builds careers/);
     assert.doesNotMatch(markupOf(home.body), /Beta builds careers ع/);
     assert.deepEqual(alternates(home.body), [
-      `en https://${BETA}/en/home`,
-      `ar https://${BETA}/home`,
+      `en https://${BETA}/en`,
+      `ar https://${BETA}/`,
+      `x-default https://${BETA}/`,
     ]);
     const about = await get(handler, BETA, '/about');
     assert.match(about.body, /<html lang="ar" dir="rtl">/);
     assert.deepEqual(alternates(about.body), [
       `en https://${BETA}/en/about`,
       `ar https://${BETA}/about`,
+      `x-default https://${BETA}/about`,
     ]);
   });
 
@@ -1786,8 +1798,9 @@ describe('Arabic as the default language', () => {
     const alpha = await get(handler, ALPHA, '/');
     assert.match(alpha.body, /<html lang="en" dir="ltr">/);
     assert.deepEqual(alternates(alpha.body), [
-      `en https://${ALPHA}/home`,
-      `ar https://${ALPHA}/ar/home`,
+      `en https://${ALPHA}/`,
+      `ar https://${ALPHA}/ar`,
+      `x-default https://${ALPHA}/`,
     ]);
     const alphaAr = await get(handler, ALPHA, '/ar/about');
     assert.equal(alphaAr.status, 200);
@@ -1836,5 +1849,256 @@ describe('Arabic as the default language', () => {
     assert.equal(again.headers['X-Atlas-SSR'], 'hit');
     assert.match(again.body, /<html lang="ar" dir="rtl">/);
     assert.match(english.body, /<html lang="en" dir="ltr">/);
+  });
+});
+
+describe('search engines and answer engines (SEO/AEO/GEO)', () => {
+  const headOf = (html) => html.slice(0, html.indexOf('</head>'));
+  const metaOf = (html, attr, key) =>
+    [
+      ...headOf(html).matchAll(
+        new RegExp(`<meta ${attr}="${key}" content="([^"]*)"`, 'g')
+      ),
+    ].map((m) => m[1]);
+  const jsonLdOf = (html) =>
+    [
+      ...headOf(html).matchAll(
+        /<script type="application\/ld\+json"[^>]*>([^<]*)<\/script>/g
+      ),
+    ].map((m) => JSON.parse(m[1]));
+  const typesOf = (html) => jsonLdOf(html).map((entry) => entry['@type']);
+
+  it('describes a page by its own opening copy, never by the bare Academy name', async () => {
+    const home = await get(handler, ALPHA, '/');
+    const [description] = metaOf(home.body, 'name', 'description');
+    assert.ok(description && description !== 'Alpha Academy', description);
+    assert.ok(description.length <= 160);
+    assert.ok(
+      markupOf(home.body).includes(description.replace(/…$/, '').slice(0, 40))
+    );
+    const arabic = await get(handler, ALPHA, '/ar/courses');
+    assert.match(
+      metaOf(arabic.body, 'name', 'description')[0],
+      /[\u0600-\u06ff]/
+    );
+  });
+
+  it('gives every page a share image, site name, locale, theme colour and the Academy’s own icons', async () => {
+    const result = await get(handler, ALPHA, '/about');
+    const [ogImage] = metaOf(result.body, 'property', 'og:image');
+    assert.match(
+      ogImage,
+      new RegExp(
+        `^https://${ALPHA.replace(/\./g, '\\.')}/api/v1/public/websites/${ALPHA_ID}/og-image\\.png\\?v=[0-9a-f]{8}$`
+      )
+    );
+    assert.deepEqual(metaOf(result.body, 'name', 'twitter:image'), [ogImage]);
+    assert.deepEqual(metaOf(result.body, 'name', 'twitter:card'), [
+      'summary_large_image',
+    ]);
+    assert.deepEqual(metaOf(result.body, 'property', 'og:site_name'), [
+      'Alpha Academy',
+    ]);
+    assert.deepEqual(metaOf(result.body, 'property', 'og:locale'), ['en_US']);
+    assert.deepEqual(metaOf(result.body, 'property', 'og:locale:alternate'), [
+      'ar_AR',
+    ]);
+    assert.match(
+      metaOf(result.body, 'name', 'theme-color')[0],
+      /^#[0-9a-f]{6}$/
+    );
+    const head = headOf(result.body);
+    assert.match(
+      head,
+      /<link rel="apple-touch-icon" href="\/api\/v1\/public\/websites\/[^"]+\/icon\.png\?size=180&amp;v=[0-9a-f]{8}"/
+    );
+    // No favicon uploaded: the Academy's monogram, never the platform icon.
+    assert.match(
+      head,
+      /<link rel="icon" href="\/api\/v1\/public\/websites\/[^"]+\/icon\.png\?size=96&amp;v=/
+    );
+    assert.doesNotMatch(head, /\/favicon\.svg/);
+  });
+
+  it('home: the Academy (EducationalOrganization) and the WebSite, no breadcrumb', async () => {
+    state.academies[ALPHA_ID].resolve.academyLogo =
+      'https://cdn.example/alpha-logo.png';
+    state.academies[ALPHA_ID].configuration.footer = {
+      ...state.academies[ALPHA_ID].configuration.footer,
+      socialLinks: [
+        { id: 's1', label: { en: 'X', ar: 'X' }, url: 'https://x.com/alpha' },
+      ],
+    };
+    const result = await get(handler, ALPHA, '/');
+    assert.deepEqual(typesOf(result.body), [
+      'EducationalOrganization',
+      'WebSite',
+    ]);
+    const [organization, website] = jsonLdOf(result.body);
+    assert.equal(organization['@id'], `https://${ALPHA}/#organization`);
+    assert.equal(organization.url, `https://${ALPHA}/`);
+    assert.equal(organization.logo, 'https://cdn.example/alpha-logo.png');
+    assert.equal(organization.email, 'hello@alpha.example');
+    assert.deepEqual(organization.sameAs, ['https://x.com/alpha']);
+    assert.equal(website.url, `https://${ALPHA}/`);
+    assert.deepEqual(website.publisher, {
+      '@id': `https://${ALPHA}/#organization`,
+    });
+  });
+
+  it('courses: a breadcrumb and the listed courses as an ItemList of their canonical URLs', async () => {
+    const result = await get(handler, ALPHA, '/courses');
+    assert.deepEqual(typesOf(result.body), ['BreadcrumbList', 'ItemList']);
+    const list = jsonLdOf(result.body)[1];
+    assert.ok(list.itemListElement.length >= 3);
+    for (const [index, item] of list.itemListElement.entries()) {
+      assert.equal(item.position, index + 1);
+      assert.match(
+        item.url,
+        new RegExp(
+          `^https://${ALPHA.replace(/\./g, '\\.')}/courses/[a-z0-9-]+$`
+        )
+      );
+      // Every listed course is on the page.
+      assert.ok(markupOf(result.body).includes(item.name), item.name);
+    }
+  });
+
+  it('a course: breadcrumb Home › Courses › course, and the Course with its offer, instance and rating', async () => {
+    const result = await get(handler, ALPHA, '/courses/fx-course-1');
+    assert.deepEqual(typesOf(result.body), ['BreadcrumbList', 'Course']);
+    const [breadcrumb, course] = jsonLdOf(result.body);
+    assert.deepEqual(
+      breadcrumb.itemListElement.map((item) => item.item),
+      [
+        `https://${ALPHA}/`,
+        `https://${ALPHA}/courses`,
+        `https://${ALPHA}/courses/ux-design-foundations`,
+      ]
+    );
+    assert.equal(course.url, `https://${ALPHA}/courses/ux-design-foundations`);
+    assert.equal(course.provider['@id'], `https://${ALPHA}/#organization`);
+    assert.equal(course.offers[0]['@type'], 'Offer');
+    assert.equal(course.hasCourseInstance[0].courseMode, 'Online');
+    assert.ok(course.hasCourseInstance[0].instructor.length > 0);
+  });
+
+  it('a course at its slug (the canonical URL) renders the same course, by id underneath', async () => {
+    const result = await get(handler, ALPHA, '/courses/ux-design-foundations');
+    assert.equal(result.status, 200);
+    assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
+    assert.match(markupOf(result.body), /Alpha course fx-course-1/);
+    assert.match(
+      result.body,
+      /<link rel="canonical" href="https:\/\/alpha\.atlass\.dpdns\.org\/courses\/ux-design-foundations"/
+    );
+    // Curriculum and the rest are read by the course's id once it is known.
+    assert.ok(
+      state.requests.some((request) =>
+        request.path.includes('/courses/fx-course-1/curriculum')
+      ),
+      'curriculum read by id'
+    );
+  });
+
+  it('faqs: FAQPage from the visible questions, and every answer is in the server HTML', async () => {
+    const result = await get(handler, ALPHA, '/faqs');
+    assert.deepEqual(typesOf(result.body), ['BreadcrumbList', 'FAQPage']);
+    const faq = jsonLdOf(result.body)[1];
+    assert.ok(faq.mainEntity.length >= 3);
+    const markup = markupOf(result.body);
+    for (const question of faq.mainEntity) {
+      assert.ok(
+        markup.includes(question.name.replace(/'/g, '&#x27;')),
+        question.name
+      );
+      assert.ok(
+        markup.includes(
+          question.acceptedAnswer.text.replace(/'/g, '&#x27;').slice(0, 30)
+        ),
+        question.acceptedAnswer.text
+      );
+    }
+  });
+
+  for (const [label, host] of [
+    ['Theme 1', ALPHA],
+    ['Atelier', DELTA],
+    ['Manara', EPSILON],
+    ['Riwaq', ZETA],
+  ]) {
+    it(`${label}: FAQ answers are in the server HTML (hidden until opened), not only the questions`, async () => {
+      const result = await get(handler, host, '/faqs');
+      assert.equal(result.headers['X-Atlas-SSR'], 'render', result.reason);
+      const faq = jsonLdOf(result.body).find(
+        (entry) => entry['@type'] === 'FAQPage'
+      );
+      assert.ok(faq, 'FAQPage');
+      const answer = faq.mainEntity[0].acceptedAnswer.text;
+      assert.ok(
+        markupOf(result.body).includes(
+          answer.replace(/'/g, '&#x27;').slice(0, 30)
+        ),
+        answer
+      );
+    });
+  }
+
+  it('an unknown path is a real 404 (branded page, noindex, no canonical/alternates/JSON-LD), from the cache too', async () => {
+    const cached = await makeHandler({ cacheTtlMs: 60_000 });
+    for (const attempt of ['miss', 'hit']) {
+      const result = await get(cached, ALPHA, '/no-such-page');
+      assert.equal(result.status, 404, attempt);
+      assert.equal(
+        result.headers['X-Atlas-SSR'],
+        attempt === 'hit' ? 'hit' : 'render'
+      );
+      assert.match(result.body, /name="robots" content="noindex,nofollow"/);
+      assert.doesNotMatch(
+        headOf(result.body),
+        /rel="canonical"|hreflang=|application\/ld\+json/
+      );
+      assert.match(markupOf(result.body), /Alpha Academy/);
+    }
+    const found = await get(cached, ALPHA, '/about');
+    assert.equal(found.status, 200);
+  });
+
+  it('a course that is not public is a 404 too', async () => {
+    const result = await get(handler, ALPHA, '/courses/no-such-course');
+    assert.equal(result.status, 404);
+    assert.match(result.body, /name="robots" content="noindex,nofollow"/);
+    assert.doesNotMatch(headOf(result.body), /rel="canonical"|hreflang=/);
+  });
+
+  it('puts the owner’s Search Console / Bing verification tokens on the home page only, and never markup', async () => {
+    state.academies[ALPHA_ID].configuration.seo = {
+      googleSiteVerification: 'abc123_-XYZ',
+      bingSiteVerification: '"><script>alert(1)</script>',
+    };
+    const home = await get(handler, ALPHA, '/');
+    assert.deepEqual(metaOf(home.body, 'name', 'google-site-verification'), [
+      'abc123_-XYZ',
+    ]);
+    assert.deepEqual(metaOf(home.body, 'name', 'msvalidate.01'), []);
+    const about = await get(handler, ALPHA, '/about');
+    assert.deepEqual(
+      metaOf(about.body, 'name', 'google-site-verification'),
+      []
+    );
+  });
+
+  it('a site whose owner turned search engines off is noindex everywhere, and can still be verified', async () => {
+    state.academies[ALPHA_ID].configuration.seo = {
+      robotsIndexable: false,
+      googleSiteVerification: 'abc123',
+    };
+    const home = await get(handler, ALPHA, '/');
+    assert.match(home.body, /name="robots" content="noindex,nofollow"/);
+    // Search Console reads the tag on a noindex page too: verify first,
+    // open to search engines later.
+    assert.deepEqual(metaOf(home.body, 'name', 'google-site-verification'), [
+      'abc123',
+    ]);
   });
 });
