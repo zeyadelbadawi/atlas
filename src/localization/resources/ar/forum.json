@@ -9,11 +9,17 @@
     "cancelButton": "إلغاء",
     "postButton": "نشر",
     "createSuccess": "تم نشر الموضوع",
-    "createError": "فشل نشر الموضوع",
+    "createError": "لم يُنشر نقاشك",
     "byAuthor": "بواسطة {{name}}",
-    "replyCount": "{{count}} ردود",
     "empty": "لا توجد نقاشات بعد",
-    "emptyDescription": "ابدأ أول نقاش لهذه الدورة."
+    "emptyDescription": "ابدأ أول نقاش لهذه الدورة.",
+    "replyCount_zero": "لا توجد ردود",
+    "replyCount_one": "رد واحد",
+    "replyCount_two": "ردّان",
+    "replyCount_few": "{{count}} ردود",
+    "replyCount_many": "{{count}} ردًا",
+    "replyCount_other": "{{count}} رد",
+    "emptyDescriptionReadOnly": "ستظهر هنا النقاشات التي تبدأ في هذه الدورة."
   },
   "thread": {
     "title": "النقاش",
@@ -24,11 +30,73 @@
     "unpinAction": "إلغاء التثبيت",
     "lockAction": "إغلاق",
     "unlockAction": "فتح",
-    "moderationError": "فشل تحديث الموضوع",
     "noReplies": "لا توجد ردود بعد.",
     "replyPlaceholder": "اكتب ردًا",
     "replyButton": "رد",
-    "replyError": "فشل نشر الرد",
-    "lockedNotice": "هذا النقاش مغلق. لا يمكن إضافة ردود جديدة."
+    "replyError": "لم يُنشر ردّك",
+    "lockedNotice": "هذا النقاش مغلق. لا يمكن إضافة ردود جديدة.",
+    "noRepliesDescription": "كن أول من يرد أدناه.",
+    "noRepliesLocked": "أُغلق هذا النقاش قبل أن يرد أحد.",
+    "replyLabel": "ردّك",
+    "replySuccess": "تم نشر الرد",
+    "lockConfirm": {
+      "title": "إغلاق هذا النقاش؟",
+      "description": "لن يتمكن أحد من الرد على {{title}} حتى يُعاد فتحه. تبقى الردود الحالية ظاهرة.",
+      "confirmLabel": "إغلاق النقاش",
+      "cancelLabel": "إبقاؤه مفتوحًا"
+    },
+    "moderation": {
+      "pin": {
+        "success": "تم تثبيت النقاش في الأعلى",
+        "error": "لم يُثبَّت النقاش"
+      },
+      "unpin": {
+        "success": "تم إلغاء تثبيت النقاش",
+        "error": "لم يُلغَ تثبيت النقاش"
+      },
+      "lock": {
+        "success": "تم إغلاق النقاش. لم تعد الردود الجديدة مقبولة.",
+        "error": "لم يُغلق النقاش"
+      },
+      "unlock": {
+        "success": "تم فتح النقاش. يمكن الرد مجددًا.",
+        "error": "لم يُفتح النقاش"
+      }
+    },
+    "deleteThread": {
+      "action": "حذف",
+      "success": "تم حذف النقاش",
+      "error": "لم يُحذف النقاش",
+      "confirm": {
+        "title": "حذف هذا النقاش؟",
+        "descriptionNoReplies": "سيُحذف {{title}} لدى الجميع. لا يمكن التراجع عن ذلك.",
+        "description_zero": "سيُحذف {{title}} لدى الجميع. لا يمكن التراجع عن ذلك.",
+        "description_one": "سيُحذف {{title}} وردّه الوحيد لدى الجميع. لا يمكن التراجع عن ذلك.",
+        "description_two": "سيُحذف {{title}} وردّاه لدى الجميع. لا يمكن التراجع عن ذلك.",
+        "description_few": "سيُحذف {{title}} و{{count}} ردود عليه لدى الجميع. لا يمكن التراجع عن ذلك.",
+        "description_many": "سيُحذف {{title}} و{{count}} ردًا عليه لدى الجميع. لا يمكن التراجع عن ذلك.",
+        "description_other": "سيُحذف {{title}} و{{count}} رد عليه لدى الجميع. لا يمكن التراجع عن ذلك.",
+        "confirmLabel": "حذف النقاش",
+        "cancelLabel": "الإبقاء عليه"
+      }
+    },
+    "deleteReply": {
+      "action": "حذف",
+      "ariaLabel": "حذف رد {{name}}",
+      "success": "تم حذف الرد",
+      "error": "لم يُحذف الرد",
+      "confirm": {
+        "title": "حذف هذا الرد؟",
+        "description": "سيُحذف رد {{name}} لدى الجميع. لا يمكن التراجع عن ذلك.",
+        "confirmLabel": "حذف الرد",
+        "cancelLabel": "الإبقاء عليه"
+      }
+    }
+  },
+  "characterCount": "{{count}} / {{max}} حرفًا",
+  "validation": {
+    "titleRequired": "أدخل عنوانًا لنقاشك.",
+    "bodyRequired": "اكتب رسالتك. المسافات وحدها لا تُحتسب.",
+    "replyRequired": "اكتب ردّك قبل الإرسال. المسافات وحدها لا تُحتسب."
   }
 }

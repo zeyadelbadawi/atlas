@@ -47,6 +47,9 @@ export default function InstructorCoursesPage(): JSX.Element {
   }, [data]);
 
   const courses = data?.items ?? [];
+  // B6 (UX audit) V01 — the API filters by title now; an empty result for a
+  // search says the search found nothing, not "no courses yet".
+  const isSearching = debouncedSearch.trim().length > 0;
 
   const columns: ColumnDef<TeachingCourse, unknown>[] = [
     {
@@ -63,7 +66,9 @@ export default function InstructorCoursesPage(): JSX.Element {
           ) : (
             <div className="size-10 shrink-0 rounded-md border border-dashed border-border" />
           )}
-          <span className="font-medium">{row.original.title}</span>
+          <span dir="auto" className="font-medium">
+            {row.original.title}
+          </span>
           {row.original.requiresAttention ? (
             <AlertTriangle
               className="size-4 shrink-0 text-warning"
@@ -129,12 +134,19 @@ export default function InstructorCoursesPage(): JSX.Element {
 
       <div className="space-y-4">
         <div className="relative max-w-xs">
-          <Search className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search
+            className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden
+          />
           <Input
             type="search"
             placeholder={t('instructor:courses.searchPlaceholder')}
             value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
+            onChange={(e) => {
+              setSearchInput(e.target.value);
+              pagination.goToFirstPage();
+            }}
+            aria-label={t('instructor:courses.searchPlaceholder')}
             className="ps-9"
           />
         </div>
@@ -152,8 +164,16 @@ export default function InstructorCoursesPage(): JSX.Element {
               })
             )
           }
-          emptyTitleKey="instructor:courses.empty"
-          emptyDescriptionKey="instructor:courses.emptyDescription"
+          emptyTitleKey={
+            isSearching
+              ? 'instructor:courses.noMatch'
+              : 'instructor:courses.empty'
+          }
+          emptyDescriptionKey={
+            isSearching
+              ? 'instructor:courses.noMatchDescription'
+              : 'instructor:courses.emptyDescription'
+          }
         />
       </div>
     </PageContainer>

@@ -7,7 +7,7 @@
  * Announcements/Discussions.
  */
 import { useTranslation } from 'react-i18next';
-import { useDateFormatter } from '@hooks';
+import { useDateFormatter, usePermissions } from '@hooks';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ClipboardCheck,
@@ -38,6 +38,10 @@ export default function InstructorCourseOverviewPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { courseId } = useParams<{ courseId: string }>();
+  const { hasPermission } = usePermissions();
+  // B6 (UX audit) V02 — the announcements page needs `announcement.manage`
+  // (its route guard); without it the link only led to "no access".
+  const canManageAnnouncements = hasPermission('announcement.manage');
 
   const {
     data: overview,
@@ -81,11 +85,15 @@ export default function InstructorCourseOverviewPage(): JSX.Element {
       icon: ClipboardCheck,
       path: DASHBOARD_ROUTES.instructorAssessments,
     },
-    {
-      key: 'announcements',
-      icon: Megaphone,
-      path: DASHBOARD_ROUTES.instructorAnnouncements,
-    },
+    ...(canManageAnnouncements
+      ? [
+          {
+            key: 'announcements',
+            icon: Megaphone,
+            path: DASHBOARD_ROUTES.instructorAnnouncements,
+          } as const,
+        ]
+      : []),
     // B0-WEB-07 — no Discussions link while learners have no forum screen.
     ...(isFeatureEnabled('academyBlogAndForum')
       ? [
@@ -156,20 +164,26 @@ export default function InstructorCourseOverviewPage(): JSX.Element {
               />
             </div>
             {overview.description ? (
-              <p className="text-sm text-muted-foreground">
+              <p dir="auto" className="text-sm text-muted-foreground">
                 {overview.description}
               </p>
             ) : null}
             <p className="text-sm text-muted-foreground">
               {t('instructor:overview.curriculumSummary', {
-                sections: overview.totalSections,
-                lessons: overview.totalLessons,
+                sections: t('instructor:overview.sectionCount', {
+                  count: overview.totalSections,
+                }),
+                lessons: t('instructor:overview.lessonCount', {
+                  count: overview.totalLessons,
+                }),
               })}
             </p>
           </CardContent>
         </Card>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {/* V16 — "submitted" counts every handed-in assignment, graded
+              or not; "awaiting grading" only those without a grade. */}
           <MetricCard
             labelKey="instructor:overview.enrolledStudents"
             value={overview.enrolledCount.toString()}
@@ -194,6 +208,9 @@ export default function InstructorCourseOverviewPage(): JSX.Element {
             icon={ClipboardCheck}
           />
         </div>
+        <p className="text-xs text-muted-foreground">
+          {t('instructor:dashboard.countsNote')}
+        </p>
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {quickLinks.map(({ key, icon: Icon, path }) => (
@@ -219,6 +236,7 @@ export default function InstructorCourseOverviewPage(): JSX.Element {
             {overview.recentActivity.length === 0 ? (
               <EmptyState
                 titleKey="instructor:dashboard.noRecentActivity"
+                descriptionKey="instructor:overview.noRecentActivityDescription"
                 className="py-8"
               />
             ) : (

@@ -2,7 +2,7 @@
  * useCreateReply hook.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { forumKeys } from '@services/query';
+import { INLINE_ERRORS_META, forumKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { forumService } from '../services/ForumService';
 import type { CreateForumReplyPayload, ForumReply } from '@types';
@@ -15,6 +15,7 @@ export function useCreateReply(courseId: string, threadId: string) {
       forumService.createReply(courseId, threadId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(forumKeys.all);
     },

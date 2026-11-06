@@ -9,11 +9,13 @@
     "cancelButton": "Cancel",
     "postButton": "Post",
     "createSuccess": "Thread posted",
-    "createError": "Failed to post the thread",
+    "createError": "Your discussion wasn't posted",
     "byAuthor": "By {{name}}",
-    "replyCount": "{{count}} replies",
     "empty": "No discussions yet",
-    "emptyDescription": "Start the first discussion for this course."
+    "emptyDescription": "Start the first discussion for this course.",
+    "replyCount_one": "{{count}} reply",
+    "replyCount_other": "{{count}} replies",
+    "emptyDescriptionReadOnly": "Discussions started in this course will appear here."
   },
   "thread": {
     "title": "Discussion",
@@ -24,11 +26,69 @@
     "unpinAction": "Unpin",
     "lockAction": "Lock",
     "unlockAction": "Unlock",
-    "moderationError": "Failed to update the thread",
     "noReplies": "No replies yet.",
     "replyPlaceholder": "Write a reply",
     "replyButton": "Reply",
-    "replyError": "Failed to post the reply",
-    "lockedNotice": "This discussion is locked. New replies aren't accepted."
+    "replyError": "Your reply wasn't posted",
+    "lockedNotice": "This discussion is locked. New replies aren't accepted.",
+    "noRepliesDescription": "Be the first to reply below.",
+    "noRepliesLocked": "This discussion was locked before anyone replied.",
+    "replyLabel": "Your reply",
+    "replySuccess": "Reply posted",
+    "lockConfirm": {
+      "title": "Lock this discussion?",
+      "description": "No one will be able to reply to {{title}} until it is unlocked. Existing replies stay visible.",
+      "confirmLabel": "Lock discussion",
+      "cancelLabel": "Keep it open"
+    },
+    "moderation": {
+      "pin": {
+        "success": "Discussion pinned to the top",
+        "error": "The discussion wasn't pinned"
+      },
+      "unpin": {
+        "success": "Discussion unpinned",
+        "error": "The discussion wasn't unpinned"
+      },
+      "lock": {
+        "success": "Discussion locked. New replies are closed.",
+        "error": "The discussion wasn't locked"
+      },
+      "unlock": {
+        "success": "Discussion unlocked. Replies are open again.",
+        "error": "The discussion wasn't unlocked"
+      }
+    },
+    "deleteThread": {
+      "action": "Delete",
+      "success": "Discussion deleted",
+      "error": "The discussion wasn't deleted",
+      "confirm": {
+        "title": "Delete this discussion?",
+        "descriptionNoReplies": "{{title}} will be deleted for everyone. This can't be undone.",
+        "description_one": "{{title}} and its {{count}} reply will be deleted for everyone. This can't be undone.",
+        "description_other": "{{title}} and its {{count}} replies will be deleted for everyone. This can't be undone.",
+        "confirmLabel": "Delete discussion",
+        "cancelLabel": "Keep it"
+      }
+    },
+    "deleteReply": {
+      "action": "Delete",
+      "ariaLabel": "Delete the reply by {{name}}",
+      "success": "Reply deleted",
+      "error": "The reply wasn't deleted",
+      "confirm": {
+        "title": "Delete this reply?",
+        "description": "The reply by {{name}} will be deleted for everyone. This can't be undone.",
+        "confirmLabel": "Delete reply",
+        "cancelLabel": "Keep it"
+      }
+    }
+  },
+  "characterCount": "{{count}} / {{max}} characters",
+  "validation": {
+    "titleRequired": "Give your discussion a title.",
+    "bodyRequired": "Write your message. Spaces alone don't count.",
+    "replyRequired": "Write your reply before sending. Spaces alone don't count."
   }
 }

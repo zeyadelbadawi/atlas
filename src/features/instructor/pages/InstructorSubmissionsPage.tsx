@@ -14,8 +14,11 @@ import { StatusBadge } from '@components/data-display';
 import { DataTable } from '@components/table';
 import { useDateFormatter, usePagination } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import { getSubmissionStatusTone } from '@features/learning';
-import { useInstructorSubmissions } from '../hooks';
+import { getSubmissionStatusTone, useAssignments } from '@features/learning';
+import {
+  useInstructorCourseOverview,
+  useInstructorSubmissions,
+} from '../hooks';
 import type { AssignmentSubmissionReview } from '@types';
 
 export default function InstructorSubmissionsPage(): JSX.Element {
@@ -47,11 +50,24 @@ export default function InstructorSubmissionsPage(): JSX.Element {
 
   const submissions = data?.items ?? [];
 
+  // B6 (UX audit) V14 — which assignment, in which course.
+  const { data: assignments } = useAssignments(courseId ?? '', {
+    enabled: !!courseId,
+  });
+  const assignment = assignments?.items.find(
+    (item) => item.id === assignmentId
+  );
+  const { data: course } = useInstructorCourseOverview(courseId ?? '');
+
   const columns: ColumnDef<AssignmentSubmissionReview, unknown>[] = [
     {
       accessorKey: 'studentName',
       header: t('instructor:submissions.table.student'),
-      cell: ({ row }) => row.original.studentName,
+      cell: ({ row }) => (
+        <span dir="auto" className="font-medium text-foreground">
+          {row.original.studentName}
+        </span>
+      ),
     },
     {
       accessorKey: 'status',
@@ -101,8 +117,20 @@ export default function InstructorSubmissionsPage(): JSX.Element {
   return (
     <PageContainer>
       <PageHeader
+        title={
+          assignment?.title
+            ? t('instructor:submissions.titleAssignment', {
+                assignment: assignment.title,
+              })
+            : undefined
+        }
         titleKey="instructor:submissions.title"
-        descriptionKey="instructor:submissions.subtitle"
+        descriptionKey={
+          course?.title
+            ? 'instructor:submissions.subtitleCourse'
+            : 'instructor:submissions.subtitle'
+        }
+        values={{ course: course?.title ?? '' }}
       />
 
       <DataTable

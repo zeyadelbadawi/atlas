@@ -3,7 +3,7 @@
  * the backend, gated in the UI via `forum.moderate`.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { forumKeys } from '@services/query';
+import { INLINE_ERRORS_META, forumKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { forumService } from '../services/ForumService';
 import type { ForumThread } from '@types';
@@ -15,6 +15,7 @@ export function usePinThread(courseId: string) {
     mutationFn: (threadId) => forumService.pinThread(courseId, threadId),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(forumKeys.all);
     },

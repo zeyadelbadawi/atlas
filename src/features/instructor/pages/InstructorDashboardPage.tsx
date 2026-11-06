@@ -80,6 +80,9 @@ export default function InstructorDashboardPage(): JSX.Element {
             value={data.totalStudents.toString()}
             icon={Users}
           />
+          {/* B6 (UX audit) V16 — the first counts every handed-in
+              assignment (graded or not), the second only those still
+              without a grade; "Pending" on both read as a contradiction. */}
           <MetricCard
             labelKey="instructor:dashboard.pendingSubmissions"
             value={data.pendingSubmissionsCount.toString()}
@@ -91,6 +94,9 @@ export default function InstructorDashboardPage(): JSX.Element {
             icon={ClipboardCheck}
           />
         </div>
+        <p className="text-xs text-muted-foreground">
+          {t('instructor:dashboard.countsNote')}
+        </p>
 
         <Card>
           <CardHeader>
@@ -100,6 +106,7 @@ export default function InstructorDashboardPage(): JSX.Element {
             {data.coursesRequiringAttention.length === 0 ? (
               <EmptyState
                 titleKey="instructor:dashboard.noAttentionNeeded"
+                descriptionKey="instructor:dashboard.noAttentionNeededDescription"
                 className="py-8"
               />
             ) : (
@@ -144,6 +151,7 @@ export default function InstructorDashboardPage(): JSX.Element {
             {data.recentActivity.length === 0 ? (
               <EmptyState
                 titleKey="instructor:dashboard.noRecentActivity"
+                descriptionKey="instructor:dashboard.noRecentActivityDescription"
                 className="py-8"
               />
             ) : (

@@ -6,7 +6,7 @@
  * score/feedback the instructor enters.
  */
 import { useApiMutation, useAuth, useInvalidate } from '@/shared/hooks';
-import { instructorKeys } from '@services/query';
+import { INLINE_ERRORS_META, instructorKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { instructorService } from '../services/InstructorService';
 import type {
@@ -32,6 +32,7 @@ export function useGradeSubmission(courseId: string, assignmentId: string) {
       ),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       // Deliberately omits the variable `query` element so this prefix
       // matches every filtered/paginated variant of the submissions list —

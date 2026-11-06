@@ -60,7 +60,12 @@ import { toast } from '@/hooks/use-toast';
 import { isApiError } from '@api';
 import { useConfirmDialog } from '@app/providers';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import { useServerValidation } from '@forms';
+import {
+  hasViolationOn,
+  SaveFailedAlert,
+  useLabelledViolations,
+  useServerValidation,
+} from '@forms';
 import {
   useDateFormatter,
   useLanguage,
@@ -71,6 +76,7 @@ import {
   apiErrorMessage,
   formatNumber,
   isolateNumericExpression,
+  isolateText,
 } from '@utils';
 import { useQuiz } from '@features/learning';
 import { getQuizAttemptStatusTone } from '@features/learning';
@@ -95,6 +101,15 @@ import {
   fromDateTimeLocalValue,
 } from '../utils/attempt-review.utils';
 import type { QuizAttemptSummary, QuizStudentOverride } from '@types';
+
+const OVERRIDE_FIELDS = {
+  studentId: 'instructor:quizResults.overrides.student',
+  timeMultiplier: 'instructor:quizResults.overrides.timeMultiplier',
+  extraAttempts: 'instructor:quizResults.overrides.extraAttempts',
+  availableFrom: 'instructor:quizResults.overrides.availableFrom',
+  availableUntil: 'instructor:quizResults.overrides.availableUntil',
+  reason: 'instructor:quizResults.overrides.reason',
+} as const;
 
 /** Enough roster to pick from in one select; the roster page paginates for reading. */
 const OVERRIDE_STUDENT_PAGE_SIZE = 100;
@@ -156,7 +171,13 @@ function OverridesSheet({
     mutateAsync: upsertOverride,
     isPending: isSaving,
     error: saveError,
+    reset: resetSave,
   } = useUpsertQuizOverride(courseId, quizId);
+  // Closing the sheet answers the last failure: reopening it starts clean.
+  const handleOpenChange = (next: boolean): void => {
+    if (!next) resetSave();
+    onOpenChange(next);
+  };
   const { mutateAsync: deleteOverride, isPending: isDeleting } =
     useDeleteQuizOverride(courseId, quizId);
 
@@ -164,7 +185,14 @@ function OverridesSheet({
     resolver: zodResolver(quizOverrideSchema),
     defaultValues: EMPTY_OVERRIDE_FORM,
   });
-  useServerValidation(form, saveError);
+  // B6 (UX audit) V07 — a refusal about a field shows on it; anything else
+  // is one alert above the Save button, never a toast on top of the sheet.
+  const labelledSaveError = useLabelledViolations(
+    saveError ?? null,
+    OVERRIDE_FIELDS
+  );
+  useServerValidation(form, labelledSaveError);
+  const saveFieldFailure = hasViolationOn(labelledSaveError, OVERRIDE_FIELDS);
 
   const studentOptions = students?.items ?? [];
 
@@ -178,15 +206,12 @@ function OverridesSheet({
         availableUntil: fromDateTimeLocalValue(data.availableUntil),
         reason: data.reason?.trim() ? data.reason.trim() : undefined,
       });
-      toast({ title: t('instructor:quizResults.overrides.saved') });
-      form.reset(EMPTY_OVERRIDE_FORM);
-    } catch (error) {
-      toast({
-        title: t('instructor:quizResults.overrides.saveError'),
-        description: apiErrorMessage(t, i18n, error),
-        variant: 'destructive',
-      });
+    } catch {
+      // Shown once, in the sheet; the typed override stays.
+      return;
     }
+    toast({ title: t('instructor:quizResults.overrides.saved') });
+    form.reset(EMPTY_OVERRIDE_FORM);
   };
 
   const onRemove = async (override: QuizStudentOverride) => {
@@ -198,7 +223,9 @@ function OverridesSheet({
         'instructor:quizResults.overrides.removeConfirm.confirmLabel',
       cancelLabelKey:
         'instructor:quizResults.overrides.removeConfirm.cancelLabel',
-      values: { student: override.studentName ?? override.studentId },
+      values: {
+        student: isolateText(override.studentName ?? override.studentId),
+      },
       intent: 'destructive',
     });
     if (!confirmed) return;
@@ -226,7 +253,7 @@ function OverridesSheet({
   });
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent className="flex w-full flex-col gap-6 overflow-y-auto sm:max-w-lg">
         <SheetHeader>
           <SheetTitle>{t('instructor:quizResults.overrides.title')}</SheetTitle>
@@ -263,7 +290,7 @@ function OverridesSheet({
                   className="flex items-start justify-between gap-3 rounded-lg border border-border p-3 text-sm"
                 >
                   <div className="min-w-0 space-y-1">
-                    <p className="font-medium text-foreground">
+                    <p dir="auto" className="font-medium text-foreground">
                       {override.studentName ?? override.studentId}
                     </p>
                     <p className="text-muted-foreground">
@@ -276,6 +303,7 @@ function OverridesSheet({
                           override.extraAttempts,
                           language
                         ),
+                        count: override.extraAttempts,
                       })}
                     </p>
                     {override.availableFrom ? (
@@ -293,7 +321,7 @@ function OverridesSheet({
                       </p>
                     ) : null}
                     {override.reason ? (
-                      <p className="text-xs text-muted-foreground">
+                      <p dir="auto" className="text-xs text-muted-foreground">
                         {override.reason}
                       </p>
                     ) : null}
@@ -327,6 +355,7 @@ function OverridesSheet({
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-4"
+                  noValidate
                 >
                   <FormField
                     control={form.control}
@@ -355,7 +384,8 @@ function OverridesSheet({
                                 key={student.studentId}
                                 value={student.studentId}
                               >
-                                {student.name} · {student.email}
+                                {isolateText(student.name)} ·{' '}
+                                {isolateText(student.email)}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -421,6 +451,11 @@ function OverridesSheet({
                               {...numberField(field)}
                             />
                           </FormControl>
+                          <FormDescription>
+                            {t(
+                              'instructor:quizResults.overrides.extraAttemptsHelp'
+                            )}
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -481,6 +516,7 @@ function OverridesSheet({
                         <FormControl>
                           <Textarea
                             rows={3}
+                            dir="auto"
                             placeholder={t(
                               'instructor:quizResults.overrides.reasonPlaceholder'
                             )}
@@ -491,6 +527,13 @@ function OverridesSheet({
                       </FormItem>
                     )}
                   />
+
+                  {labelledSaveError && !saveFieldFailure ? (
+                    <SaveFailedAlert
+                      error={labelledSaveError}
+                      titleKey="instructor:quizResults.overrides.saveError"
+                    />
+                  ) : null}
 
                   <div className="flex justify-end">
                     <Button type="submit" disabled={isSaving}>
@@ -575,17 +618,27 @@ export default function InstructorQuizResultsPage(): JSX.Element {
       useGrouping: false,
     });
 
+  // B6 (UX audit) V17 — what a reviewer triages by comes first (who,
+  // status, score, grading, when); the attempt number rides under the
+  // name and the points under the score, so nine columns fit and none of
+  // them wraps a number across two lines.
   const columns: ColumnDef<QuizAttemptSummary, unknown>[] = useMemo(
     () => [
       {
         accessorKey: 'studentName',
         header: t('instructor:quizResults.table.student'),
-        cell: ({ row }) => row.original.studentName,
-      },
-      {
-        accessorKey: 'attemptNumber',
-        header: t('instructor:quizResults.table.attempt'),
-        cell: ({ row }) => formatNumber(row.original.attemptNumber, language),
+        cell: ({ row }) => (
+          <div className="min-w-36 max-w-56">
+            <p dir="auto" className="font-medium text-foreground">
+              {row.original.studentName}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {t('instructor:studentProgress.attemptNumber', {
+                number: formatNumber(row.original.attemptNumber, language),
+              })}
+            </p>
+          </div>
+        ),
       },
       {
         accessorKey: 'status',
@@ -594,29 +647,57 @@ export default function InstructorQuizResultsPage(): JSX.Element {
           <StatusBadge
             labelKey={`instructor:studentProgress.quizStatus.${row.original.status}`}
             tone={getQuizAttemptStatusTone(row.original.status)}
+            className="whitespace-nowrap"
           />
         ),
       },
       {
         accessorKey: 'score',
         header: t('instructor:quizResults.table.score'),
-        cell: ({ row }) =>
-          typeof row.original.score === 'number'
-            ? formatNumber(Math.round(row.original.score) / 100, language, {
-                style: 'percent',
-              })
-            : '—',
+        cell: ({ row }) => (
+          <div className="whitespace-nowrap">
+            <p>
+              {typeof row.original.score === 'number'
+                ? formatNumber(Math.round(row.original.score) / 100, language, {
+                    style: 'percent',
+                  })
+                : '—'}
+            </p>
+            {row.original.pointsEarned !== null &&
+            row.original.pointsTotal !== null ? (
+              <p className="text-xs text-muted-foreground">
+                {isolateNumericExpression(
+                  t('instructor:quizResults.pointsOf', {
+                    earned: formatNumber(row.original.pointsEarned, language),
+                    total: formatNumber(row.original.pointsTotal, language),
+                  })
+                )}
+              </p>
+            ) : null}
+          </div>
+        ),
       },
       {
-        id: 'points',
-        header: t('instructor:quizResults.table.points'),
-        cell: ({ row }) =>
-          row.original.pointsEarned !== null &&
-          row.original.pointsTotal !== null
-            ? isolateNumericExpression(
-                `${formatNumber(row.original.pointsEarned, language)} / ${formatNumber(row.original.pointsTotal, language)}`
-              )
-            : '—',
+        accessorKey: 'gradingStatus',
+        header: t('instructor:quizResults.table.grading'),
+        cell: ({ row }) => (
+          <span className="whitespace-nowrap">
+            {t(
+              `instructor:quizResults.gradingStatus.${row.original.gradingStatus}`
+            )}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'submittedAt',
+        header: t('instructor:quizResults.table.submittedAt'),
+        cell: ({ row }) => (
+          <span className="whitespace-nowrap">
+            {row.original.submittedAt
+              ? fmt.date(row.original.submittedAt)
+              : '—'}
+          </span>
+        ),
       },
       {
         id: 'duration',
@@ -629,7 +710,7 @@ export default function InstructorQuizResultsPage(): JSX.Element {
             formatPart
           );
           return duration ? (
-            <span className="tabular-nums">
+            <span className="whitespace-nowrap tabular-nums">
               {isolateNumericExpression(duration)}
             </span>
           ) : (
@@ -641,7 +722,7 @@ export default function InstructorQuizResultsPage(): JSX.Element {
         accessorKey: 'violationCount',
         header: t('instructor:quizResults.table.violations'),
         cell: ({ row }) => (
-          <span className="inline-flex items-center gap-1.5">
+          <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
             {formatNumber(row.original.violationCount, language)}
             {row.original.integrityFlagged ? (
               <span className="inline-flex items-center gap-1 text-warning">
@@ -670,20 +751,6 @@ export default function InstructorQuizResultsPage(): JSX.Element {
           );
           return key ? t(key) : (row.original.autoSubmittedReason ?? '—');
         },
-      },
-      {
-        accessorKey: 'gradingStatus',
-        header: t('instructor:quizResults.table.grading'),
-        cell: ({ row }) =>
-          t(
-            `instructor:quizResults.gradingStatus.${row.original.gradingStatus}`
-          ),
-      },
-      {
-        accessorKey: 'submittedAt',
-        header: t('instructor:quizResults.table.submittedAt'),
-        cell: ({ row }) =>
-          row.original.submittedAt ? fmt.date(row.original.submittedAt) : '—',
       },
     ],
     // `formatPart` is derived from `language`, which is already listed.

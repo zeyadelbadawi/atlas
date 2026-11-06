@@ -17,7 +17,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Lock, Pin, Plus } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState, EmptyState } from '@components/feedback';
-import { Pagination } from '@components/data-display';
+import { Pagination, StatusBadge } from '@components/data-display';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Dialog,
@@ -29,6 +29,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -39,13 +40,27 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
-import { useServerValidation } from '@forms';
+import {
+  hasViolationOn,
+  RequiredMark,
+  SaveFailedAlert,
+  useLabelledViolations,
+  useServerValidation,
+} from '@forms';
 import { usePagination, usePermissions } from '@hooks';
+import { isolateText } from '@utils';
 import { useForum, useForumThreads, useCreateThread } from '../hooks';
 import {
   createThreadSchema,
+  MAX_THREAD_BODY_LENGTH,
+  MAX_THREAD_TITLE_LENGTH,
   type CreateThreadFormData,
 } from '../schemas/forum.schemas';
+
+const THREAD_FIELDS = {
+  title: 'forum:list.titleLabel',
+  body: 'forum:list.bodyLabel',
+} as const;
 
 export default function CourseForumPage(): JSX.Element {
   const { t } = useTranslation();
@@ -90,7 +105,16 @@ export default function CourseForumPage(): JSX.Element {
     defaultValues: { title: '', body: '' },
   });
 
-  useServerValidation(form, createError);
+  // B6 (UX audit) V07/V08 — a refusal about a field shows on it; anything
+  // else is one alert in the dialog with the real reason. No toast.
+  const labelledCreateError = useLabelledViolations(
+    createError ?? null,
+    THREAD_FIELDS
+  );
+  useServerValidation(form, labelledCreateError);
+  const createFieldFailure = hasViolationOn(labelledCreateError, THREAD_FIELDS);
+  const titleLength = form.watch('title')?.length ?? 0;
+  const bodyLength = form.watch('body')?.length ?? 0;
 
   const threads = threadsData?.items ?? [];
 
@@ -99,19 +123,17 @@ export default function CourseForumPage(): JSX.Element {
   };
 
   const onSubmit = async (data: CreateThreadFormData) => {
+    let thread;
     try {
-      const thread = await createThread(data);
-      toast({ title: t('forum:list.createSuccess') });
-      setDialogOpen(false);
-      form.reset();
-      goToThread(thread.id);
+      thread = await createThread(data);
     } catch {
-      toast({
-        title: t('forum:list.createError'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+      // Shown once, in the dialog; the typed thread stays.
+      return;
     }
+    toast({ title: t('forum:list.createSuccess') });
+    setDialogOpen(false);
+    form.reset();
+    goToThread(thread.id);
   };
 
   if (forumError || threadsError) {
@@ -151,7 +173,11 @@ export default function CourseForumPage(): JSX.Element {
       ) : threads.length === 0 ? (
         <EmptyState
           titleKey="forum:list.empty"
-          descriptionKey="forum:list.emptyDescription"
+          descriptionKey={
+            canPost && !isLocked
+              ? 'forum:list.emptyDescription'
+              : 'forum:list.emptyDescriptionReadOnly'
+          }
         />
       ) : (
         <div className="space-y-3">
@@ -169,27 +195,49 @@ export default function CourseForumPage(): JSX.Element {
               <CardContent className="flex items-start justify-between gap-3 pt-6">
                 <div className="min-w-0 flex-1 space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    {thread.pinned ? (
-                      <Pin
-                        className="size-4 shrink-0 text-primary"
-                        aria-hidden
-                      />
-                    ) : null}
-                    {thread.locked ? (
-                      <Lock
-                        className="size-4 shrink-0 text-muted-foreground"
-                        aria-hidden
-                      />
-                    ) : null}
-                    <h3 className="font-display text-base font-semibold text-foreground">
+                    <h3
+                      dir="auto"
+                      className="font-display text-base font-semibold text-foreground"
+                    >
                       {thread.title}
                     </h3>
+                    {/* B6 (UX audit) V26 — the state in words, not an icon
+                        only a sighted reader could see. */}
+                    {thread.pinned ? (
+                      <span className="inline-flex items-center gap-1">
+                        <Pin
+                          className="size-3.5 shrink-0 text-primary"
+                          aria-hidden
+                        />
+                        <StatusBadge
+                          labelKey="forum:thread.pinned"
+                          tone="info"
+                        />
+                      </span>
+                    ) : null}
+                    {thread.locked ? (
+                      <span className="inline-flex items-center gap-1">
+                        <Lock
+                          className="size-3.5 shrink-0 text-muted-foreground"
+                          aria-hidden
+                        />
+                        <StatusBadge
+                          labelKey="forum:thread.locked"
+                          tone="neutral"
+                        />
+                      </span>
+                    ) : null}
                   </div>
-                  <p className="line-clamp-1 text-sm text-muted-foreground">
+                  <p
+                    dir="auto"
+                    className="line-clamp-1 text-sm text-muted-foreground"
+                  >
                     {thread.body}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {t('forum:list.byAuthor', { name: thread.authorName })}
+                    {t('forum:list.byAuthor', {
+                      name: isolateText(thread.authorName),
+                    })}
                   </p>
                 </div>
                 <span className="shrink-0 text-sm text-muted-foreground">
@@ -209,16 +257,35 @@ export default function CourseForumPage(): JSX.Element {
           </DialogHeader>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4"
+              noValidate
+            >
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('forum:list.titleLabel')}</FormLabel>
+                    <FormLabel>
+                      {t('forum:list.titleLabel')}
+                      <RequiredMark />
+                    </FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input dir="auto" {...field} />
                     </FormControl>
+                    <FormDescription
+                      className={
+                        titleLength > MAX_THREAD_TITLE_LENGTH
+                          ? 'text-xs font-medium tabular-nums text-destructive'
+                          : 'text-xs tabular-nums text-muted-foreground'
+                      }
+                    >
+                      {t('forum:characterCount', {
+                        count: titleLength,
+                        max: MAX_THREAD_TITLE_LENGTH,
+                      })}
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -229,14 +296,36 @@ export default function CourseForumPage(): JSX.Element {
                 name="body"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('forum:list.bodyLabel')}</FormLabel>
+                    <FormLabel>
+                      {t('forum:list.bodyLabel')}
+                      <RequiredMark />
+                    </FormLabel>
                     <FormControl>
-                      <Textarea rows={5} {...field} />
+                      <Textarea rows={5} dir="auto" {...field} />
                     </FormControl>
+                    <FormDescription
+                      className={
+                        bodyLength > MAX_THREAD_BODY_LENGTH
+                          ? 'text-xs font-medium tabular-nums text-destructive'
+                          : 'text-xs tabular-nums text-muted-foreground'
+                      }
+                    >
+                      {t('forum:characterCount', {
+                        count: bodyLength,
+                        max: MAX_THREAD_BODY_LENGTH,
+                      })}
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              {labelledCreateError && !createFieldFailure ? (
+                <SaveFailedAlert
+                  error={labelledCreateError}
+                  titleKey="forum:list.createError"
+                />
+              ) : null}
 
               <DialogFooter>
                 <Button
