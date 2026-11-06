@@ -533,7 +533,7 @@ export default function CourseCheckoutPage(): JSX.Element {
       {header}
 
       {/* Order summary, with the references the academy sees. */}
-      <Card>
+      <Card data-testid="checkout-order-summary">
         <CardHeader>
           <CardTitle as="h2">{t('course:checkout.summaryTitle')}</CardTitle>
         </CardHeader>

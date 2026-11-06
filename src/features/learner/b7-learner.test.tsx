@@ -506,7 +506,10 @@ describe('V10/V11/V19 — the checkout proof form', () => {
     expect(screen.getByTestId('checkout-proof-choose').textContent).toContain(
       'اختيار ملف'
     );
-    expect(document.querySelector('input[type="file"]')).toBeNull();
+    // The native input is in the form but hidden and out of the tab order.
+    const native = screen.getByTestId('checkout-proof-file');
+    expect(native.className).toContain('sr-only');
+    expect(native.getAttribute('tabindex')).toBe('-1');
   });
 });
 

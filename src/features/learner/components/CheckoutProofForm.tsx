@@ -15,7 +15,7 @@
  *   reference or the file under that field; anything else one inline alert
  *   with the real reason (an expired order says so) and Try again.
  */
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2, Paperclip, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RequiredMark, SaveFailedAlert } from '@forms';
-import { useErrorText, useFilePicker } from '@hooks';
+import { useErrorText } from '@hooks';
 import { cn, formatBytes } from '@utils';
 import type { ApiError } from '@api';
 import type { LanguageCode } from '@types';
@@ -99,9 +99,10 @@ export function CheckoutProofForm({
   const [fileError, setFileError] = useState<string>();
   const [noteError, setNoteError] = useState<string>();
   const [referenceError, setReferenceError] = useState<string>();
-  const filePicker = useFilePicker({
-    accept: ALLOWED_PAYMENT_PROOF_TYPES.join(','),
-  });
+  // The native input stays in the form (hidden, out of the tab order) so the
+  // app's own button can open it and automated checks can still reach it.
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [chosenFiles, setChosenFiles] = useState<File[] | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
   const size = formatBytes(
@@ -114,9 +115,10 @@ export function CheckoutProofForm({
 
   // Checked the moment it is chosen, with the same limits the server uses.
   useEffect(() => {
-    const chosen = filePicker.files?.[0];
+    const chosen = chosenFiles?.[0];
     if (!chosen) return;
-    filePicker.clearFiles();
+    setChosenFiles(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
     if (!ALLOWED_PAYMENT_PROOF_TYPES.includes(chosen.type)) {
       setFileError(t('payments:payment.proofInvalidType'));
       return;
@@ -128,7 +130,7 @@ export function CheckoutProofForm({
     setFileError(undefined);
     setFile(chosen);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filePicker.files]);
+  }, [chosenFiles]);
 
   // A server refusal lands on its field; anything else is the one alert.
   const target = error ? checkoutProofFailureTarget(error) : null;
@@ -263,7 +265,7 @@ export function CheckoutProofForm({
             type="button"
             variant="outline"
             className="min-h-11 sm:min-h-9"
-            onClick={filePicker.openFilePicker}
+            onClick={() => fileInputRef.current?.click()}
             aria-labelledby={`${ids}-file ${ids}-file-button`}
             aria-describedby={`${fileHintId} ${fileErrorId}`}
             aria-invalid={fileError ? true : undefined}
@@ -276,6 +278,21 @@ export function CheckoutProofForm({
                 : t('payments:payment.chooseFile')}
             </span>
           </Button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept={ALLOWED_PAYMENT_PROOF_TYPES.join(',')}
+            className="sr-only"
+            tabIndex={-1}
+            aria-hidden
+            data-testid="checkout-proof-file"
+            onChange={(event) => {
+              const picked = event.target.files;
+              if (picked && picked.length > 0) {
+                setChosenFiles(Array.from(picked));
+              }
+            }}
+          />
           {file ? (
             <span
               className="inline-flex min-w-0 items-center gap-1.5 text-sm text-foreground"
