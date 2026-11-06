@@ -95,7 +95,7 @@ function PlanPriceLine({
               {t('tenant:planComparison.priceOr')}
             </span>
           ) : null}
-          <span dir="ltr" data-ltr-content>
+          <span dir="ltr" data-ltr-content className="whitespace-nowrap">
             {part}
           </span>
         </span>

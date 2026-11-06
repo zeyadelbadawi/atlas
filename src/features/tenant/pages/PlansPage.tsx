@@ -43,6 +43,7 @@ import { PageContainer, PageHeader } from '@components/layout';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAuth, useToast } from '@hooks';
 import { formatDate } from '@utils';
+import { useFailureReason } from '@forms';
 import { usePlanCatalog, useTenantSubscription } from '../hooks';
 import { useStartTrial } from '../hooks/useSubscriptionLifecycle';
 import { useSubscriptionLifecycleState } from '../hooks/useSubscriptionLifecycleState';
@@ -64,6 +65,7 @@ export default function PlansPage(): JSX.Element {
   const subscription = subscriptionQuery.data;
   const { state: lifecycle } = useSubscriptionLifecycleState();
   const startTrial = useStartTrial();
+  const failureReason = useFailureReason();
 
   const [trialPlan, setTrialPlan] = useState<Plan | null>(null);
 
@@ -111,12 +113,14 @@ export default function PlansPage(): JSX.Element {
             description: t('tenant:trial.alreadyUsedDescription'),
           });
         },
-        onError: () => {
+        // B5 (UX audit) — one toast (the hook marks its errors inline)
+        // with the real reason, not "something went wrong".
+        onError: (error) => {
           setTrialPlan(null);
           toast({
             variant: 'destructive',
             title: t('tenant:trial.failedTitle'),
-            description: t('tenant:trial.failedDescription'),
+            description: failureReason(error),
           });
         },
       }
