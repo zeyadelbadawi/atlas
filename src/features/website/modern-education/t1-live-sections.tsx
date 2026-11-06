@@ -668,7 +668,7 @@ export function T1Statistics({
 
   return (
     <T1Section labelledBy={title ? headingId : undefined}>
-      <div className="rounded-[28px] bg-[var(--website-surface)] px-6 py-12 md:px-12 md:py-16">
+      <div className="rounded-[var(--t1-radius-card)] bg-[var(--website-surface)] px-6 py-12 md:px-12 md:py-16">
         <T1SectionHeader id={headingId} title={title} align="center" />
         <dl
           className={cn(

@@ -21,8 +21,10 @@
  * Extended is left to the stylesheet here too.
  *
  * Riwaq (Theme 4) sets its heading and its text in one family, IBM Plex
- * (`<h1 class="rw-display">`, `riwaq.css`): Latin text → Plex Sans Latin,
- * Arabic text → Plex Sans Arabic (one file serves every Arabic weight).
+ * (`<h1 class="rw-display">`, `riwaq.css`): Latin text → Plex Sans Latin
+ * (variable, every weight), Arabic text → the Plex Sans Arabic weight the
+ * heading is set in (`riwaq-arabic.css`): Bold for a display headline,
+ * Medium for a title.
  *
  * The URLs are content-hashed assets, the same files `atelier.css`,
  * `manara.css` and `riwaq.css` name (their `@font-face` rules), so the preload is the
@@ -39,7 +41,8 @@ import markaziTextArabic from '@/assets/fonts/markazi-text-arabic.woff2?url';
 import alexandriaLatin from '@/assets/fonts/alexandria-latin.woff2?url';
 import alexandriaArabic from '@/assets/fonts/alexandria-arabic.woff2?url';
 import plexSansLatin from '@/assets/fonts/ibm-plex-sans-latin.woff2?url';
-import plexSansArabic from '@/assets/fonts/ibm-plex-sans-arabic-400.woff2?url';
+import plexSansArabicMedium from '@/assets/fonts/ibm-plex-sans-arabic-500.woff2?url';
+import plexSansArabicBold from '@/assets/fonts/ibm-plex-sans-arabic-700.woff2?url';
 
 /** Heading classes set in Atelier's display face (`atelier.css`). */
 const ATELIER_DISPLAY_HEADING = /class="[^"]*\bat-(?:display|title)\b/;
@@ -109,7 +112,9 @@ const riwaqHeadingFonts = (appHtml: string): string[] =>
     appHtml,
     RIWAQ_DISPLAY_HEADING,
     plexSansLatin,
-    plexSansArabic
+    /\brw-display\b/.test(/<h1\b[^>]*>/.exec(appHtml)?.[0] ?? '')
+      ? plexSansArabicBold
+      : plexSansArabicMedium
   );
 
 /**

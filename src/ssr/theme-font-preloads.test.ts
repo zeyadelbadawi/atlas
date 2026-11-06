@@ -28,8 +28,11 @@ vi.mock('@/assets/fonts/alexandria-arabic.woff2?url', () => ({
 vi.mock('@/assets/fonts/ibm-plex-sans-latin.woff2?url', () => ({
   default: '/assets/ibm-plex-sans-latin.woff2',
 }));
-vi.mock('@/assets/fonts/ibm-plex-sans-arabic-400.woff2?url', () => ({
-  default: '/assets/ibm-plex-sans-arabic-400.woff2',
+vi.mock('@/assets/fonts/ibm-plex-sans-arabic-500.woff2?url', () => ({
+  default: '/assets/ibm-plex-sans-arabic-500.woff2',
+}));
+vi.mock('@/assets/fonts/ibm-plex-sans-arabic-700.woff2?url', () => ({
+  default: '/assets/ibm-plex-sans-arabic-700.woff2',
 }));
 
 const ATELIER = new Set<WebsiteThemeKey>(['atelier']);
@@ -182,7 +185,7 @@ describe('themeFontPreloadHtml', () => {
             '<h1 class="rw-display" data-long="">تعلّم الحرفة، <em class="rw-em">عمودًا بعد عمود</em></h1>'
           )
         )
-      ).toEqual(['/assets/ibm-plex-sans-arabic-400.woff2']);
+      ).toEqual(['/assets/ibm-plex-sans-arabic-700.woff2']);
     });
 
     it('a mixed heading needs both faces', () => {
@@ -195,8 +198,14 @@ describe('themeFontPreloadHtml', () => {
         )
       ).toEqual([
         '/assets/ibm-plex-sans-latin.woff2',
-        '/assets/ibm-plex-sans-arabic-400.woff2',
+        '/assets/ibm-plex-sans-arabic-700.woff2',
       ]);
+    });
+
+    it('an Arabic title heading: the Plex Arabic weight it is set in (Medium)', () => {
+      expect(
+        hrefs(themeFontPreloadHtml(RIWAQ, '<h1 class="rw-title">من نحن</h1>'))
+      ).toEqual(['/assets/ibm-plex-sans-arabic-500.woff2']);
     });
 
     it('other themes’ headings earn Riwaq nothing', () => {

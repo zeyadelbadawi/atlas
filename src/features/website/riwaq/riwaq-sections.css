@@ -4,6 +4,54 @@
  * mapping only. `rw-` classes are Riwaq's own (see `riwaq.css` on scoping).
  */
 
+/*
+ * The colonnade's blocks (sections, pages, the footer, the enrol form):
+ * each starts across every column on phones, and its own rules below place
+ * it on the wider grids. One rule for all of them (it used to be repeated
+ * per block), so the stylesheet stays within its budget.
+ */
+.rwh-hero-copy,
+.rwh-hero-media,
+.rws-split-copy,
+.rws-split-media,
+.rws-steps-rail,
+.rws-steps-head,
+.rws-steps-plate,
+.rws-timeline,
+.rws-bay,
+.rws-enrol-copy,
+.rws-enrol-media,
+.rwl-launching-window,
+.rwl-launching-copy,
+.rwsp-card,
+.rwsp-detail,
+.rwt-stage,
+.rwt-controls,
+.rwq-aside,
+.rwq-main,
+.rwn-form-grid > *,
+.rwc-foot-id,
+.rwc-foot-cols,
+.rwc-foot-legal,
+.rwp-plate-rail,
+.rwp-plate-body,
+.rwp-plate-window,
+.rwp-catalog-aside,
+.rwp-catalog-main,
+.rwp-contact-info,
+.rwp-form,
+.rwp-system-window,
+.rwp-system-copy,
+.rwp-dossier-head,
+.rwp-dossier-aside,
+.rwp-dossier-window,
+.rwp-index,
+.rwp-dossier-main,
+.rwp-enrol {
+  grid-column: 1 / -1;
+  min-inline-size: 0;
+}
+
 /* ------------------------------------------------------------------ */
 /* Shared: inputs, action rows                                          */
 /* ------------------------------------------------------------------ */
@@ -68,12 +116,6 @@ select.rw-input:dir(rtl) {
 
 .rwh-hero-grid {
   align-items: end;
-}
-
-.rwh-hero-copy,
-.rwh-hero-media {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
 }
 
 .rwh-hero-copy {
@@ -177,12 +219,6 @@ select.rw-input:dir(rtl) {
 
 .rws-split {
   align-items: center;
-}
-
-.rws-split-copy,
-.rws-split-media {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
 }
 
 .rws-split-copy {
@@ -321,14 +357,6 @@ select.rw-input:dir(rtl) {
 /* ------------------------------------------------------------------ */
 /* Course of study — the timeline                                       */
 /* ------------------------------------------------------------------ */
-
-.rws-steps-rail,
-.rws-steps-head,
-.rws-steps-plate,
-.rws-timeline {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
-}
 
 .rws-steps-head {
   display: grid;
@@ -485,11 +513,6 @@ select.rw-input:dir(rtl) {
   align-items: start;
 }
 
-.rws-bay {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
-}
-
 .rws-bay-window {
   aspect-ratio: 4 / 5;
 }
@@ -537,12 +560,6 @@ select.rw-input:dir(rtl) {
 /* Enrol (CTA)                                                          */
 /* ------------------------------------------------------------------ */
 
-.rws-enrol-copy,
-.rws-enrol-media {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
-}
-
 .rws-enrol-copy {
   display: grid;
   gap: 1.5rem;
@@ -551,7 +568,7 @@ select.rw-input:dir(rtl) {
 }
 
 .rws-enrol-title {
-  font-size: clamp(2rem, 1.3rem + 3vw, 4rem);
+  font-size: var(--rw-display-compact);
   font-weight: 300;
   max-inline-size: 18ch;
 }
@@ -573,10 +590,22 @@ select.rw-input:dir(rtl) {
 /* Departments — the index                                              */
 /* ------------------------------------------------------------------ */
 
-.rwl-index {
+/* Riwaq's lists carry no markers and no indent; the ruled ones (the
+   index, the questions, the catalogue's sheets) open on a strong rule. One
+   rule for all of them, so the stylesheet stays within its budget. */
+.rwl-index,
+.rwq-list,
+.rwp-sheets,
+.rwc-sheet-list,
+.rwp-syllabus,
+.rwp-lessons {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+.rwl-index,
+.rwq-list,
+.rwp-sheets {
   border-block-start: 1px solid var(--rw-env-rule-strong);
 }
 
@@ -594,7 +623,7 @@ select.rw-input:dir(rtl) {
 .rwl-index-name {
   min-inline-size: 0;
   font-weight: 300;
-  font-size: clamp(1.375rem, 1.1rem + 1.2vw, 2.25rem);
+  font-size: var(--rw-heading-m);
   color: var(--rw-env-heading);
   overflow-wrap: anywhere;
 }
@@ -673,7 +702,7 @@ a.rwl-index-row:hover .rwl-index-name {
 }
 
 .rwx-row-title {
-  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  font-size: var(--rw-heading-s);
   font-weight: 400;
   line-height: 1.3;
   overflow-wrap: anywhere;
@@ -809,12 +838,6 @@ a.rwl-index-row:hover .rwl-index-name {
   max-inline-size: 40rem;
 }
 
-.rwl-launching-window,
-.rwl-launching-copy {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
-}
-
 .rwl-launching-copy {
   display: grid;
   gap: 1rem;
@@ -893,12 +916,6 @@ a.rwl-index-row:hover .rwl-index-name {
 /* ------------------------------------------------------------------ */
 /* Programme in focus (course spotlight)                                */
 /* ------------------------------------------------------------------ */
-
-.rwsp-card,
-.rwsp-detail {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
-}
 
 .rwsp-card {
   display: grid;
@@ -997,12 +1014,6 @@ a.rwl-index-row:hover .rwl-index-name {
 /* Testimonials                                                         */
 /* ------------------------------------------------------------------ */
 
-.rwt-stage,
-.rwt-controls {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
-}
-
 .rwt-quote {
   display: grid;
   gap: 2rem;
@@ -1017,7 +1028,7 @@ a.rwl-index-row:hover .rwl-index-name {
 
 .rwt-text p {
   margin: 0;
-  font-size: clamp(1.375rem, 1.05rem + 1.4vw, 2.25rem);
+  font-size: var(--rw-heading-m);
   font-weight: 300;
   line-height: 1.35;
   color: var(--rw-env-heading);
@@ -1093,12 +1104,6 @@ a.rwl-index-row:hover .rwl-index-name {
 /* FAQ — Admissions                                                     */
 /* ------------------------------------------------------------------ */
 
-.rwq-aside,
-.rwq-main {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
-}
-
 .rwq-aside {
   display: grid;
   gap: 1.25rem;
@@ -1119,13 +1124,6 @@ a.rwl-index-row:hover .rwl-index-name {
   .rwq-main {
     grid-column: 6 / -1;
   }
-}
-
-.rwq-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-block-start: 1px solid var(--rw-env-rule-strong);
 }
 
 .rwq-item {

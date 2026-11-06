@@ -125,7 +125,7 @@ function CourseCountChip({
       data-course-count-chip=""
       className="t1-card absolute end-3 top-3 flex items-center gap-3 py-2.5 pe-4 ps-2.5 shadow-[var(--t1-shadow-lift)] sm:end-4 sm:top-4 lg:-end-6 lg:top-8"
     >
-      <span className="t1-icon-tile size-10 rounded-xl">
+      <span className="t1-icon-tile size-10 rounded-[var(--t1-radius-control)]">
         <BookOpen className="size-5" aria-hidden />
       </span>
       <p className="leading-tight">
@@ -293,7 +293,7 @@ export function T1Hero({
               value={config.image}
               alt={resolveLocalizedText(config.imageAlt, locale)}
               sizes="(min-width: 1024px) 560px, (min-width: 672px) 672px, 100vw"
-              className="aspect-[4/3] rounded-[24px] shadow-[var(--t1-shadow-lift)] md:aspect-[16/10] lg:aspect-[4/5]"
+              className="aspect-[4/3] rounded-[var(--t1-radius-card)] shadow-[var(--t1-shadow-lift)] md:aspect-[16/10] lg:aspect-[4/5]"
             />
             <CourseCountChip academyId={academyId} />
           </div>

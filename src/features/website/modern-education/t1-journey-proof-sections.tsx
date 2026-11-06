@@ -122,7 +122,7 @@ export function T1VideoTestimonials({
           classes={{
             card: 't1-card overflow-hidden p-3 pb-5 sm:p-4 sm:pb-6',
             frame:
-              'rounded-[calc(var(--t1-radius-card)-0.375rem)] bg-[var(--website-surface)] t1-video-frame',
+              'rounded-[var(--t1-radius-control)] bg-[var(--website-surface)] t1-video-frame',
             play: 't1-video-play !size-14',
             placeholder:
               'border border-dashed border-[var(--website-input-border)] text-[var(--website-foreground-muted)] !shadow-none',
@@ -169,7 +169,7 @@ export function T1Downloads({
           interactive={!!linkRenderer}
           classes={{
             row: 't1-card t1-focus transition-colors duration-200 hover:border-[var(--website-link)] motion-reduce:transition-none',
-            icon: 'rounded-xl bg-[var(--website-chip-bg)] text-[var(--website-chip-fg)]',
+            icon: 'rounded-[var(--t1-radius-control)] bg-[var(--website-chip-bg)] text-[var(--website-chip-fg)]',
             title: 'font-semibold text-[var(--website-foreground)]',
             description: 'text-sm text-[var(--website-foreground-muted)]',
             meta: 'text-xs font-semibold uppercase tracking-wide text-[var(--website-foreground-muted)]',
@@ -216,8 +216,8 @@ export function T1Certificates({
           classes={{
             card: 't1-card p-3 pb-5 sm:p-4 sm:pb-6',
             frame:
-              'rounded-[calc(var(--t1-radius-card)-0.375rem)] border border-[var(--website-border)] bg-[var(--website-surface)]',
-            link: 't1-focus block rounded-[calc(var(--t1-radius-card)-0.375rem)]',
+              'rounded-[var(--t1-radius-control)] border border-[var(--website-border)] bg-[var(--website-surface)]',
+            link: 't1-focus block rounded-[var(--t1-radius-control)]',
             title:
               'px-1 font-display text-base font-bold text-[var(--website-foreground)]',
             meta: 'px-1 text-sm text-[var(--website-foreground-muted)]',

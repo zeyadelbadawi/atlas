@@ -93,10 +93,21 @@
     'Atelier Display', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
 
   /* Type scale: fluid, clamped at both ends. */
-  --at-display: clamp(2.75rem, 1.35rem + 5.6vw, 7.25rem);
-  --at-title: clamp(2rem, 1.35rem + 2.4vw, 3.75rem);
-  --at-subtitle: clamp(1.375rem, 1.1rem + 0.9vw, 1.875rem);
-  --at-lead: clamp(1.0625rem, 0.98rem + 0.3vw, 1.25rem);
+  /* Type scale (B10 V25): every fluid size in the theme is one of these
+     steps, smallest first; `--at-small` is the floor for small print. The
+     cinematic stages fit some of them to the window's height too. */
+  --at-small: 0.75rem; /* 12 */
+  --at-lead: clamp(1.0625rem, 0.98rem + 0.3vw, 1.25rem); /* 17 → 20 */
+  --at-heading-s: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem); /* 20 → 24 */
+  --at-subtitle: clamp(1.375rem, 1.1rem + 0.9vw, 1.875rem); /* 22 → 30 */
+  --at-heading-m: clamp(1.75rem, 1.3rem + 1.4vw, 2.75rem); /* 28 → 41 */
+  --at-heading-l: clamp(2rem, 1.5rem + 1.6vw, 3rem); /* 32 → 47 */
+  --at-title: clamp(2rem, 1.35rem + 2.4vw, 3.75rem); /* 32 → 56 */
+  --at-display-s: clamp(2.5rem, 1.5rem + 3.6vw, 5.25rem); /* 40 → 76 */
+  --at-display: clamp(2.75rem, 1.35rem + 5.6vw, 7.25rem); /* 44 → 102 */
+  --at-figure: clamp(3rem, 1.6rem + 6vw, 8rem); /* 49 → 112 */
+  /* Ornament (the 404 figure): artwork set in type. */
+  --at-ornament: clamp(7rem, 3rem + 20vw, 20rem);
   --at-measure: 62ch;
 
   /* Rhythm and grid. */
@@ -208,7 +219,7 @@
 
 /* Tracked small caps for labels, eyebrows and metadata. */
 [data-theme-pack='atelier'] .at-label {
-  font-size: 0.75rem;
+  font-size: var(--at-small);
   font-weight: 500;
   line-height: 1.4;
   letter-spacing: 0.16em;
@@ -583,7 +594,7 @@
   position: absolute;
   inset-block-end: 0.75rem;
   inset-inline-start: 0.75rem;
-  font-size: 0.6875rem;
+  font-size: var(--at-small);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }

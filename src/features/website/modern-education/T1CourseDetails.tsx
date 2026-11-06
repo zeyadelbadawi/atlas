@@ -161,9 +161,9 @@ export function T1CourseDetails({
       >
         <div className={cn(container, 'grid gap-10 py-14 lg:grid-cols-2')}>
           <div className="space-y-4">
-            <div className="h-4 w-1/3 animate-pulse rounded bg-[var(--website-surface-muted)] motion-reduce:animate-none" />
-            <div className="h-12 w-4/5 animate-pulse rounded bg-[var(--website-surface-muted)] motion-reduce:animate-none" />
-            <div className="h-5 w-full animate-pulse rounded bg-[var(--website-surface-muted)] motion-reduce:animate-none" />
+            <div className="h-4 w-1/3 animate-pulse rounded-[var(--t1-radius-small)] bg-[var(--website-surface-muted)] motion-reduce:animate-none" />
+            <div className="h-12 w-4/5 animate-pulse rounded-[var(--t1-radius-small)] bg-[var(--website-surface-muted)] motion-reduce:animate-none" />
+            <div className="h-5 w-full animate-pulse rounded-[var(--t1-radius-small)] bg-[var(--website-surface-muted)] motion-reduce:animate-none" />
           </div>
           <div className="aspect-[16/9] animate-pulse rounded-[var(--t1-radius-card)] bg-[var(--website-surface-muted)] motion-reduce:animate-none" />
         </div>
@@ -529,7 +529,7 @@ export function T1CourseDetails({
                           return (
                             <li
                               key={lesson.id}
-                              className="flex min-h-11 items-center gap-3 rounded-lg px-2 text-sm text-[var(--website-foreground)]"
+                              className="flex min-h-11 items-center gap-3 rounded-[var(--t1-radius-control)] px-2 text-sm text-[var(--website-foreground)]"
                             >
                               <Icon
                                 className="size-4 shrink-0 text-[var(--website-foreground-muted)]"

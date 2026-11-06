@@ -99,7 +99,7 @@
 }
 [data-theme-pack='manara'] .mnx-price {
   font-family: var(--mn-font-display);
-  font-size: clamp(2rem, 1.6rem + 1.6vw, 3rem);
+  font-size: var(--mn-figure);
   font-weight: 900;
   line-height: 1;
   letter-spacing: -0.02em;
@@ -173,7 +173,7 @@
 }
 [data-theme-pack='manara'] .mnx-timer-value {
   font-family: var(--mn-font-display);
-  font-size: clamp(2.75rem, 1.6rem + 4vw, 5rem);
+  font-size: var(--mn-display);
   font-weight: 900;
   line-height: 0.95;
   letter-spacing: -0.03em;

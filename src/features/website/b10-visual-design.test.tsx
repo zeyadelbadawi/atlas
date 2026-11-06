@@ -95,30 +95,62 @@ afterEach(cleanup);
 const css = (path: string) => readFileSync(resolve(__dirname, path), 'utf8');
 
 describe('V01/V02 theme font families', () => {
-  /** `font-weight` of every `@font-face`, grouped by family and style. */
-  function weightRanges(source: string): Map<string, Set<string>> {
-    const ranges = new Map<string, Set<string>>();
+  /**
+   * `font-weight` and `unicode-range` of every `@font-face`, grouped by
+   * family and style.
+   */
+  function faces(
+    source: string
+  ): Map<string, { weights: Set<string>; ranges: Set<string> }> {
+    const families = new Map<
+      string,
+      { weights: Set<string>; ranges: Set<string> }
+    >();
     for (const [, body] of source.matchAll(/@font-face\s*{([^}]*)}/g)) {
       const family = /font-family:\s*([^;]+);/.exec(body)?.[1].trim();
       const weight = /font-weight:\s*([^;]+);/.exec(body)?.[1].trim();
       const style = /font-style:\s*([^;]+);/.exec(body)?.[1].trim() ?? '';
+      const range =
+        /unicode-range:\s*([^;]+);/.exec(body)?.[1].replace(/\s+/g, ' ') ?? '';
       if (!family || !weight) continue;
       const key = `${family} ${style}`;
-      ranges.set(key, (ranges.get(key) ?? new Set()).add(weight));
+      const entry = families.get(key) ?? {
+        weights: new Set<string>(),
+        ranges: new Set<string>(),
+      };
+      entry.weights.add(weight);
+      entry.ranges.add(range);
+      families.set(key, entry);
     }
-    return ranges;
+    return families;
   }
 
+  // Chromium groups a family's faces by their descriptors before
+  // `unicode-range`: faces that split a family by script must declare the
+  // same weight range, or one script never gets its face. A family of one
+  // script (Riwaq's Arabic, B10 V29) may hold several weights.
   it.each([
     ['atelier/atelier.css', "'Atelier Display' normal"],
     ['manara/manara.css', "'Manara Display' normal"],
     ['riwaq/riwaq.css', "'Riwaq Sans' normal"],
   ])('%s: every face of %s declares the same weight range', (file, key) => {
-    const ranges = weightRanges(css(file));
-    expect(ranges.get(key)?.size).toBe(1);
-    for (const [family, set] of ranges) {
-      expect(set.size, family).toBe(1);
+    const families = faces(css(file));
+    expect(families.get(key)?.weights.size).toBe(1);
+    for (const [family, { weights, ranges }] of families) {
+      if (ranges.size > 1) expect(weights.size, family).toBe(1);
     }
+  });
+
+  it("riwaq/riwaq.css: Arabic in its own family, in Plex Sans Arabic's own weights", () => {
+    const families = faces(css('riwaq/riwaq.css'));
+    expect(families.get("'Riwaq Sans Arabic' normal")).toEqual({
+      weights: new Set(['100 450', '451 600', '601 700']),
+      ranges: expect.any(Set),
+    });
+    expect(families.get("'Riwaq Sans Arabic' normal")?.ranges.size).toBe(1);
+    expect(css('riwaq/riwaq.css')).toMatch(
+      /--rw-font:\s*'Riwaq Sans', 'Riwaq Sans Arabic',/
+    );
   });
 });
 

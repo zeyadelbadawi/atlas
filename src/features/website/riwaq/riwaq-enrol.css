@@ -50,10 +50,6 @@
   grid-template-columns: repeat(var(--rw-cols), minmax(0, 1fr));
   column-gap: var(--rw-gap);
 }
-.rwn-form-grid > * {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
-}
 @media (min-width: 1024px) {
   .rwn-form-grid > * {
     grid-column: 4 / span 8;
