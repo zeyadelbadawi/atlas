@@ -264,7 +264,7 @@
       "title": "Replace the grade?",
       "description": "Replace the grade of {{previous}} with {{next}}? {{student}} will see the new grade instead of the old one.",
       "confirmLabel": "Replace grade",
-      "cancelLabel": "Keep {{previous}}"
+      "cancelLabel": "Keep the current grade"
     }
   },
   "attemptReview": {

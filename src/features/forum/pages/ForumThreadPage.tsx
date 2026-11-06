@@ -341,7 +341,7 @@ export default function ForumThreadPage(): JSX.Element {
             </p>
             <p
               dir="auto"
-              className="whitespace-pre-wrap text-sm text-foreground"
+              className="whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm text-foreground"
             >
               {thread.body}
             </p>
@@ -401,7 +401,7 @@ export default function ForumThreadPage(): JSX.Element {
                     </div>
                     <p
                       dir="auto"
-                      className="whitespace-pre-wrap text-sm text-foreground"
+                      className="whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm text-foreground"
                     >
                       {reply.body}
                     </p>

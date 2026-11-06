@@ -280,7 +280,7 @@
       "title": "استبدال الدرجة؟",
       "description": "استبدال الدرجة {{previous}} بالدرجة {{next}}؟ سيرى {{student}} الدرجة الجديدة بدلًا من القديمة.",
       "confirmLabel": "استبدال الدرجة",
-      "cancelLabel": "إبقاء {{previous}}"
+      "cancelLabel": "إبقاء الدرجة الحالية"
     }
   },
   "attemptReview": {

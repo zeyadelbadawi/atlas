@@ -311,6 +311,17 @@ describe('submission review — failure and regrade (V06, V07, V08)', () => {
     ).toMatch(/^استبدال الدرجة 92 بالدرجة 40؟/);
   });
 
+  it('the confirmation buttons and title carry no placeholders (only the description is interpolated)', () => {
+    for (const lang of ['en', 'ar'] as const) {
+      const t = createI18nInstance(lang).t;
+      for (const key of ['title', 'confirmLabel', 'cancelLabel']) {
+        expect(t(`instructor:grading.regradeConfirm.${key}`)).not.toMatch(
+          /\{\{/
+        );
+      }
+    }
+  });
+
   it('saving the same score again does not ask', async () => {
     state.submission = GRADED;
     renderReview();
