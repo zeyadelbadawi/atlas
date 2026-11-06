@@ -171,7 +171,9 @@ export function T1FeatureSplit({
       {items.length > 0 ? (
         // B10 V31 — benefits are not a sequence: a check mark each, so the
         // numbered steps that follow on Home are the page's only numbers.
+        // `role="list"`: without markers Safari drops a list's semantics.
         <ul
+          role="list"
           className={cn(
             'grid gap-6',
             !hasImage && 'md:grid-cols-2 lg:grid-cols-3'
