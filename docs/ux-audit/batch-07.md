@@ -67,3 +67,66 @@ what the learner got wrong.
   provider); video playback (no video lessons); real certificates; 768 px.
 - The seeded quiz and assignment sit outside the course sequence: their player screens ran on
   mocks. Offline (`setOffline`) not meaningful under route mocks; network loss tested by abort.
+
+## Fixes
+
+### Shared root causes
+- **One message per failure (V03)** — 25 learner mutation hooks (quiz start, submit and
+  autosave, mark complete, assignment upload, draft and submit, devices, takeover, checkout,
+  profile sessions and trusted devices) and the grant, outline and payment-method reads mark
+  their errors inline (`INLINE_ERRORS_META`, checked by a test listing every hook).
+- **The right cause (V01, V04, V05)** — only a real network failure mentions the connection; a
+  5xx is "Something went wrong on the academy's side" with Try again; quiz autosave reads "Not
+  saved — retrying", not "Offline"; takeover, device removal, mark complete and the draft give
+  the server's own reason.
+- **White label (V21)** — network and error-boundary copy say "this site" / "the page", not
+  Atlas (dashboard too); delivery tiers "Standard delivery" / "Streaming-service delivery";
+  "My learning".
+- **Dialogs (V14, V20)** — the shared Dialog and Sheet close button is translated and has a
+  44 px hit area (every dialog in the app).
+- **Bidi (V17)** — `dir="auto"` on titles, headings, devices, responses, feedback and method
+  descriptions; names inside sentences isolated with `isolateText`.
+- **Backend (atlas-backend#106, #107)** — quizzes and assignments outside every unit are not
+  part of the learner's course (dashboard, completion, counts); the completion read heals the
+  stored verdict; an authoring change that can change completion recomputes every enrolled
+  learner in the background.
+
+### Per finding
+- **V02** Checkout failures classified: already enrolled links to the course, a free course to
+  its page; 5xx, abort and timeout "We couldn't start your order" with the reason and Try again
+  (same idempotency key). "Not available for purchase yet" only when payments aren't set up.
+- **V06** Results name the chosen and correct options; "0 of 1 point" (Arabic six forms).
+- **V07** "Select all that apply."; the checkbox is square.
+- **V08** The player's Previous/Next is hidden during an attempt.
+- **V09** The quiz strip sticks below the theme header.
+- **V10** The assignment counts to 5,000 and refuses past it; the proof note (500) and
+  reference (120) count and refuse instead of cutting.
+- **V11** Violations on `response`, `fileData`, `note`, `payerReference` show under their
+  fields; anything else is one alert (a 409 expired order says it expired).
+- **V12** Order and payment references (the first 8 characters, as in the academy's Orders
+  list) on checkout, Purchases and Payments; a reload or "Continue payment" returns to the
+  same payment's proof step.
+- **V13** "Awaiting payment" shows the deadline and Continue payment; Expired / Cancelled say
+  why and offer Buy again.
+- **V14** Remove asks first; rows show "Added …" and last used; the current device is marked.
+- **V15** "This activity cannot be opened" keeps the outline link and no longer offers Try
+  again; detached items are no longer listed (backend).
+- **V16** Resubmit prefills the submitted text and attachment; a server draft wins only if newer;
+  an older local draft is dropped.
+- **V18** "وضع علامة"; "جهازين"; Arabic plurals for activities; one digit style in the summary;
+  the app's file button instead of the native input.
+- **V19** Continue, Submit for review and Start Quiz stay enabled and say what's missing; the
+  proof file is marked required.
+- **V20** 44 px on phones: Sections/Contents, back link, tabs, breadcrumbs, the phone prompt
+  dismiss.
+- **V22** "92 / 100" ("92 من 100").
+- **V23** Checkout sits under Courses: Courses › course › Checkout.
+- **V24** A failed submit no longer leaves an unhandled rejection.
+- **V25** A `name` violation names the 100-character limit for first and last name together.
+
+### Not changed, with reason
+- **V04 retry rate** — the offline outbox's full-jitter backoff is a deliberate design with its
+  own tests; changing it is separate work.
+- **V12 in a new tab** — no endpoint lists an order's payments, so a new tab restarts at the
+  method step (the backend reuses the same order and payment).
+- The quiz strip offset uses each theme's header-height variable; Riwaq has none and gets 0.
