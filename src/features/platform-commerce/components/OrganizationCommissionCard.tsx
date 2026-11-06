@@ -37,6 +37,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useConfirmDialog, useToast } from '@app/providers';
 import { apiErrorMessage } from '@utils';
+import { hasViolationOn, useServerValidation } from '@forms';
 import {
   ORGANIZATION_COMMISSION_MODES,
   type OrganizationCommission,
@@ -84,6 +85,10 @@ export function OrganizationCommissionCard({
   const form = useForm<OrganizationCommissionFormData>({
     resolver: zodResolver(organizationCommissionSchema),
     defaultValues: { commissionMode: 'default', percent: '' },
+  });
+  // B8 (UX audit) V29 — the server's range refusal lands on the field.
+  useServerValidation(form, update.error ?? null, {
+    customPercentageBasisPoints: 'percent',
   });
   const mode = useWatch({ control: form.control, name: 'commissionMode' });
 
@@ -250,7 +255,10 @@ export function OrganizationCommissionCard({
                   />
                 ) : null}
 
-                {update.error ? (
+                {update.error &&
+                !hasViolationOn(update.error, {
+                  customPercentageBasisPoints: 'percent',
+                }) ? (
                   <Alert variant="destructive" role="alert">
                     <AlertDescription>
                       {apiErrorMessage(t, i18n, update.error)}

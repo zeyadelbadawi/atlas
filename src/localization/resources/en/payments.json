@@ -231,14 +231,43 @@
     "rejectTitle": "Reject",
     "notesRequiredLabel": "Reason for rejection",
     "rejectAction": "Reject payment",
-    "searchLabel": "Search by organization, reference or payment ID",
+    "searchLabel": "Search by checkout ID, payer reference, payment ID or organization",
     "planColumn": "Plan",
     "planWithCycle": "{{plan}} · {{cycle}}",
     "addOnPlan": "Add-on: {{name}}",
     "plan": "Plan",
     "billingCycle": "Billing cycle",
     "unknownOrganization": "Organization unavailable",
-    "noPlan": "No plan recorded"
+    "noPlan": "No plan recorded",
+    "checkoutId": "Checkout ID",
+    "paymentId": "Payment ID",
+    "payerReference": "Payer's transfer reference",
+    "uploadedAt": "Proof uploaded",
+    "receivingAccount": "Paid to",
+    "approveConfirm": {
+      "title": "Approve this payment?",
+      "description": "{{amount}} from {{organization}} will be accepted and the organization's subscription activated right away. This can't be undone.",
+      "descriptionWithPlan": "{{amount}} from {{organization}} will be accepted and {{plan}} activated for them right away. This can't be undone.",
+      "confirm": "Yes, approve"
+    },
+    "approvedToast": {
+      "title": "Payment approved",
+      "description": "{{amount}} from {{organization}} was accepted; their subscription is active."
+    },
+    "rejectedToast": {
+      "title": "Payment rejected",
+      "description": "{{organization}} can see your reason on their payment."
+    },
+    "approveFailed": "The payment wasn't approved",
+    "rejectFailed": "The payment wasn't rejected",
+    "decidedElsewhere": "Someone else reviewed this payment while you had it open. It now shows their decision.",
+    "reviewed": {
+      "approved": "This payment was approved on {{date}}. It can no longer be approved or rejected.",
+      "rejected": "This payment was rejected on {{date}}. It can no longer be approved or rejected.",
+      "notRequired": "This payment doesn't need a manual review.",
+      "notes": "Reviewer's notes:"
+    },
+    "backToList": "Back to payment review"
   },
   "listFilters": {
     "label": "Filters",
@@ -408,6 +437,12 @@
       "configured": "Configured",
       "verified": "Verified",
       "disabled": "Disabled"
+    },
+    "effectiveManualDescription": "Atlas subscription payments are processed by {{provider}}, the built-in default: organizations pay into the accounts below and you review each payment. It needs no configuration, so it stays active while no other provider is configured and enabled.",
+    "testNeedsConfig": "Save a configuration for this provider first, then test it.",
+    "enableNeedsVerified": "A successful connection test is needed before it can be enabled.",
+    "providers": {
+      "atlas_manual": "Manual Transfer"
     }
   },
   "bankTransferMethods": {
@@ -481,7 +516,9 @@
       "referenceInstructionsAr": "Payment reference instructions (Arabic)",
       "arabicHelp": "Optional. Shown instead of the English text to customers using Atlas in Arabic.",
       "arabicHelpLearner": "Optional. Shown instead of the English text to learners viewing your academy in Arabic."
-    }
+    },
+    "disableLastTitle": "Disable {{name}}?",
+    "disableLastDescription": "It is the only enabled {{kind}} method, so checkout will stop offering {{kind}} until you enable one again. Payments already made are not affected."
   },
   "walletMethods": {
     "title": "E-wallets",

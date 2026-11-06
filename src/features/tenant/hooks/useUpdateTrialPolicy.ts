@@ -9,7 +9,7 @@
  * not silently repeated.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { planKeys } from '@services/query';
+import { INLINE_ERRORS_META, planKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { planService } from '../services/PlanService';
 import type { TrialPolicy } from '@types';
@@ -23,6 +23,7 @@ export function useUpdateTrialPolicy() {
     // with every other Atlas settings form (e.g. Academy Settings).
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(planKeys.trialPolicy());
     },

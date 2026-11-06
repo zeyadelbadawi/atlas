@@ -203,6 +203,19 @@ export function usePlatformContactSubmissionFilters() {
     (to: string | undefined) => setOptional(PARAM.to, readDate(to ?? null)),
     [setOptional]
   );
+  /** B8 (UX audit) V22 — Swap writes both dates in ONE URL update. */
+  const swapDates = useCallback(
+    () =>
+      update((next) => {
+        const from = next.get(PARAM.from);
+        const to = next.get(PARAM.to);
+        if (to) next.set(PARAM.from, to);
+        else next.delete(PARAM.from);
+        if (from) next.set(PARAM.to, from);
+        else next.delete(PARAM.to);
+      }),
+    [update]
+  );
   const setSort = useCallback(
     (sort: PlatformContactSortOption) =>
       update((next) => {
@@ -256,6 +269,7 @@ export function usePlatformContactSubmissionFilters() {
     setTopic,
     setFrom,
     setTo,
+    swapDates,
     setSort,
     setPage,
     setPageSize,

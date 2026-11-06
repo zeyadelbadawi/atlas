@@ -6,19 +6,31 @@
  * catalog.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { paymentMethodKeys, platformPaymentMethodKeys } from '@services/query';
+import {
+  INLINE_ERRORS_META,
+  paymentMethodKeys,
+  platformPaymentMethodKeys,
+} from '@services/query';
 import type { ApiError } from '@api';
-import type { CreateInstapayMethodPayload, PlatformPaymentMethod } from '@types';
+import type {
+  CreateInstapayMethodPayload,
+  PlatformPaymentMethod,
+} from '@types';
 import { platformPaymentMethodService } from '../services/PlatformPaymentMethodService';
 
 export function useCreateInstapayMethod() {
   const { invalidate } = useInvalidate();
 
-  return useApiMutation<PlatformPaymentMethod, CreateInstapayMethodPayload, ApiError>({
+  return useApiMutation<
+    PlatformPaymentMethod,
+    CreateInstapayMethodPayload,
+    ApiError
+  >({
     mutationFn: (payload) =>
       platformPaymentMethodService.createInstapayMethod(payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(platformPaymentMethodKeys.lists());
       await invalidate(paymentMethodKeys.all);

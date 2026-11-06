@@ -14,10 +14,17 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PaymentProofDialog } from '@/components/payments/PaymentProofDialog';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertTriangle, Check, FileText, Loader2, X } from 'lucide-react';
+import {
+  AlertTriangle,
+  ArrowLeft,
+  Check,
+  FileText,
+  Loader2,
+  X,
+} from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
@@ -33,8 +40,14 @@ import {
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuth, usePermissions } from '@hooks';
+import { useAuth, useDateFormatter, usePermissions } from '@hooks';
 import { useToast } from '@app/providers/toast/useToast';
+import { useConfirmDialog } from '@app/providers/dialog/useConfirmDialog';
+import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
+import { RequiredMark, SaveFailedAlert, useServerValidation } from '@forms';
+import type { ApiError } from '@api';
+import type { ManualPaymentInstructions, Payment } from '@types';
+import { CopyValueButton } from '../components/CopyValueButton';
 import {
   useApprovePayment,
   usePlatformPaymentDetail,
@@ -59,8 +72,13 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
   const { paymentId } = useParams<{ paymentId: string }>();
   const { organization } = useAuth();
   const { hasPermission } = usePermissions();
-  const { notifyError } = useToast();
+  const { notifySuccess } = useToast();
+  const { confirm } = useConfirmDialog();
+  const fmt = useDateFormatter();
   const [isProofOpen, setIsProofOpen] = useState(false);
+  // B8 (UX audit) V03 — a 409 means someone else decided first: the page
+  // reloads the payment and says so, instead of inviting a second try.
+  const [decidedElsewhere, setDecidedElsewhere] = useState(false);
 
   const {
     data: payment,
@@ -79,6 +97,9 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
     resolver: zodResolver(rejectPaymentSchema),
     defaultValues: { notes: '' },
   });
+  // A 400 on `notes` marks that field; nothing else is said about it.
+  useServerValidation(approveForm, approvePayment.error ?? null);
+  useServerValidation(rejectForm, rejectPayment.error ?? null);
 
   if (isLoading) {
     return (
@@ -109,18 +130,68 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
   const isDeciding = approvePayment.isPending || rejectPayment.isPending;
   const planSummary = formatCheckoutSummary(t, payment.checkoutSummary);
 
-  const onApprove = (data: ApprovePaymentFormData) => {
-    approvePayment.mutate({
-      paymentId: payment.id,
-      payload: { notes: data.notes || undefined },
+  const organizationName =
+    payment.organization?.name ??
+    t('payments:platformReview.unknownOrganization');
+  const amount = formatMoney(payment.money, i18n.language);
+
+  /** A 409 reloads the payment (it was decided elsewhere); anything else stays on the form. */
+  const onDecisionError = (error: ApiError) => {
+    if (error.kind === 'conflict') {
+      setDecidedElsewhere(true);
+      void refetch();
+    }
+  };
+
+  const onApprove = async (data: ApprovePaymentFormData) => {
+    // B8 (UX audit) V01 — approving activates a paid subscription: say
+    // what, for whom and for how much before it happens.
+    const confirmed = await confirm({
+      titleKey: 'payments:platformReview.approveConfirm.title',
+      descriptionKey: planSummary
+        ? 'payments:platformReview.approveConfirm.descriptionWithPlan'
+        : 'payments:platformReview.approveConfirm.description',
+      confirmLabelKey: 'payments:platformReview.approveConfirm.confirm',
+      values: {
+        amount,
+        organization: organizationName,
+        plan: planSummary ?? '',
+      },
     });
+    if (!confirmed) return;
+    approvePayment.mutate(
+      {
+        paymentId: payment.id,
+        payload: { notes: data.notes || undefined },
+      },
+      {
+        onSuccess: () =>
+          notifySuccess(
+            'payments:platformReview.approvedToast.title',
+            'payments:platformReview.approvedToast.description',
+            { amount, organization: organizationName }
+          ),
+        onError: onDecisionError,
+      }
+    );
   };
 
   const onReject = (data: RejectPaymentFormData) => {
-    rejectPayment.mutate({
-      paymentId: payment.id,
-      payload: { notes: data.notes },
-    });
+    rejectPayment.mutate(
+      {
+        paymentId: payment.id,
+        payload: { notes: data.notes },
+      },
+      {
+        onSuccess: () =>
+          notifySuccess(
+            'payments:platformReview.rejectedToast.title',
+            'payments:platformReview.rejectedToast.description',
+            { organization: organizationName }
+          ),
+        onError: onDecisionError,
+      }
+    );
   };
 
   return (
@@ -160,12 +231,19 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
             </div>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">
-                {t('payments:payment.reference')}
-              </span>
-              <span className="font-mono text-xs">{payment.id}</span>
-            </div>
+            {/* B8 (UX audit) V02 — the Checkout ID is the reference the
+                customer was told to put on the transfer; the payment id is
+                what support quotes. Both copyable, both wrap. */}
+            <ReferenceRow
+              label={t('payments:platformReview.checkoutId')}
+              value={payment.checkoutId}
+              testId="payment-review-checkout-id"
+            />
+            <ReferenceRow
+              label={t('payments:platformReview.paymentId')}
+              value={payment.id}
+              testId="payment-review-payment-id"
+            />
             {planSummary ? (
               <div className="flex justify-between gap-4">
                 <span className="text-muted-foreground">
@@ -184,14 +262,28 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
                 {t(`payments:common.methodType.${payment.methodType}`)}
               </span>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-4">
               <span className="text-muted-foreground">
                 {t('payments:payment.createdAt')}
               </span>
-              <span>
-                {new Date(payment.createdAt).toLocaleString(i18n.language)}
+              <span className="text-end">
+                {fmt.dateTime(payment.createdAt)}
               </span>
             </div>
+            {payment.instructions ? (
+              <div className="flex justify-between gap-4">
+                <span className="text-muted-foreground">
+                  {t('payments:platformReview.receivingAccount')}
+                </span>
+                <span
+                  className="min-w-0 break-all text-end font-mono text-xs"
+                  dir="ltr"
+                  data-testid="payment-review-receiving-account"
+                >
+                  {receivingAccount(payment.instructions)}
+                </span>
+              </div>
+            ) : null}
           </CardContent>
         </Card>
 
@@ -203,8 +295,25 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
+              <div className="space-y-2 text-sm">
+                {payment.proof.payerReference ? (
+                  <ReferenceRow
+                    label={t('payments:platformReview.payerReference')}
+                    value={payment.proof.payerReference}
+                    testId="payment-review-payer-reference"
+                  />
+                ) : null}
+                <div className="flex justify-between gap-4">
+                  <span className="text-muted-foreground">
+                    {t('payments:platformReview.uploadedAt')}
+                  </span>
+                  <span className="text-end">
+                    {fmt.dateTime(payment.proof.uploadedAt)}
+                  </span>
+                </div>
+              </div>
               {payment.proof.note ? (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground" dir="auto">
                   {payment.proof.note}
                 </p>
               ) : null}
@@ -227,11 +336,10 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
         ) : null}
 
         {!isPendingReview ? (
-          <Card>
-            <CardContent className="p-6 text-sm text-muted-foreground">
-              {t('payments:platformReview.alreadyReviewed')}
-            </CardContent>
-          </Card>
+          <ReviewedNotice
+            payment={payment}
+            decidedElsewhere={decidedElsewhere}
+          />
         ) : isOwnOrganization ? (
           <Card>
             <CardContent className="flex items-start gap-3 p-6">
@@ -263,6 +371,7 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
                 <CardContent>
                   <Form {...approveForm}>
                     <form
+                      noValidate
                       onSubmit={approveForm.handleSubmit(onApprove)}
                       className="space-y-3"
                     >
@@ -281,11 +390,13 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
                           </FormItem>
                         )}
                       />
-                      {approvePayment.error ? (
-                        <ErrorState
-                          onRetry={approveForm.handleSubmit(onApprove)}
-                        />
-                      ) : null}
+                      <DecisionFailure
+                        error={approvePayment.error ?? null}
+                        titleKey="payments:platformReview.approveFailed"
+                        onRetry={() =>
+                          void approveForm.handleSubmit(onApprove)()
+                        }
+                      />
                       <Button type="submit" disabled={isDeciding}>
                         {approvePayment.isPending ? (
                           <Loader2
@@ -317,6 +428,7 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
                 <CardContent>
                   <Form {...rejectForm}>
                     <form
+                      noValidate
                       onSubmit={rejectForm.handleSubmit(onReject)}
                       className="space-y-3"
                     >
@@ -327,6 +439,7 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
                           <FormItem>
                             <FormLabel>
                               {t('payments:platformReview.notesRequiredLabel')}
+                              <RequiredMark />
                             </FormLabel>
                             <FormControl>
                               <Textarea rows={3} {...field} />
@@ -335,11 +448,11 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
                           </FormItem>
                         )}
                       />
-                      {rejectPayment.error ? (
-                        <ErrorState
-                          onRetry={rejectForm.handleSubmit(onReject)}
-                        />
-                      ) : null}
+                      <DecisionFailure
+                        error={rejectPayment.error ?? null}
+                        titleKey="payments:platformReview.rejectFailed"
+                        onRetry={() => void rejectForm.handleSubmit(onReject)()}
+                      />
                       <Button
                         type="submit"
                         variant="destructive"
@@ -364,5 +477,139 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
         )}
       </div>
     </PageContainer>
+  );
+}
+
+/** One reference value: monospace, wraps anywhere, with a copy button. */
+function ReferenceRow({
+  label,
+  value,
+  testId,
+}: {
+  readonly label: string;
+  readonly value: string;
+  readonly testId: string;
+}): JSX.Element {
+  const { t } = useTranslation();
+  return (
+    <div className="flex justify-between gap-4">
+      <span className="shrink-0 text-muted-foreground">{label}</span>
+      <span className="flex min-w-0 items-center gap-1">
+        <span
+          className="min-w-0 break-all text-end font-mono text-xs"
+          dir="ltr"
+          data-testid={testId}
+        >
+          {value}
+        </span>
+        <CopyValueButton
+          value={value}
+          label={t('payments:payment.copyValue', { label })}
+        />
+      </span>
+    </div>
+  );
+}
+
+/** Where the customer was told to send the money (the payment's own snapshot). */
+function receivingAccount(instructions: ManualPaymentInstructions): string {
+  switch (instructions.type) {
+    case 'manual_bank_transfer':
+      return [
+        instructions.bankName,
+        instructions.iban ?? instructions.accountNumber,
+      ]
+        .filter(Boolean)
+        .join(' · ');
+    case 'manual_wallet_transfer':
+      return instructions.walletNumber;
+    case 'manual_instapay':
+      return instructions.instapayAddress;
+    default:
+      return '';
+  }
+}
+
+/**
+ * B8 (UX audit) V01 — a decided payment says which decision, when, and the
+ * reviewer's notes, with the way back to the queue. The API records the
+ * reviewer on the review itself but does not return it here, so no name is
+ * shown. After a 409 it says the decision was made elsewhere.
+ */
+function ReviewedNotice({
+  payment,
+  decidedElsewhere,
+}: {
+  readonly payment: Payment;
+  readonly decidedElsewhere: boolean;
+}): JSX.Element {
+  const { t } = useTranslation();
+  const fmt = useDateFormatter();
+  const decision =
+    payment.reviewStatus === 'approved' || payment.reviewStatus === 'rejected'
+      ? payment.reviewStatus
+      : null;
+  return (
+    <Card data-testid="payment-reviewed-notice">
+      <CardContent className="space-y-3 p-6 text-sm">
+        {decidedElsewhere ? (
+          <p className="font-medium text-foreground" role="status">
+            {t('payments:platformReview.decidedElsewhere')}
+          </p>
+        ) : null}
+        <p className="text-muted-foreground">
+          {decision
+            ? t(`payments:platformReview.reviewed.${decision}`, {
+                date: fmt.dateTime(payment.updatedAt),
+              })
+            : t('payments:platformReview.reviewed.notRequired')}
+        </p>
+        {payment.reviewNotes ? (
+          <p>
+            <span className="text-muted-foreground">
+              {t('payments:platformReview.reviewed.notes')}{' '}
+            </span>
+            <span dir="auto">{payment.reviewNotes}</span>
+          </p>
+        ) : null}
+        <Button asChild variant="outline" size="sm">
+          <Link to={DASHBOARD_ROUTES.platformPayments}>
+            <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+            {t('payments:platformReview.backToList')}
+          </Link>
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+/**
+ * B8 (UX audit) V03 — ONE message per failed decision, with the real
+ * reason. A violation on `notes` is shown on the field only; a 409 (decided
+ * elsewhere) reloads the payment and never offers Try again; anything else
+ * is one inline alert. The hooks mark their errors inline, so no toast.
+ */
+function DecisionFailure({
+  error,
+  titleKey,
+  onRetry,
+}: {
+  readonly error: ApiError | null;
+  readonly titleKey: string;
+  readonly onRetry: () => void;
+}): JSX.Element | null {
+  const { t } = useTranslation();
+  if (!error || error.kind === 'cancelled') return null;
+  if (error.violations?.some((violation) => violation.field === 'notes'))
+    return null;
+  if (error.kind === 'conflict') {
+    return (
+      <p className="text-sm font-medium" role="status">
+        {t('payments:platformReview.decidedElsewhere')}
+      </p>
+    );
+  }
+  return (
+    <SaveFailedAlert error={error} titleKey={titleKey} onRetry={onRetry} />
   );
 }

@@ -61,8 +61,8 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
-import { toErrorsNamespaceKey } from '@utils';
-import { isApiError } from '@api';
+import { useErrorText } from '@hooks';
+import { errorMessageKey, normalizeUnknownError } from '@services';
 import type {
   ManualPaymentInstructions,
   ManualPaymentMethodType,
@@ -73,10 +73,12 @@ import {
   useUpdatePlatformPaymentMethod,
 } from '../hooks';
 import { localizedManualText } from '../utils/manual-payment-method.utils';
+import { localizedPaymentMethodText } from '@features/tenant';
 import { BankTransferMethodFormDialog } from './BankTransferMethodFormDialog';
 import { WalletMethodFormDialog } from './WalletMethodFormDialog';
 import { InstapayMethodFormDialog } from './InstapayMethodFormDialog';
 import { ManualPaymentBrandChip } from './ManualPaymentBrandChip';
+import { CopyValueButton } from './CopyValueButton';
 import { WARNING_ALERT_CLASS } from './ManualMethodFormFields';
 
 /** Enough for every configured method on one page; the backend's maximum is higher. */
@@ -126,7 +128,12 @@ function isManualKind(type: string): type is ManualPaymentMethodType {
   return (KIND_ORDER as readonly string[]).includes(type);
 }
 
-/** One label/value pair of a row's details. */
+/**
+ * One label/value pair of a row's details. B8 (UX audit) V17 — a long
+ * account number or IBAN stacks under its label on a phone and wraps at any
+ * character (monospace, LTR), with a copy button, instead of being squeezed
+ * to one character per line beside the row's buttons.
+ */
 function Detail({
   label,
   value,
@@ -136,17 +143,28 @@ function Detail({
   readonly value: string;
   readonly mono?: boolean;
 }): JSX.Element {
+  const { t } = useTranslation();
   return (
-    <div className="flex min-w-0 gap-1.5">
+    <div className="flex min-w-0 flex-col gap-x-1.5 sm:flex-row">
       <dt className="shrink-0 text-muted-foreground">{label}:</dt>
-      <dd
-        className={
-          mono ? 'break-all font-mono text-foreground' : 'text-foreground'
-        }
-        dir={mono ? 'ltr' : 'auto'}
-        data-ltr-content={mono || undefined}
-      >
-        {value}
+      <dd className="flex min-w-0 items-start gap-1">
+        <span
+          className={
+            mono
+              ? 'min-w-0 break-all font-mono text-foreground'
+              : 'min-w-0 text-foreground'
+          }
+          dir={mono ? 'ltr' : 'auto'}
+          data-ltr-content={mono || undefined}
+        >
+          {value}
+        </span>
+        {mono ? (
+          <CopyValueButton
+            value={value}
+            label={t('payments:payment.copyValue', { label })}
+          />
+        ) : null}
       </dd>
     </div>
   );
@@ -168,14 +186,21 @@ function MethodDetails({
     <dl className="grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
       {details.type === 'manual_bank_transfer' ? (
         <>
-          <Detail label={t('payments:payment.bankName')} value={details.bankName} />
+          <Detail
+            label={t('payments:payment.bankName')}
+            value={details.bankName}
+          />
           <Detail
             label={t('payments:payment.accountNumber')}
             value={details.accountNumber}
             mono
           />
           {details.iban ? (
-            <Detail label={t('payments:payment.iban')} value={details.iban} mono />
+            <Detail
+              label={t('payments:payment.iban')}
+              value={details.iban}
+              mono
+            />
           ) : null}
         </>
       ) : details.type === 'manual_wallet_transfer' ? (
@@ -196,7 +221,10 @@ function MethodDetails({
             value={details.walletNumber}
             mono
           />
-          <Detail label={t('payments:payment.accountHolder')} value={holder.text} />
+          <Detail
+            label={t('payments:payment.accountHolder')}
+            value={holder.text}
+          />
         </>
       ) : (
         <>
@@ -213,7 +241,10 @@ function MethodDetails({
             value={details.instapayAddress}
             mono
           />
-          <Detail label={t('payments:payment.accountHolder')} value={holder.text} />
+          <Detail
+            label={t('payments:payment.accountHolder')}
+            value={holder.text}
+          />
         </>
       )}
     </dl>
@@ -222,6 +253,7 @@ function MethodDetails({
 
 export function ManualPaymentMethodsCard(): JSX.Element {
   const { t, i18n } = useTranslation();
+  const errorText = useErrorText();
   const methodsQuery = usePlatformPaymentMethods();
   const updateMethod = useUpdatePlatformPaymentMethod();
   const [activeKind, setActiveKind] = useState<ManualPaymentMethodType>(
@@ -236,6 +268,9 @@ export function ManualPaymentMethodsCard(): JSX.Element {
   const [editingMethod, setEditingMethod] = useState<PlatformPaymentMethod>();
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [confirmingMethod, setConfirmingMethod] =
+    useState<PlatformPaymentMethod>();
+  // B8 (UX audit) V16 — the last enabled method of its kind.
+  const [confirmingDisable, setConfirmingDisable] =
     useState<PlatformPaymentMethod>();
 
   const methodsByKind = useMemo(() => {
@@ -287,16 +322,20 @@ export function ManualPaymentMethodsCard(): JSX.Element {
       });
     } catch (error) {
       // e.g. 409 `errors.paymentMethod.placeholderDetails` in production.
-      const key = isApiError(error)
-        ? toErrorsNamespaceKey(error.messageKey)
-        : undefined;
+      // B8 (UX audit) V14 — the ONE message (the hook marks its errors
+      // inline), with the real reason; a group key (`errors.conflict`)
+      // reads its sentence, never "returned an object".
+      const failure = normalizeUnknownError(error);
       toast({
         title: t(
           enabling
             ? `payments:${section}.enableError`
             : `payments:${section}.disableError`
         ),
-        description: key && i18n.exists(key) ? t(key) : undefined,
+        description: errorText(
+          failure.messageKey,
+          errorMessageKey(failure.kind)
+        ),
         variant: 'destructive',
       });
     } finally {
@@ -309,6 +348,16 @@ export function ManualPaymentMethodsCard(): JSX.Element {
     // customers: ask first.
     if (!method.enabled && method.manualInstructions?.placeholder) {
       setConfirmingMethod(method);
+      return;
+    }
+    // B8 (UX audit) V16 — disabling the only enabled method of its kind
+    // takes that way of paying out of checkout: ask first and say so.
+    if (
+      method.enabled &&
+      isManualKind(method.type) &&
+      methodsByKind[method.type].filter((other) => other.enabled).length === 1
+    ) {
+      setConfirmingDisable(method);
       return;
     }
     void toggleEnabled(method);
@@ -370,9 +419,17 @@ export function ManualPaymentMethodsCard(): JSX.Element {
                   data-testid={`${prefix}-row-${method.id}`}
                   className="flex flex-wrap items-start justify-between gap-3 py-4"
                 >
-                  <div className="min-w-0 flex-1 space-y-1">
+                  <div className="min-w-0 flex-1 basis-64 space-y-1">
                     <p className="font-medium text-foreground" dir="auto">
-                      {method.displayName}
+                      {/* B8 (UX audit) V26 — a seeded method's name in the
+                          page's language; a renamed one as written. */}
+                      {localizedPaymentMethodText(
+                        t,
+                        i18n,
+                        method.key,
+                        'name',
+                        method.displayName
+                      )}
                     </p>
                     {details ? (
                       <MethodDetails
@@ -456,7 +513,9 @@ export function ManualPaymentMethodsCard(): JSX.Element {
         <CardTitle as="h2" className="text-base">
           {t('payments:manualMethods.title')}
         </CardTitle>
-        <CardDescription>{t('payments:manualMethods.description')}</CardDescription>
+        <CardDescription>
+          {t('payments:manualMethods.description')}
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {methodsQuery.isLoading ? (
@@ -514,7 +573,9 @@ export function ManualPaymentMethodsCard(): JSX.Element {
 
       <BankTransferMethodFormDialog
         open={dialogOpen && dialogKind === 'manual_bank_transfer'}
-        method={dialogKind === 'manual_bank_transfer' ? editingMethod : undefined}
+        method={
+          dialogKind === 'manual_bank_transfer' ? editingMethod : undefined
+        }
         onOpenChange={setDialogOpen}
       />
       <WalletMethodFormDialog
@@ -558,6 +619,44 @@ export function ManualPaymentMethodsCard(): JSX.Element {
               }}
             >
               {t('payments:manualMethods.enablePlaceholderConfirm')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={confirmingDisable !== undefined}
+        onOpenChange={(open) => {
+          if (!open) setConfirmingDisable(undefined);
+        }}
+      >
+        <AlertDialogContent data-testid="last-method-disable-confirm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t('payments:manualMethods.disableLastTitle', {
+                name: confirmingDisable?.displayName ?? '',
+              })}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('payments:manualMethods.disableLastDescription', {
+                kind: confirmingDisable
+                  ? t(`payments:common.methodType.${confirmingDisable.type}`)
+                  : '',
+              })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common:actions.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              data-testid="last-method-disable-confirm-action"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                const method = confirmingDisable;
+                setConfirmingDisable(undefined);
+                if (method) void toggleEnabled(method);
+              }}
+            >
+              {t('payments:bankTransferMethods.disable')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

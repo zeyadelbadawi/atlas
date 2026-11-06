@@ -469,7 +469,9 @@
       "planArchived": "That plan is archived. Choose a plan that is still offered or hidden, not archived.",
       "noPaidPeriod": "There is no running paid period to wait for. Apply the plan change now instead.",
       "daysRange": "Enter a whole number of days from 1 to 365.",
-      "reasonTooShort": "Write a reason of at least 10 characters. It is kept in the audit log."
+      "reasonTooShort": "Write a reason of at least 10 characters. It is kept in the audit log.",
+      "planRequired": "Choose the plan to move this organization to.",
+      "planNotFound": "No plan has this key. Check the spelling, or pick a plan from the list."
     }
   },
   "lessonContent": {
@@ -525,7 +527,9 @@
   "plan": {
     "alreadyArchived": "This plan is already archived.",
     "giftedDaysRange": "Gifted days must be 0, or a whole number from 5 to 15.",
-    "keyTaken": "Another plan already uses this key. Choose a different one."
+    "keyTaken": "Another plan already uses this key. Choose a different one.",
+    "yearlyBelowMonthly": "The yearly price can't be lower than one month's price ({{min}}).",
+    "limitValue": "Enter a whole number of {{min}} or more, or choose Unlimited."
   },
   "platformSettings": {
     "invalidSessionTimeout": "Choose one of the session timeout options offered."
@@ -570,5 +574,8 @@
   },
   "announcement": {
     "scheduleInPast": "This time has already passed. Choose a time in the future, or save it as a draft."
+  },
+  "commission": {
+    "percentageRange": "Enter a percentage from {{min}} to {{max}}."
   }
 }

@@ -41,15 +41,16 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { toast } from '@/hooks/use-toast';
-import { toErrorsNamespaceKey } from '@utils';
-import { isApiError } from '@api';
 import { WALLET_PROVIDERS } from '@types';
 import type {
   PlatformPaymentMethod,
   WalletInstructionsPayload,
   WalletProvider,
 } from '@types';
-import { useCreateWalletMethod, useUpdatePlatformPaymentMethod } from '../hooks';
+import {
+  useCreateWalletMethod,
+  useUpdatePlatformPaymentMethod,
+} from '../hooks';
 import {
   walletMethodSchema,
   type WalletMethodFormData,
@@ -66,6 +67,8 @@ import {
   PlaceholderDetailsNotice,
   toTextsFormValues,
   toTextsPayload,
+  ManualMethodSaveFailure,
+  useGuardedDialogClose,
   useManualMethodServerValidation,
 } from './ManualMethodFormFields';
 
@@ -150,13 +153,19 @@ export function WalletMethodFormDialog({
     if (open) reset(toFormValues(method));
   }, [open, method, reset]);
 
-  const provider = form.watch('instructions.walletProvider');
+  // A previous attempt's failure is not this one's: clear it on open.
+  const resetMutation = activeMutation.reset;
+  useEffect(() => {
+    if (open) resetMutation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
-  const errorDescription = (error: unknown): string | undefined => {
-    if (!isApiError(error)) return undefined;
-    const key = toErrorsNamespaceKey(error.messageKey);
-    return i18n.exists(key) ? t(key) : undefined;
-  };
+  const requestOpenChange = useGuardedDialogClose(
+    form.formState.isDirty,
+    onOpenChange
+  );
+
+  const provider = form.watch('instructions.walletProvider');
 
   const onSubmit = async (values: WalletMethodFormData) => {
     const details = toInstructionsPayload(values.instructions);
@@ -181,21 +190,15 @@ export function WalletMethodFormDialog({
         toast({ title: t('payments:walletMethods.createSuccess') });
       }
       onOpenChange(false);
-    } catch (error) {
-      toast({
-        title: t(
-          method
-            ? 'payments:walletMethods.updateError'
-            : 'payments:walletMethods.createError'
-        ),
-        description: errorDescription(error),
-        variant: 'destructive',
-      });
+    } catch {
+      // B8 (UX audit) V06/V15 — the failure is shown ONCE, in the dialog
+      // (a field violation on its field, anything else in one alert);
+      // the dialog stays open with everything typed.
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={requestOpenChange}>
       <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
@@ -319,12 +322,22 @@ export function WalletMethodFormDialog({
               </p>
             ) : null}
 
+            <ManualMethodSaveFailure
+              form={form}
+              error={activeMutation.error ?? null}
+              titleKey={
+                isEdit
+                  ? 'payments:walletMethods.updateError'
+                  : 'payments:walletMethods.createError'
+              }
+            />
+
             <DialogFooter>
               <Button
                 type="button"
                 variant="outline"
                 disabled={activeMutation.isPending}
-                onClick={() => onOpenChange(false)}
+                onClick={() => requestOpenChange(false)}
               >
                 {t('common:actions.cancel')}
               </Button>

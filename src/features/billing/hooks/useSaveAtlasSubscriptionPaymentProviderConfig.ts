@@ -5,7 +5,10 @@
  * refetching the config after this mutation always reflects that.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { atlasSubscriptionPaymentProviderKeys } from '@services/query';
+import {
+  INLINE_ERRORS_META,
+  atlasSubscriptionPaymentProviderKeys,
+} from '@services/query';
 import type { ApiError } from '@api';
 import type {
   AtlasSubscriptionPaymentProviderConfig,
@@ -25,6 +28,7 @@ export function useSaveAtlasSubscriptionPaymentProviderConfig() {
       atlasSubscriptionPaymentProviderService.saveConfig(payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(atlasSubscriptionPaymentProviderKeys.config());
     },

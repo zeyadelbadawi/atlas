@@ -25,6 +25,9 @@ const plan = {
 };
 
 vi.mock('@features/tenant', () => ({
+  resolvePlanName: (p: { name: string }) => p.name,
+  resolvePlanDescription: (p: { description?: string }) => p.description ?? '',
+  localizedAddOnText: (...args: unknown[]) => args[4],
   usePlanCatalog: () => ({ data: [plan], isLoading: false, error: null }),
   useAddOnCatalog: () => ({ data: [], isLoading: false, error: null }),
 }));

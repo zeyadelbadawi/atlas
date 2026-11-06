@@ -265,7 +265,10 @@ test.describe('J41 — gifted setup days on the first paid subscription @quarant
     await monthly.fill('16');
     await expect(page.getByTestId('plan-gifted-monthly-error')).toBeVisible();
     await expect(monthly).toHaveAttribute('aria-invalid', 'true');
-    await expect(page.getByTestId('plan-save')).toBeDisabled();
+    // Save stays available and refuses with the message on screen (B8 V4).
+    await page.getByTestId('plan-save').click();
+    await expect(page.getByTestId('plan-gifted-monthly-error')).toBeVisible();
+    await expect(dialog).toBeVisible();
     await page.screenshot({ path: testInfo.outputPath('1-out-of-range.png') });
 
     await monthly.fill('7');

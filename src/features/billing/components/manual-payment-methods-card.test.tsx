@@ -24,11 +24,9 @@ import {
 } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import { createI18nInstance } from '@/localization/i18n';
+import { AtlasDialogProvider } from '@app/providers/dialog/DialogProvider';
 import { createApiError } from '@api';
-import type {
-  ManualPaymentInstructions,
-  PlatformPaymentMethod,
-} from '@types';
+import type { ManualPaymentInstructions, PlatformPaymentMethod } from '@types';
 
 // jsdom has no ResizeObserver; Radix RadioGroup measures its items with one.
 globalThis.ResizeObserver ??= class {
@@ -49,21 +47,25 @@ vi.mock('../hooks', () => ({
   useCreateBankTransferMethod: () => ({
     mutateAsync: createBankMutateAsync,
     isPending: false,
+    reset: vi.fn(),
     error: null,
   }),
   useCreateWalletMethod: () => ({
     mutateAsync: createWalletMutateAsync,
     isPending: false,
+    reset: vi.fn(),
     error: null,
   }),
   useCreateInstapayMethod: () => ({
     mutateAsync: createInstapayMutateAsync,
     isPending: false,
+    reset: vi.fn(),
     error: null,
   }),
   useUpdatePlatformPaymentMethod: () => ({
     mutateAsync: updateMutateAsync,
     isPending: false,
+    reset: vi.fn(),
     error: null,
   }),
 }));
@@ -72,9 +74,7 @@ vi.mock('@/hooks/use-toast', () => ({
   toast: (...args: unknown[]) => toast(...args) as unknown,
 }));
 
-const { ManualPaymentMethodsCard } = await import(
-  './ManualPaymentMethodsCard'
-);
+const { ManualPaymentMethodsCard } = await import('./ManualPaymentMethodsCard');
 
 const CAPABILITIES = {
   supportsManualReview: true,
@@ -159,7 +159,9 @@ function listOf(items: readonly PlatformPaymentMethod[]) {
 function renderCard() {
   return render(
     <I18nextProvider i18n={createI18nInstance('en')}>
-      <ManualPaymentMethodsCard />
+      <AtlasDialogProvider>
+        <ManualPaymentMethodsCard />
+      </AtlasDialogProvider>
     </I18nextProvider>
   );
 }
@@ -427,7 +429,9 @@ describe('ManualPaymentMethodsCard — placeholders', () => {
     expect(
       within(row).getByText('Placeholder — replace before enabling')
     ).toBeTruthy();
-    expect(within(row).getByTestId('wallet-method-placeholder-pm-p')).toBeTruthy();
+    expect(
+      within(row).getByTestId('wallet-method-placeholder-pm-p')
+    ).toBeTruthy();
 
     // Cancel: nothing is sent.
     fireEvent.click(screen.getByTestId('wallet-method-toggle-pm-p'));
@@ -540,9 +544,7 @@ describe('ManualPaymentMethodsCard — Bank transfer Arabic texts', () => {
     ).toBe('rtl');
     fireEvent.click(screen.getByTestId('bank-method-save'));
 
-    await waitFor(() =>
-      expect(createBankMutateAsync).toHaveBeenCalledTimes(1)
-    );
+    await waitFor(() => expect(createBankMutateAsync).toHaveBeenCalledTimes(1));
     expect(createBankMutateAsync).toHaveBeenCalledWith({
       displayName: 'Bank transfer',
       instructions: {

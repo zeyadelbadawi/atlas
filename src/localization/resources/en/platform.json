@@ -12,7 +12,10 @@
     "systemHealth": "System Health",
     "storageUsage": "Storage Usage",
     "apiUptime": "API Uptime",
-    "lastUpdated": "Last updated at {{time}}"
+    "lastUpdated": "Last updated at {{time}}",
+    "notMeasured": "Not measured yet",
+    "notMeasuredHint": "Health and uptime have no monitoring history yet.",
+    "liveStatusLink": "See the live status"
   },
   "sections": {
     "metrics": "Platform Metrics",
@@ -73,7 +76,16 @@
       "reason": "Reason",
       "reasonHint": "At least 10 characters. Kept in the audit log.",
       "submit": "Apply",
-      "success": "Subscription updated."
+      "success": "Subscription updated.",
+      "currentPlan": "Current plan",
+      "per": {
+        "monthly": "per month",
+        "yearly": "per year"
+      },
+      "effectNow": "The new plan and its current limits apply at once; the paid period's end date doesn't change. No payment is taken and the organization is not emailed.",
+      "effectPeriodEnd": "The current plan stays until the paid period ends, then the new plan and its limits take over. No payment is taken now and the organization is not emailed.",
+      "daysHint": "A whole number from 1 to 365.",
+      "failed": "The subscription wasn't changed"
     },
     "internal": {
       "title": "Internal organization",
@@ -97,6 +109,15 @@
         "referrerDomain": "Referring site",
         "landingTemplate": "Landing page"
       }
+    },
+    "trialEnds": "Trial ends",
+    "graceEnds": "Grace period ends",
+    "memberRoles": {
+      "owner": "Owner",
+      "admin": "Administrator",
+      "administrator": "Administrator",
+      "member": "Member",
+      "billing": "Billing"
     }
   },
   "academies": {
@@ -203,7 +224,8 @@
         "financialRecords": "Payments, orders and refunds",
         "auditRecords": "Audit history",
         "forensicWatermarks_one": "Forensic video watermark records — kept until their retention period ends, so a leaked recording can still be traced",
-        "forensicWatermarks_other": "Forensic video watermark records — kept until their retention period ends, so a leaked recording can still be traced"
+        "forensicWatermarks_other": "Forensic video watermark records — kept until their retention period ends, so a leaked recording can still be traced",
+        "mediaSize": "{{size}} of stored media"
       },
       "confirmLabel": "Type {{email}} to confirm",
       "confirmHelp": "The email must match exactly. This is what stops the wrong account being deleted.",
@@ -267,7 +289,8 @@
     "billingCycle": {
       "monthly": "month",
       "yearly": "year"
-    }
+    },
+    "hiddenPlansNote": "These are the plans customers can see. Hidden plans (such as founding price locks) aren't listed and subscriber counts aren't available here; an organization's own page shows its plan."
   },
   "adminSubscriptions": {
     "title": "Subscriptions & Trials",
@@ -356,11 +379,10 @@
       "description": "Changes take effect immediately for new operations. Existing customer data is never removed.",
       "pricingTitle": "Pricing",
       "subscriberNotice": "Saving a change to the price or the limits emails the owner of every paying organization on this plan, and shows them a notice on their subscription page. It applies to them from their next renewal.",
-      "amount": "Amount",
+      "amount": "Price",
       "currency": "Currency",
       "yearlyAmount": "Yearly price (optional)",
       "yearlyAmountHelp": "Leave empty to offer monthly billing only. When set, customers can choose yearly billing and pay this amount once a year, in the same currency.",
-      "yearlyAmountInvalid": "Enter a whole number from 0 to {{max}}, or leave it empty.",
       "pricingNote": "This is catalog pricing. Completed payments keep the amount they were charged, so changing this never alters billing history.",
       "trialTitle": "Free trial",
       "trialEligible": "Offer a free trial on this plan",
@@ -376,9 +398,9 @@
       "giftPlaceholder": "None",
       "giftInvalid": "Enter a whole number from {{min}} to {{max}}, or leave it empty for no gift.",
       "limitsTitle": "Limits",
-      "limitsHelp": "Enter a number, or “unlimited”.",
+      "limitsHelp": "A whole number of 0 or more for each limit, or switch on Unlimited.",
       "monthlyEmails": "Monthly emails per academy",
-      "monthlyEmailsHelp": "Emails each academy may send from Messages per calendar month (UTC). Leave blank for the platform default of {{count}}, or enter a number or “unlimited”.",
+      "monthlyEmailsHelp": "Emails each academy may send from Messages per calendar month (UTC). Leave blank for the platform default of {{count}}, enter a whole number, or switch on Unlimited.",
       "featuresTitle": "Features",
       "reductionTitle": "You are reducing a limit",
       "reductionDescription": "Some customers may already be above the new limit. Check the impact before saving.",
@@ -393,9 +415,17 @@
       "confirmReduction": "I understand the impact and want to apply this change.",
       "staleTitle": "This plan changed while you were editing",
       "staleDescription": "Someone else saved a change. Reload the page and reapply your edit so you do not overwrite theirs.",
-      "incompleteLimits": "Every limit needs a number or \"unlimited\". Fill in the empty fields before saving.",
       "impactProtected_one": "{{count}} subscriber keeps the limits they were granted at purchase and is not affected by this edit.",
-      "impactProtected_other": "{{count}} subscribers keep the limits they were granted at purchase and are not affected by this edit."
+      "impactProtected_other": "{{count}} subscribers keep the limits they were granted at purchase and are not affected by this edit.",
+      "amountHelp": "Charged each billing period: a whole number from 1 to 1,000,000, in the currency beside it.",
+      "currencyInvalid": "Enter a three-letter currency code, like EGP or USD.",
+      "unlimited": "Unlimited",
+      "limitWithUnit": "{{label}} ({{unit}})",
+      "impactFailed": "The impact couldn't be checked",
+      "saveFailed": "The plan wasn't saved",
+      "savedTitle": "{{plan}} saved",
+      "savedNotified": "The price or limits changed, so the owner of every paying organization on this plan is being emailed. History shows how many were notified.",
+      "savedCatalogOnly": "Only the catalog changed; no organization was emailed."
     }
   },
   "courses": {

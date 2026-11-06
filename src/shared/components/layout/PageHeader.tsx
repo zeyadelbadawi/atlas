@@ -50,7 +50,13 @@ export function PageHeader({
       */}
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
         <div className="min-w-0 space-y-1 sm:flex-[1_1_20rem]">
-          <h1 className="font-display text-2xl font-semibold leading-snug tracking-tight text-foreground">
+          {/* B8 (UX audit) V32 — a title that is someone's own text (a
+              Latin subject on an Arabic page) keeps its own direction, so
+              its punctuation doesn't jump to the wrong end. */}
+          <h1
+            className="font-display text-2xl font-semibold leading-snug tracking-tight text-foreground"
+            dir={title !== undefined ? 'auto' : undefined}
+          >
             {title ?? t(titleKey, values ?? {})}
           </h1>
           {descriptionKey ? (

@@ -38,6 +38,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useConfirmDialog, useToast } from '@app/providers';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { apiErrorMessage } from '@utils';
+import { hasViolationOn, useServerValidation } from '@forms';
 import { resolvePlanName, usePlanCatalog } from '@features/tenant';
 import type { LanguageCode, Plan } from '@types';
 import {
@@ -69,6 +70,10 @@ function GlobalCommissionCard(): JSX.Element {
   const form = useForm<CommissionRateFormData>({
     resolver: zodResolver(commissionRateSchema),
     defaultValues: { percent: '' },
+  });
+  // B8 (UX audit) V29 — the server's range refusal lands on the field.
+  useServerValidation(form, update.error ?? null, {
+    defaultCommissionBasisPoints: 'percent',
   });
 
   const { reset } = form;
@@ -170,7 +175,10 @@ function GlobalCommissionCard(): JSX.Element {
                     </FormItem>
                   )}
                 />
-                {update.error ? (
+                {update.error &&
+                !hasViolationOn(update.error, {
+                  defaultCommissionBasisPoints: 'percent',
+                }) ? (
                   <Alert variant="destructive" role="alert">
                     <AlertDescription>
                       {apiErrorMessage(t, i18n, update.error)}

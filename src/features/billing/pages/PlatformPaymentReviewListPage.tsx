@@ -111,6 +111,25 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
           ),
       },
       {
+        // B8 (UX audit) V02 — the Checkout ID is the reference the customer
+        // put on the transfer. Its first 8 characters (as the academy's
+        // Orders list shortens references) match a bank statement line; the
+        // search matches any part of it and the detail shows it whole.
+        id: 'checkoutId',
+        enableSorting: false,
+        header: t('payments:platformReview.checkoutId'),
+        cell: ({ row }) =>
+          row.original.checkoutId ? (
+            <span
+              className="whitespace-nowrap font-mono text-xs text-muted-foreground"
+              dir="ltr"
+              title={row.original.checkoutId}
+            >
+              {row.original.checkoutId.slice(0, 8)}
+            </span>
+          ) : null,
+      },
+      {
         id: 'plan',
         enableSorting: false,
         header: t('payments:platformReview.planColumn'),

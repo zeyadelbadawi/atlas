@@ -18,6 +18,13 @@ import { I18nextProvider } from 'react-i18next';
 import { createI18nInstance } from '@/localization/i18n';
 import type { Plan } from '@types';
 
+// The plan's switches sit inside a form now (Radix measures them).
+globalThis.ResizeObserver ??= class {
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+} as unknown as typeof ResizeObserver;
+
 const updateMutateAsync = vi.fn();
 
 vi.mock('../hooks/usePlatformPlans', () => ({
@@ -25,12 +32,20 @@ vi.mock('../hooks/usePlatformPlans', () => ({
     mutateAsync: updateMutateAsync,
     isPending: false,
     error: null,
+    reset: vi.fn(),
   }),
   usePreviewLimitImpact: () => ({
     mutateAsync: vi.fn(),
     isPending: false,
     error: null,
+    reset: vi.fn(),
   }),
+}));
+
+vi.mock('@app/providers', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  useToast: () => ({ notifySuccess: vi.fn(), notifyError: vi.fn() }),
+  useConfirmDialog: () => ({ confirm: vi.fn(() => Promise.resolve(true)) }),
 }));
 
 const { PlanEditorDialog } = await import('./PlanEditorDialog');

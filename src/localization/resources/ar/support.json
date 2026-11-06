@@ -44,7 +44,15 @@
     "statusUpdated": "تم تحديث حالة التذكرة.",
     "replyField": "ردّك",
     "replyEmpty": "اكتب ردّك أولًا.",
-    "replyNotSent": "لم يُرسل ردّك"
+    "replyNotSent": "لم يُرسل ردّك",
+    "requester": "مقدّم الطلب",
+    "replySent": "تم إرسال الرد.",
+    "statusNotChanged": "لم تتغيّر الحالة",
+    "closeConfirm": {
+      "title": "إغلاق هذه الحالة؟",
+      "description": "لن يتمكن مقدّم الطلب من الرد على حالة مغلقة، وإذا احتاج إلى مساعدة فسيفتح حالة جديدة.",
+      "confirm": "إغلاق الحالة"
+    }
   },
   "center": {
     "title": "الدعم",

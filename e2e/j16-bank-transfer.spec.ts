@@ -547,9 +547,13 @@ test.describe('J16 — Bank Transfer: configure, checkout, review @critical', ()
       fullPage: true,
     });
     await page.getByRole('button', { name: 'Approve payment' }).click();
+    await page
+      .getByRole('alertdialog')
+      .getByRole('button', { name: 'Yes, approve' })
+      .click();
     await expect(
       page.getByText(
-        'This payment has already been reviewed and can no longer be approved or rejected.'
+        /^This payment was approved on .+\. It can no longer be approved or rejected\.$/
       )
     ).toBeVisible({ timeout: 30_000 });
     await context.close();
@@ -670,7 +674,7 @@ test.describe('J16 — Bank Transfer: configure, checkout, review @critical', ()
     await page.getByRole('button', { name: 'Reject payment' }).click();
     await expect(
       page.getByText(
-        'This payment has already been reviewed and can no longer be approved or rejected.'
+        /^This payment was rejected on .+\. It can no longer be approved or rejected\.$/
       )
     ).toBeVisible({ timeout: 30_000 });
     await page.screenshot({

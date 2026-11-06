@@ -85,6 +85,7 @@ export default function PlatformContactSubmissionsPage(): JSX.Element {
     setTopic,
     setFrom,
     setTo,
+    swapDates,
     setSort,
     setPage,
     setPageSize,
@@ -468,6 +469,7 @@ export default function PlatformContactSubmissionsPage(): JSX.Element {
           onTopicChange={setTopic}
           onFromChange={setFrom}
           onToChange={setTo}
+          onSwapDates={swapDates}
           onSortChange={setSort}
           onClearFilters={clearFilters}
         />

@@ -13,6 +13,8 @@ import { StatusBadge } from '@components/data-display';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDateFormatter } from '@hooks';
+import { resolvePlanName } from '@features/tenant';
+import type { LanguageCode } from '@types';
 import { OrganizationCommissionCard } from '@features/platform-commerce';
 import { AcquisitionCard } from '@features/platform-growth';
 import { usePlatformOrganization } from '../hooks';
@@ -24,6 +26,12 @@ import { getPlatformOrganizationStatusTone } from '../utils/platform-status.util
 export default function PlatformOrganizationDetailPage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const fmt = useDateFormatter();
+  // B8 (UX audit) V13 — a member's role in the page's language; a role
+  // this build doesn't know is shown as the API sends it.
+  const roleLabel = (role: string): string => {
+    const key = `platform:organizations.memberRoles.${role}`;
+    return i18n.exists(key) ? t(key) : role;
+  };
   const { organizationId } = useParams<{ organizationId: string }>();
 
   const {
@@ -78,11 +86,14 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
               <p className="text-xs text-muted-foreground">
                 {t('platform:organizations.owner')}
               </p>
-              <p className="text-sm text-foreground">
+              <p className="text-sm text-foreground" dir="auto">
                 {organization.ownerName ?? '—'}
               </p>
               {organization.ownerEmail ? (
-                <p className="text-xs text-muted-foreground">
+                <p
+                  className="break-all text-xs text-muted-foreground"
+                  dir="ltr"
+                >
                   {organization.ownerEmail}
                 </p>
               ) : null}
@@ -92,9 +103,7 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
                 {t('platform:organizations.table.createdAt')}
               </p>
               <p className="text-sm text-foreground">
-                {new Date(organization.createdAt).toLocaleDateString(
-                  i18n.language
-                )}
+                {fmt.date(organization.createdAt)}
               </p>
             </div>
             {/* B0-IAM-08 / B0-ANL-04 — opted-in owner phone; sign-up source. */}
@@ -124,8 +133,11 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
                   <p className="text-xs text-muted-foreground">
                     {t('platform:organizations.table.plan')}
                   </p>
-                  <p className="font-medium text-foreground">
-                    {organization.subscription.plan.name}
+                  <p className="font-medium text-foreground" dir="auto">
+                    {resolvePlanName(
+                      organization.subscription.plan,
+                      i18n.language as LanguageCode
+                    )}
                   </p>
                 </div>
                 <div>
@@ -138,16 +150,32 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
                     )}
                   </p>
                 </div>
+                {/* B8 (UX audit) V13 — a trial shows when it ends, a grace
+                    period when it ends; a paid period its end. */}
                 <div>
                   <p className="text-xs text-muted-foreground">
-                    {t('platform:organizations.currentPeriodEnd')}
+                    {t(
+                      organization.subscription.status === 'trialing'
+                        ? 'platform:organizations.trialEnds'
+                        : organization.subscription.status === 'grace_period'
+                          ? 'platform:organizations.graceEnds'
+                          : 'platform:organizations.currentPeriodEnd'
+                    )}
                   </p>
-                  <p className="font-medium text-foreground">
-                    {organization.subscription.currentPeriodEnd
-                      ? new Date(
-                          organization.subscription.currentPeriodEnd
-                        ).toLocaleDateString(i18n.language)
-                      : '—'}
+                  <p
+                    className="font-medium text-foreground"
+                    data-testid="platform-org-period-end"
+                  >
+                    {(() => {
+                      const sub = organization.subscription;
+                      const end =
+                        sub.status === 'trialing'
+                          ? (sub.trialEndsAt ?? sub.currentPeriodEnd)
+                          : sub.status === 'grace_period'
+                            ? (sub.graceEndsAt ?? sub.currentPeriodEnd)
+                            : sub.currentPeriodEnd;
+                      return end ? fmt.date(end) : '—';
+                    })()}
                   </p>
                 </div>
                 {/* W8 — gifted setup days granted on this organization's
@@ -179,7 +207,10 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
 
         {/* B0-BIL-06 — audited Platform Owner remedies. */}
         {organization.subscription ? (
-          <SubscriptionAdjustmentsCard organizationId={organization.id} />
+          <SubscriptionAdjustmentsCard
+            organizationId={organization.id}
+            subscription={organization.subscription}
+          />
         ) : null}
 
         {/* B0-ANL-04 — internal (test/demo/staff) organizations leave MRR. */}
@@ -201,7 +232,12 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
                     key={academy.id}
                     className="flex items-center justify-between py-2 text-sm"
                   >
-                    <span className="text-foreground">{academy.name}</span>
+                    <span
+                      className="min-w-0 break-words text-foreground"
+                      dir="auto"
+                    >
+                      {academy.name}
+                    </span>
                     <span className="text-xs text-muted-foreground">
                       {t(`platform:academies.status.${academy.status}`)}
                     </span>
@@ -228,14 +264,19 @@ export default function PlatformOrganizationDetailPage(): JSX.Element {
                     key={member.id}
                     className="flex items-center justify-between py-2 text-sm"
                   >
-                    <div>
-                      <p className="text-foreground">{member.name}</p>
-                      <p className="text-xs text-muted-foreground">
+                    <div className="min-w-0">
+                      <p className="break-words text-foreground" dir="auto">
+                        {member.name}
+                      </p>
+                      <p
+                        className="break-all text-xs text-muted-foreground"
+                        dir="ltr"
+                      >
                         {member.email}
                       </p>
                     </div>
-                    <span className="text-xs text-muted-foreground">
-                      {member.role}
+                    <span className="shrink-0 text-xs text-muted-foreground">
+                      {roleLabel(member.role)}
                     </span>
                   </li>
                 ))}

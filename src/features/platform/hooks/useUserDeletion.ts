@@ -15,7 +15,7 @@
  * halfway.
  */
 import { useApiMutation, useApiQuery } from '@/shared/hooks';
-import { platformUserKeys } from '@services/query';
+import { INLINE_ERRORS_META, platformUserKeys } from '@services/query';
 import {
   platformUserManagementService,
   type AccountSuspensionResult,
@@ -41,6 +41,8 @@ export function useUserDeletionPlan(
     // visit could describe academies that have since been archived, and
     // the whole point of the plan is that it matches reality.
     staleTime: 0,
+    // The dialog says the plan couldn't load; no second toast (B8 V14).
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 
@@ -58,6 +60,7 @@ export function useDeleteUserAsPlatformOwner() {
     invalidateKeys: [platformUserKeys.all],
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }
 
@@ -84,5 +87,6 @@ export function useUserSuspension() {
     invalidateKeys: [platformUserKeys.all],
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

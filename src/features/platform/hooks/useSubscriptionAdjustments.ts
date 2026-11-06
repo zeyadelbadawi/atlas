@@ -5,7 +5,7 @@
  */
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation } from '@/shared/hooks';
-import { platformOrganizationKeys } from '@services/query';
+import { INLINE_ERRORS_META, platformOrganizationKeys } from '@services/query';
 import {
   adminSubscriptionsService,
   type SubscriptionDaysAdjustment,
@@ -43,5 +43,6 @@ export function useSubscriptionAdjustment(organizationId: string) {
     },
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

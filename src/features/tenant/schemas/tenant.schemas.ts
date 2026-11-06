@@ -6,21 +6,34 @@
  */
 import { z } from 'zod';
 import { validationMessage } from '@/shared/forms/validation-message';
+import { normalizeDigits } from '@/shared/utils/number.utils';
+
+/** Trial Policy update schema (Platform Owner only). */
+export const TRIAL_POLICY_DAYS_MIN = 1;
+export const TRIAL_POLICY_DAYS_MAX = 365;
 
 /**
- * Trial Policy update schema (Platform Owner only).
- *
- * Deliberately does not require `durationDays > 0` when `enabled` is true —
- * that would be inventing a business constraint the domain doesn't state.
- * `durationDays` only needs to be a valid non-negative integer; `0` is a
- * legitimate value regardless of `enabled` (see `TrialPolicy`'s doc comment).
+ * B8 (UX audit) V23 — a whole number of days from 1 to 365, the server's
+ * own range (`UpdateTrialPolicyDto`, atlas-backend#108): 0 gave every new
+ * organization a trial that ended at once, and there was no ceiling.
+ * Turning trials off is what `enabled` is for. The field is text so empty,
+ * "abc" and "2.5" get the same clear message; Arabic digits count.
  */
 export const updateTrialPolicySchema = z.object({
   enabled: z.boolean(),
   durationDays: z
-    .number({ invalid_type_error: 'validation:number' })
-    .int('validation:integer')
-    .min(0, validationMessage('validation:min', { min: 0 })),
+    .string()
+    .transform((value) => normalizeDigits(value).trim())
+    .refine(
+      (value) =>
+        /^\d+$/.test(value) &&
+        Number(value) >= TRIAL_POLICY_DAYS_MIN &&
+        Number(value) <= TRIAL_POLICY_DAYS_MAX,
+      validationMessage('tenant:platformAdmin.trialPolicy.durationDaysRange', {
+        min: TRIAL_POLICY_DAYS_MIN,
+        max: TRIAL_POLICY_DAYS_MAX,
+      })
+    ),
 });
 
-export type UpdateTrialPolicyFormData = z.infer<typeof updateTrialPolicySchema>;
+export type UpdateTrialPolicyFormData = z.input<typeof updateTrialPolicySchema>;

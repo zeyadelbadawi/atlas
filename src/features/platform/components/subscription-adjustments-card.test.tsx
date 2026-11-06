@@ -4,7 +4,13 @@
  * out-of-range day count is caught before any request.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import { createI18nInstance } from '@/localization/i18n';
 
@@ -22,6 +28,7 @@ vi.mock('@features/tenant', () => ({
 }));
 vi.mock('@app/providers', () => ({
   useToast: () => ({ notifySuccess: vi.fn() }),
+  useConfirmDialog: () => ({ confirm: vi.fn(() => Promise.resolve(true)) }),
 }));
 
 import { SubscriptionAdjustmentsCard } from './SubscriptionAdjustmentsCard';
@@ -42,72 +49,76 @@ afterEach(() => {
 });
 
 describe('SubscriptionAdjustmentsCard', () => {
-  it('extends by a number of days with a reason', () => {
+  it('extends by a number of days with a reason', async () => {
     renderCard();
     fireEvent.click(screen.getByRole('button', { name: 'Extend' }));
-    fireEvent.change(screen.getByLabelText('Days'), {
+    fireEvent.change(screen.getByLabelText(/^Days/), {
       target: { value: '10' },
     });
-    fireEvent.change(screen.getByLabelText('Reason'), {
+    fireEvent.change(screen.getByLabelText(/^Reason/), {
       target: { value: REASON },
     });
     fireEvent.click(screen.getByRole('button', { name: 'Apply' }));
-    expect(mutate).toHaveBeenCalledWith(
-      { kind: 'extend', days: 10, reason: REASON },
-      expect.any(Object)
+    await waitFor(() =>
+      expect(mutate).toHaveBeenCalledWith(
+        { kind: 'extend', days: 10, reason: REASON },
+        expect.any(Object)
+      )
     );
   });
 
-  it('records a grant separately from an extension', () => {
+  it('records a grant separately from an extension', async () => {
     renderCard();
     fireEvent.click(screen.getByRole('button', { name: 'Grant days' }));
-    fireEvent.change(screen.getByLabelText('Days'), { target: { value: '5' } });
-    fireEvent.change(screen.getByLabelText('Reason'), {
+    fireEvent.change(screen.getByLabelText(/^Days/), {
+      target: { value: '5' },
+    });
+    fireEvent.change(screen.getByLabelText(/^Reason/), {
       target: { value: REASON },
     });
     fireEvent.click(screen.getByRole('button', { name: 'Apply' }));
+    await waitFor(() => expect(mutate).toHaveBeenCalled());
     expect(mutate.mock.calls[0][0]).toMatchObject({
       kind: 'grant-days',
       days: 5,
     });
   });
 
-  it('refuses a short reason or an out-of-range day count without a request', () => {
+  it('refuses a short reason or an out-of-range day count without a request', async () => {
     renderCard();
     fireEvent.click(screen.getByRole('button', { name: 'Extend' }));
-    fireEvent.change(screen.getByLabelText('Days'), {
+    fireEvent.change(screen.getByLabelText(/^Days/), {
       target: { value: '10' },
     });
-    fireEvent.change(screen.getByLabelText('Reason'), {
+    fireEvent.change(screen.getByLabelText(/^Reason/), {
       target: { value: 'short' },
     });
     fireEvent.click(screen.getByRole('button', { name: 'Apply' }));
-    expect(screen.getByRole('alert').textContent).toContain(
-      'at least 10 characters'
-    );
+    expect(await screen.findByText(/at least 10 characters/)).toBeTruthy();
 
-    fireEvent.change(screen.getByLabelText('Days'), {
+    fireEvent.change(screen.getByLabelText(/^Days/), {
       target: { value: '400' },
     });
-    fireEvent.change(screen.getByLabelText('Reason'), {
+    fireEvent.change(screen.getByLabelText(/^Reason/), {
       target: { value: REASON },
     });
     fireEvent.click(screen.getByRole('button', { name: 'Apply' }));
-    expect(screen.getByRole('alert').textContent).toContain('from 1 to 365');
+    expect(await screen.findByText(/from 1 to 365/)).toBeTruthy();
     expect(mutate).not.toHaveBeenCalled();
   });
 
-  it('changes the plan by key, at the end of the paid period', () => {
+  it('changes the plan by key, at the end of the paid period', async () => {
     renderCard();
     fireEvent.click(screen.getByRole('button', { name: 'Change plan' }));
-    fireEvent.change(screen.getByLabelText('Plan key'), {
+    fireEvent.change(screen.getByLabelText(/^Plan key/), {
       target: { value: 'founding-academy' },
     });
     fireEvent.click(screen.getByLabelText('At the end of the paid period'));
-    fireEvent.change(screen.getByLabelText('Reason'), {
+    fireEvent.change(screen.getByLabelText(/^Reason/), {
       target: { value: REASON },
     });
     fireEvent.click(screen.getByRole('button', { name: 'Apply' }));
+    await waitFor(() => expect(mutate).toHaveBeenCalled());
     expect(mutate).toHaveBeenCalledWith(
       {
         kind: 'change-plan',

@@ -31,6 +31,26 @@ function buildResources() {
   >;
 }
 
+/** The sentence of a `{ title, description }` group, or '' (never an object). */
+export function groupSentence(
+  instance: Pick<I18nInstance, 't'>,
+  key: string,
+  value: unknown,
+  options: Record<string, unknown>
+): string {
+  if (value === null || typeof value !== 'object') return '';
+  const group = value as Record<string, unknown>;
+  const leaf = (['description', 'title'] as const).find(
+    (name) => typeof group[name] === 'string'
+  );
+  if (!leaf) return '';
+  const text: unknown = instance.t(`${key}.${leaf}`, {
+    ...options,
+    returnObjects: false,
+  });
+  return typeof text === 'string' ? text : '';
+}
+
 /**
  * Creates and initialises an Atlas i18n instance.
  *
@@ -61,6 +81,16 @@ export function createI18nInstance(
     // Surfacing a missing key during development prevents silent gaps.
     saveMissing: false,
     parseMissingKeyHandler: (key) => (ENV.isProduction ? '' : key),
+    // B8 (UX audit) V06 — some keys name a GROUP (`errors:conflict` is
+    // `{ title, description }`). `t()` on one used to put "key 'conflict
+    // (en)' returned an object instead of string." on screen. Every such
+    // call now reads the group's sentence (its description, else its
+    // title), interpolated, and never the raw object or that notice.
+    returnedObjectHandler: ((
+      key: string,
+      value: unknown,
+      options: Record<string, unknown>
+    ) => groupSentence(instance, key, value, options)) as never,
     react: {
       useSuspense: false,
       // A public website renders with its core translations and receives

@@ -155,7 +155,9 @@
     "error": "The payment proof could not be loaded. Check your connection and try again.",
     "alt": "Payment proof",
     "altFor": "Payment proof for {{subject}}",
-    "open": "Open in a new tab"
+    "open": "Open in a new tab",
+    "missing": "This proof file is no longer available. Ask the payer to upload it again.",
+    "serverError": "The payment proof could not be loaded because of a problem on our side. Try again in a moment."
   },
   "connectivity": {
     "offline": {

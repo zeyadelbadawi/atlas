@@ -8,7 +8,11 @@
  */
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation, useApiQuery } from '@/shared/hooks';
-import { invalidatePlans, platformPlanKeys } from '@services/query';
+import {
+  INLINE_ERRORS_META,
+  invalidatePlans,
+  platformPlanKeys,
+} from '@services/query';
 import { platformPlansService } from '../services/PlatformPlansService';
 import type {
   CollectionQuery,
@@ -46,6 +50,10 @@ export function useUpdatePlan() {
   return useApiMutation<Plan, UpdatePlanVariables, ApiError>({
     mutationFn: ({ key, payload }) =>
       platformPlansService.updatePlan(key, payload),
+    // B8 (UX audit) V07/V14 — the editor shows the one message: a
+    // violation on its field, a 409 as "reload", anything else inline.
+    showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: (_plan, variables) =>
       invalidatePlans(queryClient, variables.key),
   });
@@ -90,5 +98,6 @@ export function usePreviewLimitImpact() {
       platformPlansService.previewLimitImpact(key, limits),
     // A preview failing is not a save failing; the caller surfaces it inline.
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

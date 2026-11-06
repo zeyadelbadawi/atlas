@@ -29,6 +29,7 @@ import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createI18nInstance } from '@/localization/i18n';
+import { AtlasDialogProvider } from '@app/providers/dialog/DialogProvider';
 import type { Payment } from '@types';
 import {
   analyticsKeys,
@@ -142,11 +143,13 @@ function renderList(language: 'en' | 'ar' = 'en', url = '/payments') {
 function renderDetail() {
   return render(
     <I18nextProvider i18n={createI18nInstance('en')}>
-      <MemoryRouter initialEntries={['/p/pay-1']}>
-        <Routes>
-          <Route path="/p/:paymentId" element={<DetailPage />} />
-        </Routes>
-      </MemoryRouter>
+      <AtlasDialogProvider>
+        <MemoryRouter initialEntries={['/p/pay-1']}>
+          <Routes>
+            <Route path="/p/:paymentId" element={<DetailPage />} />
+          </Routes>
+        </MemoryRouter>
+      </AtlasDialogProvider>
     </I18nextProvider>
   );
 }
@@ -203,7 +206,7 @@ describe('PlatformPaymentReviewListPage', () => {
     renderList();
     fireEvent.change(
       screen.getByRole('searchbox', {
-        name: 'Search by organization, reference or payment ID',
+        name: 'Search by checkout ID, payer reference, payment ID or organization',
       }),
       { target: { value: 'Nile' } }
     );
@@ -231,7 +234,7 @@ describe('PlatformPaymentReviewListPage', () => {
 
     fireEvent.change(
       screen.getByRole('searchbox', {
-        name: 'Search by organization, reference or payment ID',
+        name: 'Search by checkout ID, payer reference, payment ID or organization',
       }),
       { target: { value: 'Nile' } }
     );

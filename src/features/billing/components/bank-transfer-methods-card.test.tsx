@@ -19,6 +19,7 @@ import {
 } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import { createI18nInstance } from '@/localization/i18n';
+import { AtlasDialogProvider } from '@app/providers/dialog/DialogProvider';
 import type { PlatformPaymentMethod } from '@types';
 
 const usePlatformPaymentMethods = vi.fn();
@@ -32,21 +33,25 @@ vi.mock('../hooks', () => ({
   useCreateBankTransferMethod: () => ({
     mutateAsync: createMutateAsync,
     isPending: false,
+    reset: vi.fn(),
     error: null,
   }),
   useCreateWalletMethod: () => ({
     mutateAsync: vi.fn(),
     isPending: false,
+    reset: vi.fn(),
     error: null,
   }),
   useCreateInstapayMethod: () => ({
     mutateAsync: vi.fn(),
     isPending: false,
+    reset: vi.fn(),
     error: null,
   }),
   useUpdatePlatformPaymentMethod: () => ({
     mutateAsync: updateMutateAsync,
     isPending: false,
+    reset: vi.fn(),
     error: null,
   }),
 }));
@@ -55,9 +60,7 @@ vi.mock('@/hooks/use-toast', () => ({
   toast: (...args: unknown[]) => toast(...args) as unknown,
 }));
 
-const { ManualPaymentMethodsCard } = await import(
-  './ManualPaymentMethodsCard'
-);
+const { ManualPaymentMethodsCard } = await import('./ManualPaymentMethodsCard');
 
 /** Test-only values — obviously not a real account. */
 const METHOD: PlatformPaymentMethod = {
@@ -113,7 +116,9 @@ function listOf(items: readonly PlatformPaymentMethod[]) {
 function renderCard() {
   return render(
     <I18nextProvider i18n={createI18nInstance('en')}>
-      <ManualPaymentMethodsCard />
+      <AtlasDialogProvider>
+        <ManualPaymentMethodsCard />
+      </AtlasDialogProvider>
     </I18nextProvider>
   );
 }
@@ -279,6 +284,14 @@ describe('ManualPaymentMethodsCard — Bank transfer', () => {
     const toggle = screen.getByTestId('bank-method-toggle-pm-1');
     expect(toggle.textContent).toBe('Disable');
     fireEvent.click(toggle);
+    // B8 (UX audit) V16 — the only enabled account: asks first and says
+    // checkout stops offering bank transfer.
+    const confirm = await screen.findByTestId('last-method-disable-confirm');
+    expect(confirm.textContent).toContain(
+      'checkout will stop offering Bank transfer'
+    );
+    expect(updateMutateAsync).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId('last-method-disable-confirm-action'));
     await waitFor(() =>
       expect(updateMutateAsync).toHaveBeenCalledWith({
         methodId: 'pm-1',
