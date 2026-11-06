@@ -18,8 +18,13 @@ export interface SearchInputProps {
   readonly value: string;
   /** Invoked with the debounced value. */
   readonly onValueChange: (value: string) => void;
-  /** Translation key for the accessible label and placeholder. */
+  /** Translation key for the accessible label (and placeholder by default). */
   readonly labelKey?: string;
+  /**
+   * A shorter visible placeholder when the full label doesn't fit a phone
+   * (B4 UX audit). The accessible name stays the full `labelKey`.
+   */
+  readonly placeholderKey?: string;
   readonly debounceMs?: number;
   readonly className?: string;
 }
@@ -28,6 +33,7 @@ export function SearchInput({
   value,
   onValueChange,
   labelKey = 'common:actions.search',
+  placeholderKey,
   debounceMs,
   className,
 }: SearchInputProps): JSX.Element {
@@ -60,6 +66,7 @@ export function SearchInput({
   }, [debouncedDraft, onValueChange]);
 
   const label = t(labelKey);
+  const placeholder = placeholderKey ? t(placeholderKey) : label;
 
   return (
     <div className={cn('relative', className)}>
@@ -73,7 +80,7 @@ export function SearchInput({
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
         aria-label={label}
-        placeholder={label}
+        placeholder={placeholder}
         className="ps-9 pe-9"
       />
       {draft.length > 0 ? (

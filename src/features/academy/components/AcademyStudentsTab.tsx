@@ -232,7 +232,8 @@ export function AcademyStudentsTab({
         <SearchInput
           value={search}
           onValueChange={setSearch}
-          labelKey="academy:students.searchShort"
+          labelKey="academy:students.searchPlaceholder"
+          placeholderKey="academy:students.searchShort"
           className="flex-1 sm:max-w-sm"
         />
         <Select

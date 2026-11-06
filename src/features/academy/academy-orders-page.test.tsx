@@ -199,7 +199,7 @@ describe('AcademyOrdersPage', () => {
 
     fireEvent.change(
       screen.getByRole('searchbox', {
-        name: 'Search name, course or order ID',
+        name: 'Search by student, course or order ID',
       }),
       { target: { value: 'sara' } }
     );
@@ -232,7 +232,7 @@ describe('AcademyOrdersPage', () => {
     // A change is written to the URL (replace) and returns to page 1.
     fireEvent.change(
       screen.getByRole('searchbox', {
-        name: 'Search name, course or order ID',
+        name: 'Search by student, course or order ID',
       }),
       { target: { value: 'sara' } }
     );
