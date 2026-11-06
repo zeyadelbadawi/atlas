@@ -58,4 +58,50 @@ inside the course PATCH froze the whole API at 100 % CPU for minutes.
 
 ## Fixes
 
-(filled in as the batch ships)
+### Root cause of the double messages (V05)
+Every course and authoring mutation hook had `showErrorToast: false` but not
+`INLINE_ERRORS_META`, so the app-wide reporter toasted as well. All 17 course hooks and the 7
+learning authoring hooks now mark their errors inline, and each caller shows ONE message: forms a
+`SaveFailedAlert` (or the field), row actions one toast with the real reason.
+
+### Per finding
+- **V01** The course thumbnail (Details tab and the create form) uploads through the media
+  library and saves only the URL; type and the 5 MB limit are checked first and named; the PATCH
+  sends `thumbnail` only when it changed. Backend: the audit-log scan that froze the API is
+  linear now (atlas-backend#101).
+- **V02 / V14** Price is a text field: more than 2 decimals, exponents, signs and separators are
+  refused with a message; "12,50" reads as 12.50; Arabic-Indic digits work; maximum 1,000,000;
+  paid at 0 is refused on the step.
+- **V03** The lines rule counts filled lines and names the long one ("Line 4 is 320 characters
+  long…"); `validation:maxItems` exists in EN/AR with plurals.
+- **V04** Each quiz option shows its own message; the summary names "Question 2 · Option 1".
+- **V06** Completion settings show the real reason inline — no raw `errors.conflict`.
+- **V07 / V12** `pricing.amount` lands on Price; server violations use the form's translated
+  labels; a refused `lessons` value shows on the Lessons choice.
+- **V08** Completion settings warn before leaving with changes.
+- **V09** Builder rows at 375 px: titles wrap, badges on their own line, actions below.
+- **V11** `noValidate` on course forms; URL and slug fields `dir="ltr"`; app messages in Arabic.
+- **V13** A taken slug shows on the slug field.
+- **V15** Removing a question with typed work asks first.
+- **V16** "Archive", truthfully, with where to find the course and how to publish it again.
+- **V18** Error summaries on the lesson dialog, quiz, Details step/tab and create form; focus on
+  the first server error. A list's own error reads under the list's name.
+- **V19 / V20** Required marks; character counters with the schema limits.
+- **V21** A new or changed due date / quiz window end in the past is refused.
+- **V22** Lesson links must be http(s).
+- **V24–V30** Optional Pricing for free courses, honest Review checks, blocker links, RTL-safe hex
+  and numbering, accessible quiz options and menus with 40 px targets, the locked-steps note on
+  phones, a Latin-slug hint for Arabic titles, each lesson type keeps its own link.
+
+- **V10** The media picker states its rules before upload ("Accepted: PNG, JPG, WebP · up to
+  5 MB"), checks type and size first, and a refusal is one inline message in the picker's own
+  terms — no "Unexpected error", no toast listing PDF for a course image. The course and website
+  image pickers pass their 5 MB limit.
+- **V23** "That file is larger than 10 MB" — the backend now sends the limit with the 413
+  (`details.maxBytes`); no Retry for a refusal the same file can never pass (too large, wrong
+  type).
+
+### Not changed here, with reason
+- **V17** fixed by the B2 retry change.
+- Backend price maximum (1,000,000 on the client) — the backend accepts any positive amount;
+  mirroring the limit there is a backend change for later.

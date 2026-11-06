@@ -13,6 +13,7 @@ import { courseKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { courseService } from '../services/CourseService';
 import type { CourseSection, CreateCourseSectionPayload } from '@types';
+import { COURSE_INLINE_ERRORS_META } from './inline-errors';
 
 export function useCreateCourseSection(academyId: string, courseId: string) {
   const { invalidate } = useInvalidate();
@@ -26,6 +27,7 @@ export function useCreateCourseSection(academyId: string, courseId: string) {
       courseService.createCourseSection(academyId, courseId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: COURSE_INLINE_ERRORS_META,
     onSuccess: async (_data, { academyId }) => {
       await invalidate(courseKeys.sections(academyId, courseId));
       await invalidate(courseKeys.detail(academyId, courseId));

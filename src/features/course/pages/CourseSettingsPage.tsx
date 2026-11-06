@@ -55,7 +55,42 @@ import {
 } from '../utils/course-status.utils';
 import { useCourseEditorTabs } from '../hooks/useCourseEditorTabs';
 import { CourseCompletionSettingsCard } from '../components/CourseCompletionSettingsCard';
-import type { BreadcrumbItem } from '@types';
+import { useActionFailureToast } from '../forms/course-form-feedback';
+import type { BreadcrumbItem, CourseReadinessStep } from '@types';
+
+/** Where a publish blocker is fixed outside the wizard. */
+type BlockerDestination = 'details' | 'curriculum' | 'quizzes';
+
+const STEP_DESTINATION: Record<CourseReadinessStep, BlockerDestination> = {
+  basics: 'details',
+  details: 'details',
+  media: 'details',
+  pricing: 'details',
+  curriculum: 'curriculum',
+  assessments: 'quizzes',
+};
+
+const DESTINATION_ROUTE: Record<BlockerDestination, string> = {
+  details: DASHBOARD_ROUTES.academyCourseDetail,
+  curriculum: DASHBOARD_ROUTES.academyCourseBuilder,
+  quizzes: DASHBOARD_ROUTES.academyCourseQuizzes,
+};
+
+const DESTINATION_LABEL: Record<BlockerDestination, string> = {
+  details: 'course:settings.openDetails',
+  curriculum: 'course:settings.openCurriculum',
+  quizzes: 'course:settings.openQuizzes',
+};
+
+function blockerDestinations(
+  checks: readonly { readonly step: CourseReadinessStep }[]
+): BlockerDestination[] {
+  return [
+    ...new Set(
+      checks.map((check) => STEP_DESTINATION[check.step] ?? 'curriculum')
+    ),
+  ];
+}
 
 export default function CourseSettingsPage(): JSX.Element {
   const { t } = useTranslation();
@@ -66,6 +101,7 @@ export default function CourseSettingsPage(): JSX.Element {
   }>();
   const editorTabs = useCourseEditorTabs(academyId ?? '', courseId ?? '');
   const { confirm } = useConfirmDialog();
+  const failureToast = useActionFailureToast();
   const { organization } = useAuth();
   const [justPublished, setJustPublished] = useState(false);
 
@@ -126,12 +162,8 @@ export default function CourseSettingsPage(): JSX.Element {
       await publishCourse(courseId);
       toast({ title: t('course:settings.publishSuccess') });
       setJustPublished(true);
-    } catch {
-      toast({
-        title: t('course:settings.publishError'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+    } catch (error) {
+      failureToast('course:settings.publishError', error);
     }
   };
 
@@ -150,12 +182,8 @@ export default function CourseSettingsPage(): JSX.Element {
       await unpublishCourse(courseId);
       toast({ title: t('course:settings.unpublishSuccess') });
       setJustPublished(false);
-    } catch {
-      toast({
-        title: t('course:settings.unpublishError'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+    } catch (error) {
+      failureToast('course:settings.unpublishError', error);
     }
   };
 
@@ -173,14 +201,13 @@ export default function CourseSettingsPage(): JSX.Element {
 
     try {
       await deleteCourse(courseId);
-      toast({ title: t('course:settings.deleteCourseSuccess') });
-      navigate(buildPath(DASHBOARD_ROUTES.academyCourses, { academyId }));
-    } catch {
       toast({
-        title: t('course:settings.deleteCourseError'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
+        title: t('course:settings.deleteCourseSuccess'),
+        description: t('course:settings.deleteCourseSuccessDescription'),
       });
+      navigate(buildPath(DASHBOARD_ROUTES.academyCourses, { academyId }));
+    } catch (error) {
+      failureToast('course:settings.deleteCourseError', error);
     }
   };
 
@@ -346,16 +373,25 @@ export default function CourseSettingsPage(): JSX.Element {
                         </li>
                       ))}
                     </ul>
+                    {/* B3 (V25) — a link to where each blocker is fixed
+                        (a price is set on Details, not in the curriculum). */}
                     {academyId && courseId ? (
-                      <Link
-                        className="mt-2 inline-block font-medium text-primary underline"
-                        to={buildPath(DASHBOARD_ROUTES.academyCourseBuilder, {
-                          academyId,
-                          courseId,
-                        })}
-                      >
-                        {t('course:settings.openCurriculum')}
-                      </Link>
+                      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+                        {blockerDestinations(publishBlockers).map(
+                          (destination) => (
+                            <Link
+                              key={destination}
+                              className="inline-block font-medium text-primary underline"
+                              to={buildPath(DESTINATION_ROUTE[destination], {
+                                academyId,
+                                courseId,
+                              })}
+                            >
+                              {t(DESTINATION_LABEL[destination])}
+                            </Link>
+                          )
+                        )}
+                      </div>
                     ) : null}
                   </div>
                 ) : null}

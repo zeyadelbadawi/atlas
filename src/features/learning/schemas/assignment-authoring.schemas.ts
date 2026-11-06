@@ -55,3 +55,37 @@ export const assignmentAuthoringSchema = z.object({
 export type AssignmentAuthoringFormData = z.infer<
   typeof assignmentAuthoringSchema
 >;
+
+/**
+ * B3 (UX audit, V21) — a date the author has just set must not already be
+ * in the past. An existing date left untouched passes, so editing an old
+ * assignment's title is never blocked by its past due date. Values are
+ * `datetime-local` strings.
+ */
+export function isNewPastDate(
+  value: string | undefined | null,
+  initial: string | undefined | null,
+  now: number = Date.now()
+): boolean {
+  if (!value) return false;
+  if (initial && value === initial) return false;
+  const time = new Date(value).getTime();
+  return Number.isFinite(time) && time < now;
+}
+
+/**
+ * The assignment schema for one dialog opening: `initialDueAt` is the due
+ * date the assignment already had (as a `datetime-local` value), which may
+ * stay in the past; a new or changed due date must be in the future.
+ */
+export function assignmentAuthoringSchemaFor(initialDueAt?: string) {
+  return assignmentAuthoringSchema.superRefine((data, ctx) => {
+    if (isNewPastDate(data.dueAt, initialDueAt)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'course:assignmentAuthoring.validation.dueInPast',
+        path: ['dueAt'],
+      });
+    }
+  });
+}

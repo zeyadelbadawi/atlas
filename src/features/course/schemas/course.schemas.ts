@@ -22,6 +22,8 @@ import {
   MAX_LESSON_DESCRIPTION_LENGTH,
 } from '../constants/course.constants';
 import { validationMessage } from '@/shared/forms/validation-message';
+import { isHttpUrl, linesListSchema } from '../utils/course-form.utils';
+import { pricingIssue } from '../utils/price-input.utils';
 
 /**
  * P64 Phase 4 catalog metadata, authored on the same create/edit form.
@@ -41,32 +43,15 @@ const catalogFields = {
       })
     )
     .optional(),
-  outcomes: z
-    .array(
-      z
-        .string()
-        .max(
-          MAX_COURSE_OUTCOME_LENGTH,
-          validationMessage('validation:maxLength', {
-            count: MAX_COURSE_OUTCOME_LENGTH,
-          })
-        )
-    )
-    .max(MAX_COURSE_OUTCOMES, 'validation:maxItems')
-    .optional(),
-  requirements: z
-    .array(
-      z
-        .string()
-        .max(
-          MAX_COURSE_REQUIREMENT_LENGTH,
-          validationMessage('validation:maxLength', {
-            count: MAX_COURSE_REQUIREMENT_LENGTH,
-          })
-        )
-    )
-    .max(MAX_COURSE_REQUIREMENTS, 'validation:maxItems')
-    .optional(),
+  // B3 (V03) — the count ignores blank lines and a too-long line is named.
+  outcomes: linesListSchema(
+    MAX_COURSE_OUTCOMES,
+    MAX_COURSE_OUTCOME_LENGTH
+  ).optional(),
+  requirements: linesListSchema(
+    MAX_COURSE_REQUIREMENTS,
+    MAX_COURSE_REQUIREMENT_LENGTH
+  ).optional(),
 };
 
 /** Slug validation regex: lowercase letters, numbers, hyphens. */
@@ -78,12 +63,29 @@ const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
  */
 const pricingFields = {
   pricingType: z.enum(['free', 'paid']),
-  pricingAmount: z.coerce
-    .number()
-    .min(0, validationMessage('validation:min', { min: 0 }))
-    .optional(),
+  /**
+   * B3 (V02/V14) — the text the author typed (or a stored number); read by
+   * `parsePriceInput`, never coerced: "12,50", "0.001" and "1e3" used to
+   * become 1,250, 0 and 1,000 without a word.
+   */
+  pricingAmount: z.union([z.string(), z.number()]).optional(),
   pricingCurrency: z.string().optional(),
 };
+
+/** A paid course needs a valid price above zero; the message says what is wrong. */
+function refinePricing(
+  data: { pricingType: 'free' | 'paid'; pricingAmount?: unknown },
+  ctx: z.RefinementCtx
+): void {
+  const issue = pricingIssue(data);
+  if (issue) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: issue,
+      path: ['pricingAmount'],
+    });
+  }
+}
 
 /** Course creation schema. */
 export const createCourseSchema = z
@@ -99,7 +101,7 @@ export const createCourseSchema = z
       ),
     slug: z
       .string()
-      .min(1, 'validation:required')
+      .min(1, 'course:validation.slugRequired')
       .max(
         MAX_COURSE_SLUG_LENGTH,
         validationMessage('validation:maxLength', {
@@ -131,15 +133,7 @@ export const createCourseSchema = z
     ...pricingFields,
     ...catalogFields,
   })
-  .refine(
-    (data) =>
-      data.pricingType !== 'paid' ||
-      (typeof data.pricingAmount === 'number' && data.pricingAmount > 0),
-    {
-      message: 'course:validation.priceRequired',
-      path: ['pricingAmount'],
-    }
-  );
+  .superRefine(refinePricing);
 
 export type CreateCourseFormData = z.infer<typeof createCourseSchema>;
 
@@ -157,7 +151,7 @@ export const updateCourseSchema = z
       ),
     slug: z
       .string()
-      .min(1, 'validation:required')
+      .min(1, 'course:validation.slugRequired')
       .max(
         MAX_COURSE_SLUG_LENGTH,
         validationMessage('validation:maxLength', {
@@ -189,15 +183,7 @@ export const updateCourseSchema = z
     ...pricingFields,
     ...catalogFields,
   })
-  .refine(
-    (data) =>
-      data.pricingType !== 'paid' ||
-      (typeof data.pricingAmount === 'number' && data.pricingAmount > 0),
-    {
-      message: 'course:validation.priceRequired',
-      path: ['pricingAmount'],
-    }
-  );
+  .superRefine(refinePricing);
 
 export type UpdateCourseFormData = z.infer<typeof updateCourseSchema>;
 
@@ -273,9 +259,11 @@ export const courseLessonSchema = z
       )
       .optional(),
     contentType: z.enum(['text', 'video', 'file']),
+    // B3 (V22) — a web address a learner can open: http(s) only.
     contentUrl: z
       .string()
-      .url('validation:invalidUrl')
+      .trim()
+      .refine(isHttpUrl, 'course:builder.lessonDialog.invalidContentUrl')
       .optional()
       .or(z.literal('')),
     status: z.enum(['draft', 'published']),

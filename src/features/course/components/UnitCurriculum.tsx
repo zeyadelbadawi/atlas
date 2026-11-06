@@ -64,6 +64,7 @@ import {
 import { AttachContentDialog } from './AttachContentDialog';
 import { CurriculumSortableList, DragHandle } from './UnitCurriculumSortable';
 import { useReorderFocus } from '../hooks/useReorderFocus';
+import { useActionFailureToast } from '../forms/course-form-feedback';
 import type {
   CourseLesson,
   CourseSection,
@@ -114,6 +115,7 @@ export function UnitCurriculum({
 }: UnitCurriculumProps): JSX.Element {
   const { t } = useTranslation();
   const { confirm } = useConfirmDialog();
+  const failureToast = useActionFailureToast();
   const [attachType, setAttachType] = useState<'quiz' | 'assignment' | null>(
     null
   );
@@ -179,11 +181,11 @@ export function UnitCurriculum({
         focus.requestFocus(focusCandidates, null);
       } else {
         setAnnouncement(t('course:builder.order.failed'));
-        toast({
-          title: t('course:builder.reorderError'),
-          description: t('course:builder.order.failed'),
-          variant: 'destructive',
-        });
+        failureToast(
+          'course:builder.reorderError',
+          error,
+          'course:builder.order.failed'
+        );
         focus.requestFocus(focusCandidates, previousIds);
       }
     } finally {
@@ -217,12 +219,8 @@ export function UnitCurriculum({
         itemId,
       });
       setAttachType(null);
-    } catch {
-      toast({
-        title: t('course:builder.attach.error'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+    } catch (error) {
+      failureToast('course:builder.attach.error', error);
     }
   };
 
@@ -243,12 +241,8 @@ export function UnitCurriculum({
         itemId: item.id,
       });
       toast({ title: t('course:builder.itemDetached') });
-    } catch {
-      toast({
-        title: t('course:builder.attach.error'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+    } catch (error) {
+      failureToast('course:builder.detachError', error);
     }
   };
 
@@ -318,15 +312,20 @@ export function UnitCurriculum({
             const rowBusy = item.id === busyItemId;
             const isSaving = item.id === movingId;
             return (
+              // B3 (V09) — at 375 px the row used to keep title, two badges
+              // and three buttons on one line: the title truncated to
+              // nothing and the arrows sat on top of "Draft". The title now
+              // wraps in full, the badges sit on their own line under it,
+              // and the actions wrap below when there is no room beside.
               <div
                 aria-busy={rowBusy || isSaving || undefined}
                 className={cn(
-                  'flex items-center justify-between gap-3 rounded-lg border border-border bg-background p-3 transition-colors motion-reduce:transition-none',
+                  'flex flex-wrap items-start justify-between gap-x-3 gap-y-2 rounded-lg border border-border bg-background p-3 transition-colors motion-reduce:transition-none',
                   !isDragging && 'hover:border-primary/40',
                   isSaving && 'border-primary/40'
                 )}
               >
-                <div className="flex min-w-0 items-center gap-2">
+                <div className="flex min-w-0 flex-1 basis-48 items-start gap-2">
                   <DragHandle
                     handle={handle}
                     isDragging={isDragging}
@@ -336,41 +335,58 @@ export function UnitCurriculum({
                     focusRef={focus.register(`${item.id}:handle`)}
                   />
                   <Icon
-                    className="size-4 shrink-0 text-muted-foreground"
+                    className="mt-3 size-4 shrink-0 text-muted-foreground"
                     aria-hidden
                   />
-                  <span className="truncate text-sm font-medium text-foreground">
-                    {index + 1}. {item.title}
-                  </span>
-                  <StatusBadge
-                    labelKey={TYPE_LABEL_KEY[item.type]}
-                    tone="info"
-                  />
-                  <StatusBadge
-                    labelKey={getLessonStatusLabelKey(
-                      item.status === 'published' ? 'published' : 'draft'
-                    )}
-                    tone={getLessonStatusTone(
-                      item.status === 'published' ? 'published' : 'draft'
-                    )}
-                  />
-                  {isSaving || rowBusy ? (
-                    // Visible twin of the live region above (announced there).
-                    <span
-                      aria-hidden
-                      className="inline-flex shrink-0 items-center gap-1 text-xs text-muted-foreground"
+                  <div className="min-w-0 flex-1 space-y-1.5 py-2">
+                    <p
+                      className="flex items-start gap-1.5 text-sm font-medium text-foreground"
+                      data-testid="unit-item-title"
                     >
-                      <Loader2 className="size-3 animate-spin motion-reduce:animate-none" />
-                      {isSaving
-                        ? t('course:builder.order.saving')
-                        : item.id === detachingId
-                          ? t('course:builder.removing')
-                          : t('course:builder.deleting')}
-                    </span>
-                  ) : null}
+                      {/* V26 — the position in its own chip, no "1." whose
+                          dot lands after the title in Arabic. */}
+                      <span
+                        data-position
+                        className="inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded bg-muted px-1 text-xs tabular-nums text-muted-foreground"
+                      >
+                        {index + 1}
+                      </span>
+                      <bdi className="min-w-0 break-words [overflow-wrap:anywhere]">
+                        {item.title}
+                      </bdi>
+                    </p>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <StatusBadge
+                        labelKey={TYPE_LABEL_KEY[item.type]}
+                        tone="info"
+                      />
+                      <StatusBadge
+                        labelKey={getLessonStatusLabelKey(
+                          item.status === 'published' ? 'published' : 'draft'
+                        )}
+                        tone={getLessonStatusTone(
+                          item.status === 'published' ? 'published' : 'draft'
+                        )}
+                      />
+                      {isSaving || rowBusy ? (
+                        // Visible twin of the live region above (announced there).
+                        <span
+                          aria-hidden
+                          className="inline-flex shrink-0 items-center gap-1 text-xs text-muted-foreground"
+                        >
+                          <Loader2 className="size-3 animate-spin motion-reduce:animate-none" />
+                          {isSaving
+                            ? t('course:builder.order.saving')
+                            : item.id === detachingId
+                              ? t('course:builder.removing')
+                              : t('course:builder.deleting')}
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
 
-                <div className="flex shrink-0 items-center gap-1">
+                <div className="ms-auto flex shrink-0 items-center gap-1">
                   <Button
                     ref={focus.register(`${item.id}:up`)}
                     variant="ghost"
@@ -405,7 +421,9 @@ export function UnitCurriculum({
                         variant="ghost"
                         size="icon"
                         disabled={rowBusy || setChanging || isReordering}
-                        aria-label={t('course:builder.itemMenu.actions')}
+                        aria-label={t('course:builder.itemMenu.actionsFor', {
+                          title: item.title,
+                        })}
                       >
                         <MoreHorizontal className="size-4" aria-hidden />
                       </Button>

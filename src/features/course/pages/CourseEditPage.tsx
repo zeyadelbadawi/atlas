@@ -4,18 +4,12 @@
  * Edits an existing course's identity, thumbnail, pricing and
  * visibility, and links onward to the Builder and Settings for this course.
  */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  FileText,
-  Loader2,
-  Save,
-  SlidersHorizontal,
-  Upload,
-} from 'lucide-react';
+import { FileText, Loader2, Save, SlidersHorizontal } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { SectionTabs } from '@components/navigation';
@@ -47,7 +41,7 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
-import { useFilePicker, useUnsavedChanges } from '@hooks';
+import { useUnsavedChanges } from '@hooks';
 import { saveViaForm, currencyOptions } from '@utils';
 import { CourseLanguageSelect } from '../components/CourseLanguageSelect';
 import { LinesTextarea, normalizeLines } from '../components/LinesTextarea';
@@ -55,7 +49,28 @@ import {
   parseCourseLanguages,
   serializeCourseLanguages,
 } from '../constants/course-languages';
-import { useServerValidation } from '@forms';
+import {
+  FormErrorSummary,
+  hasViolationOn,
+  RequiredMark,
+  SaveFailedAlert,
+  useFocusFirstViolation,
+  useLabelledViolations,
+  useServerValidation,
+} from '@forms';
+import { CharacterCount } from '../components/CharacterCount';
+import { CourseThumbnailField } from '../components/CourseThumbnailField';
+import {
+  COURSE_FIELD_ALIASES,
+  COURSE_FIELD_LABELS,
+  useSlugTakenError,
+  violationFields,
+} from '../forms/course-form-feedback';
+import {
+  MAX_COURSE_PRICE,
+  priceAmountFromInput,
+  priceInputFromAmount,
+} from '../utils/price-input.utils';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useCourse, useUpdateCourse } from '../hooks';
 import {
@@ -70,11 +85,27 @@ import {
 } from '../schemas/course.schemas';
 import type { BreadcrumbItem } from '@types';
 import {
-  ALLOWED_COURSE_THUMBNAIL_TYPES,
   DEFAULT_COURSE_PRICING_CURRENCY,
-  MAX_COURSE_THUMBNAIL_FILE_SIZE,
+  MAX_COURSE_DESCRIPTION_LENGTH,
 } from '../constants/course.constants';
 import type { CoursePricing } from '@types';
+
+/** The fields this page renders — where a server violation can land. */
+const EDIT_FORM_FIELDS = [
+  'title',
+  'slug',
+  'shortDescription',
+  'description',
+  'thumbnail',
+  'visibility',
+  'pricingType',
+  'pricingAmount',
+  'pricingCurrency',
+  'level',
+  'language',
+  'outcomes',
+  'requirements',
+] as const;
 
 export default function CourseEditPage(): JSX.Element {
   const { t } = useTranslation();
@@ -84,7 +115,7 @@ export default function CourseEditPage(): JSX.Element {
     courseId: string;
   }>();
   const editorTabs = useCourseEditorTabs(academyId ?? '', courseId ?? '');
-  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
 
   const {
     data: course,
@@ -109,10 +140,10 @@ export default function CourseEditPage(): JSX.Element {
           slug: course.slug,
           shortDescription: course.shortDescription ?? '',
           description: course.description ?? '',
-          thumbnail: course.thumbnail,
+          thumbnail: course.thumbnail ?? '',
           visibility: course.visibility,
           pricingType: course.pricing.type,
-          pricingAmount: course.pricing.amount,
+          pricingAmount: priceInputFromAmount(course.pricing.amount),
           pricingCurrency:
             course.pricing.currency ?? DEFAULT_COURSE_PRICING_CURRENCY,
           level: course.level,
@@ -131,49 +162,27 @@ export default function CourseEditPage(): JSX.Element {
     course
   );
 
-  useServerValidation(form, mutationError);
-
-  const thumbnailPicker = useFilePicker({
-    accept: ALLOWED_COURSE_THUMBNAIL_TYPES.join(','),
-  });
-
-  useEffect(() => {
-    const file = thumbnailPicker.files?.[0];
-    if (!file) return;
-
-    if (file.size > MAX_COURSE_THUMBNAIL_FILE_SIZE) {
-      form.setError('thumbnail', {
-        type: 'validation',
-        message: 'course:create.thumbnailTooLarge',
-      });
-      thumbnailPicker.clearFiles();
-      return;
-    }
-    if (!ALLOWED_COURSE_THUMBNAIL_TYPES.includes(file.type)) {
-      form.setError('thumbnail', {
-        type: 'validation',
-        message: 'course:create.thumbnailInvalidType',
-      });
-      thumbnailPicker.clearFiles();
-      return;
-    }
-
-    form.clearErrors('thumbnail');
-    const previewUrl = thumbnailPicker.getPreviewUrl(file);
-    setThumbnailPreview((previous) => {
-      if (previous) thumbnailPicker.revokePreviewUrl(previous);
-      return previewUrl;
-    });
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      form.setValue('thumbnail', reader.result as string, {
-        shouldDirty: true,
-      });
-    };
-    reader.readAsDataURL(file);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [thumbnailPicker.files]);
+  // B3 — violations on their fields, labelled in the page's language
+  // (V12; `pricing.amount` on the price field, V07), a taken address on
+  // the slug (V13), everything else ONE inline alert (V05) — never a
+  // generic toast as well.
+  const labelled = useLabelledViolations(mutationError, COURSE_FIELD_LABELS);
+  useServerValidation(
+    form,
+    labelled,
+    COURSE_FIELD_ALIASES as unknown as Record<
+      string,
+      keyof UpdateCourseFormData
+    >
+  );
+  const knownFields = violationFields(EDIT_FORM_FIELDS);
+  useFocusFirstViolation(form, labelled, knownFields, COURSE_FIELD_ALIASES);
+  const slugTaken = useSlugTakenError(form, mutationError);
+  const saveFailure =
+    mutationError && !slugTaken && !hasViolationOn(mutationError, knownFields)
+      ? mutationError
+      : null;
+  const descriptionLength = (form.watch('description') ?? '').length;
 
   const pricingType = form.watch('pricingType');
 
@@ -186,7 +195,7 @@ export default function CourseEditPage(): JSX.Element {
       data.pricingType === 'paid'
         ? {
             type: 'paid',
-            amount: data.pricingAmount,
+            amount: priceAmountFromInput(data.pricingAmount),
             currency: data.pricingCurrency || academyCurrency,
           }
         : { type: 'free' };
@@ -199,7 +208,11 @@ export default function CourseEditPage(): JSX.Element {
           slug: data.slug,
           shortDescription: data.shortDescription || undefined,
           description: data.description || undefined,
-          thumbnail: data.thumbnail,
+          // Only when changed: the media-library URL ('' clears it), never
+          // image bytes — and an older inline image is not re-sent (V01).
+          ...(form.formState.dirtyFields.thumbnail
+            ? { thumbnail: data.thumbnail ?? '' }
+            : {}),
           // No `categoryId`: the field is not shown to Academy Owners and
           // Managers (Task 9). Omitting it keeps the course's existing
           // category — sending '' would disconnect it.
@@ -226,11 +239,7 @@ export default function CourseEditPage(): JSX.Element {
       });
       return true;
     } catch {
-      toast({
-        title: t('course:edit.error'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+      // Shown once: on its field, or in the alert above the buttons.
       return false;
     }
   };
@@ -274,8 +283,6 @@ export default function CourseEditPage(): JSX.Element {
     );
   }
 
-  const currentThumbnail = thumbnailPreview ?? course.thumbnail;
-
   const breadcrumbs: readonly BreadcrumbItem[] = [
     {
       labelKey: 'course:list.title',
@@ -298,7 +305,12 @@ export default function CourseEditPage(): JSX.Element {
       {academyId && courseId ? <SectionTabs items={editorTabs} /> : null}
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6"
+          noValidate
+        >
+          <FormErrorSummary form={form} fieldLabels={COURSE_FIELD_LABELS} />
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -319,7 +331,10 @@ export default function CourseEditPage(): JSX.Element {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('course:create.titleLabel')}</FormLabel>
+                    <FormLabel>
+                      {t('course:create.titleLabel')}
+                      <RequiredMark />
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -333,9 +348,12 @@ export default function CourseEditPage(): JSX.Element {
                 name="slug"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('course:create.slugLabel')}</FormLabel>
+                    <FormLabel>
+                      {t('course:create.slugLabel')}
+                      <RequiredMark />
+                    </FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} dir="ltr" data-ltr-content />
                     </FormControl>
                     <FormDescription>
                       {t('course:create.slugHelp')}
@@ -370,6 +388,11 @@ export default function CourseEditPage(): JSX.Element {
                     <FormControl>
                       <Textarea rows={4} {...field} />
                     </FormControl>
+                    <CharacterCount
+                      id="edit-description-count"
+                      length={descriptionLength}
+                      max={MAX_COURSE_DESCRIPTION_LENGTH}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -378,39 +401,27 @@ export default function CourseEditPage(): JSX.Element {
               <FormField
                 control={form.control}
                 name="thumbnail"
-                render={() => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t('course:create.thumbnailLabel')}</FormLabel>
-                    {currentThumbnail ? (
-                      <div className="space-y-3">
-                        <img
-                          src={currentThumbnail}
-                          alt=""
-                          className="h-24 w-auto rounded-lg border border-border"
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={thumbnailPicker.openFilePicker}
-                        >
-                          {t('course:create.changeThumbnail')}
-                        </Button>
-                      </div>
-                    ) : (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={thumbnailPicker.openFilePicker}
-                      >
-                        <Upload
-                          className="size-4"
-                          strokeWidth={2}
-                          aria-hidden
-                        />
-                        {t('course:create.uploadThumbnail')}
-                      </Button>
-                    )}
+                    <FormDescription>
+                      {t('course:create.thumbnailHelp')}
+                    </FormDescription>
+                    {/* B3 (V01) — uploaded to the media library first; the
+                        course keeps only the URL, never the image bytes. */}
+                    {academyId ? (
+                      <CourseThumbnailField
+                        id="edit-course-thumbnail"
+                        academyId={academyId}
+                        value={field.value || undefined}
+                        onChange={(url) =>
+                          form.setValue('thumbnail', url ?? '', {
+                            shouldDirty: true,
+                          })
+                        }
+                        onUploadingChange={setIsUploadingThumbnail}
+                      />
+                    ) : null}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -505,16 +516,28 @@ export default function CourseEditPage(): JSX.Element {
                       name="pricingAmount"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t('course:create.priceLabel')}</FormLabel>
+                          <FormLabel>
+                            {t('course:create.priceLabel')}
+                            <RequiredMark />
+                          </FormLabel>
                           <FormControl>
                             <Input
-                              type="number"
-                              min={0}
-                              step="0.01"
+                              type="text"
+                              inputMode="decimal"
+                              autoComplete="off"
+                              aria-required
+                              dir="ltr"
+                              data-ltr-content
+                              placeholder={t('course:create.pricePlaceholder')}
                               {...field}
                               value={field.value ?? ''}
                             />
                           </FormControl>
+                          <FormDescription>
+                            {t('course:create.priceHelp', {
+                              max: MAX_COURSE_PRICE.toLocaleString('en-US'),
+                            })}
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -636,6 +659,7 @@ export default function CourseEditPage(): JSX.Element {
                     <FormControl>
                       <LinesTextarea
                         rows={4}
+                        name={field.name}
                         value={field.value}
                         onChange={field.onChange}
                         placeholder={t('course:edit.outcomesPlaceholder')}
@@ -658,6 +682,7 @@ export default function CourseEditPage(): JSX.Element {
                     <FormControl>
                       <LinesTextarea
                         rows={4}
+                        name={field.name}
                         value={field.value}
                         onChange={field.onChange}
                         placeholder={t('course:edit.requirementsPlaceholder')}
@@ -673,6 +698,14 @@ export default function CourseEditPage(): JSX.Element {
             </CardContent>
           </Card>
 
+          {saveFailure ? (
+            <SaveFailedAlert
+              error={saveFailure}
+              titleKey="common:form.notSaved"
+              onRetry={() => void form.handleSubmit(onSubmit)()}
+            />
+          ) : null}
+
           <div className="flex items-center justify-end gap-3">
             <Button
               type="button"
@@ -682,7 +715,7 @@ export default function CourseEditPage(): JSX.Element {
             >
               {t('course:edit.cancelButton')}
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" disabled={isPending || isUploadingThumbnail}>
               {isPending ? (
                 <>
                   <Loader2 className="size-4 animate-spin" aria-hidden />

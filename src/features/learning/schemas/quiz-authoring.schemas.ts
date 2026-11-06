@@ -30,6 +30,7 @@ import {
   MIN_QUIZ_QUESTIONS,
 } from '../constants/learning.constants';
 import { validationMessage } from '@/shared/forms/validation-message';
+import { isNewPastDate } from './assignment-authoring.schemas';
 
 /* ---------- server bounds mirrored client-side ---------- */
 
@@ -161,14 +162,12 @@ const quizQuestionSchema = z
         })
       ),
     type: z.enum(QUIZ_QUESTION_TYPES),
-    options: z
-      .array(quizQuestionOptionSchema)
-      .max(
-        MAX_QUIZ_OPTIONS_PER_QUESTION,
-        validationMessage('validation:max', {
-          max: MAX_QUIZ_OPTIONS_PER_QUESTION,
-        })
-      ),
+    options: z.array(quizQuestionOptionSchema).max(
+      MAX_QUIZ_OPTIONS_PER_QUESTION,
+      validationMessage('validation:max', {
+        max: MAX_QUIZ_OPTIONS_PER_QUESTION,
+      })
+    ),
     points: requiredInteger(MIN_QUIZ_QUESTION_POINTS, MAX_QUIZ_QUESTION_POINTS),
     explanation: z
       .string()
@@ -365,6 +364,35 @@ export const quizAuthoringSchema = quizSettingsFormSchema
   });
 
 export type QuizAuthoringFormData = z.infer<typeof quizAuthoringSchema>;
+
+/**
+ * B3 (UX audit, V21) — the quiz schema for one editing session. A due date
+ * or a window end the author SETS must be in the future; the values the
+ * quiz already had (`initial`, `datetime-local` strings) may stay in the
+ * past, so an old quiz can still be edited. The window START may be in
+ * the past — that just means "open now".
+ */
+export function quizAuthoringSchemaFor(initial?: {
+  readonly dueAt?: string;
+  readonly availableUntil?: string;
+}) {
+  return quizAuthoringSchema.superRefine((quiz, ctx) => {
+    if (isNewPastDate(quiz.availableUntil, initial?.availableUntil)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'course:quizAuthoring.validation.windowEndInPast',
+        path: ['availableUntil'],
+      });
+    }
+    if (isNewPastDate(quiz.dueAt, initial?.dueAt)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'course:quizAuthoring.validation.dueInPast',
+        path: ['dueAt'],
+      });
+    }
+  });
+}
 
 export type QuizQuestionFormData = QuizAuthoringFormData['questions'][number];
 

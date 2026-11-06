@@ -28,6 +28,7 @@ import type {
   CurriculumItem,
   ReorderItemsPayload,
 } from '@types';
+import { COURSE_INLINE_ERRORS_META } from './inline-errors';
 
 export function useUnitItems(
   academyId: string,
@@ -76,6 +77,7 @@ export function useAttachUnitItem(academyId: string, courseId: string) {
     // The caller shows its own localized toast; a second generic one would
     // just repeat it.
     showErrorToast: false,
+    meta: COURSE_INLINE_ERRORS_META,
     onSuccess: async (_data, { academyId }) => {
       await invalidateCourseCurriculum(queryClient, { academyId, courseId });
     },
@@ -98,6 +100,7 @@ export function useDetachUnitItem(academyId: string, courseId: string) {
       }),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: COURSE_INLINE_ERRORS_META,
     onSuccess: async (_data, { academyId }) => {
       await invalidateCourseCurriculum(queryClient, { academyId, courseId });
     },
@@ -140,6 +143,7 @@ export function useReorderUnitItems(
       courseService.reorderUnitItems(academyId, courseId, sectionId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: COURSE_INLINE_ERRORS_META,
     onMutate: async ({ academyId, payload }) => {
       const itemsKey = courseKeys.unitItems(academyId, courseId, sectionId);
       await queryClient.cancelQueries({ queryKey: itemsKey });

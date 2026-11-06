@@ -69,9 +69,13 @@ export const MAX_LESSON_DESCRIPTION_LENGTH = 2000;
 /** Course thumbnail maximum file size (5MB). */
 export const MAX_COURSE_THUMBNAIL_FILE_SIZE = 5 * 1024 * 1024;
 
-/** Allowed thumbnail file types. */
+/**
+ * Allowed thumbnail file types — the same set the wizard's Media step
+ * accepts from the media library (B3, V10: one rule set for one image).
+ */
 export const ALLOWED_COURSE_THUMBNAIL_TYPES = [
   'image/png',
   'image/jpeg',
   'image/jpg',
+  'image/webp',
 ];

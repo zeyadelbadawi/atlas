@@ -77,7 +77,7 @@ describe('lesson dialog — lesson types', () => {
       'combobox'
     )[0];
     expect(trigger.textContent).toBe('Text');
-    expect(screen.getByRole('textbox', { name: 'Lesson text' })).toBeTruthy();
+    expect(screen.getByRole('textbox', { name: /^Lesson text/ })).toBeTruthy();
     expect(await openTypeOptions()).toEqual(['Text', 'Video', 'File']);
   });
 

@@ -162,6 +162,16 @@ export function CourseWizardStepper({
           );
         })}
       </ol>
+      {lockedSteps.length > 0 ? (
+        // B3 (V28) — on a phone the greyed circles carry no words; say why
+        // they cannot be opened yet (the desktop list says it per step).
+        <p
+          className="mt-2 text-xs text-muted-foreground lg:hidden"
+          data-testid="wizard-locked-note"
+        >
+          {t('course:wizard.lockedNote')}
+        </p>
+      ) : null}
     </nav>
   );
 }

@@ -17,6 +17,7 @@ import { I18nextProvider } from 'react-i18next';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createI18nInstance } from '@/localization/i18n';
 import { ToastContext } from '@app/providers/toast/toast.context';
+import type * as AppProvidersModule from '@app/providers';
 import type { ToastContextValue } from '@app/providers/toast/toast.context';
 import { ApiError } from '@/services/api/api-error';
 import { quizService } from '@features/learning';
@@ -27,6 +28,12 @@ vi.mock('@/shared/hooks/useAuth', () => ({
   useAuth: () => ({ user: { id: 'user-1' }, organization: { id: 'org-1' } }),
 }));
 vi.mock('@/hooks/use-toast', () => ({ toast: vi.fn(), useToast: () => ({}) }));
+// B3 (V15) — the questions editor asks before removing a typed question.
+type AppProviders = typeof AppProvidersModule;
+vi.mock('@app/providers', async (importOriginal) => ({
+  ...(await importOriginal<AppProviders>()),
+  useConfirmDialog: () => ({ confirm: vi.fn().mockResolvedValue(true) }),
+}));
 
 if (!('ResizeObserver' in globalThis)) {
   (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver =
@@ -150,11 +157,11 @@ const panelOf = (button: HTMLElement) =>
   document.getElementById(button.getAttribute('aria-controls') ?? '')!;
 
 async function fillMinimalQuestion(user: ReturnType<typeof userEvent.setup>) {
-  await user.type(screen.getByRole('textbox', { name: 'Title' }), 'New quiz');
-  await user.type(screen.getByRole('textbox', { name: 'Prompt' }), '2 + 2?');
+  await user.type(screen.getByRole('textbox', { name: /^Title/ }), 'New quiz');
+  await user.type(screen.getByRole('textbox', { name: /^Prompt/ }), '2 + 2?');
   await user.type(screen.getByPlaceholderText('Option 1'), '4');
   await user.type(screen.getByPlaceholderText('Option 2'), '5');
-  await user.click(screen.getAllByRole('radio', { name: 'Correct' })[0]);
+  await user.click(screen.getByRole('radio', { name: 'Option 1 is correct' }));
 }
 
 // These tests type a whole quiz; give them room on a loaded CI runner.
@@ -248,7 +255,13 @@ describe(
       expect(button.getAttribute('aria-expanded')).toBe('false');
       // …then removes a question, so 2 per attempt is now more than the quiz has.
       await user.click(
-        screen.getAllByRole('button', { name: 'Remove Question' })[1]
+        screen.getAllByRole('button', { name: /^Remove question/i })[1]
+      );
+      // V15 — a typed question is removed after the (mocked) confirmation.
+      await waitFor(() =>
+        expect(
+          screen.queryAllByRole('button', { name: /^Remove question/i })
+        ).toHaveLength(0)
       );
       await user.click(screen.getByRole('button', { name: 'Save Quiz' }));
 

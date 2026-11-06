@@ -104,10 +104,10 @@ describe('CourseCreatePage (wizard step 1)', () => {
   it('creates the draft idempotently and continues to the Details step', async () => {
     const user = userEvent.setup();
     renderPage();
-    await user.type(screen.getByLabelText('Course Title'), 'Arabic 101');
+    await user.type(screen.getByLabelText(/^Course Title/), 'Arabic 101');
     await waitFor(() =>
       expect(
-        (screen.getByLabelText('Course Slug') as HTMLInputElement).value
+        (screen.getByLabelText(/^Course Slug/) as HTMLInputElement).value
       ).toBe('arabic-101')
     );
     await user.click(screen.getByRole('button', { name: 'Create Course' }));
@@ -134,7 +134,7 @@ describe('CourseCreatePage (wizard step 1)', () => {
     const user = userEvent.setup();
     createCourse.mockRejectedValueOnce(new Error('network'));
     renderPage();
-    await user.type(screen.getByLabelText('Course Title'), 'Retry Course');
+    await user.type(screen.getByLabelText(/^Course Title/), 'Retry Course');
     await user.click(screen.getByRole('button', { name: 'Create Course' }));
     await waitFor(() => expect(createCourse).toHaveBeenCalledTimes(1));
     await user.click(screen.getByRole('button', { name: 'Create Course' }));

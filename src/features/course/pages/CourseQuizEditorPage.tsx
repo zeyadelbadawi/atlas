@@ -25,6 +25,7 @@ import { useCourse, useCourseSections } from '../hooks';
 import type { RelatedLessonOption } from '../components/QuizQuestionsEditor';
 import { QuizAuthoringForm } from '../components/QuizAuthoringForm';
 import { useCourseEditorLeadCrumbs } from '../hooks/useCourseEditorTabs';
+import { useActionFailureToast } from '../forms/course-form-feedback';
 
 export default function CourseQuizEditorPage(): JSX.Element {
   const { t } = useTranslation();
@@ -35,6 +36,7 @@ export default function CourseQuizEditorPage(): JSX.Element {
     quizId?: string;
   }>();
   const { confirm } = useConfirmDialog();
+  const failureToast = useActionFailureToast();
   const isEditMode = !!quizId;
 
   const { data: course } = useCourse(academyId ?? '', courseId ?? '');
@@ -83,12 +85,8 @@ export default function CourseQuizEditorPage(): JSX.Element {
       await deleteQuiz.mutateAsync(quiz.id);
       toast({ title: t('course:quizAuthoring.deleted') });
       goToList();
-    } catch {
-      toast({
-        title: t('course:quizAuthoring.error'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+    } catch (deleteError) {
+      failureToast('course:quizAuthoring.deleteError', deleteError);
     }
   };
 

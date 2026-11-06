@@ -58,7 +58,19 @@ export function ReviewStep({
   const blocking = failing('blocking');
   const warnings = failing('warning');
   const info = failing('info');
-  const passed = readiness.checks.filter((check) => check.status === 'pass');
+  // B3 (V24) — a pass that is only true because there is nothing to check
+  // ("Every unit has content" with no units, "No content is left in
+  // draft" with no content) is not listed as done.
+  const vacuous = (check: CourseReadinessCheck) =>
+    (check.key === 'emptySections' && readiness.counts.sections === 0) ||
+    (check.key === 'draftItems' &&
+      readiness.counts.lessons +
+        readiness.counts.quizzes +
+        readiness.counts.assignments ===
+        0);
+  const passed = readiness.checks.filter(
+    (check) => check.status === 'pass' && !vacuous(check)
+  );
 
   const renderCheck = (
     check: CourseReadinessCheck,

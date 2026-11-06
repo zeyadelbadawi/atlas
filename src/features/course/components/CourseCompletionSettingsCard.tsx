@@ -44,12 +44,18 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { toast } from '@/hooks/use-toast';
-import { isApiError } from '@api';
-import { useServerValidation } from '@forms';
+import { useUnsavedChanges } from '@hooks';
+import { saveViaForm } from '@utils';
+import {
+  hasViolationOn,
+  SaveFailedAlert,
+  useFocusFirstViolation,
+  useLabelledViolations,
+  useServerValidation,
+} from '@forms';
 import { useCompletionRule, useUpdateCompletionRule } from '@features/learning';
 import type {
   CompletionRuleItem,
@@ -60,19 +66,22 @@ import {
   getLessonStatusLabelKey,
   getLessonStatusTone,
 } from '../utils/course-status.utils';
-import { validationMessage } from '@/shared/forms/validation-message';
 
 /* ---------- form schema ---------- */
 
-/** Blank numeric inputs read as "none", never as `0`. */
-function optionalNumber(min: number, max: number) {
+/**
+ * A score from 0 to 100. Blank reads as "none", never as `0`. B3 (V11) —
+ * the app says what is wrong, in the page's language, instead of the
+ * browser's English "Value must be less than or equal to 100." bubble.
+ */
+function optionalScore() {
   return z.preprocess(
     (value) =>
       value === '' || value === undefined || value === null ? undefined : value,
     z.coerce
-      .number()
-      .min(min, validationMessage('validation:min', { min: min }))
-      .max(max, validationMessage('validation:max', { max: max }))
+      .number({ invalid_type_error: 'validation:numeric.percentage' })
+      .min(0, 'validation:numeric.percentage')
+      .max(100, 'validation:numeric.percentage')
       .optional()
   );
 }
@@ -86,30 +95,49 @@ const completionSettingsSchema = z
           ? undefined
           : value,
       z.coerce
-        .number()
-        .int('validation:integer')
-        .min(1, validationMessage('validation:min', { min: 1 }))
+        .number({ invalid_type_error: 'validation:numeric.integer' })
+        .int('validation:numeric.integer')
+        .min(1, 'course:settings.completion.lessons.minAtLeastOne')
         .optional()
     ),
     requiredQuizzes: z.boolean(),
     requiredAssignments: z.boolean(),
     requiredQuizIds: z.array(z.string()),
     requiredAssignmentIds: z.array(z.string()),
-    minOverallScore: optionalNumber(0, 100),
+    minOverallScore: optionalScore(),
     certificatesEnabled: z.boolean(),
-    certificateMinScore: optionalNumber(0, 100),
+    certificateMinScore: optionalScore(),
   })
   .superRefine((values, ctx) => {
     if (values.lessons === 'min' && values.minLessons === undefined) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'validation:required',
+        message: 'course:settings.completion.lessons.minRequired',
         path: ['minLessons'],
       });
     }
   });
 
 type CompletionSettingsFormData = z.infer<typeof completionSettingsSchema>;
+
+/** The API's fields → this card's labels (V12) and form fields. */
+const COMPLETION_FIELD_LABELS = {
+  lessons: 'course:settings.completion.lessons.label',
+  minLessons: 'course:settings.completion.lessons.minInputLabel',
+  minOverallScore: 'course:settings.completion.minOverallScore.label',
+  certificatesEnabled: 'course:settings.completion.certificates.label',
+  certificateMinScore: 'course:settings.completion.certificateMinScore.label',
+  requiredQuizIds: 'course:settings.completion.quizzes.label',
+  requiredAssignmentIds: 'course:settings.completion.assignments.label',
+  requiredQuizzes: 'course:settings.completion.quizzes.label',
+  requiredAssignments: 'course:settings.completion.assignments.label',
+} as const;
+/** A `lessons` violation belongs on the number box — when it is shown. */
+const MIN_LESSONS_ALIAS = { lessons: 'minLessons' } as const;
+const NO_ALIASES = {} as const;
+const COMPLETION_FIELDS = Object.fromEntries(
+  Object.keys(COMPLETION_FIELD_LABELS).map((field) => [field, field])
+) as Record<string, string>;
 
 function toFormValues(rule: CourseCompletionRule): CompletionSettingsFormData {
   const lessons = rule.rule.lessons;
@@ -173,39 +201,66 @@ export function CourseCompletionSettingsCard({
     values: data ? toFormValues(data) : undefined,
   });
 
-  useServerValidation(form, update.error ?? null);
+  // B3 — a violation lands on its field with this card's label (V12, no
+  // more "Certificate min score must be 100 or less"); anything else is ONE
+  // inline alert with the real reason (V06 — it used to print the raw key
+  // "errors.conflict" and a toast on top).
+  const updateError = update.error ?? null;
+  const labelled = useLabelledViolations(updateError, COMPLETION_FIELD_LABELS);
+  // Otherwise on the Lessons choice itself, never on a hidden field.
+  const aliases =
+    form.watch('lessons') === 'min' ? MIN_LESSONS_ALIAS : NO_ALIASES;
+  useServerValidation(form, labelled, aliases);
+  useFocusFirstViolation(form, labelled, COMPLETION_FIELDS, aliases);
 
   const lessonsMode = form.watch('lessons');
   const requiredQuizzes = form.watch('requiredQuizzes');
   const requiredAssignments = form.watch('requiredAssignments');
   const certificatesEnabled = form.watch('certificatesEnabled');
 
+  // Only a violation on a field that is ON SCREEN counts as shown: one on
+  // a hidden field (e.g. the quiz list while its switch is off) gets the
+  // inline alert instead of failing silently.
+  const shownFields = Object.fromEntries(
+    Object.keys(COMPLETION_FIELDS)
+      .filter(
+        (field) =>
+          (field !== 'minLessons' || lessonsMode === 'min') &&
+          (field !== 'certificateMinScore' || certificatesEnabled) &&
+          (field !== 'requiredQuizIds' || requiredQuizzes) &&
+          (field !== 'requiredAssignmentIds' || requiredAssignments)
+      )
+      .map((field) => [field, field])
+  ) as Record<string, string>;
+  const saveFailure =
+    updateError && !hasViolationOn(updateError, shownFields)
+      ? updateError
+      : null;
+
   const readOnly = !canEdit || update.isPending;
 
-  const onSubmit = async (values: CompletionSettingsFormData) => {
+  const save = async (values: CompletionSettingsFormData): Promise<boolean> => {
     try {
       await update.mutateAsync(toPayload(values));
+      form.reset(values);
       toast({ title: t('course:settings.completion.saved') });
+      return true;
     } catch {
-      // Rendered inline below from `update.error`; a validation error is
-      // already on its field through `useServerValidation`.
+      // Shown once: on its field, or in the alert above Save.
+      return false;
     }
   };
 
-  /** The inline message for anything that is not a field violation. */
-  const inlineError = (() => {
-    const failure = update.error;
-    if (!failure || !isApiError(failure)) return null;
-    if (failure.kind === 'validation' && failure.violations?.length) {
-      return null;
-    }
-    if (failure.kind === 'forbidden') {
-      return t('errors:forbidden.description');
-    }
-    return t(failure.messageKey, {
-      defaultValue: t('errors:generic.description'),
-    });
-  })();
+  const onSubmit = async (values: CompletionSettingsFormData) => {
+    await save(values);
+  };
+
+  // B3 (V08) — leaving the page with a changed rule asks first, and "Save
+  // and leave" uses the same save.
+  useUnsavedChanges({
+    isDirty: canEdit && form.formState.isDirty,
+    onSave: () => saveViaForm(form, save),
+  });
 
   return (
     <Card>
@@ -233,7 +288,11 @@ export function CourseCompletionSettingsCard({
           <ErrorState kind={error?.kind} onRetry={() => refetch()} />
         ) : (
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-6"
+              noValidate
+            >
               {/* Lessons rule */}
               <FormField
                 control={form.control}
@@ -400,6 +459,7 @@ export function CourseCompletionSettingsCard({
                               : 'course:settings.completion.certificates.featureDisabled'
                           )}
                         </FormDescription>
+                        <FormMessage />
                       </div>
                       <FormControl>
                         <Switch
@@ -464,10 +524,12 @@ export function CourseCompletionSettingsCard({
                 </p>
               ) : null}
 
-              {inlineError ? (
-                <Alert variant="destructive" role="alert">
-                  <AlertDescription>{inlineError}</AlertDescription>
-                </Alert>
+              {saveFailure ? (
+                <SaveFailedAlert
+                  error={saveFailure}
+                  titleKey="common:form.notSaved"
+                  onRetry={() => void form.handleSubmit(onSubmit)()}
+                />
               ) : null}
 
               <div className="flex justify-end">
@@ -528,6 +590,7 @@ function RequiredItemsSection({
             <div className="space-y-0.5">
               <FormLabel>{t(labelKey)}</FormLabel>
               <FormDescription>{t(descriptionKey)}</FormDescription>
+              <FormMessage />
             </div>
             <FormControl>
               <Switch

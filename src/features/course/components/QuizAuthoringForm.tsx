@@ -17,7 +17,7 @@
  * close); a container that closes WITHOUT navigating (the sheet) reads
  * `onDirtyChange` to ask before discarding.
  */
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -44,14 +44,23 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { isApiError } from '@api';
-import { useServerValidation } from '@forms';
+import {
+  FormErrorSummary,
+  hasViolationOn,
+  RequiredMark,
+  SaveFailedAlert,
+  useFocusFirstViolation,
+  useLabelledViolations,
+  useServerValidation,
+} from '@forms';
 import {
   useCreateQuiz,
   useUpdateQuiz,
-  quizAuthoringSchema,
+  quizAuthoringSchemaFor,
+  MAX_QUIZ_DESCRIPTION_LENGTH,
   type QuizAuthoringFormData,
 } from '@features/learning';
+import { CharacterCount } from './CharacterCount';
 import type { QuizAuthoring, QuizStatus } from '@types';
 import {
   QuizQuestionsEditor,
@@ -89,6 +98,60 @@ const QUIZ_SERVER_FIELD_ALIASES = {
   timeLimitSeconds: 'timeLimitMinutes',
 } as const;
 
+/**
+ * Labels for the error summary and for server violations (V12/V18). A
+ * question's fields (`questions.0.prompt`) are labelled by the summary's
+ * fallback; the top-level ones are named here.
+ */
+/**
+ * B3 (UX audit) — where a question's problem is, in words: "Question 2 ·
+ * Option 1" instead of "Label" (the summary used the path's last segment).
+ */
+function quizItemLabel(
+  name: string,
+  t: (key: string, values?: Record<string, unknown>) => string
+): string | undefined {
+  const match = /^questions\.(\d+)(?:\.(\w+))?(?:\.(\d+)(?:\.\w+)?)?$/.exec(
+    name
+  );
+  if (!match) return undefined;
+  const question = t('course:quizAuthoring.editor.questionLabel', {
+    number: Number(match[1]) + 1,
+  });
+  const [, , field, option] = match;
+  if (field === 'options' && option !== undefined) {
+    return `${question} · ${t('course:quizAuthoring.editor.optionLabel', {
+      number: Number(option) + 1,
+    })}`;
+  }
+  if (field === 'options') {
+    return `${question} · ${t('course:quizAuthoring.editor.optionsLabel')}`;
+  }
+  if (field === 'prompt') {
+    return `${question} · ${t('course:quizAuthoring.editor.promptLabel')}`;
+  }
+  return question;
+}
+
+const QUIZ_FIELD_LABELS: Readonly<Record<string, string>> = {
+  title: 'course:quizAuthoring.editor.titleLabel',
+  description: 'course:quizAuthoring.editor.descriptionLabel',
+  status: 'course:quizAuthoring.editor.statusLabel',
+  passingScore: 'course:quizAuthoring.editor.passingScoreLabel',
+  maxAttempts: 'course:quizAuthoring.editor.maxAttemptsLabel',
+  timeLimitMinutes: 'course:quizAuthoring.settings.fields.timeLimit.label',
+  timeLimitSeconds: 'course:quizAuthoring.settings.fields.timeLimit.label',
+  availableFrom: 'course:quizAuthoring.settings.fields.availableFrom.label',
+  availableUntil: 'course:quizAuthoring.settings.fields.availableUntil.label',
+  dueAt: 'course:quizAuthoring.settings.fields.dueAt.label',
+  questions: 'course:quizAuthoring.editor.questionsTitle',
+};
+
+/** A server violation on any of these (or on a question) lands on a field. */
+function isFormField(field: string): boolean {
+  return field in QUIZ_FIELD_LABELS || field.startsWith('questions');
+}
+
 export function QuizAuthoringForm({
   courseId,
   quiz,
@@ -107,8 +170,21 @@ export function QuizAuthoringForm({
   const createQuiz = useCreateQuiz(courseId);
   const updateQuiz = useUpdateQuiz(courseId);
 
+  // B3 (V21) — a due date or window end the author sets must be in the
+  // future; the dates an existing quiz already has may stay as they are.
+  const initialDates = quiz ? quizToFormValues(quiz) : undefined;
+  const initialDueAt = initialDates?.dueAt;
+  const initialUntil = initialDates?.availableUntil;
+  const schema = useMemo(
+    () =>
+      quizAuthoringSchemaFor({
+        dueAt: initialDueAt,
+        availableUntil: initialUntil,
+      }),
+    [initialDueAt, initialUntil]
+  );
   const form = useForm<QuizAuthoringFormData>({
-    resolver: zodResolver(quizAuthoringSchema),
+    resolver: zodResolver(schema),
     defaultValues: quiz
       ? quizToFormValues(quiz)
       : emptyQuizValues(defaultStatus),
@@ -121,7 +197,31 @@ export function QuizAuthoringForm({
 
   const mutationError = isEditMode ? updateQuiz.error : createQuiz.error;
   const isSaving = createQuiz.isPending || updateQuiz.isPending;
-  useServerValidation(form, mutationError ?? null, QUIZ_SERVER_FIELD_ALIASES);
+  // B3 — violations on their fields, labelled in the page's language
+  // (V12) with focus on the first; anything else ONE inline alert with the
+  // real reason (V05 — it used to be a toast, a second toast and a generic
+  // line under the buttons).
+  const labelled = useLabelledViolations(
+    mutationError ?? null,
+    QUIZ_FIELD_LABELS
+  );
+  useServerValidation(form, labelled, QUIZ_SERVER_FIELD_ALIASES);
+  const violationFields = Object.fromEntries(
+    (labelled?.violations ?? [])
+      .filter((violation) => isFormField(violation.field))
+      .map((violation) => [violation.field, violation.field])
+  );
+  useFocusFirstViolation(
+    form,
+    labelled,
+    violationFields,
+    QUIZ_SERVER_FIELD_ALIASES
+  );
+  const saveFailure =
+    mutationError && !hasViolationOn(mutationError, violationFields)
+      ? mutationError
+      : null;
+  const descriptionLength = (form.watch('description') ?? '').length;
 
   async function persist(
     data: QuizAuthoringFormData
@@ -140,19 +240,8 @@ export function QuizAuthoringForm({
       }
       form.reset(data);
       return saved;
-    } catch (error) {
-      if (
-        isApiError(error) &&
-        error.kind === 'validation' &&
-        error.violations?.length
-      ) {
-        return null;
-      }
-      toast({
-        title: t('course:quizAuthoring.error'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+    } catch {
+      // Shown once: on its field, or in the alert above the buttons.
       return null;
     }
   }
@@ -181,6 +270,11 @@ export function QuizAuthoringForm({
         className="space-y-6"
         noValidate
       >
+        <FormErrorSummary
+          form={form}
+          fieldLabels={QUIZ_FIELD_LABELS}
+          labelFor={(name) => quizItemLabel(name, t)}
+        />
         <Card>
           <CardHeader>
             <CardTitle>
@@ -195,6 +289,7 @@ export function QuizAuthoringForm({
                 <FormItem>
                   <FormLabel>
                     {t('course:quizAuthoring.editor.titleLabel')}
+                    <RequiredMark />
                   </FormLabel>
                   <FormControl>
                     <Input autoFocus={autoFocusTitle} {...field} />
@@ -215,6 +310,11 @@ export function QuizAuthoringForm({
                   <FormControl>
                     <Textarea rows={2} {...field} value={field.value ?? ''} />
                   </FormControl>
+                  <CharacterCount
+                    id="quiz-description-count"
+                    length={descriptionLength}
+                    max={MAX_QUIZ_DESCRIPTION_LENGTH}
+                  />
                   <FormMessage />
                 </FormItem>
               )}
@@ -282,6 +382,18 @@ export function QuizAuthoringForm({
 
         {beforeActions}
 
+        {saveFailure ? (
+          <SaveFailedAlert
+            error={saveFailure}
+            titleKey={
+              isEditMode
+                ? 'common:form.notSaved'
+                : 'course:quizAuthoring.notCreated'
+            }
+            onRetry={() => void form.handleSubmit(onSubmit)()}
+          />
+        ) : null}
+
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
           <Button
             type="button"
@@ -298,13 +410,6 @@ export function QuizAuthoringForm({
             {t('course:quizAuthoring.editor.saveButton')}
           </Button>
         </div>
-
-        {mutationError &&
-        !(isApiError(mutationError) && mutationError.kind === 'validation') ? (
-          <p className="text-sm text-destructive">
-            {t('errors:generic.description')}
-          </p>
-        ) : null}
       </form>
     </FormProvider>
   );

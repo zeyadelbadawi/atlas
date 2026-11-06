@@ -9,6 +9,7 @@ import type { ApiError } from '@api';
 import { useCourseCatalogInvalidation } from './useCourseCatalogInvalidation';
 import { courseService } from '../services/CourseService';
 import type { AssignCourseInstructorPayload, Course } from '@types';
+import { COURSE_INLINE_ERRORS_META } from './inline-errors';
 
 export interface AssignCourseInstructorVariables {
   readonly courseId: string;
@@ -27,6 +28,7 @@ export function useAssignCourseInstructor(academyId: string) {
       courseService.assignCourseInstructor(academyId, courseId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: COURSE_INLINE_ERRORS_META,
     onSuccess: async (_course, { academyId, payload: { courseId } }) => {
       await invalidateCatalog(academyId, courseId);
     },

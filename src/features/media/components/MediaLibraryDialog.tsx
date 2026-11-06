@@ -37,7 +37,11 @@ import { Button } from '@/components/ui/button';
 import { ErrorState, EmptyState } from '@components/feedback';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useFilePicker, usePermissions, useSearch } from '@hooks';
-import { cn } from '@utils';
+import { cn, formatBytes, isolateNumericExpression } from '@utils';
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useFailureReason } from '@forms';
+import type { ApiError } from '@api';
 import {
   useMediaAssets,
   useMediaDeletion,
@@ -54,8 +58,83 @@ export interface MediaLibraryDialogProps {
   readonly onSelect: (asset: PublicMediaAsset) => void;
   /** Restricts the file picker's accepted types. Defaults to images. */
   readonly accept?: string;
+  /**
+   * The largest file this picker takes. Defaults to the public media limit
+   * (10 MB, `MEDIA_MAX_UPLOAD_BYTES`); a form with a smaller limit passes it.
+   */
+  readonly maxBytes?: number;
   /** URL the calling field currently holds, marked as the current file. */
   readonly selectedUrl?: string;
+}
+
+/** The public media upload limit (`MEDIA_MAX_UPLOAD_BYTES`, 10 MB). */
+const DEFAULT_MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+
+const TYPE_NAMES: Readonly<Record<string, string>> = {
+  'image/png': 'PNG',
+  'image/jpeg': 'JPG',
+  'image/jpg': 'JPG',
+  'image/webp': 'WebP',
+  'image/gif': 'GIF',
+  'image/svg+xml': 'SVG',
+  'application/pdf': 'PDF',
+};
+
+/** "PNG, JPG, WebP" for an explicit list; `null` for a wildcard like `image/*`. */
+export function acceptedTypeNames(accept: string): string[] | null {
+  const types = accept
+    .split(',')
+    .map((type) => type.trim())
+    .filter(Boolean);
+  if (types.length === 0 || types.some((type) => type.endsWith('/*'))) {
+    return null;
+  }
+  return [...new Set(types.map((type) => TYPE_NAMES[type] ?? type))];
+}
+
+/** Whether a file's MIME type fits the picker's `accept` list. */
+export function matchesAccept(mimeType: string, accept: string): boolean {
+  const types = accept
+    .split(',')
+    .map((type) => type.trim())
+    .filter(Boolean);
+  if (types.length === 0) return true;
+  return types.some((type) =>
+    type.endsWith('/*')
+      ? mimeType.startsWith(type.slice(0, -1))
+      : type === mimeType
+  );
+}
+
+/** The server's refusal, in this picker's terms (its own types and limit). */
+function serverFailureText(
+  error: ApiError | null,
+  helpers: {
+    readonly t: (key: string, values?: Record<string, unknown>) => string;
+    readonly typesText: string;
+    readonly sizeText: (bytes: number) => string;
+    readonly failureReason: (error: ApiError) => string;
+  }
+): string {
+  if (!error) return '';
+  if (
+    error.messageKey === 'errors.media.unsupportedFileType' ||
+    error.messageKey === 'errors.media.invalidDataUrl'
+  ) {
+    return helpers.t('media:dialog.errors.wrongType', {
+      types: helpers.typesText,
+    });
+  }
+  const maxBytes = error.details?.maxBytes;
+  if (
+    error.messageKey === 'errors.media.fileTooLarge' &&
+    typeof maxBytes === 'number'
+  ) {
+    return helpers.t('errors:media.fileTooLargeWithLimit', {
+      max: helpers.sizeText(maxBytes),
+    });
+  }
+  return helpers.failureReason(error);
 }
 
 export function MediaLibraryDialog({
@@ -64,9 +143,10 @@ export function MediaLibraryDialog({
   onOpenChange,
   onSelect,
   accept = 'image/*',
+  maxBytes = DEFAULT_MAX_UPLOAD_BYTES,
   selectedUrl,
 }: MediaLibraryDialogProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { hasPermission } = usePermissions();
   // Gates the controls only; the backend authorises the caller's academy
   // role. Uploading and deleting are for the managing roles; an instructor
@@ -90,12 +170,45 @@ export function MediaLibraryDialog({
       filters: { status: 'active', access: 'public' },
     },
   });
-  const uploadAsset = useUploadMediaAsset();
+  const uploadAsset = useUploadMediaAsset({ inlineErrors: true });
   const filePicker = useFilePicker({ accept });
+  const failureReason = useFailureReason();
+  const language = i18n.language === 'ar' ? 'ar' : 'en';
+  const sizeText = (bytes: number) => {
+    const { value, unitKey } = formatBytes(bytes, language);
+    return isolateNumericExpression(`${value} ${t(unitKey)}`);
+  };
+  const acceptedTypes = acceptedTypeNames(accept);
+  const typesText = acceptedTypes
+    ? acceptedTypes.join(', ')
+    : t('media:dialog.anyImage');
+  /**
+   * B3 (UX audit, V10) — the file's problem in words, checked before any
+   * upload: a wrong type or a file over the limit used to go to the server
+   * and come back as "Unexpected error" plus a toast suggesting PDF.
+   */
+  const [fileError, setFileError] = useState<string | null>(null);
 
   useEffect(() => {
     const file = filePicker.files?.[0];
     if (!file) return;
+    uploadAsset.reset();
+    if (!matchesAccept(file.type, accept)) {
+      setFileError(t('media:dialog.errors.wrongType', { types: typesText }));
+      filePicker.clearFiles();
+      return;
+    }
+    if (file.size > maxBytes) {
+      setFileError(
+        t('media:dialog.errors.tooLarge', {
+          size: sizeText(file.size),
+          max: sizeText(maxBytes),
+        })
+      );
+      filePicker.clearFiles();
+      return;
+    }
+    setFileError(null);
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -260,23 +373,28 @@ export function MediaLibraryDialog({
               />
             </div>
 
-            {uploadAsset.error ? (
+            {uploadAsset.error?.code === 'ENTITLEMENT_LIMIT_REACHED' ? (
               <ErrorState
-                // Phase 2 — a storage-limit rejection has its own stable
-                // `code`; everything else keeps the default kind-based
-                // message `ErrorState` already renders.
-                titleKey={
-                  uploadAsset.error.code === 'ENTITLEMENT_LIMIT_REACHED'
-                    ? 'media:dialog.errors.limitReachedTitle'
-                    : undefined
-                }
-                descriptionKey={
-                  uploadAsset.error.code === 'ENTITLEMENT_LIMIT_REACHED'
-                    ? 'media:dialog.errors.limitReachedDescription'
-                    : undefined
-                }
+                titleKey="media:dialog.errors.limitReachedTitle"
+                descriptionKey="media:dialog.errors.limitReachedDescription"
                 onRetry={filePicker.openFilePicker}
               />
+            ) : fileError || uploadAsset.error ? (
+              <Alert variant="destructive" data-testid="media-upload-error">
+                <AlertCircle className="size-4" aria-hidden />
+                <AlertTitle>
+                  {t('media:dialog.errors.uploadFailedTitle')}
+                </AlertTitle>
+                <AlertDescription>
+                  {fileError ??
+                    serverFailureText(uploadAsset.error, {
+                      t,
+                      typesText,
+                      sizeText,
+                      failureReason,
+                    })}
+                </AlertDescription>
+              </Alert>
             ) : null}
 
             <Button
@@ -290,6 +408,16 @@ export function MediaLibraryDialog({
                 ? t('media:dialog.uploading')
                 : t('media:dialog.chooseFile')}
             </Button>
+            <p className="text-xs text-muted-foreground">
+              {acceptedTypes
+                ? t('media:dialog.uploadRules', {
+                    types: typesText,
+                    max: sizeText(maxBytes),
+                  })
+                : t('media:dialog.uploadRulesAnyImage', {
+                    max: sizeText(maxBytes),
+                  })}
+            </p>
           </TabsContent>
         </Tabs>
       </DialogContent>

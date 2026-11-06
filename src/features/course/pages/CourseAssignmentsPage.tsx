@@ -27,7 +27,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { toast } from '@/hooks/use-toast';
-import { isApiError } from '@api';
 import { useConfirmDialog } from '@app/providers';
 import {
   useAssignmentsForAuthoring,
@@ -38,6 +37,7 @@ import {
 } from '@features/learning';
 import { useCourse } from '../hooks';
 import { AssignmentFormDialog } from '../components/AssignmentFormDialog';
+import { useActionFailureToast } from '../forms/course-form-feedback';
 import {
   getLessonStatusLabelKey,
   getLessonStatusTone,
@@ -63,6 +63,7 @@ export default function CourseAssignmentsPage(): JSX.Element {
   }>();
   const editorTabs = useCourseEditorTabs(academyId ?? '', courseId ?? '');
   const { confirm } = useConfirmDialog();
+  const failureToast = useActionFailureToast();
 
   const [dialog, setDialog] = useState<DialogState>(null);
 
@@ -115,19 +116,9 @@ export default function CourseAssignmentsPage(): JSX.Element {
         toast({ title: t('course:assignmentAuthoring.created') });
       }
       setDialog(null);
-    } catch (submitError) {
-      if (
-        isApiError(submitError) &&
-        submitError.kind === 'validation' &&
-        submitError.violations?.length
-      ) {
-        return;
-      }
-      toast({
-        title: t('course:assignmentAuthoring.error'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+    } catch {
+      // B3 (V05) — shown once, inside the dialog: on its field or in one
+      // alert with the real reason.
     }
   };
 
@@ -165,12 +156,8 @@ export default function CourseAssignmentsPage(): JSX.Element {
     try {
       await deleteAssignment.mutateAsync(assignment.id);
       toast({ title: t('course:assignmentAuthoring.deleted') });
-    } catch {
-      toast({
-        title: t('course:assignmentAuthoring.error'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+    } catch (deleteError) {
+      failureToast('course:assignmentAuthoring.deleteError', deleteError);
     }
   };
 
@@ -268,7 +255,12 @@ export default function CourseAssignmentsPage(): JSX.Element {
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label={t('course:assignmentAuthoring.menu.edit')}
+                        aria-label={t(
+                          'course:assignmentAuthoring.menu.actionsFor',
+                          {
+                            title: assignment.title,
+                          }
+                        )}
                       >
                         <MoreHorizontal className="size-4" aria-hidden />
                       </Button>

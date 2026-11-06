@@ -8,11 +8,11 @@
  * course is created as the backend's default (a draft); what happens next
  * is the caller's (`onCreated`).
  */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { BookOpen, Loader2, Upload } from 'lucide-react';
+import { BookOpen, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FieldHelp } from '@components/feedback';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,9 +35,29 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { useFilePicker, useSlugSuggestion, useUnsavedChanges } from '@hooks';
-import { useServerValidation } from '@forms';
+import { useSlugSuggestion, useUnsavedChanges } from '@hooks';
+import {
+  FormErrorSummary,
+  hasViolationOn,
+  RequiredMark,
+  SaveFailedAlert,
+  useFocusFirstViolation,
+  useLabelledViolations,
+  useServerValidation,
+} from '@forms';
 import { isApiError } from '@api';
+import { CharacterCount } from './CharacterCount';
+import { CourseThumbnailField } from './CourseThumbnailField';
+import {
+  COURSE_FIELD_ALIASES,
+  COURSE_FIELD_LABELS,
+  useSlugTakenError,
+  violationFields,
+} from '../forms/course-form-feedback';
+import {
+  MAX_COURSE_PRICE,
+  priceAmountFromInput,
+} from '../utils/price-input.utils';
 import { useCreateCourse } from '../hooks';
 import {
   useAcademyPriceCurrency,
@@ -48,13 +68,25 @@ import {
   type CreateCourseFormData,
 } from '../schemas/course.schemas';
 import {
-  ALLOWED_COURSE_THUMBNAIL_TYPES,
   DEFAULT_COURSE_VISIBILITY,
+  MAX_COURSE_DESCRIPTION_LENGTH,
   MAX_COURSE_SLUG_LENGTH,
-  MAX_COURSE_THUMBNAIL_FILE_SIZE,
 } from '../constants/course.constants';
 import type { Course, CoursePricing } from '@types';
 import { currencyOptions } from '@utils';
+
+/** The fields this form renders — where a server violation can land. */
+const CREATE_FORM_FIELDS = [
+  'title',
+  'slug',
+  'shortDescription',
+  'description',
+  'thumbnail',
+  'visibility',
+  'pricingType',
+  'pricingAmount',
+  'pricingCurrency',
+] as const;
 
 export interface CourseCreateFormProps {
   readonly academyId: string;
@@ -72,7 +104,7 @@ export function CourseCreateForm({
   cancelLabelKey = 'course:create.cancelButton',
 }: CourseCreateFormProps): JSX.Element {
   const { t } = useTranslation();
-  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
 
   const {
     mutateAsync: createCourse,
@@ -104,49 +136,32 @@ export function CourseCreateForm({
     isDirty: form.formState.isDirty,
   });
 
-  useServerValidation(form, mutationError);
-
-  const thumbnailPicker = useFilePicker({
-    accept: ALLOWED_COURSE_THUMBNAIL_TYPES.join(','),
-  });
-
-  useEffect(() => {
-    const file = thumbnailPicker.files?.[0];
-    if (!file) return;
-
-    if (file.size > MAX_COURSE_THUMBNAIL_FILE_SIZE) {
-      form.setError('thumbnail', {
-        type: 'validation',
-        message: 'course:create.thumbnailTooLarge',
-      });
-      thumbnailPicker.clearFiles();
-      return;
-    }
-    if (!ALLOWED_COURSE_THUMBNAIL_TYPES.includes(file.type)) {
-      form.setError('thumbnail', {
-        type: 'validation',
-        message: 'course:create.thumbnailInvalidType',
-      });
-      thumbnailPicker.clearFiles();
-      return;
-    }
-
-    form.clearErrors('thumbnail');
-    const previewUrl = thumbnailPicker.getPreviewUrl(file);
-    setThumbnailPreview((previous) => {
-      if (previous) thumbnailPicker.revokePreviewUrl(previous);
-      return previewUrl;
-    });
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      form.setValue('thumbnail', reader.result as string, {
-        shouldDirty: true,
-      });
-    };
-    reader.readAsDataURL(file);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [thumbnailPicker.files]);
+  // B3 — violations on their fields in the page's language (V12), the
+  // price violation on the price field (V07), a taken address on the slug
+  // (V13); anything else ONE inline alert (V05). No toast on top.
+  const labelled = useLabelledViolations(mutationError, COURSE_FIELD_LABELS);
+  useServerValidation(
+    form,
+    labelled,
+    COURSE_FIELD_ALIASES as unknown as Record<
+      string,
+      keyof CreateCourseFormData
+    >
+  );
+  const knownFields = violationFields(CREATE_FORM_FIELDS);
+  useFocusFirstViolation(form, labelled, knownFields, COURSE_FIELD_ALIASES);
+  const slugTaken = useSlugTakenError(form, mutationError);
+  const isLimit =
+    isApiError(mutationError) &&
+    mutationError.code === 'ENTITLEMENT_LIMIT_REACHED';
+  const createFailure =
+    mutationError &&
+    !slugTaken &&
+    !isLimit &&
+    !hasViolationOn(mutationError, knownFields)
+      ? mutationError
+      : null;
+  const descriptionLength = (form.watch('description') ?? '').length;
 
   const pricingType = form.watch('pricingType');
 
@@ -172,11 +187,13 @@ export function CourseCreateForm({
   });
 
   const onSubmit = async (data: CreateCourseFormData) => {
+    // Retry in the failure alert bypasses the disabled submit button.
+    if (isUploadingThumbnail) return;
     const pricing: CoursePricing =
       data.pricingType === 'paid'
         ? {
             type: 'paid',
-            amount: data.pricingAmount,
+            amount: priceAmountFromInput(data.pricingAmount),
             currency: data.pricingCurrency || academyCurrency,
           }
         : { type: 'free' };
@@ -187,7 +204,7 @@ export function CourseCreateForm({
         slug: data.slug,
         shortDescription: data.shortDescription || undefined,
         description: data.description || undefined,
-        thumbnail: data.thumbnail,
+        thumbnail: data.thumbnail || undefined,
         pricing,
         visibility: data.visibility,
       });
@@ -213,17 +230,18 @@ export function CourseCreateForm({
         });
         return;
       }
-      toast({
-        title: t('course:create.error'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+      // Anything else is shown once: on its field or in the alert below.
     }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6"
+        noValidate
+      >
+        <FormErrorSummary form={form} fieldLabels={COURSE_FIELD_LABELS} />
         <Card>
           <CardHeader>
             <CardTitle>{t('course:create.basicInformation')}</CardTitle>
@@ -234,7 +252,10 @@ export function CourseCreateForm({
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('course:create.titleLabel')}</FormLabel>
+                  <FormLabel>
+                    {t('course:create.titleLabel')}
+                    <RequiredMark />
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder={t('course:create.titlePlaceholder')}
@@ -251,7 +272,10 @@ export function CourseCreateForm({
               name="slug"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('course:create.slugLabel')}</FormLabel>
+                  <FormLabel>
+                    {t('course:create.slugLabel')}
+                    <RequiredMark />
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder={t('course:create.slugPlaceholder')}
@@ -321,6 +345,11 @@ export function CourseCreateForm({
                       {...field}
                     />
                   </FormControl>
+                  <CharacterCount
+                    id="create-description-count"
+                    length={descriptionLength}
+                    max={MAX_COURSE_DESCRIPTION_LENGTH}
+                  />
                   <FormMessage />
                 </FormItem>
               )}
@@ -329,38 +358,24 @@ export function CourseCreateForm({
             <FormField
               control={form.control}
               name="thumbnail"
-              render={() => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('course:create.thumbnailLabel')}</FormLabel>
                   <FormDescription>
                     {t('course:create.thumbnailHelp')}
                   </FormDescription>
-                  {thumbnailPreview ? (
-                    <div className="space-y-3">
-                      <img
-                        src={thumbnailPreview}
-                        alt=""
-                        className="h-24 w-auto rounded-lg border border-border"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={thumbnailPicker.openFilePicker}
-                      >
-                        {t('course:create.changeThumbnail')}
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={thumbnailPicker.openFilePicker}
-                    >
-                      <Upload className="size-4" strokeWidth={2} aria-hidden />
-                      {t('course:create.uploadThumbnail')}
-                    </Button>
-                  )}
+                  {/* B3 (V01) — uploaded to the media library; only the URL is kept. */}
+                  <CourseThumbnailField
+                    id="create-course-thumbnail"
+                    academyId={academyId}
+                    value={field.value || undefined}
+                    onChange={(url) =>
+                      form.setValue('thumbnail', url ?? '', {
+                        shouldDirty: true,
+                      })
+                    }
+                    onUploadingChange={setIsUploadingThumbnail}
+                  />
                   <FormMessage />
                 </FormItem>
               )}
@@ -447,17 +462,28 @@ export function CourseCreateForm({
                     name="pricingAmount"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('course:create.priceLabel')}</FormLabel>
+                        <FormLabel>
+                          {t('course:create.priceLabel')}
+                          <RequiredMark />
+                        </FormLabel>
                         <FormControl>
                           <Input
-                            type="number"
-                            min={0}
-                            step="0.01"
+                            type="text"
+                            inputMode="decimal"
+                            autoComplete="off"
+                            aria-required
+                            dir="ltr"
+                            data-ltr-content
                             placeholder={t('course:create.pricePlaceholder')}
                             {...field}
                             value={field.value ?? ''}
                           />
                         </FormControl>
+                        <FormDescription>
+                          {t('course:create.priceHelp', {
+                            max: MAX_COURSE_PRICE.toLocaleString('en-US'),
+                          })}
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -498,6 +524,14 @@ export function CourseCreateForm({
           </CardContent>
         </Card>
 
+        {createFailure ? (
+          <SaveFailedAlert
+            error={createFailure}
+            titleKey="course:create.notCreated"
+            onRetry={() => void form.handleSubmit(onSubmit)()}
+          />
+        ) : null}
+
         <div className="flex items-center justify-end gap-3">
           {onCancel ? (
             <Button
@@ -509,7 +543,7 @@ export function CourseCreateForm({
               {t(cancelLabelKey)}
             </Button>
           ) : null}
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" disabled={isPending || isUploadingThumbnail}>
             {isPending ? (
               <>
                 <Loader2 className="size-4 animate-spin" aria-hidden />

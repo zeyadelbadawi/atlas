@@ -37,6 +37,7 @@ import {
   useCourseEditorTabs,
 } from '../hooks/useCourseEditorTabs';
 import type { Quiz } from '@types';
+import { useActionFailureToast } from '../forms/course-form-feedback';
 
 export default function CourseQuizzesPage(): JSX.Element {
   const { t } = useTranslation();
@@ -47,6 +48,7 @@ export default function CourseQuizzesPage(): JSX.Element {
   }>();
   const editorTabs = useCourseEditorTabs(academyId ?? '', courseId ?? '');
   const { confirm } = useConfirmDialog();
+  const failureToast = useActionFailureToast();
 
   const { data: course } = useCourse(academyId ?? '', courseId ?? '');
 
@@ -128,12 +130,8 @@ export default function CourseQuizzesPage(): JSX.Element {
     try {
       await deleteQuiz.mutateAsync(quiz.id);
       toast({ title: t('course:quizAuthoring.deleted') });
-    } catch {
-      toast({
-        title: t('course:quizAuthoring.error'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+    } catch (deleteError) {
+      failureToast('course:quizAuthoring.deleteError', deleteError);
     }
   };
 
@@ -221,7 +219,9 @@ export default function CourseQuizzesPage(): JSX.Element {
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label={t('course:quizAuthoring.menu.edit')}
+                        aria-label={t('course:quizAuthoring.menu.actionsFor', {
+                          title: quiz.title,
+                        })}
                       >
                         <MoreHorizontal className="size-4" aria-hidden />
                       </Button>

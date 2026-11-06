@@ -248,7 +248,8 @@
         "navy": "كحلي",
         "burgundy": "عنّابي",
         "forest": "أخضر غابي"
-      }
+      },
+      "hexLabel": "{{color}}: رمز hex"
     }
   }
 }

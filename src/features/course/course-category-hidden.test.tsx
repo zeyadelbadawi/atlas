@@ -129,7 +129,7 @@ describe('course categories are hidden from Academy Owners and Managers', () => 
       '/dashboard/academy/:academyId/courses/create',
       <CourseCreatePage />
     );
-    await user.type(screen.getByLabelText('Course Title'), 'Arabic 101');
+    await user.type(screen.getByLabelText(/^Course Title/), 'Arabic 101');
     expect(screen.queryByText('Category')).toBeNull();
     await user.click(screen.getByRole('button', { name: 'Create Course' }));
     await waitFor(() => expect(createCourse).toHaveBeenCalledTimes(1));
@@ -145,7 +145,7 @@ describe('course categories are hidden from Academy Owners and Managers', () => 
       <CourseEditPage />
     );
     const title =
-      await screen.findByLabelText<HTMLInputElement>('Course Title');
+      await screen.findByLabelText<HTMLInputElement>(/^Course Title/);
     // The field renders before the loaded course fills it; editing earlier
     // races that reset (the typed text would be appended to it).
     await waitFor(() => expect(title.value).toBe('Chemistry 101'));

@@ -27,7 +27,10 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useServerValidation } from '@forms';
+import { RequiredMark, SaveFailedAlert } from '@forms';
+import { useDialogServerFeedback } from '../forms/course-form-feedback';
+import { CharacterCount } from './CharacterCount';
+import { MAX_SECTION_DESCRIPTION_LENGTH } from '../constants/course.constants';
 import {
   courseSectionSchema,
   type CourseSectionFormData,
@@ -44,6 +47,11 @@ export interface SectionFormDialogProps {
   /** The create/update mutation's current error, so a validation (400) failure maps onto the field that caused it instead of only a page-level toast. */
   readonly error?: ApiError | null;
 }
+
+const SECTION_FIELD_LABELS = {
+  title: 'course:builder.sectionDialog.titleLabel',
+  description: 'course:builder.sectionDialog.descriptionLabel',
+} as const;
 
 const EMPTY_SECTION_VALUES: CourseSectionFormData = {
   title: '',
@@ -83,7 +91,10 @@ export function SectionFormDialog({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, defaultValues]);
 
-  useServerValidation(form, error ?? null);
+  // B3 — violations on their fields (labelled), anything else one alert
+  // in the dialog (V05): the dialog stays open with the typed text.
+  const failure = useDialogServerFeedback(form, error, SECTION_FIELD_LABELS);
+  const descriptionLength = (form.watch('description') ?? '').length;
 
   return (
     <Dialog
@@ -106,7 +117,11 @@ export function SectionFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4"
+            noValidate
+          >
             <FormField
               control={form.control}
               name="title"
@@ -114,6 +129,7 @@ export function SectionFormDialog({
                 <FormItem>
                   <FormLabel>
                     {t('course:builder.sectionDialog.titleLabel')}
+                    <RequiredMark />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -146,10 +162,23 @@ export function SectionFormDialog({
                       {...field}
                     />
                   </FormControl>
+                  <CharacterCount
+                    id="section-description-count"
+                    length={descriptionLength}
+                    max={MAX_SECTION_DESCRIPTION_LENGTH}
+                  />
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            {failure ? (
+              <SaveFailedAlert
+                error={failure}
+                titleKey="common:form.notSaved"
+                onRetry={() => void form.handleSubmit(onSubmit)()}
+              />
+            ) : null}
 
             <DialogFooter>
               <Button

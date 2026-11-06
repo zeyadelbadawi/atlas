@@ -11,6 +11,7 @@ import { invalidateCourseCurriculum } from '@services/query/curriculum-invalidat
 import type { ApiError } from '@api';
 import { courseService } from '../services/CourseService';
 import type { CourseLesson, UpdateCourseLessonPayload } from '@types';
+import { COURSE_INLINE_ERRORS_META } from './inline-errors';
 
 export interface UpdateCourseLessonVariables {
   readonly sectionId: string;
@@ -36,6 +37,7 @@ export function useUpdateCourseLesson(academyId: string, courseId: string) {
       ),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: COURSE_INLINE_ERRORS_META,
     onSuccess: async (_data, { academyId }) => {
       await invalidateCourseCurriculum(queryClient, { academyId, courseId });
     },

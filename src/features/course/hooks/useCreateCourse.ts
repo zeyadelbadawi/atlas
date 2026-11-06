@@ -9,6 +9,7 @@ import type { ApiError } from '@api';
 import { useCourseCatalogInvalidation } from './useCourseCatalogInvalidation';
 import { courseService } from '../services/CourseService';
 import type { Course, CreateCoursePayload } from '@types';
+import { COURSE_INLINE_ERRORS_META } from './inline-errors';
 
 export function useCreateCourse(academyId: string) {
   const invalidateCatalog = useCourseCatalogInvalidation();
@@ -25,6 +26,7 @@ export function useCreateCourse(academyId: string) {
     // suppressed to avoid showing the user two messages for one failure.
     showSuccessToast: false,
     showErrorToast: false,
+    meta: COURSE_INLINE_ERRORS_META,
     onSuccess: async (course, { academyId }) => {
       await invalidateCatalog(academyId, course.id);
     },

@@ -80,7 +80,7 @@ describe('course wizard steps', () => {
     expect(parseCourseWizardStep(null)).toBeNull();
   });
 
-  it('a fresh draft: basics and (free) pricing done, assessments optional, resume at details', () => {
+  it('a fresh draft: basics done, (free) pricing and assessments optional, resume at details', () => {
     const states = deriveCourseWizardStepStates(course(), readiness());
     expect(states).toEqual({
       basics: 'complete',
@@ -88,7 +88,8 @@ describe('course wizard steps', () => {
       media: 'incomplete',
       curriculum: 'incomplete',
       assessments: 'optional',
-      pricing: 'complete',
+      // B3 (V24) — free is the default, not proof Pricing was opened.
+      pricing: 'optional',
       review: 'incomplete',
       publish: 'incomplete',
     });
@@ -110,6 +111,14 @@ describe('course wizard steps', () => {
     expect(states.assessments).toBe('complete');
     expect(states.pricing).toBe('incomplete');
     expect(firstIncompleteCourseWizardStep(states)).toBe('pricing');
+  });
+
+  it('a paid course with a price and currency completes Pricing (V24)', () => {
+    const states = deriveCourseWizardStepStates(
+      course({ pricing: { type: 'paid', amount: 12.5, currency: 'EGP' } }),
+      readiness()
+    );
+    expect(states.pricing).toBe('complete');
   });
 
   it('review completes on ready; publish on a published course', () => {

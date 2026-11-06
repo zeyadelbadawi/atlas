@@ -40,6 +40,8 @@ export interface LinesTextareaProps {
   readonly rows?: number;
   readonly placeholder?: string;
   readonly id?: string;
+  /** The form field's name — lets the error summary link to this box. */
+  readonly name?: string;
   readonly disabled?: boolean;
   readonly 'aria-describedby'?: string;
   readonly 'aria-invalid'?: boolean;
@@ -59,6 +61,7 @@ export function LinesTextarea({
   rows = 4,
   placeholder,
   id,
+  name,
   disabled,
   ...aria
 }: LinesTextareaProps): JSX.Element {
@@ -100,6 +103,7 @@ export function LinesTextarea({
   return (
     <Textarea
       id={id}
+      name={name}
       rows={rows}
       value={text}
       disabled={disabled}

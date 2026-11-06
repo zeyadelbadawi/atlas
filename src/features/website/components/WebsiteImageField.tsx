@@ -293,6 +293,7 @@ export function WebsiteImageField({
           onOpenChange={setIsLibraryOpen}
           onSelect={(asset) => onChange(asset.url)}
           accept={ALLOWED_WEBSITE_IMAGE_TYPES.join(',')}
+          maxBytes={MAX_WEBSITE_IMAGE_FILE_SIZE}
         />
       ) : null}
     </div>

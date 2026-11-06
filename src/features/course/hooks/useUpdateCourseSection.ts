@@ -13,6 +13,7 @@ import { courseKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { courseService } from '../services/CourseService';
 import type { CourseSection, UpdateCourseSectionPayload } from '@types';
+import { COURSE_INLINE_ERRORS_META } from './inline-errors';
 
 export interface UpdateCourseSectionVariables {
   readonly sectionId: string;
@@ -36,6 +37,7 @@ export function useUpdateCourseSection(academyId: string, courseId: string) {
       ),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: COURSE_INLINE_ERRORS_META,
     onSuccess: async (_data, { academyId }) => {
       await invalidate(courseKeys.sections(academyId, courseId));
     },

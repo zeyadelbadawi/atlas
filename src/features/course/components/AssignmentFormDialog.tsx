@@ -9,7 +9,7 @@
  * touches the authoring surface (`assignmentService.createAssignment`/
  * `updateAssignment`).
  */
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { useDirtyGuard } from '@features/unsaved-changes';
@@ -43,11 +43,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useServerValidation } from '@forms';
+import { RequiredMark, SaveFailedAlert } from '@forms';
 import {
-  assignmentAuthoringSchema,
+  assignmentAuthoringSchemaFor,
+  MAX_ASSIGNMENT_DESCRIPTION_LENGTH,
+  MAX_ASSIGNMENT_INSTRUCTIONS_LENGTH,
   type AssignmentAuthoringFormData,
 } from '@features/learning';
+import { useDialogServerFeedback } from '../forms/course-form-feedback';
+import { CharacterCount } from './CharacterCount';
 import type { ApiError } from '@api';
 import type { Assignment } from '@types';
 
@@ -81,6 +85,15 @@ export interface AssignmentFormDialogProps {
   readonly error?: ApiError | null;
 }
 
+const ASSIGNMENT_FIELD_LABELS = {
+  title: 'course:assignmentAuthoring.dialog.titleLabel',
+  description: 'course:assignmentAuthoring.dialog.descriptionLabel',
+  instructions: 'course:assignmentAuthoring.dialog.instructionsLabel',
+  status: 'course:assignmentAuthoring.dialog.statusLabel',
+  dueAt: 'course:assignmentAuthoring.dialog.dueAtLabel',
+  latePolicy: 'course:assignmentAuthoring.dialog.latePolicyLabel',
+} as const;
+
 const EMPTY_VALUES: AssignmentAuthoringFormData = {
   title: '',
   description: '',
@@ -104,8 +117,17 @@ export function AssignmentFormDialog({
 }: AssignmentFormDialogProps): JSX.Element {
   const { t } = useTranslation();
 
+  // B3 (V21) — a new or changed due date must be in the future; the date
+  // an assignment already has may stay in the past while it is edited.
+  const initialDueAt = assignment?.dueAt
+    ? toDateTimeLocalValue(assignment.dueAt)
+    : undefined;
+  const schema = useMemo(
+    () => assignmentAuthoringSchemaFor(initialDueAt),
+    [initialDueAt]
+  );
   const form = useForm<AssignmentAuthoringFormData>({
-    resolver: zodResolver(assignmentAuthoringSchema),
+    resolver: zodResolver(schema),
     defaultValues: EMPTY_VALUES,
   });
 
@@ -114,7 +136,10 @@ export function AssignmentFormDialog({
   // outside click and Escape all need to be intercepted here instead.
   const dirtyGuard = useDirtyGuard(form.formState.isDirty);
 
-  useServerValidation(form, error ?? null);
+  // B3 — violations on their fields (labelled), anything else one alert.
+  const failure = useDialogServerFeedback(form, error, ASSIGNMENT_FIELD_LABELS);
+  const descriptionLength = (form.watch('description') ?? '').length;
+  const instructionsLength = (form.watch('instructions') ?? '').length;
 
   useEffect(() => {
     if (!open) return;
@@ -158,7 +183,11 @@ export function AssignmentFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4"
+            noValidate
+          >
             <FormField
               control={form.control}
               name="title"
@@ -166,6 +195,7 @@ export function AssignmentFormDialog({
                 <FormItem>
                   <FormLabel>
                     {t('course:assignmentAuthoring.dialog.titleLabel')}
+                    <RequiredMark />
                   </FormLabel>
                   <FormControl>
                     <Input autoFocus {...field} />
@@ -186,6 +216,11 @@ export function AssignmentFormDialog({
                   <FormControl>
                     <Textarea rows={2} {...field} />
                   </FormControl>
+                  <CharacterCount
+                    id="assignment-description-count"
+                    length={descriptionLength}
+                    max={MAX_ASSIGNMENT_DESCRIPTION_LENGTH}
+                  />
                   <FormMessage />
                 </FormItem>
               )}
@@ -202,6 +237,11 @@ export function AssignmentFormDialog({
                   <FormControl>
                     <Textarea rows={4} {...field} />
                   </FormControl>
+                  <CharacterCount
+                    id="assignment-instructions-count"
+                    length={instructionsLength}
+                    max={MAX_ASSIGNMENT_INSTRUCTIONS_LENGTH}
+                  />
                   <FormMessage />
                 </FormItem>
               )}
@@ -354,6 +394,14 @@ export function AssignmentFormDialog({
                 </FormItem>
               )}
             />
+
+            {failure ? (
+              <SaveFailedAlert
+                error={failure}
+                titleKey="common:form.notSaved"
+                onRetry={() => void form.handleSubmit(onSubmit)()}
+              />
+            ) : null}
 
             <DialogFooter>
               <Button

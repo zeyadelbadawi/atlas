@@ -11,6 +11,7 @@ import type { AcademyScopedVariables } from '@/shared/hooks';
 import { invalidateCourseCurriculum } from '@services/query/curriculum-invalidation';
 import type { ApiError } from '@api';
 import { courseService } from '../services/CourseService';
+import { COURSE_INLINE_ERRORS_META } from './inline-errors';
 
 export function useDeleteCourseSection(academyId: string, courseId: string) {
   const queryClient = useQueryClient();
@@ -24,6 +25,7 @@ export function useDeleteCourseSection(academyId: string, courseId: string) {
       courseService.deleteCourseSection(academyId, courseId, sectionId),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: COURSE_INLINE_ERRORS_META,
     onSuccess: async (_data, { academyId }) => {
       await invalidateCourseCurriculum(queryClient, { academyId, courseId });
     },
