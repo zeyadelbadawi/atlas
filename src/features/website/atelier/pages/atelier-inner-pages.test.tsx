@@ -652,21 +652,17 @@ describe('AtelierContact', () => {
     );
   });
 
-  it('validates like Theme 1: required, bounded fields; blank input sends nothing', () => {
+  it('validates like Theme 1: required, counted fields; blank input sends nothing', () => {
     const submit = vi
       .spyOn(publicWebsiteService, 'submitContactMessage')
       .mockResolvedValue(undefined);
     wrap(<AtelierContact config={CONTACT} academyId="a1" pages={PAGES} />);
     const name = screen.getByLabelText('Name');
     expect(name.hasAttribute('required')).toBe(true);
-    expect(name.getAttribute('maxlength')).toBe('200');
+    // B9 — nothing is cut: a counter shows the length, a long value is refused.
+    expect(name.hasAttribute('maxlength')).toBe(false);
     expect(screen.getByLabelText('Email').getAttribute('type')).toBe('email');
-    expect(screen.getByLabelText('Email').getAttribute('maxlength')).toBe(
-      '320'
-    );
-    expect(screen.getByLabelText('Message').getAttribute('maxlength')).toBe(
-      '5000'
-    );
+    expect(screen.getByText('0 / 5000 characters')).toBeTruthy();
     fireEvent.change(name, { target: { value: '   ' } });
     fireEvent.submit(name.closest('form')!);
     expect(submit).not.toHaveBeenCalled();

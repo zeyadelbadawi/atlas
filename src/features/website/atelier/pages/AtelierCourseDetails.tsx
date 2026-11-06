@@ -53,6 +53,7 @@ import {
 import { AtelierCourseRow } from './AtelierCourseRow';
 import { AtelierNotFound } from './AtelierSystemPages';
 import '../atelier-pages.css';
+import { CourseEnrollError } from '@/features/website/renderer/CourseEnrollError';
 
 const COURSE_FALLBACK = 'theme-asset:atelier/course-fallback';
 
@@ -143,7 +144,9 @@ export function AtelierCourseDetails({
     setPreviewLesson,
     isAuthenticated,
     isEnrolled,
+    hasStarted,
     enrollError,
+    continueToCourse,
     action,
   } = useCourseDetails(academyId, courseId, locale);
 
@@ -177,9 +180,9 @@ export function AtelierCourseDetails({
         thread="none"
       >
         <div className="atp-statement" data-course-error="">
-          <p className="at-subtitle">
+          <h1 className="at-subtitle">
             {t('website:atelier.pages.courseDetails.errorTitle')}
-          </p>
+          </h1>
           <p className="at-lead mt-4">
             {t('website:atelier.pages.courseDetails.errorDescription')}
           </p>
@@ -349,6 +352,7 @@ export function AtelierCourseDetails({
           <div aria-hidden className="lg:col-span-4 lg:col-start-9">
             <AtelierMedia
               value={course.thumbnail || COURSE_FALLBACK}
+              errorValue={COURSE_FALLBACK}
               alt=""
               shape="arch"
               priority
@@ -562,6 +566,7 @@ export function AtelierCourseDetails({
                 academyId={academyId}
                 courseId={courseId}
                 canReview={isAuthenticated && isEnrolled}
+                hasStarted={hasStarted}
               />
               <CourseReviews
                 academyId={academyId}
@@ -594,11 +599,12 @@ export function AtelierCourseDetails({
               </p>
               <hr className="atp-perforation" />
               {actionButton('w-full')}
-              {enrollError ? (
-                <p role="alert" className="atp-error mt-4 text-sm">
-                  {t('website:renderer.courseDetails.enrollError')}
-                </p>
-              ) : null}
+              <CourseEnrollError
+                error={enrollError}
+                onContinue={continueToCourse}
+                className="atp-error mt-4 text-sm"
+                actionClassName="at-btn-ghost"
+              />
               {includes.length > 0 ? (
                 <div className="mt-7">
                   <p className="at-label mb-2">
@@ -626,6 +632,7 @@ export function AtelierCourseDetails({
       {/* Phones and tablets: the price and the action stay one tap away. */}
       <div
         data-atelier-purchase-bar=""
+        data-purchase-bar=""
         className={cn(
           'atp-purchase-bar lg:hidden',
           showBar
@@ -640,8 +647,7 @@ export function AtelierCourseDetails({
           {actionButton('min-h-11')}
         </div>
       </div>
-      {/* Room for the bar, so it never covers the page's last content. */}
-      <div aria-hidden className="h-20 lg:hidden" />
+      {/* Its room is at the bottom of the footer (`WebsiteChrome`). */}
     </article>
   );
 }

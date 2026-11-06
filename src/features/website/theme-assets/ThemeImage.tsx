@@ -21,7 +21,7 @@
  *     slot uses (`media-variants.ts`). The `<img>` keeps the original as
  *     its `src`, for browsers that pick neither source.
  */
-import type { CSSProperties, ReactNode } from 'react';
+import { useState, type CSSProperties, type ReactNode } from 'react';
 import {
   isThemeAssetReference,
   resolveThemeAsset,
@@ -49,6 +49,13 @@ export interface ThemeImageProps {
    * priority, as the hero is. Omitted, the manifest decides.
    */
   readonly priority?: boolean;
+  /**
+   * B9 (UX audit) V15 — what to draw when an uploaded image (a URL, not a
+   * theme asset) fails to load: this value instead (a course card's theme
+   * fallback photograph), else `fallback`, else nothing — never the
+   * browser's broken-image icon.
+   */
+  readonly errorValue?: string;
 }
 
 export function ThemeImage({
@@ -60,10 +67,30 @@ export function ThemeImage({
   fallback = null,
   loading,
   priority = false,
+  errorValue,
 }: ThemeImageProps): JSX.Element | null {
   const { locale } = usePublicWebsiteLocale();
+  // The URL that failed to load; a new `value` is tried afresh.
+  const [failed, setFailed] = useState<string>();
   if (!value) return <>{fallback}</>;
   if (!isThemeAssetReference(value)) {
+    if (failed === value) {
+      return errorValue && errorValue !== value ? (
+        <ThemeImage
+          value={errorValue}
+          alt={alt}
+          className={className}
+          style={style}
+          sizes={sizes}
+          fallback={fallback}
+          loading={loading}
+          priority={priority}
+        />
+      ) : (
+        <>{fallback}</>
+      );
+    }
+    const onError = () => setFailed(value);
     const image = loading ? (
       <img
         src={value}
@@ -73,9 +100,16 @@ export function ThemeImage({
         {...(loading === 'eager' ? { fetchpriority: 'high' } : {})}
         className={className}
         style={style}
+        onError={onError}
       />
     ) : (
-      <img src={value} alt={alt} className={className} style={style} />
+      <img
+        src={value}
+        alt={alt}
+        className={className}
+        style={style}
+        onError={onError}
+      />
     );
     const avif = mediaVariantSrcSet(value, 'avif');
     if (!avif) return image;

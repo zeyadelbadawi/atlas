@@ -165,6 +165,16 @@
   text-decoration: none;
   overflow-wrap: anywhere;
 }
+/* B9 (UX audit) V14 — on a phone the name shares the bar with Sign Up and
+   the menu: a smaller size and a third line keep a typical academy name
+   whole instead of cutting it after two lines. */
+@media (max-width: 479px) {
+  [data-theme-pack='manara'] .mnp-header .mnp-wordmark {
+    font-size: 0.9375rem;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+}
 @media (min-width: 768px) {
   [data-theme-pack='manara'] .mnp-wordmark {
     font-size: 1.25rem;
@@ -734,6 +744,17 @@
     background-color var(--mn-fast) var(--mn-ease),
     border-color var(--mn-fast) var(--mn-ease),
     color var(--mn-fast) var(--mn-ease);
+}
+/* B9 (UX audit) V11 — a name longer than the screen wraps inside its pill
+   instead of being cut at the rail's edge; the count stays whole. */
+[data-theme-pack='manara'] .mnp-filter-pill {
+  max-inline-size: calc(100vw - 2.5rem);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: start;
+}
+[data-theme-pack='manara'] .mnp-filter-pill .mnp-count {
+  flex: none;
 }
 [data-theme-pack='manara'] .mnp-filter-pill:hover {
   border-color: var(--mn-block);

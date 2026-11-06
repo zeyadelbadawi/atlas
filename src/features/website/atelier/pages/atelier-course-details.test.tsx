@@ -36,7 +36,7 @@ interface Details {
   setPreviewLesson: ReturnType<typeof vi.fn>;
   isAuthenticated: boolean;
   isEnrolled: boolean;
-  enrollError: boolean;
+  enrollError: { kind: 'server' } | null;
   action: {
     kind: string;
     labelKey: string;
@@ -184,7 +184,7 @@ beforeEach(() => {
     setPreviewLesson: vi.fn(),
     isAuthenticated: false,
     isEnrolled: false,
-    enrollError: false,
+    enrollError: null,
     action: {
       kind: 'signIn',
       labelKey: 'website:renderer.courseDetails.signInToEnrollAction',
@@ -302,7 +302,7 @@ describe('AtelierCourseDetails', () => {
   });
 
   it('an enrolment failure is announced; a busy action is disabled', () => {
-    details.enrollError = true;
+    details.enrollError = { kind: 'server' };
     details.action = {
       ...details.action,
       kind: 'enroll',

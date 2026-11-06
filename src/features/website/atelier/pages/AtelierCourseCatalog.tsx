@@ -36,6 +36,7 @@ import {
 } from '../atelier-parts';
 import { AtelierCourseRow, AtelierCourseRowSkeleton } from './AtelierCourseRow';
 import '../atelier-pages.css';
+import { loadFailureKey } from '@/features/website/utils/load-failure.utils';
 
 function FilterSelect({
   id,
@@ -345,7 +346,12 @@ export function AtelierCourseCatalog({
         <Statement
           marker={{ 'data-catalog-error': '' }}
           title={t('website:atelier.pages.catalog.errorTitle')}
-          description={t('website:atelier.pages.catalog.errorDescription')}
+          description={t(
+            loadFailureKey(
+              error,
+              'website:atelier.pages.catalog.errorDescription'
+            )
+          )}
           action={
             <button
               type="button"

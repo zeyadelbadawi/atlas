@@ -82,6 +82,7 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
   const previewLessonTitle = 'Free sample: your first build';
   let freeCourseId: string;
   let freeCourseTitle: string;
+  let freeLessonId: string;
   let paidCourseId: string;
   let paidCourseTitle: string;
 
@@ -132,13 +133,13 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
     );
     // Publishing needs at least one published activity (backend B0-LRN-03),
     // so the free course gets a lesson of its own before it is published.
-    await addExternalPreviewLesson(
+    ({ lessonId: freeLessonId } = await addExternalPreviewLesson(
       request,
       owner,
       academyId,
       freeCourseId,
       `J6 Free Lesson ${stamp}`
-    );
+    ));
     await publishCourse(request, owner, academyId, freeCourseId);
     await publishCourse(request, owner, academyId, paidCourseId);
 
@@ -341,6 +342,15 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
     // course route), so the public page is left behind here.
     await expect(page).toHaveURL(/\/my\/courses\//, { timeout: 30_000 });
     expect((await enrollmentForCourse(request, learner, freeCourseId))?.status).toBe('enrolled');
+
+    // B9 (UX audit) V24 — a review is offered once the course is started.
+    const completed = await apiPost(
+      request,
+      learner,
+      `/courses/${freeCourseId}/progress/complete-lesson`,
+      { lessonId: freeLessonId }
+    );
+    expect(completed.status(), await completed.text()).toBe(201);
 
     // Back on the public page, now enrolled: the review form is offered.
     // `MyCourseReviewForm` is gated on `isAuthenticated && isEnrolled`.

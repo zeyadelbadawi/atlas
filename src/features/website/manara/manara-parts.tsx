@@ -305,6 +305,7 @@ export function ManaraPlaceholder({
  */
 export function ManaraMedia({
   value,
+  errorValue,
   alt,
   sizes,
   shape = 'rect',
@@ -313,6 +314,8 @@ export function ManaraMedia({
   children,
 }: {
   readonly value: string | undefined;
+  /** Drawn when an uploaded image fails to load (B9 V15). */
+  readonly errorValue?: string;
   readonly alt: string;
   readonly sizes: string;
   readonly shape?: 'rect' | 'slant' | 'poster';
@@ -329,6 +332,7 @@ export function ManaraMedia({
     >
       <ThemeImage
         value={value}
+        errorValue={errorValue}
         alt={alt}
         sizes={sizes}
         className="size-full object-cover"

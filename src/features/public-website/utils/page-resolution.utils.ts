@@ -16,6 +16,31 @@ export interface ResolvedPathTarget {
 
 const COURSE_DETAILS_PATH = /^\/courses\/([^/]+)$/;
 
+/**
+ * B9 (UX audit) V04 — the Course Details page every site has, used when the
+ * published pages carry none: a site published before the page existed, or
+ * whose page was never published on its own, otherwise answered every
+ * `/courses/:id` with "page not found". Course Details has no sections
+ * (`CourseDetailsTemplate` / the theme's `CourseDetails` draws it from the
+ * course itself), so nothing the owner wrote is missing from it.
+ */
+export function builtInCourseDetailsPage(academyId: string): WebsitePage {
+  return {
+    id: 'built-in-course-details',
+    academyId,
+    pageType: 'core',
+    coreType: 'courseDetails',
+    title: 'Course Details',
+    slug: 'course-details',
+    visible: true,
+    seo: {},
+    sections: [],
+    version: 0,
+    createdAt: '',
+    updatedAt: '',
+  };
+}
+
 export function resolvePathToPage(
   pathname: string,
   pages: readonly WebsitePage[]
@@ -24,9 +49,9 @@ export function resolvePathToPage(
 
   const courseMatch = normalized.match(COURSE_DETAILS_PATH);
   if (courseMatch) {
-    const courseDetailsPage = pages.find(
-      (page) => page.coreType === 'courseDetails'
-    );
+    const courseDetailsPage =
+      pages.find((page) => page.coreType === 'courseDetails') ??
+      builtInCourseDetailsPage(pages[0]?.academyId ?? '');
     return { page: courseDetailsPage, courseId: courseMatch[1] };
   }
 

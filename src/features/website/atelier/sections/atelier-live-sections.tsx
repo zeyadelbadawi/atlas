@@ -208,6 +208,7 @@ function CourseEntry({
       {plate ? (
         <AtelierMedia
           value={image}
+          errorValue={COURSE_FALLBACK}
           alt=""
           sizes="(min-width: 768px) 22rem, 78vw"
           className="aspect-[3/2]"
@@ -218,6 +219,7 @@ function CourseEntry({
         <div aria-hidden className="ath-peek">
           <AtelierMedia
             value={image}
+            errorValue={COURSE_FALLBACK}
             alt=""
             sizes="20rem"
             className="size-full"

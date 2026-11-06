@@ -20,7 +20,7 @@ import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AlertCircle, Loader2 } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { useAuth, useSignIn, useToast, useBidiIsolation } from '@hooks';
 import { authenticationService } from '@services/identity';
@@ -216,13 +216,14 @@ export function GoogleReturnFlow({
       <div className="space-y-4" data-testid="google-return-failed">
         <Alert variant={state.cancelled ? 'default' : 'destructive'}>
           <AlertCircle className="size-4" aria-hidden />
-          <AlertTitle>
+          {/* B9 (UX audit) V19 — an h2 under the page's h1 (AlertTitle is an h5). */}
+          <h2 className="mb-1 text-sm font-medium leading-none tracking-tight">
             {t(
               state.cancelled
                 ? 'auth:google.return.cancelledTitle'
                 : 'auth:google.return.failedTitle'
             )}
-          </AlertTitle>
+          </h2>
           <AlertDescription>
             {state.cancelled
               ? t('auth:google.return.cancelledDescription')

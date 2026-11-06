@@ -23,8 +23,8 @@
  *     (its pack registers their loaders), before hydrating, so each section
  *     renders directly, as on the server;
  *   - anywhere else (dashboard previews, a page reached in the browser) a
- *     deferred section starts its group's load and draws nothing until it
- *     has arrived.
+ *     deferred section starts its group's load and keeps an empty, typical
+ *     section's room until it has arrived (B9 V20 — less layout shift).
  */
 import {
   createContext,
@@ -188,7 +188,19 @@ function deferredSection<TType extends SectionType>(
     useEffect(() => {
       if (!module) loadSectionGroup(group).catch(() => undefined);
     }, [module]);
-    if (!module) return null;
+    // B9 (UX audit) V20 — while the group's chunk arrives (a page reached
+    // in the browser; server-rendered pages load it before hydrating), the
+    // section keeps a typical section's room, so the footer and the
+    // sections below don't jump twice as it appears.
+    if (!module) {
+      return (
+        <div
+          aria-hidden
+          data-deferred-section={exportName}
+          className="min-h-[20rem]"
+        />
+      );
+    }
     const Section = module[exportName] as SectionRendererComponent<TType>;
     return <Section {...props} />;
   }

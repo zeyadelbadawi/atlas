@@ -35,6 +35,7 @@ function SheetBody({ course }: { readonly course: Course }): JSX.Element {
     <>
       <RiwaqWindow
         value={course.thumbnail || RIWAQ_COURSE_FALLBACK}
+        errorValue={RIWAQ_COURSE_FALLBACK}
         alt=""
         sizes={SHEET_SIZES}
         className="rwp-sheet-window aspect-[3/2]"

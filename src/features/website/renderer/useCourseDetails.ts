@@ -16,13 +16,12 @@
  *   - signed out → "Sign in to enroll" (returns to this course).
  */
 import { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { LEARNER_ROUTES, buildPath } from '@app/routes/route-paths';
-import { toast } from '@/hooks/use-toast';
 import { usePublicCourse, usePublicCourseCurriculum, useAuth } from '@hooks';
 import { DEV_OVERRIDE_PARAM } from '@features/public-website';
-import { hasMessageKey, learningStateOf } from '@utils';
+import { learningStateOf } from '@utils';
+import { isApiError } from '@api';
 import { useEnrollment, useEnroll } from '@features/learning';
 import type { PublicWebsiteLocale } from '@types';
 import { usePublicWebsiteDefaultLocale } from './PublicWebsiteLocaleContext';
@@ -42,6 +41,40 @@ const ENROLLED_ACTION_KINDS = {
   completed: 'completed',
 } as const;
 
+/**
+ * B9 (UX audit) V07/V08 — why "Enroll for free" failed, one message on the
+ * page (no toast beside it):
+ *   - already enrolled (a 409, or the API's `alreadyEnrolled`): say so and
+ *     offer Continue to the course;
+ *   - refused (a 403): the API's own reason only, no "try again";
+ *   - a real network failure mentions the connection; anything else is the
+ *     academy's side.
+ */
+export type CourseEnrollFailure =
+  | { readonly kind: 'alreadyEnrolled' }
+  | { readonly kind: 'refused'; readonly messageKey: string }
+  | { readonly kind: 'network' }
+  | { readonly kind: 'server' };
+
+export function classifyEnrollFailure(error: unknown): CourseEnrollFailure {
+  if (
+    isApiError(error) &&
+    (error.kind === 'conflict' || /alreadyEnrolled$/.test(error.messageKey))
+  ) {
+    return { kind: 'alreadyEnrolled' };
+  }
+  if (isApiError(error) && error.kind === 'forbidden') {
+    return { kind: 'refused', messageKey: error.messageKey };
+  }
+  if (
+    isApiError(error) &&
+    (error.kind === 'network' || error.kind === 'timeout')
+  ) {
+    return { kind: 'network' };
+  }
+  return { kind: 'server' };
+}
+
 export interface CourseDetailsAction {
   readonly kind: CourseDetailsActionKind;
   readonly labelKey: string;
@@ -54,7 +87,6 @@ export function useCourseDetails(
   courseId: string,
   locale: PublicWebsiteLocale = 'en'
 ) {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const defaultLocale = usePublicWebsiteDefaultLocale();
@@ -99,7 +131,9 @@ export function useCourseDetails(
     enabled: isAuthenticated,
   });
   const { mutateAsync: enroll, isPending: isEnrolling } = useEnroll();
-  const [enrollError, setEnrollError] = useState(false);
+  const [enrollError, setEnrollError] = useState<CourseEnrollFailure | null>(
+    null
+  );
 
   const isFree = course?.pricing.type === 'free';
   const isEnrolled = !!enrollment && enrollment.status !== 'available';
@@ -107,24 +141,24 @@ export function useCourseDetails(
     completed: enrollment?.status === 'completed',
   });
 
-  const handleEnroll = async () => {
-    setEnrollError(false);
-    try {
-      await enroll({ courseId });
+  const continueToCourse = useCallback(
+    () =>
       navigate(
         buildHref(buildPath(LEARNER_ROUTES.courseProgress, { courseId }))
-      );
+      ),
+    [navigate, buildHref, courseId]
+  );
+
+  const handleEnroll = async () => {
+    setEnrollError(null);
+    try {
+      await enroll({ courseId });
+      continueToCourse();
     } catch (error) {
-      setEnrollError(true);
-      toast({
-        title: t('website:renderer.courseDetails.enrollError'),
-        // The academy rejected this learner's registration: say so, and
-        // that they can apply again, rather than a bare failure.
-        ...(hasMessageKey(error, 'errors.academy.registrationRejected')
-          ? { description: t('errors:academy.registrationRejected') }
-          : {}),
-        variant: 'destructive',
-      });
+      // One message, on the page (`CourseEnrollError`), with the real
+      // reason — the academy's rejection of this learner's registration
+      // included (the API's own `registrationRejected` sentence).
+      setEnrollError(classifyEnrollFailure(error));
     }
   };
 
@@ -180,10 +214,13 @@ export function useCourseDetails(
     setPreviewLesson,
     isAuthenticated,
     isEnrolled,
+    /** Started, continuing or completed — when a review is offered (B9 V24). */
+    hasStarted: isEnrolled && learningState !== 'not_started',
     isFree,
     isEnrolling,
     enrollError,
     handleEnroll,
+    continueToCourse,
     action,
     buildHref,
     navigate,

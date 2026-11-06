@@ -8,15 +8,33 @@
  * (plain, chrome-free components — safe outside the dashboard shell).
  */
 import { useTranslation } from 'react-i18next';
+import { useContext } from 'react';
+import { QueryClientContext } from '@tanstack/react-query';
 import { AtlasSiteLink } from '@components/branding';
 import { Globe } from 'lucide-react';
 import { ErrorState } from '@components/feedback';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { PublicWebsiteDataState } from '../hooks/usePublicWebsiteData';
+import { useAcademyPageTitle } from '../hooks/useAcademyDocumentTitle';
 
 export interface PublicWebsiteStatusProps {
   readonly state: Exclude<PublicWebsiteDataState, { status: 'ready' }>;
 }
+
+const STATUS_COPY = {
+  'not-found': {
+    titleKey: 'website:public.notFound.title',
+    descriptionKey: 'website:public.notFound.description',
+  },
+  unavailable: {
+    titleKey: 'website:public.unavailable.title',
+    descriptionKey: 'website:public.unavailable.description',
+  },
+  unpublished: {
+    titleKey: 'website:public.unpublished.title',
+    descriptionKey: 'website:public.unpublished.description',
+  },
+} as const;
 
 /**
  * Every root here carries `website-theme-scope`: these states render OUTSIDE
@@ -29,6 +47,15 @@ export function PublicWebsiteStatus({
   state,
 }: PublicWebsiteStatusProps): JSX.Element {
   const { t } = useTranslation();
+  // Optional: a status page can render before (or without) the app's query
+  // client; Try again then reloads the page.
+  const queryClient = useContext(QueryClientContext);
+  // B9 (UX audit) V10 — the tab says what the page says, never "Atlas".
+  useAcademyPageTitle(
+    state.status === 'loading'
+      ? undefined
+      : t(STATUS_COPY[state.status].titleKey)
+  );
 
   if (state.status === 'loading') {
     return (
@@ -41,20 +68,7 @@ export function PublicWebsiteStatus({
     );
   }
 
-  const copy = {
-    'not-found': {
-      titleKey: 'website:public.notFound.title',
-      descriptionKey: 'website:public.notFound.description',
-    },
-    unavailable: {
-      titleKey: 'website:public.unavailable.title',
-      descriptionKey: 'website:public.unavailable.description',
-    },
-    unpublished: {
-      titleKey: 'website:public.unpublished.title',
-      descriptionKey: 'website:public.unpublished.description',
-    },
-  }[state.status];
+  const copy = STATUS_COPY[state.status];
 
   // The whole document here: `main` and an `h1` give it the landmark and
   // top-level heading every page needs (axe `region`, `landmark-one-main`,
@@ -70,6 +84,16 @@ export function PublicWebsiteStatus({
           titleKey={copy.titleKey}
           descriptionKey={copy.descriptionKey}
           headingLevel="h1"
+          // B9 (UX audit) V07 — a site that can't be reached right now can
+          // be tried again without reloading by hand.
+          onRetry={
+            state.status === 'unavailable'
+              ? () =>
+                  queryClient
+                    ? void queryClient.resetQueries({ type: 'active' })
+                    : window.location.reload()
+              : undefined
+          }
         />
         <p className="text-xs text-muted-foreground">
           <AtlasSiteLink>{t('website:public.poweredBy')}</AtlasSiteLink>

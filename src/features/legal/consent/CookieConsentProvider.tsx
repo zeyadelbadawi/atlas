@@ -92,6 +92,15 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
 }
 
 /**
+ * B9 (UX audit) — the consent context where one may be absent (an academy
+ * website footer that also renders in dashboard previews and tests): a
+ * control that needs it is left out rather than shown doing nothing.
+ */
+export function useOptionalCookieConsent(): CookieConsentContextValue | null {
+  return useContext(CookieConsentContext);
+}
+
+/**
  * Throws outside the provider rather than returning a silent default.
  * A consent control that quietly does nothing because it was mounted in
  * the wrong tree is precisely the failure this feature must not have.

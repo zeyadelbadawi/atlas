@@ -9,6 +9,7 @@ import { AtlasPlatformAttribution } from '@components/branding';
 import { cn } from '@utils';
 import { useCurrentYear } from '@hooks';
 import { useWebsiteDesignSystem } from './WebsiteDesignSystemContext';
+import { WebsiteLegalLinks } from './WebsiteLegalLinks';
 import { useWebsiteContainerClass } from './renderer-style.utils';
 import {
   resolveWebsiteCtaHref,
@@ -48,9 +49,12 @@ export interface WebsiteFooterProps {
 export function FooterLegalLine({
   copyright,
   className,
+  legal = false,
 }: {
   readonly copyright: ReactNode;
   readonly className?: string;
+  /** B9 — the public site's legal links (Terms, Privacy, Cookie Preferences). */
+  readonly legal?: boolean;
 }): JSX.Element {
   return (
     <div
@@ -61,6 +65,7 @@ export function FooterLegalLine({
       )}
     >
       {copyright}
+      {legal ? <WebsiteLegalLinks /> : null}
       <AtlasPlatformAttribution className="shrink-0" />
     </div>
   );
@@ -133,6 +138,7 @@ export function WebsiteFooter({
           className={`${container} flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-between sm:text-start`}
         >
           <FooterLegalLine
+            legal={!!linkRenderer}
             copyright={
               <p className="text-sm text-muted-foreground">{copyright}</p>
             }
@@ -177,6 +183,7 @@ export function WebsiteFooter({
             ))}
           </div>
           <FooterLegalLine
+            legal={!!linkRenderer}
             className="sm:justify-center"
             copyright={
               <p className="text-xs text-muted-foreground">{copyright}</p>
@@ -228,6 +235,7 @@ export function WebsiteFooter({
         className={`${container} mt-8 flex flex-col items-center gap-3 border-t border-border pt-6 text-center sm:flex-row sm:justify-between sm:text-start`}
       >
         <FooterLegalLine
+          legal={!!linkRenderer}
           copyright={
             <p className="text-xs text-muted-foreground">{copyright}</p>
           }

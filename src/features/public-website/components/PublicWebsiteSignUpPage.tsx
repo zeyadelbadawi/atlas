@@ -39,6 +39,7 @@ import {
   GoogleSignInOption,
 } from '@features/auth';
 import type { AcademyJoinCredentials } from '@features/auth';
+import { platformLegalHref } from '@features/legal';
 import { useAuth, useSignIn, useSignOut, useBidiIsolation } from '@hooks';
 import { isEmailOtpChallenge } from '@types';
 import type { SignInChallenge } from '@types';
@@ -500,6 +501,12 @@ export function PublicWebsiteSignUpPage({
                 <RegistrationForm
                   academyId={academy.academyId}
                   inviteToken={searchParams.get('invite') ?? undefined}
+                  // B9 (UX audit) V05 — the platform's Terms and Privacy
+                  // Policy, absolute (this host doesn't route them).
+                  legalLinks={{
+                    terms: platformLegalHref('terms', locale),
+                    privacy: platformLegalHref('privacy', locale),
+                  }}
                   onSuccess={(result, credentials) => {
                     // Launch Stabilization A4 — the email already had an
                     // Atlas account and its password was typed here, so this

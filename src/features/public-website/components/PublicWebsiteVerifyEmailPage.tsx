@@ -242,6 +242,8 @@ export function PublicWebsiteVerifyEmailPage({
               descriptionKey={copy.description}
               requestId={state === 'network' ? requestId : undefined}
               onRetry={canRetry ? retry : undefined}
+              // Under the page's h1 (B9 V19 heading order).
+              headingLevel="h2"
             />
             {RESENDABLE.has(state) ? (
               isAuthenticated ? (

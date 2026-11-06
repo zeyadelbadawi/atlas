@@ -102,6 +102,7 @@ export {
   resolveBlogPostSeo,
 } from './utils/seo-resolution.utils';
 export type { SeoFallback } from './utils/seo-resolution.utils';
+export { publicPageName } from './utils/page-name.utils';
 export {
   buildOrganizationJsonLd,
   buildCourseJsonLd,

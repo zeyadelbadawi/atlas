@@ -10,25 +10,24 @@
  * (sent only when a bot fills it); success and failure are announced, and
  * a failed send keeps the message.
  */
-import { useId, useState } from 'react';
+import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@utils';
 import { useAcademyIdentity } from '@hooks';
-import { publicWebsiteService } from '@services';
+import { useContactForm } from '@/features/website/sections/contact/useContactForm';
+import { contactSectionDescription } from '@/features/website/sections/contact/contact-form.logic';
 import {
-  CONTACT_EMAIL_MAX_LENGTH,
-  CONTACT_MESSAGE_MAX_LENGTH,
-  CONTACT_NAME_MAX_LENGTH,
-} from '@/features/website/constants/website.constants';
+  ContactFailureAlert,
+  ContactFieldFeedback,
+  useContactSubmitLabel,
+} from '@/features/website/sections/contact/ContactFormParts';
 import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '@/features/website/utils/localized-text.utils';
 import { Reveal } from '@/features/website/primitives';
 import type { SectionRenderProps } from '@/features/website/theme-packs/theme-pack.types';
 import { AtelierChapter, AtelierSectionHeader } from '../atelier-parts';
 import '../atelier-pages.css';
-
-type SubmitState = 'idle' | 'submitting' | 'success' | 'error';
 
 export function AtelierContact({
   config,
@@ -37,11 +36,10 @@ export function AtelierContact({
   const { t } = useTranslation();
   const { locale } = usePublicWebsiteLocale();
   const headingId = useId();
-  const fieldId = useId();
   const { data: identity } = useAcademyIdentity(academyId);
-  const [state, setState] = useState<SubmitState>('idle');
+  const contact = useContactForm(academyId);
+  const submitLabel = useContactSubmitLabel(contact.isSending);
   const title = resolveLocalizedText(config.title, locale);
-  const description = resolveLocalizedText(config.description, locale);
 
   const email = config.email || identity?.contactEmail;
   const phone = config.phone || identity?.contactPhone;
@@ -85,31 +83,13 @@ export function AtelierContact({
         }
       : null,
   ].filter((channel): channel is NonNullable<typeof channel> => !!channel);
-
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const data = new FormData(form);
-    const name = String(data.get('name') ?? '').trim();
-    const submitterEmail = String(data.get('email') ?? '').trim();
-    const message = String(data.get('message') ?? '').trim();
-    const company = String(data.get('company') ?? '').trim();
-    if (!name || !submitterEmail || !message) return;
-    setState('submitting');
-    try {
-      await publicWebsiteService.submitContactMessage(academyId, {
-        name,
-        email: submitterEmail,
-        message,
-        // Sent only when filled — i.e. by a bot (see the field below).
-        ...(company ? { company } : {}),
-      });
-      setState('success');
-      form.reset();
-    } catch {
-      setState('error');
-    }
-  };
+  const description = contactSectionDescription(
+    resolveLocalizedText(config.description, locale),
+    channels.length > 0
+  );
+  const nameField = contact.field('name');
+  const emailField = contact.field('email');
+  const messageField = contact.field('message');
 
   return (
     <AtelierChapter labelledBy={title ? headingId : undefined}>
@@ -164,11 +144,13 @@ export function AtelierContact({
         {config.showForm ? (
           <Reveal className="min-w-0 lg:col-span-6 lg:col-start-7">
             <div className="atp-letter">
-              {state === 'success' ? (
+              {contact.status === 'sent' ? (
                 <div
+                  ref={contact.successRef}
                   role="status"
+                  tabIndex={-1}
                   data-contact-success=""
-                  className="flex min-h-[20rem] flex-col items-start justify-center gap-5"
+                  className="flex min-h-[20rem] flex-col items-start justify-center gap-5 outline-none"
                 >
                   <p className="at-subtitle">
                     {t('website:atelier.pages.contact.successTitle')}
@@ -179,13 +161,17 @@ export function AtelierContact({
                   <button
                     type="button"
                     className="at-btn-ghost mt-2"
-                    onClick={() => setState('idle')}
+                    onClick={contact.sendAnother}
                   >
                     {t('website:atelier.pages.contact.sendAnother')}
                   </button>
                 </div>
               ) : (
-                <form className="space-y-8" onSubmit={onSubmit}>
+                <form
+                  className="space-y-8"
+                  noValidate
+                  onSubmit={contact.onSubmit}
+                >
                   <div className="space-y-2">
                     <p className="at-subtitle">
                       {t('website:atelier.pages.contact.formTitle')}
@@ -196,86 +182,88 @@ export function AtelierContact({
                   </div>
                   <div className="grid gap-8 sm:grid-cols-2">
                     <div>
-                      <label
-                        htmlFor={`${fieldId}-name`}
-                        className="atp-field-label"
-                      >
+                      <label htmlFor={nameField.id} className="atp-field-label">
                         {t('website:renderer.contactNameLabel')}
                       </label>
                       <input
-                        id={`${fieldId}-name`}
-                        name="name"
+                        {...nameField.controlProps}
                         autoComplete="name"
-                        maxLength={CONTACT_NAME_MAX_LENGTH}
-                        required
                         className="atp-field"
+                      />
+                      <ContactFieldFeedback
+                        field={nameField}
+                        errorClassName="atp-error"
+                        countClassName="text-[var(--atelier-text-muted)]"
                       />
                     </div>
                     <div>
                       <label
-                        htmlFor={`${fieldId}-email`}
+                        htmlFor={emailField.id}
                         className="atp-field-label"
                       >
                         {t('website:renderer.contactEmailLabel')}
                       </label>
                       <input
-                        id={`${fieldId}-email`}
-                        name="email"
+                        {...emailField.controlProps}
                         type="email"
                         autoComplete="email"
-                        maxLength={CONTACT_EMAIL_MAX_LENGTH}
-                        required
                         dir="ltr"
                         className="atp-field text-start"
+                      />
+                      <ContactFieldFeedback
+                        field={emailField}
+                        errorClassName="atp-error"
+                        countClassName="text-[var(--atelier-text-muted)]"
                       />
                     </div>
                   </div>
                   <div>
                     <label
-                      htmlFor={`${fieldId}-message`}
+                      htmlFor={messageField.id}
                       className="atp-field-label"
                     >
                       {t('website:renderer.contactMessageLabel')}
                     </label>
                     <textarea
-                      id={`${fieldId}-message`}
-                      name="message"
+                      {...messageField.controlProps}
                       rows={6}
-                      maxLength={CONTACT_MESSAGE_MAX_LENGTH}
-                      required
                       className="atp-field"
+                    />
+                    <ContactFieldFeedback
+                      field={messageField}
+                      errorClassName="atp-error"
+                      countClassName="text-[var(--atelier-text-muted)]"
                     />
                   </div>
                   {/* Spam trap: out of sight, out of the tab order and hidden
                       from assistive tech, so only a bot fills it in. */}
                   <div aria-hidden className="atp-trap">
-                    <label htmlFor={`${fieldId}-company`}>Company</label>
+                    <label htmlFor={contact.trapId}>Company</label>
                     <input
-                      id={`${fieldId}-company`}
-                      name="company"
+                      id={contact.trapId}
+                      {...contact.register('company')}
                       type="text"
                       tabIndex={-1}
                       autoComplete="off"
-                      defaultValue=""
                     />
                   </div>
-                  {state === 'error' ? (
-                    <p role="alert" className="atp-error text-sm">
-                      {t('website:renderer.contactError')}
-                    </p>
-                  ) : null}
+                  <ContactFailureAlert
+                    contact={contact}
+                    className="atp-error"
+                    retryClassName="at-btn-ghost mt-1"
+                  />
                   <button
                     type="submit"
                     className="at-btn at-btn-lg"
-                    disabled={state === 'submitting'}
+                    disabled={contact.isSending}
                   >
-                    {state === 'submitting' ? (
+                    {contact.isSending ? (
                       <Loader2
                         className="size-4 animate-spin motion-reduce:animate-none"
                         aria-hidden
                       />
                     ) : null}
-                    {t('website:renderer.contactSubmit')}
+                    {submitLabel}
                   </button>
                 </form>
               )}

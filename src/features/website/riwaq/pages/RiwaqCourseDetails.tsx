@@ -49,6 +49,7 @@ import { RiwaqCourseSheet } from './RiwaqCourseSheet';
 import { RiwaqStatement } from './RiwaqCourseCatalog';
 import { RiwaqNotFound } from './RiwaqSystemPages';
 import '../riwaq-pages.css';
+import { CourseEnrollError } from '@/features/website/renderer/CourseEnrollError';
 
 const CONTENT_TYPE_ICON = {
   video: PlayCircle,
@@ -157,7 +158,9 @@ export function RiwaqCourseDetails({
     setPreviewLesson,
     isAuthenticated,
     isEnrolled,
+    hasStarted,
     enrollError,
+    continueToCourse,
     action,
   } = useCourseDetails(academyId, courseId, locale);
 
@@ -200,6 +203,7 @@ export function RiwaqCourseDetails({
         <RiwaqStatement
           marker={{ 'data-course-error': '' }}
           title={t('website:riwaq.pages.courseDetails.errorTitle')}
+          titleAs="h1"
           description={t('website:riwaq.pages.courseDetails.errorDescription')}
           action={
             <button type="button" className="rw-btn rw-btn-line" onClick={() => void refetch()}>
@@ -335,6 +339,7 @@ export function RiwaqCourseDetails({
             <RiwaqWindow
               priority
               value={course.thumbnail || RIWAQ_COURSE_FALLBACK}
+              errorValue={RIWAQ_COURSE_FALLBACK}
               alt=""
               sizes="(min-width: 1024px) 38vw, 100vw"
               className="rwp-dossier-window aspect-[3/2]"
@@ -485,7 +490,7 @@ export function RiwaqCourseDetails({
             ) : null}
 
             <div id="reviews" className="rwp-part rwp-reviews" data-dossier-part="">
-              <MyCourseReviewForm academyId={academyId} courseId={courseId} canReview={isAuthenticated && isEnrolled} />
+              <MyCourseReviewForm academyId={academyId} courseId={courseId} canReview={isAuthenticated && isEnrolled} hasStarted={hasStarted} />
               <CourseReviews academyId={academyId} courseId={courseId} locale={locale} />
             </div>
 
@@ -505,11 +510,12 @@ export function RiwaqCourseDetails({
               <p className="rw-label">{t('website:riwaq.pages.courseDetails.enrol')}</p>
               <p className="rwp-enrol-price rw-num">{price}</p>
               {actionButton('w-full')}
-              {enrollError ? (
-                <p role="alert" className="rwp-error">
-                  {t('website:renderer.courseDetails.enrollError')}
-                </p>
-              ) : null}
+              <CourseEnrollError
+                error={enrollError}
+                onContinue={continueToCourse}
+                className="rwp-error"
+                actionClassName="rw-btn rw-btn-line"
+              />
               {stats?.hasPreview ? (
                 <p className="rw-label">{t('website:riwaq.pages.courseDetails.hasPreview')}</p>
               ) : null}
@@ -521,12 +527,11 @@ export function RiwaqCourseDetails({
       <RelatedProgrammes academyId={academyId} courseId={courseId} linkRenderer={linkRenderer} />
 
       {/* Phones and tablets: the price and the action stay one tap away. */}
-      <div data-riwaq-purchase-bar="" data-above-nav={showBar ? '' : undefined} className="rwp-bar" data-ground="porcelain">
+      <div data-riwaq-purchase-bar="" data-purchase-bar="" data-above-nav={showBar ? '' : undefined} className="rwp-bar" data-ground="porcelain">
         <p className="rwp-bar-price rw-num">{price}</p>
         {actionButton('rwp-bar-action')}
       </div>
-      {/* Room for the bar, so it never covers the page's last content. */}
-      <div aria-hidden className="rwp-bar-space" />
+      {/* Its room is at the bottom of the footer (`WebsiteChrome`). */}
     </article>
   );
 }

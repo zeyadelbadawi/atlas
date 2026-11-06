@@ -7,7 +7,7 @@
  *   cards stays aligned.
  * On the public site the whole card is one link.
  */
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PlayCircle, Star, UserRound } from 'lucide-react';
 import { cn } from '@utils';
@@ -55,6 +55,33 @@ export function CourseFallbackPattern({
   );
 }
 
+/**
+ * The course's thumbnail, or its fallback pattern — also when the image
+ * fails to load (B9 V15), never the browser's broken-image icon.
+ */
+export function T1CourseThumbnail({
+  src,
+  title,
+  loading,
+}: {
+  readonly src: string | undefined;
+  readonly title: string;
+  readonly loading?: 'lazy';
+}): JSX.Element {
+  const [failed, setFailed] = useState<string>();
+  if (!src || failed === src) return <CourseFallbackPattern title={title} />;
+  return (
+    <img
+      src={src}
+      alt=""
+      loading={loading}
+      decoding="async"
+      className="size-full object-cover"
+      onError={() => setFailed(src)}
+    />
+  );
+}
+
 function CardBody({
   course,
   showPrice,
@@ -76,17 +103,11 @@ function CardBody({
   return (
     <>
       <div className="t1-card-media relative aspect-[16/9] shrink-0 rounded-t-[calc(var(--t1-radius-card)-1px)]">
-        {course.thumbnail ? (
-          <img
-            src={course.thumbnail}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            className="size-full object-cover"
-          />
-        ) : (
-          <CourseFallbackPattern title={course.title} />
-        )}
+        <T1CourseThumbnail
+          src={course.thumbnail}
+          title={course.title}
+          loading="lazy"
+        />
         {stats?.hasPreview ? (
           <span className="absolute start-3 top-3 inline-flex min-h-7 items-center gap-1.5 rounded-full bg-[var(--website-background)] px-2.5 text-xs font-semibold text-[var(--website-foreground)] shadow-sm">
             <PlayCircle className="size-3.5" aria-hidden />

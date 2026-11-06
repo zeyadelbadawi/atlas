@@ -51,6 +51,7 @@ function RowBody({
       <div aria-hidden className="atp-row-plate">
         <AtelierMedia
           value={course.thumbnail || COURSE_FALLBACK}
+          errorValue={COURSE_FALLBACK}
           alt=""
           sizes="(min-width: 1024px) 160px, 120px"
           className="aspect-[3/2] w-full"

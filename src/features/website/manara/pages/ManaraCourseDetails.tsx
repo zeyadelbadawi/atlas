@@ -59,6 +59,7 @@ import { ManaraCourseCard } from './ManaraCourseCard';
 import { ManaraStatement } from './ManaraCourseCatalog';
 import { ManaraNotFound } from './ManaraSystemPages';
 import '../manara-pages.css';
+import { CourseEnrollError } from '@/features/website/renderer/CourseEnrollError';
 
 const COURSE_FALLBACK = 'theme-asset:manara/course-fallback';
 
@@ -146,7 +147,9 @@ export function ManaraCourseDetails({
     setPreviewLesson,
     isAuthenticated,
     isEnrolled,
+    hasStarted,
     enrollError,
+    continueToCourse,
     action,
   } = useCourseDetails(academyId, courseId, locale);
 
@@ -185,6 +188,7 @@ export function ManaraCourseDetails({
         <ManaraStatement
           marker={{ 'data-course-error': '' }}
           title={t('website:manara.pages.courseDetails.errorTitle')}
+          titleAs="h1"
           description={t('website:manara.pages.courseDetails.errorDescription')}
           action={
             <button
@@ -392,6 +396,7 @@ export function ManaraCourseDetails({
           <div aria-hidden className="lg:col-span-5">
             <ManaraMedia
               value={course.thumbnail || COURSE_FALLBACK}
+              errorValue={COURSE_FALLBACK}
               alt=""
               shape="slant"
               priority
@@ -573,6 +578,7 @@ export function ManaraCourseDetails({
                 academyId={academyId}
                 courseId={courseId}
                 canReview={isAuthenticated && isEnrolled}
+                hasStarted={hasStarted}
               />
               <CourseReviews
                 academyId={academyId}
@@ -604,11 +610,12 @@ export function ManaraCourseDetails({
                 {price}
               </p>
               <div className="mt-6">{actionButton('w-full')}</div>
-              {enrollError ? (
-                <p role="alert" className="mnp-error mt-4 text-sm">
-                  {t('website:renderer.courseDetails.enrollError')}
-                </p>
-              ) : null}
+              <CourseEnrollError
+                error={enrollError}
+                onContinue={continueToCourse}
+                className="mnp-error mt-4 text-sm"
+                actionClassName="mn-btn mn-btn-outline"
+              />
               {includes.length > 0 ? (
                 <div className="mt-6">
                   <p className="mn-label mn-muted mb-2">
@@ -635,6 +642,7 @@ export function ManaraCourseDetails({
       {/* Phones and tablets: the price and the action stay one tap away. */}
       <div
         data-manara-purchase-bar=""
+        data-purchase-bar=""
         data-above-nav={showBar ? '' : undefined}
         className="mnp-bar lg:hidden"
       >
@@ -643,8 +651,7 @@ export function ManaraCourseDetails({
         </p>
         {actionButton('min-h-11')}
       </div>
-      {/* Room for the bar, so it never covers the page's last content. */}
-      <div aria-hidden className="mnp-bar-space lg:hidden" />
+      {/* Its room is at the bottom of the footer (`WebsiteChrome`). */}
     </article>
   );
 }

@@ -810,13 +810,10 @@ describe('F-8: contact form', () => {
         linkRenderer={testLinkRenderer}
       />
     );
-    expect(screen.getByLabelText('Name').getAttribute('maxlength')).toBe('200');
-    expect(screen.getByLabelText('Email').getAttribute('maxlength')).toBe(
-      '320'
-    );
-    expect(screen.getByLabelText('Message').getAttribute('maxlength')).toBe(
-      '5000'
-    );
+    // B9 — bounded without cutting: no `maxlength`; the message is counted
+    // and a value over the limit is refused (b9-contact-form.test.tsx).
+    expect(screen.getByLabelText('Name').hasAttribute('maxlength')).toBe(false);
+    expect(screen.getByText('0 / 5000 characters')).toBeTruthy();
   });
 
   it('a person never meets the spam trap: hidden from assistive tech, out of the tab order, not sent', async () => {

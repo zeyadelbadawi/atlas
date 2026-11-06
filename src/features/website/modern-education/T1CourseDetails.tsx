@@ -51,8 +51,9 @@ import { useWebsiteContainerClass } from '../renderer/renderer-style.utils';
 import type { ThemeCourseDetailsProps } from '../theme-packs/theme-pack.types';
 import type { Course } from '@types';
 import { InitialsAvatar, T1Heading, T1Link, formatT1Number } from './t1-parts';
-import { CourseFallbackPattern, T1CourseCard } from './T1CourseCard';
+import { T1CourseCard, T1CourseThumbnail } from './T1CourseCard';
 import { T1NotFound } from './T1SystemPages';
+import { CourseEnrollError } from '../renderer/CourseEnrollError';
 
 const CONTENT_TYPE_ICON = {
   video: PlayCircle,
@@ -144,7 +145,9 @@ export function T1CourseDetails({
     setPreviewLesson,
     isAuthenticated,
     isEnrolled,
+    hasStarted,
     enrollError,
+    continueToCourse,
     action,
   } = details;
 
@@ -180,9 +183,9 @@ export function T1CourseDetails({
     return (
       <div className={cn(container, 't1-section')}>
         <div className="t1-card flex flex-col items-center gap-4 px-6 py-14 text-center">
-          <p className="font-display text-xl font-bold">
+          <h1 className="font-display text-xl font-bold">
             {t('website:theme1.courseDetails.errorTitle')}
-          </p>
+          </h1>
           <p className="text-[var(--website-foreground-muted)]">
             {t('website:theme1.courseDetails.errorDescription')}
           </p>
@@ -419,16 +422,7 @@ export function T1CourseDetails({
             ) : null}
           </div>
           <div className="t1-media aspect-[16/9] shadow-[var(--t1-shadow-lift)]">
-            {course.thumbnail ? (
-              <img
-                src={course.thumbnail}
-                alt=""
-                decoding="async"
-                className="size-full object-cover"
-              />
-            ) : (
-              <CourseFallbackPattern title={course.title} />
-            )}
+            <T1CourseThumbnail src={course.thumbnail} title={course.title} />
           </div>
         </div>
       </header>
@@ -635,6 +629,7 @@ export function T1CourseDetails({
               academyId={academyId}
               courseId={courseId}
               canReview={isAuthenticated && isEnrolled}
+              hasStarted={hasStarted}
             />
             <CourseReviews
               academyId={academyId}
@@ -666,14 +661,12 @@ export function T1CourseDetails({
               {price}
             </p>
             {actionButton('w-full')}
-            {enrollError ? (
-              <p
-                role="alert"
-                className="text-sm font-medium text-[var(--website-error)]"
-              >
-                {t('website:renderer.courseDetails.enrollError')}
-              </p>
-            ) : null}
+            <CourseEnrollError
+              error={enrollError}
+              onContinue={continueToCourse}
+              className="text-sm font-medium text-[var(--website-error)]"
+              actionClassName="t1-btn-secondary"
+            />
             {includes.length > 0 ? (
               <div className="border-t border-[var(--website-border)] pt-5">
                 <p className="mb-3 text-sm font-semibold">
@@ -705,6 +698,7 @@ export function T1CourseDetails({
       {/* Phones and tablets: the price and the action stay one tap away. */}
       <div
         data-t1-purchase-bar=""
+        data-purchase-bar=""
         className={cn(
           'fixed inset-x-0 z-30 border-t border-[var(--website-border)] bg-[var(--website-background)] px-4 py-3 shadow-[var(--t1-shadow-header)] lg:hidden',
           showBar
@@ -722,8 +716,7 @@ export function T1CourseDetails({
           {actionButton('min-h-11')}
         </div>
       </div>
-      {/* Room for the bar, so it never covers the page's last content. */}
-      <div aria-hidden className="h-20 lg:hidden" />
+      {/* Its room is at the bottom of the footer (`WebsiteChrome`). */}
     </article>
   );
 }

@@ -36,6 +36,7 @@ import {
 } from '../manara-parts';
 import { ManaraCourseCard, ManaraCourseCardSkeleton } from './ManaraCourseCard';
 import '../manara-pages.css';
+import { loadFailureKey } from '@/features/website/utils/load-failure.utils';
 
 function FilterSelect({
   id,
@@ -77,15 +78,18 @@ export function ManaraStatement({
   description,
   action,
   marker,
+  titleAs: Title = 'p',
 }: {
   readonly title: string;
   readonly description: string;
   readonly action?: JSX.Element;
   readonly marker: Record<string, string>;
+  /** B9 (UX audit) V19 — `h1` when the statement is the whole page (the course error). */
+  readonly titleAs?: 'p' | 'h1';
 }): JSX.Element {
   return (
     <div className="mn-tile mnp-statement" data-tone="night" {...marker}>
-      <p className="mn-title max-w-3xl">{title}</p>
+      <Title className="mn-title max-w-3xl">{title}</Title>
       <p className="mn-lead mn-muted">{description}</p>
       {action ? <div className="pt-2">{action}</div> : null}
     </div>
@@ -335,7 +339,12 @@ export function ManaraCourseCatalog({
         <ManaraStatement
           marker={{ 'data-catalog-error': '' }}
           title={t('website:manara.pages.catalog.errorTitle')}
-          description={t('website:manara.pages.catalog.errorDescription')}
+          description={t(
+            loadFailureKey(
+              error,
+              'website:manara.pages.catalog.errorDescription'
+            )
+          )}
           action={
             <button
               type="button"

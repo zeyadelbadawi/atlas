@@ -654,7 +654,18 @@ a.t1-footer-social:hover {
   outline: 2px solid var(--website-focus);
   outline-offset: 2px;
 }
+/* B9 (UX audit) V11 — a long category name wraps inside its chip instead
+   of widening the page; the count stays whole beside it. */
+.t1-filter-chip {
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: start;
+  padding-block: 0.375rem;
+}
 .t1-filter-chip-count {
+  flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
