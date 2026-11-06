@@ -748,10 +748,12 @@ describe('caching and publishing', () => {
         'the banner is inside the overlay scope'
       );
       assert.equal(markup.split(BANNER_ID).length - 1, 1, 'exactly one banner');
-      // The page's own theme scope, rendered before the overlay.
+      // The page's own theme scope: any theme scope that is not the
+      // overlay's (the banner comes first in the markup, B9 V18 — its
+      // buttons lead the tab order).
       const page =
-        /class="website-theme-scope [^"]*"[^>]*style="[^"]*--primary:([^;"]+)/.exec(
-          markup.slice(0, open)
+        /<div(?![^>]*data-website-overlay-scope)[^>]*class="website-theme-scope [^"]*"[^>]*style="[^"]*--primary:([^;"]+)/.exec(
+          markup
         );
       assert.ok(page, 'the page has its own palette scope');
       return {

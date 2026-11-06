@@ -58,7 +58,9 @@ const {
   isServerAcceptedEmail,
   serverLength,
 } = await import('@/features/website/sections/contact/contact-form.logic');
-const { normalizeResponseError } = await import('@/services/api/api-error');
+const { normalizeResponseError, normalizeAxiosError } =
+  await import('@/services/api/api-error');
+const { AxiosError, AxiosHeaders } = await import('axios');
 
 type ContactRenderer = ComponentType<SectionRenderProps<'contact'>>;
 
@@ -146,6 +148,26 @@ describe('contact rules (shared by every theme)', () => {
   it('measures length as the API does (an emoji is one character)', () => {
     expect(serverLength('abc')).toBe(3);
     expect(serverLength('😀😀')).toBe(2);
+  });
+
+  it('keeps Retry-After through the Axios response path (raw header block, as the adapter parses it)', () => {
+    const response = {
+      status: 429,
+      statusText: 'Too Many Requests',
+      data: {},
+      headers: AxiosHeaders.from('Retry-After: 125\r\n'),
+      config: { headers: new AxiosHeaders() },
+    };
+    const error = new AxiosError(
+      'Too Many Requests',
+      'ERR_BAD_REQUEST',
+      response.config,
+      undefined,
+      response
+    );
+    const normalized = normalizeAxiosError(error);
+    expect(normalized.kind).toBe('rateLimited');
+    expect(normalized.retryAfterSeconds).toBe(125);
   });
 
   it('reads how long to wait from Retry-After', () => {

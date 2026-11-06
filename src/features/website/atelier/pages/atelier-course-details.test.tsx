@@ -19,6 +19,7 @@ import { PublicWebsiteLocaleProvider } from '@/features/website/renderer/PublicW
 import { getWebsiteTheme } from '@/features/website/themes/website-theme.registry';
 import type { WebsiteLinkRenderer } from '@/features/website/renderer/website-link-renderer.types';
 import type { Course, PublicWebsiteLocale, WebsitePage } from '@types';
+import type { CourseEnrollFailure } from '@/features/website/renderer/useCourseDetails';
 import { AtelierCourseDetails } from './AtelierCourseDetails';
 
 /* ------------------------------------------------------------------ */
@@ -36,7 +37,9 @@ interface Details {
   setPreviewLesson: ReturnType<typeof vi.fn>;
   isAuthenticated: boolean;
   isEnrolled: boolean;
-  enrollError: { kind: 'server' } | null;
+  enrollError: CourseEnrollFailure | null;
+  continueToCourse: () => void;
+  hasStarted: boolean;
   action: {
     kind: string;
     labelKey: string;
@@ -185,6 +188,8 @@ beforeEach(() => {
     isAuthenticated: false,
     isEnrolled: false,
     enrollError: null,
+    continueToCourse: vi.fn(),
+    hasStarted: false,
     action: {
       kind: 'signIn',
       labelKey: 'website:renderer.courseDetails.signInToEnrollAction',
@@ -324,6 +329,21 @@ describe('AtelierCourseDetails', () => {
     })) {
       expect(button.hasAttribute('disabled')).toBe(true);
     }
+  });
+
+  it('already enrolled: Continue to the course, from the panel or the phone bar', async () => {
+    details.isAuthenticated = true;
+    details.enrollError = { kind: 'alreadyEnrolled' };
+    wrap(page());
+    const continues = screen.getAllByRole('button', {
+      name: 'Continue to the course',
+    });
+    expect(continues).toHaveLength(2);
+    expect(
+      continues.some((button) => button.closest('[data-atelier-purchase-bar]'))
+    ).toBe(true);
+    await userEvent.click(continues[0]!);
+    expect(details.continueToCourse).toHaveBeenCalledTimes(1);
   });
 
   it('reviews render as Theme 1 renders them; related courses only when there are some', () => {
