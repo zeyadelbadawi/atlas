@@ -3,7 +3,7 @@
  *
  * Shared create/edit dialog for a course lesson.
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { useDirtyGuard } from '@features/unsaved-changes';
@@ -36,7 +36,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useServerValidation } from '@forms';
+import { FormErrorSummary, RequiredMark, SaveFailedAlert } from '@forms';
+import { useDialogServerFeedback } from '../forms/course-form-feedback';
+import { CharacterCount } from './CharacterCount';
+import { MAX_LESSON_DESCRIPTION_LENGTH } from '../constants/course.constants';
 import {
   courseLessonSchema,
   type CourseLessonFormData,
@@ -95,6 +98,15 @@ export interface LessonFormDialogProps {
  * for new content (CF-01): "Text" is offered only while editing a lesson
  * that already is one, so it still opens, saves and can be switched away.
  */
+const LESSON_FIELD_LABELS = {
+  title: 'course:builder.lessonDialog.titleLabel',
+  description: 'course:builder.lessonDialog.descriptionLabel',
+  contentType: 'course:builder.lessonDialog.contentTypeLabel',
+  status: 'course:builder.lessonDialog.statusLabel',
+  contentUrl: 'course:builder.lessonDialog.contentUrlLabel',
+  bodyHtml: 'course:builder.lessonDialog.bodyLabel',
+} as const;
+
 const EMPTY_LESSON_VALUES: CourseLessonFormData = {
   title: '',
   description: '',
@@ -121,7 +133,9 @@ export function LessonFormDialog({
   const { t, i18n } = useTranslation();
   const [isUploadingFile, setIsUploadingFile] = useState(false);
   const hostedVideo =
-    isFeatureEnabled('hostedVideoAuthoring') && onUploadHostedVideo && loadHostedVideos
+    isFeatureEnabled('hostedVideoAuthoring') &&
+    onUploadHostedVideo &&
+    loadHostedVideos
       ? { onUpload: onUploadHostedVideo, loadLibrary: loadHostedVideos }
       : null;
   const hostedVideoEnabled = hostedVideo !== null;
@@ -151,13 +165,39 @@ export function LessonFormDialog({
   // Force-resetting on every `open` transition (matching
   // `AssignmentFormDialog.tsx`'s identical, already-correct convention)
   // fixes this regardless of `deepEqual`.
+  // B3 (V30) — the link typed for each content type (see `changeContentType`).
+  const urlByType = useRef<Partial<Record<string, string>>>({});
   useEffect(() => {
     if (!open) return;
     form.reset(defaultValues ?? EMPTY_LESSON_VALUES);
+    urlByType.current = {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, defaultValues]);
 
-  useServerValidation(form, error ?? null);
+  // B3 — violations on their fields (labelled), anything else one alert in
+  // the dialog; the summary lists every problem after a failed submit.
+  const failure = useDialogServerFeedback(form, error, LESSON_FIELD_LABELS);
+  const descriptionLength = (form.watch('description') ?? '').length;
+
+  /*
+    B3 (V30) — a link belongs to the type it was typed for. Switching
+    Video → File used to keep the YouTube link, so the File lesson showed
+    the "public file" warning for a video. Each type keeps its own link
+    while the dialog is open; switching back restores it.
+  */
+  const changeContentType = (
+    next: CourseLessonFormData['contentType'],
+    apply: (value: CourseLessonFormData['contentType']) => void
+  ) => {
+    const previous = form.getValues('contentType');
+    if (previous === next) return;
+    urlByType.current[previous] = form.getValues('contentUrl') ?? '';
+    apply(next);
+    form.setValue('contentUrl', urlByType.current[next] ?? '', {
+      shouldDirty: true,
+    });
+    form.clearErrors('contentUrl');
+  };
 
   return (
     <Dialog
@@ -180,7 +220,12 @@ export function LessonFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4"
+            noValidate
+          >
+            <FormErrorSummary form={form} fieldLabels={LESSON_FIELD_LABELS} />
             <FormField
               control={form.control}
               name="title"
@@ -188,6 +233,7 @@ export function LessonFormDialog({
                 <FormItem>
                   <FormLabel>
                     {t('course:builder.lessonDialog.titleLabel')}
+                    <RequiredMark />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -220,6 +266,11 @@ export function LessonFormDialog({
                       {...field}
                     />
                   </FormControl>
+                  <CharacterCount
+                    id="lesson-description-count"
+                    length={descriptionLength}
+                    max={MAX_LESSON_DESCRIPTION_LENGTH}
+                  />
                   <FormMessage />
                 </FormItem>
               )}
@@ -234,7 +285,15 @@ export function LessonFormDialog({
                     <FormLabel>
                       {t('course:builder.lessonDialog.contentTypeLabel')}
                     </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      onValueChange={(value) =>
+                        changeContentType(
+                          value as CourseLessonFormData['contentType'],
+                          field.onChange
+                        )
+                      }
+                      value={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue />
@@ -298,6 +357,7 @@ export function LessonFormDialog({
                   <FormItem>
                     <FormLabel id="lesson-body-label">
                       {t('course:builder.lessonDialog.bodyLabel')}
+                      <RequiredMark />
                     </FormLabel>
                     {bodyLoading ? (
                       <p
@@ -380,7 +440,10 @@ export function LessonFormDialog({
               (hasProtectedFile || !!form.watch('protectedFile'))
             ) &&
             // B0-MED-11 — likewise for a hosted video: it is what plays.
-            !(form.watch('contentType') === 'video' && !!form.watch('hostedVideo')) ? (
+            !(
+              form.watch('contentType') === 'video' &&
+              !!form.watch('hostedVideo')
+            ) ? (
               <FormField
                 control={form.control}
                 name="contentUrl"
@@ -403,6 +466,11 @@ export function LessonFormDialog({
                       <FormControl>
                         <Input
                           type="url"
+                          inputMode="url"
+                          // A web address reads left to right on an Arabic page.
+                          dir="ltr"
+                          data-ltr-content
+                          autoComplete="off"
                           placeholder={t(
                             'course:builder.lessonDialog.contentUrlPlaceholder'
                           )}
@@ -430,6 +498,14 @@ export function LessonFormDialog({
                     </FormItem>
                   );
                 }}
+              />
+            ) : null}
+
+            {failure ? (
+              <SaveFailedAlert
+                error={failure}
+                titleKey="common:form.notSaved"
+                onRetry={() => void form.handleSubmit(onSubmit)()}
               />
             ) : null}
 

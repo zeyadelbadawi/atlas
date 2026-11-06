@@ -9,6 +9,7 @@ import type { ApiError } from '@api';
 import { useCourseCatalogInvalidation } from './useCourseCatalogInvalidation';
 import { courseService } from '../services/CourseService';
 import type { Course, UpdateCoursePayload } from '@types';
+import { COURSE_INLINE_ERRORS_META } from './inline-errors';
 
 export interface UpdateCourseVariables {
   readonly courseId: string;
@@ -27,6 +28,7 @@ export function useUpdateCourse(academyId: string) {
       courseService.updateCourse(academyId, courseId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: COURSE_INLINE_ERRORS_META,
     onSuccess: async (_course, { academyId, payload: { courseId } }) => {
       await invalidateCatalog(academyId, courseId);
     },

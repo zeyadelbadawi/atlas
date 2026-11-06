@@ -58,14 +58,36 @@ const GENERIC_FAILURE_KEY = 'errors:generic.description';
  * errors; see `specificDescriptionKey` there.
  */
 function failureText(
-  i18n: { exists: (key: string) => boolean },
-  t: (key: string) => string,
-  messageKey: string | undefined
+  i18n: { exists: (key: string) => boolean; language: string },
+  t: (key: string, values?: Record<string, unknown>) => string,
+  error: MediaUploadState['error']
 ): string {
+  const messageKey = error?.messageKey;
   if (!messageKey) return t(GENERIC_FAILURE_KEY);
+  // B3 (UX audit) — "That file is too large to upload." never said the
+  // limit; the backend now sends it (`details.maxBytes`).
+  const maxBytes = error?.details?.maxBytes;
+  if (messageKey === FILE_TOO_LARGE && typeof maxBytes === 'number') {
+    const max = formatBytes(maxBytes, i18n.language as LanguageCode);
+    return t('errors:media.fileTooLargeWithLimit', {
+      max: `${max.value} ${t(max.unitKey)}`,
+    });
+  }
   const key = toErrorsNamespaceKey(messageKey);
   return i18n.exists(key) ? t(key) : t(GENERIC_FAILURE_KEY);
 }
+
+const FILE_TOO_LARGE = 'errors.media.fileTooLarge';
+
+/**
+ * Refusals the same file can never pass: offering Retry for them only
+ * fails again (UX audit B3, V23). The file has to change, not the attempt.
+ */
+const NOT_RETRYABLE = new Set([
+  FILE_TOO_LARGE,
+  'errors.media.unsupportedFileType',
+  'errors.media.invalidDataUrl',
+]);
 
 export interface MediaUploadProgressProps {
   readonly state: MediaUploadState;
@@ -124,14 +146,14 @@ export function MediaUploadProgress({
           </p>
           <p className="text-xs text-muted-foreground">
             {failed
-              ? failureText(i18n, t, state.error?.messageKey)
+              ? failureText(i18n, t, state.error)
               : t(`media:upload.stage.${state.stage}`)}
             {size ? ` · ${size.value} ${t(size.unitKey)}` : ''}
           </p>
         </div>
 
         <div className="flex shrink-0 items-center gap-1">
-          {failed ? (
+          {failed && !NOT_RETRYABLE.has(state.error?.messageKey ?? '') ? (
             <Button size="sm" variant="outline" onClick={onRetry}>
               <RefreshCw className="size-3.5" aria-hidden />
               {t('media:upload.retry')}

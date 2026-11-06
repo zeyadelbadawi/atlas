@@ -22,6 +22,12 @@ export interface FormErrorSummaryProps<TValues extends FieldValues> {
   readonly form: UseFormReturn<TValues>;
   /** Translation keys of the field labels, by field path (`address.city`). */
   readonly fieldLabels?: Readonly<Record<string, string>>;
+  /**
+   * The label of a path `fieldLabels` doesn't list — for dynamic lists
+   * (`questions.1.options.0.label` → "Question 2, option 1"). Already
+   * translated; `undefined` falls back to the humanized path.
+   */
+  readonly labelFor?: (name: string) => string | undefined;
   readonly className?: string;
 }
 
@@ -44,7 +50,13 @@ export function flattenFormErrors(
     if (typeof node.message === 'string' && node.message.length > 0) {
       // `root` and `root.*` are form-level errors, never a field.
       const isRoot = path === 'root' || path.startsWith('root.');
-      items.push({ name: isRoot ? null : path, message: node.message });
+      // B3 (UX audit) — `options.root` (zod's error on an array itself) is
+      // the LIST's own error: it reads under the list's name, not "Root".
+      const listOwn = Boolean(prefix) && key === 'root';
+      items.push({
+        name: isRoot ? null : listOwn ? prefix : path,
+        message: node.message,
+      });
       continue;
     }
     items.push(...flattenFormErrors(value as FieldErrors, path));
@@ -70,6 +82,7 @@ function findControl(
 export function FormErrorSummary<TValues extends FieldValues>({
   form,
   fieldLabels,
+  labelFor,
   className,
 }: FormErrorSummaryProps<TValues>): JSX.Element | null {
   const { t } = useTranslation();
@@ -91,7 +104,7 @@ export function FormErrorSummary<TValues extends FieldValues>({
         const label = labelKey
           ? t(labelKey)
           : name
-            ? humanizeFieldName(name)
+            ? (labelFor?.(name) ?? humanizeFieldName(name))
             : '';
         const text =
           resolveValidationMessage(message, t, { field: label }) ?? message;
@@ -100,7 +113,7 @@ export function FormErrorSummary<TValues extends FieldValues>({
           message: label && !text.includes(label) ? `${label}: ${text}` : text,
         };
       }),
-    [errors, fieldLabels, t]
+    [errors, fieldLabels, labelFor, t]
   );
 
   const hasOrphan = items.some(
@@ -162,7 +175,7 @@ export function FormErrorSummary<TValues extends FieldValues>({
               <button
                 type="button"
                 onClick={() => focusField(item.name as string)}
-                className="text-start underline underline-offset-2 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+                className="inline text-start underline underline-offset-2 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
               >
                 {item.message}
               </button>

@@ -58,7 +58,7 @@ afterEach(() => cleanup());
 describe('lesson dialog — text body', () => {
   it('shows the body editor, not the URL field, for a text lesson', () => {
     renderDialog(textLesson);
-    expect(screen.getByRole('textbox', { name: 'Lesson text' })).toBeTruthy();
+    expect(screen.getByRole('textbox', { name: /^Lesson text/ })).toBeTruthy();
     expect(screen.queryByLabelText('Content URL')).toBeNull();
   });
 
@@ -73,7 +73,7 @@ describe('lesson dialog — text body', () => {
 
   it('submits the body typed into the editor', async () => {
     const onSubmit = renderDialog(textLesson);
-    const editor = screen.getByRole('textbox', { name: 'Lesson text' });
+    const editor = screen.getByRole('textbox', { name: /^Lesson text/ });
     editor.innerHTML = '<p>Chapter one</p>';
     fireEvent.input(editor);
     fireEvent.click(screen.getByRole('button', { name: 'Save Lesson' }));
@@ -88,7 +88,7 @@ describe('lesson dialog — text body', () => {
     renderDialog({ ...textLesson, bodyHtml: '<p>Saved reading</p>' });
     await waitFor(() =>
       expect(
-        screen.getByRole('textbox', { name: 'Lesson text' }).textContent
+        screen.getByRole('textbox', { name: /^Lesson text/ }).textContent
       ).toContain('Saved reading')
     );
   });
@@ -108,7 +108,7 @@ describe('lesson dialog — text body', () => {
       contentType: 'video',
       contentUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     });
-    expect(screen.queryByRole('textbox', { name: 'Lesson text' })).toBeNull();
+    expect(screen.queryByRole('textbox', { name: /^Lesson text/ })).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Save Lesson' }));
     await waitFor(() => expect(onSubmit).toHaveBeenCalled());
   });

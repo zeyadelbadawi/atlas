@@ -12,8 +12,14 @@
     "uploading": "Uploading…",
     "errors": {
       "limitReachedTitle": "Storage limit reached",
-      "limitReachedDescription": "You've reached your plan's storage limit. Upgrade your plan or free up space to upload more."
-    }
+      "limitReachedDescription": "You've reached your plan's storage limit. Upgrade your plan or free up space to upload more.",
+      "wrongType": "This file type can't be used here. Choose {{types}}.",
+      "tooLarge": "This file is {{size}}; the limit is {{max}}. Choose a smaller file or compress it.",
+      "uploadFailedTitle": "The file wasn't uploaded"
+    },
+    "uploadRules": "Accepted: {{types}} · up to {{max}}",
+    "uploadRulesAnyImage": "Any image up to {{max}}",
+    "anyImage": "an image"
   },
   "page": {
     "title": "Academy Media",

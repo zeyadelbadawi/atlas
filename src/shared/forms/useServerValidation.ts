@@ -9,7 +9,12 @@ import { useTranslation } from 'react-i18next';
 import type { FieldValues, UseFormReturn, Path } from 'react-hook-form';
 import type { FieldViolation } from '@types';
 import type { ApiError } from '@api';
-import { humanizeFieldName, isTranslatedString } from '@utils';
+import {
+  displayableErrorKey,
+  humanizeFieldName,
+  isTranslatedString,
+  toErrorsNamespaceKey,
+} from '@utils';
 
 /**
  * "This phone number is already in use" (409) carries a `phoneNumber`
@@ -83,9 +88,13 @@ export function useServerValidation<TValues extends FieldValues>(
     error.violations.forEach((violation: FieldViolation) => {
       // B1 (V44) — a key this build doesn't translate falls back to a
       // generic field message instead of reaching the screen raw.
-      const messageKey = isTranslatedString(i18n, violation.messageKey)
-        ? violation.messageKey
-        : 'errors:validation.field';
+      // B3 (UX audit) — dotted backend keys (`errors.course.slugTaken`)
+      // resolve in the `errors` namespace, and an object key renders its
+      // description, as `useErrorText` does.
+      const messageKey =
+        displayableErrorKey(toErrorsNamespaceKey(violation.messageKey), (key) =>
+          isTranslatedString(i18n, key)
+        ) ?? 'errors:validation.field';
       const resolved = t(messageKey, {
         field: serverFieldLabel(violation.field, i18n.language, t),
         ...violation.values,

@@ -12,6 +12,7 @@ import {
   type ModerationReviewQuery,
 } from '../services/CourseReviewModerationService';
 import type { CourseReview, PaginatedResult } from '@types';
+import { COURSE_INLINE_ERRORS_META } from './inline-errors';
 
 export function useCourseReviewModeration(
   courseId: string | undefined,
@@ -48,6 +49,7 @@ export function useModerateReview(courseId: string) {
         : courseReviewModerationService.reject(courseId, reviewId),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: COURSE_INLINE_ERRORS_META,
     onSuccess: invalidateAll,
   });
 }
@@ -59,6 +61,7 @@ export function useRemoveReview(courseId: string) {
       courseReviewModerationService.remove(courseId, reviewId),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: COURSE_INLINE_ERRORS_META,
     onSuccess: invalidateAll,
   });
 }

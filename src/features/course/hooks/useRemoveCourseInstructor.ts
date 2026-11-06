@@ -9,6 +9,7 @@ import type { AcademyScopedVariables } from '@/shared/hooks';
 import type { ApiError } from '@api';
 import { useCourseCatalogInvalidation } from './useCourseCatalogInvalidation';
 import { courseService } from '../services/CourseService';
+import { COURSE_INLINE_ERRORS_META } from './inline-errors';
 
 export interface RemoveCourseInstructorVariables {
   readonly courseId: string;
@@ -27,6 +28,7 @@ export function useRemoveCourseInstructor(academyId: string) {
       courseService.removeCourseInstructor(academyId, courseId, userId),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: COURSE_INLINE_ERRORS_META,
     onSuccess: async (_data, { academyId, payload: { courseId } }) => {
       await invalidateCatalog(academyId, courseId);
     },

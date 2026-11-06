@@ -12,6 +12,7 @@ import { FieldHelp } from '@components/feedback';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -34,27 +35,34 @@ import { useStepSave } from './useStepSave';
 import { WizardStepFooter } from './WizardStepFooter';
 import type { WizardStepProps } from './wizard-step.types';
 import { currencyOptions } from '@utils';
-import { validationMessage } from '@/shared/forms/validation-message';
+import { RequiredMark, SaveFailedAlert } from '@forms';
+import {
+  MAX_COURSE_PRICE,
+  pricingIssue,
+  priceAmountFromInput,
+  priceInputFromAmount,
+} from '../utils/price-input.utils';
 
 const pricingSchema = z
   .object({
     visibility: z.enum(['public', 'private']),
     pricingType: z.enum(['free', 'paid']),
-    pricingAmount: z.preprocess(
-      (value) => (value === '' || value === null ? undefined : value),
-      z.coerce
-        .number()
-        .min(0, validationMessage('validation:min', { min: 0 }))
-        .optional()
-    ),
+    // B3 (V02/V14) — the typed text, read by `parsePriceInput`: sub-unit
+    // precision, "1e3", a thousands separator and anything above the
+    // maximum are refused with a message; "12,50" reads as 12.50.
+    pricingAmount: z.union([z.string(), z.number()]).optional(),
     pricingCurrency: z.string().optional(),
   })
-  .refine(
-    (data) =>
-      data.pricingType !== 'paid' ||
-      (typeof data.pricingAmount === 'number' && data.pricingAmount > 0),
-    { message: 'course:validation.priceRequired', path: ['pricingAmount'] }
-  );
+  .superRefine((data, ctx) => {
+    const issue = pricingIssue(data);
+    if (issue) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: issue,
+        path: ['pricingAmount'],
+      });
+    }
+  });
 
 type PricingValues = z.infer<typeof pricingSchema>;
 
@@ -73,17 +81,18 @@ export function PricingStep({
     defaultValues: {
       visibility: course.visibility,
       pricingType: course.pricing.type,
-      pricingAmount: course.pricing.amount,
+      pricingAmount: priceInputFromAmount(course.pricing.amount),
       pricingCurrency: course.pricing.currency ?? academyCurrency,
     },
   });
   usePriceCurrencyDefault(form, academyCurrency, course.pricing.currency);
   const pricingType = form.watch('pricingType');
 
-  const { save, markSaved, isSaving } = useStepSave({
+  const { save, markSaved, isSaving, saveFailure } = useStepSave({
     academyId,
     courseId: course.id,
     form,
+    fields: ['visibility', 'pricingType', 'pricingAmount', 'pricingCurrency'],
     toPayload: (values, dirty) => {
       const pricingChanged =
         dirty.pricingType || dirty.pricingAmount || dirty.pricingCurrency;
@@ -91,7 +100,7 @@ export function PricingStep({
         values.pricingType === 'paid'
           ? {
               type: 'paid',
-              amount: values.pricingAmount,
+              amount: priceAmountFromInput(values.pricingAmount),
               currency: values.pricingCurrency || academyCurrency,
             }
           : { type: 'free' };
@@ -180,13 +189,16 @@ export function PricingStep({
                 name="pricingAmount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('course:create.priceLabel')}</FormLabel>
+                    <FormLabel>
+                      {t('course:create.priceLabel')}
+                      <RequiredMark />
+                    </FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
+                        type="text"
                         inputMode="decimal"
-                        min={0}
-                        step="0.01"
+                        autoComplete="off"
+                        aria-required
                         dir="ltr"
                         data-ltr-content
                         placeholder={t('course:create.pricePlaceholder')}
@@ -194,6 +206,11 @@ export function PricingStep({
                         value={field.value ?? ''}
                       />
                     </FormControl>
+                    <FormDescription>
+                      {t('course:create.priceHelp', {
+                        max: MAX_COURSE_PRICE.toLocaleString('en-US'),
+                      })}
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -226,6 +243,13 @@ export function PricingStep({
           ) : null}
         </div>
 
+        {saveFailure ? (
+          <SaveFailedAlert
+            error={saveFailure}
+            titleKey="common:form.notSaved"
+            onRetry={() => void form.handleSubmit(onSubmit)()}
+          />
+        ) : null}
         <WizardStepFooter
           onBack={onBack}
           nextType="submit"

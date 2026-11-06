@@ -10,6 +10,7 @@ import type { AcademyScopedVariables } from '@/shared/hooks';
 import { invalidateCourseCurriculum } from '@services/query/curriculum-invalidation';
 import type { ApiError } from '@api';
 import { courseService } from '../services/CourseService';
+import { COURSE_INLINE_ERRORS_META } from './inline-errors';
 
 export interface DeleteCourseLessonVariables {
   readonly sectionId: string;
@@ -33,6 +34,7 @@ export function useDeleteCourseLesson(academyId: string, courseId: string) {
       ),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: COURSE_INLINE_ERRORS_META,
     onSuccess: async (_data, { academyId }) => {
       await invalidateCourseCurriculum(queryClient, { academyId, courseId });
     },

@@ -1,7 +1,13 @@
 {
   "title": "Course Management",
   "validation": {
-    "priceRequired": "Enter a price greater than 0 for a paid course"
+    "priceRequired": "Enter a price greater than 0 for a paid course",
+    "priceFormat": "Enter the price in digits, like 12.50 — no spaces, thousands separators or letters.",
+    "priceDecimals": "Use at most {{count}} decimal places, like 12.50.",
+    "priceTooHigh": "The highest price you can set is {{max}}. Enter a lower amount.",
+    "slugRequired": "Enter a web address in lowercase English letters, numbers and hyphens, for example intro-to-algebra. It can't be made from an Arabic title automatically.",
+    "tooManyLines": "You have {{count}} lines; the limit is {{max}}. Remove some lines to continue.",
+    "lineTooLong": "Line {{line}} is {{length}} characters long. Keep each line to {{max}} characters or fewer."
   },
   "status": {
     "draft": "Draft",
@@ -51,10 +57,11 @@
       "edit": "Edit",
       "builder": "Curriculum",
       "settings": "Settings",
-      "delete": "Delete",
+      "delete": "Archive",
       "continueSetup": "Continue setup"
     },
-    "uncategorized": "Uncategorized"
+    "uncategorized": "Uncategorized",
+    "actionsFor": "Actions for \"{{title}}\""
   },
   "empty": {
     "noCourses": "You don't have any courses yet.",
@@ -81,7 +88,7 @@
     "descriptionLabel": "Description",
     "descriptionPlaceholder": "Detailed description of your course",
     "thumbnailLabel": "Thumbnail",
-    "thumbnailHelp": "Upload a course thumbnail (PNG, JPG, max 5MB)",
+    "thumbnailHelp": "PNG, JPG or WebP, up to 5 MB. It is saved to your media library.",
     "uploadThumbnail": "Upload Thumbnail",
     "changeThumbnail": "Change Thumbnail",
     "configuration": "Configuration",
@@ -102,8 +109,8 @@
     "successNextStepDescription": "Start building your curriculum.",
     "continueToBuilder": "Continue to Course Builder",
     "error": "Failed to create course",
-    "thumbnailTooLarge": "Thumbnail must be smaller than 5MB.",
-    "thumbnailInvalidType": "Thumbnail must be a PNG or JPG image.",
+    "thumbnailTooLarge": "The image must be 5 MB or smaller. Choose a smaller file or compress it.",
+    "thumbnailInvalidType": "Choose a PNG, JPG or WebP image.",
     "errors": {
       "limitReachedTitle": "Course limit reached",
       "limitReachedDescription": "You've reached your plan's course limit. Upgrade your plan to create another course."
@@ -112,7 +119,13 @@
       "visibility": "Private courses are visible only to your staff. Public courses can appear on your academy website and be discovered by students.",
       "pricingType": "Free courses can be enrolled in directly. Paid courses require a completed purchase before a student gets access."
     },
-    "slugSuggested": "Suggested from the course title. Edit it if you would prefer a different address."
+    "slugSuggested": "Suggested from the course title. Edit it if you would prefer a different address.",
+    "priceHelp": "Up to 2 decimal places, at most {{max}}.",
+    "notCreated": "The course wasn't created",
+    "thumbnailReadFailed": "That image couldn't be read. Choose it again.",
+    "thumbnailUploadFailed": "The image wasn't uploaded, and the previous image is kept.",
+    "uploadingThumbnail": "Uploading image…",
+    "removeThumbnail": "Remove image"
   },
   "edit": {
     "title": "Edit Course",
@@ -161,7 +174,9 @@
       "notEligible": "This person isn't an active instructor in this academy.",
       "alreadyAssigned": "This instructor is already assigned to this course.",
       "insufficientRole": "You don't have permission to manage this course's instructors.",
-      "generic": "Couldn't update this course's instructors. Please try again."
+      "generic": "Couldn't update this course's instructors. Please try again.",
+      "assignFailed": "The instructor wasn't assigned",
+      "removeFailed": "The instructor wasn't removed"
     }
   },
   "builder": {
@@ -177,7 +192,8 @@
       "edit": "Edit section",
       "delete": "Delete section",
       "moveUp": "Move section \"{{title}}\" up",
-      "moveDown": "Move section \"{{title}}\" down"
+      "moveDown": "Move section \"{{title}}\" down",
+      "actions": "Actions for unit \"{{title}}\""
     },
     "lessonMenu": {
       "edit": "Edit lesson",
@@ -256,7 +272,8 @@
         "wrongType": "Upload an MP4 video.",
         "tooLarge": "This video is larger than 5 GB.",
         "help": "MP4 only. Learners watch it with their name watermarked on the video, on the devices your academy allows. It counts towards your plan's video minutes and storage."
-      }
+      },
+      "invalidContentUrl": "Enter a web address that starts with https:// or http://, for example https://youtu.be/…"
     },
     "deleteSectionConfirm": {
       "title": "Delete this section?",
@@ -294,7 +311,8 @@
     "itemMenu": {
       "actions": "Item actions",
       "removeFromUnit": "Remove from unit",
-      "liveSessionDeferred": "Live Sessions coming soon"
+      "liveSessionDeferred": "Live Sessions coming soon",
+      "actionsFor": "Actions for \"{{title}}\""
     },
     "attach": {
       "quizTitle": "Add an existing quiz",
@@ -335,11 +353,14 @@
     "removing": "Removing…",
     "deleting": "Deleting…",
     "lessonBodyError": "The lesson was saved, but its text was not. Try saving again.",
-    "lessonFileError": "The lesson was saved, but its file was not attached. Try saving again."
+    "lessonFileError": "The lesson was saved, but its file was not attached. Try saving again.",
+    "sectionDeleteError": "The unit wasn't deleted",
+    "lessonDeleteError": "The lesson wasn't deleted",
+    "detachError": "The item wasn't removed from the unit"
   },
   "settings": {
     "title": "Course Settings",
-    "subtitle": "Manage status, visibility and publishing",
+    "subtitle": "Publishing, completion rules and certificates. Visibility and price are on the Details tab.",
     "general": "General",
     "publishing": "Publishing",
     "publishingDescription": "Published courses are visible to students and open for enrollment.",
@@ -367,19 +388,19 @@
     "publishSuccessNextStepDescription": "Continue managing your academy.",
     "backToAcademy": "Back to Academy",
     "unpublishSuccess": "Course unpublished",
-    "publishError": "Failed to publish course",
-    "unpublishError": "Failed to unpublish course",
+    "publishError": "The course wasn't published",
+    "unpublishError": "The course wasn't unpublished",
     "dangerZone": "Danger Zone",
-    "dangerZoneDescription": "Deleting a course is permanent and removes it for every enrolled student.",
-    "deleteCourse": "Delete Course",
+    "dangerZoneDescription": "Archiving takes the course out of your catalogue and closes enrollment. Its curriculum and learner records are kept.",
+    "deleteCourse": "Archive course",
     "deleteCourseConfirm": {
-      "title": "Delete this course?",
-      "description": "This will permanently delete \"{{title}}\" and its entire curriculum. This cannot be undone.",
-      "confirmLabel": "Delete Course",
+      "title": "Archive this course?",
+      "description": "\"{{title}}\" will be archived: it leaves your catalogue and is no longer open for enrollment. Its curriculum and learner records are kept. You can find it later with the Archived status filter on the courses list and publish it again from its settings.",
+      "confirmLabel": "Archive course",
       "cancelLabel": "Cancel"
     },
-    "deleteCourseSuccess": "Course deleted",
-    "deleteCourseError": "Failed to delete course",
+    "deleteCourseSuccess": "Course archived",
+    "deleteCourseError": "The course wasn't archived",
     "completion": {
       "title": "Completion and certificate",
       "description": "What a learner must do to complete this course, and whether a certificate is issued for it.",
@@ -401,7 +422,9 @@
             "label": "At least this many lessons",
             "description": "Any published lessons count towards the number."
           }
-        }
+        },
+        "minAtLeastOne": "Enter 1 or more lessons.",
+        "minRequired": "Enter how many lessons a learner must complete."
       },
       "quizzes": {
         "label": "Required quizzes",
@@ -431,7 +454,10 @@
       "ownerOrManagerOnly": "Only academy owners and managers can change these settings.",
       "save": "Save completion settings",
       "saved": "Completion settings saved"
-    }
+    },
+    "openDetails": "Open course details",
+    "openQuizzes": "Open the quizzes",
+    "deleteCourseSuccessDescription": "Find it with the Archived status filter on the courses list."
   },
   "assignmentAuthoring": {
     "title": "Assignments",
@@ -443,7 +469,8 @@
     "menu": {
       "edit": "Edit",
       "delete": "Delete",
-      "reviewSubmissions": "Review submissions"
+      "reviewSubmissions": "Review submissions",
+      "actionsFor": "Actions for \"{{title}}\""
     },
     "dialog": {
       "createTitle": "Add Assignment",
@@ -488,7 +515,11 @@
       "block": "Late submissions not accepted",
       "accept_flagged": "Late submissions accepted and flagged"
     },
-    "requiredForCompletionBadge": "Required for completion"
+    "requiredForCompletionBadge": "Required for completion",
+    "validation": {
+      "dueInPast": "This due date has already passed. Choose a date and time in the future."
+    },
+    "deleteError": "The assignment wasn't deleted"
   },
   "quizAuthoring": {
     "title": "Quizzes",
@@ -501,7 +532,8 @@
     "menu": {
       "edit": "Edit",
       "delete": "Delete",
-      "reviewAttempts": "Review attempts"
+      "reviewAttempts": "Review attempts",
+      "actionsFor": "Actions for \"{{title}}\""
     },
     "created": "Quiz created",
     "updated": "Quiz updated",
@@ -566,7 +598,10 @@
       "acceptedAnswerPlaceholder": "Accepted answer {{number}}",
       "addAcceptedAnswer": "Add accepted answer",
       "removeAcceptedAnswer": "Remove accepted answer",
-      "moreOptions": "More options"
+      "moreOptions": "More options",
+      "removeQuestionNumber": "Remove question {{number}}",
+      "correctOption": "Option {{number}} is correct",
+      "removeOptionNumber": "Remove option {{number}}"
     },
     "validation": {
       "trueFalseOptionCount": "A True/False question needs exactly two options.",
@@ -576,7 +611,9 @@
       "acceptedAnswerRequired": "Add at least one accepted answer.",
       "availabilityOrder": "The closing time must be after the opening time.",
       "dueAfterWindow": "The due date can't be after the closing time.",
-      "questionsPerAttemptExceedsCount": "This is more than the number of questions in the quiz."
+      "questionsPerAttemptExceedsCount": "This is more than the number of questions in the quiz.",
+      "windowEndInPast": "This closing time has already passed, so the quiz would be closed. Choose a time in the future.",
+      "dueInPast": "This due date has already passed. Choose a date and time in the future."
     },
     "settings": {
       "title": "Settings",
@@ -764,6 +801,14 @@
       "shortAnswer": "Type your answer",
       "essayAnswer": "Write your answer",
       "selectAllThatApply": "Select all that apply."
+    },
+    "deleteError": "The quiz wasn't deleted",
+    "notCreated": "The quiz wasn't created",
+    "removeQuestionConfirm": {
+      "title": "Remove question {{number}}?",
+      "description": "Its prompt, options and settings will be removed from this quiz. Nothing is saved until you select Save Quiz.",
+      "confirmLabel": "Remove question",
+      "cancelLabel": "Keep it"
     }
   },
   "categories": {
@@ -799,7 +844,10 @@
     "noBody": "No written review.",
     "ratingLabel": "Rated {{rating}} out of 5",
     "emptyTitle": "No reviews yet",
-    "emptyDescription": "Reviews from enrolled learners will appear here for moderation."
+    "emptyDescription": "Reviews from enrolled learners will appear here for moderation.",
+    "approveFailed": "The review wasn't approved",
+    "rejectFailed": "The review wasn't rejected",
+    "removeFailed": "The review wasn't removed"
   },
   "wizard": {
     "title": "Set up your course",
@@ -966,7 +1014,8 @@
       "publishedDescription": "Learners can now find it according to its visibility.",
       "viewCourses": "Back to courses",
       "openSettings": "Course settings"
-    }
+    },
+    "lockedNote": "Create the course first — the other steps open once it is saved."
   },
   "checkout": {
     "title": "Checkout",
@@ -1006,5 +1055,8 @@
     "referenceHelp": "The transaction or reference number from your bank or wallet. It helps the academy find your payment.",
     "proofFileHelp": "PNG, JPG or PDF, up to 10 MB.",
     "notAdmittedTitle": "You can't buy courses here yet"
+  },
+  "form": {
+    "characterCount": "{{counter}} characters"
   }
 }

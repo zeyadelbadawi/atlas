@@ -44,7 +44,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { toast } from '@/hooks/use-toast';
-import { isApiError } from '@api';
 import { usePermissions } from '@hooks';
 import { useConfirmDialog } from '@app/providers';
 import {
@@ -67,6 +66,7 @@ import { LessonFormDialog } from './LessonFormDialog';
 import { UnitCurriculum } from './UnitCurriculum';
 import { CurriculumSortableList, DragHandle } from './UnitCurriculumSortable';
 import { useReorderFocus } from '../hooks/useReorderFocus';
+import { useActionFailureToast } from '../forms/course-form-feedback';
 import { LiveSessionCurriculumBlock } from '@features/live-sessions';
 import { isStaleOrderError, moveItem } from '../utils/reorder.utils';
 import type {
@@ -140,6 +140,7 @@ export function CourseCurriculumEditor({
 }: CourseCurriculumEditorProps): JSX.Element {
   const { t } = useTranslation();
   const { confirm } = useConfirmDialog();
+  const failureToast = useActionFailureToast();
   const { hasPermission } = usePermissions();
   // Uploading to the academy's media (a protected lesson file, a hosted
   // video) is for the managing roles; the server refuses a course
@@ -203,19 +204,9 @@ export function CourseCurriculumEditor({
         toast({ title: t('course:builder.sectionCreated') });
       }
       setSectionDialog(null);
-    } catch (error) {
-      if (
-        isApiError(error) &&
-        error.kind === 'validation' &&
-        error.violations?.length
-      ) {
-        return;
-      }
-      toast({
-        title: t('course:builder.sectionError'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+    } catch {
+      // B3 (V05) — shown once, inside the dialog: on its field or in one
+      // alert with the real reason. The dialog stays open with the text.
     }
   };
 
@@ -233,12 +224,8 @@ export function CourseCurriculumEditor({
     try {
       await deleteSection.mutateAsync(section.id);
       toast({ title: t('course:builder.sectionDeleted') });
-    } catch {
-      toast({
-        title: t('course:builder.sectionError'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+    } catch (error) {
+      failureToast('course:builder.sectionDeleteError', error);
     }
   };
 
@@ -275,11 +262,11 @@ export function CourseCurriculumEditor({
         sectionFocus.requestFocus(focusCandidates, null);
       } else {
         setSectionAnnouncement(t('course:builder.order.failed'));
-        toast({
-          title: t('course:builder.reorderError'),
-          description: t('course:builder.order.failed'),
-          variant: 'destructive',
-        });
+        failureToast(
+          'course:builder.reorderError',
+          error,
+          'course:builder.order.failed'
+        );
         sectionFocus.requestFocus(focusCandidates, previousIds);
       }
     } finally {
@@ -426,18 +413,14 @@ export function CourseCurriculumEditor({
             saved.id,
             { kind: 'text', bodyHtml: data.bodyHtml ?? '' }
           );
-        } catch {
+        } catch (bodyError) {
           setLessonDialog({
             mode: 'edit',
             sectionId: lessonDialog.sectionId,
             lesson: saved,
             pendingBodyHtml: data.bodyHtml ?? '',
           });
-          toast({
-            title: t('course:builder.lessonBodyError'),
-            description: t('errors:generic.description'),
-            variant: 'destructive',
-          });
+          failureToast('course:builder.lessonBodyError', bodyError);
           return;
         }
         void lessonBody.refetch();
@@ -470,18 +453,14 @@ export function CourseCurriculumEditor({
               publicLink: saved.contentUrl,
             }
           );
-        } catch {
+        } catch (fileError) {
           setLessonDialog({
             mode: 'edit',
             sectionId: lessonDialog.sectionId,
             lesson: saved,
             pendingProtectedFile: data.protectedFile,
           });
-          toast({
-            title: t('course:builder.lessonFileError'),
-            description: t('errors:generic.description'),
-            variant: 'destructive',
-          });
+          failureToast('course:builder.lessonFileError', fileError);
           return;
         }
         void lessonFileContent.refetch();
@@ -495,23 +474,9 @@ export function CourseCurriculumEditor({
         ),
       });
       setLessonDialog(null);
-    } catch (error) {
-      // A validation error is shown inline, on the field that caused it,
-      // via `useServerValidation` inside `LessonFormDialog` — a generic
-      // toast on top would just repeat "something's wrong" without
-      // saying what.
-      if (
-        isApiError(error) &&
-        error.kind === 'validation' &&
-        error.violations?.length
-      ) {
-        return;
-      }
-      toast({
-        title: t('course:builder.lessonError'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+    } catch {
+      // B3 (V05) — shown once, inside `LessonFormDialog`: a violation on
+      // its field, anything else in one alert with the real reason.
     }
   };
 
@@ -532,12 +497,8 @@ export function CourseCurriculumEditor({
     try {
       await deleteLesson.mutateAsync({ sectionId, lessonId: lesson.id });
       toast({ title: t('course:builder.lessonDeleted') });
-    } catch {
-      toast({
-        title: t('course:builder.lessonError'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+    } catch (error) {
+      failureToast('course:builder.lessonDeleteError', error);
     }
   };
 
@@ -622,8 +583,8 @@ export function CourseCurriculumEditor({
                     isDragging && 'border-primary/60'
                   )}
                 >
-                  <CardHeader className="flex-row items-start justify-between gap-2 space-y-0">
-                    <div className="flex min-w-0 items-start gap-2">
+                  <CardHeader className="flex-row flex-wrap items-start justify-between gap-2 space-y-0 p-3 sm:p-6">
+                    <div className="flex min-w-0 flex-1 basis-48 items-start gap-2">
                       <DragHandle
                         handle={handle}
                         isDragging={isDragging}
@@ -633,8 +594,16 @@ export function CourseCurriculumEditor({
                         focusRef={sectionFocus.register(`${section.id}:handle`)}
                       />
                       <div className="min-w-0 space-y-1">
-                        <h3 className="font-display text-base font-semibold text-foreground">
-                          {sectionIndex + 1}. {section.title}
+                        {/* B3 (V26) — the number in its own chip and the
+                            title isolated: "1. Unit Two" read as
+                            "Unit Two .1" on an Arabic page. */}
+                        <h3 className="flex items-start gap-2 font-display text-base font-semibold text-foreground">
+                          <span className="mt-0.5 inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded bg-muted px-1 text-xs tabular-nums text-muted-foreground">
+                            {sectionIndex + 1}
+                          </span>
+                          <bdi className="min-w-0 break-words [overflow-wrap:anywhere]">
+                            {section.title}
+                          </bdi>
                         </h3>
                         {section.description ? (
                           <p className="text-sm text-muted-foreground">
@@ -656,7 +625,7 @@ export function CourseCurriculumEditor({
                       </div>
                     </div>
 
-                    <div className="flex shrink-0 items-center gap-1">
+                    <div className="ms-auto flex shrink-0 items-center gap-1">
                       <Button
                         ref={sectionFocus.register(`${section.id}:up`)}
                         variant="ghost"
@@ -693,7 +662,12 @@ export function CourseCurriculumEditor({
                             variant="ghost"
                             size="icon"
                             disabled={isDeleting || isReorderingSections}
-                            aria-label={t('course:builder.sectionMenu.edit')}
+                            aria-label={t(
+                              'course:builder.sectionMenu.actions',
+                              {
+                                title: section.title,
+                              }
+                            )}
                           >
                             <MoreHorizontal className="size-4" aria-hidden />
                           </Button>
@@ -717,7 +691,7 @@ export function CourseCurriculumEditor({
                     </div>
                   </CardHeader>
 
-                  <CardContent className="space-y-3">
+                  <CardContent className="space-y-3 px-3 pb-3 sm:px-6 sm:pb-6">
                     {/*
                       P52 — the unified, ordered curriculum of this unit:
                       lessons + quizzes + assignments in ONE sequence the
@@ -796,7 +770,9 @@ export function CourseCurriculumEditor({
         onSubmit={handleLessonSubmit}
         onUploadProtectedFile={canUploadMedia ? uploadProtectedFile : undefined}
         hasProtectedFile={hasProtectedFile}
-        onUploadHostedVideo={hostedVideoAuthoring ? uploadLessonVideo : undefined}
+        onUploadHostedVideo={
+          hostedVideoAuthoring ? uploadLessonVideo : undefined
+        }
         loadHostedVideos={hostedVideoAuthoring ? loadHostedVideos : undefined}
         error={
           lessonDialog?.mode === 'edit'

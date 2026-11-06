@@ -11,6 +11,7 @@ import type { ApiError } from '@api';
 import { useCourseCatalogInvalidation } from './useCourseCatalogInvalidation';
 import { courseService } from '../services/CourseService';
 import type { Course } from '@types';
+import { COURSE_INLINE_ERRORS_META } from './inline-errors';
 
 export function usePublishCourse(academyId: string) {
   const invalidateCatalog = useCourseCatalogInvalidation();
@@ -24,6 +25,7 @@ export function usePublishCourse(academyId: string) {
       courseService.publishCourse(academyId, courseId),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: COURSE_INLINE_ERRORS_META,
     onSuccess: async (_course, { academyId, payload: courseId }) => {
       await invalidateCatalog(academyId, courseId);
     },

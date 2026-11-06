@@ -42,6 +42,7 @@ import {
   useCourseEditorTabs,
 } from '../hooks/useCourseEditorTabs';
 import type { BreadcrumbItem, CourseReviewStatus } from '@types';
+import { useActionFailureToast } from '../forms/course-form-feedback';
 
 type StatusFilter = 'all' | CourseReviewStatus;
 
@@ -101,6 +102,7 @@ export default function CourseReviewsModerationPage(): JSX.Element {
     if (reviews) setTotalItems(reviews.pagination.totalItems);
   }, [reviews]);
 
+  const failureToast = useActionFailureToast();
   const moderate = useModerateReview(courseId ?? '');
   const remove = useRemoveReview(courseId ?? '');
 
@@ -110,8 +112,8 @@ export default function CourseReviewsModerationPage(): JSX.Element {
       toast({
         title: t(`course:reviews.${action}dToast`),
       });
-    } catch {
-      toast({ title: t('common:states.error.title'), variant: 'destructive' });
+    } catch (error) {
+      failureToast(`course:reviews.${action}Failed`, error);
     }
   };
 
@@ -126,8 +128,8 @@ export default function CourseReviewsModerationPage(): JSX.Element {
     try {
       await remove.mutateAsync({ reviewId });
       toast({ title: t('course:reviews.removedToast') });
-    } catch {
-      toast({ title: t('common:states.error.title'), variant: 'destructive' });
+    } catch (error) {
+      failureToast('course:reviews.removeFailed', error);
     }
   };
 

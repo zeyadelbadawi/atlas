@@ -161,10 +161,10 @@ describe('course price currency default (D5-3)', { timeout: 20_000 }, () => {
     );
     await waitFor(() => expect(getAcademy).toHaveBeenCalled());
 
-    await user.type(screen.getByLabelText('Course Title'), 'Tajweed');
+    await user.type(screen.getByLabelText(/^Course Title/), 'Tajweed');
     await choosePaid(user);
     await waitFor(() => expect(currencyShown()).toContain('SAR'));
-    await user.type(screen.getByLabelText('Price'), '150');
+    await user.type(screen.getByLabelText(/^Price/), '150');
     await user.click(screen.getByRole('button', { name: 'Create Course' }));
 
     await waitFor(() => expect(createCourse).toHaveBeenCalledTimes(1));
@@ -193,7 +193,7 @@ describe('course price currency default (D5-3)', { timeout: 20_000 }, () => {
     await waitFor(() => expect(getAcademy).toHaveBeenCalled());
     await choosePaid(user);
     await waitFor(() => expect(currencyShown()).toContain('SAR'));
-    await user.type(screen.getByLabelText('Price'), '80');
+    await user.type(screen.getByLabelText(/^Price/), '80');
     await user.click(screen.getByRole('button', { name: 'Save and continue' }));
 
     await waitFor(() => expect(updateCourse).toHaveBeenCalledTimes(1));
@@ -228,7 +228,7 @@ describe('course price currency default (D5-3)', { timeout: 20_000 }, () => {
     await new Promise((resolve) => setTimeout(resolve, 50));
     expect(currencyShown()).toContain('EGP');
 
-    const price = screen.getByLabelText('Price');
+    const price = screen.getByLabelText(/^Price/);
     await user.clear(price);
     await user.type(price, '250');
     await user.click(screen.getByRole('button', { name: 'Save and continue' }));

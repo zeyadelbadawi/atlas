@@ -27,7 +27,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { useSlugSuggestion, useUnsavedChanges } from '@hooks';
-import { useServerValidation } from '@forms';
+import {
+  hasViolationOn,
+  RequiredMark,
+  SaveFailedAlert,
+  useFocusFirstViolation,
+  useLabelledViolations,
+  useServerValidation,
+} from '@forms';
 import { isApiError } from '@api';
 import type { Course } from '@types';
 import { useCreateCourse } from '../hooks';
@@ -43,6 +50,10 @@ import {
 } from './create-idempotency-key';
 import { useStepSave } from './useStepSave';
 import { WizardStepFooter } from './WizardStepFooter';
+import {
+  COURSE_FIELD_LABELS,
+  useSlugTakenError,
+} from '../forms/course-form-feedback';
 import { validationMessage } from '@/shared/forms/validation-message';
 
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -60,7 +71,7 @@ const basicsStepSchema = z.object({
     ),
   slug: z
     .string()
-    .min(1, 'validation:required')
+    .min(1, 'course:validation.slugRequired')
     .max(
       MAX_COURSE_SLUG_LENGTH,
       validationMessage('validation:maxLength', {
@@ -80,6 +91,14 @@ const basicsStepSchema = z.object({
 });
 
 type BasicsStepValues = z.infer<typeof basicsStepSchema>;
+
+/** The fields a server violation on this step can land on. */
+const BASICS_FIELDS = ['title', 'slug', 'shortDescription'] as const;
+const BASICS_VIOLATION_FIELDS = {
+  title: 'title',
+  slug: 'slug',
+  shortDescription: 'shortDescription',
+} as const;
 
 export interface BasicsStepProps {
   readonly academyId: string;
@@ -110,7 +129,23 @@ function CreateBasics({
     resolver: zodResolver(basicsStepSchema),
     defaultValues: { title: '', slug: '', shortDescription: '' },
   });
-  useServerValidation(form, create.error ?? null);
+  // B3 — server violations on their fields, labelled in the page's
+  // language (V12); a taken address on the slug field (V13); a plan limit
+  // in its own toast; anything else one inline alert (V05).
+  const createError = create.error ?? null;
+  const labelled = useLabelledViolations(createError, COURSE_FIELD_LABELS);
+  useServerValidation(form, labelled);
+  useFocusFirstViolation(form, labelled, BASICS_VIOLATION_FIELDS);
+  const slugTaken = useSlugTakenError(form, createError);
+  const isLimit =
+    isApiError(createError) && createError.code === 'ENTITLEMENT_LIMIT_REACHED';
+  const createFailure =
+    createError &&
+    !slugTaken &&
+    !isLimit &&
+    !hasViolationOn(createError, BASICS_VIOLATION_FIELDS)
+      ? createError
+      : null;
   const { markSaved } = useUnsavedChanges({ isDirty: form.formState.isDirty });
 
   // The slug follows the title until the author edits it (see
@@ -146,18 +181,7 @@ function CreateBasics({
         });
         return;
       }
-      if (
-        isApiError(error) &&
-        error.kind === 'validation' &&
-        error.violations?.length
-      ) {
-        return; // Shown on the fields.
-      }
-      toast({
-        title: t('course:create.error'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+      // Anything else is shown once: on its field or in the alert below.
     }
   };
 
@@ -177,6 +201,13 @@ function CreateBasics({
               : 'course:create.slugSuggested'
           }
         />
+        {createFailure ? (
+          <SaveFailedAlert
+            error={createFailure}
+            titleKey="course:create.notCreated"
+            onRetry={() => void form.handleSubmit(onSubmit)()}
+          />
+        ) : null}
         <WizardStepFooter
           onBack={onCancel}
           backLabel={t('course:create.cancelButton')}
@@ -202,10 +233,11 @@ function EditBasics({
       shortDescription: course.shortDescription ?? '',
     },
   });
-  const { save, markSaved, isSaving } = useStepSave({
+  const { save, markSaved, isSaving, saveFailure } = useStepSave({
     academyId,
     courseId: course.id,
     form,
+    fields: BASICS_FIELDS,
     toPayload: (values, dirty) => ({
       ...(dirty.title ? { title: values.title.trim() } : {}),
       ...(dirty.slug ? { slug: values.slug } : {}),
@@ -230,6 +262,13 @@ function EditBasics({
         noValidate
       >
         <BasicsFields form={form} slugHelpKey="course:create.slugHelp" />
+        {saveFailure ? (
+          <SaveFailedAlert
+            error={saveFailure}
+            titleKey="common:form.notSaved"
+            onRetry={() => void form.handleSubmit(onSubmit)()}
+          />
+        ) : null}
         <WizardStepFooter nextType="submit" pending={isSaving} />
       </form>
     </Form>
@@ -253,7 +292,10 @@ function BasicsFields({
         name="title"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>{t('course:create.titleLabel')}</FormLabel>
+            <FormLabel>
+              {t('course:create.titleLabel')}
+              <RequiredMark />
+            </FormLabel>
             <FormControl>
               <Input
                 placeholder={t('course:create.titlePlaceholder')}
@@ -270,7 +312,10 @@ function BasicsFields({
         name="slug"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>{t('course:create.slugLabel')}</FormLabel>
+            <FormLabel>
+              {t('course:create.slugLabel')}
+              <RequiredMark />
+            </FormLabel>
             <FormControl>
               <Input
                 placeholder={t('course:create.slugPlaceholder')}

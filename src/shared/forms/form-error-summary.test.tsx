@@ -157,3 +157,21 @@ describe('FormErrorSummary — scoped to its own form', () => {
     );
   });
 });
+
+describe('flattenFormErrors — list errors (B3)', () => {
+  it("names a list's own error after the list, not \"root\"", () => {
+    expect(
+      flattenFormErrors({
+        questions: {
+          0: { options: { root: { type: 'custom', message: 'm' } } },
+        },
+      } as never)
+    ).toEqual([{ name: 'questions.0.options', message: 'm' }]);
+  });
+
+  it('keeps a top-level root error form-level', () => {
+    expect(
+      flattenFormErrors({ root: { type: 'server', message: 'm' } } as never)
+    ).toEqual([{ name: null, message: 'm' }]);
+  });
+});

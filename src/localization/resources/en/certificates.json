@@ -244,7 +244,8 @@
         "navy": "Navy",
         "burgundy": "Burgundy",
         "forest": "Forest"
-      }
+      },
+      "hexLabel": "{{color}} — hex code"
     }
   }
 }

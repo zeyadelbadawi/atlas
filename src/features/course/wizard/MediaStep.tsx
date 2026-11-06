@@ -8,10 +8,12 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { MAX_COURSE_THUMBNAIL_FILE_SIZE } from '../constants/course.constants';
 import { useForm } from 'react-hook-form';
 import { ImageIcon, ImagePlus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MediaLibraryDialog } from '@features/media';
+import { SaveFailedAlert } from '@forms';
 import { useStepSave } from './useStepSave';
 import { WizardStepFooter } from './WizardStepFooter';
 import type { WizardStepProps } from './wizard-step.types';
@@ -33,10 +35,11 @@ export function MediaStep({
   });
   const thumbnail = form.watch('thumbnail');
 
-  const { save, markSaved, isSaving } = useStepSave({
+  const { save, markSaved, isSaving, saveFailure } = useStepSave({
     academyId,
     courseId: course.id,
     form,
+    fields: ['thumbnail'],
     toPayload: (values, dirty) =>
       dirty.thumbnail ? { thumbnail: values.thumbnail } : null,
   });
@@ -105,6 +108,7 @@ export function MediaStep({
         open={libraryOpen}
         onOpenChange={setLibraryOpen}
         accept="image/png,image/jpeg,image/webp"
+        maxBytes={MAX_COURSE_THUMBNAIL_FILE_SIZE}
         selectedUrl={thumbnail || undefined}
         onSelect={(asset) => {
           form.setValue('thumbnail', asset.url, { shouldDirty: true });
@@ -112,6 +116,18 @@ export function MediaStep({
         }}
       />
 
+      {saveFailure ? (
+        <SaveFailedAlert
+          error={saveFailure}
+          titleKey="common:form.notSaved"
+          onRetry={() => void form.handleSubmit(onSubmit)()}
+        />
+      ) : null}
+      {form.formState.errors.thumbnail?.message ? (
+        <p role="alert" className="text-sm text-destructive">
+          {form.formState.errors.thumbnail.message}
+        </p>
+      ) : null}
       <WizardStepFooter onBack={onBack} nextType="submit" pending={isSaving} />
     </form>
   );

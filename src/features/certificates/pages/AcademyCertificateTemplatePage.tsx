@@ -91,11 +91,41 @@ const PALETTE_PRESETS: {
   readonly textColor: string;
   readonly backgroundColor: string;
 }[] = [
-  { id: 'atlas', primaryColor: '#1F4E5F', accentColor: '#B08A3E', textColor: '#14303A', backgroundColor: '#FCFBF7' },
-  { id: 'charcoal', primaryColor: '#2B2F36', accentColor: '#9A7B4F', textColor: '#1A1D22', backgroundColor: '#FAFAF8' },
-  { id: 'navy', primaryColor: '#1B3A5B', accentColor: '#C0A15B', textColor: '#152A3E', backgroundColor: '#FBFCFE' },
-  { id: 'burgundy', primaryColor: '#6E1E2B', accentColor: '#C2A05A', textColor: '#2A1418', backgroundColor: '#FDFAF6' },
-  { id: 'forest', primaryColor: '#25503C', accentColor: '#B4914A', textColor: '#16281F', backgroundColor: '#FAFCF8' },
+  {
+    id: 'atlas',
+    primaryColor: '#1F4E5F',
+    accentColor: '#B08A3E',
+    textColor: '#14303A',
+    backgroundColor: '#FCFBF7',
+  },
+  {
+    id: 'charcoal',
+    primaryColor: '#2B2F36',
+    accentColor: '#9A7B4F',
+    textColor: '#1A1D22',
+    backgroundColor: '#FAFAF8',
+  },
+  {
+    id: 'navy',
+    primaryColor: '#1B3A5B',
+    accentColor: '#C0A15B',
+    textColor: '#152A3E',
+    backgroundColor: '#FBFCFE',
+  },
+  {
+    id: 'burgundy',
+    primaryColor: '#6E1E2B',
+    accentColor: '#C2A05A',
+    textColor: '#2A1418',
+    backgroundColor: '#FDFAF6',
+  },
+  {
+    id: 'forest',
+    primaryColor: '#25503C',
+    accentColor: '#B4914A',
+    textColor: '#16281F',
+    backgroundColor: '#FAFCF8',
+  },
 ];
 
 export default function AcademyCertificateTemplatePage(): JSX.Element {
@@ -217,7 +247,9 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
     []
   );
 
-  async function onSubmit(values: CertificateTemplateFormData): Promise<boolean> {
+  async function onSubmit(
+    values: CertificateTemplateFormData
+  ): Promise<boolean> {
     try {
       const saved = await update.mutateAsync({
         name: values.name,
@@ -418,19 +450,28 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
               <input
                 type="color"
                 aria-label={t(labelKey)}
-                value={/^#[0-9a-fA-F]{6}$/.test(field.value) ? field.value : '#000000'}
-                disabled={disabled}
-                onChange={(e) =>
-                  field.onChange(e.target.value.toUpperCase())
+                value={
+                  /^#[0-9a-fA-F]{6}$/.test(field.value)
+                    ? field.value
+                    : '#000000'
                 }
+                disabled={disabled}
+                onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                 className="h-9 w-12 shrink-0 cursor-pointer rounded-md border border-input bg-background p-1 disabled:cursor-not-allowed disabled:opacity-50"
               />
             </FormControl>
+            {/* B3 (V26) — a hex code reads left to right: "#B08A3E", never
+                "B08A3E#" on an Arabic page. */}
             <Input
               value={field.value ?? ''}
               onChange={(e) => field.onChange(e.target.value.toUpperCase())}
               disabled={disabled}
               spellCheck={false}
+              dir="ltr"
+              data-ltr-content
+              aria-label={t('certificates:template.colors.hexLabel', {
+                color: t(labelKey),
+              })}
               className="font-mono uppercase"
               placeholder="#000000"
             />
@@ -442,12 +483,13 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
   );
 
   const applyPreset = (preset: (typeof PALETTE_PRESETS)[number]) => {
-    (['primaryColor', 'accentColor', 'textColor', 'backgroundColor'] as const).forEach(
-      (key) =>
-        form.setValue(key, preset[key], {
-          shouldDirty: true,
-          shouldValidate: true,
-        })
+    (
+      ['primaryColor', 'accentColor', 'textColor', 'backgroundColor'] as const
+    ).forEach((key) =>
+      form.setValue(key, preset[key], {
+        shouldDirty: true,
+        shouldValidate: true,
+      })
     );
   };
 
@@ -564,27 +606,38 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
                       className="gap-2"
                     >
                       <span className="flex" aria-hidden>
-                        {[preset.primaryColor, preset.accentColor, preset.textColor].map(
-                          (c, i) => (
-                            <span
-                              key={i}
-                              className="inline-block size-3 rounded-full border border-border"
-                              style={{
-                                backgroundColor: c,
-                                marginInlineStart: i === 0 ? 0 : -4,
-                              }}
-                            />
-                          )
-                        )}
+                        {[
+                          preset.primaryColor,
+                          preset.accentColor,
+                          preset.textColor,
+                        ].map((c, i) => (
+                          <span
+                            key={i}
+                            className="inline-block size-3 rounded-full border border-border"
+                            style={{
+                              backgroundColor: c,
+                              marginInlineStart: i === 0 ? 0 : -4,
+                            }}
+                          />
+                        ))}
                       </span>
                       {t(`certificates:template.colors.presets.${preset.id}`)}
                     </Button>
                   ))}
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  {renderColorField('primaryColor', 'certificates:template.colors.primary')}
-                  {renderColorField('accentColor', 'certificates:template.colors.accent')}
-                  {renderColorField('textColor', 'certificates:template.colors.text')}
+                  {renderColorField(
+                    'primaryColor',
+                    'certificates:template.colors.primary'
+                  )}
+                  {renderColorField(
+                    'accentColor',
+                    'certificates:template.colors.accent'
+                  )}
+                  {renderColorField(
+                    'textColor',
+                    'certificates:template.colors.text'
+                  )}
                   {renderColorField(
                     'backgroundColor',
                     'certificates:template.colors.background'
@@ -622,7 +675,9 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
             <CardHeader>
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <CardTitle>{t('certificates:template.preview.title')}</CardTitle>
+                  <CardTitle>
+                    {t('certificates:template.preview.title')}
+                  </CardTitle>
                   <CardDescription>
                     {t('certificates:template.preview.description')}
                   </CardDescription>

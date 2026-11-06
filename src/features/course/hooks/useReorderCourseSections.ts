@@ -27,6 +27,7 @@ import type {
   PaginatedResult,
   ReorderItemsPayload,
 } from '@types';
+import { COURSE_INLINE_ERRORS_META } from './inline-errors';
 
 export interface ReorderSectionsContext {
   readonly previous: PaginatedResult<CourseSection> | undefined;
@@ -52,6 +53,7 @@ export function useReorderCourseSections(academyId: string, courseId: string) {
       courseService.reorderCourseSections(academyId, courseId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: COURSE_INLINE_ERRORS_META,
     onMutate: async ({ academyId, payload }) => {
       const sectionsKey = courseKeys.sections(academyId, courseId);
       await queryClient.cancelQueries({ queryKey: sectionsKey });

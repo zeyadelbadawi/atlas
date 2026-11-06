@@ -8,7 +8,12 @@ import {
   useAcademyBoundMutation,
 } from '@/shared/hooks';
 import type { AcademyScopedVariables } from '@/shared/hooks';
-import { completionKeys, quizKeys, assignmentKeys } from '@services/query';
+import {
+  INLINE_ERRORS_META,
+  completionKeys,
+  quizKeys,
+  assignmentKeys,
+} from '@services/query';
 import type { ApiError } from '@api';
 import { completionService } from '../services/CompletionService';
 import type { CourseCompletionRule, UpdateCompletionRulePayload } from '@types';
@@ -43,6 +48,9 @@ export function useUpdateCompletionRule(academyId: string, courseId: string) {
       completionService.updateCompletionRule(academyId, courseId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B3 (V05) — the authoring screen shows the failure itself; the
+    // app-wide reporter must not add a second message.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, { academyId }) => {
       await invalidate(completionKeys.rule(academyId, courseId));
       // Required flags live on the quizzes and assignments themselves.

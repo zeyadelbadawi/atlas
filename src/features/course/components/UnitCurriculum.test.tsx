@@ -122,13 +122,24 @@ function rowTitles(): string[] {
   const list = screen.getByRole('list', { name: 'Unit 1' });
   return within(list)
     .getAllByRole('listitem')
-    .map((row) =>
-      (within(row).getByText(/^\d+\. /).textContent ?? '').replace(
-        /^\d+\. /,
-        ''
-      )
+    .map(
+      (row) =>
+        within(row).getByTestId('unit-item-title').querySelector('bdi')
+          ?.textContent ?? ''
     );
 }
+
+/**
+ * B3 (V09/V26) — a row's title: its position in a chip, the title in
+ * <bdi> (no "1." whose dot lands after the title in Arabic).
+ */
+const itemTitle =
+  (position: number, title: string) =>
+  (_content: string, element: Element | null): boolean =>
+    element?.getAttribute('data-testid') === 'unit-item-title' &&
+    element.querySelector('[data-position]')?.textContent ===
+      String(position) &&
+    element.querySelector('bdi')?.textContent === title;
 
 // jsdom has no layout. dnd-kit's keyboard sensor finds the "next" row from
 // measured rects, so give each sortable row a stacked 40px box.
@@ -171,8 +182,21 @@ const tick = () => act(() => new Promise((resolve) => setTimeout(resolve, 0)));
 describe('UnitCurriculum', () => {
   it('renders mixed content as one ordered list', async () => {
     renderComp();
-    await screen.findByText(/1\. Intro/);
+    await screen.findByText(itemTitle(1, 'Intro'));
     expect(rowTitles()).toEqual(['Intro', 'Quiz', 'Homework']);
+  });
+
+  it('B3 (V09/V27) — the whole title shows on its own line and each menu is named after its item', async () => {
+    renderComp();
+    const title = await screen.findByText(itemTitle(1, 'Intro'));
+    // Wraps instead of truncating to nothing at 375 px.
+    expect(title.className).not.toMatch(/truncate/);
+    expect(title.querySelector('bdi')?.className).toMatch(/break-words/);
+    // The badges sit on their own line under the title, not beside it.
+    expect(title.nextElementSibling?.textContent).toMatch(/Lesson/);
+    expect(
+      screen.getByRole('button', { name: 'Actions for "Intro"' })
+    ).toBeTruthy();
   });
 
   it('keyboard drag (Space, ArrowDown, Space) persists the new full order with the order the author saw', async () => {
@@ -219,7 +243,7 @@ describe('UnitCurriculum', () => {
     service.reorderUnitItems.mockReturnValue(save.promise);
     const user = userEvent.setup();
     renderComp();
-    await screen.findByText(/1\. Intro/);
+    await screen.findByText(itemTitle(1, 'Intro'));
 
     // The name says which item moves, not just "move down".
     const moveDown = screen.getByRole('button', { name: 'Move "Intro" down' });
@@ -230,7 +254,7 @@ describe('UnitCurriculum', () => {
       expect(rowTitles()).toEqual(['Quiz', 'Intro', 'Homework'])
     );
     // …focus followed the moved row instead of dropping to <body>…
-    const introRow = screen.getByText(/2\. Intro/).closest('li')!;
+    const introRow = screen.getByText(itemTitle(2, 'Intro')).closest('li')!;
     await waitFor(() =>
       expect(document.activeElement).toBe(
         within(introRow).getByRole('button', { name: 'Move "Intro" down' })
@@ -250,7 +274,7 @@ describe('UnitCurriculum', () => {
     service.reorderUnitItems.mockReturnValue(save.promise);
     const user = userEvent.setup();
     renderComp();
-    await screen.findByText(/1\. Intro/);
+    await screen.findByText(itemTitle(1, 'Intro'));
 
     await user.click(
       screen.getAllByRole('button', { name: /^Move ".+" down$/ })[0]
@@ -273,7 +297,7 @@ describe('UnitCurriculum', () => {
         .getAttribute('aria-disabled')
     ).toBe('true');
     screen
-      .getAllByRole('button', { name: /item actions/i })
+      .getAllByRole('button', { name: /^actions for/i })
       .forEach((button) =>
         expect((button as HTMLButtonElement).disabled).toBe(true)
       );
@@ -293,7 +317,7 @@ describe('UnitCurriculum', () => {
     service.reorderUnitItems.mockReturnValue(save.promise);
     const user = userEvent.setup();
     renderComp();
-    await screen.findByText(/1\. Intro/);
+    await screen.findByText(itemTitle(1, 'Intro'));
 
     await user.click(
       screen.getAllByRole('button', { name: /^Move ".+" down$/ })[0]
@@ -328,7 +352,7 @@ describe('UnitCurriculum', () => {
     );
     const user = userEvent.setup();
     renderComp();
-    await screen.findByText(/1\. Intro/);
+    await screen.findByText(itemTitle(1, 'Intro'));
     expect(service.getUnitItems).toHaveBeenCalledTimes(1);
     // Someone else's order, served by the refetch.
     service.getUnitItems.mockResolvedValue([ITEMS[2], ITEMS[0], ITEMS[1]]);
@@ -351,12 +375,12 @@ describe('UnitCurriculum', () => {
   it('asks before removing a quiz from the unit, and only removes it on confirm', async () => {
     const user = userEvent.setup();
     renderComp();
-    await screen.findByText(/2\. Quiz/);
-    const quizRow = screen.getByText(/2\. Quiz/).closest('li')!;
+    await screen.findByText(itemTitle(2, 'Quiz'));
+    const quizRow = screen.getByText(itemTitle(2, 'Quiz')).closest('li')!;
 
     confirmSpy.mockResolvedValueOnce(false);
     await user.click(
-      within(quizRow).getByRole('button', { name: /item actions/i })
+      within(quizRow).getByRole('button', { name: /^actions for/i })
     );
     await user.click(
       await screen.findByRole('menuitem', { name: /remove from unit/i })
@@ -371,7 +395,7 @@ describe('UnitCurriculum', () => {
 
     confirmSpy.mockResolvedValueOnce(true);
     await user.click(
-      within(quizRow).getByRole('button', { name: /item actions/i })
+      within(quizRow).getByRole('button', { name: /^actions for/i })
     );
     await user.click(
       await screen.findByRole('menuitem', { name: /remove from unit/i })
@@ -386,7 +410,7 @@ describe('UnitCurriculum', () => {
 
   it('renders in Arabic with no raw keys', async () => {
     const { container } = renderComp('ar');
-    await screen.findByText(/1\. Intro/);
+    await screen.findByText(itemTitle(1, 'Intro'));
     expect(container.textContent).not.toMatch(/course:/);
     expect(container.textContent).toMatch(/[؀-ۿ]/);
   });

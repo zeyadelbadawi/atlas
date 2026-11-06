@@ -6,7 +6,7 @@
  */
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation, useAuth, useInvalidate } from '@/shared/hooks';
-import { quizKeys } from '@services/query';
+import { INLINE_ERRORS_META, quizKeys } from '@services/query';
 import { invalidateCourseCurriculum } from '@services/query/curriculum-invalidation';
 import type { ApiError } from '@api';
 import { quizService } from '../services/QuizService';
@@ -27,6 +27,9 @@ export function useUpdateQuiz(courseId: string) {
       quizService.updateQuiz(courseId, quizId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B3 (V05) — the authoring screen shows the failure itself; the
+    // app-wide reporter must not add a second message.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_result, { quizId }) => {
       // Authoring list + the course builder (unit row title/status, picker).
       await invalidateCourseCurriculum(queryClient, { courseId });

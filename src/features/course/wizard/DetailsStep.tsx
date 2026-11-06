@@ -39,6 +39,9 @@ import {
   MAX_COURSE_REQUIREMENT_LENGTH,
   MAX_COURSE_REQUIREMENTS,
 } from '../constants/course.constants';
+import { FormErrorSummary, SaveFailedAlert } from '@forms';
+import { CharacterCount } from '../components/CharacterCount';
+import { linesListSchema } from '../utils/course-form.utils';
 import { useStepSave } from './useStepSave';
 import { WizardStepFooter } from './WizardStepFooter';
 import type { WizardStepProps } from './wizard-step.types';
@@ -66,33 +69,32 @@ const detailsSchema = z.object({
       })
     )
     .optional(),
-  outcomes: z
-    .array(
-      z
-        .string()
-        .max(
-          MAX_COURSE_OUTCOME_LENGTH,
-          validationMessage('validation:maxLength', {
-            count: MAX_COURSE_OUTCOME_LENGTH,
-          })
-        )
-    )
-    .max(MAX_COURSE_OUTCOMES, 'validation:maxItems'),
-  requirements: z
-    .array(
-      z
-        .string()
-        .max(
-          MAX_COURSE_REQUIREMENT_LENGTH,
-          validationMessage('validation:maxLength', {
-            count: MAX_COURSE_REQUIREMENT_LENGTH,
-          })
-        )
-    )
-    .max(MAX_COURSE_REQUIREMENTS, 'validation:maxItems'),
+  // B3 (V03) — the count ignores blank lines; a too-long line is named.
+  outcomes: linesListSchema(MAX_COURSE_OUTCOMES, MAX_COURSE_OUTCOME_LENGTH),
+  requirements: linesListSchema(
+    MAX_COURSE_REQUIREMENTS,
+    MAX_COURSE_REQUIREMENT_LENGTH
+  ),
 });
 
 type DetailsValues = z.infer<typeof detailsSchema>;
+
+const DETAILS_FIELDS = [
+  'description',
+  'level',
+  'language',
+  'outcomes',
+  'requirements',
+] as const;
+
+/** Labels for the error summary (V18). */
+const DETAILS_FIELD_LABELS = {
+  description: 'course:create.descriptionLabel',
+  level: 'course:edit.levelLabel',
+  language: 'course:edit.languageLabel',
+  outcomes: 'course:edit.outcomesLabel',
+  requirements: 'course:edit.requirementsLabel',
+} as const;
 
 export function DetailsStep({
   academyId,
@@ -112,10 +114,12 @@ export function DetailsStep({
     },
   });
 
-  const { save, markSaved, isSaving } = useStepSave({
+  const descriptionLength = (form.watch('description') ?? '').length;
+  const { save, markSaved, isSaving, saveFailure } = useStepSave({
     academyId,
     courseId: course.id,
     form,
+    fields: DETAILS_FIELDS,
     toPayload: (values, dirty) => ({
       ...(dirty.description ? { description: values.description ?? '' } : {}),
       ...(dirty.level && values.level ? { level: values.level } : {}),
@@ -150,6 +154,7 @@ export function DetailsStep({
         className="space-y-6"
         noValidate
       >
+        <FormErrorSummary form={form} fieldLabels={DETAILS_FIELD_LABELS} />
         <FormField
           control={form.control}
           name="description"
@@ -164,6 +169,11 @@ export function DetailsStep({
                   value={field.value ?? ''}
                 />
               </FormControl>
+              <CharacterCount
+                id="course-description-count"
+                length={descriptionLength}
+                max={MAX_COURSE_DESCRIPTION_LENGTH}
+              />
               <FormMessage />
             </FormItem>
           )}
@@ -233,6 +243,7 @@ export function DetailsStep({
               <FormControl>
                 <LinesTextarea
                   rows={4}
+                  name={field.name}
                   value={field.value}
                   onChange={field.onChange}
                   placeholder={t('course:edit.outcomesPlaceholder')}
@@ -255,6 +266,7 @@ export function DetailsStep({
               <FormControl>
                 <LinesTextarea
                   rows={4}
+                  name={field.name}
                   value={field.value}
                   onChange={field.onChange}
                   placeholder={t('course:edit.requirementsPlaceholder')}
@@ -268,6 +280,13 @@ export function DetailsStep({
           )}
         />
 
+        {saveFailure ? (
+          <SaveFailedAlert
+            error={saveFailure}
+            titleKey="common:form.notSaved"
+            onRetry={() => void form.handleSubmit(onSubmit)()}
+          />
+        ) : null}
         <WizardStepFooter
           onBack={onBack}
           nextType="submit"

@@ -21,7 +21,7 @@
  * their authored order and every input is disabled.
  */
 import { useEffect, useState, type ReactNode } from 'react';
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import { get, useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -46,11 +46,16 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { FieldHelp } from '@components/feedback';
+import { RequiredMark } from '@forms';
+import { parseValidationMessage } from '@/shared/forms/validation-message';
+import { useConfirmDialog } from '@app/providers';
+import { CharacterCount } from './CharacterCount';
 import {
   blankQuizAcceptedAnswer,
   blankQuizOption,
   blankQuizQuestion,
   MAX_QUIZ_ACCEPTED_ANSWERS,
+  MAX_QUIZ_QUESTION_PROMPT_LENGTH,
   MAX_QUIZ_QUESTION_POINTS,
   MIN_QUIZ_QUESTION_POINTS,
   QUIZ_QUESTION_TYPES,
@@ -65,6 +70,37 @@ export interface RelatedLessonOption {
   readonly id: string;
   readonly title: string;
   readonly sectionTitle: string;
+}
+
+/**
+ * B3 (V27) — the 16 px radio/checkbox keeps its look but gets a 40 px
+ * touch target (an invisible box around it).
+ */
+const HIT_AREA = "relative after:absolute after:-inset-3 after:content-['']";
+
+/**
+ * The message of a LIST (options, accepted answers) — only the list's own
+ * rule. The shared `FormMessage` falls back to a child's message, which
+ * repeated an option's "required" here as well as under the option.
+ */
+function ListMessage({ name }: { readonly name: string }): JSX.Element | null {
+  const { t } = useTranslation();
+  const { formState } = useFormContext<QuizAuthoringFormData>();
+  const error = get(formState.errors, name) as
+    { message?: unknown; root?: { message?: unknown } } | undefined;
+  const message =
+    typeof error?.message === 'string'
+      ? error.message
+      : typeof error?.root?.message === 'string'
+        ? error.root.message
+        : undefined;
+  if (!message) return null;
+  const { key, values } = parseValidationMessage(message);
+  return (
+    <p role="alert" className="text-sm font-medium text-destructive">
+      {t(key, { field: t('validation:thisField'), ...values })}
+    </p>
+  );
 }
 
 /** Radix `Select` rejects an empty-string item value, so "none" needs a sentinel. */
@@ -83,9 +119,41 @@ export function QuizQuestionsEditor({
   lessons,
 }: QuizQuestionsEditorProps): JSX.Element {
   const { t } = useTranslation();
-  const { control } = useFormContext<QuizAuthoringFormData>();
+  const { control, getValues } = useFormContext<QuizAuthoringFormData>();
+  const { confirm } = useConfirmDialog();
 
   const questions = useFieldArray({ control, name: 'questions' });
+
+  /*
+    B3 (UX audit, V15) — "Remove question" used to delete typed work at
+    once, with no undo. A question with anything typed in it asks first;
+    a blank one is removed straight away.
+  */
+  const removeQuestion = async (index: number) => {
+    const question = getValues(`questions.${index}`);
+    const hasWork =
+      !!question?.prompt?.trim() ||
+      !!question?.explanation?.trim() ||
+      (question?.options ?? []).some(
+        (option) => !!option.label.trim() && question.type !== 'true_false'
+      ) ||
+      (question?.acceptedAnswers ?? []).some((answer) => !!answer.value.trim());
+    if (hasWork) {
+      const confirmed = await confirm({
+        titleKey: 'course:quizAuthoring.removeQuestionConfirm.title',
+        descriptionKey:
+          'course:quizAuthoring.removeQuestionConfirm.description',
+        confirmLabelKey:
+          'course:quizAuthoring.removeQuestionConfirm.confirmLabel',
+        cancelLabelKey:
+          'course:quizAuthoring.removeQuestionConfirm.cancelLabel',
+        values: { number: index + 1 },
+        intent: 'destructive',
+      });
+      if (!confirmed) return;
+    }
+    questions.remove(index);
+  };
 
   return (
     <div className="space-y-4">
@@ -112,7 +180,7 @@ export function QuizQuestionsEditor({
               lessons={lessons}
               onRemove={
                 questions.fields.length > 1
-                  ? () => questions.remove(questionIndex)
+                  ? () => void removeQuestion(questionIndex)
                   : undefined
               }
             />
@@ -269,7 +337,9 @@ function QuestionCard({
             variant="ghost"
             size="icon"
             onClick={onRemove}
-            aria-label={t('course:quizAuthoring.editor.removeQuestion')}
+            aria-label={t('course:quizAuthoring.editor.removeQuestionNumber', {
+              number: questionIndex + 1,
+            })}
           >
             <Trash2 className="size-4" aria-hidden />
           </Button>
@@ -284,10 +354,16 @@ function QuestionCard({
             <FormItem>
               <FormLabel>
                 {t('course:quizAuthoring.editor.promptLabel')}
+                <RequiredMark />
               </FormLabel>
               <FormControl>
                 <Textarea rows={2} {...field} />
               </FormControl>
+              <CharacterCount
+                id={`question-${questionIndex}-prompt-count`}
+                length={(field.value ?? '').length}
+                max={MAX_QUIZ_QUESTION_PROMPT_LENGTH}
+              />
               <FormMessage />
             </FormItem>
           )}
@@ -419,11 +495,7 @@ function QuestionCard({
                 {t('course:quizAuthoring.editor.addAcceptedAnswer')}
               </Button>
             ) : null}
-            <FormField
-              control={control}
-              name={`questions.${questionIndex}.acceptedAnswers`}
-              render={() => <FormMessage />}
-            />
+            <ListMessage name={`questions.${questionIndex}.acceptedAnswers`} />
           </div>
         ) : (
           <div className="space-y-2">
@@ -452,8 +524,10 @@ function QuestionCard({
                     correctControl={
                       <RadioGroupItem
                         value={String(optionIndex)}
+                        className={HIT_AREA}
                         aria-label={t(
-                          'course:quizAuthoring.editor.correctLabel'
+                          'course:quizAuthoring.editor.correctOption',
+                          { number: optionIndex + 1 }
                         )}
                       />
                     }
@@ -479,11 +553,13 @@ function QuestionCard({
                         correctControl={
                           <Checkbox
                             checked={field.value}
+                            className={HIT_AREA}
                             onCheckedChange={(checked) =>
                               field.onChange(!!checked)
                             }
                             aria-label={t(
-                              'course:quizAuthoring.editor.correctLabel'
+                              'course:quizAuthoring.editor.correctOption',
+                              { number: optionIndex + 1 }
                             )}
                           />
                         }
@@ -511,11 +587,9 @@ function QuestionCard({
               </Button>
             ) : null}
 
-            <FormField
-              control={control}
-              name={`questions.${questionIndex}.options`}
-              render={() => <FormMessage />}
-            />
+            {/* The list's own rule ("mark one option as correct"); an
+                option's own problem shows under that option (V04). */}
+            <ListMessage name={`questions.${questionIndex}.options`} />
           </div>
         )}
 
@@ -610,22 +684,28 @@ function OptionRow({
   const { control } = useFormContext<QuizAuthoringFormData>();
 
   return (
-    <div className="flex items-center gap-2">
-      {correctControl}
+    <div className="flex items-start gap-3">
+      <div className="flex h-10 shrink-0 items-center">{correctControl}</div>
       <FormField
         control={control}
         name={`questions.${questionIndex}.options.${optionIndex}.label`}
         render={({ field }) => (
-          <FormItem className="flex-1">
+          <FormItem className="flex-1 space-y-1">
             <FormControl>
               <Input
                 {...field}
                 disabled={locked}
+                // V27 — a name for assistive technology, not only a placeholder.
+                aria-label={t('course:quizAuthoring.editor.optionLabel', {
+                  number: optionIndex + 1,
+                })}
                 placeholder={t('course:quizAuthoring.editor.optionLabel', {
                   number: optionIndex + 1,
                 })}
               />
             </FormControl>
+            {/* V04 — an empty or too-long option says so under itself. */}
+            <FormMessage />
           </FormItem>
         )}
       />
@@ -635,7 +715,9 @@ function OptionRow({
           variant="ghost"
           size="icon"
           onClick={onRemove}
-          aria-label={t('course:quizAuthoring.editor.removeOption')}
+          aria-label={t('course:quizAuthoring.editor.removeOptionNumber', {
+            number: optionIndex + 1,
+          })}
         >
           <Trash2 className="size-4" aria-hidden />
         </Button>

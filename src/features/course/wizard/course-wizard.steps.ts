@@ -94,9 +94,14 @@ export function deriveCourseWizardStepStates(
   const hasAssessments = counts
     ? counts.quizzes + counts.assignments > 0
     : false;
-  const pricingDone =
-    course.pricing.type === 'free' ||
-    ((course.pricing.amount ?? 0) > 0 && present(course.pricing.currency));
+  // B3 (V24) — every new course starts free, so "free" alone does not
+  // prove the author has looked at Pricing: it reads "Optional" (nothing
+  // is missing) rather than "Completed". A paid course with a price and a
+  // currency is complete; a paid one without is not.
+  const paidPriced =
+    course.pricing.type === 'paid' &&
+    (course.pricing.amount ?? 0) > 0 &&
+    present(course.pricing.currency);
 
   const state = (done: boolean): CourseWizardStepState =>
     done ? 'complete' : 'incomplete';
@@ -107,7 +112,7 @@ export function deriveCourseWizardStepStates(
     media: state(present(course.thumbnail)),
     curriculum: state(curriculumDone),
     assessments: hasAssessments ? 'complete' : 'optional',
-    pricing: state(pricingDone),
+    pricing: course.pricing.type === 'free' ? 'optional' : state(paidPriced),
     review: state(readiness?.ready === true),
     publish: state(course.status === 'published'),
   };

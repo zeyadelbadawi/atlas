@@ -1,7 +1,13 @@
 {
   "title": "إدارة الدورات",
   "validation": {
-    "priceRequired": "أدخل سعرًا أكبر من 0 للدورة المدفوعة"
+    "priceRequired": "أدخل سعرًا أكبر من 0 للدورة المدفوعة",
+    "priceFormat": "أدخل السعر بالأرقام، مثل 12.50، من دون مسافات أو فواصل آلاف أو حروف.",
+    "priceDecimals": "استخدم خانتين عشريتين على الأكثر، مثل 12.50.",
+    "priceTooHigh": "أعلى سعر يمكنك تحديده هو {{max}}. أدخل مبلغًا أقل.",
+    "slugRequired": "أدخل عنوان الويب بأحرف إنجليزية صغيرة وأرقام وشرطات، مثل intro-to-algebra. لا يمكن إنشاؤه تلقائيًا من عنوان عربي.",
+    "tooManyLines": "عدد الأسطر {{count}} والحد الأقصى {{max}}. احذف بعض الأسطر للمتابعة.",
+    "lineTooLong": "عدد أحرف السطر {{line}} هو {{length}}، والحد الأقصى لكل سطر {{max}}. اختصره للمتابعة."
   },
   "status": {
     "draft": "مسودة",
@@ -51,10 +57,11 @@
       "edit": "تعديل",
       "builder": "المنهج",
       "settings": "الإعدادات",
-      "delete": "حذف",
+      "delete": "أرشفة",
       "continueSetup": "متابعة الإعداد"
     },
-    "uncategorized": "بدون فئة"
+    "uncategorized": "بدون فئة",
+    "actionsFor": "إجراءات «{{title}}»"
   },
   "empty": {
     "noCourses": "ليس لديك أي دورات بعد.",
@@ -81,7 +88,7 @@
     "descriptionLabel": "الوصف",
     "descriptionPlaceholder": "وصف تفصيلي لدورتك",
     "thumbnailLabel": "الصورة المصغّرة",
-    "thumbnailHelp": "تحميل صورة مصغّرة للدورة (PNG، JPG، بحد أقصى 5 ميجابايت)",
+    "thumbnailHelp": "PNG أو JPG أو WebP، حتى 5 ميجابايت. تُحفظ الصورة في مكتبة الوسائط.",
     "uploadThumbnail": "تحميل الصورة المصغّرة",
     "changeThumbnail": "تغيير الصورة المصغّرة",
     "configuration": "الإعدادات",
@@ -102,8 +109,8 @@
     "successNextStepDescription": "ابدأ في بناء منهج دورتك.",
     "continueToBuilder": "الانتقال إلى منشئ الدورة",
     "error": "فشل إنشاء الدورة",
-    "thumbnailTooLarge": "يجب أن يكون حجم الصورة المصغّرة أقل من 5 ميجابايت.",
-    "thumbnailInvalidType": "يجب أن تكون الصورة المصغّرة بصيغة PNG أو JPG.",
+    "thumbnailTooLarge": "يجب ألا يزيد حجم الصورة عن 5 ميجابايت. اختر ملفًا أصغر أو اضغط الصورة.",
+    "thumbnailInvalidType": "اختر صورة بصيغة PNG أو JPG أو WebP.",
     "errors": {
       "limitReachedTitle": "تم بلوغ الحد الأقصى للدورات",
       "limitReachedDescription": "لقد وصلت إلى الحد الأقصى للدورات في خطتك. قم بترقية خطتك لإنشاء دورة أخرى."
@@ -112,7 +119,13 @@
       "visibility": "الدورات الخاصة يراها فريقك فقط. أما الدورات العامة فيمكن أن تظهر على موقع أكاديميتك ويكتشفها الطلاب.",
       "pricingType": "يمكن التسجيل في الدورات المجانية مباشرة. أما الدورات المدفوعة فتتطلب إتمام عملية شراء قبل أن يحصل الطالب على الوصول."
     },
-    "slugSuggested": "مُقترح من عنوان الدورة. يمكنك تعديله إذا كنت تفضّل عنوانًا مختلفًا."
+    "slugSuggested": "مُقترح من عنوان الدورة. يمكنك تعديله إذا كنت تفضّل عنوانًا مختلفًا.",
+    "priceHelp": "حتى خانتين عشريتين، وبحد أقصى {{max}}.",
+    "notCreated": "لم تُنشأ الدورة",
+    "thumbnailReadFailed": "تعذّرت قراءة هذه الصورة. اخترها مرة أخرى.",
+    "thumbnailUploadFailed": "لم تُرفع الصورة، وبقيت الصورة السابقة كما هي.",
+    "uploadingThumbnail": "جارٍ رفع الصورة…",
+    "removeThumbnail": "إزالة الصورة"
   },
   "edit": {
     "title": "تعديل الدورة",
@@ -161,7 +174,9 @@
       "notEligible": "هذا الشخص ليس مدرّسًا نشطًا في هذه الأكاديمية.",
       "alreadyAssigned": "هذا المدرّس معيّن بالفعل لهذه الدورة.",
       "insufficientRole": "ليس لديك صلاحية لإدارة مدرّسي هذه الدورة.",
-      "generic": "تعذّر تحديث مدرّسي هذه الدورة. يرجى المحاولة مرة أخرى."
+      "generic": "تعذّر تحديث مدرّسي هذه الدورة. يرجى المحاولة مرة أخرى.",
+      "assignFailed": "لم يُعيَّن المدرّب",
+      "removeFailed": "لم يُزَل المدرّب"
     }
   },
   "builder": {
@@ -177,7 +192,8 @@
       "edit": "تعديل القسم",
       "delete": "حذف القسم",
       "moveUp": "نقل القسم «{{title}}» لأعلى",
-      "moveDown": "نقل القسم «{{title}}» لأسفل"
+      "moveDown": "نقل القسم «{{title}}» لأسفل",
+      "actions": "إجراءات الوحدة «{{title}}»"
     },
     "lessonMenu": {
       "edit": "تعديل الدرس",
@@ -256,7 +272,8 @@
         "wrongType": "ارفع فيديو بصيغة MP4.",
         "tooLarge": "حجم هذا الفيديو أكبر من 5 جيجابايت.",
         "help": "صيغة MP4 فقط. يشاهده المتعلمون مع علامة مائية باسمهم على الفيديو، على الأجهزة التي تسمح بها أكاديميتك. يُحتسب ضمن دقائق الفيديو والتخزين في خطتك."
-      }
+      },
+      "invalidContentUrl": "أدخل عنوان ويب يبدأ بـ ⁦https://⁩ أو ⁦http://⁩، مثل ⁦https://youtu.be/…⁩"
     },
     "deleteSectionConfirm": {
       "title": "حذف هذا القسم؟",
@@ -294,7 +311,8 @@
     "itemMenu": {
       "actions": "إجراءات العنصر",
       "removeFromUnit": "إزالة من الوحدة",
-      "liveSessionDeferred": "الجلسات المباشرة قريبًا"
+      "liveSessionDeferred": "الجلسات المباشرة قريبًا",
+      "actionsFor": "إجراءات «{{title}}»"
     },
     "attach": {
       "quizTitle": "إضافة اختبار موجود",
@@ -335,11 +353,14 @@
     "removing": "جارٍ الإزالة…",
     "deleting": "جارٍ الحذف…",
     "lessonBodyError": "حُفظ الدرس، لكن لم يُحفظ نصه. حاول الحفظ مرة أخرى.",
-    "lessonFileError": "حُفظ الدرس، لكن لم يُرفق ملفه. حاول الحفظ مرة أخرى."
+    "lessonFileError": "حُفظ الدرس، لكن لم يُرفق ملفه. حاول الحفظ مرة أخرى.",
+    "sectionDeleteError": "لم تُحذف الوحدة",
+    "lessonDeleteError": "لم يُحذف الدرس",
+    "detachError": "لم يُزَل العنصر من الوحدة"
   },
   "settings": {
     "title": "إعدادات الدورة",
-    "subtitle": "إدارة الحالة والظهور والنشر",
+    "subtitle": "النشر وقواعد الإكمال والشهادات. يمكنك ضبط الظهور والسعر من تبويب التفاصيل.",
     "general": "عام",
     "publishing": "النشر",
     "publishingDescription": "الدورات المنشورة تكون مرئية للطلاب ومتاحة للتسجيل.",
@@ -367,19 +388,19 @@
     "publishSuccessNextStepDescription": "تابع إدارة أكاديميتك.",
     "backToAcademy": "العودة إلى الأكاديمية",
     "unpublishSuccess": "تم إلغاء نشر الدورة",
-    "publishError": "فشل نشر الدورة",
-    "unpublishError": "فشل إلغاء نشر الدورة",
+    "publishError": "لم تُنشر الدورة",
+    "unpublishError": "لم يُلغَ نشر الدورة",
     "dangerZone": "منطقة الخطر",
-    "dangerZoneDescription": "حذف الدورة إجراء نهائي ويزيلها لدى جميع الطلاب المسجَّلين.",
-    "deleteCourse": "حذف الدورة",
+    "dangerZoneDescription": "الأرشفة تُخرج الدورة من الفهرس وتوقف التسجيل فيها، مع الاحتفاظ بمنهجها وسجلات المتعلمين.",
+    "deleteCourse": "أرشفة الدورة",
     "deleteCourseConfirm": {
-      "title": "حذف هذه الدورة؟",
-      "description": "سيؤدي هذا إلى حذف \"{{title}}\" ومنهجها بالكامل نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
-      "confirmLabel": "حذف الدورة",
+      "title": "أرشفة هذه الدورة؟",
+      "description": "ستُؤرشف «{{title}}»: ستخرج من الفهرس ولن يكون التسجيل فيها متاحًا. سيُحتفظ بمنهجها وسجلات المتعلمين. يمكنك العثور عليها لاحقًا بتصفية قائمة الدورات على الحالة «مؤرشفة» وإعادة نشرها من إعداداتها.",
+      "confirmLabel": "أرشفة الدورة",
       "cancelLabel": "إلغاء"
     },
-    "deleteCourseSuccess": "تم حذف الدورة",
-    "deleteCourseError": "فشل حذف الدورة",
+    "deleteCourseSuccess": "تمت أرشفة الدورة",
+    "deleteCourseError": "لم تُؤرشف الدورة",
     "completion": {
       "title": "الإكمال والشهادة",
       "description": "ما يجب على المتعلم فعله لإكمال هذه الدورة، وهل تصدر شهادة عنها.",
@@ -405,7 +426,9 @@
             "label": "هذا العدد من الدروس على الأقل",
             "description": "تُحتسب أي دروس منشورة ضمن العدد."
           }
-        }
+        },
+        "minAtLeastOne": "أدخل درسًا واحدًا على الأقل.",
+        "minRequired": "أدخل عدد الدروس التي يجب أن يكملها المتعلم."
       },
       "quizzes": {
         "label": "الاختبارات المطلوبة",
@@ -435,7 +458,10 @@
       "ownerOrManagerOnly": "لا يمكن تغيير هذه الإعدادات إلا لمالكي الأكاديمية ومديريها.",
       "save": "حفظ إعدادات الإكمال",
       "saved": "تم حفظ إعدادات الإكمال"
-    }
+    },
+    "openDetails": "افتح تفاصيل الدورة",
+    "openQuizzes": "افتح الاختبارات",
+    "deleteCourseSuccessDescription": "يمكنك العثور عليها بتصفية قائمة الدورات على الحالة «مؤرشفة»."
   },
   "assignmentAuthoring": {
     "title": "الواجبات",
@@ -447,7 +473,8 @@
     "menu": {
       "edit": "تعديل",
       "delete": "حذف",
-      "reviewSubmissions": "مراجعة التسليمات"
+      "reviewSubmissions": "مراجعة التسليمات",
+      "actionsFor": "إجراءات «{{title}}»"
     },
     "dialog": {
       "createTitle": "إضافة واجب",
@@ -492,7 +519,11 @@
       "block": "التسليمات المتأخرة غير مقبولة",
       "accept_flagged": "التسليمات المتأخرة مقبولة ومميَّزة"
     },
-    "requiredForCompletionBadge": "مطلوب للإكمال"
+    "requiredForCompletionBadge": "مطلوب للإكمال",
+    "validation": {
+      "dueInPast": "موعد التسليم هذا قد مضى. اختر تاريخًا ووقتًا في المستقبل."
+    },
+    "deleteError": "لم يُحذف الواجب"
   },
   "quizAuthoring": {
     "title": "الاختبارات",
@@ -505,7 +536,8 @@
     "menu": {
       "edit": "تعديل",
       "delete": "حذف",
-      "reviewAttempts": "مراجعة المحاولات"
+      "reviewAttempts": "مراجعة المحاولات",
+      "actionsFor": "إجراءات «{{title}}»"
     },
     "created": "تم إنشاء الاختبار",
     "updated": "تم تحديث الاختبار",
@@ -570,7 +602,10 @@
       "acceptedAnswerPlaceholder": "الإجابة المقبولة {{number}}",
       "addAcceptedAnswer": "إضافة إجابة مقبولة",
       "removeAcceptedAnswer": "إزالة الإجابة المقبولة",
-      "moreOptions": "خيارات إضافية"
+      "moreOptions": "خيارات إضافية",
+      "removeQuestionNumber": "إزالة السؤال {{number}}",
+      "correctOption": "الخيار {{number}} صحيح",
+      "removeOptionNumber": "إزالة الخيار {{number}}"
     },
     "validation": {
       "trueFalseOptionCount": "يحتاج سؤال صح/خطأ إلى خيارين بالضبط.",
@@ -580,7 +615,9 @@
       "acceptedAnswerRequired": "أضف إجابة مقبولة واحدة على الأقل.",
       "availabilityOrder": "يجب أن يكون وقت الإغلاق بعد وقت الفتح.",
       "dueAfterWindow": "لا يمكن أن يكون موعد التسليم بعد وقت الإغلاق.",
-      "questionsPerAttemptExceedsCount": "هذا العدد أكبر من عدد أسئلة الاختبار."
+      "questionsPerAttemptExceedsCount": "هذا العدد أكبر من عدد أسئلة الاختبار.",
+      "windowEndInPast": "وقت الإغلاق هذا قد مضى، فسيكون الاختبار مغلقًا. اختر وقتًا في المستقبل.",
+      "dueInPast": "موعد التسليم هذا قد مضى. اختر تاريخًا ووقتًا في المستقبل."
     },
     "settings": {
       "title": "الإعدادات",
@@ -772,6 +809,14 @@
       "shortAnswer": "اكتب إجابتك",
       "essayAnswer": "اكتب إجابتك",
       "selectAllThatApply": "اختر كل ما ينطبق."
+    },
+    "deleteError": "لم يُحذف الاختبار",
+    "notCreated": "لم يُنشأ الاختبار",
+    "removeQuestionConfirm": {
+      "title": "إزالة السؤال {{number}}؟",
+      "description": "ستُزال صيغة السؤال وخياراته وإعداداته من هذا الاختبار. لا يُحفظ شيء حتى تختار «حفظ الاختبار».",
+      "confirmLabel": "إزالة السؤال",
+      "cancelLabel": "الإبقاء عليه"
     }
   },
   "categories": {
@@ -807,7 +852,10 @@
     "noBody": "لا يوجد تقييم مكتوب.",
     "ratingLabel": "التقييم {{rating}} من 5",
     "emptyTitle": "لا توجد تقييمات بعد",
-    "emptyDescription": "ستظهر تقييمات المتعلمين المسجّلين هنا للمراجعة."
+    "emptyDescription": "ستظهر تقييمات المتعلمين المسجّلين هنا للمراجعة.",
+    "approveFailed": "لم يُعتمد التقييم",
+    "rejectFailed": "لم يُرفض التقييم",
+    "removeFailed": "لم يُحذف التقييم"
   },
   "wizard": {
     "title": "إعداد الدورة",
@@ -974,7 +1022,8 @@
       "publishedDescription": "يمكن للمتعلمين الآن العثور عليها وفق إعداد ظهورها.",
       "viewCourses": "العودة إلى الدورات",
       "openSettings": "إعدادات الدورة"
-    }
+    },
+    "lockedNote": "أنشئ الدورة أولًا، فبقية الخطوات تُتاح بعد حفظها."
   },
   "checkout": {
     "title": "إتمام الشراء",
@@ -1014,5 +1063,8 @@
     "referenceHelp": "رقم العملية أو المرجع من البنك أو المحفظة، ويساعد الأكاديمية في العثور على دفعتك.",
     "proofFileHelp": "PNG أو JPG أو PDF، حتى 10 ميجابايت.",
     "notAdmittedTitle": "لا يمكنك شراء الدورات هنا الآن"
+  },
+  "form": {
+    "characterCount": "عدد الأحرف: {{counter}}"
   }
 }

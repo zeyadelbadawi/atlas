@@ -31,6 +31,7 @@ import { toast } from '@/hooks/use-toast';
 import { useAcademyMembers } from '@/features/academy/hooks';
 import { useAssignCourseInstructor, useRemoveCourseInstructor } from '../hooks';
 import type { Course } from '@types';
+import { useActionFailureToast } from '../forms/course-form-feedback';
 
 export interface CourseInstructorsCardProps {
   readonly academyId: string;
@@ -55,6 +56,7 @@ export function CourseInstructorsCard({
     course.instructors.map((instructor) => instructor.id)
   );
 
+  const failureToast = useActionFailureToast();
   const { mutateAsync: assignInstructor } =
     useAssignCourseInstructor(academyId);
   const { mutateAsync: removeInstructor } =
@@ -71,22 +73,15 @@ export function CourseInstructorsCard({
         toast({ title: t('course:instructors.removeSuccess') });
       }
     } catch (error) {
-      const apiError = error as { kind?: string; code?: string };
-      const key =
-        apiError.code === 'ENTITLEMENT_LIMIT_REACHED'
-          ? 'course:instructors.errors.generic'
-          : apiError.kind === 'conflict'
-            ? 'course:instructors.errors.alreadyAssigned'
-            : apiError.kind === 'notFound'
-              ? 'course:instructors.errors.notEligible'
-              : apiError.kind === 'forbidden'
-                ? 'course:instructors.errors.insufficientRole'
-                : 'course:instructors.errors.generic';
-      toast({
-        title: t(key),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+      // B3 (V05) — one toast: what did not happen, and the real reason
+      // ("already assigned", "not an active instructor"…) instead of a
+      // guessed title over "Something went wrong".
+      failureToast(
+        checked
+          ? 'course:instructors.errors.assignFailed'
+          : 'course:instructors.errors.removeFailed',
+        error
+      );
     } finally {
       setPendingUserId(null);
     }

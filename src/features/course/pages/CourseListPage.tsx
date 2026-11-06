@@ -52,6 +52,7 @@ import type {
   CourseStatus,
   CourseVisibility,
 } from '@types';
+import { useActionFailureToast } from '../forms/course-form-feedback';
 
 export default function CourseListPage(): JSX.Element {
   const fmt = useDateFormatter();
@@ -59,6 +60,7 @@ export default function CourseListPage(): JSX.Element {
   const navigate = useNavigate();
   const { academyId } = useParams<{ academyId: string }>();
   const { confirm } = useConfirmDialog();
+  const failureToast = useActionFailureToast();
 
   const [searchInput, setSearchInput] = useState('');
   const debouncedSearch = useDebounce(searchInput);
@@ -131,14 +133,10 @@ export default function CourseListPage(): JSX.Element {
       await deleteCourse(course.id);
       toast({
         title: t('course:settings.deleteCourseSuccess'),
-        description: t('common:states.success.description'),
+        description: t('course:settings.deleteCourseSuccessDescription'),
       });
-    } catch {
-      toast({
-        title: t('course:settings.deleteCourseError'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+    } catch (error) {
+      failureToast('course:settings.deleteCourseError', error);
     }
   };
 
@@ -206,7 +204,9 @@ export default function CourseListPage(): JSX.Element {
                 variant="ghost"
                 size="icon"
                 onClick={(e) => e.stopPropagation()}
-                aria-label={t('course:list.table.actions')}
+                aria-label={t('course:list.actionsFor', {
+                  title: row.original.title,
+                })}
               >
                 <MoreHorizontal className="size-4" aria-hidden />
               </Button>

@@ -122,8 +122,14 @@ function renderPage() {
   return render(<CourseBuilderPage />, { wrapper });
 }
 
+// B3 (V26) — the number is its own chip; the title is isolated in <bdi>.
 const sectionTitles = () =>
-  screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
+  screen
+    .getAllByRole('heading', { level: 3 })
+    .map(
+      (h) =>
+        `${h.firstElementChild?.textContent}. ${h.querySelector('bdi')?.textContent}`
+    );
 
 beforeEach(() => {
   permissions.granted = new Set(OWNER_PERMISSIONS);
@@ -214,7 +220,7 @@ describe('CourseBuilderPage — sections', () => {
     service.reorderCourseSections.mockReturnValue(save.promise);
     const user = userEvent.setup();
     renderPage();
-    await screen.findByText('1. Basics');
+    await screen.findByRole('heading', { level: 3, name: /Basics/ });
 
     const moveDown = screen.getByRole('button', {
       name: 'Move section "Basics" down',
@@ -230,7 +236,9 @@ describe('CourseBuilderPage — sections', () => {
       expectedOrderedIds: ['s1', 's2'],
     });
     // Saving is visible on the moved section and every move control refuses.
-    const basicsCard = screen.getByText('2. Basics').closest('li')!;
+    const basicsCard = screen
+      .getByRole('heading', { level: 3, name: /Basics/ })
+      .closest('li')!;
     expect(within(basicsCard).getByText(/Saving order/)).toBeTruthy();
     screen
       .getAllByRole('button', { name: /^Move section ".+" (up|down)$/ })
@@ -255,11 +263,14 @@ describe('CourseBuilderPage — sections', () => {
     service.deleteCourseSection.mockReturnValue(removal.promise);
     const user = userEvent.setup();
     renderPage();
-    await screen.findByText('1. Basics');
+    await screen.findByRole('heading', { level: 3, name: /Basics/ });
 
-    const basicsCard = screen.getByText('1. Basics').closest('li')!;
+    const basicsCard = screen
+      .getByRole('heading', { level: 3, name: /Basics/ })
+      .closest('li')!;
     await user.click(
-      within(basicsCard).getByRole('button', { name: /edit section/i })
+      // V27 — the "…" menu is named after the unit, not "Edit section".
+      within(basicsCard).getByRole('button', { name: /actions for unit/i })
     );
     await user.click(
       await screen.findByRole('menuitem', { name: /delete section/i })
@@ -275,7 +286,7 @@ describe('CourseBuilderPage — sections', () => {
     expect(
       (
         within(basicsCard).getByRole('button', {
-          name: /edit section/i,
+          name: /actions for unit/i,
         }) as HTMLButtonElement
       ).disabled
     ).toBe(true);

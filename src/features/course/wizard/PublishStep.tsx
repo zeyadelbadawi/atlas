@@ -15,6 +15,7 @@ import { toast } from '@/hooks/use-toast';
 import { useConfirmDialog } from '@app/providers';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { usePublishCourse } from '../hooks';
+import { useActionFailureToast } from '../forms/course-form-feedback';
 import { WizardStepFooter } from './WizardStepFooter';
 import type { WizardStepProps } from './wizard-step.types';
 
@@ -29,6 +30,7 @@ export function PublishStep({
   const { t } = useTranslation();
   const { confirm } = useConfirmDialog();
   const publish = usePublishCourse(academyId);
+  const failureToast = useActionFailureToast();
   const ready = readiness?.ready === true;
 
   const handlePublish = async () => {
@@ -44,12 +46,9 @@ export function PublishStep({
     try {
       await publish.mutateAsync(course.id);
       toast({ title: t('course:wizard.publish.success') });
-    } catch {
-      toast({
-        title: t('course:wizard.publish.error'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+    } catch (error) {
+      // B3 (V05) — one toast, with the real reason (e.g. what is missing).
+      failureToast('course:wizard.publish.error', error);
     }
   };
 
