@@ -8,10 +8,13 @@
 export {
   CookieConsentProvider,
   useCookieConsent,
+  useOptionalCookieConsent,
 } from './consent/CookieConsentProvider';
 export { CookieConsentBanner } from './components/CookieConsentBanner';
 export { CookiePreferencesDialog } from './components/CookiePreferencesDialog';
 export { CookiePreferencesButton } from './components/CookiePreferencesButton';
+export { platformLegalHref } from './utils/platform-legal-href';
+export type { PlatformLegalDocument } from './utils/platform-legal-href';
 export { LegalDocumentView } from './components/LegalDocumentView';
 export { default as PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 export { default as TermsPage } from './pages/TermsPage';

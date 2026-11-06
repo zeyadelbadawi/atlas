@@ -69,7 +69,7 @@ export function PublicWebsiteConsentLayer({
   return (
     <WebsiteOverlayScope themeKey={themeKey} brand={brand}>
       <CookieConsentBanner academySite academyName={academyName} />
-      <CookiePreferencesDialog />
+      <CookiePreferencesDialog academySite academyName={academyName} />
     </WebsiteOverlayScope>
   );
 }

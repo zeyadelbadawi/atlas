@@ -12,7 +12,6 @@
  *    contact` — persisted for real (`ContactSubmission`), never a
  *    console-log or a fake success message.
  */
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2, Mail, MapPin, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -20,7 +19,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useAcademyIdentity } from '@hooks';
-import { publicWebsiteService } from '@services';
 import {
   useWebsiteContainerClass,
   useWebsiteHeadingClass,
@@ -28,19 +26,20 @@ import {
 } from '../renderer/renderer-style.utils';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
+import { useContactForm } from './contact/useContactForm';
+import { contactSectionDescription } from './contact/contact-form.logic';
 import {
-  CONTACT_EMAIL_MAX_LENGTH,
-  CONTACT_MESSAGE_MAX_LENGTH,
-  CONTACT_NAME_MAX_LENGTH,
-} from '../constants/website.constants';
+  ContactFailureAlert,
+  ContactFieldFeedback,
+  ContactRequiredNote,
+  useContactSubmitLabel,
+} from './contact/ContactFormParts';
 import type { ContactSectionConfig } from '@types';
 
 export interface ContactSectionProps {
   readonly config: ContactSectionConfig;
   readonly academyId: string;
 }
-
-type SubmitState = 'idle' | 'submitting' | 'success' | 'error';
 
 export function ContactSection({
   config,
@@ -51,10 +50,10 @@ export function ContactSection({
   const section = useWebsiteSectionClass();
   const heading = useWebsiteHeadingClass();
   const { data: identity } = useAcademyIdentity(academyId);
-  const [submitState, setSubmitState] = useState<SubmitState>('idle');
+  const contact = useContactForm(academyId);
+  const submitLabel = useContactSubmitLabel(contact.isSending);
   const { locale } = usePublicWebsiteLocale();
   const title = resolveLocalizedText(config.title, locale);
-  const description = resolveLocalizedText(config.description, locale);
 
   const email = config.email || identity?.contactEmail;
   const phone = config.phone || identity?.contactPhone;
@@ -69,30 +68,16 @@ export function ContactSection({
       .join(', ') ||
     undefined;
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    const name = String(formData.get('name') ?? '').trim();
-    const submitterEmail = String(formData.get('email') ?? '').trim();
-    const message = String(formData.get('message') ?? '').trim();
-    const company = String(formData.get('company') ?? '').trim();
-    if (!name || !submitterEmail || !message) return;
-
-    setSubmitState('submitting');
-    try {
-      await publicWebsiteService.submitContactMessage(academyId, {
-        name,
-        email: submitterEmail,
-        message,
-        // Sent only when filled — i.e. by a bot (see the field below).
-        ...(company ? { company } : {}),
-      });
-      setSubmitState('success');
-      form.reset();
-    } catch {
-      setSubmitState('error');
-    }
+  const description = contactSectionDescription(
+    resolveLocalizedText(config.description, locale),
+    !!(email || phone || address)
+  );
+  const nameField = contact.field('name');
+  const emailField = contact.field('email');
+  const messageField = contact.field('message');
+  const feedbackClasses = {
+    errorClassName: 'text-destructive',
+    countClassName: 'text-muted-foreground',
   };
 
   return (
@@ -161,78 +146,92 @@ export function ContactSection({
           ) : null}
         </dl>
         {config.showForm ? (
-          <form className="relative space-y-4" onSubmit={handleSubmit}>
-            <div className="space-y-1.5">
-              <Label htmlFor="website-contact-name">
-                {t('website:renderer.contactNameLabel')}
-              </Label>
-              <Input
-                id="website-contact-name"
-                name="name"
-                autoComplete="name"
-                maxLength={CONTACT_NAME_MAX_LENGTH}
-                required
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="website-contact-email">
-                {t('website:renderer.contactEmailLabel')}
-              </Label>
-              <Input
-                id="website-contact-email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                maxLength={CONTACT_EMAIL_MAX_LENGTH}
-                required
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="website-contact-message">
-                {t('website:renderer.contactMessageLabel')}
-              </Label>
-              <Textarea
-                id="website-contact-message"
-                name="message"
-                rows={4}
-                maxLength={CONTACT_MESSAGE_MAX_LENGTH}
-                required
-              />
-            </div>
-            {/* Spam trap: out of sight, out of the tab order and hidden
-                from assistive tech, so only a bot fills it in. Same field
-                as Theme 1's contact form (`t1-page-sections.tsx`). */}
+          contact.status === 'sent' ? (
             <div
-              aria-hidden
-              className="pointer-events-none absolute -start-[10000px] size-px overflow-hidden"
+              ref={contact.successRef}
+              role="status"
+              tabIndex={-1}
+              data-contact-success=""
+              className="space-y-3 outline-none"
             >
-              <label htmlFor="website-contact-company">Company</label>
-              <input
-                id="website-contact-company"
-                name="company"
-                type="text"
-                tabIndex={-1}
-                autoComplete="off"
-                defaultValue=""
-              />
-            </div>
-            <Button type="submit" disabled={submitState === 'submitting'}>
-              {submitState === 'submitting' ? (
-                <Loader2 className="size-4 animate-spin" aria-hidden />
-              ) : null}
-              {t('website:renderer.contactSubmit')}
-            </Button>
-            {submitState === 'success' ? (
-              <p role="status" className="text-sm text-success">
+              <p className="text-sm text-success">
                 {t('website:renderer.contactSuccess')}
               </p>
-            ) : null}
-            {submitState === 'error' ? (
-              <p role="alert" className="text-sm text-destructive">
-                {t('website:renderer.contactError')}
-              </p>
-            ) : null}
-          </form>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={contact.sendAnother}
+              >
+                {t('website:theme1.contact.sendAnother')}
+              </Button>
+            </div>
+          ) : (
+            <form
+              className="relative space-y-4"
+              noValidate
+              onSubmit={contact.onSubmit}
+            >
+              <ContactRequiredNote className="text-sm text-muted-foreground" />
+              <div className="space-y-1.5">
+                <Label htmlFor={nameField.id}>
+                  {t('website:renderer.contactNameLabel')}
+                </Label>
+                <Input {...nameField.controlProps} autoComplete="name" />
+                <ContactFieldFeedback field={nameField} {...feedbackClasses} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor={emailField.id}>
+                  {t('website:renderer.contactEmailLabel')}
+                </Label>
+                <Input
+                  {...emailField.controlProps}
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  dir="ltr"
+                  className="text-start"
+                />
+                <ContactFieldFeedback field={emailField} {...feedbackClasses} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor={messageField.id}>
+                  {t('website:renderer.contactMessageLabel')}
+                </Label>
+                <Textarea {...messageField.controlProps} rows={4} />
+                <ContactFieldFeedback
+                  field={messageField}
+                  {...feedbackClasses}
+                />
+              </div>
+              {/* Spam trap: out of sight, out of the tab order and hidden
+                  from assistive tech, so only a bot fills it in. Same field
+                  as every theme's contact form. */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -start-[10000px] size-px overflow-hidden"
+              >
+                <label htmlFor={contact.trapId}>Company</label>
+                <input
+                  id={contact.trapId}
+                  {...contact.register('company')}
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+              </div>
+              <ContactFailureAlert
+                contact={contact}
+                className="rounded-md border border-destructive/40 bg-destructive/5 p-4 text-foreground"
+                retryClassName="text-sm font-medium underline underline-offset-4"
+              />
+              <Button type="submit" disabled={contact.isSending}>
+                {contact.isSending ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden />
+                ) : null}
+                {submitLabel}
+              </Button>
+            </form>
+          )
         ) : null}
       </div>
     </section>

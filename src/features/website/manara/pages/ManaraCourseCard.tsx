@@ -27,6 +27,7 @@ function CardBody({ course }: { readonly course: Course }): JSX.Element {
     <>
       <ManaraMedia
         value={course.thumbnail || COURSE_FALLBACK}
+        errorValue={COURSE_FALLBACK}
         alt=""
         shape="slant"
         sizes={CARD_SIZES}

@@ -37,7 +37,7 @@ interface Details {
   setPreviewLesson: ReturnType<typeof vi.fn>;
   isAuthenticated: boolean;
   isEnrolled: boolean;
-  enrollError: boolean;
+  enrollError: { kind: 'server' } | null;
   action: {
     kind: string;
     labelKey: string;
@@ -181,7 +181,7 @@ beforeEach(() => {
     setPreviewLesson: vi.fn(),
     isAuthenticated: false,
     isEnrolled: false,
-    enrollError: false,
+    enrollError: null,
     action: {
       kind: 'signIn',
       labelKey: 'website:renderer.courseDetails.signInToEnrollAction',
@@ -345,7 +345,7 @@ describe('ManaraCourseDetails', () => {
   });
 
   it('an enrolment failure is announced; a busy action is disabled', () => {
-    details.enrollError = true;
+    details.enrollError = { kind: 'server' };
     details.action = {
       ...details.action,
       kind: 'enroll',
@@ -353,9 +353,15 @@ describe('ManaraCourseDetails', () => {
       busy: true,
     };
     wrap(page());
-    expect(screen.getByRole('alert').textContent).toContain(
-      "We couldn't enroll you"
-    );
+    // The panel and the phone bar (one of them hidden per width) each say it.
+    const alerts = screen.getAllByRole('alert');
+    expect(alerts).toHaveLength(2);
+    for (const alert of alerts) {
+      expect(alert.textContent).toContain("We couldn't enroll you");
+    }
+    expect(
+      alerts.some((alert) => alert.closest('[data-manara-purchase-bar]'))
+    ).toBe(true);
     for (const button of screen.getAllByRole('button', {
       name: 'Enroll for free',
     })) {

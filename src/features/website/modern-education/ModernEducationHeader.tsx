@@ -111,6 +111,7 @@ export function ModernEducationHeader({
   const container = useWebsiteContainerClass();
   const menu = useDisclosure();
   const headerRef = useRef<HTMLElement>(null);
+  const sheetNavRef = useRef<HTMLElement>(null);
   const solid = useScrolledPast(headerRef, SOLID_AFTER_PX);
   const direction = PUBLIC_WEBSITE_LOCALE_DIRECTION[locale];
   const items = [...navigation].sort((a, b) => a.order - b.order);
@@ -383,11 +384,25 @@ export function ModernEducationHeader({
               side={direction === 'rtl' ? 'left' : 'right'}
               dir={direction}
               className="flex w-[min(22rem,88vw)] flex-col gap-6 bg-[var(--website-background)] p-6 pt-14 text-[var(--website-foreground)]"
+              // B9 (UX audit) V18 — the menu opens on its first link, not
+              // on whatever control the focus scope happened to pick.
+              onOpenAutoFocus={(event) => {
+                const first =
+                  sheetNavRef.current?.querySelector<HTMLElement>(
+                    'a[href], button'
+                  );
+                if (!first) return;
+                event.preventDefault();
+                first.focus();
+              }}
             >
               <SheetTitle className="sr-only">
                 {t('website:chrome.menuTitle', { name: academyName })}
               </SheetTitle>
-              <nav aria-label={t('website:chrome.primaryNavigation')}>
+              <nav
+                ref={sheetNavRef}
+                aria-label={t('website:chrome.primaryNavigation')}
+              >
                 <ul className="flex flex-col gap-1">{navLinks('sheet')}</ul>
               </nav>
               <div className="mt-auto flex flex-col gap-4 border-t border-[var(--website-border)] pt-6">

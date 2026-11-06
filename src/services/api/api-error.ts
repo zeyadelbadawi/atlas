@@ -64,6 +64,7 @@ export class ApiError extends Error implements NormalizedApiError {
   public readonly violations?: readonly FieldViolation[];
   public readonly details?: Readonly<Record<string, JsonValue>>;
   public readonly requestId?: string;
+  public readonly retryAfterSeconds?: number;
   public readonly retryable: boolean;
 
   constructor(normalized: NormalizedApiError) {
@@ -77,6 +78,9 @@ export class ApiError extends Error implements NormalizedApiError {
     this.violations = normalized.violations;
     this.details = normalized.details;
     this.requestId = normalized.requestId;
+    if (normalized.retryAfterSeconds !== undefined) {
+      this.retryAfterSeconds = normalized.retryAfterSeconds;
+    }
     this.retryable = normalized.retryable;
   }
 
@@ -99,6 +103,9 @@ export function createApiError(
     violations: details.violations,
     details: details.details,
     requestId: details.requestId,
+    ...(details.retryAfterSeconds !== undefined
+      ? { retryAfterSeconds: details.retryAfterSeconds }
+      : {}),
     retryable: RETRYABLE_KINDS.includes(kind),
   });
 }
@@ -256,12 +263,41 @@ function unwrapErrorBody(payload: unknown): BackendErrorPayload {
  * @param status HTTP-like status code of the response.
  * @param payload Parsed response body, if any.
  */
+/**
+ * B9 (UX audit) — `Retry-After` in whole seconds (delta-seconds or an
+ * HTTP-date), or `undefined` when absent or unusable.
+ */
+export function readRetryAfterSeconds(
+  headers: unknown,
+  now = Date.now()
+): number | undefined {
+  const raw =
+    headers && typeof headers === 'object'
+      ? ((headers as Record<string, unknown>)['retry-after'] ??
+        (headers as Record<string, unknown>)['Retry-After'])
+      : undefined;
+  if (typeof raw !== 'string' && typeof raw !== 'number') return undefined;
+  const text = String(raw).trim();
+  if (!text) return undefined;
+  const seconds = Number(text);
+  if (Number.isFinite(seconds)) {
+    return seconds >= 0 ? Math.ceil(seconds) : undefined;
+  }
+  const date = Date.parse(text);
+  return Number.isFinite(date)
+    ? Math.max(0, Math.ceil((date - now) / 1000))
+    : undefined;
+}
+
 export function normalizeResponseError(
   status: number,
-  payload: unknown
+  payload: unknown,
+  headers?: unknown
 ): ApiError {
   const body = unwrapErrorBody(payload);
   const kind = toErrorKind(body.kind) ?? kindFromStatus(status);
+  const retryAfterSeconds =
+    kind === 'rateLimited' ? readRetryAfterSeconds(headers) : undefined;
 
   return createApiError(kind, {
     status,
@@ -292,6 +328,7 @@ export function normalizeResponseError(
     // is the backend's call, not a list maintained here. The save-conflict
     // response is the first user.
     details: readDetails(body),
+    retryAfterSeconds,
   });
 }
 
@@ -349,7 +386,11 @@ export function normalizeAxiosError(error: unknown): ApiError {
     }
 
     if (error.response) {
-      return normalizeResponseError(error.response.status, error.response.data);
+      return normalizeResponseError(
+        error.response.status,
+        error.response.data,
+        error.response.headers
+      );
     }
 
     if (error.code === 'ECONNABORTED') {

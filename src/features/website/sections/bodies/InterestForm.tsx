@@ -29,6 +29,7 @@ import { isApiError } from '@api';
 import { publicWebsiteService } from '@services';
 import type { InterestFormSectionConfig } from '@types';
 import { usePublicWebsiteLocale } from '@/features/website/renderer/PublicWebsiteLocaleContext';
+import { isConnectionFailure } from '@/features/website/utils/load-failure.utils';
 import {
   CONTACT_EMAIL_MAX_LENGTH,
   CONTACT_MESSAGE_MAX_LENGTH,
@@ -83,6 +84,7 @@ type SubmitState =
   | 'success'
   | 'preview'
   | 'error'
+  | 'networkError'
   | 'rateLimited'
   | 'unavailable';
 
@@ -98,6 +100,7 @@ const SERVER_FIELDS: Readonly<Record<string, InterestFieldName>> = {
 
 const ALERT_KEYS: Partial<Record<SubmitState, string>> = {
   error: 'website:renderer.interestForm.sendFailed',
+  networkError: 'website:renderer.interestForm.sendFailedNetwork',
   rateLimited: 'website:renderer.interestForm.rateLimited',
   unavailable: 'website:renderer.interestForm.unavailable',
 };
@@ -276,7 +279,11 @@ export function InterestForm({
           ? 'rateLimited'
           : isApiError(error) && error.kind === 'notFound'
             ? 'unavailable'
-            : 'error'
+            : // B9 (UX audit) V07 — only a real network failure is
+              // blamed on the connection.
+              isConnectionFailure(error)
+              ? 'networkError'
+              : 'error'
       );
     }
   };

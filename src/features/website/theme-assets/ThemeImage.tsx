@@ -28,6 +28,7 @@ import {
 } from './resolve-theme-asset';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { mediaVariantSrcSet } from './media-variants';
+import { useImageFailure } from './useImageFailure';
 
 export interface ThemeImageProps {
   readonly value: string | undefined;
@@ -49,6 +50,13 @@ export interface ThemeImageProps {
    * priority, as the hero is. Omitted, the manifest decides.
    */
   readonly priority?: boolean;
+  /**
+   * B9 (UX audit) V15 — what to draw when the image fails to load (before
+   * or after hydration): this value instead (a course card's theme fallback
+   * photograph), else `fallback`, else nothing — never the browser's
+   * broken-image icon. When this value fails too, `fallback`.
+   */
+  readonly errorValue?: string;
 }
 
 export function ThemeImage({
@@ -60,12 +68,33 @@ export function ThemeImage({
   fallback = null,
   loading,
   priority = false,
+  errorValue,
 }: ThemeImageProps): JSX.Element | null {
   const { locale } = usePublicWebsiteLocale();
+  // Whether `value` failed to load (an uploaded image or a theme asset); a
+  // new `value` is tried afresh.
+  const { failed, ref, onError } = useImageFailure(value);
   if (!value) return <>{fallback}</>;
+  if (failed) {
+    return errorValue && errorValue !== value ? (
+      <ThemeImage
+        value={errorValue}
+        alt={alt}
+        className={className}
+        style={style}
+        sizes={sizes}
+        fallback={fallback}
+        loading={loading}
+        priority={priority}
+      />
+    ) : (
+      <>{fallback}</>
+    );
+  }
   if (!isThemeAssetReference(value)) {
     const image = loading ? (
       <img
+        ref={ref}
         src={value}
         alt={alt}
         loading={loading}
@@ -73,9 +102,17 @@ export function ThemeImage({
         {...(loading === 'eager' ? { fetchpriority: 'high' } : {})}
         className={className}
         style={style}
+        onError={onError}
       />
     ) : (
-      <img src={value} alt={alt} className={className} style={style} />
+      <img
+        ref={ref}
+        src={value}
+        alt={alt}
+        className={className}
+        style={style}
+        onError={onError}
+      />
     );
     const avif = mediaVariantSrcSet(value, 'avif');
     if (!avif) return image;
@@ -107,12 +144,14 @@ export function ThemeImage({
         />
       ))}
       <img
+        ref={ref}
         src={asset.src}
         alt={alt || asset.alt[locale]}
         width={asset.width}
         height={asset.height}
         loading={eager ? 'eager' : 'lazy'}
         decoding="async"
+        onError={onError}
         // React 18 forwards the lowercase attribute unchanged.
         {...{ fetchpriority: eager ? 'high' : 'auto' }}
         className={className}

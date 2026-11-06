@@ -198,6 +198,16 @@
   color: var(--atelier-text);
   text-decoration: none;
 }
+/* B9 (UX audit) V14 — on a phone the name shares the bar with Sign Up and
+   the menu: a smaller face and a third line keep a typical academy name
+   whole instead of cutting it after two lines. */
+@media (max-width: 479px) {
+  [data-theme-pack='atelier'] .atp-header .atp-wordmark {
+    font-size: 1.0625rem;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+}
 [data-theme-pack='atelier'] [dir='rtl'] .atp-wordmark,
 [data-theme-pack='atelier'][dir='rtl'] .atp-wordmark {
   letter-spacing: 0;

@@ -12,7 +12,7 @@
  */
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, SearchX, ShieldAlert } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
@@ -59,6 +59,7 @@ export function CertificateVerifySheet({
         descriptionKey="certificates:verify.error.description"
         requestId={error?.requestId}
         onRetry={() => void refetch()}
+        headingLevel="h2"
       />
     );
   }
@@ -105,11 +106,12 @@ export function CertificateVerifySheet({
           data-testid="certificate-verify-revoked"
         >
           <ShieldAlert className="size-4" aria-hidden />
-          <AlertTitle>
+          {/* B9 (UX audit) V19 — an h2 under the page's h1 (AlertTitle is an h5). */}
+          <h2 className="mb-1 text-sm font-medium leading-none tracking-tight">
             {t('certificates:verify.revoked.title', {
               date: data.revokedAt ? fmt.date(data.revokedAt) : '—',
             })}
-          </AlertTitle>
+          </h2>
           <AlertDescription>
             {t('certificates:verify.revoked.description')}
           </AlertDescription>
@@ -117,7 +119,9 @@ export function CertificateVerifySheet({
       ) : (
         <Alert className="border-success/50 bg-success-surface text-foreground [&>svg]:text-success">
           <CheckCircle2 className="size-4" aria-hidden />
-          <AlertTitle>{t('certificates:verify.valid.title')}</AlertTitle>
+          <h2 className="mb-1 text-sm font-medium leading-none tracking-tight">
+            {t('certificates:verify.valid.title')}
+          </h2>
           <AlertDescription>
             {t('certificates:verify.valid.description')}
           </AlertDescription>

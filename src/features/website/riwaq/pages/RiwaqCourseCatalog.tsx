@@ -36,6 +36,7 @@ import type { SectionRenderProps } from '@/features/website/theme-packs/theme-pa
 import { RiwaqBand, RiwaqSectionHead, formatRiwaqNumber } from '../riwaq-parts';
 import { RiwaqCourseSheet, RiwaqCourseSheetSkeleton } from './RiwaqCourseSheet';
 import '../riwaq-pages.css';
+import { loadFailureKey } from '@/features/website/utils/load-failure.utils';
 
 type Catalog = ReturnType<typeof useCourseCatalog>;
 
@@ -191,15 +192,18 @@ export function RiwaqStatement({
   description,
   action,
   marker,
+  titleAs: Title = 'p',
 }: {
   readonly title: string;
   readonly description: string;
   readonly action?: JSX.Element;
   readonly marker: Record<string, string>;
+  /** B9 (UX audit) V19 — `h1` when the statement is the whole page (the course error). */
+  readonly titleAs?: 'p' | 'h1';
 }): JSX.Element {
   return (
     <div className="rw-cell rwp-statement" data-tick="" {...marker}>
-      <p className="rw-title">{title}</p>
+      <Title className="rw-title">{title}</Title>
       <p className="rw-lead">{description}</p>
       {action ? <div>{action}</div> : null}
     </div>
@@ -284,7 +288,7 @@ export function RiwaqCourseCatalog({
       <RiwaqStatement
         marker={{ 'data-catalog-error': '' }}
         title={t('website:riwaq.pages.catalog.errorTitle')}
-        description={t('website:riwaq.pages.catalog.errorDescription')}
+        description={t(loadFailureKey(error, 'website:riwaq.pages.catalog.errorDescription'))}
         action={
           <button type="button" className="rw-btn rw-btn-line" onClick={() => void refetch()}>
             {t('website:riwaq.pages.catalog.retry')}

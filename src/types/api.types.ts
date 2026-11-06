@@ -146,6 +146,11 @@ export interface NormalizedApiError {
    */
   readonly details?: Readonly<Record<string, JsonValue>>;
   readonly requestId?: string;
+  /**
+   * B9 (UX audit) — a 429's `Retry-After`, in whole seconds, when the
+   * server sent one: how long to ask the person to wait.
+   */
+  readonly retryAfterSeconds?: number;
   /** True when repeating the same request may succeed. */
   readonly retryable: boolean;
 }

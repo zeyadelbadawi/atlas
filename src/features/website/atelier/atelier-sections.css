@@ -127,6 +127,10 @@
 /* The underlined search field. */
 [data-theme-pack='atelier'] .ath-hero-search {
   display: grid;
+  /* B9 (UX audit) V11 — the track is the column's width, not the search
+     field's intrinsic width: on a phone the field shrinks instead of
+     pushing the page sideways. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.5rem;
   max-width: 34rem;
 }

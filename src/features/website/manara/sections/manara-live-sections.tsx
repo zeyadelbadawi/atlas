@@ -192,6 +192,7 @@ function CoursePoster({
     <>
       <ManaraMedia
         value={course.thumbnail || MANARA_COURSE_FALLBACK}
+        errorValue={MANARA_COURSE_FALLBACK}
         alt=""
         sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 82vw"
         shape="slant"

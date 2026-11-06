@@ -43,6 +43,7 @@ import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { SectionRenderProps } from '../theme-packs/theme-pack.types';
 import { T1Section, T1SectionHeader, formatT1Number } from './t1-parts';
 import { T1CourseCard, T1CourseCardSkeleton } from './T1CourseCard';
+import { loadFailureKey } from '@/features/website/utils/load-failure.utils';
 
 const GRID = 'grid gap-6 sm:grid-cols-2 lg:grid-cols-3';
 
@@ -400,7 +401,9 @@ export function T1CourseCatalog({
             {t('website:theme1.catalog.errorTitle')}
           </p>
           <p className="text-[var(--website-foreground-muted)]">
-            {t('website:theme1.catalog.errorDescription')}
+            {t(
+              loadFailureKey(error, 'website:theme1.catalog.errorDescription')
+            )}
           </p>
           <button
             type="button"

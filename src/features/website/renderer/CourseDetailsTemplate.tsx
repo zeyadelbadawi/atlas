@@ -66,6 +66,7 @@ import {
   useWebsiteHeadingClass,
 } from './renderer-style.utils';
 import type { PublicWebsiteLocale } from '@types';
+import { CourseEnrollError } from './CourseEnrollError';
 
 export interface CourseDetailsTemplateProps {
   readonly academyId: string;
@@ -100,7 +101,9 @@ export function CourseDetailsTemplate({
     setPreviewLesson,
     isAuthenticated,
     isEnrolled,
+    hasStarted,
     enrollError,
+    continueToCourse,
     action,
     buildHref,
   } = useCourseDetails(academyId, courseId, locale);
@@ -120,7 +123,7 @@ export function CourseDetailsTemplate({
   if (error || !course) {
     return (
       <div className={`${container} py-16`}>
-        <ErrorState onRetry={() => refetch()} />
+        <ErrorState onRetry={() => refetch()} headingLevel="h1" />
       </div>
     );
   }
@@ -341,6 +344,7 @@ export function CourseDetailsTemplate({
             academyId={academyId}
             courseId={courseId}
             canReview={isAuthenticated && isEnrolled}
+            hasStarted={hasStarted}
           />
 
           <CourseReviews
@@ -371,11 +375,12 @@ export function CourseDetailsTemplate({
             {t(action.labelKey)}
           </Button>
 
-          {enrollError ? (
-            <p className="text-sm text-destructive">
-              {t('website:renderer.courseDetails.enrollError')}
-            </p>
-          ) : null}
+          <CourseEnrollError
+            error={enrollError}
+            onContinue={continueToCourse}
+            className="text-sm text-destructive"
+            actionClassName="text-sm font-medium underline underline-offset-4"
+          />
         </aside>
       </div>
 

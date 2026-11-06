@@ -26,9 +26,25 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { PUBLIC_ROUTES } from '@app/routes/route-paths';
 import { useCookieConsent } from '../consent/CookieConsentProvider';
+import { platformLegalHref } from '../utils/platform-legal-href';
 
-export function CookiePreferencesDialog() {
-  const { t } = useTranslation(['legal']);
+export interface CookiePreferencesDialogProps {
+  /**
+   * B9 (UX audit) V05/V06 — rendered on an academy website: the copy names
+   * the academy (or "this website") and says nothing about dashboards, and
+   * the Privacy Policy opens on the platform's site in a new tab (academy
+   * hosts don't route `/privacy-policy`).
+   */
+  readonly academySite?: boolean;
+  /** The academy's name, once the host has resolved. */
+  readonly academyName?: string;
+}
+
+export function CookiePreferencesDialog({
+  academySite = false,
+  academyName,
+}: CookiePreferencesDialogProps = {}) {
+  const { t, i18n } = useTranslation(['legal']);
   const { consent, isPreferencesOpen, closePreferences, decide } =
     useCookieConsent();
 
@@ -52,7 +68,13 @@ export function CookiePreferencesDialog() {
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{t('legal:consent.dialogTitle')}</DialogTitle>
-          <DialogDescription>{t('legal:consent.dialogBody')}</DialogDescription>
+          <DialogDescription>
+            {!academySite
+              ? t('legal:consent.dialogBody')
+              : academyName
+                ? t('legal:consent.dialogBodyAcademy', { academyName })
+                : t('legal:consent.dialogBodySite')}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -63,7 +85,11 @@ export function CookiePreferencesDialog() {
                   {t('legal:consent.necessaryTitle')}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {t('legal:consent.necessaryBody')}
+                  {t(
+                    academySite
+                      ? 'legal:consent.necessaryBodySite'
+                      : 'legal:consent.necessaryBody'
+                  )}
                 </p>
               </div>
               {/* Not a disabled switch that looks togglable —
@@ -84,7 +110,11 @@ export function CookiePreferencesDialog() {
                   {t('legal:consent.preferencesTitle')}
                 </Label>
                 <p className="text-sm text-muted-foreground">
-                  {t('legal:consent.preferencesBody')}
+                  {t(
+                    academySite
+                      ? 'legal:consent.preferencesBodySite'
+                      : 'legal:consent.preferencesBody'
+                  )}
                 </p>
               </div>
               <Switch
@@ -96,13 +126,29 @@ export function CookiePreferencesDialog() {
             </div>
           </div>
 
-          <Link
-            to={PUBLIC_ROUTES.privacyPolicy}
-            className="inline-block text-sm underline underline-offset-4"
-            onClick={closePreferences}
-          >
-            {t('legal:consent.learnMore')}
-          </Link>
+          {academySite ? (
+            <a
+              href={platformLegalHref('privacy', i18n.language)}
+              target="_blank"
+              rel="noopener"
+              className="inline-block text-sm underline underline-offset-4"
+              data-testid="cookie-privacy-link"
+            >
+              {t('legal:consent.learnMore')}
+              <span className="sr-only">
+                {' '}
+                {t('legal:consent.learnMoreNewTab')}
+              </span>
+            </a>
+          ) : (
+            <Link
+              to={PUBLIC_ROUTES.privacyPolicy}
+              className="inline-block text-sm underline underline-offset-4"
+              onClick={closePreferences}
+            >
+              {t('legal:consent.learnMore')}
+            </Link>
+          )}
         </div>
 
         <DialogFooter>

@@ -516,3 +516,19 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* B9 (UX audit) V16 — on phones sonner 1.7 makes the toaster `width: 100%`
+   between two offsets and, right to left, pulls it past the start edge
+   (`left: calc(offset * -1)`), so an Arabic toast began 16px off the screen.
+   Pinned between the two mobile offsets in both directions instead (`html`
+   outweighs the rules sonner injects at runtime). */
+@media (max-width: 600px) {
+  html [data-sonner-toaster] {
+    left: var(--mobile-offset-left);
+    right: var(--mobile-offset-right);
+    width: auto;
+  }
+  html [data-sonner-toaster] [data-sonner-toast] {
+    width: 100%;
+  }
+}

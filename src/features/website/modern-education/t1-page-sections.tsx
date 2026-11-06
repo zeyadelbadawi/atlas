@@ -31,14 +31,16 @@ import {
 } from '@/components/ui/dialog';
 import { cn } from '@utils';
 import { useAcademyIdentity } from '@hooks';
-import { publicWebsiteService } from '@services';
 import { ThemeImage, hasRenderableImage } from '../theme-assets';
 import { PUBLIC_WEBSITE_LOCALE_DIRECTION } from '../constants/locale.constants';
+import { useContactForm } from '../sections/contact/useContactForm';
+import { contactSectionDescription } from '../sections/contact/contact-form.logic';
 import {
-  CONTACT_EMAIL_MAX_LENGTH,
-  CONTACT_MESSAGE_MAX_LENGTH,
-  CONTACT_NAME_MAX_LENGTH,
-} from '../constants/website.constants';
+  ContactFailureAlert,
+  ContactFieldFeedback,
+  ContactRequiredNote,
+  useContactSubmitLabel,
+} from '../sections/contact/ContactFormParts';
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { SectionRenderProps } from '../theme-packs/theme-pack.types';
@@ -48,8 +50,6 @@ import { T1ImagePlaceholder, T1Section, T1SectionHeader } from './t1-parts';
 /* Contact                                                               */
 /* ------------------------------------------------------------------ */
 
-type SubmitState = 'idle' | 'submitting' | 'success' | 'error';
-
 export function T1Contact({
   config,
   academyId,
@@ -57,11 +57,10 @@ export function T1Contact({
   const { t } = useTranslation();
   const { locale } = usePublicWebsiteLocale();
   const headingId = useId();
-  const fieldId = useId();
   const { data: identity } = useAcademyIdentity(academyId);
-  const [state, setState] = useState<SubmitState>('idle');
+  const contact = useContactForm(academyId);
+  const submitLabel = useContactSubmitLabel(contact.isSending);
   const title = resolveLocalizedText(config.title, locale);
-  const description = resolveLocalizedText(config.description, locale);
 
   const email = config.email || identity?.contactEmail;
   const phone = config.phone || identity?.contactPhone;
@@ -108,34 +107,20 @@ export function T1Contact({
         }
       : null,
   ].filter((method): method is NonNullable<typeof method> => !!method);
-
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const data = new FormData(form);
-    const name = String(data.get('name') ?? '').trim();
-    const submitterEmail = String(data.get('email') ?? '').trim();
-    const message = String(data.get('message') ?? '').trim();
-    const company = String(data.get('company') ?? '').trim();
-    if (!name || !submitterEmail || !message) return;
-    setState('submitting');
-    try {
-      await publicWebsiteService.submitContactMessage(academyId, {
-        name,
-        email: submitterEmail,
-        message,
-        // Sent only when filled — i.e. by a bot (see the field below).
-        ...(company ? { company } : {}),
-      });
-      setState('success');
-      form.reset();
-    } catch {
-      setState('error');
-    }
-  };
+  const description = contactSectionDescription(
+    resolveLocalizedText(config.description, locale),
+    methods.length > 0
+  );
 
   const labelClass =
     'mb-1.5 block text-sm font-semibold text-[var(--website-foreground)]';
+  const nameField = contact.field('name');
+  const emailField = contact.field('email');
+  const messageField = contact.field('message');
+  const feedbackClasses = {
+    errorClassName: 'font-medium text-[var(--website-error)]',
+    countClassName: 'text-[var(--website-foreground-muted)]',
+  };
 
   return (
     <T1Section labelledBy={title ? headingId : undefined}>
@@ -188,11 +173,13 @@ export function T1Contact({
         </div>
         {config.showForm ? (
           <div className="t1-card p-6 md:p-9">
-            {state === 'success' ? (
+            {contact.status === 'sent' ? (
               <div
+                ref={contact.successRef}
                 role="status"
+                tabIndex={-1}
                 data-contact-success=""
-                className="flex min-h-[20rem] flex-col items-center justify-center gap-4 text-center"
+                className="flex min-h-[20rem] flex-col items-center justify-center gap-4 text-center outline-none"
               >
                 <span className="t1-icon-tile size-14 rounded-full">
                   <CheckCircle2 className="size-7" aria-hidden />
@@ -206,57 +193,68 @@ export function T1Contact({
                 <button
                   type="button"
                   className="t1-btn-secondary mt-2"
-                  onClick={() => setState('idle')}
+                  onClick={contact.sendAnother}
                 >
                   {t('website:theme1.contact.sendAnother')}
                 </button>
               </div>
             ) : (
-              <form className="space-y-5" onSubmit={onSubmit}>
-                <p className="font-display text-xl font-bold text-[var(--website-foreground)]">
-                  {t('website:theme1.contact.formTitle')}
-                </p>
+              <form
+                className="space-y-5"
+                noValidate
+                onSubmit={contact.onSubmit}
+              >
+                <div className="space-y-1">
+                  <p className="font-display text-xl font-bold text-[var(--website-foreground)]">
+                    {t('website:theme1.contact.formTitle')}
+                  </p>
+                  <ContactRequiredNote className="text-sm text-[var(--website-foreground-muted)]" />
+                </div>
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div>
-                    <label htmlFor={`${fieldId}-name`} className={labelClass}>
+                    <label htmlFor={nameField.id} className={labelClass}>
                       {t('website:renderer.contactNameLabel')}
                     </label>
                     <input
-                      id={`${fieldId}-name`}
-                      name="name"
+                      {...nameField.controlProps}
                       autoComplete="name"
-                      maxLength={CONTACT_NAME_MAX_LENGTH}
-                      required
                       className="t1-input"
+                    />
+                    <ContactFieldFeedback
+                      field={nameField}
+                      {...feedbackClasses}
                     />
                   </div>
                   <div>
-                    <label htmlFor={`${fieldId}-email`} className={labelClass}>
+                    <label htmlFor={emailField.id} className={labelClass}>
                       {t('website:renderer.contactEmailLabel')}
                     </label>
                     <input
-                      id={`${fieldId}-email`}
-                      name="email"
+                      {...emailField.controlProps}
                       type="email"
+                      inputMode="email"
                       autoComplete="email"
-                      maxLength={CONTACT_EMAIL_MAX_LENGTH}
-                      required
                       dir="ltr"
                       className="t1-input text-start"
+                    />
+                    <ContactFieldFeedback
+                      field={emailField}
+                      {...feedbackClasses}
                     />
                   </div>
                 </div>
                 <div>
-                  <label htmlFor={`${fieldId}-message`} className={labelClass}>
+                  <label htmlFor={messageField.id} className={labelClass}>
                     {t('website:renderer.contactMessageLabel')}
                   </label>
                   <textarea
-                    id={`${fieldId}-message`}
-                    name="message"
+                    {...messageField.controlProps}
                     rows={6}
-                    maxLength={CONTACT_MESSAGE_MAX_LENGTH}
-                    required
                     className="t1-input min-h-[10rem] py-3"
+                  />
+                  <ContactFieldFeedback
+                    field={messageField}
+                    {...feedbackClasses}
                   />
                 </div>
                 {/* Spam trap: out of sight, out of the tab order and hidden
@@ -265,33 +263,29 @@ export function T1Contact({
                   aria-hidden
                   className="pointer-events-none absolute -start-[10000px] size-px overflow-hidden"
                 >
-                  <label htmlFor={`${fieldId}-company`}>Company</label>
+                  <label htmlFor={contact.trapId}>Company</label>
                   <input
-                    id={`${fieldId}-company`}
-                    name="company"
+                    id={contact.trapId}
+                    {...contact.register('company')}
                     type="text"
                     tabIndex={-1}
                     autoComplete="off"
-                    defaultValue=""
                   />
                 </div>
-                {state === 'error' ? (
-                  <p
-                    role="alert"
-                    className="text-sm font-medium text-[var(--website-error)]"
-                  >
-                    {t('website:renderer.contactError')}
-                  </p>
-                ) : null}
+                <ContactFailureAlert
+                  contact={contact}
+                  className="rounded-[var(--t1-radius-control)] border border-[var(--website-error)] p-4 text-[var(--website-foreground)]"
+                  retryClassName="t1-btn-secondary"
+                />
                 <button
                   type="submit"
                   className="t1-cta t1-btn-lg w-full sm:w-auto"
-                  disabled={state === 'submitting'}
+                  disabled={contact.isSending}
                 >
-                  {state === 'submitting' ? (
+                  {contact.isSending ? (
                     <Loader2 className="size-4 animate-spin" aria-hidden />
                   ) : null}
-                  {t('website:renderer.contactSubmit')}
+                  {submitLabel}
                 </button>
               </form>
             )}

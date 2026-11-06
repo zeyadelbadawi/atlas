@@ -51,7 +51,8 @@
       "invalidTitle": "This reset link is invalid or has expired",
       "invalidDescription": "Reset links can only be used once and expire after a short time. Request a new one to continue.",
       "requestNewLink": "Request a new reset link",
-      "goToSignIn": "Go to sign in"
+      "goToSignIn": "Go to sign in",
+      "checkFailedTitle": "We couldn't check your reset link"
     },
     "setPassword": {
       "title": "Set your password",
@@ -60,7 +61,8 @@
       "invalidTitle": "This setup link is invalid or has expired",
       "invalidDescription": "Setup links can only be used once and last 72 hours. Request a new link to continue.",
       "requestNewLink": "Get a new link",
-      "goToSignIn": "Go to sign in"
+      "goToSignIn": "Go to sign in",
+      "checkFailedTitle": "We couldn't check your setup link"
     },
     "verifyEmail": {
       "title": "Verify your email",
@@ -95,6 +97,11 @@
         "rateLimited": "You've asked for several links already. Please wait a while before requesting another.",
         "failed": "We couldn't send a new link. Please try again."
       }
+    },
+    "linkCheck": {
+      "server": "Something went wrong on the academy's side, so we couldn't check the link. Your link may still be valid — try again in a moment.",
+      "network": "We couldn't reach the academy to check the link. Check your internet connection, then try again.",
+      "rateLimited": "The link was checked too many times in a short while. Please wait a few minutes, then try again."
     }
   },
   "comingSoon": {

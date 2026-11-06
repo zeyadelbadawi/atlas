@@ -26,6 +26,13 @@ export interface MyCourseReviewFormProps {
   readonly courseId: string;
   /** Signed in AND enrolled — the backend's own precondition for authoring. */
   readonly canReview: boolean;
+  /**
+   * B9 (UX audit) V24 — the learner has started the course (the page's
+   * Start / Continue / Completed state). A review is offered from then, not
+   * the moment they enrol; one written earlier is still shown and editable
+   * (the API accepts any active enrolment). Omitted: offered as before.
+   */
+  readonly hasStarted?: boolean;
 }
 
 const STATUS_VARIANT: Record<
@@ -41,6 +48,7 @@ export function MyCourseReviewForm({
   academyId,
   courseId,
   canReview,
+  hasStarted = true,
 }: MyCourseReviewFormProps): JSX.Element | null {
   const { t } = useTranslation();
   const { data: existing, isLoading } = useMyCourseReview(courseId, {
@@ -64,6 +72,16 @@ export function MyCourseReviewForm({
 
   if (!canReview || isLoading) {
     return null;
+  }
+  if (!existing && !hasStarted) {
+    return (
+      <p
+        className="text-sm text-muted-foreground"
+        data-testid="review-after-start"
+      >
+        {t('website:renderer.courseDetails.reviewAfterStart')}
+      </p>
+    );
   }
 
   const hasReview = !!existing;

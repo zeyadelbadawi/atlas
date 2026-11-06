@@ -223,6 +223,7 @@ export function RiwaqPlaceholder({
  */
 export function RiwaqWindow({
   value,
+  errorValue,
   alt,
   sizes,
   priority = false,
@@ -233,6 +234,8 @@ export function RiwaqWindow({
   children,
 }: {
   readonly value: string | undefined;
+  /** Drawn when an uploaded image fails to load (B9 V15). */
+  readonly errorValue?: string;
   readonly alt: string;
   readonly sizes: string;
   readonly priority?: boolean;
@@ -246,6 +249,7 @@ export function RiwaqWindow({
   const image = (
     <ThemeImage
       value={value}
+      errorValue={errorValue}
       alt={alt}
       sizes={sizes}
       className="size-full object-cover"

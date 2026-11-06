@@ -6,8 +6,8 @@
  *   - a honeypot field (`company`) a person never meets — hidden from
  *     assistive tech, out of the tab order — sent only when a bot fills it,
  *     so the backend can discard the message while answering normally;
- *   - every field capped at the server's own limit (`maxLength`), so a
- *     person learns about a too-long value while typing, not as a 400.
+ *   - every field checked against the server's own limit, counted and
+ *     refused rather than cut (B9).
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -59,13 +59,14 @@ afterEach(() => {
 });
 
 describe('ContactSection (generic academy website)', () => {
-  it('caps every field at the server limit and hides the trap from people', () => {
+  it('never cuts a field and hides the trap from people', () => {
     const { container } = renderSection();
     const byName = (name: string) =>
       container.querySelector<HTMLInputElement>(`[name="${name}"]`)!;
-    expect(byName('name').maxLength).toBe(200);
-    expect(byName('email').maxLength).toBe(320);
-    expect(byName('message').maxLength).toBe(5000);
+    // B9 — bounded without cutting: no `maxlength` (the form counts and
+    // refuses instead, b9-contact-form.test.tsx).
+    expect(byName('name').hasAttribute('maxlength')).toBe(false);
+    expect(byName('message').hasAttribute('maxlength')).toBe(false);
     const trap = byName('company');
     expect(trap.tabIndex).toBe(-1);
     expect(trap.closest('[aria-hidden]')).toBeTruthy();

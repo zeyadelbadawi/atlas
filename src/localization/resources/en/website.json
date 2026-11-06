@@ -469,7 +469,7 @@
     "poweredBy": "Powered by Atlas",
     "notFound": {
       "title": "Website not found",
-      "description": "We couldn't find a website at this address."
+      "description": "There's no website available at this address. Check the address, or try again later."
     },
     "unavailable": {
       "title": "Temporarily unavailable",
@@ -1234,7 +1234,7 @@
       "startAction": "Start course",
       "completedAction": "Course completed · Review",
       "signInToEnrollAction": "Sign in to enroll",
-      "enrollError": "We couldn't enroll you in this course. Please try again.",
+      "enrollError": "We couldn't enroll you because of a problem on the academy's side. Please try again in a moment.",
       "outcomesTitle": "What you'll learn",
       "requirementsTitle": "Requirements",
       "reviewsTitle": "Learner reviews",
@@ -1276,7 +1276,14 @@
       "previewLoading": "Loading the preview…",
       "previewUnavailable": "This preview cannot be played right now. Please try again later.",
       "previewNotPlayable": "This preview is not a video. Enrol to open the full lesson.",
-      "previewClose": "Close"
+      "previewClose": "Close",
+      "enrollNetworkError": "We couldn't enroll you. Check your internet connection, then try again.",
+      "alreadyEnrolled": "You're already enrolled in this course.",
+      "continueToCourse": "Continue to the course",
+      "enrollRefused": "You can't enroll in this course right now. Contact the academy if you think this is a mistake.",
+      "enrollLimitReached": "This academy can't take new enrollments right now. Please contact the academy.",
+      "enrollUnavailable": "Enrollment isn't available at this academy right now. Please try again later.",
+      "reviewAfterStart": "You can review this course once you've started it."
     },
     "courseCategories": {
       "courseCount": "{{count}} course",
@@ -1369,7 +1376,7 @@
       "sending": "Sending…",
       "successTitle": "Thank you",
       "successDefault": "We received your details and will contact you soon.",
-      "sendFailed": "We couldn’t send your details. Check your connection and try again.",
+      "sendFailed": "We couldn't send your details because of a problem on the academy's side. Please try again in a moment.",
       "rateLimited": "This form was sent several times from your connection. Please wait a few minutes, then try again.",
       "unavailable": "This form is no longer available. Refresh the page and try again.",
       "previewNote": "This is a preview, so nothing was sent. On your published site, this form sends to your Messages.",
@@ -1382,7 +1389,8 @@
         "message": "Write your message.",
         "server": "Check this field and try again.",
         "choiceGone": "This option is no longer offered. Refresh the page and choose again."
-      }
+      },
+      "sendFailedNetwork": "We couldn't send your details. Check your internet connection and try again."
     },
     "announcement": {
       "label": "Announcement"
@@ -1432,6 +1440,32 @@
       "emptyChecklist": "Type this checklist’s items. Visitors don’t see an empty list.",
       "emptyIconTitle": "Type a title",
       "emptyColumn": "Column {{number}} is empty. Visitors don’t see an empty column."
+    },
+    "contactForm": {
+      "requiredNote": "All fields are required.",
+      "sending": "Sending…",
+      "errors": {
+        "nameRequired": "Enter your name.",
+        "emailRequired": "Enter your email address.",
+        "emailInvalid": "Enter a full email address, like name@example.com.",
+        "messageRequired": "Write your message.",
+        "tooLong": "This is too long. Shorten it to {{max}} characters or fewer.",
+        "server": "This wasn't accepted. Check it and try again."
+      },
+      "failure": {
+        "title": "Your message wasn't sent",
+        "server": "Something went wrong on the academy's side. Your message is still here, so you can try again in a moment.",
+        "network": "We couldn't reach the academy. Check your internet connection, then try again. Your message is still here.",
+        "rateLimited_one": "Several messages were sent from your connection in a short time. Please wait {{count}} minute, then send it again.",
+        "rateLimited_other": "Several messages were sent from your connection in a short time. Please wait {{count}} minutes, then send it again.",
+        "rateLimitedSoon": "Several messages were sent from your connection in a short time. Please wait a few minutes, then send it again.",
+        "unavailable": "This form is no longer available. Refresh the page and try again.",
+        "rejected": "Some details weren't accepted. Check the form and try again.",
+        "reference": "Reference: {{reference}}"
+      }
+    },
+    "loadFailure": {
+      "network": "We couldn't reach the site. Check your internet connection, then try again."
     }
   },
   "common": {
@@ -1651,7 +1685,7 @@
       "removeFilter": "Remove the filter {{name}}",
       "clearAll": "Clear all",
       "errorTitle": "We couldn't load the courses",
-      "errorDescription": "Please check your connection and try again.",
+      "errorDescription": "Something went wrong on the academy's side. Please try again.",
       "retry": "Try again",
       "pagination": "Course pages",
       "previousPage": "Previous page",
@@ -1951,7 +1985,7 @@
         "clearAll": "Clear all",
         "loading": "Loading courses",
         "errorTitle": "The index could not be loaded",
-        "errorDescription": "Something interrupted the connection. Please try again.",
+        "errorDescription": "Something went wrong on the academy's side. Please try again.",
         "retry": "Try again",
         "launchingTitle": "The first courses are in preparation",
         "launchingDescription": "Our index is still being written. Check back soon, or get in touch to hear when enrolment opens.",
@@ -2099,7 +2133,7 @@
         "clearAll": "Clear all",
         "loading": "Loading courses",
         "errorTitle": "The courses couldn't be loaded",
-        "errorDescription": "Something interrupted the connection. Please try again.",
+        "errorDescription": "Something went wrong on the academy's side. Please try again.",
         "retry": "Try again",
         "launchingTitle": "Launching soon",
         "launchingDescription": "The first courses are being prepared. Check back soon, or get in touch to hear when enrolment opens.",

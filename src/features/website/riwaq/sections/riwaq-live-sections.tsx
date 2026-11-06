@@ -233,6 +233,7 @@ function ProgrammeSheet({
     <div className="rwx-sheet">
       <RiwaqWindow
         value={course.thumbnail || RIWAQ_COURSE_FALLBACK}
+        errorValue={RIWAQ_COURSE_FALLBACK}
         alt=""
         sizes="(min-width: 1024px) 50vw, 100vw"
         className="rwx-sheet-window aspect-[3/2]"

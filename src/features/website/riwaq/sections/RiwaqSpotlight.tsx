@@ -93,6 +93,7 @@ export function RiwaqSpotlight({
             shutter
             develop
             value={course.thumbnail || RIWAQ_COURSE_FALLBACK}
+            errorValue={RIWAQ_COURSE_FALLBACK}
             alt=""
             sizes="(min-width: 1024px) 34vw, 100vw"
             className="aspect-[3/2]"

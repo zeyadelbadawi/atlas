@@ -6,7 +6,7 @@
  * fires an accidental request.
  */
 import { useApiQuery } from '@/shared/hooks';
-import { publicWebsiteKeys } from '@services/query';
+import { INLINE_ERRORS_META, publicWebsiteKeys } from '@services/query';
 // The early request `main.tsx` started, if any (Reports/LCP_ROOT_CAUSE.md).
 import { prefetchKeys, publicWebsiteService, takePrefetched } from '@services';
 import { setDevHostAcademyId } from '@/services/api/dev-host-academy';
@@ -14,8 +14,12 @@ import { DEV_OVERRIDE_PARAM } from '@utils';
 import type { HostnameResolution } from '@types';
 import type { ApiError } from '@api';
 
+/** B9 (UX audit) — the public site draws its own state for a failed read; the app-wide toast would only repeat it. */
+const PUBLIC_READ_META = { [INLINE_ERRORS_META]: true } as const;
+
 export function useResolveHostname(hostname: string) {
   return useApiQuery<HostnameResolution | null, ApiError>({
+    meta: PUBLIC_READ_META,
     queryKey: publicWebsiteKeys.hostnameResolution(hostname),
     queryFn: async () => {
       const resolution = await (takePrefetched<HostnameResolution | null>(

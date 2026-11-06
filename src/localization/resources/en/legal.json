@@ -23,6 +23,14 @@
     "preferencesTitle": "Preferences",
     "preferencesBody": "Remembers your theme, language, sidebar layout and similar choices. Declining removes what is already stored and Atlas will simply use its defaults.",
     "decisionSaved": "Your cookie preferences have been saved.",
-    "learnMore": "Read the Privacy Policy"
+    "learnMore": "Read the Privacy Policy",
+    "dialogBodyAcademy": "{{academyName}}'s website uses no advertising or third-party tracking technologies and no analytics cookies. For a sample of visits, page speed is measured on the website platform's own servers, without cookies or identifiers (see the Privacy Policy); browsers that send Global Privacy Control or Do Not Track are never measured. These are the only two categories that exist.",
+    "dialogBodySite": "This website uses no advertising or third-party tracking technologies and no analytics cookies. For a sample of visits, page speed is measured on the website platform's own servers, without cookies or identifiers (see the Privacy Policy); browsers that send Global Privacy Control or Do Not Track are never measured. These are the only two categories that exist.",
+    "necessaryBodySite": "Keeps you signed in to this website and remembers your session. The website can't work without it, so it can't be turned off.",
+    "preferencesBodySite": "Remembers your language and similar choices on this website. Declining removes what is already stored, and the website simply uses its defaults.",
+    "learnMoreNewTab": "(opens in a new tab)"
+  },
+  "footer": {
+    "label": "Legal"
   }
 }

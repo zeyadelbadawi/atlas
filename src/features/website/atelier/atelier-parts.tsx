@@ -296,6 +296,7 @@ export function AtelierPlaceholder({
  */
 export function AtelierMedia({
   value,
+  errorValue,
   alt,
   sizes,
   shape = 'rect',
@@ -305,6 +306,8 @@ export function AtelierMedia({
   children,
 }: {
   readonly value: string | undefined;
+  /** Drawn when an uploaded image fails to load (B9 V15). */
+  readonly errorValue?: string;
   readonly alt: string;
   readonly sizes: string;
   readonly shape?: 'rect' | 'arch' | 'round';
@@ -323,6 +326,7 @@ export function AtelierMedia({
     >
       <ThemeImage
         value={value}
+        errorValue={errorValue}
         alt={alt}
         sizes={sizes}
         className="size-full object-cover"

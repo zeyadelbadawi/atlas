@@ -28,11 +28,13 @@ import {
   resolvePageSeo,
   resolveCourseSeo,
   resolveLocalizedText,
+  publicPageName,
   publicWebsiteLocalePrefix,
   stripPublicWebsiteLocalePrefix,
   usePublicWebsiteDefaultLocale,
 } from '@features/website';
 import { useDocumentSeo } from '../hooks/useDocumentSeo';
+import { composeDocumentTitle } from '../hooks/useAcademyDocumentTitle';
 import { academyFaviconHref } from '../hooks/useAcademyFavicon';
 import { resolveCanonicalOrigin } from '../utils/canonical-redirect.utils';
 import { usePublicCourse } from '@hooks';
@@ -118,8 +120,15 @@ export function PublicWebsitePage({
     isCourseDetailsPage ? courseId : undefined
   );
 
+  // B9 (UX audit) V10 — each page is titled by its own name in the
+  // visitor's language ("Courses · Academy", `useDocumentSeo` adds the
+  // site), never the academy's name alone on every page; Home keeps the
+  // name alone. A page or course that isn't here says so.
+  const pageName = page
+    ? publicPageName(page, configuration.navigation, locale, t)
+    : t('website:public.pageNotFound.title');
   const fallback = {
-    title: academy.academyName,
+    title: pageName || academy.academyName,
     description: academy.academyName,
   };
   // A course that doesn't exist here (unknown, unpublished or not public —
@@ -142,9 +151,27 @@ export function PublicWebsitePage({
             locale,
             hreflangAlternates: [],
           };
+  // The Academy's name when no site title is configured: a page title
+  // alone ("Home") never says whose site this is.
+  const siteTitle =
+    resolveLocalizedText(configuration.seo.siteTitle, locale) ||
+    academy.academyName;
+  const namedSeo =
+    resolvedSeo.titleSource === 'fallback' &&
+    resolvedSeo.ogTitle === resolvedSeo.title
+      ? // A shared link names the site too, as the tab does.
+        {
+          ...resolvedSeo,
+          ogTitle: composeDocumentTitle(resolvedSeo.title, siteTitle),
+        }
+      : resolvedSeo;
   const seo = isMissingCourse
-    ? { ...resolvedSeo, indexable: false }
-    : resolvedSeo;
+    ? {
+        ...namedSeo,
+        title: t('website:public.pageNotFound.title'),
+        indexable: false,
+      }
+    : namedSeo;
 
   const pagePath =
     isCourseDetailsPage && course
@@ -185,11 +212,7 @@ export function PublicWebsitePage({
 
   useDocumentSeo({
     seo,
-    // The Academy's name when no site title is configured: a page title
-    // alone ("Home") never says whose site this is.
-    siteTitle:
-      resolveLocalizedText(configuration.seo.siteTitle, locale) ||
-      academy.academyName,
+    siteTitle,
     canonicalUrl,
     structuredData,
     faviconHref: academyFaviconHref(academy),

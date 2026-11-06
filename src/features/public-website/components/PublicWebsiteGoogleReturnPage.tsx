@@ -7,6 +7,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GoogleReturnFlow, readGoogleFlowContext } from '@features/auth';
+import { platformLegalHref } from '@features/legal';
 import type { PublicWebsiteLocale } from '@types';
 import { LEARNER_ROUTES } from '@app/routes/route-paths';
 import { PublicWebsiteAuthShell } from './PublicWebsiteAuthShell';
@@ -53,6 +54,10 @@ export function PublicWebsiteGoogleReturnPage({
           defaultNext={buildHref(LEARNER_ROUTES.root)}
           defaultFrom={buildHref('/sign-in')}
           forgotPasswordHref={buildHref('/forgot-password')}
+          legalLinks={{
+            terms: platformLegalHref('terms', locale),
+            privacy: platformLegalHref('privacy', locale),
+          }}
         />
       )}
     </PublicWebsiteAuthShell>

@@ -496,6 +496,12 @@ export function PublicWebsiteRouter({
   return (
     <AcademyTitleBaselineContext.Provider value={academyName}>
       <PublicWebsiteDefaultLocaleProvider value={defaultLocale}>
+        {/* Mounted once for the whole site and never remounted by a
+          navigation; `RootRoute` skips its own banner on an Academy host.
+          B9 (UX audit) V18 — before the routes, so the banner's buttons
+          come first in the tab order instead of after the whole page (it
+          stays fixed at the bottom of the screen). */}
+        <PublicWebsiteConsentLayer lookupKey={lookupKey} />
         <Routes>
           <Route
             path="/robots.txt"
@@ -524,10 +530,6 @@ export function PublicWebsiteRouter({
             }
           />
         </Routes>
-        {/* After the routes, outside them: mounted once for the whole site
-          and never remounted by a navigation. `RootRoute` skips its own
-          banner on an Academy host. */}
-        <PublicWebsiteConsentLayer lookupKey={lookupKey} />
       </PublicWebsiteDefaultLocaleProvider>
     </AcademyTitleBaselineContext.Provider>
   );

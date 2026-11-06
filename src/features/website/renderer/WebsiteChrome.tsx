@@ -24,6 +24,7 @@ import { WebsiteFooter } from './WebsiteFooter';
 import { getThemePack } from '../theme-packs/theme-pack.registry';
 import { ThemePackGate } from '../theme-packs/ThemePackGate';
 import { MobileBottomNav } from './MobileBottomNav';
+import { WebsiteLegalLinks } from './WebsiteLegalLinks';
 import { useMobileBottomNavVisibility } from './useMobileBottomNavVisibility';
 import { PublicWebsiteLocaleProvider } from './PublicWebsiteLocaleContext';
 import { WebsiteIdentityProvider } from './WebsiteIdentityContext';
@@ -153,7 +154,11 @@ function LoadedWebsiteChrome({
         MIN-height, never a fixed height: the column below grows normally
         once the Academy has real content, so a long page simply scrolls.
       */}
-          <div className="flex min-h-[100dvh] flex-col bg-[var(--website-background)] text-[var(--website-foreground)]">
+          {/* B9 (UX audit) V13 — a page with a fixed purchase bar (Course
+            Details on phones and tablets, `data-purchase-bar`) ends with room
+            for it at the bottom of the footer, in the footer's own colour, so
+            the bar never covers the footer's last line. */}
+          <div className="flex min-h-[100dvh] flex-col bg-[var(--website-background)] text-[var(--website-foreground)] max-lg:[&:has([data-purchase-bar])>footer]:![padding-block-end:calc(6.5rem+env(safe-area-inset-bottom))]">
             <Header
               logo={academyLogo}
               academyName={academyName}
@@ -217,7 +222,14 @@ function LoadedWebsiteChrome({
                 linkRenderer={linkRenderer}
                 // The platform attribution is handed to the theme's footer as
                 // a finished element: the theme places it, it can't change it.
-                attribution={<AtlasPlatformAttribution className="shrink-0" />}
+                // B9 — the legal links share that line, in the preview too, so
+                // the builder lays the footer out exactly as the site does.
+                attribution={
+                  <>
+                    <WebsiteLegalLinks />
+                    <AtlasPlatformAttribution className="shrink-0" />
+                  </>
+                }
               />
             ) : (
               <WebsiteFooter
