@@ -8,7 +8,7 @@
  */
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation } from '@/shared/hooks';
-import { invalidateTenantPayments } from '@services/query';
+import { INLINE_ERRORS_META, invalidateTenantPayments } from '@services/query';
 import type { ApiError } from '@api';
 import type { Checkout, Payment } from '@types';
 import type { PaymentProviderAdapter } from '../providers/PaymentProviderAdapter';
@@ -28,6 +28,8 @@ export function useCreatePayment() {
       provider.createPayment(checkout, methodKey),
     showSuccessToast: false,
     showErrorToast: false,
+    // B5 (UX audit) — the page shows this failure itself; no toast repeats it.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, variables) => {
       // Every history list of this organization (`lists`, not `list(org)`,
       // whose trailing `undefined` never matched the screen's query key).

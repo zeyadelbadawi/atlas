@@ -27,23 +27,26 @@
     "recordingRemaining_other": "Uses 1 of your {{count}} remaining recorded sessions.",
     "recordingUnlimited": "Your plan includes unlimited recorded sessions.",
     "recordingQuotaExhausted": "You've used every recorded session on your plan. Upgrade to record more — normal live sessions are still unlimited.",
-    "create": "Add session"
+    "create": "Add session",
+    "notCreated": "The session wasn't added"
   },
   "validation": {
     "endBeforeStart": "The end time must be after the start time.",
     "tooShort": "A session must be at least 5 minutes long.",
-    "tooLong": "A session can't be longer than 12 hours."
+    "tooLong": "A session can't be longer than 12 hours.",
+    "startInPast": "This time has already passed. Choose a start time in the future."
   },
   "toast": {
     "created": "Live session added",
     "updated": "Live session updated",
     "connected": "Zoom connected",
     "disconnected": "Zoom disconnected",
-    "published": "Session published. Enrolled students have been notified."
+    "published": "Session published. Enrolled students have been notified.",
+    "cancelled": "Live session cancelled. Enrolled students have been told."
   },
   "catalog": {
-    "title": "Add-ons",
-    "subtitle": "Extend Atlas with capabilities your academies need.",
+    "title": "Manage add-ons",
+    "subtitle": "Install add-ons, and turn them on or off for your academies.",
     "emptyTitle": "No add-ons available yet",
     "emptyDescription": "New capabilities will appear here when they're released.",
     "free": "Free",
@@ -64,7 +67,21 @@
       "failed": "Failed"
     },
     "comingSoon": "Coming soon",
-    "comingSoonNote": "This add-on is coming soon. It will be available once final setup is complete."
+    "comingSoonNote": "This add-on is coming soon. It will be available once final setup is complete.",
+    "priceMonthly": "{{price}} a month",
+    "priceYearly": "{{price}} a year",
+    "confirm": {
+      "keep": "Keep it",
+      "disableTitle": "Turn off {{name}}?",
+      "disableDescription": "{{loss}} Nothing is deleted, and you can turn it back on at any time.",
+      "uninstallTitle": "Uninstall {{name}}?",
+      "uninstallDescription": "{{loss}} Nothing is deleted: its settings and history stay.{{rebuy}}",
+      "rebuy": " It's a paid add-on, so to use it again you'll need to buy it again.",
+      "limitLoss_one": "Your limit for {{limit}} goes down by 1. What you already have stays, but you can't add more while you're over the limit.",
+      "limitLoss_other": "Your limit for {{limit}} goes down by {{count}}. What you already have stays, but you can't add more while you're over the limit.",
+      "liveSessionsLoss": "New live sessions can’t be created.",
+      "genericLoss": "What this add-on gives you stops working."
+    }
   },
   "overview": {
     "title": "Live Sessions",
@@ -227,6 +244,20 @@
   },
   "publish": {
     "action": "Publish",
-    "needsProvider": "Connect Zoom to publish"
+    "needsProvider": "Connect Zoom to publish",
+    "confirmTitle": "Publish “{{title}}”?",
+    "confirmDescription": "Publishing creates the Zoom meeting for {{when}} and tells every student enrolled in this course about it. Students can join from the course when it starts."
+  },
+  "row": {
+    "when": "{{date}}, {{start}}–{{end}}",
+    "duration_one": "1 minute",
+    "duration_other": "{{formatted}} minutes"
+  },
+  "cancel": {
+    "action": "Cancel session",
+    "confirmTitle": "Cancel “{{title}}”?",
+    "confirmDescription": "Enrolled students are told it's cancelled, its Zoom meeting (if one was created) is cancelled, and nobody can join it.",
+    "confirm": "Cancel session",
+    "keep": "Keep session"
   }
 }

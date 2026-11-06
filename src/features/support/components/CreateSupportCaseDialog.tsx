@@ -7,7 +7,7 @@
  * offering a control that silently does nothing would be worse than not
  * offering one.
  */
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,8 +27,14 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useNavigate } from 'react-router-dom';
 import { useDirtyGuard } from '@features/unsaved-changes';
-import { useServerValidation } from '@forms';
-import { useErrorText } from '@hooks';
+import {
+  hasViolationOn,
+  RequiredMark,
+  SaveFailedAlert,
+  useLabelledViolations,
+  useServerValidation,
+} from '@forms';
+import type { ApiError } from '@api';
 import { buildPath, DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useCreateSupportCase } from '../hooks';
 import { SupportAttachmentField } from './SupportAttachmentField';
@@ -53,6 +59,39 @@ export const createSupportCaseSchema = z.object({
 
 type CreateSupportCaseFormData = z.infer<typeof createSupportCaseSchema>;
 
+const FIELD_LABELS = {
+  subject: 'support:create.subjectLabel',
+  description: 'support:create.descriptionLabel',
+} as const;
+const FIELD_LIMITS: Readonly<Record<string, number>> = {
+  subject: SUBJECT_MAX,
+  description: DESCRIPTION_MAX,
+};
+
+/**
+ * B5 (UX audit) — a server length refusal that arrives without its number
+ * read "Check this field"; the limit is known here, so it is filled in.
+ */
+export function withKnownLimits(error: ApiError | null): ApiError | null {
+  if (!error?.violations?.length) return error;
+  const violations = error.violations.map((violation) => {
+    const limit = FIELD_LIMITS[violation.field];
+    if (
+      limit === undefined ||
+      violation.values?.count !== undefined ||
+      !/maxLength/i.test(violation.messageKey)
+    ) {
+      return violation;
+    }
+    return { ...violation, values: { ...violation.values, count: limit } };
+  });
+  return Object.assign(
+    Object.create(Object.getPrototypeOf(error) as object) as ApiError,
+    error,
+    { violations }
+  );
+}
+
 export interface CreateSupportCaseDialogProps {
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
@@ -67,13 +106,13 @@ export function CreateSupportCaseDialog({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const createCase = useCreateSupportCase();
-  const errorText = useErrorText();
 
   const form = useForm<CreateSupportCaseFormData>({
     resolver: zodResolver(createSupportCaseSchema),
     defaultValues: { subject: '', description: '' },
   });
   const descriptionLength = form.watch('description')?.length ?? 0;
+  const subjectLength = form.watch('subject')?.length ?? 0;
 
   /*
     P53 — the optional image lives in local state rather than in the form
@@ -91,7 +130,13 @@ export function CreateSupportCaseDialog({
   // never sees it.
   const dirtyGuard = useDirtyGuard(form.formState.isDirty);
 
-  useServerValidation(form, createCase.error ?? null);
+  const limitedError = useMemo(
+    () => withKnownLimits(createCase.error ?? null),
+    [createCase.error]
+  );
+  const labelledError = useLabelledViolations(limitedError, FIELD_LABELS);
+  useServerValidation(form, labelledError);
+  const fieldFailure = hasViolationOn(labelledError, FIELD_LABELS);
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (nextOpen) return onOpenChange(true);
@@ -104,14 +149,21 @@ export function CreateSupportCaseDialog({
 
   const onSubmit = form.handleSubmit(async (values) => {
     if (!organizationId) return;
-    const created = await createCase.mutateAsync({
-      organizationId,
-      // `attachment` is omitted entirely when none was chosen, rather than
-      // sent as `undefined`/`null` — the DTO's `@IsOptional()` treats an
-      // absent key as "no attachment", and the request stays the exact
-      // shape a text-only ticket has always had.
-      payload: attachment ? { ...values, attachment } : values,
-    });
+    let created;
+    try {
+      created = await createCase.mutateAsync({
+        organizationId,
+        // `attachment` is omitted entirely when none was chosen, rather than
+        // sent as `undefined`/`null` — the DTO's `@IsOptional()` treats an
+        // absent key as "no attachment", and the request stays the exact
+        // shape a text-only ticket has always had.
+        payload: attachment ? { ...values, attachment } : values,
+      });
+    } catch {
+      // B5 (UX audit) — shown in the dialog (field or one alert); the
+      // typed ticket stays.
+      return;
+    }
     // Reset BEFORE navigating: otherwise the form is still dirty when the
     // route changes and the unsaved-changes dialog fires on a ticket the
     // user just successfully filed.
@@ -135,19 +187,30 @@ export function CreateSupportCaseDialog({
           <div className="space-y-2">
             <Label htmlFor="support-subject">
               {t('support:create.subjectLabel')}
+              <RequiredMark />
             </Label>
             <Input
               id="support-subject"
               data-testid="support-subject"
               placeholder={t('support:create.subjectPlaceholder')}
               aria-invalid={Boolean(form.formState.errors.subject)}
-              aria-describedby={
-                form.formState.errors.subject
-                  ? 'support-subject-error'
-                  : undefined
-              }
+              aria-describedby="support-subject-count support-subject-error"
               {...form.register('subject')}
             />
+            <p
+              id="support-subject-count"
+              data-testid="support-subject-count"
+              className={
+                subjectLength > SUBJECT_MAX
+                  ? 'text-xs font-medium tabular-nums text-destructive'
+                  : 'text-xs tabular-nums text-muted-foreground'
+              }
+            >
+              {t('support:create.characterCount', {
+                count: subjectLength,
+                max: SUBJECT_MAX,
+              })}
+            </p>
             {form.formState.errors.subject ? (
               <p
                 id="support-subject-error"
@@ -168,6 +231,7 @@ export function CreateSupportCaseDialog({
           <div className="space-y-2">
             <Label htmlFor="support-description">
               {t('support:create.descriptionLabel')}
+              <RequiredMark />
             </Label>
             <Textarea
               id="support-description"
@@ -217,14 +281,16 @@ export function CreateSupportCaseDialog({
 
           {/* A server-side refusal (wrong real type, over the real ceiling)
               surfaces here rather than silently doing nothing. */}
-          {createCase.error ? (
-            <p
-              role="alert"
-              className="text-sm text-destructive"
-              data-testid="support-create-error"
-            >
-              {errorText(createCase.error.messageKey, 'support:create.failed')}
-            </p>
+          {/* B5 (UX audit) — a refusal about a field shows there; anything
+              else (409, 500, a lost connection) is one alert with the real
+              reason — never "check the details" for a server failure. */}
+          {labelledError && !fieldFailure ? (
+            <div data-testid="support-create-error">
+              <SaveFailedAlert
+                error={labelledError}
+                titleKey="support:create.notSubmitted"
+              />
+            </div>
           ) : null}
 
           <DialogFooter>

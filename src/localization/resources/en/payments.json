@@ -27,7 +27,18 @@
     "paymentHistoryLink": "Payment history",
     "paymentHistoryLinkDescription": "Every payment you've submitted and its status",
     "addOnsLink": "Add-ons",
-    "addOnsLinkDescription": "Browse and purchase available add-ons"
+    "addOnsLinkDescription": "Browse and purchase available add-ons",
+    "noAttentionNeededDescription": "Payments waiting for your transfer or for review appear here.",
+    "forPlan": "{{name}} plan",
+    "forAddOn": "{{name}} add-on",
+    "forUnknown": "Payment",
+    "openPayment": "Open payment",
+    "nextStep": {
+      "awaitingReview": "your receipt is being reviewed; nothing to do.",
+      "continueToProvider": "continue to the secure payment page.",
+      "transferAndUpload": "send the transfer, then upload your receipt.",
+      "open": "open it to see what's needed."
+    }
   },
   "checkout": {
     "title": "Checkout",
@@ -52,7 +63,26 @@
     "catalogPriceLabel": "Price:",
     "alreadyUnderReviewTitle": "A payment is already awaiting review",
     "viewExistingPayment": "View that payment",
-    "placeholderWarning": "Placeholder details — do not send money. This method is configured for testing only."
+    "placeholderWarning": "Placeholder details — do not send money. This method is configured for testing only.",
+    "reviewRenewDescription": "This is your current plan. You're paying for its next period.",
+    "reviewFirstPlanDescription": "You're choosing a plan for your organization.",
+    "renewNote": "Your current period runs until {{date}}. Once this payment is confirmed, the new period starts on that date, so no paid day is lost.",
+    "chooseMethodFirst": "Choose a payment method first.",
+    "addOnBlocked": {
+      "backToAddOns": "Back to add-ons",
+      "active": {
+        "title": "This add-on is already active",
+        "description": "It's already on your subscription, so there is nothing to buy."
+      },
+      "notForSale": {
+        "title": "This add-on isn't for sale",
+        "description": "It isn't available to buy right now. Check the add-ons page for the ones you can add."
+      },
+      "incompatible": {
+        "title": "Not available on your plan",
+        "description": "This add-on can't be added to your current plan. Change your plan first, or choose another add-on."
+      }
+    }
   },
   "paymentHistory": {
     "title": "Payment History",
@@ -133,10 +163,10 @@
     "walletNumber": "Wallet number",
     "uploadProofTitle": "Proof of payment",
     "chooseFile": "Choose file",
-    "proofNotePlaceholder": "Add a note for the reviewer (optional)",
+    "proofNotePlaceholder": "Add a note for the reviewer, e.g. the name on the account you paid from",
     "submittingProof": "Submitting…",
     "submitProof": "Submit for review",
-    "proofTooLarge": "The file is too large.",
+    "proofTooLarge": "The file is larger than 10 MB. Choose a smaller file or compress it.",
     "proofInvalidType": "This file type isn't supported. Use PNG, JPG or PDF.",
     "proofLoadError": "Couldn't open the submitted proof. Please try again.",
     "redirectDescription": "You'll be taken to a secure page to complete this payment.",
@@ -151,7 +181,29 @@
     "placeholderDescription": "The payment details below are placeholders for testing, not a real account. Do not transfer any money to them. Contact support if you see this outside a test environment.",
     "notFoundTitle": "Payment not found",
     "notFoundDescription": "This payment doesn't exist, or it belongs to another organization.",
-    "branchName": "Branch"
+    "branchName": "Branch",
+    "paymentId": "Payment ID",
+    "checkoutIdLabel": "Checkout ID",
+    "checkoutIdHint": "Write this ID as the reference or note of your transfer, so the payment can be matched to your order.",
+    "proofNoteLabel": "Note for the reviewer",
+    "proofRules": "Upload a screenshot or receipt of your transfer: PNG, JPG or PDF, up to {{max}}.",
+    "proofRequired": "Choose the receipt file first (PNG, JPG or PDF, up to {{max}}).",
+    "proofNotSubmitted": "Your proof wasn't submitted",
+    "cancelFailedTitle": "The payment wasn't cancelled",
+    "cancelConfirm": {
+      "title": "Cancel this payment?",
+      "description": "This payment will be closed and can't be paid or reviewed any more. If you've already sent the money, don't cancel: upload your receipt instead. To pay later, start a new checkout.",
+      "descriptionUnderReview": "Your receipt is waiting for review. Cancelling closes this payment, so it won't be reviewed. If you've already sent the money, keep it and wait for the review. To pay later, start a new checkout.",
+      "confirm": "Cancel payment",
+      "keep": "Keep payment"
+    },
+    "closedMessage": {
+      "failed": "This payment wasn’t accepted.",
+      "cancelled": "This payment was cancelled.",
+      "expired": "This payment expired before it was completed."
+    },
+    "closedNextStep": "It can't be paid any more. Don't send money for it. To pay, start a new checkout. If you already sent money for this payment, contact support with your receipt.",
+    "startNewCheckout": "Start a new checkout"
   },
   "platformReview": {
     "title": "Payment Review",
@@ -511,7 +563,9 @@
     "effective": "Takes effect",
     "effectiveOnConfirmation": "When your payment is confirmed",
     "trialConversionNote": "Your trial ends and this plan starts once the payment is confirmed. You keep trial access until then.",
-    "replacementNote": "This replaces your current plan once the payment is confirmed. You keep your current plan until then."
+    "replacementNote": "This replaces your current plan once the payment is confirmed. You keep your current plan until then.",
+    "renewNote": "Your plan stays the same. The new period starts when your current one ends on {{date}}, so no paid day is lost.",
+    "paidDaysKeptNote": "Days you've already paid for aren't lost: the new period starts when your current one ends on {{date}}. A bigger plan applies once the payment is confirmed; a smaller one waits until {{date}} if more than 7 days are left."
   },
   "academyMethods": {
     "title": "Payment methods",
@@ -692,5 +746,29 @@
     "decisionFailedTitle": "Your decision wasn't saved",
     "noteTooLong": "Keep this to {{max}} characters or fewer.",
     "searchShort": "Search name, course or reference"
+  },
+  "catalogText": {
+    "methods": {
+      "atlas_bank_transfer": {
+        "name": "Bank Transfer",
+        "description": "Pay by direct bank transfer — reviewed manually within 1-2 business days."
+      },
+      "atlas_wallet_transfer": {
+        "name": "Mobile Wallet",
+        "description": "Pay by mobile wallet transfer — reviewed manually within 1-2 business days."
+      },
+      "wallet_vodafone_cash": {
+        "name": "Vodafone Cash"
+      },
+      "wallet_orange_cash": {
+        "name": "Orange Cash"
+      },
+      "wallet_etisalat_cash": {
+        "name": "Etisalat Cash"
+      },
+      "instapay": {
+        "name": "InstaPay"
+      }
+    }
   }
 }

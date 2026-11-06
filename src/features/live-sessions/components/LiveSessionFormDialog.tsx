@@ -12,8 +12,16 @@
  * actually needs: that it consumes one of the plan's recorded sessions,
  * and how many remain. When the allowance is exhausted the control is
  * disabled with an explanation rather than silently failing on save.
+ *
+ * B5 (UX audit):
+ *   - a start in the past is refused here (and by the API: a violation on
+ *     `scheduledStartAt`);
+ *   - the server's schedule errors land on the start/end fields; any other
+ *     failure is ONE inline alert in the dialog (the hooks mark their
+ *     errors inline, so no toast repeats it);
+ *   - closing with typed changes asks first; while saving the dialog stays.
  */
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -39,9 +47,17 @@ import {
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { useServerValidation } from '@forms';
 import {
-  liveSessionFormSchema,
+  hasViolationOn,
+  RequiredMark,
+  SaveFailedAlert,
+  useServerValidation,
+} from '@forms';
+import { useDirtyGuard } from '@features/unsaved-changes';
+import {
+  createLiveSessionFormSchema,
+  SESSION_DESCRIPTION_MAX,
+  SESSION_TITLE_MAX,
   type LiveSessionFormData,
 } from '../schemas/liveSession.schemas';
 import type { ApiError } from '@api';
@@ -57,6 +73,44 @@ export interface LiveSessionFormDialogProps {
   readonly error?: ApiError | null;
   /** Drives the recording control's availability and its helper text. */
   readonly recordingQuota?: RecordingQuotaUsage;
+}
+
+/** The fields a server refusal can be shown on. */
+const FORM_FIELDS = {
+  title: 'liveSessions:form.title',
+  description: 'liveSessions:form.descriptionLabel',
+  scheduledStartAt: 'liveSessions:form.startsAt',
+  scheduledEndAt: 'liveSessions:form.endsAt',
+  recordingEnabled: 'liveSessions:form.recordSession',
+} as const;
+
+/**
+ * The backend's past-start refusal reuses the announcements key
+ * (`validation:scheduleInPast`, "…or leave it empty to save a draft"),
+ * which doesn't fit a session that must have a start. Shown with this
+ * form's own words instead.
+ */
+export function withLiveSessionWording(
+  error: ApiError | null
+): ApiError | null {
+  if (!error?.violations?.length) return error;
+  if (
+    !error.violations.some(
+      (violation) => violation.messageKey === 'validation:scheduleInPast'
+    )
+  ) {
+    return error;
+  }
+  const violations = error.violations.map((violation) =>
+    violation.messageKey === 'validation:scheduleInPast'
+      ? { ...violation, messageKey: 'liveSessions:validation.startInPast' }
+      : violation
+  );
+  return Object.assign(
+    Object.create(Object.getPrototypeOf(error) as object) as ApiError,
+    error,
+    { violations }
+  );
 }
 
 /** `datetime-local` needs `YYYY-MM-DDTHH:mm` in LOCAL time, not an ISO UTC string. */
@@ -82,9 +136,17 @@ export function LiveSessionFormDialog({
   recordingQuota,
 }: LiveSessionFormDialogProps): JSX.Element {
   const { t } = useTranslation();
+  const originalStart =
+    mode === 'edit'
+      ? toLocalInputValue(defaultValues?.scheduledStartAt)
+      : undefined;
+  const schema = useMemo(
+    () => createLiveSessionFormSchema({ originalStart }),
+    [originalStart]
+  );
 
   const form = useForm<LiveSessionFormData>({
-    resolver: zodResolver(liveSessionFormSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       title: '',
       description: '',
@@ -95,8 +157,6 @@ export function LiveSessionFormDialog({
       ...defaultValues,
     },
   });
-
-  useServerValidation(form, error ?? null);
 
   useEffect(() => {
     if (!open) return;
@@ -112,6 +172,26 @@ export function LiveSessionFormDialog({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
+  // After the reset above, so a refusal present on open is not wiped.
+  const serverError = useMemo(
+    () => withLiveSessionWording(error ?? null),
+    [error]
+  );
+  useServerValidation(form, serverError);
+  const fieldFailure =
+    serverError?.kind === 'validation' &&
+    hasViolationOn(serverError, FORM_FIELDS);
+  const dirtyGuard = useDirtyGuard(open && form.formState.isDirty);
+  const titleLength = form.watch('title')?.length ?? 0;
+  const descriptionLength = form.watch('description')?.length ?? 0;
+
+  const handleOpenChange = (next: boolean): void => {
+    if (next) return onOpenChange(true);
+    // While saving the dialog stays: the outcome shows here.
+    if (isPending) return;
+    void dirtyGuard.requestClose(() => onOpenChange(false));
+  };
+
   const alreadyRecording = defaultValues?.recordingEnabled === true;
   const exhausted =
     recordingQuota !== undefined &&
@@ -122,14 +202,14 @@ export function LiveSessionFormDialog({
   const recordingDisabled = exhausted && !alreadyRecording;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>
             {t(
               mode === 'create'
                 ? 'liveSessions:form.createTitle'
-                : 'liveSessions:form.editTitle',
+                : 'liveSessions:form.editTitle'
             )}
           </DialogTitle>
           <DialogDescription>
@@ -148,13 +228,29 @@ export function LiveSessionFormDialog({
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('liveSessions:form.title')}</FormLabel>
+                  <FormLabel>
+                    {t('liveSessions:form.title')}
+                    <RequiredMark />
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
+                      dir="auto"
                       placeholder={t('liveSessions:form.titlePlaceholder')}
                     />
                   </FormControl>
+                  <p
+                    className={
+                      titleLength > SESSION_TITLE_MAX
+                        ? 'text-xs font-medium tabular-nums text-destructive'
+                        : 'text-xs tabular-nums text-muted-foreground'
+                    }
+                  >
+                    {t('common:form.characterCount', {
+                      count: titleLength,
+                      max: SESSION_TITLE_MAX,
+                    })}
+                  </p>
                   <FormMessage />
                 </FormItem>
               )}
@@ -165,10 +261,27 @@ export function LiveSessionFormDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('liveSessions:form.descriptionLabel')}</FormLabel>
+                  <FormLabel>
+                    {t('liveSessions:form.descriptionLabel')}{' '}
+                    <span className="font-normal text-muted-foreground">
+                      ({t('common:form.optional')})
+                    </span>
+                  </FormLabel>
                   <FormControl>
-                    <Textarea {...field} rows={3} />
+                    <Textarea {...field} dir="auto" rows={3} />
                   </FormControl>
+                  <p
+                    className={
+                      descriptionLength > SESSION_DESCRIPTION_MAX
+                        ? 'text-xs font-medium tabular-nums text-destructive'
+                        : 'text-xs tabular-nums text-muted-foreground'
+                    }
+                  >
+                    {t('common:form.characterCount', {
+                      count: descriptionLength,
+                      max: SESSION_DESCRIPTION_MAX,
+                    })}
+                  </p>
                   <FormMessage />
                 </FormItem>
               )}
@@ -180,7 +293,10 @@ export function LiveSessionFormDialog({
                 name="scheduledStartAt"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('liveSessions:form.startsAt')}</FormLabel>
+                    <FormLabel>
+                      {t('liveSessions:form.startsAt')}
+                      <RequiredMark />
+                    </FormLabel>
                     <FormControl>
                       {/* `datetime-local` renders in the viewer's own
                           timezone, which is what a scheduling control
@@ -198,7 +314,10 @@ export function LiveSessionFormDialog({
                 name="scheduledEndAt"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('liveSessions:form.endsAt')}</FormLabel>
+                    <FormLabel>
+                      {t('liveSessions:form.endsAt')}
+                      <RequiredMark />
+                    </FormLabel>
                     <FormControl>
                       <Input type="datetime-local" {...field} />
                     </FormControl>
@@ -242,11 +361,22 @@ export function LiveSessionFormDialog({
               )}
             />
 
+            {serverError && !fieldFailure ? (
+              <SaveFailedAlert
+                error={serverError}
+                titleKey={
+                  mode === 'create'
+                    ? 'liveSessions:form.notCreated'
+                    : 'common:form.notSaved'
+                }
+              />
+            ) : null}
+
             <DialogFooter>
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => onOpenChange(false)}
+                onClick={() => handleOpenChange(false)}
                 disabled={isPending}
               >
                 {t('common:actions.cancel')}
@@ -258,7 +388,7 @@ export function LiveSessionFormDialog({
                 {t(
                   mode === 'create'
                     ? 'liveSessions:form.create'
-                    : 'common:actions.save',
+                    : 'common:actions.save'
                 )}
               </Button>
             </DialogFooter>

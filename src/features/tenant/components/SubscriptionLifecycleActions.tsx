@@ -81,6 +81,8 @@ export function SubscriptionLifecycleActions({
     if (!kind) return;
     const mutation = kind === 'trial' ? cancelTrial : cancelSubscription;
 
+    // B5 (UX audit) — a failure stays in the dialog (reason and feedback
+    // kept, the real reason inline); only success closes it.
     mutation.mutate(input, {
       onSuccess: (result) => {
         setCancelKind(null);
@@ -97,16 +99,17 @@ export function SubscriptionLifecycleActions({
               : undefined,
         });
       },
-      onError: () => {
-        setCancelKind(null);
-        toast({
-          variant: 'destructive',
-          title: t('tenant:cancellation.failed'),
-          description: t('tenant:cancellation.failedDescription'),
-        });
-      },
     });
   };
+
+  const openCancel = (kind: 'trial' | 'paid'): void => {
+    // A new decision starts without the previous attempt's failure.
+    cancelTrial.reset();
+    cancelSubscription.reset();
+    setCancelKind(kind);
+  };
+  const activeMutation =
+    cancelKind === 'paid' ? cancelSubscription : cancelTrial;
 
   if (!canStartTrial && !isTrialing && !isPaid) return null;
 
@@ -123,7 +126,7 @@ export function SubscriptionLifecycleActions({
         <Button
           type="button"
           variant="outline"
-          onClick={() => setCancelKind('trial')}
+          onClick={() => openCancel('trial')}
           disabled={cancelTrial.isPending}
         >
           <XCircle className="me-2 size-4" aria-hidden />
@@ -135,7 +138,7 @@ export function SubscriptionLifecycleActions({
         <Button
           type="button"
           variant="outline"
-          onClick={() => setCancelKind('paid')}
+          onClick={() => openCancel('paid')}
           disabled={cancelSubscription.isPending}
         >
           <XCircle className="me-2 size-4" aria-hidden />
@@ -155,6 +158,7 @@ export function SubscriptionLifecycleActions({
             : undefined
         }
         isSubmitting={cancelTrial.isPending || cancelSubscription.isPending}
+        error={cancelKind ? (activeMutation.error ?? null) : null}
         onConfirm={handleConfirmCancel}
       />
     </div>

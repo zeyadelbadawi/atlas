@@ -17,9 +17,19 @@ vi.mock('./hooks', () => ({
     data: { items: [] },
     refetch: vi.fn(),
   }),
+  useCheckout: () => ({ data: undefined }),
 }));
 vi.mock('@features/tenant', () => ({
   SubscriptionGiftDetails: () => null,
+  usePlanCatalog: () => ({ data: [] }),
+  resolvePlanName: (plan: { name: string }) => plan.name,
+  localizedAddOnText: (
+    _t: unknown,
+    _i: unknown,
+    _k: string,
+    _f: string,
+    text: string
+  ) => text,
   useTenantSubscription: () => ({
     isLoading: false,
     error: null,

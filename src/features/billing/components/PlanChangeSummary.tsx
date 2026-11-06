@@ -27,6 +27,15 @@
  *     so the date does not exist yet. It appears on the subscription page
  *     once it is real.
  *
+ * B5 (UX audit) — WHAT HAPPENS TO DAYS ALREADY PAID FOR is now said,
+ * because the backend decides it and it is not a computed figure
+ * (`PaymentApplicationService.applyCommercialEffect`): a purchase while a
+ * paid period is still running starts its new period WHEN THE CURRENT ONE
+ * ENDS ("paying early must never forfeit days already paid for"); and a
+ * smaller plan bought with more than 7 days left waits for that date
+ * (`shouldScheduleDowngrade`, `SCHEDULED_CHANGE_MIN_DAYS_LEFT`). The same
+ * plan bought again ("renew") only adds the next period.
+ *
  * These are honest limitations of the current provider, not gaps in the UI.
  * When a gateway that supports proration is integrated, its real numbers
  * belong here — nothing invented in the meantime.
@@ -36,25 +45,49 @@ import { ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatusBadge } from '@components/data-display';
 import { formatDate } from '@utils';
+import { resolvePlanName } from '@features/tenant';
 import type { LanguageCode, TenantSubscription } from '@types';
 
 export interface PlanChangeSummaryProps {
   /** Absent for an Organization buying its first plan — then there is nothing to compare against. */
   readonly subscription?: TenantSubscription;
   readonly newPlanName: string;
+  /** `renew`: the same plan for one more period; `change`/`first` otherwise. */
+  readonly mode?: 'first' | 'renew' | 'change';
 }
 
 export function PlanChangeSummary({
   subscription,
   newPlanName,
+  mode = 'change',
 }: PlanChangeSummaryProps): JSX.Element | null {
   const { t, i18n } = useTranslation();
+  const language = i18n.language as LanguageCode;
 
   // A first purchase has no "from" side. Rendering a comparison against
   // nothing would be noise.
   if (!subscription) return null;
 
   const isTrial = subscription.status === 'trialing';
+  // A paid period still running: its days are kept (see header).
+  const runningPeriodEnd =
+    (subscription.status === 'active' ||
+      subscription.status === 'grace_period') &&
+    subscription.currentPeriodEnd &&
+    new Date(subscription.currentPeriodEnd).getTime() > Date.now()
+      ? subscription.currentPeriodEnd
+      : undefined;
+  const note = isTrial
+    ? t('payments:planChange.trialConversionNote')
+    : mode === 'renew' && runningPeriodEnd
+      ? t('payments:planChange.renewNote', {
+          date: formatDate(runningPeriodEnd, language),
+        })
+      : runningPeriodEnd
+        ? t('payments:planChange.paidDaysKeptNote', {
+            date: formatDate(runningPeriodEnd, language),
+          })
+        : t('payments:planChange.replacementNote');
 
   return (
     <Card data-testid="plan-change-summary">
@@ -69,8 +102,8 @@ export function PlanChangeSummary({
             <p className="text-xs uppercase tracking-wide text-muted-foreground">
               {t('payments:planChange.currentPlan')}
             </p>
-            <p className="font-medium text-foreground">
-              {subscription.plan.name}
+            <p className="font-medium text-foreground" dir="auto">
+              {resolvePlanName(subscription.plan, language)}
             </p>
           </div>
 
@@ -83,7 +116,9 @@ export function PlanChangeSummary({
             <p className="text-xs uppercase tracking-wide text-muted-foreground">
               {t('payments:planChange.newPlan')}
             </p>
-            <p className="font-medium text-foreground">{newPlanName}</p>
+            <p className="font-medium text-foreground" dir="auto">
+              {newPlanName}
+            </p>
           </div>
         </div>
 
@@ -107,10 +142,7 @@ export function PlanChangeSummary({
                 {t('payments:planChange.trialEnds')}
               </dt>
               <dd className="text-sm text-foreground">
-                {formatDate(
-                  subscription.trialEndsAt,
-                  i18n.language as LanguageCode
-                )}
+                {formatDate(subscription.trialEndsAt, language)}
               </dd>
             </div>
           ) : null}
@@ -141,10 +173,11 @@ export function PlanChangeSummary({
           </div>
         </dl>
 
-        <p className="text-sm text-muted-foreground">
-          {isTrial
-            ? t('payments:planChange.trialConversionNote')
-            : t('payments:planChange.replacementNote')}
+        <p
+          className="text-sm text-muted-foreground"
+          data-testid="plan-change-note"
+        >
+          {note}
         </p>
       </CardContent>
     </Card>

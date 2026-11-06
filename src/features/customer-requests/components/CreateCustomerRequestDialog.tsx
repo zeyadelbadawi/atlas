@@ -12,6 +12,13 @@
  * opens and reused by every submit until it closes: a double click, or a
  * retry after a dropped connection whose first attempt actually landed,
  * returns the request already created instead of filing a second one.
+ *
+ * B5 (UX audit) — required fields are marked; two or more problems show
+ * the error summary; inputs take no `maxLength` of their own (the counter
+ * and the message say the real limit, nothing is cut); a domain must look
+ * like one ("myacademy.com"); a refusal about a field shows there and
+ * anything else is ONE inline alert with the real reason — a server
+ * failure never blames "the details".
  */
 import { useEffect, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -35,7 +42,16 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@app/providers';
 import { useDirtyGuard } from '@features/unsaved-changes';
-import { useServerValidation } from '@forms';
+import {
+  fieldErrorText,
+  FormErrorSummary,
+  hasViolationOn,
+  RequiredMark,
+  SaveFailedAlert,
+  useFocusFirstViolation,
+  useServerValidation,
+} from '@forms';
+import { validationMessage } from '@/shared/forms/validation-message';
 import { buildPath, DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { cn } from '@utils';
 import {
@@ -51,7 +67,6 @@ import {
 } from '../constants/customer-request.constants';
 import { useCreateCustomerRequest, useCustomerRequestAccess } from '../hooks';
 import {
-  customerRequestErrorKey,
   customerRequestTypeIcon,
   customerRequestTypeLabelKey,
   newClientRequestId,
@@ -64,7 +79,38 @@ import type {
 
 type OwnedAnswer = 'yes' | 'no' | 'unsure';
 
-const formSchema = z
+/**
+ * B5 (UX audit) — "my academy dot com" was accepted. The client checks
+ * the shape only — no spaces, no scheme, path or email ("/", ":", "@"),
+ * at least one dot with a name on each side, and a last part of 2+
+ * characters — and leaves exact validity (IDNA, DNS limits) to the
+ * server, whose refusal lands on the same field. Unicode names
+ * (`أكاديمية.مصر`) pass.
+ */
+export function isPlausibleDomain(raw: string): boolean {
+  const value = raw.trim();
+  if (!value) return true;
+  if (/[\s/:@]/u.test(value)) return false;
+  const labels = value.split('.');
+  if (labels.length < 2 || labels.some((label) => label.length === 0)) {
+    return false;
+  }
+  return [...labels[labels.length - 1]].length >= 2;
+}
+
+const TITLE_MESSAGE = validationMessage(`${CR_NS}:fields.titleInvalid`, {
+  min: CUSTOMER_REQUEST_TITLE_MIN,
+  max: CUSTOMER_REQUEST_TITLE_MAX,
+});
+const DESCRIPTION_MESSAGE = validationMessage(
+  `${CR_NS}:fields.descriptionInvalid`,
+  {
+    min: CUSTOMER_REQUEST_DESCRIPTION_MIN,
+    max: CUSTOMER_REQUEST_DESCRIPTION_MAX,
+  }
+);
+
+export const customerRequestFormSchema = z
   .object({
     type: z.enum([
       'logo',
@@ -76,13 +122,13 @@ const formSchema = z
     title: z
       .string()
       .trim()
-      .min(CUSTOMER_REQUEST_TITLE_MIN)
-      .max(CUSTOMER_REQUEST_TITLE_MAX),
+      .min(CUSTOMER_REQUEST_TITLE_MIN, TITLE_MESSAGE)
+      .max(CUSTOMER_REQUEST_TITLE_MAX, TITLE_MESSAGE),
     description: z
       .string()
       .trim()
-      .min(CUSTOMER_REQUEST_DESCRIPTION_MIN)
-      .max(CUSTOMER_REQUEST_DESCRIPTION_MAX),
+      .min(CUSTOMER_REQUEST_DESCRIPTION_MIN, DESCRIPTION_MESSAGE)
+      .max(CUSTOMER_REQUEST_DESCRIPTION_MAX, DESCRIPTION_MESSAGE),
     priority: z.enum(['low', 'normal', 'high']),
     details: z.record(z.string()),
     alreadyOwned: z.enum(['yes', 'no', 'unsure']),
@@ -99,12 +145,26 @@ const formSchema = z
           type: 'string',
           inclusive: true,
           path: ['details', field.key],
+          message: validationMessage(`${CR_NS}:fields.tooLong`, {
+            max: field.maxLength,
+          }),
+        });
+      } else if (field.key === 'desiredDomain' && !isPlausibleDomain(value)) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['details', field.key],
+          message: `${CR_NS}:fields.invalidDomain`,
         });
       }
     }
   });
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof customerRequestFormSchema>;
+
+const FIELD_LABELS = {
+  title: `${CR_NS}:fields.title`,
+  description: `${CR_NS}:fields.description`,
+} as const;
 
 function defaultsFor(type: CustomerRequestType | undefined): FormValues {
   return {
@@ -161,7 +221,7 @@ export function CreateCustomerRequestDialog({
   const fieldId = (name: string) => `${idPrefix}-${name}`;
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(customerRequestFormSchema),
     defaultValues: defaultsFor(initialType),
     mode: 'onTouched',
   });
@@ -183,10 +243,24 @@ export function CreateCustomerRequestDialog({
   }, [open, initialType, reset]);
 
   const dirtyGuard = useDirtyGuard(isDirty);
-  useServerValidation(form, createRequest.error ?? null);
-
   const type = form.watch('type');
   const fields = CUSTOMER_REQUEST_DETAIL_FIELDS[type];
+  // Every field a server violation can land on: the two texts and this
+  // type's details (`details.desiredDomain`, …).
+  const knownFields = useMemo(() => {
+    const known: Record<string, string> = { ...FIELD_LABELS };
+    for (const field of CUSTOMER_REQUEST_DETAIL_FIELDS[type]) {
+      known[`details.${field.key}`] =
+        `${CR_NS}:details.${type}.${field.key}.label`;
+    }
+    return known;
+  }, [type]);
+  const requestError = createRequest.error ?? null;
+  useServerValidation(form, requestError);
+  useFocusFirstViolation(form, requestError, knownFields);
+  const fieldFailure =
+    requestError?.kind === 'validation' &&
+    hasViolationOn(requestError, knownFields);
   const isBusy = isSubmitting || createRequest.isPending;
   const descriptionLength = form.watch('description').length;
 
@@ -238,15 +312,9 @@ export function CreateCustomerRequestDialog({
             ),
         },
       });
-    } catch (error) {
+    } catch {
       // The id is kept: retrying returns the request if the first attempt
-      // did land.
-      const reasonKey = customerRequestErrorKey(error);
-      notify({
-        intent: 'error',
-        titleKey: `${CR_NS}:create.failed`,
-        ...(reasonKey ? { descriptionKey: reasonKey } : {}),
-      });
+      // did land. The failure shows in the dialog (field or one alert).
     }
   });
 
@@ -257,18 +325,11 @@ export function CreateCustomerRequestDialog({
     ? `${CR_NS}:types.${initialType}.dialogDescription`
     : `${CR_NS}:create.description`;
 
-  const errorText = (name: 'title' | 'description'): string | undefined => {
-    if (!errors[name]) return undefined;
-    return name === 'title'
-      ? t(`${CR_NS}:fields.titleInvalid`, {
-          min: CUSTOMER_REQUEST_TITLE_MIN,
-          max: CUSTOMER_REQUEST_TITLE_MAX,
-        })
-      : t(`${CR_NS}:fields.descriptionInvalid`, {
-          min: CUSTOMER_REQUEST_DESCRIPTION_MIN,
-          max: CUSTOMER_REQUEST_DESCRIPTION_MAX,
-        });
-  };
+  // The schema's own message (packed with its numbers), or the server's
+  // already-translated one.
+  const errorText = (name: 'title' | 'description'): string | undefined =>
+    fieldErrorText(t, errors[name]?.message, t(FIELD_LABELS[name]));
+  const titleLength = form.watch('title').length;
 
   const titleError = errorText('title');
   const descriptionError = errorText('description');
@@ -294,6 +355,7 @@ export function CreateCustomerRequestDialog({
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="space-y-5" noValidate>
+          <FormErrorSummary form={form} fieldLabels={knownFields} />
           {initialType ? null : (
             <fieldset className="space-y-2">
               <legend className="text-sm font-medium text-foreground">
@@ -348,12 +410,12 @@ export function CreateCustomerRequestDialog({
           <div className="space-y-2">
             <Label htmlFor={fieldId('title')}>
               {t(`${CR_NS}:fields.title`)}
+              <RequiredMark />
             </Label>
             <Input
               id={fieldId('title')}
               data-testid="customer-request-title"
               placeholder={t(`${CR_NS}:fields.titlePlaceholder`)}
-              maxLength={CUSTOMER_REQUEST_TITLE_MAX + 40}
               dir="auto"
               aria-invalid={!!titleError}
               aria-describedby={fieldId(
@@ -371,12 +433,24 @@ export function CreateCustomerRequestDialog({
             ) : (
               <p
                 id={fieldId('title-help')}
-                className="text-xs text-muted-foreground"
+                className="flex justify-between gap-3 text-xs text-muted-foreground"
               >
-                {t(`${CR_NS}:fields.titleHelp`, {
-                  min: CUSTOMER_REQUEST_TITLE_MIN,
-                  max: CUSTOMER_REQUEST_TITLE_MAX,
-                })}
+                <span>
+                  {t(`${CR_NS}:fields.titleHelp`, {
+                    min: CUSTOMER_REQUEST_TITLE_MIN,
+                    max: CUSTOMER_REQUEST_TITLE_MAX,
+                  })}
+                </span>
+                <span
+                  data-atlas-numeric="true"
+                  aria-hidden
+                  data-testid="customer-request-title-count"
+                >
+                  {t(`${CR_NS}:fields.characterCount`, {
+                    count: titleLength,
+                    max: CUSTOMER_REQUEST_TITLE_MAX,
+                  })}
+                </span>
               </p>
             )}
           </div>
@@ -384,6 +458,7 @@ export function CreateCustomerRequestDialog({
           <div className="space-y-2">
             <Label htmlFor={fieldId('description')}>
               {t(`${CR_NS}:fields.description`)}
+              <RequiredMark />
             </Label>
             <Textarea
               id={fieldId('description')}
@@ -490,8 +565,22 @@ export function CreateCustomerRequestDialog({
                     <Input {...controlProps} />
                   )}
                   {fieldError ? (
-                    <p id={`${id}-error`} className="text-sm text-destructive">
-                      {t(`${CR_NS}:fields.tooLong`, { max: field.maxLength })}
+                    <p
+                      id={`${id}-error`}
+                      role="alert"
+                      className="text-sm text-destructive"
+                      data-testid={`customer-request-detail-${field.key}-error`}
+                    >
+                      {fieldErrorText(
+                        t,
+                        fieldError.message,
+                        t(`${base}.label`)
+                      ) ??
+                        t(`${CR_NS}:fields.tooLong`, { max: field.maxLength })}
+                    </p>
+                  ) : field.key === 'desiredDomain' ? (
+                    <p className="text-xs text-muted-foreground">
+                      {t(`${CR_NS}:fields.domainHelp`)}
                     </p>
                   ) : null}
                 </div>
@@ -535,6 +624,13 @@ export function CreateCustomerRequestDialog({
               {t(`${CR_NS}:fields.priorityHelp`)}
             </p>
           </fieldset>
+
+          {requestError && !fieldFailure ? (
+            <SaveFailedAlert
+              error={requestError}
+              titleKey={`${CR_NS}:create.notSent`}
+            />
+          ) : null}
 
           <DialogFooter className="gap-2 sm:gap-0">
             <Button

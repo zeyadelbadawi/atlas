@@ -96,8 +96,10 @@
     "priority": "الأولوية",
     "priorityHelp": "اختر \"عالية\" فقط عند وجود موعد نهائي حقيقي.",
     "optional": "اختياري",
-    "tooLong": "اجعله أقل من {{max}} حرفًا.",
-    "characterCount": "{{count}} / {{max}}"
+    "tooLong": "استخدم {{max}} حرفًا أو أقل.",
+    "characterCount": "{{count}} / {{max}}",
+    "invalidDomain": "أدخل نطاقًا مثل myacademy.com — بدون https:// وبدون مسافات أو شرطات مائلة.",
+    "domainHelp": "النطاق فقط، مثل myacademy.com أو learn.myacademy.com."
   },
   "details": {
     "heading": "التفاصيل",
@@ -184,7 +186,8 @@
     "successTitle": "تم إرسال الطلب",
     "successDescription": "سنرد عليك في لوحة التحكم وعبر البريد الإلكتروني.",
     "viewRequest": "عرض الطلب",
-    "failed": "تعذّر إرسال طلبك. يرجى المحاولة مرة أخرى."
+    "failed": "تعذّر إرسال طلبك. يرجى المحاولة مرة أخرى.",
+    "notSent": "لم يُرسل طلبك"
   },
   "list": {
     "newRequest": "طلب جديد",

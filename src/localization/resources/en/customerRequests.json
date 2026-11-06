@@ -96,8 +96,10 @@
     "priority": "Priority",
     "priorityHelp": "Choose High only when there's a real deadline.",
     "optional": "Optional",
-    "tooLong": "Keep this under {{max}} characters.",
-    "characterCount": "{{count}} / {{max}}"
+    "tooLong": "Use {{max}} characters or fewer.",
+    "characterCount": "{{count}} / {{max}}",
+    "invalidDomain": "Enter a domain like myacademy.com — no https://, no spaces and no slashes.",
+    "domainHelp": "Just the domain, for example myacademy.com or learn.myacademy.com."
   },
   "details": {
     "heading": "Details",
@@ -184,7 +186,8 @@
     "successTitle": "Request sent",
     "successDescription": "We'll reply in your dashboard and by email.",
     "viewRequest": "View request",
-    "failed": "Couldn't send your request. Please try again."
+    "failed": "Couldn't send your request. Please try again.",
+    "notSent": "Your request wasn't sent"
   },
   "list": {
     "newRequest": "New request",

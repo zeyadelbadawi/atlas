@@ -10,7 +10,9 @@ const Progress = React.forwardRef<
     <ProgressPrimitive.Root
         ref={ref}
         className={cn(
-            'relative h-4 w-full overflow-hidden rounded-full bg-secondary',
+            // B5 (UX audit) — the bar fills from the reading start: in RTL
+            // the track is mirrored, so it grows from the right.
+            'relative h-4 w-full overflow-hidden rounded-full bg-secondary rtl:-scale-x-100',
             className
         )}
         {...props}

@@ -107,7 +107,9 @@ export function CustomerRequestsToolbar({
       aria-label={t(`${CR_NS}:list.filtersLabel`)}
       className="space-y-3"
     >
-      <div className="-mx-1 max-w-full overflow-x-auto px-1 pb-1">
+      {/* B5 (UX audit) — the status tabs wrap onto a second line instead
+          of being cut off at phone width with nothing saying more exist. */}
+      <div className="max-w-full">
         <ToggleGroup
           type="single"
           value={value.status}
@@ -116,7 +118,7 @@ export function CustomerRequestsToolbar({
             if (next) onChange('status', next);
           }}
           aria-label={t(`${CR_NS}:list.statusFilter`)}
-          className="inline-flex w-max justify-start rounded-md bg-muted p-1 text-muted-foreground"
+          className="flex flex-wrap justify-start gap-1 rounded-md bg-muted p-1 text-muted-foreground"
         >
           {STATUS_OPTIONS.map((status) => {
             const count = countFor(status);

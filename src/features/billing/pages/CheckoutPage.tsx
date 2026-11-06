@@ -16,7 +16,7 @@
  * `Payment.status === 'succeeded'` is (see `Reports/ARCHITECTURE.md`,
  * Prompt 7, "Payment Is Not Subscription").
  */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Link,
@@ -52,40 +52,59 @@ import { formatMoney } from '../utils/money.utils';
 import { PlanChangeSummary } from '../components/PlanChangeSummary';
 import { ManualPaymentBrandChip } from '../components/ManualPaymentBrandChip';
 import {
+  localizedAddOnText,
+  localizedPaymentMethodText,
   PlanGiftOffer,
+  planCyclePrice,
+  resolvePlanName,
+  useAddOnCatalog,
   usePlanCatalog,
   usePlanByKey,
   useSubscriptionLifecycleState,
+  useTenantAddOns,
   useTenantSubscription,
 } from '@features/tenant';
 import {
   cn,
+  displayableErrorKey,
   formatCurrency,
   formatDate,
   isOnboardingReturnPath,
+  isTranslatedString,
   MIRROR_IN_RTL,
   planBillingCycles,
   toErrorsNamespaceKey,
 } from '@utils';
+import type { i18n as I18nInstance } from 'i18next';
 import type { ApiError } from '@api';
 import type {
   CheckoutTarget,
   CheckoutTargetType,
   LanguageCode,
-  PlanPricingMetadata,
   SubscriptionBillingCycle,
+  TenantSubscription,
 } from '@types';
 
-/** The catalog price (major units) for one cycle, or `undefined` when there is none. */
-function catalogPriceFor(
-  pricing: PlanPricingMetadata | undefined,
-  cycle: SubscriptionBillingCycle
-): number | undefined {
-  if (!pricing?.currency) return undefined;
-  if (cycle === 'yearly' && pricing.billingCycle === 'monthly') {
-    return pricing.yearlyAmount;
-  }
-  return pricing.amount;
+/**
+ * B5 (UX audit) — what checking out a plan does to the subscription
+ * already there, as the backend applies it (`PaymentApplicationService`):
+ * the SAME plan while a paid period runs adds one more period after it
+ * ends; anything else changes or starts the plan.
+ */
+export function planCheckoutMode(
+  subscription: TenantSubscription | undefined,
+  planKey: string,
+  now: Date = new Date()
+): 'first' | 'renew' | 'change' {
+  if (!subscription || subscription.status === 'no_plan') return 'first';
+  const periodRunning =
+    (subscription.status === 'active' ||
+      subscription.status === 'grace_period') &&
+    !!subscription.currentPeriodEnd &&
+    new Date(subscription.currentPeriodEnd).getTime() > now.getTime();
+  return subscription.plan.key === planKey && periodRunning
+    ? 'renew'
+    : 'change';
 }
 
 /** The existing payment a 409 `alreadyUnderReview` points at, if the error carries one. */
@@ -108,11 +127,18 @@ function paymentUnderReviewId(error: ApiError | null): string | undefined {
  * unhelpful generic "Unexpected error" card.
  */
 function specificDescriptionKey(
-  i18n: { exists: (key: string) => boolean },
+  i18n: I18nInstance,
   error: ApiError
 ): string | undefined {
-  const key = toErrorsNamespaceKey(error.messageKey);
-  return i18n.exists(key) ? key : undefined;
+  // B5 (UX audit) — `i18n.exists` is true for an OBJECT key such as
+  // `errors.conflict` ({ title, description }), and `t()` on it printed
+  // "key 'conflict (en)' returned an object instead of string." Only a
+  // string key (or the object's description) is ever handed on.
+  return (
+    displayableErrorKey(toErrorsNamespaceKey(error.messageKey), (key) =>
+      isTranslatedString(i18n, key)
+    ) ?? undefined
+  );
 }
 
 export default function CheckoutPage(): JSX.Element {
@@ -148,11 +174,15 @@ export default function CheckoutPage(): JSX.Element {
   const [billingCycle, setBillingCycle] =
     useState<SubscriptionBillingCycle>('monthly');
   const [selectedMethodKey, setSelectedMethodKey] = useState<string>();
+  const [methodMissing, setMethodMissing] = useState(false);
+  const summaryHeadingRef = useRef<HTMLHeadingElement>(null);
 
   const createCheckout = useCreateCheckout();
   const createPayment = useCreatePayment();
   const paymentMethodsQuery = usePaymentMethods();
   const plansQuery = usePlanCatalog();
+  const addOnCatalogQuery = useAddOnCatalog();
+  const tenantAddOnsQuery = useTenantAddOns();
 
   /*
     Derived once and used by BOTH the empty check and the list below, so the
@@ -194,7 +224,67 @@ export default function CheckoutPage(): JSX.Element {
   const effectiveBillingCycle = billingCycles.includes(billingCycle)
     ? billingCycle
     : billingCycles[0];
-  const cyclePrice = catalogPriceFor(planPricing, effectiveBillingCycle);
+  const cyclePrice = planCyclePrice(planPricing, effectiveBillingCycle);
+  const language = i18n.language as LanguageCode;
+
+  // B5 (UX audit) — the add-on being bought, from the catalog: its name
+  // and price are shown before anything starts, and a checkout is not
+  // offered for one that is already active or not for sale.
+  const targetAddOn =
+    target?.type === 'add_on'
+      ? addOnCatalogQuery.data?.find((addOn) => addOn.key === target.addOnKey)
+      : undefined;
+  const addOnActive =
+    target?.type === 'add_on' &&
+    !!tenantAddOnsQuery.data?.some(
+      (tenantAddOn) => tenantAddOn.addOn.key === target.addOnKey
+    );
+  const addOnBlock: 'active' | 'notForSale' | 'incompatible' | null =
+    target?.type !== 'add_on' || addOnCatalogQuery.isLoading
+      ? null
+      : addOnActive
+        ? 'active'
+        : !targetAddOn ||
+            targetAddOn.comingSoon ||
+            targetAddOn.catalogStatus === 'coming_soon'
+          ? 'notForSale'
+          : subscriptionQuery.data &&
+              !targetAddOn.compatiblePlanKeys.includes(
+                subscriptionQuery.data.plan.key
+              )
+            ? 'incompatible'
+            : null;
+  const addOnPrice =
+    targetAddOn?.pricing?.currency && targetAddOn.pricing.amount !== undefined
+      ? `${formatCurrency(
+          targetAddOn.pricing.amount,
+          language,
+          targetAddOn.pricing.currency,
+          // B5 (UX audit) — "USD 15.00", never a bare "$" beside EGP plans.
+          { currencyDisplay: 'code' }
+        )} / ${t(
+          `payments:common.billingCycleShort.${targetAddOn.pricing.billingCycle ?? 'monthly'}`
+        )}`
+      : undefined;
+  const checkoutMode =
+    target?.type === 'plan_subscription'
+      ? planCheckoutMode(subscriptionQuery.data, target.planKey)
+      : null;
+  const targetName =
+    target?.type === 'plan_subscription'
+      ? targetPlan
+        ? resolvePlanName(targetPlan, language)
+        : undefined
+      : targetAddOn
+        ? localizedAddOnText(t, i18n, targetAddOn.key, 'name', targetAddOn.name)
+        : undefined;
+
+  const checkoutReady = !!createCheckout.data;
+  // B5 (UX audit) — once the checkout exists the review card is replaced:
+  // focus moves to the order summary instead of being lost on <body>.
+  useEffect(() => {
+    if (checkoutReady) summaryHeadingRef.current?.focus();
+  }, [checkoutReady]);
 
   if (!target || !organization?.id) {
     return (
@@ -235,7 +325,11 @@ export default function CheckoutPage(): JSX.Element {
   const existingPaymentId = paymentUnderReviewId(createPayment.error);
 
   const handleContinueToPayment = () => {
-    if (!checkout || !selectedMethodKey) return;
+    if (!checkout) return;
+    if (!selectedMethodKey) {
+      setMethodMissing(true);
+      return;
+    }
     const method = paymentMethodsQuery.data?.find(
       (candidate) => candidate.key === selectedMethodKey
     );
@@ -284,13 +378,68 @@ export default function CheckoutPage(): JSX.Element {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {targetName ? (
+                <div className="space-y-1" data-testid="checkout-target">
+                  <p
+                    className="font-display text-lg font-semibold text-foreground"
+                    dir="auto"
+                  >
+                    {targetName}
+                  </p>
+                  {targetAddOn?.description ? (
+                    <p className="text-sm text-muted-foreground" dir="auto">
+                      {localizedAddOnText(
+                        t,
+                        i18n,
+                        targetAddOn.key,
+                        'description',
+                        targetAddOn.description
+                      )}
+                    </p>
+                  ) : null}
+                  {addOnPrice ? (
+                    <p
+                      className="text-sm text-muted-foreground"
+                      data-testid="checkout-add-on-price"
+                    >
+                      {t('payments:checkout.catalogPriceLabel')}{' '}
+                      <span
+                        className="font-semibold text-foreground"
+                        data-atlas-numeric="true"
+                        dir="ltr"
+                        data-ltr-content
+                      >
+                        {addOnPrice}
+                      </span>
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
               <p className="text-sm text-muted-foreground">
                 {t(
-                  target.type === 'plan_subscription'
-                    ? 'payments:checkout.reviewPlanDescription'
-                    : 'payments:checkout.reviewAddOnDescription'
+                  target.type === 'add_on'
+                    ? 'payments:checkout.reviewAddOnDescription'
+                    : checkoutMode === 'renew'
+                      ? 'payments:checkout.reviewRenewDescription'
+                      : checkoutMode === 'first'
+                        ? 'payments:checkout.reviewFirstPlanDescription'
+                        : 'payments:checkout.reviewPlanDescription'
                 )}
               </p>
+              {checkoutMode === 'renew' &&
+              subscriptionQuery.data?.currentPeriodEnd ? (
+                <p
+                  className="text-sm text-foreground"
+                  data-testid="checkout-renew-note"
+                >
+                  {t('payments:checkout.renewNote', {
+                    date: formatDate(
+                      subscriptionQuery.data.currentPeriodEnd,
+                      language
+                    ),
+                  })}
+                </p>
+              ) : null}
 
               {target.type === 'plan_subscription' ? (
                 <div className="space-y-2">
@@ -375,7 +524,27 @@ export default function CheckoutPage(): JSX.Element {
                 />
               ) : null}
 
-              {createCheckout.error ? (
+              {addOnBlock ? (
+                /* B5 (UX audit) — no checkout that can only be refused. */
+                <Alert data-testid={`checkout-add-on-${addOnBlock}`}>
+                  <AlertTriangle className="size-4" aria-hidden />
+                  <AlertTitle>
+                    {t(`payments:checkout.addOnBlocked.${addOnBlock}.title`)}
+                  </AlertTitle>
+                  <AlertDescription className="space-y-3">
+                    <p>
+                      {t(
+                        `payments:checkout.addOnBlocked.${addOnBlock}.description`
+                      )}
+                    </p>
+                    <Button asChild size="sm" variant="outline">
+                      <Link to={DASHBOARD_ROUTES.tenantAddOns}>
+                        {t('payments:checkout.addOnBlocked.backToAddOns')}
+                      </Link>
+                    </Button>
+                  </AlertDescription>
+                </Alert>
+              ) : createCheckout.error ? (
                 <ErrorState
                   kind={createCheckout.error.kind}
                   descriptionKey={specificDescriptionKey(
@@ -408,12 +577,22 @@ export default function CheckoutPage(): JSX.Element {
             <Card>
               <CardHeader>
                 <CardTitle className="text-base">
-                  {t('payments:checkout.summaryTitle')}
+                  <span
+                    ref={summaryHeadingRef}
+                    tabIndex={-1}
+                    className="outline-none"
+                    data-testid="checkout-summary-heading"
+                  >
+                    {t('payments:checkout.summaryTitle')}
+                  </span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-1">
-                <p className="font-display text-lg font-semibold text-foreground">
-                  {checkout.snapshot.displayName}
+                <p
+                  className="font-display text-lg font-semibold text-foreground"
+                  dir="auto"
+                >
+                  {targetName ?? checkout.snapshot.displayName}
                 </p>
                 <p
                   className="text-2xl font-semibold text-foreground"
@@ -456,7 +635,8 @@ export default function CheckoutPage(): JSX.Element {
             {target.type === 'plan_subscription' ? (
               <PlanChangeSummary
                 subscription={subscriptionQuery.data}
-                newPlanName={checkout.snapshot.displayName}
+                newPlanName={targetName ?? checkout.snapshot.displayName}
+                mode={checkoutMode ?? 'change'}
               />
             ) : null}
 
@@ -494,8 +674,16 @@ export default function CheckoutPage(): JSX.Element {
                 ) : (
                   <RadioGroup
                     value={selectedMethodKey}
-                    onValueChange={setSelectedMethodKey}
+                    onValueChange={(value) => {
+                      setSelectedMethodKey(value);
+                      setMethodMissing(false);
+                    }}
                     className="gap-3"
+                    aria-label={t('payments:checkout.paymentMethodTitle')}
+                    aria-invalid={methodMissing || undefined}
+                    aria-describedby={
+                      methodMissing ? 'checkout-method-missing' : undefined
+                    }
                   >
                     {enabledMethods.map((method) => {
                       const available = !!getPaymentProvider(method.provider);
@@ -521,8 +709,17 @@ export default function CheckoutPage(): JSX.Element {
                               so a customer never has to guess from the name.
                             */}
                             <span className="flex flex-wrap items-center gap-2">
-                              <span className="font-medium text-foreground">
-                                {method.displayName}
+                              <span
+                                className="font-medium text-foreground"
+                                dir="auto"
+                              >
+                                {localizedPaymentMethodText(
+                                  t,
+                                  i18n,
+                                  method.key,
+                                  'name',
+                                  method.displayName
+                                )}
                               </span>
                               <span
                                 className="rounded-pill bg-muted px-2 py-0.5 text-xs text-muted-foreground"
@@ -539,8 +736,17 @@ export default function CheckoutPage(): JSX.Element {
                               ) : null}
                             </span>
                             {method.description ? (
-                              <span className="block text-sm text-muted-foreground">
-                                {method.description}
+                              <span
+                                className="block text-sm text-muted-foreground"
+                                dir="auto"
+                              >
+                                {localizedPaymentMethodText(
+                                  t,
+                                  i18n,
+                                  method.key,
+                                  'description',
+                                  method.description
+                                )}
                               </span>
                             ) : null}
                             {method.manualInstructions?.placeholder ? (
@@ -605,10 +811,23 @@ export default function CheckoutPage(): JSX.Element {
                   />
                 ) : null}
 
+                {methodMissing && !selectedMethodKey ? (
+                  <p
+                    id="checkout-method-missing"
+                    role="alert"
+                    className="text-sm text-destructive"
+                    data-testid="checkout-method-missing"
+                  >
+                    {t('payments:checkout.chooseMethodFirst')}
+                  </p>
+                ) : null}
+
                 <Button
                   type="button"
                   onClick={handleContinueToPayment}
-                  disabled={!selectedMethodKey || createPayment.isPending}
+                  disabled={
+                    createPayment.isPending || enabledMethods.length === 0
+                  }
                 >
                   {createPayment.isPending ? (
                     <>

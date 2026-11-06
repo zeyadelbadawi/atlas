@@ -11,7 +11,7 @@
  * `usePaymentDetails`, which re-fetches the backend-authoritative
  * `Payment` and polls while it's still in progress.
  */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PaymentProofDialog } from '@/components/payments/PaymentProofDialog';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
@@ -21,7 +21,6 @@ import {
   ExternalLink,
   FileText,
   Loader2,
-  Upload,
   XCircle,
 } from 'lucide-react';
 import {
@@ -35,11 +34,13 @@ import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuth, useFilePicker } from '@hooks';
-import { useToast } from '@app/providers/toast/useToast';
+import { useAuth } from '@hooks';
+import { useConfirmDialog } from '@app/providers';
+import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
+import { SaveFailedAlert } from '@forms';
 import {
+  useCheckout,
   usePaymentDetails,
   usePaymentMethods,
   useCancelPayment,
@@ -58,11 +59,33 @@ import {
   PlaceholderPaymentBanner,
 } from '../components/ManualPaymentInstructionsPanel';
 import { ManualPaymentBrandChip } from '../components/ManualPaymentBrandChip';
-import {
-  ALLOWED_PAYMENT_PROOF_TYPES,
-  MAX_PAYMENT_PROOF_FILE_SIZE,
-} from '../constants/billing.constants';
+import { PaymentProofForm } from '../components/PaymentProofForm';
+import { CopyValueButton } from '../components/CopyValueButton';
 import { TERMINAL_PAYMENT_STATUSES } from '@types';
+import type { Checkout, PaymentLifecycleStatus } from '@types';
+
+/** Statuses after which this payment can no longer be paid: a new checkout is the way on. */
+const CLOSED_UNPAID_STATUSES: readonly PaymentLifecycleStatus[] = [
+  'failed',
+  'cancelled',
+  'expired',
+];
+
+/**
+ * B5 (UX audit) — where "Start a new checkout" goes: the same plan or
+ * add-on this payment was for when its checkout can be read, otherwise
+ * the plans page (a plan) or the add-ons page.
+ */
+export function newCheckoutPath(checkout: Checkout | undefined): string {
+  if (!checkout) return DASHBOARD_ROUTES.plans;
+  return buildPath(DASHBOARD_ROUTES.tenantBillingCheckout, {
+    targetType: checkout.target.type,
+    targetKey:
+      checkout.target.type === 'plan_subscription'
+        ? checkout.target.planKey
+        : checkout.target.addOnKey,
+  });
+}
 
 export default function PaymentDetailsPage(): JSX.Element {
   // New Customer Onboarding — the checkout forwards `?returnTo=/onboarding…`
@@ -89,32 +112,14 @@ export default function PaymentDetailsPage(): JSX.Element {
   const paymentMethodsQuery = usePaymentMethods();
   const submitProof = useSubmitPaymentProof();
   const cancelPayment = useCancelPayment();
-  const { notifyError } = useToast();
-
-  const [note, setNote] = useState('');
-  const [fileError, setFileError] = useState<string>();
+  const { confirm } = useConfirmDialog();
   const [isProofOpen, setIsProofOpen] = useState(false);
-
-  const filePicker = useFilePicker({
-    accept: ALLOWED_PAYMENT_PROOF_TYPES.join(','),
-  });
-
-  useEffect(() => {
-    const file = filePicker.files?.[0];
-    if (!file) return;
-    if (file.size > MAX_PAYMENT_PROOF_FILE_SIZE) {
-      setFileError('payments:payment.proofTooLarge');
-      filePicker.clearFiles();
-      return;
-    }
-    if (!ALLOWED_PAYMENT_PROOF_TYPES.includes(file.type)) {
-      setFileError('payments:payment.proofInvalidType');
-      filePicker.clearFiles();
-      return;
-    }
-    setFileError(undefined);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filePicker.files]);
+  // Only read once the payment is closed unpaid: it names what to buy again.
+  const closedUnpaid =
+    !!payment && CLOSED_UNPAID_STATUSES.includes(payment.status);
+  const checkoutQuery = useCheckout(
+    closedUnpaid ? (payment?.checkoutId ?? '') : ''
+  );
 
   if (isLoading) {
     return (
@@ -178,26 +183,42 @@ export default function PaymentDetailsPage(): JSX.Element {
     ? method.capabilities.supportsCancellation
     : !!provider?.capabilities.supportsCancellation;
   const isTerminal = TERMINAL_PAYMENT_STATUSES.includes(payment.status);
-  const proofFile = filePicker.files?.[0];
+  const startAgainPath = newCheckoutPath(checkoutQuery.data);
 
-  const handleSubmitProof = () => {
-    if (!proofFile || !provider || !isManualReviewProvider(provider)) return;
+  const handleSubmitProof = (file: File, note: string | undefined) => {
+    if (!provider || !isManualReviewProvider(provider)) return;
     submitProof.mutate({
       organizationId: organization.id,
       paymentId: payment.id,
-      file: proofFile,
-      note: note || undefined,
+      file,
+      note,
       provider,
     });
   };
 
-  const handleCancel = () => {
+  const runCancel = () => {
     if (!provider) return;
     cancelPayment.mutate({
       organizationId: organization.id,
       paymentId: payment.id,
       provider,
     });
+  };
+
+  // B5 (UX audit) — cancelling is final: ask first, and say what to do
+  // with money already sent.
+  const handleCancel = async () => {
+    const confirmed = await confirm({
+      titleKey: 'payments:payment.cancelConfirm.title',
+      descriptionKey:
+        payment.reviewStatus === 'pending'
+          ? 'payments:payment.cancelConfirm.descriptionUnderReview'
+          : 'payments:payment.cancelConfirm.description',
+      confirmLabelKey: 'payments:payment.cancelConfirm.confirm',
+      cancelLabelKey: 'payments:payment.cancelConfirm.keep',
+      intent: 'destructive',
+    });
+    if (confirmed) runCancel();
   };
 
   return (
@@ -255,9 +276,11 @@ export default function PaymentDetailsPage(): JSX.Element {
           <CardContent className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">
-                {t('payments:payment.reference')}
+                {t('payments:payment.paymentId')}
               </span>
-              <span className="font-mono text-xs">{payment.id}</span>
+              <span className="break-all font-mono text-xs" dir="ltr">
+                {payment.id}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">
@@ -330,17 +353,32 @@ export default function PaymentDetailsPage(): JSX.Element {
               </p>
             </CardContent>
           </Card>
-        ) : payment.status === 'failed' ? (
-          <Card>
-            <CardContent className="flex items-center gap-3 p-6">
+        ) : closedUnpaid ? (
+          /*
+            B5 (UX audit) — a failed, rejected, cancelled or expired payment
+            can't take money or a receipt any more: no bank details, no
+            upload, and a real way to start again.
+          */
+          <Card data-testid="payment-closed">
+            <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center">
               <XCircle
                 className="size-8 shrink-0 text-destructive"
                 strokeWidth={1.75}
                 aria-hidden
               />
-              <p className="text-sm text-foreground">
-                {t('payments:payment.failedMessage')}
-              </p>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-foreground">
+                  {t(`payments:payment.closedMessage.${payment.status}`)}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {t('payments:payment.closedNextStep')}
+                </p>
+              </div>
+              <Button asChild className="sm:ms-auto">
+                <Link to={startAgainPath} data-testid="payment-start-again">
+                  {t('payments:payment.startNewCheckout')}
+                </Link>
+              </Button>
             </CardContent>
           </Card>
         ) : payment.reviewStatus === 'pending' ? (
@@ -403,47 +441,46 @@ export default function PaymentDetailsPage(): JSX.Element {
                 <ManualPaymentInstructionsPanel instructions={instructions} />
               ) : null}
 
-              <div className="space-y-3 border-t border-border pt-4">
-                <p className="text-sm font-medium text-foreground">
-                  {t('payments:payment.uploadProofTitle')}
-                </p>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={filePicker.openFilePicker}
+              {/*
+                B5 (UX audit) — the transfer reference the instructions ask
+                for is this payment's checkout id: shown, labelled and
+                copyable right here, never left for the customer to find.
+              */}
+              {payment.checkoutId ? (
+                <div
+                  className="rounded-md border border-border bg-muted/40 p-3 text-sm"
+                  data-testid="payment-transfer-reference"
                 >
-                  <Upload className="size-4" strokeWidth={2} aria-hidden />
-                  {proofFile
-                    ? proofFile.name
-                    : t('payments:payment.chooseFile')}
-                </Button>
-                {fileError ? (
-                  <p className="text-sm text-destructive">{t(fileError)}</p>
-                ) : null}
-                <Textarea
-                  placeholder={t('payments:payment.proofNotePlaceholder')}
-                  value={note}
-                  onChange={(event) => setNote(event.target.value)}
-                  rows={2}
-                />
-                {submitProof.error ? (
-                  <ErrorState onRetry={handleSubmitProof} />
-                ) : null}
-                <Button
-                  type="button"
-                  onClick={handleSubmitProof}
-                  disabled={!proofFile || !!fileError || submitProof.isPending}
-                >
-                  {submitProof.isPending ? (
-                    <>
-                      <Loader2 className="size-4 animate-spin" aria-hidden />
-                      {t('payments:payment.submittingProof')}
-                    </>
-                  ) : (
-                    t('payments:payment.submitProof')
-                  )}
-                </Button>
-              </div>
+                  <p className="text-muted-foreground">
+                    {t('payments:payment.checkoutIdLabel')}
+                  </p>
+                  <p className="flex min-w-0 items-center gap-1">
+                    <span
+                      className="break-all font-mono text-foreground"
+                      dir="ltr"
+                      data-testid="payment-checkout-id"
+                    >
+                      {payment.checkoutId}
+                    </span>
+                    <CopyValueButton
+                      value={payment.checkoutId}
+                      label={t('payments:payment.copyValue', {
+                        label: t('payments:payment.checkoutIdLabel'),
+                      })}
+                      testId="payment-checkout-id-copy"
+                    />
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {t('payments:payment.checkoutIdHint')}
+                  </p>
+                </div>
+              ) : null}
+
+              <PaymentProofForm
+                isPending={submitProof.isPending}
+                error={submitProof.error ?? null}
+                onSubmit={handleSubmitProof}
+              />
             </CardContent>
           </Card>
         ) : payment.nextAction?.type === 'redirect' ? (
@@ -496,14 +533,24 @@ export default function PaymentDetailsPage(): JSX.Element {
             <Button
               type="button"
               variant="ghost"
-              onClick={handleCancel}
+              onClick={() => void handleCancel()}
               disabled={cancelPayment.isPending}
+              data-testid="payment-cancel"
             >
+              {cancelPayment.isPending ? (
+                <Loader2 className="size-4 animate-spin" aria-hidden />
+              ) : null}
               {t('payments:payment.cancelPayment')}
             </Button>
           ) : null}
         </div>
-        {cancelPayment.error ? <ErrorState onRetry={handleCancel} /> : null}
+        {cancelPayment.error ? (
+          <SaveFailedAlert
+            error={cancelPayment.error}
+            titleKey="payments:payment.cancelFailedTitle"
+            onRetry={runCancel}
+          />
+        ) : null}
       </div>
     </PageContainer>
   );

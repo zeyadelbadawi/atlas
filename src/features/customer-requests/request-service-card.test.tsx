@@ -264,7 +264,10 @@ describe('CreateCustomerRequestDialog', () => {
     expect(
       screen.getByText('Write a description between 10 and 5000 characters.')
     ).toBeTruthy();
-    expect(screen.getByText('Keep this under 120 characters.')).toBeTruthy();
+    // B5 (UX audit) — "or fewer": the limit itself is allowed.
+    expect(screen.getByText('Use 120 characters or fewer.')).toBeTruthy();
+    // Three problems: the summary lists them at the top.
+    expect(screen.getByTestId('form-error-summary')).toBeTruthy();
     expect(
       screen.getByTestId('customer-request-title').getAttribute('aria-invalid')
     ).toBe('true');
@@ -303,13 +306,13 @@ describe('CreateCustomerRequestDialog', () => {
         retryable: true,
       })
     );
-    await waitFor(() =>
-      expect(notify).toHaveBeenCalledWith(
-        expect.objectContaining({
-          intent: 'error',
-          titleKey: 'customerRequests:create.failed',
-        })
-      )
+    // B5 (UX audit) — ONE message, inside the dialog, with the real
+    // reason; no toast on top of it.
+    const failure = await screen.findByTestId('save-failed');
+    expect(failure.textContent).toContain("Your request wasn't sent");
+    expect(failure.textContent).toContain('Atlas could not reach the server');
+    expect(notify).not.toHaveBeenCalledWith(
+      expect.objectContaining({ intent: 'error' })
     );
 
     // Retry: the dialog is still open with the same answers.
@@ -356,13 +359,53 @@ describe('CreateCustomerRequestDialog', () => {
     const { user } = await openDialog('logo');
     await fillValid(user);
     await user.click(screen.getByTestId('customer-request-submit'));
-    await waitFor(() =>
-      expect(notify).toHaveBeenCalledWith({
-        intent: 'error',
-        titleKey: 'customerRequests:create.failed',
-        descriptionKey: 'errors:customerRequest.invalidDetails',
+    const failure = await screen.findByTestId('save-failed');
+    expect(failure.textContent).toContain(
+      "Some of the request details aren't valid for this type of request."
+    );
+    expect(notify).not.toHaveBeenCalled();
+  });
+
+  it('refuses a domain that is not one, with an example (B5 V20)', async () => {
+    const { user } = await openDialog('domain');
+    await fillValid(user);
+    await user.type(
+      screen.getByTestId('customer-request-detail-desiredDomain'),
+      'my academy dot com'
+    );
+    await user.click(screen.getByTestId('customer-request-submit'));
+    expect(
+      (await screen.findByTestId('customer-request-detail-desiredDomain-error'))
+        .textContent
+    ).toContain('myacademy.com');
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('puts the server domain refusal on the domain field, with no alert', async () => {
+    create.mockRejectedValue(
+      new ApiError({
+        kind: 'validation',
+        messageKey: 'errors.customerRequest.invalidDomain',
+        status: 400,
+        retryable: false,
+        violations: [
+          {
+            field: 'details.desiredDomain',
+            messageKey: 'errors.customerRequest.invalidDomain',
+          },
+        ],
       })
     );
+    const { user } = await openDialog('domain');
+    await fillValid(user);
+    await user.type(
+      screen.getByTestId('customer-request-detail-desiredDomain'),
+      'xn--.com'
+    );
+    await user.click(screen.getByTestId('customer-request-submit'));
+    await screen.findByTestId('customer-request-detail-desiredDomain-error');
+    expect(screen.queryByTestId('save-failed')).toBeNull();
+    expect(notify).not.toHaveBeenCalled();
   });
 
   it('starts a fresh clientRequestId when the dialog is opened again', async () => {

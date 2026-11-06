@@ -21,6 +21,7 @@ import {
 } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
+import { AtlasDialogProvider } from '@app/providers/dialog/DialogProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createI18nInstance } from '@/localization/i18n';
 import { IdentityContext } from '@app/providers/identity/identity.context';
@@ -73,15 +74,17 @@ function withProviders(
       }
     >
       <I18nextProvider i18n={createI18nInstance(language)}>
-        <ToastContext.Provider value={toastValue}>
-          <IdentityContext.Provider value={identity}>
-            <MemoryRouter initialEntries={[entry]}>
-              <Routes>
-                <Route path={path} element={element} />
-              </Routes>
-            </MemoryRouter>
-          </IdentityContext.Provider>
-        </ToastContext.Provider>
+        <AtlasDialogProvider>
+          <ToastContext.Provider value={toastValue}>
+            <IdentityContext.Provider value={identity}>
+              <MemoryRouter initialEntries={[entry]}>
+                <Routes>
+                  <Route path={path} element={element} />
+                </Routes>
+              </MemoryRouter>
+            </IdentityContext.Provider>
+          </ToastContext.Provider>
+        </AtlasDialogProvider>
       </I18nextProvider>
     </QueryClientProvider>
   );
@@ -288,7 +291,9 @@ describe('PaymentDetailsPage — wallet and InstaPay snapshots', () => {
       screen.getByTestId('payment-instructions-wallet-number').textContent
     ).toBe('01000000000');
     expect(
-      screen.getByTestId('payment-instructions-wallet-number').getAttribute('dir')
+      screen
+        .getByTestId('payment-instructions-wallet-number')
+        .getAttribute('dir')
     ).toBe('ltr');
     expect(
       screen.getByTestId('payment-instructions-account-name').textContent
@@ -304,9 +309,8 @@ describe('PaymentDetailsPage — wallet and InstaPay snapshots', () => {
     // The receipt upload is the same as Bank Transfer's.
     expect(screen.getByText('Proof of payment')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Choose file' }));
-    const input = document.querySelector<HTMLInputElement>(
-      'input[type="file"]'
-    );
+    const input =
+      document.querySelector<HTMLInputElement>('input[type="file"]');
     expect(input).toBeTruthy();
     fireEvent.change(input!, {
       target: {
@@ -346,7 +350,9 @@ describe('PaymentDetailsPage — wallet and InstaPay snapshots', () => {
     ).toBe('اكتب مرجع الدفع.');
     // The number itself stays left-to-right.
     expect(
-      screen.getByTestId('payment-instructions-wallet-number').getAttribute('dir')
+      screen
+        .getByTestId('payment-instructions-wallet-number')
+        .getAttribute('dir')
     ).toBe('ltr');
     expect(screen.getByText('إثبات الدفع')).toBeTruthy();
   });
@@ -355,9 +361,7 @@ describe('PaymentDetailsPage — wallet and InstaPay snapshots', () => {
     vi.spyOn(paymentService, 'getPayment').mockResolvedValue(
       paymentWith(INSTAPAY_DETAILS, 'instapay_test')
     );
-    vi.spyOn(paymentService, 'getPaymentMethods').mockResolvedValue([
-      INSTAPAY,
-    ]);
+    vi.spyOn(paymentService, 'getPaymentMethods').mockResolvedValue([INSTAPAY]);
     renderPayment('ar');
 
     expect(

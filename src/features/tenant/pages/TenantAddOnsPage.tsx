@@ -28,8 +28,36 @@ import {
 } from '../hooks';
 import { PLAN_FEATURE_KEYS } from '../constants/tenant.constants';
 import { formatLimitValue } from '../utils/entitlement.utils';
-import { isCustomerVisibleLimitKey } from '@utils';
-import type { AddOn, PlanFeatureKey } from '@types';
+import { formatCurrency, isCustomerVisibleLimitKey } from '@utils';
+import { localizedAddOnText } from '../utils/catalog-text.utils';
+import type { AddOn, LanguageCode, PlanFeatureKey } from '@types';
+
+/** B5 (UX audit) — "US$15.00 a month", in the add-on's own currency. */
+function AddOnPrice({ addOn }: { readonly addOn: AddOn }): JSX.Element | null {
+  const { t, i18n } = useTranslation();
+  const pricing = addOn.pricing;
+  if (!pricing?.currency || pricing.amount === undefined) return null;
+  return (
+    <p
+      className="text-sm font-medium text-foreground"
+      data-testid={`tenant-add-on-price-${addOn.key}`}
+    >
+      {t(
+        pricing.billingCycle === 'yearly'
+          ? 'liveSessions:catalog.priceYearly'
+          : 'liveSessions:catalog.priceMonthly',
+        {
+          price: formatCurrency(
+            pricing.amount,
+            i18n.language as LanguageCode,
+            pricing.currency,
+            { currencyDisplay: 'code' }
+          ),
+        }
+      )}
+    </p>
+  );
+}
 
 function AddOnEffectSummary({
   addOn,
@@ -75,7 +103,7 @@ function isPlanFeatureKey(value: unknown): value is PlanFeatureKey {
 
 export default function TenantAddOnsPage(): JSX.Element {
   const fmt = useDateFormatter();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
   const activeAddOnsQuery = useTenantAddOns();
@@ -152,7 +180,9 @@ export default function TenantAddOnsPage(): JSX.Element {
   // filtered out of "Active" and always surfaced under "Available" as
   // Coming Soon (with no purchase action).
   const comingSoonKeys = new Set(
-    catalogQuery.data.filter((addOn) => addOn.comingSoon).map((addOn) => addOn.key),
+    catalogQuery.data
+      .filter((addOn) => addOn.comingSoon)
+      .map((addOn) => addOn.key)
   );
   // B0-MED-04 — an add-on that only raises a limit customers cannot use
   // yet (video storage) is not offered. One a tenant already holds stays
@@ -162,14 +192,14 @@ export default function TenantAddOnsPage(): JSX.Element {
     addOn.effect.type !== 'limit' ||
     isCustomerVisibleLimitKey(addOn.effect.limitKey);
   const activeAddOns = activeAddOnsQuery.data.filter(
-    (a) => !comingSoonKeys.has(a.addOn.key),
+    (a) => !comingSoonKeys.has(a.addOn.key)
   );
   const activeAddOnIds = new Set(activeAddOns.map((a) => a.addOnId));
   const currentPlanKey = subscriptionQuery.data.plan.key;
   const availableAddOns = catalogQuery.data.filter(
     (addOn) =>
       isUsable(addOn) &&
-      (comingSoonKeys.has(addOn.key) || !activeAddOnIds.has(addOn.id)),
+      (comingSoonKeys.has(addOn.key) || !activeAddOnIds.has(addOn.id))
   );
 
   return (
@@ -197,8 +227,14 @@ export default function TenantAddOnsPage(): JSX.Element {
                 <Card key={tenantAddOn.id}>
                   <CardContent className="space-y-2 p-4">
                     <div className="flex items-center justify-between gap-2">
-                      <h3 className="font-medium text-foreground">
-                        {tenantAddOn.addOn.name}
+                      <h3 className="font-medium text-foreground" dir="auto">
+                        {localizedAddOnText(
+                          t,
+                          i18n,
+                          tenantAddOn.addOn.key,
+                          'name',
+                          tenantAddOn.addOn.name
+                        )}
                       </h3>
                       <StatusBadge
                         labelKey={
@@ -207,13 +243,21 @@ export default function TenantAddOnsPage(): JSX.Element {
                             : 'tenant:addOns.activeBadge'
                         }
                         tone={
-                          comingSoonKeys.has(tenantAddOn.addOn.key) ? 'neutral' : 'success'
+                          comingSoonKeys.has(tenantAddOn.addOn.key)
+                            ? 'neutral'
+                            : 'success'
                         }
                       />
                     </div>
                     {tenantAddOn.addOn.description ? (
-                      <p className="text-sm text-muted-foreground">
-                        {tenantAddOn.addOn.description}
+                      <p className="text-sm text-muted-foreground" dir="auto">
+                        {localizedAddOnText(
+                          t,
+                          i18n,
+                          tenantAddOn.addOn.key,
+                          'description',
+                          tenantAddOn.addOn.description
+                        )}
                       </p>
                     ) : null}
                     <p className="text-sm text-foreground">
@@ -253,8 +297,14 @@ export default function TenantAddOnsPage(): JSX.Element {
                   >
                     <CardContent className="space-y-2 p-4">
                       <div className="flex items-center justify-between gap-2">
-                        <h3 className="font-medium text-foreground">
-                          {addOn.name}
+                        <h3 className="font-medium text-foreground" dir="auto">
+                          {localizedAddOnText(
+                            t,
+                            i18n,
+                            addOn.key,
+                            'name',
+                            addOn.name
+                          )}
                         </h3>
                         <StatusBadge
                           labelKey={
@@ -274,13 +324,22 @@ export default function TenantAddOnsPage(): JSX.Element {
                         />
                       </div>
                       {addOn.description ? (
-                        <p className="text-sm text-muted-foreground">
-                          {addOn.description}
+                        <p className="text-sm text-muted-foreground" dir="auto">
+                          {localizedAddOnText(
+                            t,
+                            i18n,
+                            addOn.key,
+                            'description',
+                            addOn.description
+                          )}
                         </p>
                       ) : null}
                       <p className="text-sm text-foreground">
                         <AddOnEffectSummary addOn={addOn} />
                       </p>
+                      {comingSoonKeys.has(addOn.key) ? null : (
+                        <AddOnPrice addOn={addOn} />
+                      )}
                       {comingSoonKeys.has(addOn.key) ? (
                         <p className="text-xs text-muted-foreground">
                           {t('tenant:addOns.comingSoonNote')}

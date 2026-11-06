@@ -90,6 +90,8 @@ export function useReplyToMySupportCase() {
       mySupportService.replyToMyCase(caseId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B5 (UX audit) — the page shows the failure itself, once.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, { caseId }) => {
       // Both the thread and the list's "last activity" column change.
       await invalidate(supportKeys.mineDetail(caseId));

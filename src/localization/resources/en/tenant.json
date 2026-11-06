@@ -29,7 +29,7 @@
     "subscriptionStatusDescription": {
       "trialing": "Your organization is on a trial.",
       "active": "Your subscription is active and in good standing.",
-      "past_due": "We were unable to confirm your latest payment. Please update your billing details to avoid an interruption.",
+      "past_due": "We couldn't confirm your latest payment. Open Billing to see what needs your attention.",
       "paused": "Your subscription is currently paused.",
       "grace_period": "Your subscription has lapsed and is in its grace period before access is restricted.",
       "cancelled": "Your subscription has been cancelled.",
@@ -60,7 +60,9 @@
     "viewUsage": "View usage",
     "addOnsSectionTitle": "Add-ons",
     "viewAddOns": "View add-ons",
-    "activeAddOnsCount": "{{count}} active add-ons"
+    "activeAddOnsCount": "{{count}} active add-ons",
+    "activeAddOnsCount_one": "1 active add-on",
+    "activeAddOnsCount_other": "{{count}} active add-ons"
   },
   "plans": {
     "title": "Plans",
@@ -80,7 +82,7 @@
       "description": "Choose a plan to activate your organization's subscription.",
       "action": "Browse plans"
     },
-    "cancelAtPeriodEnd": "Your subscription will not renew at the end of the current period.",
+    "cancelAtPeriodEnd": "Your subscription ends at the end of the current period.",
     "featuresTitle": "Add-ons",
     "featuresSubtitle": "Capabilities you add to your plan separately.",
     "cancelSubscription": "Cancel subscription",
@@ -102,6 +104,21 @@
       "limit": "{{name}}: {{from}} → {{to}}",
       "notIncluded": "not included",
       "dismiss": "Got it"
+    },
+    "billing": {
+      "price": "Price",
+      "cycle": "Billing cycle",
+      "nextPaymentDue": "Next payment due",
+      "accessUntil": "Access until",
+      "manualNote": "Atlas doesn't charge you automatically. To continue without a break, pay for the next period before {{date}}. If no payment is confirmed by then, your plan goes into a grace period and then expires.",
+      "manualNoteNoDate": "Atlas doesn't charge you automatically. Pay for each period yourself to keep your plan.",
+      "cancelledNote": "You've cancelled: your plan ends on {{date}} and nothing more is due. To keep it, pay for the next period before then.",
+      "graceNote": "Your paid period has ended. Pay by {{date}} to keep your plan; after that it expires.",
+      "graceNoteNoDate": "Your paid period has ended. Pay now to keep your plan before it expires.",
+      "payNextPeriod": "Pay for the next period",
+      "payNow": "Pay now",
+      "trialEndsOn": "Your trial ends on {{date}}.",
+      "trialWhatHappens": "Nothing is charged automatically. When the trial ends you'll need a plan to keep managing your academies. Nothing is deleted: your academies, courses and students stay."
     }
   },
   "usage": {
@@ -119,8 +136,8 @@
     }
   },
   "addOns": {
-    "title": "Add-ons",
-    "subtitle": "Add-ons active on your subscription, and what else is available.",
+    "title": "Subscription add-ons",
+    "subtitle": "What's active on your subscription, and the add-ons you can buy.",
     "activeSectionTitle": "Active add-ons",
     "noActiveAddOns": "No active add-ons",
     "noActiveAddOnsDescription": "You don't have any add-ons active on your subscription yet.",
@@ -146,7 +163,13 @@
     "selectableFooterNote": "Selecting a plan starts checkout — no payment is taken until you complete it.",
     "tryFreeForDays_one": "Try {{plan}} for 1 day",
     "tryFreeForDays_other": "Try {{plan}} for {{count}} days",
-    "tryFree": "Try {{plan}}"
+    "tryFree": "Try {{plan}}",
+    "priceOr": "or",
+    "payNextPeriod": "Pay for the next period",
+    "renewNote": "Your current plan. Paying adds one more period after your current one ends; no paid day is lost.",
+    "buyCurrentPlan": "Buy this plan",
+    "buyCurrentNote": "Your current plan. Buying it starts a paid period once the payment is confirmed.",
+    "notForSale": "Not available to buy yet. Contact support if you need this plan."
   },
   "platformAdmin": {
     "trialPolicy": {
@@ -184,10 +207,10 @@
   },
   "cancellation": {
     "trialTitle": "Cancel your trial?",
-    "trialDescription": "Your trial ends as soon as you confirm, and this workspace loses access. Trials are one per customer, so you won't be able to start another one.",
+    "trialDescription": "Your trial ends as soon as you confirm, and you'll need a plan to keep managing your academies. Nothing is deleted: your academies, courses and students stay. Trials are one per customer, so you won't be able to start another one.",
     "subscriptionTitle": "Cancel your subscription?",
-    "subscriptionDescription": "Your subscription will not renew. You keep access until the end of your current billing period.",
-    "subscriptionDescriptionWithDate": "Your subscription will not renew. You keep full access until {{date}} — you're not losing time you've already paid for.",
+    "subscriptionDescription": "Your subscription ends at the end of your current billing period instead of continuing. You keep access until then, and nothing more is due.",
+    "subscriptionDescriptionWithDate": "Your subscription ends on {{date}} instead of continuing. You keep full access until then — you're not losing time you've already paid for — and nothing more is due.",
     "reasonLabel": "Why are you cancelling?",
     "reasonPlaceholder": "Choose a reason",
     "feedbackLabel": "Anything else you'd like to tell us?",
@@ -208,7 +231,10 @@
       "switching_provider": "Switching to something else",
       "temporary_pause": "Pausing for now",
       "other": "Something else"
-    }
+    },
+    "reasonRequired": "Choose a reason to continue.",
+    "feedbackField": "Your feedback",
+    "failedInline": "We couldn't cancel that"
   },
   "subscriptionRequired": {
     "title": "Your subscription has ended",
@@ -428,5 +454,17 @@
     "adminPlanSummary": "Gifted setup days: {{monthly}} monthly · {{yearly}} yearly",
     "adminNone": "none",
     "adminGiftEnds": "Gift ends {{date}}"
+  },
+  "catalogText": {
+    "addOns": {
+      "extra-academy": {
+        "name": "Extra Academy",
+        "description": "Raises your academy limit by 2."
+      },
+      "live-sessions": {
+        "name": "Live Sessions",
+        "description": "Run live classes inside your courses with Zoom, with attendance tracking and optional recording."
+      }
+    }
   }
 }

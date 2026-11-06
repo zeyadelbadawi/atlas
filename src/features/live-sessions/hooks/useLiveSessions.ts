@@ -13,7 +13,7 @@ import {
   useAcademyBoundMutation,
 } from '@/shared/hooks';
 import type { AcademyScopedVariables } from '@/shared/hooks';
-import { liveSessionKeys } from '@services/query';
+import { INLINE_ERRORS_META, liveSessionKeys } from '@services/query';
 import { liveSessionService } from '../services/LiveSessionService';
 import type {
   CreateLiveSessionInput,
@@ -90,6 +90,9 @@ export function useCreateLiveSession(
       liveSessionService.create(academyId, courseId!, input),
     onSuccess: invalidate,
     successMessageKey: 'liveSessions:toast.created',
+    // B5 (UX audit) — the form dialog shows the failure itself.
+    showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 
   return useAcademyBoundMutation(mutation, academyId);
@@ -112,6 +115,35 @@ export function useUpdateLiveSession(
       liveSessionService.update(academyId, liveSessionId, input),
     onSuccess: invalidate,
     successMessageKey: 'liveSessions:toast.updated',
+    // B5 (UX audit) — the form dialog shows the failure itself.
+    showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
+  });
+
+  return useAcademyBoundMutation(mutation, academyId);
+}
+
+/**
+ * B5 (UX audit) — cancels a session (`PATCH … { status: 'cancelled' }`,
+ * the only cancel the API has). The backend cancels the Zoom meeting, if
+ * one exists, and tells the enrolled students. One toast on failure.
+ */
+export function useCancelLiveSession(
+  academyId: string | undefined,
+  courseId: string | undefined
+) {
+  const invalidate = useInvalidateLiveSessions(courseId);
+  const mutation = useApiMutation<
+    LiveSession,
+    AcademyScopedVariables<{ readonly liveSessionId: string }>,
+    ApiError
+  >({
+    mutationFn: ({ academyId, payload: { liveSessionId } }) =>
+      liveSessionService.update(academyId, liveSessionId, {
+        status: 'cancelled',
+      }),
+    onSuccess: invalidate,
+    successMessageKey: 'liveSessions:toast.cancelled',
   });
 
   return useAcademyBoundMutation(mutation, academyId);

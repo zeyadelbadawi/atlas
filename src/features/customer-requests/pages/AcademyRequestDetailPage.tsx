@@ -36,7 +36,10 @@ import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@app/providers';
-import { MIRROR_IN_RTL, cn } from '@utils';
+import { MIRROR_IN_RTL, cn, isTranslatedString } from '@utils';
+import { resolveErrorTextKey } from '@hooks';
+import { errorMessageKey } from '@services';
+import { isApiError } from '@api';
 import { buildPath, DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import type { BreadcrumbItem } from '@types';
 import {
@@ -60,7 +63,7 @@ import { CustomerRequestBrief } from '../components/CustomerRequestBrief';
 import { CustomerRequestTimeline } from '../components/CustomerRequestTimeline';
 
 export default function AcademyRequestDetailPage(): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { notify, notifySuccess } = useToast();
   const { requestId } = useParams<{ requestId: string }>();
   const { academyId, canRequest, isResolving } = useCustomerRequestAccess();
@@ -91,8 +94,19 @@ export default function AcademyRequestDetailPage(): JSX.Element {
     { labelKey: `${CR_NS}:detail.breadcrumb` },
   ];
 
+  // B5 (UX audit) — ONE toast (the hooks mark their errors inline) with the
+  // action's title and the REAL reason: the request's own refusal when it
+  // has one, else what kind of failure it was — never a bare title.
   const failWith = (titleKey: string, error: unknown) => {
-    const reasonKey = customerRequestErrorKey(error);
+    const reasonKey =
+      customerRequestErrorKey(error) ??
+      (isApiError(error)
+        ? resolveErrorTextKey(
+            error.messageKey,
+            errorMessageKey(error.kind),
+            (key) => isTranslatedString(i18n, key)
+          )
+        : undefined);
     notify({
       intent: 'error',
       titleKey,

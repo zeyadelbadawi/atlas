@@ -43,7 +43,7 @@ import { PageContainer, PageHeader } from '@components/layout';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useAuth, useToast } from '@hooks';
 import { formatDate } from '@utils';
-import { usePlanCatalog } from '../hooks';
+import { usePlanCatalog, useTenantSubscription } from '../hooks';
 import { useStartTrial } from '../hooks/useSubscriptionLifecycle';
 import { useSubscriptionLifecycleState } from '../hooks/useSubscriptionLifecycleState';
 import { PlanComparisonDialog } from '../components/PlanComparisonDialog';
@@ -57,6 +57,11 @@ export default function PlansPage(): JSX.Element {
   const { toast } = useToast();
   const { organization } = useAuth();
   const planCatalogQuery = usePlanCatalog();
+  // B5 (UX audit) — the current plan is marked, and its card says what
+  // checking it out does. A brand-new organization has none (404): then
+  // nothing is marked.
+  const subscriptionQuery = useTenantSubscription();
+  const subscription = subscriptionQuery.data;
   const { state: lifecycle } = useSubscriptionLifecycleState();
   const startTrial = useStartTrial();
 
@@ -127,14 +132,24 @@ export default function PlansPage(): JSX.Element {
 
       <PlanComparisonDialog
         open
-        // Closing here means "go back to the dashboard" — there is no
-        // underlying page content behind this dialog on a dedicated
-        // Plans route, unlike `TenantSubscriptionPage`'s use of it.
+        // Closing goes back to where the person came from (B5 UX audit:
+        // Escape used to land on the dashboard). There is no page content
+        // behind this dialog, so with no history it goes to the dashboard.
         onOpenChange={(open) => {
-          if (!open) navigate(DASHBOARD_ROUTES.root);
+          if (open) return;
+          const historyIndex =
+            (window.history.state as { idx?: number } | null)?.idx ?? 0;
+          if (historyIndex > 0) navigate(-1);
+          else navigate(DASHBOARD_ROUTES.root);
         }}
         plans={planCatalogQuery.data}
         isLoading={planCatalogQuery.isLoading}
+        currentPlanKey={
+          subscription && subscription.status !== 'no_plan'
+            ? subscription.plan.key
+            : undefined
+        }
+        currentStatus={subscription?.status}
         onSelectPlan={
           hasOrganization
             ? (plan) => {
