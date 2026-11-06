@@ -5,7 +5,7 @@
  */
 import { useTranslation } from 'react-i18next';
 import { CalendarClock } from 'lucide-react';
-import { useDateFormatter } from '@hooks';
+import { useDateFormatter, useBidiIsolation } from '@hooks';
 import type { TenantSubscription } from '@types';
 
 interface ScheduledPlanChangeNoticeProps {
@@ -16,6 +16,7 @@ export function ScheduledPlanChangeNotice({
   subscription,
 }: ScheduledPlanChangeNoticeProps): JSX.Element | null {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const fmt = useDateFormatter();
   const change = subscription.scheduledChange;
   if (!change) return null;
@@ -32,7 +33,7 @@ export function ScheduledPlanChangeNotice({
       />
       <span>
         {t('tenant:subscription.scheduledChange', {
-          plan: change.planName,
+          plan: isolate(change.planName),
           date: fmt.date(change.effectiveAt),
         })}
       </span>

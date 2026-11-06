@@ -23,6 +23,7 @@ import {
   SYNTHETIC_ALERT_MIN_MINUTES,
 } from '../services/PlatformObservabilityService';
 import { useNow } from '../hooks/useNow';
+import { useBidiIsolation } from '@hooks';
 
 const DEFAULT_MINUTES = 10;
 
@@ -32,6 +33,7 @@ export function SyntheticAlertControl({
   readonly state: SyntheticAlertState;
 }): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const language = i18n.language as LanguageCode;
   const { confirm } = useConfirmDialog();
   const arm = useArmSyntheticAlert();
@@ -109,7 +111,7 @@ export function SyntheticAlertControl({
                         'platformObservability:configuration.synthetic.armedAtBy',
                         {
                           time: formatDate(state.armedAt, language, 'dateTime'),
-                          user: state.armedBy,
+                          user: isolate(state.armedBy),
                         }
                       )
                     : t(

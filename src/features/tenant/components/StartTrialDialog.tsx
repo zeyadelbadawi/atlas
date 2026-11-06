@@ -32,6 +32,7 @@ import { Button } from '@/components/ui/button';
 import { formatDate } from '@utils';
 import type { LanguageCode, Plan } from '@types';
 import { resolvePlanName } from '../utils/plan-text.utils';
+import { useBidiIsolation } from '@hooks';
 
 export interface StartTrialDialogProps {
   readonly open: boolean;
@@ -50,6 +51,7 @@ export function StartTrialDialog({
   onConfirm,
 }: StartTrialDialogProps): JSX.Element | null {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const language = i18n.language as LanguageCode;
 
   if (!plan) return null;
@@ -67,32 +69,43 @@ export function StartTrialDialog({
       ? undefined
       : new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
 
-  const facts: readonly { readonly icon: LucideIcon; readonly text: string }[] = [
-    {
-      icon: CalendarClock,
-      text:
-        endsAt !== undefined
-          ? t('tenant:startTrial.factDates', {
-              date: formatDate(endsAt, language, 'short'),
-            })
-          : t('tenant:startTrial.factDatesUnknown'),
-    },
-    { icon: CreditCard, text: t('tenant:startTrial.factNoCard') },
-    { icon: ShieldCheck, text: t('tenant:startTrial.factNoAutoCharge') },
-    { icon: Rocket, text: t('tenant:startTrial.factEntitlements', { plan: planName }) },
-  ];
+  const facts: readonly { readonly icon: LucideIcon; readonly text: string }[] =
+    [
+      {
+        icon: CalendarClock,
+        text:
+          endsAt !== undefined
+            ? t('tenant:startTrial.factDates', {
+                date: formatDate(endsAt, language, 'short'),
+              })
+            : t('tenant:startTrial.factDatesUnknown'),
+      },
+      { icon: CreditCard, text: t('tenant:startTrial.factNoCard') },
+      { icon: ShieldCheck, text: t('tenant:startTrial.factNoAutoCharge') },
+      {
+        icon: Rocket,
+        text: t('tenant:startTrial.factEntitlements', {
+          plan: isolate(planName),
+        }),
+      },
+    ];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>
-            {t('tenant:startTrial.title', { plan: planName })}
+            {t('tenant:startTrial.title', { plan: isolate(planName) })}
           </DialogTitle>
           <DialogDescription>
             {days === undefined
-              ? t('tenant:startTrial.subtitleNoDays', { plan: planName })
-              : t('tenant:startTrial.subtitle', { plan: planName, count: days })}
+              ? t('tenant:startTrial.subtitleNoDays', {
+                  plan: isolate(planName),
+                })
+              : t('tenant:startTrial.subtitle', {
+                  plan: planName,
+                  count: days,
+                })}
           </DialogDescription>
         </DialogHeader>
 
@@ -128,7 +141,7 @@ export function StartTrialDialog({
           <Button type="button" onClick={onConfirm} disabled={isSubmitting}>
             {isSubmitting
               ? t('tenant:trial.starting')
-              : t('tenant:startTrial.confirm', { plan: planName })}
+              : t('tenant:startTrial.confirm', { plan: isolate(planName) })}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -45,7 +45,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { usePermissions } from '@hooks';
+import { usePermissions, useBidiIsolation } from '@hooks';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useDeleteAcademy } from '../hooks';
 import { SaveFailedAlert } from '@forms';
@@ -73,6 +73,7 @@ export function DeleteAcademyCard({
   academy,
 }: DeleteAcademyCardProps): JSX.Element | null {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const navigate = useNavigate();
   const { hasPermission } = usePermissions();
   const deleteAcademy = useDeleteAcademy();
@@ -102,7 +103,7 @@ export function DeleteAcademyCard({
       toast({
         title: t('academy:delete.deletedTitle'),
         description: t('academy:delete.deletedDescription', {
-          name: academy.name,
+          name: isolate(academy.name),
         }),
       });
       navigate(DASHBOARD_ROUTES.academy, { replace: true });
@@ -155,7 +156,9 @@ export function DeleteAcademyCard({
           <DialogHeader>
             <DialogTitle>{t('academy:delete.confirmTitle')}</DialogTitle>
             <DialogDescription>
-              {t('academy:delete.confirmDescription', { name: academy.name })}
+              {t('academy:delete.confirmDescription', {
+                name: isolate(academy.name),
+              })}
             </DialogDescription>
           </DialogHeader>
 
@@ -202,7 +205,9 @@ export function DeleteAcademyCard({
 
             <div className="space-y-2">
               <Label htmlFor="delete-academy-confirmation">
-                {t('academy:delete.typeNameLabel', { name: academy.name })}
+                {t('academy:delete.typeNameLabel', {
+                  name: isolate(academy.name),
+                })}
               </Label>
               <Input
                 id="delete-academy-confirmation"

@@ -61,6 +61,7 @@ import {
 import { WebsiteNavigationTab } from '../components/WebsiteNavigationTab';
 import { WebsitePageSeoDialog } from '../components/WebsitePageSeoDialog';
 import { WebsitePublishBar } from '../components/WebsitePublishBar';
+import { useBidiIsolation } from '@hooks';
 
 export interface SiteSettingsPanelProps {
   readonly academyId: string;
@@ -90,6 +91,7 @@ export function SiteSettingsPanel({
   onClose,
 }: SiteSettingsPanelProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   // B2 — the panel says itself why a theme change failed (one message,
   // with the reason), so the app-wide toast stays quiet.
   const updateConfig = useUpdateWebsiteConfiguration({ inlineErrors: true });
@@ -297,7 +299,9 @@ export function SiteSettingsPanel({
             </AccordionTrigger>
             <AccordionContent className="space-y-3">
               <p className="text-xs leading-relaxed text-muted-foreground">
-                {t('website:visualEditor.site.seoHint', { page: page.title })}
+                {t('website:visualEditor.site.seoHint', {
+                  page: isolate(page.title),
+                })}
               </p>
               {canManage ? (
                 <Button

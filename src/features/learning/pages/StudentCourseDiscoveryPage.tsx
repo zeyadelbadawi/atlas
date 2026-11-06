@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { useDebounce, usePagination } from '@hooks';
+import { useDebounce, usePagination, useBidiIsolation } from '@hooks';
 import { useDiscoverCourses } from '../hooks';
 import { useLearningPaths } from '../context/LearningPaths.context';
 import { formatCoursePricing } from '@features/course';
@@ -30,6 +30,7 @@ import type { CoursePricingType } from '@types';
 
 export default function StudentCourseDiscoveryPage(): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const navigate = useNavigate();
   // P64 Phase 2 (D2) — was `buildPath(DASHBOARD_ROUTES.learningCourseDetail)`.
   // That constant is gone with the rest of the dashboard learner routes, and
@@ -180,7 +181,7 @@ export default function StudentCourseDiscoveryPage(): JSX.Element {
                   {course.instructors.length > 0 ? (
                     <p className="text-xs text-muted-foreground">
                       {t('learning:discovery.card.byInstructor', {
-                        name: course.instructors[0].name,
+                        name: isolate(course.instructors[0].name),
                       })}
                     </p>
                   ) : null}

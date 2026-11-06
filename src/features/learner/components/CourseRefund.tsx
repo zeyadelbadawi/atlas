@@ -36,7 +36,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useDateFormatter } from '@hooks';
+import { useDateFormatter, useBidiIsolation } from '@hooks';
 import { apiErrorMessage } from '@utils';
 import { formatMoney } from '@features/billing';
 import type { ApiError } from '@api';
@@ -69,6 +69,7 @@ export function RequestRefundDialog({
   onClose,
 }: RequestRefundDialogProps): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const reasonId = useId();
   const hintId = useId();
 
@@ -95,7 +96,7 @@ export function RequestRefundDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>
             {t('learning:learnerDashboard.purchases.refund.dialog.title', {
-              course,
+              course: isolate(course),
             })}
           </AlertDialogTitle>
           <AlertDialogDescription>

@@ -9,7 +9,7 @@ import type { LucideIcon } from 'lucide-react';
 import { Inbox } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { cn } from '@utils';
+import { cn, directionOf, isolateValues } from '@utils';
 
 /** A call to action rendered inside an empty state. */
 export interface EmptyStateAction {
@@ -48,7 +48,10 @@ export function EmptyState({
   headingLevel: Heading = 'h3',
   className,
 }: EmptyStateProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // RTL sweep: interpolated values (names, titles) are bidi-isolated so
+  // they cannot reorder the translated sentence (no-op in LTR).
+  const shown = isolateValues(values ?? {}, directionOf(i18n));
   const PrimaryIcon = primaryAction?.icon;
   const SecondaryIcon = secondaryAction?.icon;
 
@@ -72,10 +75,10 @@ export function EmptyState({
             Heading === 'h1' && 'tracking-normal'
           )}
         >
-          {t(titleKey, values ?? {})}
+          {t(titleKey, shown)}
         </Heading>
         <p className="mx-auto max-w-prose text-sm text-muted-foreground">
-          {t(descriptionKey, values ?? {})}
+          {t(descriptionKey, shown)}
         </p>
       </div>
 

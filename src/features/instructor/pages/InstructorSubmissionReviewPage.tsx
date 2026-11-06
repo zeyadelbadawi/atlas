@@ -56,6 +56,7 @@ import {
   useLanguage,
   usePermissions,
   useUnsavedChanges,
+  useBidiIsolation,
 } from '@hooks';
 import { formatBytes, formatNumber } from '@utils';
 import { getSubmissionStatusTone, useAssignments } from '@features/learning';
@@ -80,6 +81,7 @@ const GRADE_FIELDS = {
 export default function InstructorSubmissionReviewPage(): JSX.Element {
   const fmt = useDateFormatter();
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { language } = useLanguage();
   const navigate = useNavigate();
   const { confirm } = useConfirmDialog();
@@ -177,7 +179,7 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
       title: t('instructor:grading.success'),
       description: t('instructor:grading.successDescription', {
         score: formatNumber(data.score, language),
-        student: submission?.studentName ?? '',
+        student: isolate(submission?.studentName ?? ''),
       }),
     });
     // Graded: going back must not ask about the grade just saved.

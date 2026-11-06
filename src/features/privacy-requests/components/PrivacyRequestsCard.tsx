@@ -44,7 +44,7 @@ import {
   InputOTPSlot,
 } from '@/components/ui/input-otp';
 import { StatusBadge } from '@components/data-display';
-import { useCurrentUser, useDateFormatter } from '@hooks';
+import { useCurrentUser, useDateFormatter, useBidiIsolation } from '@hooks';
 import { useToast } from '@app/providers';
 import { downloadBlob } from '@utils';
 import type { ApiError } from '@api';
@@ -73,6 +73,7 @@ function toErrorKey(error: unknown): string {
 
 export function PrivacyRequestsCard(): JSX.Element | null {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const user = useCurrentUser();
   const fmt = useDateFormatter();
   const { notifySuccess } = useToast();
@@ -320,7 +321,9 @@ export function PrivacyRequestsCard(): JSX.Element | null {
               <div className="space-y-1">
                 <p className="font-medium">{t(`${NS}.codeTitle`)}</p>
                 <p className="text-sm text-muted-foreground">
-                  {t(`${NS}.codeDescription`, { email: challenge.maskedEmail })}
+                  {t(`${NS}.codeDescription`, {
+                    email: isolate(challenge.maskedEmail),
+                  })}
                 </p>
               </div>
               <div className="space-y-2">

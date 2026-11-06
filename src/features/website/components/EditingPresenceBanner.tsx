@@ -13,6 +13,7 @@
 import { useTranslation } from 'react-i18next';
 import { Users } from 'lucide-react';
 import type { EditingParticipant } from '@types';
+import { useBidiIsolation } from '@hooks';
 
 export interface EditingPresenceBannerProps {
   readonly participants: readonly EditingParticipant[];
@@ -22,6 +23,7 @@ export function EditingPresenceBanner({
   participants,
 }: EditingPresenceBannerProps): JSX.Element | null {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
 
   if (participants.length === 0) return null;
 
@@ -41,13 +43,13 @@ export function EditingPresenceBanner({
       <p>
         {others === 0
           ? t('website:presence.oneEditing', {
-              name: first.name,
+              name: isolate(first.name),
               role: t(`website:presence.roles.${first.role}`, {
                 defaultValue: first.role,
               }),
             })
           : t('website:presence.manyEditing', {
-              name: first.name,
+              name: isolate(first.name),
               count: others,
             })}
       </p>

@@ -43,6 +43,7 @@ import {
   basisPointsToPercent,
   percentToBasisPoints,
 } from '../utils/commission.utils';
+import { useBidiIsolation } from '@hooks';
 
 export interface PlanCommissionTarget {
   readonly planKey: string;
@@ -60,6 +61,7 @@ export function PlanCommissionDialog({
   onClose,
 }: PlanCommissionDialogProps): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { notifySuccess } = useToast();
   const updatePlan = useUpdatePlanCommission();
 
@@ -116,7 +118,7 @@ export function PlanCommissionDialog({
         <DialogHeader>
           <DialogTitle>
             {t('platformCommerce:commission.plans.dialogTitle', {
-              plan: target?.planName ?? '',
+              plan: isolate(target?.planName ?? ''),
             })}
           </DialogTitle>
           <DialogDescription>

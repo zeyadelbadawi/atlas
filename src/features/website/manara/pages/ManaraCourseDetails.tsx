@@ -446,10 +446,10 @@ export function ManaraCourseDetails({
                         {formatManaraIndex(index, locale)}
                       </span>
                       <div className="mnp-track-head">
-                        <h3
-                          className="mn-font-display min-w-0 text-lg font-bold"
-                          dir="auto"
-                        >
+                        <h3 className="mn-font-display min-w-0 text-lg font-bold">
+                          {/* The title's direction on the title alone: on
+                              the heading, `dir="auto"` was decided by the
+                              hidden translated label in front of it. */}
                           <span className="mn-sr-only">
                             {t(
                               'website:manara.pages.courseDetails.sectionLabel',
@@ -458,7 +458,7 @@ export function ManaraCourseDetails({
                               }
                             )}{' '}
                           </span>
-                          {section.title}
+                          <bdi>{section.title}</bdi>
                         </h3>
                         {section.lessons.length > 0 ? (
                           <ManaraPill>

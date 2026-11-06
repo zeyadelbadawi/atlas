@@ -30,6 +30,7 @@ import {
   formatManaraNumber,
   manaraEnter,
 } from '../manara-parts';
+import { useBidiIsolation } from '@hooks';
 import '../manara-pages.css';
 
 export function ManaraNotFound({
@@ -115,6 +116,7 @@ export function ManaraComingSoon({
   academyLogo,
 }: ThemeComingSoonProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const headingId = useId();
   return (
     <main
@@ -147,7 +149,7 @@ export function ManaraComingSoon({
             </p>
             <ManaraHeading as="h1" id={headingId} size="title">
               {t('website:manara.pages.comingSoon.title', {
-                name: academyName,
+                name: isolate(academyName),
               })}
             </ManaraHeading>
             <p

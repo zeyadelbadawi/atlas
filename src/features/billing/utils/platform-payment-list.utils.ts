@@ -13,20 +13,29 @@ import type {
   PaymentLifecycleStatus,
   PaymentMethodType,
 } from '@types';
+import { isolateTextIn, type TextDirection } from '@utils';
 
-/** "Pro · Yearly", "Add-on: Extra seats", or the key when no display name was frozen on the checkout. */
+/**
+ * "Pro · Yearly", "Add-on: Extra seats", or the key when no display name was
+ * frozen on the checkout. A translated phrase: render it in the page's
+ * direction (no `dir="auto"`); in RTL the plan name is bidi-isolated so a
+ * Latin name cannot turn "Pro · سنوي" left-to-right.
+ */
 export function formatCheckoutSummary(
   t: TFunction,
-  summary: Payment['checkoutSummary']
+  summary: Payment['checkoutSummary'],
+  direction: TextDirection = 'ltr'
 ): string | undefined {
   if (!summary) return undefined;
   const name = summary.displayName ?? summary.targetKey;
   if (summary.targetType === 'add_on') {
-    return t('payments:platformReview.addOnPlan', { name });
+    return t('payments:platformReview.addOnPlan', {
+      name: isolateTextIn(direction, name),
+    });
   }
   return summary.billingCycle
     ? t('payments:platformReview.planWithCycle', {
-        plan: name,
+        plan: isolateTextIn(direction, name),
         cycle: t(`payments:common.billingCycle.${summary.billingCycle}`),
       })
     : name;

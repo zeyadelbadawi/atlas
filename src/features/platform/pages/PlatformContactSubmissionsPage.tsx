@@ -39,7 +39,12 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@app/providers';
-import { useDateFormatter, useLanguage, usePagination } from '@hooks';
+import {
+  useDateFormatter,
+  useLanguage,
+  usePagination,
+  useBidiIsolation,
+} from '@hooks';
 import { cn, formatNumber } from '@utils';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import type { BreadcrumbItem } from '@types';
@@ -73,6 +78,7 @@ const K = 'platform:contactSubmissions';
 
 export default function PlatformContactSubmissionsPage(): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { language } = useLanguage();
   const fmt = useDateFormatter();
   const { notify, notifySuccess, notifyError } = useToast();
@@ -507,7 +513,7 @@ export default function PlatformContactSubmissionsPage(): JSX.Element {
             <AlertDialogTitle>{t(`${K}.deleteDialog.title`)}</AlertDialogTitle>
             <AlertDialogDescription>
               {t(`${K}.deleteDialog.description`, {
-                name: toDelete?.name ?? '',
+                name: isolate(toDelete?.name ?? ''),
               })}
             </AlertDialogDescription>
           </AlertDialogHeader>

@@ -23,7 +23,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { StatusBadge } from '@components/data-display';
-import { useDateFormatter, useLanguage } from '@hooks';
+import { useDateFormatter, useLanguage, useBidiIsolation } from '@hooks';
 import { MIRROR_IN_RTL, cn, formatRelativeTime } from '@utils';
 import { CR_NS } from '../constants/customer-request.constants';
 import {
@@ -89,6 +89,7 @@ function TimelineItem({
   readonly isLast: boolean;
 }): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { language } = useLanguage();
   const fmt = useDateFormatter();
   const Icon = KIND_ICON[event.kind];
@@ -99,7 +100,9 @@ function TimelineItem({
     event.kind === 'team_message' ||
     event.kind === 'internal_note';
   const fromTeam = event.actorSide === 'team';
-  const actor = event.actorName;
+  // The headline is a translated sentence (page direction); the names in
+  // it are bidi-isolated so a Latin name cannot reorder it.
+  const actor = isolate(event.actorName);
 
   const headline = (() => {
     switch (event.kind) {
@@ -111,7 +114,7 @@ function TimelineItem({
         return event.assignee
           ? t(`${CR_NS}:timeline.assigned`, {
               actor,
-              assignee: event.assignee.name,
+              assignee: isolate(event.assignee.name),
             })
           : t(`${CR_NS}:timeline.unassigned`, { actor });
       case 'internal_note':
@@ -155,7 +158,7 @@ function TimelineItem({
       <div className="min-w-0 space-y-2 pt-1">
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
           <p className="min-w-0 text-sm font-medium text-foreground">
-            <span dir="auto">{headline}</span>
+            <span>{headline}</span>
             {fromTeam && !isInternal ? (
               <span className="ms-2 text-xs font-normal text-muted-foreground">
                 {t(`${CR_NS}:timeline.atlasTeam`)}

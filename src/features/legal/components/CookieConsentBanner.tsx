@@ -16,6 +16,7 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { useCookieConsent } from '../consent/CookieConsentProvider';
+import { useBidiIsolation } from '@hooks';
 
 export interface CookieConsentBannerProps {
   /** Rendered on an academy website rather than on the Atlas platform. */
@@ -29,6 +30,7 @@ export function CookieConsentBanner({
   academyName,
 }: CookieConsentBannerProps = {}) {
   const { t } = useTranslation(['legal']);
+  const { isolate } = useBidiIsolation();
   const { needsDecision, decide, openPreferences } = useCookieConsent();
 
   if (!needsDecision) return null;
@@ -52,7 +54,9 @@ export function CookieConsentBanner({
             {!academySite
               ? t('legal:consent.bannerBody')
               : academyName
-                ? t('legal:consent.bannerBodyAcademy', { academyName })
+                ? t('legal:consent.bannerBodyAcademy', {
+                    academyName: isolate(academyName),
+                  })
                 : t('legal:consent.bannerBodySite')}
           </p>
         </div>

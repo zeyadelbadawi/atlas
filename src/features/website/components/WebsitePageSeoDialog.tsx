@@ -50,6 +50,7 @@ import {
 import { resolvePageSeo } from '../utils/seo-resolution.utils';
 import { DEFAULT_PUBLIC_WEBSITE_LOCALE } from '../constants/locale.constants';
 import type { LocalizedText, WebsiteConfiguration, WebsitePage } from '@types';
+import { useBidiIsolation } from '@hooks';
 
 const EMPTY_LOCALIZED: LocalizedText = { en: '', ar: '' };
 
@@ -97,6 +98,7 @@ export function WebsitePageSeoDialog({
   onOpenChange,
 }: WebsitePageSeoDialogProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const updatePage = useUpdateWebsitePage({ inlineErrors: true });
   const [ogImage, setOgImage] = useState(page.seo.ogImage);
 
@@ -205,8 +207,8 @@ export function WebsitePageSeoDialog({
         </DialogHeader>
         <p className="rounded-md bg-muted p-3 text-xs text-muted-foreground">
           {t('website:seo.resolvedFallbackHint', {
-            title: resolved.title,
-            description: resolved.description,
+            title: isolate(resolved.title),
+            description: isolate(resolved.description),
           })}
         </p>
         <Form {...form}>

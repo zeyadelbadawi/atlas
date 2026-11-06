@@ -102,7 +102,7 @@ function AssessmentList({
             <div className="min-w-0 flex-1">
               <h3
                 dir="auto"
-                className="text-start truncate text-sm font-medium text-foreground"
+                className="truncate text-sm font-medium text-foreground"
               >
                 <Link
                   to={href}

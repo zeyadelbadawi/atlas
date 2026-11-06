@@ -160,7 +160,7 @@ export default function LearnerOverviewPage(): JSX.Element {
                     <div className="min-w-0 flex-1">
                       <h3
                         dir="auto"
-                        className="text-start truncate font-display text-sm font-semibold text-foreground"
+                        className="truncate font-display text-sm font-semibold text-foreground"
                       >
                         <Link
                           to={courseHref}
@@ -232,7 +232,7 @@ export default function LearnerOverviewPage(): JSX.Element {
                 <div className="min-w-0 flex-1">
                   <h3
                     dir="auto"
-                    className="text-start truncate text-sm font-medium text-foreground"
+                    className="truncate text-sm font-medium text-foreground"
                   >
                     <Link
                       to={buildHref(
@@ -248,7 +248,7 @@ export default function LearnerOverviewPage(): JSX.Element {
                   </h3>
                   <p
                     dir="auto"
-                    className="text-start truncate text-xs text-muted-foreground"
+                    className="truncate text-xs text-muted-foreground"
                   >
                     {deadline.courseTitle}
                   </p>
@@ -295,7 +295,7 @@ export default function LearnerOverviewPage(): JSX.Element {
                 <div className="min-w-0 flex-1">
                   <h3
                     dir="auto"
-                    className="text-start truncate text-sm font-medium text-foreground"
+                    className="truncate text-sm font-medium text-foreground"
                   >
                     <Link
                       to={buildHref(

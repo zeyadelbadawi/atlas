@@ -9,7 +9,7 @@ import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Breadcrumbs } from '@components/navigation';
 import type { BreadcrumbItem } from '@types';
-import { cn } from '@utils';
+import { cn, directionOf, isolateValues } from '@utils';
 
 export interface PageHeaderProps {
   /** Translation key for the page title. */
@@ -36,7 +36,10 @@ export function PageHeader({
   actions,
   className,
 }: PageHeaderProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // RTL sweep: interpolated values (names, titles) are bidi-isolated so
+  // they cannot reorder the translated sentence (no-op in LTR).
+  const shown = isolateValues(values ?? {}, directionOf(i18n));
 
   return (
     <header className={cn('space-y-3', className)}>
@@ -57,11 +60,11 @@ export function PageHeader({
             className="font-display text-2xl font-semibold leading-snug tracking-tight text-foreground"
             dir={title !== undefined ? 'auto' : undefined}
           >
-            {title ?? t(titleKey, values ?? {})}
+            {title ?? t(titleKey, shown)}
           </h1>
           {descriptionKey ? (
             <p className="max-w-prose text-sm text-muted-foreground">
-              {t(descriptionKey, values ?? {})}
+              {t(descriptionKey, shown)}
             </p>
           ) : null}
         </div>

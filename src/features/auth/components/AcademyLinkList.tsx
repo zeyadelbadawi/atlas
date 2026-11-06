@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowUpRight, GraduationCap } from 'lucide-react';
 import { cn } from '@utils';
 import { buildAcademyUrl } from '../utils/academy-surface.utils';
+import { useBidiIsolation } from '@hooks';
 
 export interface AcademyLinkListItem {
   readonly academyId: string;
@@ -41,6 +42,7 @@ export function AcademyLinkList({
   className,
 }: AcademyLinkListProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
 
   if (academies.length === 0) {
     return (
@@ -53,7 +55,8 @@ export function AcademyLinkList({
     );
   }
 
-  const single = emphasizeSingle && academies.length === 1 ? academies[0] : null;
+  const single =
+    emphasizeSingle && academies.length === 1 ? academies[0] : null;
   if (single?.host) {
     return (
       <a
@@ -65,7 +68,7 @@ export function AcademyLinkList({
         data-testid="academy-link-primary"
       >
         <GraduationCap className="size-4" aria-hidden />
-        {t('auth:academyList.goTo', { academy: single.name })}
+        {t('auth:academyList.goTo', { academy: isolate(single.name) })}
         <ArrowUpRight className="size-4" aria-hidden />
       </a>
     );
@@ -73,7 +76,10 @@ export function AcademyLinkList({
 
   return (
     <ul
-      className={cn('divide-y divide-border rounded-lg border border-border', className)}
+      className={cn(
+        'divide-y divide-border rounded-lg border border-border',
+        className
+      )}
       data-testid="academy-link-list"
     >
       {academies.map((academy) => {
@@ -88,7 +94,10 @@ export function AcademyLinkList({
                 aria-hidden
               />
               <span className="min-w-0">
-                <span className="block truncate font-medium text-foreground" dir="auto">
+                <span
+                  className="block truncate font-medium text-foreground"
+                  dir="auto"
+                >
                   {academy.name}
                 </span>
                 {academy.host ? (
@@ -101,7 +110,9 @@ export function AcademyLinkList({
                   </span>
                 )}
                 {academy.note ? (
-                  <span className="block text-xs text-warning">{academy.note}</span>
+                  <span className="block text-xs text-warning">
+                    {academy.note}
+                  </span>
                 ) : null}
               </span>
             </span>

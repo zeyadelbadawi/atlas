@@ -22,7 +22,7 @@ import { useTranslation } from 'react-i18next';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { useAuth, useSignIn, useToast } from '@hooks';
+import { useAuth, useSignIn, useToast, useBidiIsolation } from '@hooks';
 import { authenticationService } from '@services/identity';
 import type { ApiError } from '@api';
 import {
@@ -96,6 +96,7 @@ export function GoogleReturnFlow({
   onContext,
 }: GoogleReturnFlowProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { session, acceptSignInResult } = useAuth();
@@ -164,7 +165,7 @@ export function GoogleReturnFlow({
           toast({
             title: t('auth:google.linked.title'),
             description: t('auth:google.linked.description', {
-              email: result.email,
+              email: isolate(result.email),
             }),
           });
           navigate(context?.from ?? defaultFrom, { replace: true });

@@ -32,7 +32,7 @@ import { apiErrorKind } from '@api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuth, usePermissions } from '@hooks';
+import { useAuth, usePermissions, useBidiIsolation } from '@hooks';
 import {
   DASHBOARD_ROUTES,
   ONBOARDING_ROUTES,
@@ -69,6 +69,7 @@ import type { Academy } from '@types';
  */
 export default function AcademyDashboardPage(): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -294,7 +295,7 @@ export default function AcademyDashboardPage(): JSX.Element {
           <CardHeader>
             <CardTitle>
               {t('academy:dashboard.welcome', {
-                academyName: currentAcademy.name,
+                academyName: isolate(currentAcademy.name),
               })}
             </CardTitle>
           </CardHeader>

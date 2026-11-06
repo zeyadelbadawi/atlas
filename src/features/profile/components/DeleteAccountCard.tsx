@@ -64,7 +64,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useAuth } from '@hooks';
+import { useAuth, useBidiIsolation } from '@hooks';
 import { useToast } from '@app/providers';
 import { currentUserService } from '@services/identity';
 import type { AccountDeletionChallenge } from '@services/identity/current-user.service';
@@ -95,6 +95,7 @@ export function DeleteAccountCard({
   user,
 }: DeleteAccountCardProps): JSX.Element | null {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const { notifyError } = useToast();
@@ -256,7 +257,7 @@ export function DeleteAccountCard({
                 </p>
                 <p className="text-sm text-muted-foreground">
                   {t('profile:deleteAccount.codeDescription', {
-                    email: challenge.maskedEmail,
+                    email: isolate(challenge.maskedEmail),
                   })}
                 </p>
               </div>
@@ -340,7 +341,7 @@ export function DeleteAccountCard({
               <div className="space-y-2">
                 <Label htmlFor="delete-account-confirmation">
                   {t('profile:deleteAccount.typeEmailLabel', {
-                    email: user.email,
+                    email: isolate(user.email),
                   })}
                 </Label>
                 <Input

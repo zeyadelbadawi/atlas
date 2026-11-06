@@ -112,9 +112,10 @@ describe('PriceChangeNotice', () => {
 
   it('is translated in Arabic', () => {
     renderNotice(withNotice, 'ar');
+    // RTL sweep: the plan name is bidi-isolated inside the sentence.
     expect(
       screen.getByTestId('subscription-price-change').textContent
-    ).toContain('تتغير خطة Academy عند تجديدك القادم');
+    ).toContain('تتغير خطة \u2068Academy\u2069 عند تجديدك القادم');
     expect(screen.getByRole('button', { name: 'فهمت' })).toBeTruthy();
   });
 });

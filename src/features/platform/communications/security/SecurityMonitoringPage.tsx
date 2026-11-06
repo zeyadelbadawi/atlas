@@ -48,7 +48,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from '@/components/ui/chart';
-import { useDateFormatter, useLanguage } from '@hooks';
+import { useDateFormatter, useLanguage, useBidiIsolation } from '@hooks';
 import { formatNumber, formatPercentage } from '@utils';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import type { BreadcrumbItem } from '@types';
@@ -218,6 +218,7 @@ function TrendChart({
 
 export default function SecurityMonitoringPage(): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { language } = useLanguage();
   const fmt = useDateFormatter();
   const [params, setParams] = useSearchParams();
@@ -308,7 +309,9 @@ export default function SecurityMonitoringPage(): JSX.Element {
       item.occurrences > 1
         ? t(`${K}.events.occurrences`, { count: item.occurrences })
         : null,
-      item.academy?.name ?? null,
+      // The joined line is mixed translated text: page direction, with
+      // the academy's (user-written) name isolated.
+      item.academy?.name ? isolate(item.academy.name) : null,
     ]
       .filter(Boolean)
       .join(' · ') || t('platformEmail:common.notAvailable');
@@ -514,7 +517,7 @@ export default function SecurityMonitoringPage(): JSX.Element {
                       t('platformEmail:common.notAvailable')
                     )}
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground" dir="auto">
+                  <td className="px-4 py-3 text-muted-foreground">
                     {detailsText(item)}
                   </td>
                 </tr>
@@ -540,7 +543,7 @@ export default function SecurityMonitoringPage(): JSX.Element {
               <p className="truncate text-sm" dir="auto">
                 {accountText(item)}
               </p>
-              <p className="text-xs text-muted-foreground" dir="auto">
+              <p className="text-xs text-muted-foreground">
                 {surfaceText(item)} · {detailsText(item)}
               </p>
             </li>

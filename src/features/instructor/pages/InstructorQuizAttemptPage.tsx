@@ -851,7 +851,8 @@ export default function InstructorQuizAttemptPage(): JSX.Element {
                 </span>
                 <span
                   dir="ltr"
-                  className="block text-start text-xs text-muted-foreground"
+                  data-ltr-content
+                  className="block text-xs text-muted-foreground"
                 >
                   {attempt.studentEmail}
                 </span>

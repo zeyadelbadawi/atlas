@@ -66,7 +66,7 @@ import type { LucideIcon } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
-import { formatDate } from '@utils';
+import { formatDate, isolateTextIn } from '@utils';
 import { useSubscriptionLifecycleState } from '../hooks/useSubscriptionLifecycleState';
 import { useTenantRetention } from '../hooks/useTenantRetention';
 import type {
@@ -76,6 +76,7 @@ import type {
   TenantRetention,
 } from '@types';
 import { resolvePlanName } from '../utils/plan-text.utils';
+import { LANGUAGES } from '@localization';
 
 /**
  * How loudly to speak. Derived from the lifecycle, never from whether
@@ -187,7 +188,14 @@ function buildContent(
   language: LanguageCode
 ): PanelContent | null {
   // P54 — the plan's bilingual catalog name, not its English `name`.
-  const planName = state.plan ? resolvePlanName(state.plan, language) : '';
+  // RTL sweep: bidi-isolated, since every use is inside a translated
+  // sentence ("ابدأ تجربة Growth") that must keep the page's direction.
+  const planName = state.plan
+    ? isolateTextIn(
+        LANGUAGES[language].direction,
+        resolvePlanName(state.plan, language)
+      )
+    : '';
 
   switch (state.lifecycle) {
     case 'no_organization':
@@ -370,7 +378,9 @@ export function LifecyclePanel(): JSX.Element | null {
     !!state &&
     RETENTION_POSSIBLE_LIFECYCLES.has(state.lifecycle) &&
     hasPermission(RETENTION_VIEW_PERMISSION);
-  const { data: retention } = useTenantRetention({ enabled: retentionPossible });
+  const { data: retention } = useTenantRetention({
+    enabled: retentionPossible,
+  });
 
   /*
     A Platform/SaaS Owner is a platform operator, not a customer.

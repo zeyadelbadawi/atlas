@@ -5,7 +5,7 @@
  * readable for colour-blind users and in monochrome print.
  */
 import { useTranslation } from 'react-i18next';
-import { cn } from '@utils';
+import { cn, directionOf, isolateValues } from '@utils';
 
 /** Semantic tone of a status. */
 export type StatusTone =
@@ -35,7 +35,10 @@ export function StatusBadge({
   values,
   className,
 }: StatusBadgeProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // RTL sweep: interpolated values (names, titles) are bidi-isolated so
+  // they cannot reorder the translated sentence (no-op in LTR).
+  const shown = isolateValues(values ?? {}, directionOf(i18n));
 
   return (
     <span
@@ -47,7 +50,7 @@ export function StatusBadge({
     >
       {/* A dot reinforces the tone without becoming the only signal. */}
       <span className="size-1.5 rounded-pill bg-current" aria-hidden />
-      {t(labelKey, values ?? {})}
+      {t(labelKey, shown)}
     </span>
   );
 }

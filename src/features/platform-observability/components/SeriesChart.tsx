@@ -227,9 +227,11 @@ export function SeriesChart({
                     key={index}
                     scope="col"
                     className="px-3 py-2 text-end font-medium"
-                    dir="auto"
                   >
-                    {names[index]}
+                    {/* `<bdi>`, not `dir` on the cell: with its own `dir`
+                        the header's `text-end` was resolved against the
+                        name's direction and left the numeric column. */}
+                    <bdi>{names[index]}</bdi>
                   </th>
                 ))}
               </tr>

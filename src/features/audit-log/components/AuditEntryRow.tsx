@@ -12,7 +12,7 @@
 import { useTranslation } from 'react-i18next';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useDateFormatter } from '@hooks';
+import { useBidiIsolation, useDateFormatter } from '@hooks';
 import {
   formatAuditEntry,
   type AuditEntryInput,
@@ -50,6 +50,7 @@ export function AuditEntryRow({
 }: AuditEntryRowProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const fmt = useDateFormatter();
+  const { isolate } = useBidiIsolation();
   const formatted = formatAuditEntry(row.input, i18n, {
     formatDateTime: fmt.dateTime,
   });
@@ -59,8 +60,11 @@ export function AuditEntryRow({
       ? t(`auditLog:roles.${row.role}`)
       : undefined;
 
+  // A translated sentence takes the page's direction — never `dir="auto"`,
+  // which let a Latin actor name turn an Arabic sentence left-to-right.
+  // Its values are bidi-isolated by `formatAuditEntry`.
   const sentence = (
-    <span className="text-sm font-medium text-foreground" dir="auto">
+    <span className="text-sm font-medium text-foreground">
       {formatted.sentence}
     </span>
   );
@@ -87,7 +91,7 @@ export function AuditEntryRow({
       {!compact && formatted.details.length > 0 ? (
         <ul className="flex flex-col gap-0.5">
           {formatted.details.map((line) => (
-            <li key={line} className="text-xs text-muted-foreground" dir="auto">
+            <li key={line} className="text-xs text-muted-foreground">
               {line}
             </li>
           ))}
@@ -138,11 +142,15 @@ export function AuditEntryRow({
                 name: row.academyName,
               })}
             >
-              {t('auditLog:list.inAcademy', { name: row.academyName })}
+              {t('auditLog:list.inAcademy', {
+                name: isolate(row.academyName),
+              })}
             </button>
           ) : (
             <span>
-              {t('auditLog:list.inAcademy', { name: row.academyName })}
+              {t('auditLog:list.inAcademy', {
+                name: isolate(row.academyName),
+              })}
             </span>
           )
         ) : null}

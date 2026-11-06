@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@app/providers';
-import { useDateFormatter } from '@hooks';
+import { useDateFormatter, useBidiIsolation } from '@hooks';
 import { apiErrorMessage } from '@utils';
 import { ACQUISITION_CHANNELS } from '@utils/acquisition-channel.utils';
 import { useSetOrganizationChannel } from '../hooks/usePlatformGrowth';
@@ -50,6 +50,7 @@ export function AcquisitionCard({
   readonly acquisition: OrganizationAcquisition | null | undefined;
 }): JSX.Element | null {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const fmt = useDateFormatter();
   const { notifySuccess } = useToast();
   const channelLabel = useChannelLabel();
@@ -121,7 +122,7 @@ export function AcquisitionCard({
               <dd className="text-xs text-muted-foreground">
                 {acquisition.override.updatedByName
                   ? t(`${K}acquisition.override.setBy`, {
-                      name: acquisition.override.updatedByName,
+                      name: isolate(acquisition.override.updatedByName),
                       date: fmt.date(acquisition.override.updatedAt),
                     })
                   : t(`${K}acquisition.override.setOn`, {
@@ -130,14 +131,14 @@ export function AcquisitionCard({
               </dd>
             ) : null}
             {acquisition.override?.note ? (
-              <dd
-                className="whitespace-pre-line rounded-md bg-muted/50 px-3 py-2 text-sm text-foreground"
-                dir="auto"
-              >
+              <dd className="whitespace-pre-line rounded-md bg-muted/50 px-3 py-2 text-sm text-foreground">
+                {/* The hidden label is translated text: the note's own
+                    direction goes on the note alone, not on the `dd` that
+                    also holds the label (whose first letter would decide). */}
                 <span className="sr-only">
                   {t(`${K}acquisition.override.note`)}:{' '}
                 </span>
-                {acquisition.override.note}
+                <bdi>{acquisition.override.note}</bdi>
               </dd>
             ) : null}
           </div>
@@ -151,11 +152,11 @@ export function AcquisitionCard({
                 : t(`${K}acquisition.notAnswered`)}
             </dd>
             {acquisition.heardFromOther ? (
-              <dd className="text-sm text-muted-foreground" dir="auto">
+              <dd className="text-sm text-muted-foreground">
                 <span className="sr-only">
                   {t(`${K}acquisition.inTheirWords`)}:{' '}
                 </span>
-                “{acquisition.heardFromOther}”
+                <bdi>“{acquisition.heardFromOther}”</bdi>
               </dd>
             ) : null}
           </div>

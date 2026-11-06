@@ -38,7 +38,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth, usePagination } from '@hooks';
+import { useAuth, usePagination, useBidiIsolation } from '@hooks';
 import { useEnrollments } from '../hooks';
 import { useLearningPaths } from '../context/LearningPaths.context';
 import { isEnrollmentAccessEnded } from '../utils/learning-status.utils';
@@ -96,6 +96,7 @@ export default function StudentMyLearningPage({
   academyId,
 }: StudentMyLearningPageProps = {}): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const navigate = useNavigate();
   const paths = useLearningPaths();
   const { user } = useAuth();
@@ -332,7 +333,7 @@ export default function StudentMyLearningPage({
                       {course?.instructors && course.instructors.length > 0 ? (
                         <p className="text-xs text-muted-foreground">
                           {t('learning:discovery.card.byInstructor', {
-                            name: course.instructors[0].name,
+                            name: isolate(course.instructors[0].name),
                           })}
                         </p>
                       ) : null}

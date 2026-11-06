@@ -45,7 +45,12 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@app/providers';
-import { useDateFormatter, useLanguage, useUnsavedChanges } from '@hooks';
+import {
+  useDateFormatter,
+  useLanguage,
+  useUnsavedChanges,
+  useBidiIsolation,
+} from '@hooks';
 import { formatNumber, toErrorsNamespaceKey } from '@utils';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import type { ApiError } from '@api';
@@ -272,6 +277,7 @@ export default function PlatformAnnouncementEditorPage(): JSX.Element {
     ? (params.get('surface') as AnnouncementSurface)
     : 'marketing_banner';
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { language, direction } = useLanguage();
   const fmt = useDateFormatter();
   const navigate = useNavigate();
@@ -1176,7 +1182,7 @@ export default function PlatformAnnouncementEditorPage(): JSX.Element {
                   {announcement.updatedByName
                     ? t(`${K}common.updatedBy`, {
                         date: fmt.dateTime(announcement.updatedAt),
-                        name: announcement.updatedByName,
+                        name: isolate(announcement.updatedByName),
                       })
                     : t(`${K}common.updatedAt`, {
                         date: fmt.dateTime(announcement.updatedAt),

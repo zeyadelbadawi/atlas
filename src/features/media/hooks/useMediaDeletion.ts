@@ -22,6 +22,7 @@ import {
   useArchiveMediaAssets,
 } from './useArchiveMediaAsset';
 import { mediaDeleteErrorMessage } from '../utils/media-delete-copy';
+import { useBidiIsolation } from '@hooks';
 
 /** The backend accepts at most this many ids per bulk request. */
 export const MEDIA_BULK_DELETE_LIMIT = 50;
@@ -57,6 +58,7 @@ export function useMediaDeletion(
   academyId: string | undefined
 ): UseMediaDeletionResult {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { confirm } = useConfirmDialog();
   const archiveOne = useArchiveMediaAsset();
   const archiveMany = useArchiveMediaAssets();
@@ -79,18 +81,25 @@ export function useMediaDeletion(
       try {
         await archiveOne.mutateAsync({ academyId, assetId: asset.id });
         toast({
-          title: t('media:delete.successOne', { fileName: asset.fileName }),
+          title: t('media:delete.successOne', {
+            fileName: isolate(asset.fileName),
+          }),
         });
         return true;
       } catch (error) {
         setOutcome({
           kind: 'error',
-          message: mediaDeleteErrorMessage(t, i18n, error, asset.fileName),
+          message: mediaDeleteErrorMessage(
+            t,
+            i18n,
+            error,
+            isolate(asset.fileName)
+          ),
         });
         return false;
       }
     },
-    [academyId, archiveOne, confirm, i18n, t]
+    [academyId, archiveOne, confirm, i18n, isolate, t]
   );
 
   const deleteMany = useCallback(

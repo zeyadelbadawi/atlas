@@ -169,6 +169,7 @@ export default function PlatformBlogListPage(): JSX.Element {
             <span
               className="block truncate text-xs text-muted-foreground"
               dir="ltr"
+              data-ltr-content
             >
               /blog/{row.original.slug}
             </span>

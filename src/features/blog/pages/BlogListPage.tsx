@@ -17,7 +17,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useDebounce, usePagination, usePermissions } from '@hooks';
+import {
+  useDebounce,
+  usePagination,
+  usePermissions,
+  useBidiIsolation,
+} from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useBlogPosts } from '../hooks';
 import type { BlogPostStatus } from '@types';
@@ -38,6 +43,7 @@ function getStatusTone(status: BlogPostStatus) {
 
 export default function BlogListPage(): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const navigate = useNavigate();
   const { hasPermission } = usePermissions();
   const canCreate = hasPermission('blog.create');
@@ -164,7 +170,9 @@ export default function BlogListPage(): JSX.Element {
                       </p>
                     ) : null}
                     <p className="mt-auto text-xs text-muted-foreground">
-                      {t('blog:list.byAuthor', { name: post.authorName })}
+                      {t('blog:list.byAuthor', {
+                        name: isolate(post.authorName),
+                      })}
                     </p>
                   </CardContent>
                 </Card>

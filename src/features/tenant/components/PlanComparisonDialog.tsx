@@ -49,6 +49,7 @@ import {
   resolvePlanName,
 } from '../utils/plan-text.utils';
 import type { LanguageCode, Plan, TenantSubscriptionStatus } from '@types';
+import { useBidiIsolation } from '@hooks';
 
 /**
  * B5 (UX audit) — "Monthly: EGP 699 · Yearly: EGP 6,990" from the plan's
@@ -210,6 +211,7 @@ export function PlanComparisonDialog({
   currentStatus,
 }: PlanComparisonDialogProps): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const unlimitedLabel = t('tenant:common.unlimited');
   /*
     P54 — plan names/descriptions are CATALOG DATA, so they are resolved
@@ -402,11 +404,11 @@ export function PlanComparisonDialog({
                         >
                           {plan.trialDurationDays
                             ? t('tenant:planComparison.tryFreeForDays', {
-                                plan: resolvePlanName(plan, locale),
+                                plan: isolate(resolvePlanName(plan, locale)),
                                 count: plan.trialDurationDays,
                               })
                             : t('tenant:planComparison.tryFree', {
-                                plan: resolvePlanName(plan, locale),
+                                plan: isolate(resolvePlanName(plan, locale)),
                               })}
                         </Button>
                       ) : null}

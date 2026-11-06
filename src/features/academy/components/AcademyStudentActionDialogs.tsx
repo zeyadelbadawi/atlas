@@ -46,6 +46,7 @@ import {
 } from '../utils/academy-roster.utils';
 import { InlineFailureAlert } from './InlineFailureAlert';
 import { TextLengthCounter } from './TextLengthCounter';
+import { useBidiIsolation } from '@hooks';
 
 interface BaseDialogProps {
   readonly open: boolean;
@@ -82,6 +83,7 @@ export function BlockStudentDialog({
   onConfirm,
 }: BlockStudentDialogProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const [reason, setReason] = useState('');
   const [tooLong, setTooLong] = useState(false);
   const dirtyGuard = useDirtyGuard(open && reason.trim() !== '');
@@ -119,7 +121,9 @@ export function BlockStudentDialog({
         <DialogHeader>
           <DialogTitle>{t('academy:students.block.title')}</DialogTitle>
           <DialogDescription>
-            {t('academy:students.block.description', { name: studentName })}
+            {t('academy:students.block.description', {
+              name: isolate(studentName),
+            })}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-2">
@@ -214,6 +218,7 @@ export function EnrollStudentDialog({
   onConfirm,
 }: EnrollStudentDialogProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const [courseId, setCourseId] = useState('');
   const [expiresOn, setExpiresOn] = useState('');
   const [attempted, setAttempted] = useState(false);
@@ -268,7 +273,9 @@ export function EnrollStudentDialog({
         <DialogHeader>
           <DialogTitle>{t('academy:students.enroll.title')}</DialogTitle>
           <DialogDescription>
-            {t('academy:students.enroll.description', { name: studentName })}
+            {t('academy:students.enroll.description', {
+              name: isolate(studentName),
+            })}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
@@ -399,6 +406,7 @@ export function RevokeEnrollmentDialog({
   onConfirm,
 }: RevokeEnrollmentDialogProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const [reason, setReason] = useState<RosterEnrollmentRevokeReason>('manual');
 
   useEffect(() => {
@@ -417,7 +425,9 @@ export function RevokeEnrollmentDialog({
         <DialogHeader>
           <DialogTitle>{t('academy:students.revoke.title')}</DialogTitle>
           <DialogDescription>
-            {t('academy:students.revoke.description', { course: courseTitle })}
+            {t('academy:students.revoke.description', {
+              course: isolate(courseTitle),
+            })}
           </DialogDescription>
         </DialogHeader>
         {/* Revoking only ends access: the order stays paid. A refund is
@@ -503,6 +513,7 @@ export function EnrollmentExpiryDialog({
   onConfirm,
 }: EnrollmentExpiryDialogProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const [expiresOn, setExpiresOn] = useState('');
   const [attempted, setAttempted] = useState(false);
 
@@ -542,7 +553,9 @@ export function EnrollmentExpiryDialog({
         <DialogHeader>
           <DialogTitle>{t('academy:students.expiry.title')}</DialogTitle>
           <DialogDescription>
-            {t('academy:students.expiry.description', { course: courseTitle })}
+            {t('academy:students.expiry.description', {
+              course: isolate(courseTitle),
+            })}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-2">

@@ -2,7 +2,7 @@
  * Announcement Detail Page.
  */
 import { useTranslation } from 'react-i18next';
-import { useDateFormatter } from '@hooks';
+import { useDateFormatter, useBidiIsolation } from '@hooks';
 import { useParams } from 'react-router-dom';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
@@ -14,6 +14,7 @@ import { useAnnouncement } from '../hooks';
 export default function AnnouncementDetailPage(): JSX.Element {
   const fmt = useDateFormatter();
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { announcementId } = useParams<{ announcementId: string }>();
 
   const {
@@ -60,7 +61,7 @@ export default function AnnouncementDetailPage(): JSX.Element {
         <CardContent className="space-y-4 pt-6">
           <p className="text-xs text-muted-foreground">
             {t('announcements:feed.byAuthor', {
-              name: announcement.authorName,
+              name: isolate(announcement.authorName),
             })}
             {announcement.publishedAt
               ? ` · ${fmt.dateTime(announcement.publishedAt)}`

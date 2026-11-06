@@ -28,6 +28,7 @@ import {
   type HostedVideoUploadPhase,
   type UploadedHostedVideo,
 } from '../utils/hosted-video-upload';
+import { useBidiIsolation } from '@hooks';
 
 const NS = 'course:builder.lessonDialog.hostedVideo';
 
@@ -58,6 +59,7 @@ export function HostedVideoField({
   onUploadingChange,
 }: HostedVideoFieldProps): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const inputRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = useState<number | null>(null);
   const [phase, setPhase] = useState<HostedVideoUploadPhase>('uploading');
@@ -146,9 +148,11 @@ export function HostedVideoField({
               className="mt-0.5 size-4 shrink-0 text-success"
               aria-hidden
             />
-            <span dir="auto">
+            <span>
               {value.fileName
-                ? t(`${NS}.attachedNamed`, { fileName: value.fileName })
+                ? t(`${NS}.attachedNamed`, {
+                    fileName: isolate(value.fileName),
+                  })
                 : t(`${NS}.attached`)}
             </span>
           </p>

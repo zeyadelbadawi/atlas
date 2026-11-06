@@ -59,9 +59,13 @@ describe('RecentActivityList', () => {
 
   it('renders Arabic sentences', () => {
     renderList('ar');
-    const rows = screen
+    const raw = screen
       .getAllByTestId('audit-entry')
-      .map((row) => row.textContent);
+      .map((row) => row.textContent ?? '');
+    // On Arabic pages names and titles are bidi-isolated (U+2068…U+2069)
+    // so a Latin name can't reorder the sentence; the words are unchanged.
+    expect(raw[0]).toContain('\u2068Sara\u2069');
+    const rows = raw.map((text) => text.replace(/[\u2066-\u2069]/g, ''));
     expect(rows[0]).toContain('Sara نشر صفحة الموقع «Pricing»');
     expect(rows[1]).toContain('أطلس حرّر النطاق «old.example.org»');
   });

@@ -413,6 +413,51 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /*
+   * A value's DIRECTION is its own; its ALIGNMENT belongs to the layout.
+   *
+   * WHAT WENT WRONG. `dir="auto"` (and `dir="ltr"`) on a value makes the
+   * element's `direction` the value's own — which is right for its reading
+   * order. But the inherited `text-align: start` is then resolved against
+   * THAT direction, so a Latin value ("manara") in an Arabic table cell
+   * sat at the LEFT of its cell while its header sat at the right; card
+   * titles, key-value rows and list rows on Arabic pages mixed left and
+   * right the same way.
+   *
+   * `match-parent` resolves an inherited start/end against the PARENT's
+   * direction, so the value lines up with its column, its label and its
+   * neighbours while its characters keep their own order. Chromium only
+   * understands the `-webkit-` spelling (MDN BCD: Chrome/Edge prefixed
+   * since 16; Firefox 40+ and Safari 15.4+ unprefixed), so both are
+   * written; each browser keeps the one it parses. An older browser that
+   * knows neither keeps the previous behaviour.
+   *
+   * SCOPE. Every `dir="auto"` element, plus `dir="ltr"` VALUES — those
+   * marked `data-ltr-content` (the codebase's LTR-value marker) and
+   * table / description-list cells. Not form controls (their alignment is
+   * typing direction), not code (`pre`, `code`, `kbd`, `samp`) and not
+   * an LTR container that is not a value (an editor pane, a Radix root, a
+   * preview frame): those keep their own alignment.
+   *
+   * Zero specificity (`:where`), in the base layer: any explicit
+   * alignment wins. To keep a LONG-FORM body (a forum post, a support
+   * message) aligned to its own direction, put `text-start` on the
+   * element — on an element with `dir`, `start` means its own start.
+   */
+  :where(
+    [dir='auto'],
+    [dir='ltr'][data-ltr-content],
+    th[dir='ltr'],
+    td[dir='ltr'],
+    dt[dir='ltr'],
+    dd[dir='ltr']
+  ):where(
+    :not(input, textarea, select, pre, code, kbd, samp, [contenteditable])
+  ) {
+    text-align: -webkit-match-parent;
+    text-align: match-parent;
+  }
+
   /* Arabic renders at a larger optical size; neutralise Latin tracking. */
   [dir='rtl'] body,
   [dir='rtl'] h1,

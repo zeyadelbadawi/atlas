@@ -21,7 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState, ErrorState } from '@components/feedback';
 import { Pagination } from '@components/data-display';
-import { useDateFormatter, usePagination } from '@hooks';
+import { useDateFormatter, usePagination, useBidiIsolation } from '@hooks';
 import { usePlanHistory } from '../hooks/usePlatformPlans';
 import type { PlanHistoryEntry } from '@types';
 
@@ -47,7 +47,15 @@ function renderValue(value: unknown): string {
   return String(value);
 }
 
-function ChangeRow({ field, from, to }: { field: string; from: unknown; to: unknown }) {
+function ChangeRow({
+  field,
+  from,
+  to,
+}: {
+  field: string;
+  from: unknown;
+  to: unknown;
+}) {
   return (
     <li className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm">
       <span className="font-medium text-foreground">{field}</span>
@@ -68,8 +76,11 @@ function ChangeRow({ field, from, to }: { field: string; from: unknown; to: unkn
   );
 }
 
-export function PlanHistoryPanel({ planKey }: PlanHistoryPanelProps): JSX.Element {
+export function PlanHistoryPanel({
+  planKey,
+}: PlanHistoryPanelProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const fmt = useDateFormatter();
 
   // `totalItems` comes back from the server, so the control is driven by the
@@ -124,12 +135,17 @@ export function PlanHistoryPanel({ planKey }: PlanHistoryPanelProps): JSX.Elemen
                     defaultValue: entry.action,
                   })}
                 </span>
-                <time className="text-xs text-muted-foreground" dateTime={entry.occurredAt}>
+                <time
+                  className="text-xs text-muted-foreground"
+                  dateTime={entry.occurredAt}
+                >
                   {fmt.dateTime(entry.occurredAt)}
                 </time>
               </div>
-              <p className="mt-1 text-xs text-muted-foreground" dir="auto">
-                {t('platform:planAdmin.history.by', { name: entry.actor.name })}
+              <p className="mt-1 text-xs text-muted-foreground">
+                {t('platform:planAdmin.history.by', {
+                  name: isolate(entry.actor.name),
+                })}
               </p>
 
               {entry.action === 'plan.subscribers_notified' ? (

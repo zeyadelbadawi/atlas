@@ -34,7 +34,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
-import { useCopyToClipboard, useDateFormatter } from '@hooks';
+import { useCopyToClipboard, useDateFormatter, useBidiIsolation } from '@hooks';
 import {
   useMyCertificateDownload,
   useMyCertificates,
@@ -98,6 +98,7 @@ function CertificateCard({
   onRefresh,
 }: CertificateCardProps): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const fmt = useDateFormatter();
   const download = useMyCertificateDownload();
   const [link, setLink] = useState<CertificateDownload | null>(null);
@@ -162,9 +163,9 @@ function CertificateCard({
             {certificate.revokeReason ? (
               <>
                 {' · '}
-                <span dir="auto">
+                <span>
                   {t('certificates:learner.card.revokeReason', {
-                    reason: certificate.revokeReason,
+                    reason: isolate(certificate.revokeReason),
                   })}
                 </span>
               </>

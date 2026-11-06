@@ -65,6 +65,98 @@ export function isolateText(text: string): string {
   return `${FIRST_STRONG_ISOLATE}${text}${POP_DIRECTIONAL_ISOLATE}`;
 }
 
+/** A paragraph's base direction, as `i18n.dir()` returns it. */
+export type TextDirection = 'ltr' | 'rtl';
+
+/**
+ * The active language's direction from an i18next instance — tolerant of a
+ * partial instance (a test double without `dir`), which reads as LTR.
+ */
+export function directionOf(
+  i18n: { readonly dir?: (lng?: string) => string } | null | undefined
+): TextDirection {
+  return typeof i18n?.dir === 'function' && i18n.dir() === 'rtl'
+    ? 'rtl'
+    : 'ltr';
+}
+
+/**
+ * RTL sweep — `isolateText` for a user value inside a TRANSLATED sentence,
+ * applied only when the sentence is laid out right-to-left.
+ *
+ * A translated sentence takes the page's direction (never `dir="auto"`: a
+ * Latin name at its start would turn a whole Arabic sentence left-to-right
+ * and read its phrases backwards). Each user value inside it is sealed in
+ * its own isolate so it can neither be reordered by its neighbours nor
+ * reorder them.
+ *
+ * WHY ONLY IN RTL. In a left-to-right page the base direction is already
+ * the sentence's, and an English sentence's values cannot flip it, so the
+ * isolate adds nothing visible — but it would add invisible characters to
+ * the text people copy and to every English string tests and locators
+ * match. Gating keeps English output byte-for-byte what it was.
+ */
+export function isolateTextIn(direction: TextDirection, text: string): string {
+  return direction === 'rtl' && text.length > 0 ? isolateText(text) : text;
+}
+
+/**
+ * i18next reads these keys of the values object as OPTIONS, not as text to
+ * interpolate (`context` picks a variant, `count` a plural form…). They must
+ * reach i18next untouched.
+ */
+const I18NEXT_OPTION_KEYS: ReadonlySet<string> = new Set([
+  'count',
+  'context',
+  'defaultValue',
+  'ordinal',
+  'ns',
+  'lng',
+  'lngs',
+  'fallbackLng',
+  'keyPrefix',
+  'returnObjects',
+  'returnDetails',
+  'joinArrays',
+  'postProcess',
+  'interpolation',
+  'replace',
+  'skipInterpolation',
+]);
+
+/**
+ * `isolateTextIn` over every TEXT value of a translation's values object —
+ * for sentences whose values come from data the template does not control
+ * (a notification's stored values, an audit row's context).
+ *
+ * Only values that contain a LETTER are isolated: numbers, booleans,
+ * objects and number-only strings (an already formatted "٣" or "1,250")
+ * pass through — a lone number has no internal order to protect and sits
+ * naturally in the sentence; an expression whose order matters goes
+ * through `isolateNumericExpression`. i18next's option keys and empty
+ * strings pass through too. For DISPLAYED text only: never
+ * for a value that ends up in a URL, an email, a filename or anything sent
+ * back to the server.
+ */
+const HAS_LETTER = /\p{L}/u;
+
+export function isolateValues<T extends Record<string, unknown>>(
+  values: T,
+  direction: TextDirection = 'rtl'
+): T {
+  if (direction !== 'rtl') return values;
+  const isolated: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(values)) {
+    isolated[key] =
+      typeof value === 'string' &&
+      !I18NEXT_OPTION_KEYS.has(key) &&
+      HAS_LETTER.test(value)
+        ? isolateTextIn(direction, value)
+        : value;
+  }
+  return isolated as T;
+}
+
 /**
  * The class that mirrors a DIRECTIONAL icon for right-to-left reading.
  *

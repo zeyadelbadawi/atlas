@@ -18,7 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { cn } from '@utils';
+import { cn, directionOf, isolateValues } from '@utils';
 import { DialogContext } from './dialog.context';
 import type { ConfirmRequest, DialogContextValue } from './dialog.context';
 
@@ -29,7 +29,7 @@ export interface AtlasDialogProviderProps {
 export function AtlasDialogProvider({
   children,
 }: AtlasDialogProviderProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [request, setRequest] = useState<ConfirmRequest | null>(null);
 
   // Holds the pending promise resolver for the dialog currently on screen.
@@ -70,6 +70,9 @@ export function AtlasDialogProvider({
   const value = useMemo<DialogContextValue>(() => ({ confirm }), [confirm]);
 
   const isDestructive = request?.intent === 'destructive';
+  // RTL sweep: names and titles in the confirmation sentence are
+  // bidi-isolated (no-op in a left-to-right language).
+  const shownValues = isolateValues(request?.values ?? {}, directionOf(i18n));
 
   return (
     <DialogContext.Provider value={value}>
@@ -90,10 +93,10 @@ export function AtlasDialogProvider({
             <>
               <AlertDialogHeader>
                 <AlertDialogTitle className="font-display text-lg">
-                  {t(request.titleKey, request.values ?? {})}
+                  {t(request.titleKey, shownValues)}
                 </AlertDialogTitle>
                 <AlertDialogDescription className="text-sm text-muted-foreground">
-                  {t(request.descriptionKey, request.values ?? {})}
+                  {t(request.descriptionKey, shownValues)}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -107,7 +110,7 @@ export function AtlasDialogProvider({
                       'bg-destructive text-destructive-foreground hover:bg-destructive/90'
                   )}
                 >
-                  {t(request.confirmLabelKey, request.values ?? {})}
+                  {t(request.confirmLabelKey, shownValues)}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </>

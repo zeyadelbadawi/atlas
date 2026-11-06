@@ -46,7 +46,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2 } from 'lucide-react';
-import { useAuth, useSignIn, useSignOut } from '@hooks';
+import { useAuth, useSignIn, useSignOut, useBidiIsolation } from '@hooks';
 import {
   WebsiteChrome,
   WebsiteAuthFrame,
@@ -89,6 +89,7 @@ export function PublicWebsiteSignInPage({
   locale,
 }: PublicWebsiteSignInPageProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   usePublicWebsiteDocumentDirection(locale);
   const data = usePublicWebsiteData(lookupKey);
   const { session } = useAuth();
@@ -238,7 +239,9 @@ export function PublicWebsiteSignInPage({
       configuration.header.authPages?.signIn?.title,
       locale
     ) ||
-    t('publicWebsite:auth.signIn.title', { academyName: academy.academyName });
+    t('publicWebsite:auth.signIn.title', {
+      academyName: isolate(academy.academyName),
+    });
   const subtitle =
     resolveLocalizedText(
       configuration.header.authPages?.signIn?.subtitle,
@@ -284,7 +287,7 @@ export function PublicWebsiteSignInPage({
               />
               <p className="font-medium text-foreground">
                 {t('publicWebsite:auth.signIn.success', {
-                  name: session.user?.name ?? '',
+                  name: isolate(session.user?.name ?? ''),
                 })}
               </p>
             </div>

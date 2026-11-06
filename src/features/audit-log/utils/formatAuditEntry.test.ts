@@ -23,6 +23,13 @@ import { formatAuditEntry, humanizeKey } from './formatAuditEntry';
 const enI18n = createI18nInstance('en');
 const arI18n = createI18nInstance('ar');
 
+/**
+ * RTL sweep — in Arabic every interpolated value is wrapped in a bidi
+ * isolate (U+2068 … U+2069) so a Latin name cannot reorder the sentence;
+ * English output carries none.
+ */
+const iso = (value: string): string => `\u2068${value}\u2069`;
+
 function resource(bundle: unknown, path: string): unknown {
   return path
     .split('.')
@@ -82,7 +89,7 @@ describe('formatAuditEntry — sentences', () => {
 
   it('Arabic: names the lesson and its unit', () => {
     expect(formatAuditEntry(lesson, arI18n).sentence).toBe(
-      'محمد أنشأ درسًا بعنوان «مقدمة في الكيمياء» داخل وحدة «التفاعلات»'
+      `${iso('محمد')} أنشأ درسًا بعنوان «${iso('مقدمة في الكيمياء')}» داخل وحدة «${iso('التفاعلات')}»`
     );
   });
 
@@ -120,7 +127,7 @@ describe('formatAuditEntry — sentences', () => {
       'Owner enrolled Lina in the course “Chemistry 101”'
     );
     expect(formatAuditEntry(entry, arI18n).sentence).toBe(
-      'Owner سجّل Lina في الدورة «Chemistry 101»'
+      `${iso('Owner')} سجّل ${iso('Lina')} في الدورة «${iso('Chemistry 101')}»`
     );
     expect(
       formatAuditEntry(
@@ -139,7 +146,9 @@ describe('formatAuditEntry — sentences', () => {
     expect(formatAuditEntry(release, enI18n).sentence).toBe(
       'Atlas published the website'
     );
-    expect(formatAuditEntry(release, arI18n).sentence).toBe('أطلس نشر الموقع');
+    expect(formatAuditEntry(release, arI18n).sentence).toBe(
+      `${iso('أطلس')} نشر الموقع`
+    );
     expect(
       formatAuditEntry({ action: 'website.published', actorName: '  ' }, enI18n)
         .actorLabel
@@ -180,7 +189,7 @@ describe('formatAuditEntry — sentences', () => {
         },
         arI18n
       ).sentence
-    ).toBe('سارة غيّر دورة');
+    ).toBe(`${iso('سارة')} غيّر دورة`);
     expect(
       formatAuditEntry(
         { action: 'future.thing', actorName: 'Sara', category: 'website' },

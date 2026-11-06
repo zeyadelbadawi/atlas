@@ -146,7 +146,13 @@ describe('AcademyActivityLogPage', () => {
       error: null,
     });
     renderPage('ar');
-    expect(screen.getByTestId('audit-entry').textContent).toContain(
+    // RTL sweep: each interpolated value is bidi-isolated (U+2068…U+2069),
+    // so compare with the isolates removed.
+    expect(
+      screen
+        .getByTestId('audit-entry')
+        .textContent?.replace(/[\u2068\u2069]/g, '')
+    ).toContain(
       'محمد أنشأ درسًا بعنوان «مقدمة في الكيمياء» داخل وحدة «التفاعلات»'
     );
     expect(screen.getByText('وصلت إلى أقدم نشاط مسجّل.')).toBeTruthy();

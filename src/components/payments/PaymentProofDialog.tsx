@@ -26,6 +26,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useBidiIsolation } from '@hooks';
 
 export interface PaymentProofDialogProps {
   readonly open: boolean;
@@ -66,6 +67,7 @@ export function PaymentProofDialog({
   subject,
 }: PaymentProofDialogProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const [state, setState] = useState<ProofState>({ status: 'loading' });
   const [attempt, setAttempt] = useState(0);
 
@@ -94,7 +96,7 @@ export function PaymentProofDialog({
   }, [open, attempt]);
 
   const title = subject
-    ? t('common:paymentProof.titleFor', { subject })
+    ? t('common:paymentProof.titleFor', { subject: isolate(subject) })
     : t('common:paymentProof.title');
   const isImage = state.status === 'ready' && state.type.startsWith('image/');
 

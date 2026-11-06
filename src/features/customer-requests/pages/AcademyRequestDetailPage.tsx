@@ -37,7 +37,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@app/providers';
 import { MIRROR_IN_RTL, cn, isTranslatedString } from '@utils';
-import { resolveErrorTextKey } from '@hooks';
+import { resolveErrorTextKey, useBidiIsolation } from '@hooks';
 import { errorMessageKey } from '@services';
 import { isApiError } from '@api';
 import { buildPath, DASHBOARD_ROUTES } from '@app/routes/route-paths';
@@ -64,6 +64,7 @@ import { CustomerRequestTimeline } from '../components/CustomerRequestTimeline';
 
 export default function AcademyRequestDetailPage(): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { notify, notifySuccess } = useToast();
   const { requestId } = useParams<{ requestId: string }>();
   const { academyId, canRequest, isResolving } = useCustomerRequestAccess();
@@ -335,7 +336,7 @@ export default function AcademyRequestDetailPage(): JSX.Element {
             </AlertDialogTitle>
             <AlertDialogDescription>
               {t(`${CR_NS}:detail.cancelDialog.description`, {
-                title: request.title,
+                title: isolate(request.title),
               })}
             </AlertDialogDescription>
           </AlertDialogHeader>

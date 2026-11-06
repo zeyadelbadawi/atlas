@@ -54,6 +54,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { apiErrorMessage, formatBytes } from '@utils';
 import { useDeleteUserAsPlatformOwner, useUserDeletionPlan } from '../hooks';
 import type { DeletionPlanLine, DeletionTreatment, LanguageCode } from '@types';
+import { useBidiIsolation } from '@hooks';
 
 export interface DeleteUserDialogProps {
   readonly open: boolean;
@@ -96,6 +97,7 @@ export function DeleteUserDialog({
   userName,
 }: DeleteUserDialogProps): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const [confirmation, setConfirmation] = useState('');
 
   const plan = useUserDeletionPlan(userId, { enabled: open });
@@ -160,10 +162,12 @@ export function DeleteUserDialog({
           </DialogTitle>
           <DialogDescription>
             {succeeded
-              ? t('platform:users.delete.doneDescription', { name: userName })
+              ? t('platform:users.delete.doneDescription', {
+                  name: isolate(userName),
+                })
               : t('platform:users.delete.confirmDescription', {
-                  name: userName,
-                  email: userEmail,
+                  name: isolate(userName),
+                  email: isolate(userEmail),
                 })}
           </DialogDescription>
         </DialogHeader>
@@ -230,7 +234,7 @@ export function DeleteUserDialog({
                 <div className="space-y-2">
                   <Label htmlFor="delete-user-confirm">
                     {t('platform:users.delete.confirmLabel', {
-                      email: userEmail,
+                      email: isolate(userEmail),
                     })}
                   </Label>
                   <Input

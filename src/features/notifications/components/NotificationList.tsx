@@ -32,7 +32,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Pagination } from '@components/data-display';
 import { EmptyState, ErrorState } from '@components/feedback';
-import type { PaginationState } from '@hooks';
+import { useBidiIsolation, type PaginationState } from '@hooks';
 import { cn, formatDate, formatRelativeTime } from '@utils';
 import type { LanguageCode, Notification } from '@types';
 
@@ -56,7 +56,12 @@ export function NotificationRow({
 }: NotificationRowProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const language = i18n.language as LanguageCode;
-  const values = notification.values ?? {};
+  // The title and message are translated sentences in the page's
+  // direction; each stored value (a course title, a sender's name, a
+  // subject) is bidi-isolated so a Latin value cannot reorder an Arabic
+  // sentence around it (RTL only — `useBidiIsolation`).
+  const { isolateValues } = useBidiIsolation();
+  const values = isolateValues(notification.values ?? {});
   const title = t(notification.titleKey, values);
   const message = t(notification.messageKey, values);
   const isUnread = !notification.isRead;
@@ -130,7 +135,10 @@ export function NotificationRow({
               onClick={isUnread ? () => onMarkRead(notification.id) : undefined}
               className="font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
             >
-              {t(notification.actionLabelKey ?? 'notifications:actions.viewDetails')}
+              {t(
+                notification.actionLabelKey ??
+                  'notifications:actions.viewDetails'
+              )}
               <span className="sr-only">: {title}</span>
             </Link>
           ) : null}

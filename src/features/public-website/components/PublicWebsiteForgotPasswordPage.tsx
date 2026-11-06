@@ -15,6 +15,7 @@ import { ForgotPasswordForm } from '@features/auth';
 import { PublicWebsiteAuthShell } from './PublicWebsiteAuthShell';
 import { usePublicWebsiteLinkRenderer } from '../utils/public-website-link-renderer';
 import type { PublicWebsiteLocale } from '@types';
+import { useBidiIsolation } from '@hooks';
 
 export interface PublicWebsiteForgotPasswordPageProps {
   readonly lookupKey: string;
@@ -26,6 +27,7 @@ export function PublicWebsiteForgotPasswordPage({
   locale,
 }: PublicWebsiteForgotPasswordPageProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const linkRenderer = usePublicWebsiteLinkRenderer(locale);
 
   return (
@@ -39,7 +41,9 @@ export function PublicWebsiteForgotPasswordPage({
       {({ academyName }) => (
         <div className="space-y-6">
           <p className="text-center text-sm text-muted-foreground">
-            {t('publicWebsite:auth.forgotPassword.subtitle', { academyName })}
+            {t('publicWebsite:auth.forgotPassword.subtitle', {
+              academyName: isolate(academyName),
+            })}
           </p>
           <ForgotPasswordForm />
           <div className="text-center text-sm">

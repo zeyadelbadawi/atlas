@@ -39,6 +39,23 @@ const PHONE = { width: 390, height: 844 };
 const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/;
 const OWNER_NAME = 'Sarah Chen';
 
+const escapeRegExp = (text: string): string =>
+  text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * RTL sweep — in Arabic each value interpolated into an activity sentence
+ * is wrapped in a bidi isolate (U+2068 … U+2069) so a Latin name cannot
+ * reorder the Arabic around it. Matches `text` with or without them.
+ */
+function withIsolates(text: string, values: readonly string[]): RegExp {
+  let pattern = escapeRegExp(text);
+  for (const value of values) {
+    const escaped = escapeRegExp(value);
+    pattern = pattern.split(escaped).join(`\u2068?${escaped}\u2069?`);
+  }
+  return new RegExp(pattern);
+}
+
 async function signIn(page: Page, email: string): Promise<void> {
   await clearAuthRateLimits();
   await seedCookieDecision(page);
@@ -154,7 +171,10 @@ test.describe('J28 — activity log', () => {
     await expect(
       page.getByRole('heading', { name: 'سجل النشاط', exact: true })
     ).toBeVisible({ timeout: 90_000 });
-    const sentence = `${OWNER_NAME} حدّث الدورة «${renamedTitle}»`;
+    const sentence = withIsolates(
+      `${OWNER_NAME} حدّث الدورة «${renamedTitle}»`,
+      [OWNER_NAME, renamedTitle]
+    );
     const entry = page
       .getByTestId('audit-entry')
       .filter({ hasText: sentence })
@@ -272,7 +292,12 @@ test.describe('J28 — activity log', () => {
     await page.locator('#platform-audit-search').fill(renamedTitle);
     await expect(
       entries
-        .filter({ hasText: `${OWNER_NAME} حدّث الدورة «${renamedTitle}»` })
+        .filter({
+          hasText: withIsolates(`${OWNER_NAME} حدّث الدورة «${renamedTitle}»`, [
+            OWNER_NAME,
+            renamedTitle,
+          ]),
+        })
         .first()
     ).toBeVisible();
     await page.screenshot({

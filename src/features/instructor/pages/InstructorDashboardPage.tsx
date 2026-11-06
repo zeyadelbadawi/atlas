@@ -170,7 +170,7 @@ export default function InstructorDashboardPage(): JSX.Element {
                       </p>
                       {activity.studentName ? (
                         <p className="text-xs text-muted-foreground">
-                          {t('common:by')} {activity.studentName}
+                          {t('common:by')} <bdi>{activity.studentName}</bdi>
                         </p>
                       ) : null}
                     </div>

@@ -43,7 +43,12 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@app/providers';
-import { useDateFormatter, useLanguage, usePagination } from '@hooks';
+import {
+  useDateFormatter,
+  useLanguage,
+  usePagination,
+  useBidiIsolation,
+} from '@hooks';
 import { formatNumber, toErrorsNamespaceKey } from '@utils';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import type { BreadcrumbItem } from '@types';
@@ -123,6 +128,7 @@ function useFoundingFilters() {
 
 export default function PlatformFoundingAcademiesPage(): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { language } = useLanguage();
   const fmt = useDateFormatter();
   const { notifySuccess, notifyError } = useToast();
@@ -682,7 +688,7 @@ export default function PlatformFoundingAcademiesPage(): JSX.Element {
             <AlertDialogTitle>{t(`${K}.revoke.title`)}</AlertDialogTitle>
             <AlertDialogDescription>
               {t(`${K}.revoke.description`, {
-                name: toRevoke?.organization.name ?? '',
+                name: isolate(toRevoke?.organization.name ?? ''),
               })}
             </AlertDialogDescription>
           </AlertDialogHeader>

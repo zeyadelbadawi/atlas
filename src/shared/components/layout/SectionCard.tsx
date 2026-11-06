@@ -7,7 +7,7 @@
  */
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@utils';
+import { cn, directionOf, isolateValues } from '@utils';
 
 export interface SectionCardProps {
   /** Translation key for the section heading. */
@@ -33,7 +33,10 @@ export function SectionCard({
   flushBody = false,
   className,
 }: SectionCardProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // RTL sweep: interpolated values (names, titles) are bidi-isolated so
+  // they cannot reorder the translated sentence (no-op in LTR).
+  const shown = isolateValues(values ?? {}, directionOf(i18n));
   const hasHeader = Boolean(titleKey || descriptionKey || actions);
 
   return (
@@ -48,12 +51,12 @@ export function SectionCard({
           <div className="min-w-0 space-y-1">
             {titleKey ? (
               <h2 className="font-display text-base font-semibold text-foreground">
-                {t(titleKey, values ?? {})}
+                {t(titleKey, shown)}
               </h2>
             ) : null}
             {descriptionKey ? (
               <p className="max-w-prose text-sm text-muted-foreground">
-                {t(descriptionKey, values ?? {})}
+                {t(descriptionKey, shown)}
               </p>
             ) : null}
           </div>

@@ -103,7 +103,8 @@ describe('account menu', () => {
 
   it('Arabic: a natural Arabic greeting', () => {
     renderUi(<AccountMenu />, 'ar');
-    expect(trigger().textContent).toContain('مرحبًا، Sara Ali');
+    // RTL sweep: the name inside the translated greeting is bidi-isolated.
+    expect(trigger().textContent).toContain('مرحبًا، \u2068Sara Ali\u2069');
     expect(trigger().textContent).not.toContain('Welcome');
   });
 
@@ -125,7 +126,9 @@ describe('account menu', () => {
     expect(
       within(menu).getByRole('menuitem', { name: 'Notifications' })
     ).toBeTruthy();
-    expect(within(menu).getByRole('menuitem', { name: 'Support' })).toBeTruthy();
+    expect(
+      within(menu).getByRole('menuitem', { name: 'Support' })
+    ).toBeTruthy();
     expect(within(menu).getByText('Appearance')).toBeTruthy();
     // Appearance is collapsed until opened, then lists the three options.
     expect(within(menu).queryAllByRole('menuitemradio')).toHaveLength(0);

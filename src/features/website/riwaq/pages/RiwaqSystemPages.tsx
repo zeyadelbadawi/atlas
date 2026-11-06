@@ -30,12 +30,16 @@ import {
   formatRiwaqNumber,
   riwaqEnter,
 } from '../riwaq-parts';
+import { useBidiIsolation } from '@hooks';
 import '../riwaq-pages.css';
 
 const NOT_FOUND_IMAGE = 'theme-asset:riwaq/not-found';
 const COMING_SOON_IMAGE = 'theme-asset:riwaq/coming-soon';
 
-export function RiwaqNotFound({ pages, linkRenderer }: ThemeNotFoundProps): JSX.Element {
+export function RiwaqNotFound({
+  pages,
+  linkRenderer,
+}: ThemeNotFoundProps): JSX.Element {
   const { t } = useTranslation();
   const { locale } = usePublicWebsiteLocale();
   const headingId = useId();
@@ -62,11 +66,21 @@ export function RiwaqNotFound({ pages, linkRenderer }: ThemeNotFoundProps): JSX.
           <RiwaqHeading as="h1" id={headingId}>
             {t('website:riwaq.pages.notFound.title')}
           </RiwaqHeading>
-          <p className={`rw-lead ${riwaqEnter(0).className}`} style={riwaqEnter(0).style}>
+          <p
+            className={`rw-lead ${riwaqEnter(0).className}`}
+            style={riwaqEnter(0).style}
+          >
             {t('website:riwaq.pages.notFound.description')}
           </p>
-          <div className={`rwh-hero-actions ${riwaqEnter(1).className}`} style={riwaqEnter(1).style}>
-            <RiwaqLink href={linkRenderer ? '/' : undefined} linkRenderer={linkRenderer} className="rw-btn rw-btn-lg">
+          <div
+            className={`rwh-hero-actions ${riwaqEnter(1).className}`}
+            style={riwaqEnter(1).style}
+          >
+            <RiwaqLink
+              href={linkRenderer ? '/' : undefined}
+              linkRenderer={linkRenderer}
+              className="rw-btn rw-btn-lg"
+            >
               {t('website:riwaq.pages.notFound.home')}
               <RiwaqArrow />
             </RiwaqLink>
@@ -95,8 +109,12 @@ export function RiwaqNotFound({ pages, linkRenderer }: ThemeNotFoundProps): JSX.
   );
 }
 
-export function RiwaqComingSoon({ academyName, academyLogo }: ThemeComingSoonProps): JSX.Element {
+export function RiwaqComingSoon({
+  academyName,
+  academyLogo,
+}: ThemeComingSoonProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const headingId = useId();
   return (
     <main
@@ -110,21 +128,37 @@ export function RiwaqComingSoon({ academyName, academyLogo }: ThemeComingSoonPro
           <div className="rwp-system-copy">
             <div className="rwp-coming-id">
               {academyLogo ? (
-                <img src={academyLogo} alt={academyName} className="rwp-coming-logo" />
+                <img
+                  src={academyLogo}
+                  alt={academyName}
+                  className="rwp-coming-logo"
+                />
               ) : (
-                <RiwaqCrest name={academyName} size="clamp(6rem, 4rem + 6vw, 9rem)" />
+                <RiwaqCrest
+                  name={academyName}
+                  size="clamp(6rem, 4rem + 6vw, 9rem)"
+                />
               )}
               <p className="rw-label" data-mark="">
                 {t('website:riwaq.pages.comingSoon.eyebrow')}
               </p>
             </div>
             <RiwaqHeading as="h1" id={headingId} size="display">
-              {t('website:riwaq.pages.comingSoon.title', { name: academyName })}
+              {t('website:riwaq.pages.comingSoon.title', {
+                name: isolate(academyName),
+              })}
             </RiwaqHeading>
-            <p className={`rw-lead ${riwaqEnter(0).className}`} style={riwaqEnter(0).style}>
+            <p
+              className={`rw-lead ${riwaqEnter(0).className}`}
+              style={riwaqEnter(0).style}
+            >
               {t('website:riwaq.pages.comingSoon.description')}
             </p>
-            <p className="rw-label"><AtlasSiteLink>{t('publicWebsite:comingSoon.attribution')}</AtlasSiteLink></p>
+            <p className="rw-label">
+              <AtlasSiteLink>
+                {t('publicWebsite:comingSoon.attribution')}
+              </AtlasSiteLink>
+            </p>
           </div>
           <RiwaqWindow
             priority

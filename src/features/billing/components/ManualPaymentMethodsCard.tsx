@@ -80,6 +80,7 @@ import { InstapayMethodFormDialog } from './InstapayMethodFormDialog';
 import { ManualPaymentBrandChip } from './ManualPaymentBrandChip';
 import { CopyValueButton } from './CopyValueButton';
 import { WARNING_ALERT_CLASS } from './ManualMethodFormFields';
+import { useBidiIsolation } from '@hooks';
 
 /** Enough for every configured method on one page; the backend's maximum is higher. */
 
@@ -254,6 +255,7 @@ function MethodDetails({
 export function ManualPaymentMethodsCard(): JSX.Element {
   const { t, i18n } = useTranslation();
   const errorText = useErrorText();
+  const { isolate } = useBidiIsolation();
   const methodsQuery = usePlatformPaymentMethods();
   const updateMethod = useUpdatePlatformPaymentMethod();
   const [activeKind, setActiveKind] = useState<ManualPaymentMethodType>(
@@ -604,7 +606,7 @@ export function ManualPaymentMethodsCard(): JSX.Element {
             </AlertDialogTitle>
             <AlertDialogDescription>
               {t('payments:manualMethods.enablePlaceholderDescription', {
-                name: confirmingMethod?.displayName ?? '',
+                name: isolate(confirmingMethod?.displayName ?? ''),
               })}
             </AlertDialogDescription>
           </AlertDialogHeader>
