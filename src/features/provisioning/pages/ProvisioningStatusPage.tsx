@@ -148,6 +148,7 @@ export default function ProvisioningStatusPage(): JSX.Element {
             requestId={request.id}
             academyName={request.requestedAcademyName}
             serverReady={request.status === 'ready'}
+            presented={request}
             onComplete={() => finishAcademyBuild(request.id)}
           >
             {request.stalled === true || progress.isReconnecting ? (

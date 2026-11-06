@@ -6,11 +6,13 @@
  * options"), questions, preview and the one atomic save — is
  * `QuizAuthoringForm` (W7), shared with the course wizard's "Create quiz"
  * sheet so both behave identically. This page owns only the route: loading
- * the quiz for edit, the header (with Delete), and where to go after a
- * save or cancel.
+ * the quiz for edit, the header (with Delete), where to go after a save or
+ * cancel, and which unit a NEW quiz goes into (`UnitPickerField`; the unit
+ * in `?sectionId=` when the page was opened from one, else the first) —
+ * an existing quiz's unit is shown, not changed, here.
  */
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Trash2 } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
@@ -21,9 +23,13 @@ import type { BreadcrumbItem } from '@types';
 import { toast } from '@/hooks/use-toast';
 import { useConfirmDialog } from '@app/providers';
 import { useQuizForAuthoring, useDeleteQuiz } from '@features/learning';
-import { useCourse, useCourseSections } from '../hooks';
+import { useCourse, useUnitPlacement } from '../hooks';
 import type { RelatedLessonOption } from '../components/QuizQuestionsEditor';
 import { QuizAuthoringForm } from '../components/QuizAuthoringForm';
+import {
+  UnitPickerField,
+  UnitPlacementNote,
+} from '../components/UnitPickerField';
 import { useCourseEditorLeadCrumbs } from '../hooks/useCourseEditorTabs';
 import { useActionFailureToast } from '../forms/course-form-feedback';
 
@@ -39,19 +45,19 @@ export default function CourseQuizEditorPage(): JSX.Element {
   const failureToast = useActionFailureToast();
   const isEditMode = !!quizId;
 
+  const [searchParams] = useSearchParams();
+
   const { data: course } = useCourse(academyId ?? '', courseId ?? '');
-  const { data: sectionsData } = useCourseSections(
-    academyId ?? '',
-    courseId ?? ''
-  );
-  const lessons: readonly RelatedLessonOption[] = (
-    sectionsData?.items ?? []
-  ).flatMap((section) =>
-    section.lessons.map((lesson) => ({
-      id: lesson.id,
-      title: lesson.title,
-      sectionTitle: section.title,
-    }))
+  const placement = useUnitPlacement(academyId ?? '', courseId ?? '', {
+    preferredSectionId: searchParams.get('sectionId'),
+  });
+  const lessons: readonly RelatedLessonOption[] = placement.sections.flatMap(
+    (section) =>
+      section.lessons.map((lesson) => ({
+        id: lesson.id,
+        title: lesson.title,
+        sectionTitle: section.title,
+      }))
   );
   const {
     data: quiz,
@@ -168,6 +174,29 @@ export default function CourseQuizEditorPage(): JSX.Element {
         lessons={lessons}
         onSaved={goToList}
         onCancel={goToList}
+        createPlacement={
+          !isEditMode && placement.section
+            ? {
+                sectionId: placement.section.id,
+                unitTitle: placement.section.title,
+              }
+            : null
+        }
+        beforeActions={
+          isEditMode ? (
+            <UnitPlacementNote
+              sections={placement.sections}
+              sectionId={quiz?.sectionId}
+            />
+          ) : (
+            <UnitPickerField
+              sections={placement.sections}
+              value={placement.value}
+              onChange={placement.setValue}
+              itemType="quiz"
+            />
+          )
+        }
       />
     </PageContainer>
   );

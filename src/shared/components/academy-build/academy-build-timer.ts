@@ -10,12 +10,25 @@
  * fast as the server makes it, and nothing here changes what the server
  * stores or decides.
  *
+ * The SERVER owns the window: the provisioning request carries
+ * `presentedReadyAt` (its `createdAt` + a per-request 45–75 s), and the
+ * "your academy is ready" email is held until that instant. The screen
+ * therefore runs for exactly that window, so its 100 % and the email
+ * arrive together. Only a response from an older API without
+ * `presentedReadyAt` falls back to a random 45–75 s chosen here.
+ *
  * One timer per provisioning request, kept in `sessionStorage` so a reload
  * resumes the same countdown instead of starting a new one (or skipping
  * it). Only the request id, a start time and a duration are stored. Storage
  * can be missing or throw (private mode); the timer then lives in memory.
  */
 
+/**
+ * The window's bounds. MIRRORED in the backend: `PRESENTED_BUILD_MIN_MS`/
+ * `PRESENTED_BUILD_MAX_MS` in `atlas-backend/src/provisioning/dto/
+ * presented-build.ts`, which picks each request's window. A test on each
+ * side pins the values, so changing one alone fails.
+ */
 export const ACADEMY_BUILD_MIN_MS = 45_000;
 export const ACADEMY_BUILD_MAX_MS = 75_000;
 /** A stored timer older than this is ignored: the build it described is long over. */
@@ -25,6 +38,37 @@ const STORAGE_PREFIX = 'atlas:academyBuild:';
 interface BuildTimer {
   readonly startedAt: number;
   readonly durationMs: number;
+  /** The duration is the server's (`presentedReadyAt`), not a local guess. */
+  readonly presented?: boolean;
+}
+
+/** What the provisioning request says about its presented window. */
+export interface PresentedBuildWindow {
+  readonly createdAt: string;
+  readonly presentedReadyAt?: string | null;
+}
+
+/**
+ * The server's window for this request — `presentedReadyAt - createdAt`,
+ * both server clock, so no client clock skew enters the duration — or
+ * `undefined` when the response has none (older API) or it is out of
+ * bounds.
+ */
+export function presentedBuildWindow(
+  presented: PresentedBuildWindow | null | undefined
+): { readonly createdAtMs: number; readonly durationMs: number } | undefined {
+  if (!presented?.presentedReadyAt) return undefined;
+  const createdAtMs = Date.parse(presented.createdAt);
+  const readyAtMs = Date.parse(presented.presentedReadyAt);
+  const durationMs = readyAtMs - createdAtMs;
+  if (
+    !Number.isFinite(durationMs) ||
+    durationMs < ACADEMY_BUILD_MIN_MS ||
+    durationMs > ACADEMY_BUILD_MAX_MS
+  ) {
+    return undefined;
+  }
+  return { createdAtMs, durationMs };
 }
 
 const memory = new Map<string, BuildTimer>();
@@ -78,14 +122,7 @@ function randomDuration(): number {
   );
 }
 
-/** The timer for this request, starting one now if there is none. */
-export function startAcademyBuild(
-  requestId: string,
-  now: number = Date.now()
-): BuildTimer {
-  const existing = read(requestId, now);
-  if (existing) return existing;
-  const timer: BuildTimer = { startedAt: now, durationMs: randomDuration() };
+function write(requestId: string, timer: BuildTimer): BuildTimer {
   memory.set(requestId, timer);
   finished.delete(requestId);
   try {
@@ -95,6 +132,55 @@ export function startAcademyBuild(
   }
   notify();
   return timer;
+}
+
+/**
+ * The timer for this request, starting one now if there is none. Called
+ * the moment the request is created, so it starts NOW and runs for the
+ * server's presented window when the response carries one.
+ */
+export function startAcademyBuild(
+  requestId: string,
+  now: number = Date.now(),
+  presented?: PresentedBuildWindow | null
+): BuildTimer {
+  const existing = read(requestId, now);
+  if (existing) return existing;
+  const server = presentedBuildWindow(presented);
+  return write(
+    requestId,
+    server
+      ? { startedAt: now, durationMs: server.durationMs, presented: true }
+      : { startedAt: now, durationMs: randomDuration() }
+  );
+}
+
+/**
+ * The timer for a request the build screen is showing, aligned with the
+ * server's window once it is known: a timer this device started from the
+ * create response is kept as it is; one started without the server's
+ * window (an older response, another tab, lost storage) is replaced by the
+ * server's, counted from the request's `createdAt` — so the screen reaches
+ * 100 % at `presentedReadyAt`, when the ready email is released.
+ */
+export function syncAcademyBuild(
+  requestId: string,
+  presented?: PresentedBuildWindow | null,
+  now: number = Date.now()
+): BuildTimer {
+  const existing = read(requestId, now);
+  const server = presentedBuildWindow(presented);
+  if (!server) return existing ?? startAcademyBuild(requestId, now);
+  if (existing?.presented && existing.durationMs === server.durationMs) {
+    return existing;
+  }
+  // Never a start in the future (client clock behind the server's).
+  const startedAt = Math.min(server.createdAtMs, now);
+  return write(requestId, {
+    startedAt,
+    durationMs: server.durationMs,
+    presented: true,
+  });
 }
 
 /** The existing timer for this request, if this device started one. */

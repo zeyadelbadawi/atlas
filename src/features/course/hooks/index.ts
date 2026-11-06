@@ -41,6 +41,18 @@ export {
   useDetachUnitItem,
   useReorderUnitItems,
 } from './useUnitCurriculum';
+export {
+  useUnitPlacement,
+  usePlaceAfterCreate,
+  defaultUnitId,
+  sortUnits,
+} from './useUnitPlacement';
+export type {
+  UnitPlacement,
+  UseUnitPlacementOptions,
+  PlaceAfterCreateResult,
+} from './useUnitPlacement';
+export { useSaveAssignment, toAssignmentPayload } from './useSaveAssignment';
 export type { ReorderCourseLessonsVariables } from './useReorderCourseLessons';
 export {
   useCourseReviewModeration,

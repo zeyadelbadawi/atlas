@@ -9,7 +9,7 @@
  * touches the authoring surface (`assignmentService.createAssignment`/
  * `updateAssignment`).
  */
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { useDirtyGuard } from '@features/unsaved-changes';
@@ -83,6 +83,12 @@ export interface AssignmentFormDialogProps {
   ) => void | Promise<void>;
   /** The create/update mutation's current error, so a validation (400) failure maps onto the field that caused it instead of only a page-level toast. */
   readonly error?: ApiError | null;
+  /**
+   * The unit placement, above the buttons: `UnitPickerField` when
+   * creating, `UnitPlacementNote` (read-only) when editing. The caller
+   * owns it — placing happens after the create (see `useSaveAssignment`).
+   */
+  readonly unitField?: ReactNode;
 }
 
 const ASSIGNMENT_FIELD_LABELS = {
@@ -114,6 +120,7 @@ export function AssignmentFormDialog({
   isPending,
   onSubmit,
   error,
+  unitField,
 }: AssignmentFormDialogProps): JSX.Element {
   const { t } = useTranslation();
 
@@ -394,6 +401,8 @@ export function AssignmentFormDialog({
                 </FormItem>
               )}
             />
+
+            {unitField}
 
             {failure ? (
               <SaveFailedAlert
