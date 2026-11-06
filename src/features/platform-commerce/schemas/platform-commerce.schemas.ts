@@ -126,7 +126,9 @@ export type CommissionRateFormData = z.infer<typeof commissionRateSchema>;
 export const organizationCommissionSchema = z
   .object({
     commissionMode: z.enum(['default', 'custom', 'exempt']),
-    percent: z.string().trim(),
+    // Normalised here too, so the submitted value is Western digits
+    // ("١٢" → "12") — `Number()` on Arabic digits is NaN.
+    percent: z.string().transform((value) => normalizeDigits(value).trim()),
   })
   .superRefine((value, ctx) => {
     if (value.commissionMode !== 'custom') return;

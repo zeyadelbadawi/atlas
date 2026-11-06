@@ -34,6 +34,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   localizedAddOnText,
+  resolvePlanDescription,
   resolvePlanName,
   usePlanCatalog,
   useAddOnCatalog,
@@ -114,9 +115,9 @@ export default function PlatformPlanCatalogPage(): JSX.Element {
                       <p className="font-medium text-foreground" dir="auto">
                         {resolvePlanName(plan, language)}
                       </p>
-                      {plan.description ? (
+                      {resolvePlanDescription(plan, language) ? (
                         <p className="text-xs text-muted-foreground" dir="auto">
-                          {plan.description}
+                          {resolvePlanDescription(plan, language)}
                         </p>
                       ) : null}
                       {/* W8 — the configured gift per cycle, at a glance. */}

@@ -3,7 +3,10 @@
  * read "up to two decimal places" because the format was checked first).
  */
 import { describe, expect, it } from 'vitest';
-import { percentageField } from './schemas/platform-commerce.schemas';
+import {
+  organizationCommissionSchema,
+  percentageField,
+} from './schemas/platform-commerce.schemas';
 
 describe('V29 — commission: the range before the decimals', () => {
   const messageOf = (value: string) => {
@@ -24,5 +27,19 @@ describe('V29 — commission: the range before the decimals', () => {
   it('accepts 0, 12.5 and 100', () => {
     for (const value of ['0', '12.5', '100'])
       expect(messageOf(value)).toBeNull();
+  });
+});
+
+describe('organization commission: Arabic digits reach the API as numbers', () => {
+  it('submits "١٢٫٥"-style input as Western digits', () => {
+    const result = organizationCommissionSchema.safeParse({
+      commissionMode: 'custom',
+      percent: ' ١٢ ',
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.percent).toBe('12');
+      expect(Number(result.data.percent)).toBe(12);
+    }
   });
 });

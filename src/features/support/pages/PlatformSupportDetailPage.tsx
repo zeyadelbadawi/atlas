@@ -326,7 +326,11 @@ export default function PlatformSupportDetailPage(): JSX.Element {
                   placeholder={t('support:detail.replyPlaceholder')}
                   rows={3}
                   aria-invalid={replyError ? true : undefined}
-                  aria-describedby="platform-support-reply-count platform-support-reply-error"
+                  aria-describedby={
+                    replyError
+                      ? 'platform-support-reply-count platform-support-reply-error'
+                      : 'platform-support-reply-count'
+                  }
                 />
                 <p
                   id="platform-support-reply-count"
