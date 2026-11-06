@@ -126,6 +126,22 @@ describe('V19 — replying to a ticket', () => {
     await waitFor(() => expect(toastValue.notifyError).not.toHaveBeenCalled());
   });
 
+  it('editing the reply clears the last failure', async () => {
+    vi.spyOn(mySupportService, 'replyToMyCase').mockRejectedValue(
+      createApiError('conflict', {
+        status: 409,
+        messageKey: 'errors.support.caseClosed',
+      })
+    );
+    renderPage();
+    const box = await screen.findByTestId('support-reply');
+    fireEvent.change(box, { target: { value: 'Still broken today.' } });
+    fireEvent.click(screen.getByTestId('send-reply'));
+    await screen.findByTestId('save-failed');
+    fireEvent.change(box, { target: { value: 'Still broken today!' } });
+    await waitFor(() => expect(screen.queryByTestId('save-failed')).toBeNull());
+  });
+
   it('says it in Arabic', async () => {
     renderPage('ar');
     fireEvent.click(await screen.findByTestId('send-reply'));

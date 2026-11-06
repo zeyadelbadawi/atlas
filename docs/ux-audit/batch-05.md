@@ -9,7 +9,7 @@ purpose; 400 (real violation shape), 409, 500 and network abort forced. No purch
 backend: every checkout, payment, proof, cancel and add-on action was answered by the test.
 350 screenshots.
 
-**35 findings — 9 High, 15 Medium, 11 Low.** The pattern: one-click actions that can't be
+**35 findings — 9 High, 14 Medium, 12 Low.** The pattern: one-click actions that can't be
 undone, payment pages that don't tell the customer what to do with their money, and failures
 that repeat or hide the real reason.
 

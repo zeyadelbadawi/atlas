@@ -121,7 +121,7 @@ const SUBSCRIPTION = {
   planId: 'p-growth',
   plan: GROWTH,
   billingCycle: 'monthly',
-  currentPeriodEnd: '2099-12-01T00:00:00Z',
+  currentPeriodEnd: new Date(2099, 11, 1, 12).toISOString(),
   cancelAtPeriodEnd: false,
 } as unknown as TenantSubscription;
 
@@ -299,6 +299,19 @@ describe('V23 — add-on checkout', () => {
     renderCheckout('add_on/extra-academy');
     expect(await screen.findByTestId('checkout-add-on-active')).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Start checkout' })).toBeNull();
+  });
+
+  it('a failed catalog request does not read as "not for sale"', async () => {
+    mockCatalog();
+    const getAddOns = vi
+      .spyOn(planService, 'getAddOns')
+      .mockRejectedValue(
+        createApiError('server', { status: 500, messageKey: 'errors.internal' })
+      );
+    renderCheckout('add_on/extra-academy');
+    await waitFor(() => expect(getAddOns).toHaveBeenCalled());
+    await screen.findByRole('button', { name: 'Start checkout' });
+    expect(screen.queryByTestId('checkout-add-on-notForSale')).toBeNull();
   });
 
   it('offers no checkout for an add-on that is not for sale', async () => {

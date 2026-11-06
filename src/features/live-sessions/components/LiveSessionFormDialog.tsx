@@ -348,6 +348,9 @@ export function LiveSessionFormDialog({
                               })
                           : t('liveSessions:form.recordingHint')}
                     </FormDescription>
+                    {/* A server refusal on the switch shows here: the field
+                        is in FORM_FIELDS, so no general alert covers it. */}
+                    <FormMessage />
                   </div>
                   <FormControl>
                     <Switch

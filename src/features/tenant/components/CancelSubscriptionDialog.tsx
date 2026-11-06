@@ -85,6 +85,11 @@ export function CancelSubscriptionDialog({
   const [feedback, setFeedback] = useState('');
   const [showReasonError, setShowReasonError] = useState(false);
   const [showFeedbackError, setShowFeedbackError] = useState(false);
+  const [reasonEditedAfter, setReasonEditedAfter] = useState<ApiError | null>(
+    null
+  );
+  const [feedbackEditedAfter, setFeedbackEditedAfter] =
+    useState<ApiError | null>(null);
   const dirtyGuard = useDirtyGuard(open && feedback.trim() !== '');
 
   // Reopening never silently carries a previous, half-finished answer
@@ -100,16 +105,17 @@ export function CancelSubscriptionDialog({
 
   const feedbackLength = feedback.trim().length;
   const feedbackTooLong = feedbackLength > CANCELLATION_FEEDBACK_MAX_LENGTH;
-  const serverFeedback = Boolean(
-    error?.violations?.some((violation) => violation.field === 'feedback')
-  );
-  const serverReason = Boolean(
-    error?.violations?.some((violation) => violation.field === 'reason')
-  );
+  const violatesOn = (field: string): boolean =>
+    Boolean(error?.violations?.some((violation) => violation.field === field));
+  // The refusal a field was edited after no longer marks that field: the
+  // person has acted on it. The general alert still keys off the refusal.
+  const serverFeedback =
+    error !== feedbackEditedAfter && violatesOn('feedback');
+  const serverReason = error !== reasonEditedAfter && violatesOn('reason');
   const reasonInvalid = (showReasonError && !reason) || serverReason;
   const feedbackInvalid =
     (showFeedbackError && feedbackTooLong) || serverFeedback;
-  const fieldError = serverFeedback || serverReason;
+  const fieldError = violatesOn('feedback') || violatesOn('reason');
 
   const handleOpenChange = (next: boolean): void => {
     if (next) return onOpenChange(true);
@@ -156,6 +162,7 @@ export function CancelSubscriptionDialog({
               onValueChange={(value) => {
                 setReason(value as CancellationReason);
                 setShowReasonError(false);
+                setReasonEditedAfter(error ?? null);
               }}
             >
               <SelectTrigger
@@ -201,6 +208,7 @@ export function CancelSubscriptionDialog({
               onChange={(event) => {
                 setFeedback(event.target.value);
                 setShowFeedbackError(false);
+                setFeedbackEditedAfter(error ?? null);
               }}
               placeholder={t('tenant:cancellation.feedbackPlaceholder')}
               rows={4}

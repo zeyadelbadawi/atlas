@@ -217,6 +217,8 @@ export default function SupportCaseDetailPage(): JSX.Element {
             onChange={(event) => {
               setReply(event.target.value);
               setReplyProblem(null);
+              // Editing answers the last refusal: no stale message stays.
+              if (postReply.error) postReply.reset();
             }}
             aria-invalid={replyError ? true : undefined}
             aria-describedby="support-reply-count support-reply-error"

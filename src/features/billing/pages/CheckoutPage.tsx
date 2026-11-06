@@ -240,20 +240,24 @@ export default function CheckoutPage(): JSX.Element {
       (tenantAddOn) => tenantAddOn.addOn.key === target.addOnKey
     );
   const addOnBlock: 'active' | 'notForSale' | 'incompatible' | null =
-    target?.type !== 'add_on' || addOnCatalogQuery.isLoading
+    target?.type !== 'add_on'
       ? null
       : addOnActive
         ? 'active'
-        : !targetAddOn ||
-            targetAddOn.comingSoon ||
-            targetAddOn.catalogStatus === 'coming_soon'
-          ? 'notForSale'
-          : subscriptionQuery.data &&
-              !targetAddOn.compatiblePlanKeys.includes(
-                subscriptionQuery.data.plan.key
-              )
-            ? 'incompatible'
-            : null;
+        : // Unknown until the catalog loads: a failed catalog request must
+          // not read as "not for sale" (the server still refuses a bad add-on).
+          !addOnCatalogQuery.isSuccess
+          ? null
+          : !targetAddOn ||
+              targetAddOn.comingSoon ||
+              targetAddOn.catalogStatus === 'coming_soon'
+            ? 'notForSale'
+            : subscriptionQuery.data &&
+                !targetAddOn.compatiblePlanKeys.includes(
+                  subscriptionQuery.data.plan.key
+                )
+              ? 'incompatible'
+              : null;
   const addOnPrice =
     targetAddOn?.pricing?.currency && targetAddOn.pricing.amount !== undefined
       ? `${formatCurrency(

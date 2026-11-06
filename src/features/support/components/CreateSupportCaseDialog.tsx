@@ -28,6 +28,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useNavigate } from 'react-router-dom';
 import { useDirtyGuard } from '@features/unsaved-changes';
 import {
+  fieldErrorText,
   hasViolationOn,
   RequiredMark,
   SaveFailedAlert,
@@ -217,13 +218,19 @@ export function CreateSupportCaseDialog({
                 role="alert"
                 className="text-sm text-destructive"
               >
-                {t(
-                  form.formState.errors.subject.message ??
-                    'support:create.subjectInvalid',
-                  {
-                    count: SUBJECT_MAX,
-                  }
-                )}
+                {/* A server refusal arrives already translated and
+                    labelled; only schema keys go through `t`. */}
+                {form.formState.errors.subject.type === 'server'
+                  ? fieldErrorText(
+                      t,
+                      form.formState.errors.subject.message,
+                      t('support:create.subjectLabel')
+                    )
+                  : t(
+                      form.formState.errors.subject.message ??
+                        'support:create.subjectInvalid',
+                      { count: SUBJECT_MAX }
+                    )}
               </p>
             ) : null}
           </div>
@@ -261,11 +268,17 @@ export function CreateSupportCaseDialog({
                 role="alert"
                 className="text-sm text-destructive"
               >
-                {t(
-                  form.formState.errors.description.message ??
-                    'support:create.descriptionInvalid',
-                  { count: DESCRIPTION_MAX }
-                )}
+                {form.formState.errors.description.type === 'server'
+                  ? fieldErrorText(
+                      t,
+                      form.formState.errors.description.message,
+                      t('support:create.descriptionLabel')
+                    )
+                  : t(
+                      form.formState.errors.description.message ??
+                        'support:create.descriptionInvalid',
+                      { count: DESCRIPTION_MAX }
+                    )}
               </p>
             ) : null}
           </div>

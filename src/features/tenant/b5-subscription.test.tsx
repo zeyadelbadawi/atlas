@@ -67,7 +67,8 @@ const ACTIVE = {
   planId: 'p-growth',
   plan: GROWTH,
   billingCycle: 'yearly',
-  currentPeriodEnd: '2027-03-01T00:00:00Z',
+  // Local noon: the asserted date holds in every time zone.
+  currentPeriodEnd: new Date(2027, 2, 1, 12).toISOString(),
   cancelAtPeriodEnd: false,
 } as unknown as TenantSubscription;
 
@@ -118,7 +119,7 @@ describe('V09 — subscription billing details', () => {
           {
             ...ACTIVE,
             status: 'trialing',
-            trialEndsAt: '2026-11-13T00:00:00Z',
+            trialEndsAt: new Date(2026, 10, 13, 12).toISOString(),
           } as TenantSubscription
         }
       />
@@ -216,6 +217,24 @@ describe('V13 / V26 — the cancel dialog', () => {
     expect(
       (screen.getByTestId('cancellation-feedback') as HTMLTextAreaElement).value
     ).toBe('Too pricey for us');
+  });
+
+  it('a server refusal on the feedback clears once the feedback is edited', () => {
+    renderDialog({
+      error: createApiError('validation', {
+        status: 400,
+        messageKey: 'errors.validation',
+        violations: [{ field: 'feedback', messageKey: 'validation.maxLength' }],
+      }),
+    });
+    expect(screen.getByTestId('cancellation-feedback-error')).toBeTruthy();
+    fireEvent.change(screen.getByTestId('cancellation-feedback'), {
+      target: { value: 'Shorter now' },
+    });
+    expect(screen.queryByTestId('cancellation-feedback-error')).toBeNull();
+    // The refusal was about a field the person has acted on: no general
+    // alert replaces the field message.
+    expect(screen.queryByTestId('save-failed')).toBeNull();
   });
 
   it('says what is kept, in the paid copy', () => {
