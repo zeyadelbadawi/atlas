@@ -136,6 +136,10 @@ export function PaymentProofForm({
   const noteTooLong = note.trim().length > MAX_PAYMENT_PROOF_NOTE_LENGTH;
 
   const handleSubmit = () => {
+    // A new attempt starts clean: the last refusal's field messages go,
+    // and the checks below (or the next answer) say what is wrong now.
+    setNoteError(undefined);
+    setFileError(undefined);
     let blocked = false;
     if (!proofFile) {
       setFileError(t('payments:payment.proofRequired', { max: maxSize }));

@@ -14,6 +14,43 @@ import type { i18n as I18nInstance, TFunction } from 'i18next';
 
 type CatalogField = 'name' | 'description';
 
+/**
+ * The SEEDED English texts (atlas-backend `prisma/seed.ts`). They live in
+ * code, not in the English catalogue, because an Arabic page doesn't load
+ * every English namespace: the comparison must not depend on it.
+ */
+const SEEDED_TEXT: Readonly<
+  Record<string, Partial<Record<CatalogField, string>>>
+> = {
+  'tenant:catalogText.addOns.extra-academy': {
+    name: 'Extra Academy',
+    description: 'Raises your academy limit by 2.',
+  },
+  'tenant:catalogText.addOns.live-sessions': {
+    name: 'Live Sessions',
+    description:
+      'Run live classes inside your courses with Zoom, with attendance tracking and optional recording.',
+  },
+  'payments:catalogText.methods.atlas_bank_transfer': {
+    name: 'Bank Transfer',
+    description:
+      'Pay by direct bank transfer — reviewed manually within 1-2 business days.',
+  },
+  'payments:catalogText.methods.atlas_wallet_transfer': {
+    name: 'Mobile Wallet',
+    description:
+      'Pay by mobile wallet transfer — reviewed manually within 1-2 business days.',
+  },
+  'payments:catalogText.methods.wallet_vodafone_cash': {
+    name: 'Vodafone Cash',
+  },
+  'payments:catalogText.methods.wallet_orange_cash': { name: 'Orange Cash' },
+  'payments:catalogText.methods.wallet_etisalat_cash': {
+    name: 'Etisalat Cash',
+  },
+  'payments:catalogText.methods.instapay': { name: 'InstaPay' },
+};
+
 /** Pure form: `english` is the catalogue's English text for the key, if any. */
 export function pickCatalogText(
   backendText: string,
@@ -33,14 +70,11 @@ function catalogText(
   backendText: string | undefined
 ): string | undefined {
   if (backendText === undefined || backendText === '') return backendText;
-  const catalogKey = `${base}.${key.replace(/\./g, '_')}.${field}`;
-  if (!i18n.exists(catalogKey)) return backendText;
-  const english = i18n.getFixedT('en')(catalogKey);
-  return pickCatalogText(
-    backendText,
-    typeof english === 'string' ? english : undefined,
-    t(catalogKey)
-  );
+  const rowKey = `${base}.${key}`;
+  const english = SEEDED_TEXT[rowKey]?.[field];
+  const catalogKey = `${rowKey}.${field}`;
+  if (!english || !i18n.exists(catalogKey)) return backendText;
+  return pickCatalogText(backendText, english, t(catalogKey));
 }
 
 /** An add-on's name or description in the page's language (see header). */

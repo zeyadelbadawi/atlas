@@ -170,9 +170,16 @@ export interface AddOnCatalogEntry {
   readonly effect: {
     readonly type: 'limit' | 'feature';
     readonly featureKey?: string;
+    /** For a limit add-on: which plan limit it raises, and by how much. */
+    readonly limitKey?: string;
+    readonly amount?: number;
   };
   readonly compatiblePlanKeys: readonly string[];
-  readonly pricing?: { readonly amount?: number; readonly currency?: string };
+  readonly pricing?: {
+    readonly amount?: number;
+    readonly currency?: string;
+    readonly billingCycle?: string;
+  };
   /** Free is simply "no price attached" — decided by the catalog, never a second flag. */
   readonly isFree: boolean;
   /** Implemented but customer launch deferred: show "Coming Soon", no install. */

@@ -72,3 +72,61 @@ that repeat or hide the real reason.
 - Gateway redirect: no gateway method enabled locally.
 - Live-session pages behind the feature flag (off); invoices (route redirects to history).
 - Grace period, cancelled-but-active, gift, price change: no local data. 768 px.
+
+## Fixes
+
+### Shared root causes
+- **One message per failure (V12)** — 13 billing, tenant, customer-request, support and
+  live-session hooks now mark their errors inline (`INLINE_ERRORS_META`, checked by a test);
+  each caller shows one message with the real reason.
+- **Progress bars in RTL (V29)** — the shared `Progress` track is mirrored in RTL, so every bar
+  (usage, quotas, 11 places) fills from the reading start.
+- **Arabic length messages** — "يجب ألّا يزيد طول {{field}} عن …" / "يجب ألّا يقل طول …": the
+  verb agrees with "طول", so a feminine label ("ملاحظة") no longer reads ungrammatically.
+- **Backend (atlas-backend#104)** — live-session schedule refusals name their field
+  (`scheduledStartAt` / `scheduledEndAt`) and a start in the past is refused; a custom-domain
+  request's domain is checked with IDNA encoding and DNS limits (Arabic and other scripts pass).
+  A digest e2e test that failed whenever CI crossed 06:00 UTC now counts only its own digests.
+- Grace period constant on the client corrected to the backend's 7 days (it said 3; unused).
+
+### Per finding
+- **V01–V03** Cancel payment, Disable/Uninstall add-on and Publish live session ask first and say
+  what happens — what to do if money was already sent; that an uninstalled paid add-on must be
+  bought again and the academy limit drops (nothing is deleted); that publishing creates the
+  meeting and notifies every enrolled student.
+- **V04 / V05 / V18** New proof form: "PNG, JPG or PDF, up to 10 MB" before choosing; the limit
+  named on refusal; a 0/500 note counter, refused before sending; 400s on `note`/`fileData` on
+  their fields; any other failure one `SaveFailedAlert`; Submit never greyed without a reason.
+- **V06** The copyable Checkout ID the instructions refer to is shown next to them (the header row
+  is labelled "Payment ID").
+- **V07 / V24** A failed, rejected, cancelled or expired payment hides the bank details and the
+  upload, says why, and links to "Start a new checkout" for the same plan or add-on.
+- **V08** Checkout resolves error keys through `displayableErrorKey` — no "returned an object".
+- **V09 / V32** Subscription shows price, cycle and "Next payment due"; says Atlas doesn't charge
+  automatically, what happens if no payment is confirmed (grace, then expiry) and links to pay;
+  the trial shows its end date and that nothing is charged or deleted; cancel no longer says
+  "will not renew".
+- **V10 / V11 / V23 / V25** Plans mark the current plan, show prices, and offer "Pay for the next
+  period" on it; checkout for the current plan says it pays the next period and when it starts; a
+  plan change says paid days aren't lost (what the backend does); add-on checkout names the
+  add-on and price and isn't offered for an active or unavailable one; disabled buttons say why.
+- **V13 / V26** The cancel dialog stays open on failure with the reason inline, keeps the typed
+  feedback, asks before discarding it, and marks the reason required.
+- **V14–V17** Live sessions: past start refused (client and server), dirty guard, server schedule
+  refusals on their fields, rows show time and duration, draft/scheduled sessions can be cancelled
+  with confirmation.
+- **V19 / V27 / V28** Support reply and ticket, customer request: counters with the real limits,
+  no silent cuts, required marks, error summary, unsaved warnings, one inline failure; the 500
+  copy no longer blames the details.
+- **V20** The domain must look like a domain (client) and be one (server), with an example.
+- **V21** Plan names through `resolvePlanName`; seeded add-ons and payment methods translated by
+  key. **Partly:** names a Platform Owner typed stay as typed — the backend has no Arabic columns.
+- **V22 / V30 / V31 / V33 / V34** Pending items say what they are with an "Open payment" link;
+  status tabs wrap; closing the plan comparison goes back; one title per add-on page and the
+  currency named; i18next plurals for add-ons.
+
+### Not changed, with reason
+- **V35** A customer can't close a support ticket: the API has no endpoint for it.
+- **Platform payment review (B8)** shows only the payment ID; reviewers need the Checkout ID the
+  instructions name — noted for B8.
+- Arabic names for Platform-Owner-created add-ons and payment methods need backend columns.
