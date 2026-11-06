@@ -51,7 +51,7 @@ test.describe('J22 — My Learn and the account menu', () => {
 
     await page.goto(academyPath('/'));
     const header = page.locator('header').first();
-    const myLearn = header.getByRole('link', { name: 'My Learn' });
+    const myLearn = header.getByRole('link', { name: 'My learning' });
     await expect(myLearn).toBeVisible({ timeout: 30_000 });
     await myLearn.click();
     await expect(page).toHaveURL(/\/sign-in\?returnTo=%2Fmy/);
@@ -74,7 +74,7 @@ test.describe('J22 — My Learn and the account menu', () => {
     await trigger.click();
     const menu = page.getByRole('menu');
     await expect(menu.getByRole('menuitem')).toHaveText([
-      'My Learn',
+      'My learning',
       'My Courses',
       'Profile & settings',
       'Sign out',
@@ -99,7 +99,7 @@ test.describe('J22 — My Learn and the account menu', () => {
     await page.keyboard.press('Enter');
     // Opened from the keyboard, the first entry takes focus.
     await expect(
-      page.getByRole('menuitem', { name: 'My Learn' })
+      page.getByRole('menuitem', { name: 'My learning' })
     ).toBeFocused();
     await page.keyboard.press('ArrowDown');
     await expect(
@@ -119,7 +119,7 @@ test.describe('J22 — My Learn and the account menu', () => {
     });
     await page.reload();
     await expect(
-      page.locator('header').first().getByRole('link', { name: 'My Learn' })
+      page.locator('header').first().getByRole('link', { name: 'My learning' })
     ).toHaveAttribute('href', /\/sign-in\?returnTo=%2Fmy/);
   });
 
@@ -134,7 +134,7 @@ test.describe('J22 — My Learn and the account menu', () => {
     const page = await context.newPage();
     await seedCookieDecision(page);
     for (const locale of ['en', 'ar'] as const) {
-      const label = locale === 'en' ? 'My Learn' : 'تعلّمي';
+      const label = locale === 'en' ? 'My learning' : 'تعلّمي';
       await page.goto(academyPath(locale === 'en' ? '/' : '/ar'));
       await expect(page.locator('html')).toHaveAttribute(
         'dir',
