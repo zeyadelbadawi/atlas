@@ -84,6 +84,7 @@ export default function WebsiteMessagesPage(): JSX.Element {
     setKind,
     setFrom,
     setTo,
+    setRange,
     setSort,
     setPage,
     setPageSize,
@@ -228,7 +229,7 @@ export default function WebsiteMessagesPage(): JSX.Element {
         cell: ({ row }) => (
           <span
             className={cn(
-              'block max-w-[18rem] truncate xl:max-w-[26rem]',
+              'block max-w-[14rem] truncate xl:max-w-[20rem]',
               row.original.status === 'new'
                 ? 'font-medium text-foreground'
                 : 'text-muted-foreground'
@@ -458,6 +459,7 @@ export default function WebsiteMessagesPage(): JSX.Element {
           onKindChange={setKind}
           onFromChange={setFrom}
           onToChange={setTo}
+          onRangeChange={setRange}
           onSortChange={setSort}
           onClearFilters={clearFilters}
         />

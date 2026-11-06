@@ -43,6 +43,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
+import { useErrorText } from '@hooks';
+import { useFailureReason } from '@forms';
+import { isApiError } from '@api';
 import { useFilePicker, useUnsavedChanges } from '@hooks';
 import {
   ALLOWED_FAVICON_TYPES,
@@ -183,7 +186,10 @@ export function VisualIdentityEditor({
     palette: paletteKey(studio.draft),
     paletteLogoFingerprint: storedPalette?.extraction?.logoFingerprint,
   }));
-  const [nameError, setNameError] = useState(false);
+  // The name field's message: required (client) or the server's reason.
+  const [nameError, setNameError] = useState<string | null>(null);
+  const errorText = useErrorText();
+  const failureReason = useFailureReason();
 
   // Only the latest logo upload may land (see the doc comment).
   const uploadTicket = useRef(0);
@@ -274,7 +280,7 @@ export function VisualIdentityEditor({
       return false;
     const trimmed = name.trim();
     if (!trimmed) {
-      setNameError(true);
+      setNameError(t('website:visualIdentity.nameRequired'));
       return false;
     }
     if (changes.palette && !studio.validation.valid) return false;
@@ -316,13 +322,32 @@ export function VisualIdentityEditor({
       toast({ title: t('website:visualIdentity.saved') });
       return true;
     } catch (error) {
-      const conflict = (error as { kind?: string }).kind === 'conflict';
+      // B2 (UX audit) — ONE message with the real reason. A failed save
+      // used to raise this page's toast AND the app-wide reporter's (the
+      // hook marks its errors inline now), and a refused name only said
+      // "couldn't be saved" with the field unmarked.
+      if (!isApiError(error)) return false;
+      const nameViolation = error.violations?.find(
+        (violation) => violation.field === 'name'
+      );
+      if (nameViolation) {
+        setNameError(
+          errorText(nameViolation.messageKey, 'errors:validation.field', {
+            field: t('academy:create.nameLabel'),
+            ...(nameViolation.values ?? {}),
+          })
+        );
+        document.getElementById('visual-identity-name')?.focus();
+        return false;
+      }
+      const conflict = error.kind === 'conflict';
       toast({
         title: t(
           conflict
             ? 'website:visualIdentity.conflict'
             : 'website:visualIdentity.saveError'
         ),
+        description: conflict ? undefined : failureReason(error),
         variant: 'destructive',
       });
       return false;
@@ -382,13 +407,13 @@ export function VisualIdentityEditor({
                 id="visual-identity-name"
                 value={name}
                 maxLength={MAX_ACADEMY_NAME_LENGTH}
-                aria-invalid={nameError}
+                aria-invalid={nameError !== null}
                 aria-describedby={
                   nameError ? 'visual-identity-name-error' : undefined
                 }
                 onChange={(event) => {
                   setName(event.target.value);
-                  if (event.target.value.trim()) setNameError(false);
+                  if (event.target.value.trim()) setNameError(null);
                 }}
               />
               {nameError ? (
@@ -396,7 +421,7 @@ export function VisualIdentityEditor({
                   id="visual-identity-name-error"
                   className="text-sm text-destructive"
                 >
-                  {t('website:visualIdentity.nameRequired')}
+                  {nameError}
                 </p>
               ) : null}
             </div>

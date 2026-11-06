@@ -2,7 +2,7 @@
  * useAddCustomDomain hook.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { domainKeys } from '@services/query';
+import { INLINE_ERRORS_META, domainKeys } from '@services/query';
 import type { ApiError } from '@api';
 import type {
   AcademyDomainConfiguration,
@@ -27,6 +27,10 @@ export function useAddCustomDomain() {
       domainService.addCustomDomain(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // B2 (UX audit) — the domain tab shows the failure itself (on the
+    // hostname field, or one toast with the reason); the app-wide reporter
+    // used to add a second toast.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, variables) => {
       await invalidate(domainKeys.configuration(variables.academyId));
     },

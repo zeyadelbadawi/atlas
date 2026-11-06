@@ -180,6 +180,8 @@ export interface UseContactSubmissionFiltersResult {
   readonly setKind: (kind: ContactSubmissionKind | undefined) => void;
   readonly setFrom: (from: string | undefined) => void;
   readonly setTo: (to: string | undefined) => void;
+  /** Both ends at once (one URL write — swapping a reversed range). */
+  readonly setRange: (from: string | undefined, to: string | undefined) => void;
   readonly setSort: (sort: ContactSubmissionSortOption) => void;
   readonly setPage: (page: number) => void;
   readonly setPageSize: (pageSize: number) => void;
@@ -249,6 +251,17 @@ export function useContactSubmissionFilters(): UseContactSubmissionFiltersResult
     [setOptional]
   );
 
+  const setRange = useCallback(
+    (from: string | undefined, to: string | undefined) =>
+      update((next) => {
+        if (from) next.set(PARAM.from, from);
+        else next.delete(PARAM.from);
+        if (to) next.set(PARAM.to, to);
+        else next.delete(PARAM.to);
+      }),
+    [update]
+  );
+
   const setSort = useCallback(
     (sort: ContactSubmissionSortOption) =>
       update((next) => {
@@ -305,6 +318,7 @@ export function useContactSubmissionFilters(): UseContactSubmissionFiltersResult
     setKind,
     setFrom,
     setTo,
+    setRange,
     setSort,
     setPage,
     setPageSize,

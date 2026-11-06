@@ -61,7 +61,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useConfirmDialog } from '@app/providers';
 import { useDateFormatter, usePermissions, useUnsavedChanges } from '@hooks';
-import { useServerValidation } from '@forms';
+import { useFailureReason, useServerValidation } from '@forms';
 import { cn, MIRROR_IN_RTL } from '@utils';
 import { RequestServiceCard } from '@features/customer-requests';
 import {
@@ -121,6 +121,13 @@ function addErrorKey(error: {
   }
 }
 
+/** Refusals that are about the hostname typed, shown on that field. */
+const HOSTNAME_ERROR_KEYS = new Set([
+  'errors.domain.hostnameTaken',
+  'errors.domain.hostnameReserved',
+  'errors.domain.invalidHostname',
+]);
+
 /** Which copy explains a failed HTTPS check: the probe's reason, the certificate state, or a generic fallback. */
 function httpsFailureKey(custom: {
   readonly httpsFailureReason?: string;
@@ -161,6 +168,7 @@ export function WebsiteDomainTab({
   });
   const cloudflareStatusQuery = useInfrastructureProviderStatus('cloudflare');
   const addDomain = useAddCustomDomain();
+  const failureReason = useFailureReason();
   const removeDomain = useRemoveCustomDomain();
   const verifyDomain = useVerifyDomain();
 
@@ -255,11 +263,27 @@ export function WebsiteDomainTab({
           });
           closeForm();
         },
-        onError: (error) =>
+        onError: (error) => {
+          // B2 (UX audit) — a refused hostname is the field's problem: it
+          // shows there, with focus, instead of a toast (and a second
+          // generic toast) while the field looked fine.
+          if (HOSTNAME_ERROR_KEYS.has(error.messageKey ?? '')) {
+            form.setError(
+              'hostname',
+              { type: 'server', message: t(addErrorKey(error)) },
+              { shouldFocus: true }
+            );
+            return;
+          }
           toast({
-            title: t(addErrorKey(error)),
+            title: t('website:domain.custom.addError'),
+            description:
+              addErrorKey(error) === 'website:domain.custom.addError'
+                ? failureReason(error)
+                : t(addErrorKey(error)),
             variant: 'destructive',
-          }),
+          });
+        },
       }
     );
   };

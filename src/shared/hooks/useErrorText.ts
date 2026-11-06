@@ -39,13 +39,19 @@ export function resolveErrorTextKey(
 export function useErrorText(): ErrorTextResolver {
   const { t, i18n } = useTranslation();
   return useCallback<ErrorTextResolver>(
-    (messageKey, fallbackKey, values) =>
-      t(
+    (messageKey, fallbackKey, values) => {
+      const text = t(
         resolveErrorTextKey(messageKey, fallbackKey, (key) =>
           isTranslatedString(i18n, key)
         ),
         values ?? {}
-      ),
+      );
+      // B2 (UX audit) — a value the message needs was not provided
+      // ("{{count}}"): the fallback says something true instead.
+      return /\{\{\s*[\w.]+\s*\}\}/.test(text)
+        ? t(fallbackKey, values ?? {})
+        : text;
+    },
     [t, i18n]
   );
 }

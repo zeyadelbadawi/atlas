@@ -104,8 +104,32 @@ export function setServerRequestContextProvider(
 /** Default timeout for API requests, in milliseconds. */
 const DEFAULT_TIMEOUT_MS = 30_000;
 
-/** Maximum number of retry attempts for transient failures. */
-const MAX_RETRIES = 3;
+/**
+ * Maximum number of transport-level retries of a write.
+ *
+ * B2 (UX audit) — retries happen in ONE layer. A GET is retried by the
+ * query layer (`shouldRetryQuery`, 2 retries with a short backoff); this
+ * client used to retry it three more times underneath, so one failing list
+ * took 18 requests and ~40 s of skeleton before its error, and a failed
+ * save sat silent for ~12 s. Here: a replay-safe write is retried once,
+ * and only when the failure is the gateway's or a restart's (no response,
+ * 502, 503, 504) — a plain 500 will not fix itself in a second.
+ */
+const MAX_RETRIES = 1;
+
+/** Failures that a second attempt a moment later can plausibly clear. */
+const TRANSIENT_STATUSES = new Set([502, 503, 504]);
+
+/** Reads are retried by the query layer, not here (see `MAX_RETRIES`). */
+const READ_METHODS = new Set(['get', 'head', 'options']);
+
+function isTransportRetryable(
+  config: { method?: string },
+  error: Pick<AxiosError, 'response'>
+): boolean {
+  if (READ_METHODS.has((config.method ?? 'get').toLowerCase())) return false;
+  return !error.response || TRANSIENT_STATUSES.has(error.response.status);
+}
 
 /** Delay between retries, in milliseconds. */
 const RETRY_DELAY_MS = 1_000;
@@ -379,7 +403,10 @@ export class HttpClient {
               await this.delay(waitMs);
               return this.instance.request(originalRequest);
             }
-          } else if (retryCount < MAX_RETRIES) {
+          } else if (
+            retryCount < MAX_RETRIES &&
+            isTransportRetryable(originalRequest, error)
+          ) {
             originalRequest.headers['X-Retry-Count'] = retryCount + 1;
 
             await this.delay(RETRY_DELAY_MS * (retryCount + 1));

@@ -9,6 +9,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
+import type { Path } from 'react-hook-form';
 import { useDirtyGuard } from '@features/unsaved-changes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
@@ -31,10 +32,17 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
-import { useServerValidation } from '@forms';
+import { SaveFailedAlert, hasViolationOn, useServerValidation } from '@forms';
 import { useUpdateWebsitePage } from '../hooks';
 import { WebsiteImageField } from './WebsiteImageField';
 import { LocalizedTextField } from './LocalizedTextField';
+import { useLocalizedFormErrors } from './localized-form-errors';
+import {
+  MAX_OG_DESCRIPTION_LENGTH,
+  MAX_OG_TITLE_LENGTH,
+  MAX_SEO_DESCRIPTION_LENGTH,
+  MAX_SEO_TITLE_LENGTH,
+} from '../constants/website.constants';
 import {
   pageSeoSchema,
   type PageSeoFormData,
@@ -44,6 +52,32 @@ import { DEFAULT_PUBLIC_WEBSITE_LOCALE } from '../constants/locale.constants';
 import type { LocalizedText, WebsiteConfiguration, WebsitePage } from '@types';
 
 const EMPTY_LOCALIZED: LocalizedText = { en: '', ar: '' };
+
+const LOCALIZED_SEO_FIELDS = [
+  'metaTitle',
+  'metaDescription',
+  'ogTitle',
+  'ogDescription',
+] as const;
+
+/** Server paths (`seo.metaTitle.en` or `metaTitle.en`) onto this form's fields. */
+const SEO_ALIASES: Record<string, keyof PageSeoFormData> = Object.fromEntries(
+  [...LOCALIZED_SEO_FIELDS, 'canonicalPath', 'indexable'].flatMap((name) => [
+    [`seo.${name}`, name],
+    ...(['en', 'ar'] as const).map((lang) => [
+      `seo.${name}.${lang}`,
+      `${name}.${lang}`,
+    ]),
+  ])
+) as Record<string, keyof PageSeoFormData>;
+
+const SEO_FIELDS: Record<string, string> = Object.fromEntries(
+  [
+    ...Object.keys(SEO_ALIASES),
+    ...Object.values(SEO_ALIASES),
+    ...LOCALIZED_SEO_FIELDS,
+  ].map((name) => [name, ''])
+);
 
 export interface WebsitePageSeoDialogProps {
   readonly academyId: string;
@@ -63,7 +97,7 @@ export function WebsitePageSeoDialog({
   onOpenChange,
 }: WebsitePageSeoDialogProps): JSX.Element {
   const { t } = useTranslation();
-  const updatePage = useUpdateWebsitePage();
+  const updatePage = useUpdateWebsitePage({ inlineErrors: true });
   const [ogImage, setOgImage] = useState(page.seo.ogImage);
 
   const form = useForm<PageSeoFormData>({
@@ -82,7 +116,36 @@ export function WebsitePageSeoDialog({
   // this: closing a dialog is not a navigation, so the X button, an
   // outside click and Escape all need to be intercepted here instead.
   const dirtyGuard = useDirtyGuard(form.formState.isDirty);
-  useServerValidation(form, updatePage.error);
+  useServerValidation(
+    form,
+    updatePage.error,
+    SEO_ALIASES as Record<string, Path<PageSeoFormData>>
+  );
+  const { errors } = form.formState;
+  const localizedErrors = {
+    metaTitle: useLocalizedFormErrors(
+      errors,
+      'metaTitle',
+      'website:seo.metaTitle'
+    ),
+    metaDescription: useLocalizedFormErrors(
+      errors,
+      'metaDescription',
+      'website:seo.metaDescription'
+    ),
+    ogTitle: useLocalizedFormErrors(errors, 'ogTitle', 'website:seo.ogTitle'),
+    ogDescription: useLocalizedFormErrors(
+      errors,
+      'ogDescription',
+      'website:seo.ogDescription'
+    ),
+  };
+  // One message per failure: a violation shows on its field, anything else
+  // is one inline alert with the real reason (no toast on top).
+  const saveError =
+    updatePage.error && !hasViolationOn(updatePage.error, SEO_FIELDS)
+      ? updatePage.error
+      : null;
 
   // What this page would resolve to right now if the fields below were
   // left blank — makes the Page Override → Website Global → Atlas System
@@ -118,8 +181,6 @@ export function WebsitePageSeoDialog({
           toast({ title: t('website:seo.saved') });
           onOpenChange(false);
         },
-        onError: () =>
-          toast({ title: t('website:seo.saveError'), variant: 'destructive' }),
       }
     );
   };
@@ -156,9 +217,10 @@ export function WebsitePageSeoDialog({
                       labelKey="website:seo.metaTitle"
                       value={field.value}
                       onChange={field.onChange}
+                      maxLength={MAX_SEO_TITLE_LENGTH}
+                      errors={localizedErrors.metaTitle}
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -173,10 +235,11 @@ export function WebsitePageSeoDialog({
                       labelKey="website:seo.metaDescription"
                       value={field.value}
                       onChange={field.onChange}
+                      maxLength={MAX_SEO_DESCRIPTION_LENGTH}
+                      errors={localizedErrors.metaDescription}
                       multiline
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -191,9 +254,10 @@ export function WebsitePageSeoDialog({
                       labelKey="website:seo.ogTitle"
                       value={field.value}
                       onChange={field.onChange}
+                      maxLength={MAX_OG_TITLE_LENGTH}
+                      errors={localizedErrors.ogTitle}
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -208,10 +272,11 @@ export function WebsitePageSeoDialog({
                       labelKey="website:seo.ogDescription"
                       value={field.value}
                       onChange={field.onChange}
+                      maxLength={MAX_OG_DESCRIPTION_LENGTH}
+                      errors={localizedErrors.ogDescription}
                       multiline
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -254,10 +319,11 @@ export function WebsitePageSeoDialog({
                 </label>
               )}
             />
-            {updatePage.error ? (
-              <p className="text-sm text-destructive">
-                {t('website:seo.saveError')}
-              </p>
+            {saveError ? (
+              <SaveFailedAlert
+                error={saveError}
+                titleKey="common:form.notSaved"
+              />
             ) : null}
             <DialogFooter>
               <Button type="submit" disabled={updatePage.isPending}>

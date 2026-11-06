@@ -14,7 +14,9 @@
  * disabled fieldset leaves enabled), and a save the API refuses for the
  * lock says so.
  */
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import { cn } from '@utils';
 import { ArrowDown, ArrowUp, Loader2, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -38,9 +40,15 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { useInvalidate } from '@/shared/hooks';
 import { websiteKeys } from '@services/query';
+import { fieldErrorText, useFailureReason } from '@forms';
+import { validationMessage } from '@/shared/forms/validation-message';
+import { isApiError } from '@api';
+import type { ApiError } from '@api';
 import { useUpdateWebsiteConfiguration } from '../hooks';
 import { isSafeExternalUrl } from '../utils/url-safety.utils';
 import { LocalizedTextField } from './LocalizedTextField';
+import type { LocalizedFieldErrors } from './LocalizedTextField';
+import { MAX_CTA_LABEL_LENGTH } from '../constants/website.constants';
 import {
   ChromeLockControl,
   chromeLockErrorMessage,
@@ -60,6 +68,34 @@ import type {
 } from '@types';
 
 const EMPTY_LOCALIZED: LocalizedText = { en: '', ar: '' };
+
+/**
+ * B2 (UX audit) — a menu label longer than this breaks the site header; the
+ * header button shares the section buttons' limit. Shown as a counter, and
+ * an over-long label is not sent.
+ */
+const MAX_MENU_LABEL_LENGTH = MAX_CTA_LABEL_LENGTH;
+
+type Builder = (
+  current: WebsiteConfiguration
+) => UpdateWebsiteConfigurationPayload | null;
+
+/** Which field a server violation names: a menu item (by position) or the header button. */
+function violationTarget(
+  field: string,
+  navigation: readonly WebsiteNavigationItem[]
+): { readonly key: string; readonly language: keyof LocalizedText } | null {
+  const nav = /^(?:navigation\.)?(\d+)\.label\.(en|ar)$/.exec(field);
+  if (nav) {
+    const item = navigation[Number(nav[1])];
+    return item ? { key: item.id, language: nav[2] as 'en' | 'ar' } : null;
+  }
+  const cta = /^(?:header\.)?cta\.label\.(en|ar)$/.exec(field);
+  if (cta) return { key: CTA_KEY, language: cta[1] as 'en' | 'ar' };
+  return null;
+}
+
+const CTA_KEY = '__header-cta__';
 
 export interface WebsiteNavigationTabProps {
   readonly academyId: string;
@@ -90,7 +126,9 @@ export function WebsiteNavigationTab({
   // Two columns from `sm` on a page; one in a narrow panel.
   const wide = compact ? '' : 'sm:col-span-2';
   const { t } = useTranslation();
-  const updateConfig = useUpdateWebsiteConfiguration();
+  const updateConfig = useUpdateWebsiteConfiguration({ inlineErrors: true });
+  const queryClient = useQueryClient();
+  const failureReason = useFailureReason();
   const { invalidate } = useInvalidate();
   // B0-WEB-02 — the site's main language is the one a label must have.
   const primaryLocale = useWebsiteContentLocale();
@@ -98,47 +136,137 @@ export function WebsiteNavigationTab({
   const showLock = useCanToggleChromeLock(academyId) || locked;
 
   /**
-   * Every change on this tab is a full replace of navigation, header or
-   * footer, built from the copy on screen. It carries that copy's
-   * `updatedAt`, so a save based on a copy a colleague has since changed is
-   * refused rather than silently replacing their work; the latest copy is
-   * then loaded and the change can be made again on top of it.
+   * Field messages, by menu item id (or the header button): a label left
+   * empty, too long, or refused by the server shows under ITS language.
+   * B2 (UX audit): an empty label used to fail with only "Failed to save
+   * navigation" and nothing marked.
    */
-  const save = (payload: UpdateWebsiteConfigurationPayload) => {
+  const [labelErrors, setLabelErrors] = useState<
+    Readonly<Record<string, LocalizedFieldErrors>>
+  >({});
+  const setLabelError = (key: string, errors: LocalizedFieldErrors | null) =>
+    setLabelErrors((previous) => {
+      const next = { ...previous };
+      if (errors) next[key] = errors;
+      else delete next[key];
+      return next;
+    });
+
+  /**
+   * Every change on this tab is a full replace of navigation, header or
+   * footer. It carries the copy's `updatedAt`, so a save based on a copy a
+   * colleague has since changed is refused rather than silently replacing
+   * their work; the latest copy is then loaded and the change can be made
+   * again on top of it.
+   *
+   * B2 (UX audit) — saves run ONE AT A TIME, each built from the latest
+   * saved copy when its turn comes. Two quick edits (the copyright, then a
+   * menu label) used to race: the second carried the first's stale
+   * `updatedAt`, was refused as "changed by someone else" — by the same
+   * person in the same tab — and the edit was lost.
+   */
+  const queue = useRef<Promise<void>>(Promise.resolve());
+  const latestConfiguration = (): WebsiteConfiguration =>
+    queryClient.getQueryData<WebsiteConfiguration>(
+      websiteKeys.configuration(academyId)
+    ) ?? configuration;
+
+  const reportFailure = (error: ApiError, sent: WebsiteConfiguration) => {
+    // Locked meanwhile (by an owner or administrator elsewhere): say so,
+    // and load the saved state so the fields turn read-only.
+    if (isChromeLockedError(error)) {
+      toast({
+        title: chromeLockErrorMessage(error, t) ?? '',
+        variant: 'destructive',
+      });
+      void invalidate(websiteKeys.configuration(academyId));
+      return;
+    }
+    if (error.kind === 'conflict') {
+      toast({
+        title: t('website:navigation.staleConflict'),
+        variant: 'destructive',
+      });
+      void invalidate(websiteKeys.configuration(academyId));
+      return;
+    }
+    // A refused label shows under its field; anything else is one toast
+    // with the real reason (this tab saves as you go — there is no Save
+    // button to put an inline message next to).
+    const sortedSent = [...sent.navigation].sort((x, y) => x.order - y.order);
+    const placed = (error.violations ?? []).flatMap((violation) => {
+      const target = violationTarget(violation.field, sortedSent);
+      if (!target) return [];
+      const label =
+        target.key === CTA_KEY
+          ? t('website:navigation.ctaLabel')
+          : t('website:navigation.itemLabel');
+      setLabelError(target.key, {
+        [target.language]: fieldErrorText(
+          t,
+          validationMessage(
+            violation.messageKey.replace(/^errors\./, 'errors:'),
+            {
+              ...(violation.values ?? {}),
+            }
+          ),
+          label
+        ),
+      });
+      return [target];
+    });
+    if (placed.length > 0) return;
+    toast({
+      title: t('website:navigation.saveError'),
+      description: failureReason(error),
+      variant: 'destructive',
+    });
+  };
+
+  const save = (build: Builder) => {
     // Locked: the fields are read-only, and the API would refuse it anyway.
     if (configuration.chromeLocked === true) return;
-    updateConfig.mutate(
-      {
-        academyId,
-        payload: { ...payload, expectedUpdatedAt: configuration.updatedAt },
-      },
-      {
-        onError: (error) => {
-          // Locked meanwhile (by an owner or administrator elsewhere): say
-          // so, and load the saved state so the fields turn read-only.
-          if (isChromeLockedError(error)) {
-            toast({
-              title: chromeLockErrorMessage(error, t) ?? '',
-              variant: 'destructive',
-            });
-            void invalidate(websiteKeys.configuration(academyId));
-            return;
-          }
-          if (error.kind === 'conflict') {
-            toast({
-              title: t('website:navigation.staleConflict'),
-              variant: 'destructive',
-            });
-            void invalidate(websiteKeys.configuration(academyId));
-            return;
-          }
-          toast({
-            title: t('website:navigation.saveError'),
-            variant: 'destructive',
-          });
-        },
+    queue.current = queue.current.then(async () => {
+      const current = latestConfiguration();
+      if (current.chromeLocked === true) return;
+      const payload = build(current);
+      if (!payload) return;
+      try {
+        await updateConfig.mutateAsync({
+          academyId,
+          payload: { ...payload, expectedUpdatedAt: current.updatedAt },
+        });
+      } catch (error) {
+        if (isApiError(error)) reportFailure(error, current);
       }
+    });
+  };
+
+  /** Empty in the site's main language, or too long: the field says so and nothing is sent. */
+  const checkLabel = (
+    key: string,
+    label: LocalizedText,
+    labelKey: string,
+    { allowEmpty = false }: { readonly allowEmpty?: boolean } = {}
+  ): boolean => {
+    const errors: Partial<Record<keyof LocalizedText, string>> = {};
+    if (!allowEmpty && !label[primaryLocale].trim()) {
+      errors[primaryLocale] = fieldErrorText(
+        t,
+        'validation:required',
+        t(labelKey)
+      );
+    }
+    const tooLong = (['en', 'ar'] as const).some(
+      (language) => label[language].length > MAX_MENU_LABEL_LENGTH
     );
+    if (Object.keys(errors).length > 0 || tooLong) {
+      // An over-long language is already marked by the field's counter.
+      setLabelError(key, errors);
+      return false;
+    }
+    setLabelError(key, null);
+    return true;
   };
 
   const navPageIds = new Set(
@@ -151,19 +279,25 @@ export function WebsiteNavigationTab({
     (page) => page.coreType !== 'courseDetails'
   );
 
-  const persistNavigation = (navigation: readonly WebsiteNavigationItem[]) => {
-    save({
-      navigation: navigation.map((item, index) => ({
+  const persistNavigation = (
+    change: (
+      sorted: readonly WebsiteNavigationItem[]
+    ) => readonly WebsiteNavigationItem[]
+  ) => {
+    save((current) => ({
+      navigation: change(
+        [...current.navigation].sort((a, b) => a.order - b.order)
+      ).map((item, index) => ({
         ...item,
         order: index,
       })),
-    });
+    }));
   };
 
   const togglePageInNav = (page: WebsitePage, inNav: boolean) => {
     if (inNav) {
-      persistNavigation([
-        ...configuration.navigation,
+      persistNavigation((navigation) => [
+        ...navigation,
         {
           id: crypto.randomUUID(),
           // `page.title` (a plain, admin-internal label — see
@@ -173,26 +307,29 @@ export function WebsiteNavigationTab({
           // this tab already used before Phase 6.
           label: { en: page.title, ar: '' },
           pageId: page.id,
-          order: configuration.navigation.length,
+          order: navigation.length,
         },
       ]);
     } else {
-      persistNavigation(
-        configuration.navigation.filter((item) => item.pageId !== page.id)
+      persistNavigation((navigation) =>
+        navigation.filter((item) => item.pageId !== page.id)
       );
     }
   };
 
   const renameItem = (id: string, label: LocalizedText) => {
-    persistNavigation(
-      configuration.navigation.map((item) =>
-        item.id === id ? { ...item, label } : item
-      )
+    if (!checkLabel(id, label, 'website:navigation.itemLabel')) return;
+    persistNavigation((navigation) =>
+      navigation.map((item) => (item.id === id ? { ...item, label } : item))
     );
   };
 
   const moveItem = (index: number, direction: -1 | 1) => {
-    persistNavigation(reorder(sortedNav, index, direction));
+    const id = sortedNav[index]?.id;
+    persistNavigation((navigation) => {
+      const from = navigation.findIndex((item) => item.id === id);
+      return from < 0 ? navigation : reorder(navigation, from, direction);
+    });
   };
 
   const currentCta = configuration.header.cta;
@@ -221,7 +358,15 @@ export function WebsiteNavigationTab({
    * already set, and vice versa.
    */
   const updateHeaderCtaLabel = (label: LocalizedText) => {
-    save({
+    // Clearing the label removes the button (see above), so empty is fine.
+    if (
+      !checkLabel(CTA_KEY, label, 'website:navigation.ctaLabel', {
+        allowEmpty: true,
+      })
+    ) {
+      return;
+    }
+    save(() => ({
       header: label[primaryLocale].trim()
         ? {
             cta: {
@@ -233,7 +378,7 @@ export function WebsiteNavigationTab({
             authPages: currentAuthPages,
           }
         : { authPages: currentAuthPages },
-    });
+    }));
   };
 
   /**
@@ -276,17 +421,21 @@ export function WebsiteNavigationTab({
           ar: currentCta?.label?.ar ?? '',
         };
 
-    save({
+    save(() => ({
       header: { cta: { label, ...target }, authPages: currentAuthPages },
-    });
+    }));
   };
 
   const updateFooterCopyright = (value: LocalizedText) => {
-    save({ footer: { ...configuration.footer, copyrightText: value } });
+    save((current) => ({
+      footer: { ...current.footer, copyrightText: value },
+    }));
   };
 
   const persistSocialLinks = (links: readonly WebsiteFooterLink[]) => {
-    save({ footer: { ...configuration.footer, socialLinks: links } });
+    save((current) => ({
+      footer: { ...current.footer, socialLinks: links },
+    }));
   };
 
   return (
@@ -337,6 +486,8 @@ export function WebsiteNavigationTab({
                       labelKey="website:navigation.itemLabel"
                       value={item.label}
                       onBlur={(label) => renameItem(item.id, label)}
+                      maxLength={MAX_MENU_LABEL_LENGTH}
+                      errors={labelErrors[item.id]}
                     />
                   </div>
                   <div className="flex shrink-0 flex-col gap-2 pt-8">
@@ -383,6 +534,8 @@ export function WebsiteNavigationTab({
               labelKey="website:navigation.ctaLabel"
               value={configuration.header.cta?.label ?? EMPTY_LOCALIZED}
               onBlur={updateHeaderCtaLabel}
+              maxLength={MAX_MENU_LABEL_LENGTH}
+              errors={labelErrors[CTA_KEY]}
             />
           </div>
           <div className="space-y-1.5">

@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { toast as sonnerToast } from 'sonner';
+import { APP_CONFIG } from '@config';
 
 import type { ToastActionElement, ToastProps } from '@/components/ui/toast';
 
@@ -136,30 +138,34 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, 'id'>;
 
-function toast({ ...props }: Toast) {
-  const id = genId();
+/**
+ * B2 (UX audit) — one toaster for the whole app. This store used to render
+ * its own Radix toaster in the bottom corner while everything else used
+ * sonner at the top: two places for messages, and the bottom one covered
+ * sticky save bars ("SEO settings saved" over "Save visual identity").
+ * The 54 call sites keep their `toast({ title, description, variant })`
+ * shape; the message now goes to the app's sonner toaster (below the
+ * header, the reading edge, the app's duration).
+ */
+function toast({ title, description, variant }: Toast) {
+  const options = {
+    description,
+    duration: APP_CONFIG.toastDurationMs,
+  };
+  const id =
+    variant === 'destructive'
+      ? sonnerToast.error(title ?? '', options)
+      : sonnerToast(title ?? '', options);
 
-  const update = (props: ToasterToast) =>
-    dispatch({
-      type: 'UPDATE_TOAST',
-      toast: { ...props, id },
-    });
-  const dismiss = () => dispatch({ type: 'DISMISS_TOAST', toastId: id });
-
-  dispatch({
-    type: 'ADD_TOAST',
-    toast: {
-      ...props,
+  const update = (next: ToasterToast) =>
+    sonnerToast(next.title ?? title ?? '', {
       id,
-      open: true,
-      onOpenChange: (open) => {
-        if (!open) dismiss();
-      },
-    },
-  });
+      description: next.description ?? description,
+    });
+  const dismiss = () => sonnerToast.dismiss(id);
 
   return {
-    id: id,
+    id: String(id),
     dismiss,
     update,
   };

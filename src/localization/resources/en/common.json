@@ -50,7 +50,8 @@
     "contactSupport": "Contact support",
     "loading": "Loading…",
     "saving": "Saving…",
-    "saveFailed": "Your changes couldn't be saved. Fix any errors on the page and try again, or stay to keep editing."
+    "saveFailed": "Your changes couldn't be saved. Fix any errors on the page and try again, or stay to keep editing.",
+    "swapDates": "Swap dates"
   },
   "states": {
     "loading": "Loading your content…",
@@ -100,7 +101,8 @@
     "errorSummary": {
       "title_one": "Fix this problem to continue",
       "title_other": "Fix these {{count}} problems to continue"
-    }
+    },
+    "notSaved": "Your changes weren't saved"
   },
   "feedback": {
     "successTitle": "Done",

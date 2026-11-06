@@ -7,7 +7,11 @@
  */
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation } from '@/shared/hooks';
-import { invalidateBranding, websiteKeys } from '@services/query';
+import {
+  INLINE_ERRORS_META,
+  invalidateBranding,
+  websiteKeys,
+} from '@services/query';
 import type { ApiError } from '@api';
 import type {
   SaveVisualIdentityPayload,
@@ -32,6 +36,9 @@ export function useSaveVisualIdentity() {
       websiteConfigurationService.saveVisualIdentity(academyId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    // The page shows the failure itself (one toast with the reason, or the
+    // name field), so the app-wide reporter stays quiet.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (data, { academyId }) => {
       queryClient.setQueryData(
         websiteKeys.configuration(academyId),

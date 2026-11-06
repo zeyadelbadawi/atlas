@@ -8,7 +8,7 @@
  * read" and explicit actions that confirm what happened.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { websiteKeys } from '@services/query';
+import { INLINE_ERRORS_META, websiteKeys } from '@services/query';
 import type { ApiError } from '@api';
 import type { ContactSubmission, ContactSubmissionStatus } from '@types';
 import { contactSubmissionService } from '../services/ContactSubmissionService';
@@ -33,6 +33,9 @@ export function useUpdateContactSubmissionStatus() {
       }),
     showSuccessToast: false,
     showErrorToast: false,
+    // B2 (UX audit) — the messages page raises its own failure toast with
+    // the reason; the app-wide reporter used to add a second one.
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, variables) => {
       await Promise.all([
         invalidate(websiteKeys.allContactSubmissions(variables.academyId)),
