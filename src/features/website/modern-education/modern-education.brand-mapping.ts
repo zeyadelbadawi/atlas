@@ -209,7 +209,8 @@ export function resolveModernEducationTokens(
             C: Math.min(MODERN_EDUCATION_NEUTRAL_CHROMA_CAP, rawBorder.C),
           },
           isBoundary,
-          'darker'
+          // Either way: a dark custom canvas needs a lighter border.
+          'nearest'
         ) ?? roles.border);
 
   const divider = oklchToTriplet({

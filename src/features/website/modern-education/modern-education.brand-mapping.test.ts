@@ -20,6 +20,17 @@ import {
   resolveModernEducationTokens,
 } from './modern-education.brand-mapping';
 
+/** Contrast as painted: each channel rounded to 8 bits first. */
+const paintedContrast = (a: HslTriplet, b: HslTriplet) => {
+  const luminance = (triplet: HslTriplet) => {
+    const { r, g, b: blue } = parseHslTriplet(triplet);
+    const q = (channel: number) => Math.round(channel * 255) / 255;
+    return relativeLuminance({ r: q(r), g: q(g), b: q(blue) });
+  };
+  const [la, lb] = [luminance(a), luminance(b)];
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+};
+
 const theme = getWebsiteTheme('modern-education');
 
 /** §I.2's identity matrix (as legacy seeds, the render-time path). */
@@ -98,15 +109,7 @@ describe.each(Object.entries(IDENTITY_MATRIX))(
     it('keeps links readable on the soft surface as painted (8-bit channels)', () => {
       // Page heroes set eyebrows and links on the surface band; axe measures
       // the painted colours, so the check rounds each channel as they are.
-      const painted = (triplet: HslTriplet) => {
-        const { r: red, g, b } = parseHslTriplet(triplet);
-        const q = (channel: number) => Math.round(channel * 255) / 255;
-        return relativeLuminance({ r: q(red), g: q(g), b: q(b) });
-      };
-      const [link, surface] = [painted(r.link), painted(r.surface)];
-      const ratio =
-        (Math.max(link, surface) + 0.05) / (Math.min(link, surface) + 0.05);
-      expect(ratio).toBeGreaterThanOrEqual(4.5);
+      expect(paintedContrast(r.link, r.surface)).toBeGreaterThanOrEqual(4.5);
     });
 
     it('keeps every emitted text/fill pair readable', () => {
@@ -151,8 +154,8 @@ describe.each(Object.entries(IDENTITY_MATRIX))(
       ).toBeGreaterThanOrEqual(3);
       // B10 V08 — page heroes set their search field on the surface band.
       expect(
-        contrastRatio(t.border, r.surface),
-        'border boundary on the surface band'
+        paintedContrast(t.border, r.surface),
+        'border boundary on the surface band, as painted'
       ).toBeGreaterThanOrEqual(3);
       expect(tripletToOklch(t.divider).C, 'divider').toBeLessThanOrEqual(
         MODERN_EDUCATION_NEUTRAL_CHROMA_CAP + 0.002
@@ -186,6 +189,26 @@ describe('Theme 1 mapping — source of truth (§F.4.6)', () => {
     });
     expect(vars['--website-link']).toBe('hsl(262 70% 35%)');
     expect(vars['--primary']).toBe(stored.roles.cta);
+  });
+
+  it('a dark custom canvas gets a lighter border that bounds the background and the surface', () => {
+    const dark = buildBrandPalette({
+      seeds: { primary: '262 70% 60%' },
+      source: 'manual',
+      status: 'confirmed',
+      overrides: {
+        background: '222 22% 9%',
+        surface: '222 20% 13%',
+        border: '222 12% 20%',
+      },
+    });
+    const { roles } = dark;
+    const t = resolveModernEducationTokens({ theme, seeds, palette: dark });
+    expect(contrastRatio(t.border, roles.background)).toBeGreaterThanOrEqual(3);
+    expect(paintedContrast(t.border, roles.surface)).toBeGreaterThanOrEqual(3);
+    expect(tripletToOklch(t.border).L).toBeGreaterThan(
+      tripletToOklch(roles.background).L
+    );
   });
 
   it('ignores a stored palette that is incomplete, deriving from the seeds instead', () => {
