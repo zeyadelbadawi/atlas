@@ -634,6 +634,34 @@ describe('B4 — payment method dialog and review sheet', () => {
     expect(notifyError).not.toHaveBeenCalled();
   });
 
+  it('V14 review — mixed violations: the instructions one on its field, the rest one alert, no render loop', async () => {
+    const { view, form } = await openBankSetup();
+    saveState.error = createApiError('validation', {
+      violations: [
+        {
+          field: 'instructions.instructions',
+          messageKey: 'validation:invalid',
+        },
+        { field: 'enabled', messageKey: 'validation:invalid' },
+      ],
+    });
+    view.rerender(
+      <I18nextProvider i18n={createI18nInstance('en')}>
+        <MemoryRouter initialEntries={['/x']}>
+          <AcademyPaymentMethodsPage />
+        </MemoryRouter>
+      </I18nextProvider>
+    );
+    // A new filtered error per render used to re-run setError forever;
+    // settling here (no "Maximum update depth") is the regression check.
+    expect(await screen.findByTestId('save-failed')).toBeTruthy();
+    const field = within(form).getByTestId('academy-bank-instructions');
+    await waitFor(() =>
+      expect(field.getAttribute('aria-invalid')).toBe('true')
+    );
+    expect(notifyError).not.toHaveBeenCalled();
+  });
+
   it('V13 — Escape with typed bank details asks first', async () => {
     confirm.mockResolvedValue(false);
     const { form } = await openBankSetup();

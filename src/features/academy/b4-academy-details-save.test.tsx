@@ -154,7 +154,7 @@ describe('Academy Profile — checks before sending (V04)', () => {
     expect(screen.getByText(/must be 200 characters or fewer/)).toBeTruthy();
     expect(
       screen.getByText(
-        'Use 2 to 20 letters, digits, spaces or hyphens, like 11511.'
+        'Use 2 to 20 Latin letters (A–Z), digits, spaces or hyphens, like 11511.'
       )
     ).toBeTruthy();
     expect(state.update).not.toHaveBeenCalled();

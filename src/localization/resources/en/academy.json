@@ -78,7 +78,7 @@
     "success": "Profile updated successfully",
     "error": "Failed to update profile",
     "unsavedChanges": "You have unsaved profile changes. Are you sure you want to leave?",
-    "postalCodeInvalid": "Use 2 to 20 letters, digits, spaces or hyphens, like 11511."
+    "postalCodeInvalid": "Use 2 to 20 Latin letters (A–Z), digits, spaces or hyphens, like 11511."
   },
   "settings": {
     "title": "Academy Settings",
