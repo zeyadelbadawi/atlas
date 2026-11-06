@@ -51,6 +51,20 @@ export function isolateNumericExpression(expression: string): string {
   return `${LEFT_TO_RIGHT_ISOLATE}${expression}${POP_DIRECTIONAL_ISOLATE}`;
 }
 
+/** U+2068 FIRST STRONG ISOLATE: the direction comes from the text itself. */
+const FIRST_STRONG_ISOLATE = '\u2068';
+
+/**
+ * B6 (UX audit) — wraps user-written text (a name, a title) interpolated
+ * into a translated sentence, so a Latin name inside an Arabic byline
+ * keeps its own direction and does not drag the punctuation around it
+ * ("بواسطة Sarah · …", not ".Sarah بواسطة"). Its direction is taken from
+ * its first strong character, so Arabic text inside English works too.
+ */
+export function isolateText(text: string): string {
+  return `${FIRST_STRONG_ISOLATE}${text}${POP_DIRECTIONAL_ISOLATE}`;
+}
+
 /**
  * The class that mirrors a DIRECTIONAL icon for right-to-left reading.
  *

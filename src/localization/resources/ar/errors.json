@@ -347,7 +347,7 @@
     "multipleChoiceRequiresOneCorrectOption": "يحتاج سؤال الاختيار المتعدد إلى خيار صحيح واحد على الأقل.",
     "choiceRequiresTwoOptions": "يحتاج سؤال الاختيار إلى خيارين على الأقل.",
     "shortAnswerRequiresAcceptedAnswer": "يحتاج سؤال الإجابة القصيرة إلى إجابة مقبولة واحدة على الأقل.",
-    "pointsExceedMaximum": "لا يمكن أن تتجاوز نقاط السؤال 100.",
+    "pointsExceedMaximum": "قيمة هذا السؤال {{max}} نقطة. أدخل {{max}} أو أقل.",
     "locked": "هذا الاختبار مقفل حتى تُكمِل العنصر الذي يسبقه في الدورة.",
     "windowOrder": "يجب أن يكون وقت الإغلاق بعد وقت الفتح.",
     "dueAfterWindow": "لا يمكن أن يكون موعد التسليم بعد وقت الإغلاق.",

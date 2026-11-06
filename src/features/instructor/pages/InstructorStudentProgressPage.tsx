@@ -106,6 +106,7 @@ export default function InstructorStudentProgressPage(): JSX.Element {
             {data.quizAttempts.length === 0 ? (
               <EmptyState
                 titleKey="instructor:studentProgress.noQuizAttempts"
+                descriptionKey="instructor:studentProgress.noQuizAttemptsDescription"
                 className="py-8"
               />
             ) : (
@@ -148,6 +149,7 @@ export default function InstructorStudentProgressPage(): JSX.Element {
             {data.assignmentSubmissions.length === 0 ? (
               <EmptyState
                 titleKey="instructor:studentProgress.noSubmissions"
+                descriptionKey="instructor:studentProgress.noSubmissionsDescription"
                 className="py-8"
               />
             ) : (

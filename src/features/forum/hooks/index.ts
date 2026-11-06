@@ -15,3 +15,4 @@ export { usePinThread } from './usePinThread';
 export { useUnpinThread } from './useUnpinThread';
 export { useLockThread } from './useLockThread';
 export { useUnlockThread } from './useUnlockThread';
+export { useDeleteThread, useDeleteReply } from './useDeleteForumPosts';

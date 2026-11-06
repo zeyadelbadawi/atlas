@@ -58,10 +58,19 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
 import { useConfirmDialog } from '@app/providers';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import { useServerValidation } from '@forms';
-import { useDateFormatter, useLanguage, usePermissions } from '@hooks';
 import {
-  apiErrorMessage,
+  hasViolationOn,
+  SaveFailedAlert,
+  useLabelledViolations,
+  useServerValidation,
+} from '@forms';
+import {
+  useDateFormatter,
+  useLanguage,
+  usePermissions,
+  useUnsavedChanges,
+} from '@hooks';
+import {
   cn,
   formatNumber,
   isolateNumericExpression,
@@ -92,6 +101,10 @@ import type {
   QuizReviewAnswer,
 } from '@types';
 import { IntegritySignalsCard } from '../components/IntegritySignalsCard';
+
+const VOID_FIELDS = {
+  reason: 'instructor:attemptReview.void.reasonLabel',
+} as const;
 
 /* ---------- small presentational pieces ---------- */
 
@@ -163,6 +176,7 @@ function QuestionCard({ question, index }: QuestionCardProps): JSX.Element {
             {t(`instructor:attemptReview.questionType.${question.type}`)}
             {' · '}
             {t('instructor:attemptReview.answers.pointsWorth', {
+              count: question.points,
               points: formatNumber(question.points, language),
             })}
           </p>
@@ -190,7 +204,10 @@ function QuestionCard({ question, index }: QuestionCardProps): JSX.Element {
             {t('instructor:attemptReview.answers.learnerText')}
           </p>
           {question.text ? (
-            <p className="whitespace-pre-wrap rounded-md bg-muted p-3 text-sm text-foreground">
+            <p
+              dir="auto"
+              className="whitespace-pre-wrap rounded-md bg-muted p-3 text-sm text-foreground"
+            >
               {question.text}
             </p>
           ) : (
@@ -209,6 +226,7 @@ function QuestionCard({ question, index }: QuestionCardProps): JSX.Element {
                 {question.acceptedAnswers.map((answer) => (
                   <li
                     key={answer}
+                    dir="auto"
                     className="rounded-md border border-border px-2 py-0.5 text-sm"
                   >
                     {answer}
@@ -259,7 +277,9 @@ function QuestionCard({ question, index }: QuestionCardProps): JSX.Element {
                     className={cn('mt-0.5 size-4 shrink-0', marker.className)}
                     aria-hidden
                   />
-                  <span className="text-foreground">{option.label}</span>
+                  <span dir="auto" className="text-foreground">
+                    {option.label}
+                  </span>
                 </span>
                 {/* The words carry the meaning and the icon the colour: small
                     coloured text on the tinted row fell below 4.5:1 (axe). */}
@@ -296,13 +316,25 @@ interface ManualGradingCardProps {
   readonly canGrade: boolean;
 }
 
+/**
+ * B6 (UX audit):
+ *   V03 whole points (the server's `@IsInt`), checked here with the app's
+ *       message; a server refusal on `grades.<index>.points` lands on that
+ *       question's field;
+ *   V07/V24 any other failure is ONE inline alert in this card (no toast
+ *       covering the first field on a phone);
+ *   V11 leaving with typed points asks first;
+ *   V13 the cap named is the question's own points;
+ *   V27 grades can be saved in parts — the server keeps what it gets and
+ *       finalises once every question has points.
+ */
 function ManualGradingCard({
   courseId,
   quizId,
   attempt,
   canGrade,
 }: ManualGradingCardProps): JSX.Element | null {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { language } = useLanguage();
 
   const manualQuestions = useMemo(
@@ -319,7 +351,7 @@ function ManualGradingCard({
         Object.fromEntries(
           manualQuestions.map(({ question }) => [
             question.questionId,
-            question.points,
+            { max: question.points, saved: question.manualPoints !== null },
           ])
         )
       ),
@@ -350,7 +382,35 @@ function ManualGradingCard({
     isPending,
     error: mutationError,
   } = useGradeQuizAttempt(courseId, quizId);
-  useServerValidation(form, mutationError);
+
+  // The server names a grade by its place in the `grades` array sent;
+  // the form names it by question. Rebuilt on every submit, since only the
+  // questions with points entered are sent.
+  const [aliases, setAliases] = useState<Record<string, string>>({});
+  const fieldLabels = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.keys(aliases).map((field) => [
+          field,
+          'instructor:attemptReview.grading.pointsField',
+        ])
+      ),
+    [aliases]
+  );
+  const labelledError = useLabelledViolations(
+    mutationError ?? null,
+    fieldLabels
+  );
+  useServerValidation(
+    form,
+    labelledError,
+    aliases as Record<string, `grades.${string}`>
+  );
+  const fieldFailure = hasViolationOn(labelledError, aliases);
+
+  const { markSaved } = useUnsavedChanges({
+    isDirty: form.formState.isDirty,
+  });
 
   useEffect(() => {
     form.reset(defaults);
@@ -366,30 +426,48 @@ function ManualGradingCard({
   );
 
   const onSubmit = async (data: ManualGradesFormData) => {
+    const grades = manualQuestions
+      .map(({ question }) => ({
+        questionId: question.questionId,
+        points: data.grades[question.questionId],
+      }))
+      .filter(
+        (grade): grade is { questionId: string; points: number } =>
+          typeof grade.points === 'number'
+      );
+    setAliases(
+      Object.fromEntries(
+        grades.map((grade, index) => [
+          `grades.${index}.points`,
+          `grades.${grade.questionId}`,
+        ])
+      )
+    );
+    let result: QuizAttemptReview;
     try {
-      const result = await gradeAttempt({
+      result = await gradeAttempt({
         attemptId: attempt.id,
-        payload: {
-          grades: manualQuestions.map(({ question }) => ({
-            questionId: question.questionId,
-            points: data.grades[question.questionId],
-          })),
-        },
+        payload: { grades },
       });
-      toast({
-        title: t('instructor:attemptReview.grading.saved'),
-        description:
-          result.gradingStatus === 'graded'
-            ? t('instructor:attemptReview.grading.savedFinal')
-            : t('instructor:attemptReview.grading.savedPending'),
-      });
-    } catch (error) {
-      toast({
-        title: t('instructor:attemptReview.grading.error'),
-        description: apiErrorMessage(t, i18n, error),
-        variant: 'destructive',
-      });
+    } catch {
+      // Shown once: on its field, or as the alert above the button.
+      return;
     }
+    markSaved();
+    form.reset(data);
+    const remaining = result.questions.filter(
+      (question) =>
+        question.needsManualGrading && question.manualPoints === null
+    ).length;
+    toast({
+      title: t('instructor:attemptReview.grading.saved'),
+      description:
+        result.gradingStatus === 'graded'
+          ? t('instructor:attemptReview.grading.savedFinal')
+          : t('instructor:attemptReview.grading.savedPending', {
+              count: remaining,
+            }),
+    });
   };
 
   return (
@@ -419,7 +497,11 @@ function ManualGradingCard({
           </p>
         ) : (
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4"
+              noValidate
+            >
               {manualQuestions.map(({ question, index }) => (
                 <FormField
                   key={question.questionId}
@@ -435,10 +517,10 @@ function ManualGradingCard({
                       <FormControl>
                         <Input
                           type="number"
-                          inputMode="decimal"
+                          inputMode="numeric"
                           min={0}
                           max={question.points}
-                          step="any"
+                          step={1}
                           className="max-w-40"
                           {...field}
                           value={field.value ?? ''}
@@ -454,6 +536,7 @@ function ManualGradingCard({
                       <FormDescription>
                         {isolateNumericExpression(
                           t('instructor:attemptReview.grading.pointsHint', {
+                            min: formatNumber(0, language),
                             max: formatNumber(question.points, language),
                           })
                         )}
@@ -463,6 +546,12 @@ function ManualGradingCard({
                   )}
                 />
               ))}
+              {labelledError && !fieldFailure ? (
+                <SaveFailedAlert
+                  error={labelledError}
+                  titleKey="instructor:attemptReview.grading.error"
+                />
+              ) : null}
               <div className="flex justify-end">
                 <Button type="submit" disabled={isPending}>
                   {isPending ? (
@@ -496,7 +585,7 @@ function VoidAttemptDialog({
   open,
   onOpenChange,
 }: VoidAttemptDialogProps): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { language } = useLanguage();
   const { confirm } = useConfirmDialog();
 
@@ -510,7 +599,12 @@ function VoidAttemptDialog({
     isPending,
     error: mutationError,
   } = useInvalidateQuizAttempt(courseId, quizId);
-  useServerValidation(form, mutationError);
+  const labelledError = useLabelledViolations(
+    mutationError ?? null,
+    VOID_FIELDS
+  );
+  useServerValidation(form, labelledError);
+  const fieldFailure = hasViolationOn(labelledError, VOID_FIELDS);
 
   const onSubmit = async (data: VoidAttemptFormData) => {
     const confirmed = await confirm({
@@ -530,16 +624,14 @@ function VoidAttemptDialog({
         attemptId: attempt.id,
         payload: { reason: data.reason },
       });
-      toast({ title: t('instructor:attemptReview.void.success') });
-      form.reset({ reason: '' });
-      onOpenChange(false);
-    } catch (error) {
-      toast({
-        title: t('instructor:attemptReview.void.error'),
-        description: apiErrorMessage(t, i18n, error),
-        variant: 'destructive',
-      });
+    } catch {
+      // B6 (UX audit) V07 — one alert in the dialog, which stays open with
+      // the reason typed; no toast on top.
+      return;
     }
+    toast({ title: t('instructor:attemptReview.void.success') });
+    form.reset({ reason: '' });
+    onOpenChange(false);
   };
 
   return (
@@ -564,6 +656,7 @@ function VoidAttemptDialog({
                   <FormControl>
                     <Textarea
                       rows={4}
+                      dir="auto"
                       placeholder={t(
                         'instructor:attemptReview.void.reasonPlaceholder'
                       )}
@@ -574,6 +667,12 @@ function VoidAttemptDialog({
                 </FormItem>
               )}
             />
+            {labelledError && !fieldFailure ? (
+              <SaveFailedAlert
+                error={labelledError}
+                titleKey="instructor:attemptReview.void.error"
+              />
+            ) : null}
             <DialogFooter>
               <Button
                 type="button"
@@ -740,8 +839,13 @@ export default function InstructorQuizAttemptPage(): JSX.Element {
           <CardContent>
             <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <Fact label={t('instructor:attemptReview.facts.student')}>
-                <span className="block">{attempt.studentName}</span>
-                <span className="block text-xs text-muted-foreground">
+                <span dir="auto" className="block">
+                  {attempt.studentName}
+                </span>
+                <span
+                  dir="ltr"
+                  className="block text-start text-xs text-muted-foreground"
+                >
                   {attempt.studentEmail}
                 </span>
               </Fact>
@@ -841,7 +945,7 @@ export default function InstructorQuizAttemptPage(): JSX.Element {
                 <Fact
                   label={t('instructor:attemptReview.facts.invalidationReason')}
                 >
-                  {attempt.invalidationReason}
+                  <span dir="auto">{attempt.invalidationReason}</span>
                 </Fact>
               ) : null}
             </dl>
@@ -916,7 +1020,7 @@ export default function InstructorQuizAttemptPage(): JSX.Element {
                     type="button"
                     variant="link"
                     size="sm"
-                    className="h-auto p-0 text-xs"
+                    className="h-auto min-h-6 p-0 text-xs"
                     aria-pressed={showHeartbeats}
                     onClick={() => setShowHeartbeats((value) => !value)}
                   >

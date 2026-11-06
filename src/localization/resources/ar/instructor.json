@@ -5,8 +5,8 @@
     "assignedCourses": "الدورات المسندة",
     "activeCourses": "الدورات النشطة",
     "totalStudents": "إجمالي الطلاب",
-    "pendingSubmissions": "التسليمات المعلّقة",
-    "pendingGrading": "بانتظار التصحيح",
+    "pendingSubmissions": "الواجبات المُسلَّمة",
+    "pendingGrading": "واجبات بانتظار التصحيح",
     "requiresAttention": "دورات تحتاج إلى اهتمام",
     "noAttentionNeeded": "لا يوجد ما يحتاج إلى اهتمامك الآن.",
     "recentActivity": "النشاط الأخير",
@@ -15,7 +15,10 @@
       "pending_grading": "تسليمات بانتظار التصحيح",
       "low_engagement": "تفاعل منخفض من الطلاب",
       "no_recent_activity": "لا يوجد نشاط حديث"
-    }
+    },
+    "countsNote": "يحتسب «الواجبات المُسلَّمة» كل واجب سُلِّم، صُحّح أم لا. أما إجابات الاختبارات التي تحتاج إلى تصحيح يدوي فتظهر في صفحة نتائج كل اختبار.",
+    "noAttentionNeededDescription": "ستظهر هنا الدورات التي فيها واجبات تنتظر التصحيح.",
+    "noRecentActivityDescription": "ستظهر هنا التسجيلات الجديدة والتسليمات ومحاولات الاختبارات في دوراتك."
   },
   "courses": {
     "title": "دوراتي",
@@ -29,22 +32,37 @@
       "visibility": "الظهور",
       "enrolled": "المسجّلون",
       "averageProgress": "متوسط التقدّم"
-    }
+    },
+    "noMatch": "لا توجد دورات مطابقة",
+    "noMatchDescription": "لا يحتوي عنوان أي دورة تُدرّسها على ما بحثت عنه. تحقّق من الكتابة أو امسح البحث."
   },
   "overview": {
     "title": "نظرة عامة على الدورة",
-    "curriculumSummary": "{{sections}} أقسام · {{lessons}} دروس",
     "enrolledStudents": "الطلاب المسجّلون",
     "averageProgress": "متوسط التقدّم",
-    "pendingSubmissions": "التسليمات المعلّقة",
-    "pendingGrading": "بانتظار التصحيح",
+    "pendingSubmissions": "الواجبات المُسلَّمة",
+    "pendingGrading": "واجبات بانتظار التصحيح",
     "quickLinks": {
       "students": "الطلاب",
       "assessments": "التقييمات",
       "announcements": "الإعلانات",
       "discussions": "النقاشات"
     },
-    "editCurriculum": "تحرير المنهج"
+    "editCurriculum": "تحرير المنهج",
+    "curriculumSummary": "{{sections}} · {{lessons}}",
+    "sectionCount_zero": "لا توجد أقسام",
+    "sectionCount_one": "قسم واحد",
+    "sectionCount_two": "قسمان",
+    "sectionCount_few": "{{count}} أقسام",
+    "sectionCount_many": "{{count}} قسمًا",
+    "sectionCount_other": "{{count}} قسم",
+    "lessonCount_zero": "لا توجد دروس",
+    "lessonCount_one": "درس واحد",
+    "lessonCount_two": "درسان",
+    "lessonCount_few": "{{count}} دروس",
+    "lessonCount_many": "{{count}} درسًا",
+    "lessonCount_other": "{{count}} درس",
+    "noRecentActivityDescription": "ستظهر هنا التسجيلات الجديدة والتسليمات ومحاولات الاختبارات في هذه الدورة."
   },
   "students": {
     "title": "الطلاب",
@@ -70,7 +88,10 @@
       "incomplete": "غير مكتمل",
       "in_progress": "قيد التقدّم",
       "completed": "مكتمل"
-    }
+    },
+    "subtitleCourse": "الطلاب المسجّلون في {{course}}.",
+    "noMatch": "لا يوجد طلاب مطابقون",
+    "noMatchDescription": "لا يوجد طالب في هذه الدورة بهذا الاسم أو البريد الإلكتروني. تحقّق من الكتابة أو امسح البحث."
   },
   "studentProgress": {
     "title": "تقدّم الطالب",
@@ -91,7 +112,9 @@
     },
     "assignmentSubmissions": "تسليمات الواجبات",
     "noSubmissions": "لا توجد تسليمات بعد.",
-    "viewSubmission": "عرض التسليم"
+    "viewSubmission": "عرض التسليم",
+    "noQuizAttemptsDescription": "ستظهر هنا محاولات هذا الطالب في اختبارات هذه الدورة.",
+    "noSubmissionsDescription": "ستظهر هنا الواجبات التي يسلّمها هذا الطالب، جاهزة للمراجعة."
   },
   "assessments": {
     "title": "التقييمات",
@@ -100,12 +123,20 @@
     "assignments": "الواجبات",
     "noQuizzes": "لا توجد اختبارات محدّدة لهذه الدورة بعد.",
     "noAssignments": "لا توجد واجبات محدّدة لهذه الدورة بعد.",
-    "questionCount": "{{count}} أسئلة",
     "dueAt": "الاستحقاق {{date}}",
     "status": {
       "draft": "مسودة",
       "published": "منشور"
-    }
+    },
+    "subtitleCourse": "الاختبارات والواجبات المحدّدة لدورة {{course}}.",
+    "questionCount_zero": "لا توجد أسئلة",
+    "questionCount_one": "سؤال واحد",
+    "questionCount_two": "سؤالان",
+    "questionCount_few": "{{count}} أسئلة",
+    "questionCount_many": "{{count}} سؤالًا",
+    "questionCount_other": "{{count}} سؤال",
+    "noQuizzesDescription": "ستظهر هنا الاختبارات المضافة إلى منهج هذه الدورة مع نتائجها.",
+    "noAssignmentsDescription": "ستظهر هنا الواجبات المضافة إلى منهج هذه الدورة مع تسليماتها."
   },
   "quizResults": {
     "title": "نتائج الاختبار",
@@ -158,7 +189,7 @@
       "noStudents": "لا يوجد طلاب مسجّلون للاختيار من بينهم.",
       "timeMultiplier": "مضاعف الوقت",
       "timeMultiplierHelp": "1 يبقي الحد الزمني كما هو؛ 1.5 يمنح 50% وقتًا إضافيًا.",
-      "timeMultiplierRange": "أدخل مضاعفًا بين 1 و4.",
+      "timeMultiplierRange": "أدخل مضاعفًا بين 1 و4، بمنزلتين عشريتين على الأكثر (مثل 1.5).",
       "extraAttempts": "محاولات إضافية",
       "availableFrom": "متاح من",
       "availableUntil": "متاح حتى",
@@ -168,13 +199,12 @@
       "reasonPlaceholder": "لماذا يحصل هذا الطالب على استثناء",
       "reasonTooLong": "أبقِ السبب أقل من 500 حرف.",
       "studentRequired": "اختر طالبًا.",
-      "summary": "{{multiplier}}× من الوقت · {{attempts}} محاولات إضافية",
       "windowFrom": "من {{date}}",
       "windowUntil": "حتى {{date}}",
       "save": "حفظ الاستثناء",
       "remove": "إزالة",
       "saved": "تم حفظ الاستثناء",
-      "saveError": "تعذّر حفظ الاستثناء",
+      "saveError": "لم يُحفظ الاستثناء",
       "removed": "تمت إزالة الاستثناء",
       "removeError": "تعذّر إزالة الاستثناء",
       "removeConfirm": {
@@ -182,8 +212,18 @@
         "description": "سيعود {{student}} إلى الحد الزمني والمحاولات والنافذة الخاصة بالاختبار نفسه.",
         "confirmLabel": "إزالة الاستثناء",
         "cancelLabel": "الإبقاء عليه"
-      }
-    }
+      },
+      "extraAttemptsRange": "أدخل عددًا صحيحًا من المحاولات الإضافية: 0 أو أكثر.",
+      "extraAttemptsHelp": "0 يُبقي عدد محاولات الاختبار كما هو.",
+      "windowEnded": "انتهت هذه النافذة بالفعل، فلن تمنح الطالب شيئًا. اختر نهاية في المستقبل، أو اترك التاريخين فارغين.",
+      "summary_zero": "{{multiplier}}× من الوقت · بلا محاولات إضافية",
+      "summary_one": "{{multiplier}}× من الوقت · محاولة إضافية واحدة",
+      "summary_two": "{{multiplier}}× من الوقت · محاولتان إضافيتان",
+      "summary_few": "{{multiplier}}× من الوقت · {{attempts}} محاولات إضافية",
+      "summary_many": "{{multiplier}}× من الوقت · {{attempts}} محاولة إضافية",
+      "summary_other": "{{multiplier}}× من الوقت · {{attempts}} محاولة إضافية"
+    },
+    "pointsOf": "{{earned}} / {{total}} نقطة"
   },
   "submissions": {
     "title": "التسليمات",
@@ -196,7 +236,9 @@
       "gradingStatus": "التصحيح",
       "score": "الدرجة",
       "submittedAt": "تاريخ التسليم"
-    }
+    },
+    "titleAssignment": "التسليمات: {{assignment}}",
+    "subtitleCourse": "تسليمات جميع الطلاب لهذا الواجب في دورة {{course}}."
   },
   "grading": {
     "title": "مراجعة التسليم",
@@ -206,14 +248,14 @@
     "viewAttachment": "عرض المرفق",
     "submittedAt": "تم التسليم في {{date}}",
     "scoreLabel": "الدرجة",
-    "scorePlaceholder": "٠–١٠٠",
+    "scorePlaceholder": "{{min}}–{{max}}",
     "feedbackLabel": "الملاحظات",
     "feedbackPlaceholder": "ملاحظات اختيارية للطالب",
     "optional": "اختياري",
     "cancelButton": "إلغاء",
     "submitButton": "حفظ الدرجة",
     "success": "تم حفظ الدرجة",
-    "error": "فشل حفظ الدرجة",
+    "error": "لم تُحفظ الدرجة",
     "viewOnlyNotice": "ليس لديك صلاحية تصحيح هذا التسليم.",
     "status": {
       "ungraded": "غير مصحّح",
@@ -223,7 +265,23 @@
       "open": "فتح المرفق",
       "expires": "تنتهي صلاحية هذا الرابط في {{time}}"
     },
-    "submittedLate": "تم التسليم متأخرًا"
+    "submittedLate": "تم التسليم متأخرًا",
+    "context": "{{assignment}} · {{course}}",
+    "contextAssignment": "{{assignment}}",
+    "scoreLabelWithScale": "الدرجة (من {{max}})",
+    "scoreHint": "نسبة مئوية من {{min}} إلى {{max}}؛ بمنزلتين عشريتين على الأكثر، مثل 92.5.",
+    "scoreRange": "أدخل درجة من {{min}} إلى {{max}}، بمنزلتين عشريتين على الأكثر (مثل 92.5).",
+    "characterCount": "{{count}} / {{max}} حرفًا",
+    "successDescription": "أصبحت درجة {{student}} في هذا الواجب {{score}}.",
+    "gradedBadge": "تم التصحيح · {{score}} / {{max}}",
+    "gradedAt": "صُحّح في {{date}}",
+    "gradedAtByYou": "صحّحته أنت في {{date}}",
+    "regradeConfirm": {
+      "title": "استبدال الدرجة؟",
+      "description": "استبدال الدرجة {{previous}} بالدرجة {{next}}؟ سيرى {{student}} الدرجة الجديدة بدلًا من القديمة.",
+      "confirmLabel": "استبدال الدرجة",
+      "cancelLabel": "إبقاء {{previous}}"
+    }
   },
   "attemptReview": {
     "title": "مراجعة المحاولة",
@@ -259,7 +317,6 @@
     "answers": {
       "title": "الإجابات",
       "questionNumber": "السؤال {{number}}",
-      "pointsWorth": "{{points}} نقاط",
       "selectedCorrect": "مُختار · صحيح",
       "selectedIncorrect": "مُختار · غير صحيح",
       "correctAnswer": "الإجابة الصحيحة",
@@ -274,7 +331,13 @@
         "awaitingGrading": "بانتظار التصحيح",
         "graded": "صُحّحت يدويًا",
         "unanswered": "بدون إجابة"
-      }
+      },
+      "pointsWorth_zero": "{{points}} نقطة",
+      "pointsWorth_one": "نقطة واحدة",
+      "pointsWorth_two": "نقطتان",
+      "pointsWorth_few": "{{points}} نقاط",
+      "pointsWorth_many": "{{points}} نقطة",
+      "pointsWorth_other": "{{points}} نقطة"
     },
     "questionType": {
       "single_choice": "اختيار واحد",
@@ -285,18 +348,25 @@
     },
     "grading": {
       "title": "التصحيح اليدوي",
-      "description": "أدخل النقاط لكل سؤال يحتاج إلى تصحيح يدوي. تُختتم المحاولة وتُحتسب الدرجة بمجرد حفظ جميع الدرجات اليدوية.",
+      "description": "أدخل نقاطًا صحيحة لكل سؤال يحتاج إلى تصحيح يدوي. يمكنك حفظ بعضها الآن والباقي لاحقًا: تُختتم المحاولة وتُحتسب الدرجة عندما يحصل كل سؤال على نقاطه.",
       "pointsLabel": "نقاط السؤال {{number}}",
-      "pointsRange": "أدخل رقمًا بين 0 ونقاط السؤال.",
-      "pointsHint": "0–{{max}}",
+      "pointsRange": "أدخل عددًا صحيحًا من النقاط من 0 إلى {{max}}.",
+      "pointsHint": "{{min}}–{{max}} نقاط، أعداد صحيحة",
       "save": "حفظ الدرجات",
       "saved": "تم حفظ الدرجات",
       "savedFinal": "اكتملت جميع الدرجات اليدوية. اختُتمت المحاولة واحتُسبت الدرجة.",
-      "savedPending": "تُختتم المحاولة بمجرد إدخال جميع الدرجات اليدوية.",
       "error": "تعذّر حفظ الدرجات",
       "viewOnly": "ليس لديك صلاحية تصحيح هذه المحاولة.",
       "complete": "اكتملت جميع الدرجات اليدوية؛ هذه المحاولة مُختتمة.",
-      "unavailable": "التصحيح غير متاح لمحاولة ملغاة."
+      "unavailable": "التصحيح غير متاح لمحاولة ملغاة.",
+      "pointsField": "النقاط",
+      "noneEntered": "أدخل نقاط سؤال واحد على الأقل قبل الحفظ.",
+      "savedPending_zero": "تم الحفظ. اكتملت الدرجات اليدوية.",
+      "savedPending_one": "تم الحفظ. ما زال سؤال واحد يحتاج إلى نقاط قبل اختتام المحاولة.",
+      "savedPending_two": "تم الحفظ. ما زال سؤالان يحتاجان إلى نقاط قبل اختتام المحاولة.",
+      "savedPending_few": "تم الحفظ. ما زالت {{count}} أسئلة تحتاج إلى نقاط قبل اختتام المحاولة.",
+      "savedPending_many": "تم الحفظ. ما زال {{count}} سؤالًا يحتاج إلى نقاط قبل اختتام المحاولة.",
+      "savedPending_other": "تم الحفظ. ما زال {{count}} سؤال يحتاج إلى نقاط قبل اختتام المحاولة."
     },
     "signals": {
       "title": "يستحق النظر",
@@ -422,7 +492,7 @@
         "cancelLabel": "الإبقاء على المحاولة"
       },
       "success": "تم إلغاء المحاولة",
-      "error": "تعذّر إلغاء المحاولة",
+      "error": "لم تُلغَ المحاولة",
       "alreadyVoided": "هذه المحاولة مُلغاة بالفعل.",
       "viewOnly": "ليس لديك صلاحية إلغاء هذه المحاولة."
     },

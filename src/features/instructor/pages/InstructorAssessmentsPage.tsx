@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useQuizzes, useAssignments } from '@features/learning';
+import { useInstructorCourseOverview } from '../hooks';
 import type { AssignmentStatus, QuizStatus } from '@types';
 
 function getAssessmentStatusTone(
@@ -46,6 +47,9 @@ export default function InstructorAssessmentsPage(): JSX.Element {
     refetch: refetchAssignments,
   } = useAssignments(courseId ?? '', { enabled: !!courseId });
 
+  // B6 (UX audit) V14 — the course is named in the header.
+  const { data: course } = useInstructorCourseOverview(courseId ?? '');
+
   const quizzes = quizzesData?.items ?? [];
   const assignments = assignmentsData?.items ?? [];
 
@@ -53,7 +57,12 @@ export default function InstructorAssessmentsPage(): JSX.Element {
     <PageContainer>
       <PageHeader
         titleKey="instructor:assessments.title"
-        descriptionKey="instructor:assessments.subtitle"
+        descriptionKey={
+          course?.title
+            ? 'instructor:assessments.subtitleCourse'
+            : 'instructor:assessments.subtitle'
+        }
+        values={{ course: course?.title ?? '' }}
       />
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -75,6 +84,7 @@ export default function InstructorAssessmentsPage(): JSX.Element {
             ) : quizzes.length === 0 ? (
               <EmptyState
                 titleKey="instructor:assessments.noQuizzes"
+                descriptionKey="instructor:assessments.noQuizzesDescription"
                 className="py-8"
               />
             ) : (
@@ -95,7 +105,7 @@ export default function InstructorAssessmentsPage(): JSX.Element {
                     className="flex w-full items-center justify-between gap-3 rounded-md border border-border p-3 text-start text-sm hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <div>
-                      <p className="font-medium text-foreground">
+                      <p dir="auto" className="font-medium text-foreground">
                         {quiz.title}
                       </p>
                       <p className="text-xs text-muted-foreground">
@@ -133,6 +143,7 @@ export default function InstructorAssessmentsPage(): JSX.Element {
             ) : assignments.length === 0 ? (
               <EmptyState
                 titleKey="instructor:assessments.noAssignments"
+                descriptionKey="instructor:assessments.noAssignmentsDescription"
                 className="py-8"
               />
             ) : (
@@ -153,7 +164,7 @@ export default function InstructorAssessmentsPage(): JSX.Element {
                     className="flex w-full items-center justify-between gap-3 rounded-md border border-border p-3 text-start text-sm hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <div>
-                      <p className="font-medium text-foreground">
+                      <p dir="auto" className="font-medium text-foreground">
                         {assignment.title}
                       </p>
                       {assignment.dueAt ? (

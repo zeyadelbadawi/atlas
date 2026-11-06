@@ -21,7 +21,7 @@ import {
   getCourseCompletionTone,
   getEnrollmentStatusTone,
 } from '@features/learning';
-import { useCourseStudents } from '../hooks';
+import { useCourseStudents, useInstructorCourseOverview } from '../hooks';
 import type { InstructorStudent } from '@types';
 
 export default function InstructorStudentsPage(): JSX.Element {
@@ -51,6 +51,13 @@ export default function InstructorStudentsPage(): JSX.Element {
   }, [data]);
 
   const students = data?.items ?? [];
+  // B6 (UX audit) V01 — the API searches name and email now; an empty
+  // result for a search says so. V14 — the course is named in the header.
+  const isSearching = debouncedSearch.trim().length > 0;
+  const { data: course } = useInstructorCourseOverview(courseId ?? '');
+  const headerDescription = course?.title
+    ? 'instructor:students.subtitleCourse'
+    : 'instructor:students.subtitle';
 
   const columns: ColumnDef<InstructorStudent, unknown>[] = [
     {
@@ -58,8 +65,12 @@ export default function InstructorStudentsPage(): JSX.Element {
       header: t('instructor:students.table.name'),
       cell: ({ row }) => (
         <div>
-          <p className="font-medium text-foreground">{row.original.name}</p>
-          <p className="text-xs text-muted-foreground">{row.original.email}</p>
+          <p dir="auto" className="font-medium text-foreground">
+            {row.original.name}
+          </p>
+          <p dir="ltr" className="text-start text-xs text-muted-foreground">
+            {row.original.email}
+          </p>
         </div>
       ),
     },
@@ -114,17 +125,25 @@ export default function InstructorStudentsPage(): JSX.Element {
     <PageContainer>
       <PageHeader
         titleKey="instructor:students.title"
-        descriptionKey="instructor:students.subtitle"
+        descriptionKey={headerDescription}
+        values={{ course: course?.title ?? '' }}
       />
 
       <div className="space-y-4">
         <div className="relative max-w-xs">
-          <Search className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search
+            className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden
+          />
           <Input
             type="search"
             placeholder={t('instructor:students.searchPlaceholder')}
             value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
+            onChange={(e) => {
+              setSearchInput(e.target.value);
+              pagination.goToFirstPage();
+            }}
+            aria-label={t('instructor:students.searchPlaceholder')}
             className="ps-9"
           />
         </div>
@@ -144,8 +163,16 @@ export default function InstructorStudentsPage(): JSX.Element {
               })
             )
           }
-          emptyTitleKey="instructor:students.empty"
-          emptyDescriptionKey="instructor:students.emptyDescription"
+          emptyTitleKey={
+            isSearching
+              ? 'instructor:students.noMatch'
+              : 'instructor:students.empty'
+          }
+          emptyDescriptionKey={
+            isSearching
+              ? 'instructor:students.noMatchDescription'
+              : 'instructor:students.emptyDescription'
+          }
         />
       </div>
     </PageContainer>

@@ -24,6 +24,11 @@ vi.mock('./hooks', () => ({
   }),
 }));
 
+vi.mock('@hooks', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  usePermissions: () => ({ hasPermission: () => true }),
+}));
+
 import InstructorCourseOverviewPage from './pages/InstructorCourseOverviewPage';
 
 const BASE = {
@@ -74,6 +79,8 @@ describe('instructor course overview — Edit curriculum', () => {
   it('shows no link when the response has no academy to build the address from', () => {
     overview.value = BASE;
     renderPage();
-    expect(screen.queryByRole('button', { name: 'Edit curriculum' })).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: 'Edit curriculum' })
+    ).toBeNull();
   });
 });

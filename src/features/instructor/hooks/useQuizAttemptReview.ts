@@ -11,7 +11,7 @@ import {
   useAuth,
   useInvalidate,
 } from '@/shared/hooks';
-import { instructorKeys } from '@services/query';
+import { INLINE_ERRORS_META, instructorKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { instructorService } from '../services/InstructorService';
 import type {
@@ -73,6 +73,7 @@ export function useGradeQuizAttempt(courseId: string, quizId: string) {
       instructorService.gradeQuizAttempt(courseId, quizId, attemptId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, { attemptId }) => refresh(attemptId),
   });
 }
@@ -97,6 +98,7 @@ export function useInvalidateQuizAttempt(courseId: string, quizId: string) {
       ),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, { attemptId }) => refresh(attemptId),
   });
 }
@@ -129,6 +131,7 @@ export function useUpsertQuizOverride(courseId: string, quizId: string) {
       instructorService.upsertQuizOverride(courseId, quizId, payload),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(
         instructorKeys.quizOverrides(user?.id, courseId, quizId)
@@ -146,6 +149,7 @@ export function useDeleteQuizOverride(courseId: string, quizId: string) {
       instructorService.deleteQuizOverride(courseId, quizId, studentId),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(
         instructorKeys.quizOverrides(user?.id, courseId, quizId)
@@ -160,5 +164,6 @@ export function useIntegrityCsv(courseId: string, quizId: string) {
     mutationFn: () => instructorService.getIntegrityCsv(courseId, quizId),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
   });
 }

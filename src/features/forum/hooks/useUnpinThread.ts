@@ -2,7 +2,7 @@
  * useUnpinThread hook. Requires forum moderation authorization.
  */
 import { useApiMutation, useInvalidate } from '@/shared/hooks';
-import { forumKeys } from '@services/query';
+import { INLINE_ERRORS_META, forumKeys } from '@services/query';
 import type { ApiError } from '@api';
 import { forumService } from '../services/ForumService';
 import type { ForumThread } from '@types';
@@ -14,6 +14,7 @@ export function useUnpinThread(courseId: string) {
     mutationFn: (threadId) => forumService.unpinThread(courseId, threadId),
     showSuccessToast: false,
     showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async () => {
       await invalidate(forumKeys.all);
     },

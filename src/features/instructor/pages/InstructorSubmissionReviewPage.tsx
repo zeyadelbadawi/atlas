@@ -5,6 +5,18 @@
  * instructor enter a score/feedback. No grading logic runs on the
  * frontend — this only forwards the values the instructor enters to the
  * existing `GradeSubmissionPayload` contract.
+ *
+ * B6 (UX audit):
+ *   V06 a graded submission says so in the header (score, when, by whom
+ *       when that is you) and replacing a grade with a different score
+ *       asks first;
+ *   V07/V08 one message per failure with the real reason ("not handed in
+ *       yet"): a field refusal on its field, anything else one inline alert;
+ *   V09/V10 the score accepts what the server accepts (0–100, two
+ *       decimals) and every refusal is the app's own translated message;
+ *   V14 the header names the assignment and course; the score states its
+ *       scale and is marked required;
+ *   V15 the student's text keeps its own direction in Arabic.
  */
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +31,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -29,26 +42,48 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
-import { useServerValidation } from '@forms';
+import { useConfirmDialog } from '@app/providers';
 import {
+  hasViolationOn,
+  RequiredMark,
+  SaveFailedAlert,
+  useLabelledViolations,
+  useServerValidation,
+} from '@forms';
+import {
+  useAuth,
   useDateFormatter,
   useLanguage,
   usePermissions,
   useUnsavedChanges,
 } from '@hooks';
-import { formatBytes } from '@utils';
-import { getSubmissionStatusTone } from '@features/learning';
-import { useInstructorSubmission, useGradeSubmission } from '../hooks';
+import { formatBytes, formatNumber } from '@utils';
+import { getSubmissionStatusTone, useAssignments } from '@features/learning';
+import {
+  useInstructorCourseOverview,
+  useInstructorSubmission,
+  useGradeSubmission,
+} from '../hooks';
 import {
   gradeSubmissionSchema,
+  MAX_GRADING_FEEDBACK_LENGTH,
+  MAX_SUBMISSION_SCORE,
+  MIN_SUBMISSION_SCORE,
   type GradeSubmissionFormData,
 } from '../schemas/instructor.schemas';
+
+const GRADE_FIELDS = {
+  score: 'instructor:grading.scoreLabel',
+  feedback: 'instructor:grading.feedbackLabel',
+} as const;
 
 export default function InstructorSubmissionReviewPage(): JSX.Element {
   const fmt = useDateFormatter();
   const { t } = useTranslation();
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const { confirm } = useConfirmDialog();
+  const { user } = useAuth();
   const { hasPermission } = usePermissions();
   const canGrade = hasPermission('instructor.assignment.grade');
   const { courseId, assignmentId, submissionId } = useParams<{
@@ -68,6 +103,16 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
     submissionId ?? ''
   );
 
+  // V14 — context for the header; neither blocks the page. The list is
+  // the one the Assessments page reads (usually cached already).
+  const { data: assignments } = useAssignments(courseId ?? '', {
+    enabled: !!courseId,
+  });
+  const assignment = assignments?.items.find(
+    (item) => item.id === assignmentId
+  );
+  const { data: course } = useInstructorCourseOverview(courseId ?? '');
+
   const {
     mutateAsync: gradeSubmission,
     isPending,
@@ -78,8 +123,14 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
     resolver: zodResolver(gradeSubmissionSchema),
     defaultValues: { score: undefined, feedback: '' },
   });
+  const feedbackLength = form.watch('feedback')?.length ?? 0;
 
-  useServerValidation(form, mutationError);
+  const labelledError = useLabelledViolations(
+    mutationError ?? null,
+    GRADE_FIELDS
+  );
+  useServerValidation(form, labelledError);
+  const fieldFailure = hasViolationOn(labelledError, GRADE_FIELDS);
   const { markSaved } = useUnsavedChanges({
     isDirty: form.formState.isDirty,
   });
@@ -94,28 +145,45 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submission?.id]);
 
+  const previousScore = submission?.grade?.score;
+
   const onSubmit = async (data: GradeSubmissionFormData) => {
     if (!submissionId) return;
+    // V06 — a saved grade is never overwritten without a word.
+    if (previousScore !== undefined && previousScore !== data.score) {
+      const confirmed = await confirm({
+        titleKey: 'instructor:grading.regradeConfirm.title',
+        descriptionKey: 'instructor:grading.regradeConfirm.description',
+        confirmLabelKey: 'instructor:grading.regradeConfirm.confirmLabel',
+        cancelLabelKey: 'instructor:grading.regradeConfirm.cancelLabel',
+        values: {
+          previous: formatNumber(previousScore, language),
+          next: formatNumber(data.score, language),
+          student: submission?.studentName ?? '',
+        },
+      });
+      if (!confirmed) return;
+    }
     try {
       await gradeSubmission({
         submissionId,
         payload: { score: data.score, feedback: data.feedback || undefined },
       });
-      toast({
-        title: t('instructor:grading.success'),
-        description: t('common:states.success.description'),
-      });
-      // Graded: going back must not ask about the grade just saved.
-      form.reset(data);
-      markSaved();
-      navigate(-1);
     } catch {
-      toast({
-        title: t('instructor:grading.error'),
-        description: t('errors:generic.description'),
-        variant: 'destructive',
-      });
+      // Shown once: on its field, or as the inline alert above the buttons.
+      return;
     }
+    toast({
+      title: t('instructor:grading.success'),
+      description: t('instructor:grading.successDescription', {
+        score: formatNumber(data.score, language),
+        student: submission?.studentName ?? '',
+      }),
+    });
+    // Graded: going back must not ask about the grade just saved.
+    form.reset(data);
+    markSaved();
+    navigate(-1);
   };
 
   if (isLoading) {
@@ -142,17 +210,60 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
     submission.attachment?.sizeBytes ?? 0,
     language
   );
+  const grade =
+    submission.gradingStatus === 'graded' ? submission.grade : undefined;
+  const contextKey =
+    assignment?.title && course?.title
+      ? 'instructor:grading.context'
+      : assignment?.title
+        ? 'instructor:grading.contextAssignment'
+        : undefined;
 
   return (
     <PageContainer>
       <PageHeader
         title={submission.studentName}
         titleKey="instructor:grading.title"
+        descriptionKey={contextKey}
+        values={{
+          assignment: assignment?.title ?? '',
+          course: course?.title ?? '',
+        }}
         actions={
-          <StatusBadge
-            labelKey={`learning:assignment.status.${submission.status}`}
-            tone={getSubmissionStatusTone(submission.status)}
-          />
+          grade ? (
+            <div className="flex flex-col items-start gap-1 sm:items-end">
+              <StatusBadge
+                labelKey={
+                  grade.score !== undefined
+                    ? 'instructor:grading.gradedBadge'
+                    : 'instructor:grading.status.graded'
+                }
+                values={{
+                  score: formatNumber(grade.score ?? 0, language),
+                  max: formatNumber(MAX_SUBMISSION_SCORE, language),
+                }}
+                tone="success"
+              />
+              {grade.gradedAt ? (
+                <p
+                  className="text-xs text-muted-foreground"
+                  data-testid="graded-at"
+                >
+                  {t(
+                    grade.gradedBy && grade.gradedBy === user?.id
+                      ? 'instructor:grading.gradedAtByYou'
+                      : 'instructor:grading.gradedAt',
+                    { date: fmt.dateTime(grade.gradedAt) }
+                  )}
+                </p>
+              ) : null}
+            </div>
+          ) : (
+            <StatusBadge
+              labelKey={`learning:assignment.status.${submission.status}`}
+              tone={getSubmissionStatusTone(submission.status)}
+            />
+          )
         }
       />
 
@@ -163,7 +274,10 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
           </CardHeader>
           <CardContent className="space-y-4">
             {submission.response ? (
-              <p className="whitespace-pre-wrap text-sm text-foreground">
+              <p
+                dir="auto"
+                className="whitespace-pre-wrap text-sm text-foreground"
+              >
                 {submission.response}
               </p>
             ) : (
@@ -180,7 +294,7 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
                     className="size-4 text-muted-foreground"
                     aria-hidden
                   />
-                  <span className="font-medium text-foreground">
+                  <span dir="auto" className="font-medium text-foreground">
                     {submission.attachment.fileName}
                   </span>
                   <span className="text-muted-foreground">
@@ -191,7 +305,7 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
                   href={submission.attachment.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1 font-medium text-primary underline underline-offset-4"
+                  className="inline-flex min-h-6 items-center gap-1 py-0.5 font-medium text-primary underline underline-offset-4"
                 >
                   {t('instructor:grading.attachment.open')}
                   <ExternalLink className="size-3.5" aria-hidden />
@@ -207,7 +321,7 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
                 href={submission.attachmentUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="text-sm font-medium text-primary underline underline-offset-4"
+                className="inline-flex min-h-6 items-center py-0.5 text-sm font-medium text-primary underline underline-offset-4"
               >
                 {t('instructor:grading.viewAttachment')}
               </a>
@@ -242,6 +356,7 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-4"
+                  noValidate
                 >
                   <FormField
                     control={form.control}
@@ -249,16 +364,31 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {t('instructor:grading.scoreLabel')}
+                          {t('instructor:grading.scoreLabelWithScale', {
+                            max: formatNumber(MAX_SUBMISSION_SCORE, language),
+                          })}
+                          <RequiredMark />
                         </FormLabel>
                         <FormControl>
                           <Input
                             type="number"
-                            min={0}
-                            max={100}
-                            step="1"
+                            inputMode="decimal"
+                            min={MIN_SUBMISSION_SCORE}
+                            max={MAX_SUBMISSION_SCORE}
+                            step="0.01"
+                            className="max-w-40"
                             placeholder={t(
-                              'instructor:grading.scorePlaceholder'
+                              'instructor:grading.scorePlaceholder',
+                              {
+                                min: formatNumber(
+                                  MIN_SUBMISSION_SCORE,
+                                  language
+                                ),
+                                max: formatNumber(
+                                  MAX_SUBMISSION_SCORE,
+                                  language
+                                ),
+                              }
                             )}
                             {...field}
                             value={field.value ?? ''}
@@ -271,6 +401,12 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
                             }
                           />
                         </FormControl>
+                        <FormDescription>
+                          {t('instructor:grading.scoreHint', {
+                            min: formatNumber(MIN_SUBMISSION_SCORE, language),
+                            max: formatNumber(MAX_SUBMISSION_SCORE, language),
+                          })}
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -290,16 +426,38 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
                         <FormControl>
                           <Textarea
                             rows={5}
+                            dir="auto"
                             placeholder={t(
                               'instructor:grading.feedbackPlaceholder'
                             )}
+                            aria-describedby="grading-feedback-count"
                             {...field}
                           />
                         </FormControl>
+                        <p
+                          id="grading-feedback-count"
+                          className={
+                            feedbackLength > MAX_GRADING_FEEDBACK_LENGTH
+                              ? 'text-xs font-medium tabular-nums text-destructive'
+                              : 'text-xs tabular-nums text-muted-foreground'
+                          }
+                        >
+                          {t('instructor:grading.characterCount', {
+                            count: feedbackLength,
+                            max: MAX_GRADING_FEEDBACK_LENGTH,
+                          })}
+                        </p>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+
+                  {labelledError && !fieldFailure ? (
+                    <SaveFailedAlert
+                      error={labelledError}
+                      titleKey="instructor:grading.error"
+                    />
+                  ) : null}
 
                   <div className="flex items-center justify-end gap-3">
                     <Button

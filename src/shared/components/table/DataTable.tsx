@@ -189,13 +189,17 @@ export function DataTable<TData>({
                             ? 'ascending'
                             : 'descending'
                       }
-                      className="whitespace-nowrap text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                      // B6 (UX audit) V17 — one case for every header: a
+                      // sortable header (a <button>) never inherited the
+                      // uppercase, so a table mixed "Student" with "POINTS".
+                      className="whitespace-nowrap text-xs font-semibold text-muted-foreground"
                     >
                       {header.isPlaceholder ? null : canSort ? (
                         <button
                           type="button"
                           onClick={header.column.getToggleSortingHandler()}
-                          className="inline-flex items-center gap-1.5 rounded-sm transition-colors duration-fast ease-standard hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                          // V25 — a 24 px target, not the 16 px text line.
+                          className="inline-flex min-h-6 items-center gap-1.5 rounded-sm transition-colors duration-fast ease-standard hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                         >
                           {flexRender(
                             header.column.columnDef.header,

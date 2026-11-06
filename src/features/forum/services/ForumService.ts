@@ -150,6 +150,35 @@ export class ForumService extends BaseService {
       options
     );
   }
+
+  /**
+   * B6 (UX audit) V05 — deletes a thread and every reply in it. Course
+   * moderators only (the same people who may pin and lock); the backend
+   * answers 403 for anyone else, the author included.
+   */
+  async deleteThread(
+    courseId: string,
+    threadId: string,
+    options?: WriteOptions
+  ): Promise<void> {
+    await this.client.delete<void>(
+      this.path(courseId, 'forum', 'threads', threadId),
+      options
+    );
+  }
+
+  /** B6 (UX audit) V05 — deletes one reply. Course moderators only. */
+  async deleteReply(
+    courseId: string,
+    threadId: string,
+    replyId: string,
+    options?: WriteOptions
+  ): Promise<void> {
+    await this.client.delete<void>(
+      this.path(courseId, 'forum', 'threads', threadId, 'replies', replyId),
+      options
+    );
+  }
 }
 
 /** Singleton instance following the Atlas service pattern. */

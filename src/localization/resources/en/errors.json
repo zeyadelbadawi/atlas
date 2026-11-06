@@ -347,7 +347,7 @@
     "multipleChoiceRequiresOneCorrectOption": "A multiple-choice question needs at least one correct option.",
     "choiceRequiresTwoOptions": "A choice question needs at least two options.",
     "shortAnswerRequiresAcceptedAnswer": "A short-answer question needs at least one accepted answer.",
-    "pointsExceedMaximum": "Points per question cannot exceed 100.",
+    "pointsExceedMaximum": "This question is worth {{max}} points. Enter {{max}} or fewer.",
     "locked": "This quiz is locked until you finish the item before it in the course.",
     "windowOrder": "The closing time must be after the opening time.",
     "dueAfterWindow": "The due date can't be after the closing time.",
