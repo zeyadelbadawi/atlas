@@ -212,15 +212,30 @@ export function CourseCompletionSettingsCard({
     form.watch('lessons') === 'min' ? MIN_LESSONS_ALIAS : NO_ALIASES;
   useServerValidation(form, labelled, aliases);
   useFocusFirstViolation(form, labelled, COMPLETION_FIELDS, aliases);
-  const saveFailure =
-    updateError && !hasViolationOn(updateError, COMPLETION_FIELDS)
-      ? updateError
-      : null;
 
   const lessonsMode = form.watch('lessons');
   const requiredQuizzes = form.watch('requiredQuizzes');
   const requiredAssignments = form.watch('requiredAssignments');
   const certificatesEnabled = form.watch('certificatesEnabled');
+
+  // Only a violation on a field that is ON SCREEN counts as shown: one on
+  // a hidden field (e.g. the quiz list while its switch is off) gets the
+  // inline alert instead of failing silently.
+  const shownFields = Object.fromEntries(
+    Object.keys(COMPLETION_FIELDS)
+      .filter(
+        (field) =>
+          (field !== 'minLessons' || lessonsMode === 'min') &&
+          (field !== 'certificateMinScore' || certificatesEnabled) &&
+          (field !== 'requiredQuizIds' || requiredQuizzes) &&
+          (field !== 'requiredAssignmentIds' || requiredAssignments)
+      )
+      .map((field) => [field, field])
+  ) as Record<string, string>;
+  const saveFailure =
+    updateError && !hasViolationOn(updateError, shownFields)
+      ? updateError
+      : null;
 
   const readOnly = !canEdit || update.isPending;
 
@@ -444,6 +459,7 @@ export function CourseCompletionSettingsCard({
                               : 'course:settings.completion.certificates.featureDisabled'
                           )}
                         </FormDescription>
+                        <FormMessage />
                       </div>
                       <FormControl>
                         <Switch
@@ -574,6 +590,7 @@ function RequiredItemsSection({
             <div className="space-y-0.5">
               <FormLabel>{t(labelKey)}</FormLabel>
               <FormDescription>{t(descriptionKey)}</FormDescription>
+              <FormMessage />
             </div>
             <FormControl>
               <Switch

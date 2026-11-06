@@ -339,6 +339,19 @@ export function CourseCurriculumEditor({
     });
   const loadHostedVideos = () =>
     courseService.listHostedVideos(academyId, courseId);
+  // Stable across renders: the dialog resets its form whenever this
+  // object changes, which wiped an edit (and its failed-save message) on
+  // any re-render while the save was pending.
+  const sectionDefaultValues = useMemo<CourseSectionFormData | undefined>(
+    () =>
+      sectionDialog?.mode === 'edit'
+        ? {
+            title: sectionDialog.section.title,
+            description: sectionDialog.section.description ?? '',
+          }
+        : undefined,
+    [sectionDialog]
+  );
   const lessonDefaultValues = useMemo<CourseLessonFormData | undefined>(() => {
     if (lessonDialog?.mode !== 'edit') return undefined;
     const { lesson } = lessonDialog;
@@ -743,14 +756,7 @@ export function CourseCurriculumEditor({
         open={sectionDialog !== null}
         onOpenChange={(open) => !open && setSectionDialog(null)}
         mode={sectionDialog?.mode ?? 'create'}
-        defaultValues={
-          sectionDialog?.mode === 'edit'
-            ? {
-                title: sectionDialog.section.title,
-                description: sectionDialog.section.description ?? '',
-              }
-            : undefined
-        }
+        defaultValues={sectionDefaultValues}
         isPending={createSection.isPending || updateSection.isPending}
         onSubmit={handleSectionSubmit}
         error={

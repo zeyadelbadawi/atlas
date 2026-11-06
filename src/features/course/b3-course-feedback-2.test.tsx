@@ -310,6 +310,49 @@ describe('Completion settings', () => {
     expect(await screen.findByText('Lessons must be 0 or less')).toBeTruthy();
   });
 
+  it('a violation on a hidden list is the inline alert, never silence (review)', async () => {
+    update.mockRejectedValue(
+      createApiError('validation', {
+        status: 400,
+        violations: [
+          { field: 'requiredQuizIds', messageKey: 'validation:invalid' },
+        ],
+      })
+    );
+    renderWith(
+      <CourseCompletionSettingsCard academyId="aca-1" courseId="c1" canEdit />
+    );
+    const { user } = await changeCertificateScore('60');
+    await user.click(screen.getByRole('button', { name: /Save/ }));
+    // The quiz list is hidden (its switch is off), so the alert says it.
+    expect(await screen.findByTestId('save-failed')).toBeTruthy();
+  });
+
+  it('a violation on a switch shows under that switch (review)', async () => {
+    update.mockRejectedValue(
+      createApiError('validation', {
+        status: 400,
+        violations: [
+          { field: 'certificatesEnabled', messageKey: 'validation:invalid' },
+        ],
+      })
+    );
+    renderWith(
+      <CourseCompletionSettingsCard academyId="aca-1" courseId="c1" canEdit />
+    );
+    const { user } = await changeCertificateScore('60');
+    await user.click(screen.getByRole('button', { name: /Save/ }));
+    const toggle = await screen.findByRole('switch', {
+      name: en.settings.completion.certificates.label,
+    });
+    await vi.waitFor(() =>
+      expect(toggle.closest('[class*="justify-between"]')?.textContent).toMatch(
+        /not valid|invalid/i
+      )
+    );
+    expect(screen.queryByTestId('save-failed')).toBeNull();
+  });
+
   it('leaving with a changed rule asks first (V08)', async () => {
     const router = createMemoryRouter(
       [

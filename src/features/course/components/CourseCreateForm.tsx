@@ -187,6 +187,8 @@ export function CourseCreateForm({
   });
 
   const onSubmit = async (data: CreateCourseFormData) => {
+    // Retry in the failure alert bypasses the disabled submit button.
+    if (isUploadingThumbnail) return;
     const pricing: CoursePricing =
       data.pricingType === 'paid'
         ? {
