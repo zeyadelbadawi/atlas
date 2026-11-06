@@ -565,5 +565,8 @@
     "monthRangeTooLong": "اختر 36 شهرًا على الأكثر.",
     "seasonRangeInvalid": "يجب أن ينتهي الموسم بعد بدايته.",
     "hireThresholdsInvalid": "يجب ألا يقل رقم «عيّن عند» عن رقم «خطّط للتعيين»."
+  },
+  "announcement": {
+    "scheduleInPast": "هذا الوقت قد مضى. اختر وقتًا في المستقبل، أو احفظه مسودة."
   }
 }

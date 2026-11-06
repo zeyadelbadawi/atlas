@@ -81,7 +81,9 @@
     "sortDescending": "ترتيب تنازلي",
     "clearSort": "إلغاء الترتيب",
     "selectAllRows": "تحديد جميع الصفوف",
-    "selectRow": "تحديد الصف"
+    "selectRow": "تحديد الصف",
+    "scrollHint": "مرّر أفقيًا لرؤية كل الأعمدة.",
+    "scrollRegion": "جدول، يُمرَّر أفقيًا"
   },
   "pagination": {
     "summary": "عرض {{from}}–{{to}} من {{total}}",
@@ -106,7 +108,8 @@
       "title_many": "صحّح هذه المشكلات الـ{{count}} للمتابعة",
       "title_other": "صحّح هذه المشكلات الـ{{count}} للمتابعة"
     },
-    "notSaved": "لم تُحفظ تغييراتك"
+    "notSaved": "لم تُحفظ تغييراتك",
+    "characterCount": "{{count}} / {{max}} حرفًا"
   },
   "feedback": {
     "successTitle": "تم بنجاح",

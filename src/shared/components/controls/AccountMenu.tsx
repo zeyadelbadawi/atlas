@@ -115,7 +115,10 @@ export function AccountMenu({
           {/* Phones show the first name only; the full greeting from `sm`
               up. Either way the accessible name is the greeting plus what
               the button opens. */}
-          <span className="min-w-0 truncate">
+          {/* B4 (UX audit) — `dir="auto"`: in the Arabic header a Latin name
+              was cut from the wrong end ("…h" for Sarah); it now keeps its
+              start ("Sar…"), and the button keeps room for a few letters. */}
+          <span className="min-w-[2.5rem] truncate" dir="auto">
             <span className="sm:hidden">{firstName}</span>
             <span className="hidden sm:inline">
               {t('common:account.welcome', { name: fullName })}
