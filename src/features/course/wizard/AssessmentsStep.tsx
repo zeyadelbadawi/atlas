@@ -5,28 +5,29 @@
  * standalone quiz editor uses — in a wide side sheet, so the author never
  * leaves the wizard. A new quiz starts Published (a draft quiz is invisible
  * to learners, which is the commonest way to publish an "empty" course)
- * and can be placed in a unit right away: it is created at course level
- * and then ATTACHED through the unit-curriculum endpoint, which appends it
- * at the end of the unit under the unit's row lock.
+ * and goes into the unit chosen in the shared `UnitPickerField` (sent with
+ * the create, which appends it at the end of the unit atomically).
+ *
+ * Assignments are created here too, with the SAME `AssignmentFormDialog`
+ * and unit picker as the assignments page (`useSaveAssignment`: create,
+ * then attach to the unit). Grading and submissions stay on that page,
+ * linked from here.
  *
  * Closing the sheet with unsaved edits asks first (a sheet close is not a
- * navigation, so the route guard alone would not see it). Assignments keep
- * their own page, linked from here.
+ * navigation, so the route guard alone would not see it).
  */
-import { useCallback, useId, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ClipboardList, ExternalLink, Pencil, Plus } from 'lucide-react';
+import {
+  ClipboardList,
+  ExternalLink,
+  FileText,
+  Pencil,
+  Plus,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import {
   Sheet,
   SheetContent,
@@ -36,26 +37,43 @@ import {
 } from '@/components/ui/sheet';
 import { EmptyState, ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
-import { toast } from '@/hooks/use-toast';
 import { useDirtyGuard } from '@features/unsaved-changes';
 import {
+  useAssignmentsForAuthoring,
   useQuizForAuthoring,
   useQuizzesForAuthoring,
+  type AssignmentAuthoringFormData,
 } from '@features/learning';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import type { CourseSection, QuizAuthoring } from '@types';
-import { useAttachUnitItem, useCourseSections } from '../hooks';
+import type { Assignment, CourseSection } from '@types';
+import {
+  sortUnits,
+  useCourseSections,
+  useSaveAssignment,
+  useUnitPlacement,
+} from '../hooks';
 import { QuizAuthoringForm } from '../components/QuizAuthoringForm';
 import type { RelatedLessonOption } from '../components/QuizQuestionsEditor';
+import { AssignmentFormDialog } from '../components/AssignmentFormDialog';
+import {
+  UnitPickerField,
+  UnitPlacementNote,
+} from '../components/UnitPickerField';
+import {
+  getLessonStatusLabelKey,
+  getLessonStatusTone,
+} from '../utils/course-status.utils';
 import { WizardStepFooter } from './WizardStepFooter';
 import type { WizardStepProps } from './wizard-step.types';
-
-/** Radix `Select` rejects an empty item value. */
-const NO_UNIT = '__none__';
 
 type SheetState =
   | { readonly mode: 'create' }
   | { readonly mode: 'edit'; readonly quizId: string }
+  | null;
+
+type AssignmentDialogState =
+  | { readonly mode: 'create' }
+  | { readonly mode: 'edit'; readonly assignment: Assignment }
   | null;
 
 export function AssessmentsStep({
@@ -70,12 +88,39 @@ export function AssessmentsStep({
   const guard = useDirtyGuard(sheetDirty);
 
   const quizzesQuery = useQuizzesForAuthoring(course.id);
+  const assignmentsQuery = useAssignmentsForAuthoring(course.id);
   const { data: sectionsData } = useCourseSections(academyId, course.id);
-  const sections: readonly CourseSection[] = [
-    ...(sectionsData?.items ?? []),
-  ].sort((a, b) => a.order - b.order);
+  const sections = sortUnits(sectionsData?.items);
   const sectionTitle = (id?: string | null) =>
     sections.find((section) => section.id === id)?.title;
+  const unitLine = (id?: string | null) => {
+    const unit = sectionTitle(id);
+    return unit
+      ? t('course:unitPlacement.inUnit', { unit })
+      : t('course:unitPlacement.notPlaced');
+  };
+
+  const [assignmentDialog, setAssignmentDialog] =
+    useState<AssignmentDialogState>(null);
+  const assignmentPlacement = useUnitPlacement(academyId, course.id);
+  const saveAssignment = useSaveAssignment(academyId, course.id);
+  const openCreateAssignment = () => {
+    assignmentPlacement.reset();
+    setAssignmentDialog({ mode: 'create' });
+  };
+  const handleAssignmentSubmit = async (data: AssignmentAuthoringFormData) => {
+    try {
+      if (assignmentDialog?.mode === 'edit') {
+        await saveAssignment.update(assignmentDialog.assignment.id, data);
+      } else {
+        await saveAssignment.create(data, assignmentPlacement.section);
+      }
+      setAssignmentDialog(null);
+    } catch {
+      // Shown once, inside the dialog (on its field or one alert).
+    }
+  };
+  const assignments = assignmentsQuery.data?.items ?? [];
   const lessons: readonly RelatedLessonOption[] = sections.flatMap((section) =>
     section.lessons.map((lesson) => ({
       id: lesson.id,
@@ -124,7 +169,6 @@ export function AssessmentsStep({
         ) : (
           <ul className="divide-y divide-border rounded-lg border border-border">
             {quizzes.map((quiz) => {
-              const unit = sectionTitle(quiz.sectionId);
               return (
                 <li
                   key={quiz.id}
@@ -147,11 +191,7 @@ export function AssessmentsStep({
                         })}
                       </span>
                       <span aria-hidden>·</span>
-                      <span>
-                        {unit
-                          ? t('course:wizard.assessments.inUnit', { unit })
-                          : t('course:wizard.assessments.notPlaced')}
-                      </span>
+                      <span>{unitLine(quiz.sectionId)}</span>
                     </p>
                   </div>
                   <Button
@@ -174,19 +214,76 @@ export function AssessmentsStep({
         )}
       </section>
 
-      <section
-        aria-labelledby="wizard-assignments-title"
-        className="space-y-2 rounded-lg border border-border p-4"
-      >
-        <h3
-          id="wizard-assignments-title"
-          className="font-display text-base font-semibold text-foreground"
-        >
-          {t('course:wizard.assessments.assignmentsTitle')}
-        </h3>
-        <p className="text-sm text-muted-foreground">
-          {t('course:wizard.assessments.assignmentsDescription')}
-        </p>
+      <section aria-labelledby="wizard-assignments-title" className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="space-y-1">
+            <h3
+              id="wizard-assignments-title"
+              className="font-display text-base font-semibold text-foreground"
+            >
+              {t('course:wizard.assessments.assignmentsTitle')}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {t('course:wizard.assessments.assignmentsDescription')}
+            </p>
+          </div>
+          <Button type="button" onClick={openCreateAssignment}>
+            <Plus className="size-4" strokeWidth={2} aria-hidden />
+            {t('course:wizard.assessments.createAssignment')}
+          </Button>
+        </div>
+
+        {assignmentsQuery.isLoading ? (
+          <Skeleton className="h-14 w-full" />
+        ) : assignmentsQuery.error ? (
+          <ErrorState onRetry={() => assignmentsQuery.refetch()} />
+        ) : assignments.length === 0 ? (
+          <p className="rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">
+            {t('course:wizard.assessments.assignmentsEmpty')}
+          </p>
+        ) : (
+          <ul className="divide-y divide-border rounded-lg border border-border">
+            {assignments.map((assignment) => (
+              <li
+                key={assignment.id}
+                className="flex flex-col gap-2 p-3 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0 space-y-1">
+                  <p className="flex min-w-0 items-center gap-2 font-medium text-foreground">
+                    <FileText
+                      className="size-4 shrink-0 text-muted-foreground"
+                      aria-hidden
+                    />
+                    <span className="truncate">{assignment.title}</span>
+                  </p>
+                  <p className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                    <StatusBadge
+                      labelKey={getLessonStatusLabelKey(assignment.status)}
+                      tone={getLessonStatusTone(assignment.status)}
+                    />
+                    <span>{unitLine(assignment.sectionId)}</span>
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="self-start sm:self-auto"
+                  aria-label={t('course:wizard.assessments.editAssignment', {
+                    title: assignment.title,
+                  })}
+                  onClick={() =>
+                    setAssignmentDialog({ mode: 'edit', assignment })
+                  }
+                >
+                  <Pencil className="size-4" strokeWidth={2} aria-hidden />
+                  {t('course:wizard.assessments.edit')}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        )}
+
         <Button asChild variant="link" className="h-auto p-0">
           <Link
             to={buildPath(DASHBOARD_ROUTES.academyCourseAssignments, {
@@ -228,7 +325,6 @@ export function AssessmentsStep({
               <CreateQuizInSheet
                 academyId={academyId}
                 courseId={course.id}
-                sections={sections}
                 lessons={lessons}
                 onDirtyChange={setSheetDirty}
                 onDone={closeSheet}
@@ -238,6 +334,7 @@ export function AssessmentsStep({
               <EditQuizInSheet
                 courseId={course.id}
                 quizId={sheet.quizId}
+                sections={sections}
                 lessons={lessons}
                 onDirtyChange={setSheetDirty}
                 onDone={closeSheet}
@@ -247,6 +344,38 @@ export function AssessmentsStep({
           </div>
         </SheetContent>
       </Sheet>
+
+      <AssignmentFormDialog
+        open={assignmentDialog !== null}
+        onOpenChange={(open) => !open && setAssignmentDialog(null)}
+        mode={assignmentDialog?.mode ?? 'create'}
+        assignment={
+          assignmentDialog?.mode === 'edit' ? assignmentDialog.assignment : null
+        }
+        isPending={saveAssignment.isPending}
+        onSubmit={handleAssignmentSubmit}
+        error={
+          assignmentDialog?.mode === 'edit'
+            ? saveAssignment.updateError
+            : saveAssignment.createError
+        }
+        unitField={
+          assignmentDialog?.mode === 'edit' ? (
+            <UnitPlacementNote
+              sections={sections}
+              sectionId={assignmentDialog.assignment.sectionId}
+            />
+          ) : (
+            <UnitPickerField
+              sections={assignmentPlacement.sections}
+              value={assignmentPlacement.value}
+              onChange={assignmentPlacement.setValue}
+              itemType="assignment"
+              disabled={saveAssignment.isPending}
+            />
+          )
+        }
+      />
     </div>
   );
 }
@@ -261,7 +390,6 @@ interface SheetBodyProps {
 function CreateQuizInSheet({
   academyId,
   courseId,
-  sections,
   lessons,
   onDirtyChange,
   onDone,
@@ -269,35 +397,9 @@ function CreateQuizInSheet({
 }: SheetBodyProps & {
   readonly academyId: string;
   readonly courseId: string;
-  readonly sections: readonly CourseSection[];
 }): JSX.Element {
-  const { t } = useTranslation();
-  const unitFieldId = useId();
-  const [unitId, setUnitId] = useState<string>(sections[0]?.id ?? NO_UNIT);
-  const attach = useAttachUnitItem(academyId, courseId);
-
-  const handleSaved = async (quiz: QuizAuthoring) => {
-    const unit = sections.find((section) => section.id === unitId);
-    if (unit) {
-      try {
-        await attach.mutateAsync({
-          sectionId: unit.id,
-          type: 'quiz',
-          itemId: quiz.id,
-        });
-        toast({
-          title: t('course:wizard.assessments.attached', { unit: unit.title }),
-        });
-      } catch {
-        toast({
-          title: t('course:wizard.assessments.attachError'),
-          variant: 'destructive',
-        });
-      }
-    }
-    onDone();
-  };
-
+  // Mounted each time the sheet opens: a fresh default (the first unit).
+  const placement = useUnitPlacement(academyId, courseId);
   return (
     <QuizAuthoringForm
       courseId={courseId}
@@ -305,34 +407,23 @@ function CreateQuizInSheet({
       defaultStatus="published"
       autoFocusTitle={false}
       onDirtyChange={onDirtyChange}
-      onSaved={(quiz) => void handleSaved(quiz)}
+      onSaved={onDone}
       onCancel={onCancel}
+      createPlacement={
+        placement.section
+          ? {
+              sectionId: placement.section.id,
+              unitTitle: placement.section.title,
+            }
+          : null
+      }
       beforeActions={
-        sections.length > 0 ? (
-          <div className="space-y-2 rounded-lg border border-border p-4 sm:max-w-sm">
-            <Label htmlFor={unitFieldId}>
-              {t('course:wizard.assessments.unitLabel')}
-            </Label>
-            <Select value={unitId} onValueChange={setUnitId}>
-              <SelectTrigger id={unitFieldId}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {sections.map((section) => (
-                  <SelectItem key={section.id} value={section.id}>
-                    {section.title}
-                  </SelectItem>
-                ))}
-                <SelectItem value={NO_UNIT}>
-                  {t('course:wizard.assessments.unitNone')}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground">
-              {t('course:wizard.assessments.unitHelp')}
-            </p>
-          </div>
-        ) : null
+        <UnitPickerField
+          sections={placement.sections}
+          value={placement.value}
+          onChange={placement.setValue}
+          itemType="quiz"
+        />
       }
     />
   );
@@ -341,6 +432,7 @@ function CreateQuizInSheet({
 function EditQuizInSheet({
   courseId,
   quizId,
+  sections,
   lessons,
   onDirtyChange,
   onDone,
@@ -348,6 +440,7 @@ function EditQuizInSheet({
 }: SheetBodyProps & {
   readonly courseId: string;
   readonly quizId: string;
+  readonly sections: readonly CourseSection[];
 }): JSX.Element {
   const {
     data: quiz,
@@ -374,6 +467,9 @@ function EditQuizInSheet({
       onDirtyChange={onDirtyChange}
       onSaved={onDone}
       onCancel={onCancel}
+      beforeActions={
+        <UnitPlacementNote sections={sections} sectionId={quiz.sectionId} />
+      }
     />
   );
 }

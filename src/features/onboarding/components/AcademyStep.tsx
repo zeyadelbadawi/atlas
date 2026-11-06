@@ -17,8 +17,9 @@
  * panel shows a brand follow-up only when something still needs the owner.
  *
  * While the request runs, the step shows `AcademyBuildExperience` for the
- * request's build window (a random 45–75 s, or longer if provisioning takes
- * longer). The ready panel and Continue appear only after it hands back.
+ * request's build window (the server's `presentedReadyAt`, 45–75 s after
+ * the request was created — when the ready email is released — or longer
+ * if provisioning takes longer). The ready panel and Continue appear only after it hands back.
  * A failure replaces it at once; a stall or lost connection is shown under it.
  */
 import { useEffect, useState, useSyncExternalStore } from 'react';
@@ -138,6 +139,7 @@ function ProvisioningRun({
       requestId={requestId}
       academyName={academyName}
       serverReady={requestStatus === 'ready'}
+      presented={request}
       onComplete={() => {
         finishAcademyBuild(requestId);
         onSettled();

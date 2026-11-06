@@ -358,6 +358,28 @@
     "lessonDeleteError": "The lesson wasn't deleted",
     "detachError": "The item wasn't removed from the unit"
   },
+  "unitPlacement": {
+    "label": "Place in unit",
+    "none": "Not in a unit",
+    "inUnit": "In {{unit}}",
+    "notPlaced": "Not in a unit",
+    "help": {
+      "quiz": "The quiz is added at the end of the unit you choose. Learners take it as part of that unit.",
+      "assignment": "The assignment is added at the end of the unit you choose. Learners submit it as part of that unit."
+    },
+    "attached": {
+      "quiz": "Quiz added to {{unit}}.",
+      "assignment": "Assignment added to {{unit}}."
+    },
+    "attachError": {
+      "quiz": "The quiz was saved, but it could not be added to {{unit}}. Add it from Curriculum: in that unit, choose “Add content”, then “Add existing quiz”.",
+      "assignment": "The assignment was saved, but it could not be added to {{unit}}. Add it from Curriculum: in that unit, choose “Add content”, then “Add existing assignment”."
+    },
+    "current": {
+      "label": "Unit",
+      "none": "Not in a unit yet. Add it to a unit from Curriculum."
+    }
+  },
   "settings": {
     "title": "Course Settings",
     "subtitle": "Publishing, completion rules and certificates. Visibility and price are on the Details tab.",
@@ -925,20 +947,16 @@
       "quizzesTitle": "Quizzes",
       "emptyTitle": "No quizzes yet",
       "emptyDescription": "Create a quiz to check what learners have understood.",
-      "unitLabel": "Place in unit",
-      "unitNone": "Not in a unit",
-      "unitHelp": "The quiz is added at the end of the unit you choose.",
-      "notPlaced": "Not in a unit",
-      "inUnit": "In {{unit}}",
       "sheetCreateTitle": "Create quiz",
       "sheetEditTitle": "Edit quiz",
       "sheetDescription": "A quiz created here starts as Published, so learners can take it once the course is live.",
-      "attached": "Quiz added to {{unit}}.",
-      "attachError": "The quiz was saved but could not be added to the unit. Add it from the Curriculum step.",
       "assignmentsTitle": "Assignments",
-      "assignmentsDescription": "Assignments are created and graded on their own page.",
+      "assignmentsDescription": "Create an assignment here and place it in a unit. Grading happens on the assignments page.",
       "manageAssignments": "Manage assignments",
-      "loadError": "We couldn't load the quizzes."
+      "loadError": "We couldn't load the quizzes.",
+      "createAssignment": "Create assignment",
+      "assignmentsEmpty": "No assignments yet.",
+      "editAssignment": "Edit {{title}}"
     },
     "review": {
       "ready": "Ready to publish",

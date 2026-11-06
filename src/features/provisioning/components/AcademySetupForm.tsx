@@ -289,7 +289,9 @@ export function AcademySetupForm({
           }
           // Start the academy build screen's window now, so a fast
           // provisioning still shows it (onboarding and the status page).
-          startAcademyBuild(request.id);
+          // It runs for the server's window (`presentedReadyAt`), which is
+          // also when the "your academy is ready" email is released.
+          startAcademyBuild(request.id, Date.now(), request);
           // Submitted means saved: clear the unsaved-changes guard so the
           // move to the status page isn't met with "Leave without saving?".
           // `reset` alone reaches the guard only after the next render;

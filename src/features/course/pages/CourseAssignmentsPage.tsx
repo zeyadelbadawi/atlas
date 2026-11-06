@@ -5,11 +5,16 @@
  * authoring user, with create/edit/delete. Grading happens elsewhere (the
  * Instructor experience); this page only ever authors the assignment
  * itself.
+ *
+ * A new assignment is placed in the unit chosen in the dialog
+ * (`UnitPickerField`; the unit in `?sectionId=` when the page was opened
+ * from one, else the first) — see `useSaveAssignment`. Each row says which
+ * unit its assignment is in.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDateFormatter } from '@hooks';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { FileCheck2, MoreHorizontal, Plus } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { SectionTabs } from '@components/navigation';
@@ -30,13 +35,15 @@ import { toast } from '@/hooks/use-toast';
 import { useConfirmDialog } from '@app/providers';
 import {
   useAssignmentsForAuthoring,
-  useCreateAssignment,
-  useUpdateAssignment,
   useDeleteAssignment,
   type AssignmentAuthoringFormData,
 } from '@features/learning';
-import { useCourse } from '../hooks';
+import { useCourse, useSaveAssignment, useUnitPlacement } from '../hooks';
 import { AssignmentFormDialog } from '../components/AssignmentFormDialog';
+import {
+  UnitPickerField,
+  UnitPlacementNote,
+} from '../components/UnitPickerField';
 import { useActionFailureToast } from '../forms/course-form-feedback';
 import {
   getLessonStatusLabelKey,
@@ -88,32 +95,24 @@ export default function CourseAssignmentsPage(): JSX.Element {
   } = useAssignmentsForAuthoring(courseId ?? '');
   const assignments = assignmentsData?.items ?? [];
 
-  const createAssignment = useCreateAssignment(courseId ?? '');
-  const updateAssignment = useUpdateAssignment(courseId ?? '');
+  const [searchParams] = useSearchParams();
+  const placement = useUnitPlacement(academyId ?? '', courseId ?? '', {
+    preferredSectionId: searchParams.get('sectionId'),
+  });
+  const save = useSaveAssignment(academyId ?? '', courseId ?? '');
   const deleteAssignment = useDeleteAssignment(courseId ?? '');
 
-  const handleSubmit = async (data: AssignmentAuthoringFormData) => {
-    const payload = {
-      title: data.title,
-      description: data.description || undefined,
-      instructions: data.instructions || undefined,
-      status: data.status,
-      dueAt: data.dueAt ? new Date(data.dueAt).toISOString() : undefined,
-      allowResubmission: data.allowResubmission,
-      latePolicy: data.latePolicy,
-      requiredForCompletion: data.requiredForCompletion,
-    };
+  const openCreate = () => {
+    placement.reset();
+    setDialog({ mode: 'create' });
+  };
 
+  const handleSubmit = async (data: AssignmentAuthoringFormData) => {
     try {
       if (dialog?.mode === 'edit') {
-        await updateAssignment.mutateAsync({
-          assignmentId: dialog.assignment.id,
-          payload,
-        });
-        toast({ title: t('course:assignmentAuthoring.updated') });
+        await save.update(dialog.assignment.id, data);
       } else {
-        await createAssignment.mutateAsync(payload);
-        toast({ title: t('course:assignmentAuthoring.created') });
+        await save.create(data, placement.section);
       }
       setDialog(null);
     } catch {
@@ -140,6 +139,16 @@ export default function CourseAssignmentsPage(): JSX.Element {
         assignmentId,
       })
     );
+  };
+
+  const unitLabel = (sectionId?: string) => {
+    const unit = sectionId
+      ? placement.sections.find((section) => section.id === sectionId)
+      : undefined;
+    if (sectionId && !unit) return null; // units still loading
+    return unit
+      ? t('course:unitPlacement.inUnit', { unit: unit.title })
+      : t('course:unitPlacement.notPlaced');
   };
 
   const handleDelete = async (assignment: Assignment) => {
@@ -194,7 +203,7 @@ export default function CourseAssignmentsPage(): JSX.Element {
         descriptionKey="course:assignmentAuthoring.subtitle"
         breadcrumbs={breadcrumbs}
         actions={
-          <Button onClick={() => setDialog({ mode: 'create' })}>
+          <Button onClick={openCreate}>
             <Plus className="size-4" strokeWidth={2} aria-hidden />
             {t('course:assignmentAuthoring.addAssignment')}
           </Button>
@@ -209,7 +218,7 @@ export default function CourseAssignmentsPage(): JSX.Element {
           descriptionKey="course:assignmentAuthoring.emptyDescription"
           primaryAction={{
             labelKey: 'course:assignmentAuthoring.addAssignment',
-            onAction: () => setDialog({ mode: 'create' }),
+            onAction: openCreate,
             icon: Plus,
           }}
         />
@@ -242,6 +251,9 @@ export default function CourseAssignmentsPage(): JSX.Element {
                         )}
                       </p>
                     ) : null}
+                    <p className="text-xs text-muted-foreground">
+                      {unitLabel(assignment.sectionId)}
+                    </p>
                     {assignment.requiredForCompletion ? (
                       <StatusBadge
                         labelKey="course:assignmentAuthoring.requiredForCompletionBadge"
@@ -297,12 +309,24 @@ export default function CourseAssignmentsPage(): JSX.Element {
         onOpenChange={(open) => !open && setDialog(null)}
         mode={dialog?.mode ?? 'create'}
         assignment={dialog?.mode === 'edit' ? dialog.assignment : null}
-        isPending={createAssignment.isPending || updateAssignment.isPending}
+        isPending={save.isPending}
         onSubmit={handleSubmit}
-        error={
-          dialog?.mode === 'edit'
-            ? updateAssignment.error
-            : createAssignment.error
+        error={dialog?.mode === 'edit' ? save.updateError : save.createError}
+        unitField={
+          dialog?.mode === 'edit' ? (
+            <UnitPlacementNote
+              sections={placement.sections}
+              sectionId={dialog.assignment.sectionId}
+            />
+          ) : (
+            <UnitPickerField
+              sections={placement.sections}
+              value={placement.value}
+              onChange={placement.setValue}
+              itemType="assignment"
+              disabled={save.isPending}
+            />
+          )
         }
       />
     </PageContainer>

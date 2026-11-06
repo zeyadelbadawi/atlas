@@ -87,8 +87,18 @@ export interface QuizAuthoringFormProps {
   readonly defaultStatus?: QuizStatus;
   /** Reports dirtiness, for a container that closes without navigating (a sheet). */
   readonly onDirtyChange?: (dirty: boolean) => void;
-  /** Extra content above the action buttons (e.g. the wizard's unit picker). */
+  /** Extra content above the action buttons (e.g. the unit picker). */
   readonly beforeActions?: ReactNode;
+  /**
+   * CREATE only: the unit the new quiz goes into (`UnitPickerField`), sent
+   * as `sectionId` with the create itself — the API checks the unit is
+   * this course's and appends the quiz at its end in the same transaction,
+   * so a quiz is never created half-placed. `null`/absent = not in a unit.
+   */
+  readonly createPlacement?: {
+    readonly sectionId: string;
+    readonly unitTitle: string;
+  } | null;
   /** Focus the title on mount (the page does; a sheet manages its own focus). */
   readonly autoFocusTitle?: boolean;
 }
@@ -161,6 +171,7 @@ export function QuizAuthoringForm({
   defaultStatus = 'draft',
   onDirtyChange,
   beforeActions,
+  createPlacement,
   autoFocusTitle = true,
 }: QuizAuthoringFormProps): JSX.Element {
   const { t } = useTranslation();
@@ -235,8 +246,17 @@ export function QuizAuthoringForm({
         });
         toast({ title: t('course:quizAuthoring.updated') });
       } else {
-        saved = await createQuiz.mutateAsync(toQuizPayload(data, 'create'));
-        toast({ title: t('course:quizAuthoring.created') });
+        saved = await createQuiz.mutateAsync({
+          ...toQuizPayload(data, 'create'),
+          ...(createPlacement ? { sectionId: createPlacement.sectionId } : {}),
+        });
+        toast({
+          title: createPlacement
+            ? t('course:unitPlacement.attached.quiz', {
+                unit: createPlacement.unitTitle,
+              })
+            : t('course:quizAuthoring.created'),
+        });
       }
       form.reset(data);
       return saved;

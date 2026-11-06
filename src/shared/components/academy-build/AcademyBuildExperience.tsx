@@ -2,8 +2,9 @@
  * Academy build experience — the screen shown while a new academy is
  * being built during onboarding.
  *
- * It runs for the request's build window (`academy-build-timer.ts`: a
- * random 45–75 s, or longer if provisioning itself takes longer) and walks
+ * It runs for the request's build window (`academy-build-timer.ts`: the
+ * server's `presentedReadyAt`, 45–75 s after the request was created, or
+ * longer if provisioning itself takes longer) and walks
  * through the stages of the build with a progress ring, a checklist and
  * short lines about what the academy will be able to do. It only calls
  * `onComplete` once BOTH the window has passed AND the server says the
@@ -17,7 +18,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Loader2 } from 'lucide-react';
 import { cn } from '@utils';
-import { readAcademyBuild, startAcademyBuild } from './academy-build-timer';
+import {
+  syncAcademyBuild,
+  type PresentedBuildWindow,
+} from './academy-build-timer';
 import {
   ACADEMY_BUILD_STAGES,
   BUILD_HIGHLIGHT_KEYS as HIGHLIGHT_KEYS,
@@ -35,6 +39,12 @@ export interface AcademyBuildExperienceProps {
   readonly academyName: string;
   /** The server reports the academy as ready. */
   readonly serverReady: boolean;
+  /**
+   * The request's server-owned window (`createdAt` + `presentedReadyAt`):
+   * the ring reaches 100 % at `presentedReadyAt`, when the server releases
+   * the "your academy is ready" email.
+   */
+  readonly presented?: PresentedBuildWindow | null;
   /** Called once, when the window has passed and the server is ready. */
   readonly onComplete: () => void;
   /** Real-state notices (stalled, reconnecting) shown under the build. */
@@ -45,14 +55,21 @@ export function AcademyBuildExperience({
   requestId,
   academyName,
   serverReady,
+  presented,
   onComplete,
   children,
 }: AcademyBuildExperienceProps): JSX.Element {
   const { t } = useTranslation();
   const { isolate } = useBidiIsolation();
+  const createdAt = presented?.createdAt;
+  const presentedReadyAt = presented?.presentedReadyAt;
   const timer = useMemo(
-    () => readAcademyBuild(requestId) ?? startAcademyBuild(requestId),
-    [requestId]
+    () =>
+      syncAcademyBuild(
+        requestId,
+        createdAt ? { createdAt, presentedReadyAt } : undefined
+      ),
+    [requestId, createdAt, presentedReadyAt]
   );
   const [now, setNow] = useState(() => Date.now());
   const [highlight, setHighlight] = useState(0);

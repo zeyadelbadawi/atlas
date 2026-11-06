@@ -232,6 +232,12 @@ export interface ProvisioningRequest {
   /** W2 — absent when the form chose nothing (theme default colours). */
   readonly requestedBrand?: ProvisioningRequestedBrand;
   readonly createdAt: string;
+  /**
+   * When the academy build screen reaches 100 % — the server owns this
+   * window, and holds the "your academy is ready" email until it (or until
+   * the real completion, if later). Absent on servers that predate it.
+   */
+  readonly presentedReadyAt?: string;
   readonly startedAt?: string;
   readonly completedAt?: string;
   readonly failedAt?: string;
