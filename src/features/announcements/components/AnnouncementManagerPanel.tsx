@@ -22,7 +22,7 @@
  * is the only thing actually deciding — a hidden button is a courtesy, not
  * a permission.
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { useDateFormatter, useUnsavedChanges } from '@hooks';
@@ -64,7 +64,7 @@ import { useConfirmDialog, useToast } from '@app/providers';
 import { normalizeUnknownError } from '@api';
 import { useActionFailureToast } from '../hooks/useActionFailureToast';
 import {
-  announcementSchema,
+  announcementSchemaFor,
   type AnnouncementFormData,
 } from '../schemas/announcement.schemas';
 import type { ApiError } from '@api';
@@ -178,8 +178,16 @@ export function AnnouncementManagerPanel({
     setSaveFailure(null);
   };
 
+  // The stored time of the announcement being edited: keeping it is not a
+  // new schedule, so it is not refused for being past.
+  const storedSchedule = useRef('');
   const form = useForm<AnnouncementFormData>({
-    resolver: zodResolver(announcementSchema),
+    resolver: (values, context, options) =>
+      zodResolver(announcementSchemaFor(storedSchedule.current))(
+        values,
+        context,
+        options
+      ),
     defaultValues: { title: '', body: '', scheduledAt: '' },
   });
 
@@ -207,6 +215,9 @@ export function AnnouncementManagerPanel({
 
   useEffect(() => {
     if (dialogOpen) {
+      storedSchedule.current = editing?.scheduledAt
+        ? toDateTimeLocalValue(editing.scheduledAt)
+        : '';
       form.reset(
         editing
           ? {
@@ -468,7 +479,11 @@ export function AnnouncementManagerPanel({
                     <FormControl>
                       <Input
                         type="datetime-local"
-                        min={toDateTimeLocalValue(new Date().toISOString())}
+                        min={
+                          field.value && field.value === storedSchedule.current
+                            ? undefined
+                            : toDateTimeLocalValue(new Date().toISOString())
+                        }
                         {...field}
                       />
                     </FormControl>

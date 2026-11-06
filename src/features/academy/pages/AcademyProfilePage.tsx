@@ -178,7 +178,10 @@ export default function AcademyProfilePage(): JSX.Element {
             street: data.street?.trim(),
             city: data.city?.trim(),
             state: data.state?.trim(),
-            postalCode: data.postalCode?.trim(),
+            // Arabic-Indic digits are accepted and sent as 0-9.
+            postalCode: data.postalCode
+              ? toWesternDigits(data.postalCode).trim()
+              : data.postalCode,
             country: data.country || '',
           },
           language: data.language,

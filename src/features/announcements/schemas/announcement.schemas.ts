@@ -39,6 +39,25 @@ export const announcementSchema = z.object({
     }),
 });
 
+/**
+ * The schema for editing an announcement whose stored time is `unchanged`
+ * (a `datetime-local` value): keeping that time is not a new schedule, so
+ * a title fix on an announcement whose time has passed is not refused.
+ * The server applies the same rule.
+ */
+export function announcementSchemaFor(unchanged?: string) {
+  if (!unchanged) return announcementSchema;
+  return announcementSchema.extend({
+    scheduledAt: z
+      .string()
+      .optional()
+      .refine(
+        (value) => !value || value === unchanged || !isScheduleInPast(value),
+        { message: 'validation:scheduleInPast' }
+      ),
+  });
+}
+
 /** A `datetime-local` value at or before now (a minute's grace for typing). */
 export function isScheduleInPast(
   value: string,

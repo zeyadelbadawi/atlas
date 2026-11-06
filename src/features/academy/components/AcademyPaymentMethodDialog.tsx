@@ -12,7 +12,7 @@
  * Saving a NEW method also turns it on (that is why the owner opened it);
  * saving an existing one keeps its current on/off state.
  */
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -204,7 +204,12 @@ export function AcademyPaymentMethodDialog({
   // B4 (UX audit) V14 — field violations on their fields (and in the
   // summary); a refusal no field can show — another field, a 500, a lost
   // connection — is ONE alert inside the dialog, never a toast under it.
-  const fieldError = fieldViolationsOnly(save.error);
+  // Stable for one error: a new object each render would re-run the
+  // server-validation effect (setError → render → new object → …).
+  const fieldError = useMemo(
+    () => fieldViolationsOnly(save.error),
+    [save.error]
+  );
   useManualMethodServerValidation(form, fieldError, 'instructions');
   const failure =
     save.error &&

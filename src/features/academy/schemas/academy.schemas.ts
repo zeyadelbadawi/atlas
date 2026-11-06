@@ -68,7 +68,8 @@ const postalCodeSchema = z
   .string()
   .refine(
     (value) =>
-      value.trim() === '' || ACADEMY_POSTAL_CODE_PATTERN.test(value.trim()),
+      value.trim() === '' ||
+      ACADEMY_POSTAL_CODE_PATTERN.test(toWesternDigits(value).trim()),
     'academy:profile.postalCodeInvalid'
   )
   .optional();

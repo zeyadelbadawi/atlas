@@ -108,6 +108,8 @@ export function BlockStudentDialog({
 
   const handleOpenChange = (next: boolean) => {
     if (next) return onOpenChange(true);
+    // While the request runs the dialog stays: its failure shows only here.
+    if (isPending) return;
     void dirtyGuard.requestClose(() => onOpenChange(false));
   };
 
@@ -255,7 +257,13 @@ export function EnrollStudentDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      // Not dismissable mid-request: its failure shows only in the dialog.
+      onOpenChange={(next) => {
+        if (next || !isPending) onOpenChange(next);
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('academy:students.enroll.title')}</DialogTitle>
@@ -398,7 +406,13 @@ export function RevokeEnrollmentDialog({
   }, [open]);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      // Not dismissable mid-request: its failure shows only in the dialog.
+      onOpenChange={(next) => {
+        if (next || !isPending) onOpenChange(next);
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('academy:students.revoke.title')}</DialogTitle>
@@ -517,7 +531,13 @@ export function EnrollmentExpiryDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      // Not dismissable mid-request: its failure shows only in the dialog.
+      onOpenChange={(next) => {
+        if (next || !isPending) onOpenChange(next);
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('academy:students.expiry.title')}</DialogTitle>

@@ -161,9 +161,11 @@ export function MessageComposer({
     setPreviewFailure(null);
   }, [audienceVersion, channels.email, channels.inApp]);
 
-  // A changed draft is a different message: it gets a new idempotency key.
+  // A changed draft is a different message: it gets a new idempotency key,
+  // and a "not sent" alert about the previous one no longer applies.
   useEffect(() => {
     idempotencyKey.current = null;
+    setNotice((current) => (current?.kind === 'sendError' ? null : current));
   }, [
     audienceVersion,
     channels.email,

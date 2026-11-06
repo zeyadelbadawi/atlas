@@ -36,11 +36,13 @@ export default function InstructorAnnouncementsPage(): JSX.Element {
 
   const {
     mutateAsync: createAnnouncement,
+    reset: resetCreate,
     isPending: isCreating,
     error: createError,
   } = useCreateAnnouncement(courseId ?? '');
   const {
     mutateAsync: updateAnnouncement,
+    reset: resetUpdate,
     isPending: isUpdating,
     error: updateError,
   } = useUpdateAnnouncement(courseId ?? '');
@@ -56,7 +58,9 @@ export default function InstructorAnnouncementsPage(): JSX.Element {
       <PageHeader
         titleKey="announcements:manage.title"
         descriptionKey="announcements:manage.subtitle"
-        actions={<AnnouncementCreateButton onClick={() => setCreateOpen(true)} />}
+        actions={
+          <AnnouncementCreateButton onClick={() => setCreateOpen(true)} />
+        }
       />
 
       <AnnouncementManagerPanel
@@ -67,10 +71,16 @@ export default function InstructorAnnouncementsPage(): JSX.Element {
         canManage
         emptyTitleKey="announcements:manage.empty"
         emptyDescriptionKey="announcements:manage.emptyDescription"
-        onCreate={(payload) => createAnnouncement(payload)}
-        onUpdate={(announcementId, payload) =>
-          updateAnnouncement({ announcementId, payload })
-        }
+        // Each save clears the other's error: a stale create failure must
+        // not stand in for (and hide) the current update's.
+        onCreate={(payload) => {
+          resetUpdate();
+          return createAnnouncement(payload);
+        }}
+        onUpdate={(announcementId, payload) => {
+          resetCreate();
+          return updateAnnouncement({ announcementId, payload });
+        }}
         onPublish={(announcementId) => publishAnnouncement(announcementId)}
         onArchive={(announcementId) => archiveAnnouncement(announcementId)}
         isSaving={isCreating || isUpdating}

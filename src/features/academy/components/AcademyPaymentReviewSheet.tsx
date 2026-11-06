@@ -554,7 +554,12 @@ export function AcademyPaymentReviewSheet({
                       onChange={(event) => setReason(event.target.value)}
                       placeholder={t(`${K}.reasonPlaceholder`)}
                       aria-describedby="academy-payment-reject-help academy-payment-reject-count"
-                      aria-invalid={noteTooLong === 'reason' || undefined}
+                      aria-invalid={
+                        (noteTooLong === 'reason' &&
+                          reason.trim().length >
+                            MAX_PAYMENT_REVIEW_NOTES_LENGTH) ||
+                        undefined
+                      }
                       dir="auto"
                       data-testid="academy-payment-reject-reason"
                     />
@@ -676,7 +681,12 @@ export function AcademyPaymentReviewSheet({
                       value={refundNote}
                       onChange={(event) => setRefundNote(event.target.value)}
                       aria-describedby="academy-payment-refund-help academy-payment-refund-count"
-                      aria-invalid={noteTooLong === 'refund' || undefined}
+                      aria-invalid={
+                        (noteTooLong === 'refund' &&
+                          refundNote.trim().length >
+                            MAX_PAYMENT_REVIEW_NOTES_LENGTH) ||
+                        undefined
+                      }
                       dir="auto"
                       data-testid="academy-payment-refund-note"
                     />

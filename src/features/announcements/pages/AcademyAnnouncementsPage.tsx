@@ -49,11 +49,13 @@ export default function AcademyAnnouncementsPage(): JSX.Element {
 
   const {
     mutateAsync: createAnnouncement,
+    reset: resetCreate,
     isPending: isCreating,
     error: createError,
   } = useCreateAcademyAnnouncement(academyId ?? '');
   const {
     mutateAsync: updateAnnouncement,
+    reset: resetUpdate,
     isPending: isUpdating,
     error: updateError,
   } = useUpdateAcademyAnnouncement(academyId ?? '');
@@ -92,10 +94,16 @@ export default function AcademyAnnouncementsPage(): JSX.Element {
             ? 'announcements:academy.emptyDescription'
             : 'announcements:academy.emptyReadOnlyDescription'
         }
-        onCreate={(payload) => createAnnouncement(payload)}
-        onUpdate={(announcementId, payload) =>
-          updateAnnouncement({ announcementId, payload })
-        }
+        // Each save clears the other's error: a stale create failure must
+        // not stand in for (and hide) the current update's.
+        onCreate={(payload) => {
+          resetUpdate();
+          return createAnnouncement(payload);
+        }}
+        onUpdate={(announcementId, payload) => {
+          resetCreate();
+          return updateAnnouncement({ announcementId, payload });
+        }}
         onPublish={(announcementId) => publishAnnouncement(announcementId)}
         onArchive={(announcementId) => archiveAnnouncement(announcementId)}
         isSaving={isCreating || isUpdating}
