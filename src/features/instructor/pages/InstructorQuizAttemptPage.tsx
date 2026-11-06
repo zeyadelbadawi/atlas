@@ -598,7 +598,14 @@ function VoidAttemptDialog({
     mutateAsync: voidAttempt,
     isPending,
     error: mutationError,
+    reset: resetVoid,
   } = useInvalidateQuizAttempt(courseId, quizId);
+  // Closing the dialog answers the last failure: reopening it starts clean
+  // (the typed reason stays, as it did before).
+  const handleOpenChange = (next: boolean): void => {
+    if (!next) resetVoid();
+    onOpenChange(next);
+  };
   const labelledError = useLabelledViolations(
     mutationError ?? null,
     VOID_FIELDS
@@ -631,11 +638,11 @@ function VoidAttemptDialog({
     }
     toast({ title: t('instructor:attemptReview.void.success') });
     form.reset({ reason: '' });
-    onOpenChange(false);
+    handleOpenChange(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('instructor:attemptReview.void.title')}</DialogTitle>
@@ -678,7 +685,7 @@ function VoidAttemptDialog({
                 type="button"
                 variant="outline"
                 disabled={isPending}
-                onClick={() => onOpenChange(false)}
+                onClick={() => handleOpenChange(false)}
               >
                 {t('instructor:attemptReview.void.cancel')}
               </Button>

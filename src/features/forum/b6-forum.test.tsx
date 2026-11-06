@@ -189,6 +189,19 @@ describe('reply form (V04, V07, V08, V11, V19)', () => {
     expect(state.createReply).not.toHaveBeenCalled();
   });
 
+  it('the reply box is described by both its counter and its error', async () => {
+    state.thread = THREAD;
+    renderThread();
+    await userEvent.type(replyBox(), '   ');
+    fireEvent.click(screen.getByRole('button', { name: 'Reply' }));
+    const message = await screen.findByText(
+      "Write your reply before sending. Spaces alone don't count."
+    );
+    const describedBy = replyBox().getAttribute('aria-describedby') ?? '';
+    expect(describedBy).toContain(message.id);
+    expect(describedBy).toContain(screen.getByTestId('forum-reply-count').id);
+  });
+
   it('is labelled, counts against the server limit, and is guarded while typed', async () => {
     state.thread = THREAD;
     renderThread();

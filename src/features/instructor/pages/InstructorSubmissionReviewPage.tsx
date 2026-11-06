@@ -430,12 +430,10 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
                             placeholder={t(
                               'instructor:grading.feedbackPlaceholder'
                             )}
-                            aria-describedby="grading-feedback-count"
                             {...field}
                           />
                         </FormControl>
-                        <p
-                          id="grading-feedback-count"
+                        <FormDescription
                           className={
                             feedbackLength > MAX_GRADING_FEEDBACK_LENGTH
                               ? 'text-xs font-medium tabular-nums text-destructive'
@@ -446,7 +444,7 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
                             count: feedbackLength,
                             max: MAX_GRADING_FEEDBACK_LENGTH,
                           })}
-                        </p>
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}

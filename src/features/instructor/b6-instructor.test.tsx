@@ -62,6 +62,7 @@ function useFakeMutation(fn: (variables: unknown) => Promise<unknown>) {
   return {
     isPending: false,
     error,
+    reset: () => setError(null),
     mutateAsync: async (variables: unknown) => {
       setError(null);
       try {

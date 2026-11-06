@@ -31,6 +31,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -434,12 +435,10 @@ export default function ForumThreadPage(): JSX.Element {
                         rows={3}
                         dir="auto"
                         placeholder={t('forum:thread.replyPlaceholder')}
-                        aria-describedby="forum-reply-count"
                         {...field}
                       />
                     </FormControl>
-                    <p
-                      id="forum-reply-count"
+                    <FormDescription
                       data-testid="forum-reply-count"
                       className={
                         replyLength > MAX_REPLY_BODY_LENGTH
@@ -451,7 +450,7 @@ export default function ForumThreadPage(): JSX.Element {
                         count: replyLength,
                         max: MAX_REPLY_BODY_LENGTH,
                       })}
-                    </p>
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

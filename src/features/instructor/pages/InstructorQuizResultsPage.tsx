@@ -171,7 +171,13 @@ function OverridesSheet({
     mutateAsync: upsertOverride,
     isPending: isSaving,
     error: saveError,
+    reset: resetSave,
   } = useUpsertQuizOverride(courseId, quizId);
+  // Closing the sheet answers the last failure: reopening it starts clean.
+  const handleOpenChange = (next: boolean): void => {
+    if (!next) resetSave();
+    onOpenChange(next);
+  };
   const { mutateAsync: deleteOverride, isPending: isDeleting } =
     useDeleteQuizOverride(courseId, quizId);
 
@@ -247,7 +253,7 @@ function OverridesSheet({
   });
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent className="flex w-full flex-col gap-6 overflow-y-auto sm:max-w-lg">
         <SheetHeader>
           <SheetTitle>{t('instructor:quizResults.overrides.title')}</SheetTitle>

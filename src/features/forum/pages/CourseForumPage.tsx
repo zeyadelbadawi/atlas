@@ -29,6 +29,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -271,14 +272,9 @@ export default function CourseForumPage(): JSX.Element {
                       <RequiredMark />
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        dir="auto"
-                        aria-describedby="forum-thread-title-count"
-                        {...field}
-                      />
+                      <Input dir="auto" {...field} />
                     </FormControl>
-                    <p
-                      id="forum-thread-title-count"
+                    <FormDescription
                       className={
                         titleLength > MAX_THREAD_TITLE_LENGTH
                           ? 'text-xs font-medium tabular-nums text-destructive'
@@ -289,7 +285,7 @@ export default function CourseForumPage(): JSX.Element {
                         count: titleLength,
                         max: MAX_THREAD_TITLE_LENGTH,
                       })}
-                    </p>
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -305,15 +301,9 @@ export default function CourseForumPage(): JSX.Element {
                       <RequiredMark />
                     </FormLabel>
                     <FormControl>
-                      <Textarea
-                        rows={5}
-                        dir="auto"
-                        aria-describedby="forum-thread-body-count"
-                        {...field}
-                      />
+                      <Textarea rows={5} dir="auto" {...field} />
                     </FormControl>
-                    <p
-                      id="forum-thread-body-count"
+                    <FormDescription
                       className={
                         bodyLength > MAX_THREAD_BODY_LENGTH
                           ? 'text-xs font-medium tabular-nums text-destructive'
@@ -324,7 +314,7 @@ export default function CourseForumPage(): JSX.Element {
                         count: bodyLength,
                         max: MAX_THREAD_BODY_LENGTH,
                       })}
-                    </p>
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
