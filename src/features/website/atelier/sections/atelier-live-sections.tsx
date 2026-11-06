@@ -20,6 +20,7 @@ import {
   usePublicCourseCategories,
   usePublicCourses,
   usePublicWebsiteStatistics,
+  useBidiIsolation,
 } from '@hooks';
 import type { Course, CourseInstructorSummary } from '@types';
 import {
@@ -161,6 +162,7 @@ export function AtelierCourseCategories({
 /** The small-caps line under a course title: category, level, length. */
 function useCourseMeta(course: Course, showInstructor: boolean): string[] {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const lessons = course.stats?.totalLessons ?? 0;
   const duration = formatCatalogDuration(course.stats?.durationSeconds, t);
   const instructor = showInstructor ? course.instructors[0]?.name : undefined;
@@ -174,7 +176,9 @@ function useCourseMeta(course: Course, showInstructor: boolean): string[] {
         ? t('website:renderer.courseDetails.lessonCount', { count: lessons })
         : undefined),
     instructor
-      ? t('website:atelier.home.courses.taughtBy', { name: instructor })
+      ? t('website:atelier.home.courses.taughtBy', {
+          name: isolate(instructor),
+        })
       : undefined,
   ].filter((item): item is string => !!item);
 }

@@ -27,6 +27,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@app/providers';
 import { useIssueCertificate } from '@features/learning';
 import { apiErrorMessage, isolateNumericExpression } from '@utils';
+import { useBidiIsolation } from '@hooks';
 
 export interface IssueCertificateTarget {
   readonly enrollmentId: string;
@@ -47,6 +48,7 @@ export function IssueCertificateDialog({
   onOpenChange,
 }: IssueCertificateDialogProps): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { notifySuccess } = useToast();
   const issue = useIssueCertificate(academyId);
   const [reason, setReason] = useState('');
@@ -94,8 +96,8 @@ export function IssueCertificateDialog({
           <DialogTitle>{t('certificates:issue.title')}</DialogTitle>
           <DialogDescription>
             {t('certificates:issue.description', {
-              course: target?.courseTitle ?? '',
-              name: target?.studentName ?? '',
+              course: isolate(target?.courseTitle ?? ''),
+              name: isolate(target?.studentName ?? ''),
             })}
           </DialogDescription>
         </DialogHeader>

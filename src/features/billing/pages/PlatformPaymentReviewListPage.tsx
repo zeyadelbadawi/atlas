@@ -41,6 +41,7 @@ import {
   toPlatformPaymentQuery,
 } from '../utils/platform-payment-list.utils';
 import type { LanguageCode, Payment } from '@types';
+import { directionOf } from '@utils';
 
 export default function PlatformPaymentReviewListPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -134,8 +135,12 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
         enableSorting: false,
         header: t('payments:platformReview.planColumn'),
         cell: ({ row }) => (
-          <span className="whitespace-nowrap text-muted-foreground" dir="auto">
-            {formatCheckoutSummary(t, row.original.checkoutSummary) ?? (
+          <span className="whitespace-nowrap text-muted-foreground">
+            {formatCheckoutSummary(
+              t,
+              row.original.checkoutSummary,
+              directionOf(i18n)
+            ) ?? (
               <>
                 <span aria-hidden>—</span>
                 <span className="sr-only">
@@ -202,7 +207,7 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
         ),
       },
     ],
-    [t, fmt, locale]
+    [t, i18n, fmt, locale]
   );
 
   return (

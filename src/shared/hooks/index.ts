@@ -92,3 +92,10 @@ export {
  */
 export { useDateFormatter } from './useDateFormatter';
 export type { DateFormatters } from './useDateFormatter';
+
+/**
+ * RTL sweep — isolates user values inside translated sentences, in the
+ * active language's direction only. See the hook's own comment.
+ */
+export { useBidiIsolation } from './useBidiIsolation';
+export type { BidiIsolation } from './useBidiIsolation';

@@ -11,6 +11,7 @@ import { formatCoursePricing } from '@features/course';
 import type { Course } from '@types';
 import type { WebsiteLinkRenderer } from '@/features/website/renderer/website-link-renderer.types';
 import { AtelierArrow, AtelierMedia } from '../atelier-parts';
+import { useBidiIsolation } from '@hooks';
 
 const COURSE_FALLBACK = 'theme-asset:atelier/course-fallback';
 
@@ -22,6 +23,7 @@ function RowBody({
   readonly index: string;
 }): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const stats = course.stats;
   const lessons = stats?.totalLessons ?? 0;
   const quizzes = stats?.totalQuizzes ?? 0;
@@ -97,8 +99,10 @@ function RowBody({
       </div>
       <div className="atp-row-end">
         {instructor ? (
-          <span className="text-sm text-[var(--atelier-text-muted)]" dir="auto">
-            {t('website:atelier.pages.catalog.by', { name: instructor })}
+          <span className="text-sm text-[var(--atelier-text-muted)]">
+            {t('website:atelier.pages.catalog.by', {
+              name: isolate(instructor),
+            })}
           </span>
         ) : (
           <span />

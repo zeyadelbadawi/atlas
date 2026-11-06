@@ -21,6 +21,7 @@ import {
   usePublicCourseCategories,
   usePublicCourses,
   usePublicWebsiteStatistics,
+  useBidiIsolation,
 } from '@hooks';
 import type { Course, CourseInstructorSummary } from '@types';
 import {
@@ -185,6 +186,7 @@ function CoursePoster({
   readonly linkRenderer?: WebsiteLinkRenderer;
 }): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const instructor = showInstructor ? course.instructors[0]?.name : undefined;
   const body = (
     <>
@@ -206,8 +208,10 @@ function CoursePoster({
           {course.title}
         </span>
         {instructor ? (
-          <span className="mn-muted mnh-course-teacher" dir="auto">
-            {t('website:manara.home.courses.taughtBy', { name: instructor })}
+          <span className="mn-muted mnh-course-teacher">
+            {t('website:manara.home.courses.taughtBy', {
+              name: isolate(instructor),
+            })}
           </span>
         ) : null}
         <span className="mnh-course-foot">

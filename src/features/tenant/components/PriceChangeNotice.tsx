@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { BellRing } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { useDateFormatter } from '@hooks';
+import { useDateFormatter, useBidiIsolation } from '@hooks';
 import { formatCurrency } from '@utils';
 import type {
   LanguageCode,
@@ -45,6 +45,7 @@ function PriceChangeNoticeCard({
   readonly notice: PriceChangeNoticeData;
 }): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const fmt = useDateFormatter();
   const dismiss = useDismissPriceChangeNotice();
 
@@ -70,7 +71,9 @@ function PriceChangeNoticeCard({
     <Alert data-testid="subscription-price-change">
       <BellRing className="size-4" aria-hidden />
       <AlertTitle>
-        {t('tenant:subscription.priceChange.title', { plan: notice.planName })}
+        {t('tenant:subscription.priceChange.title', {
+          plan: isolate(notice.planName),
+        })}
       </AlertTitle>
       <AlertDescription className="space-y-2">
         <p>

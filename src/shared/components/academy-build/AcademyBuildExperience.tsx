@@ -17,15 +17,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Loader2 } from 'lucide-react';
 import { cn } from '@utils';
-import {
-  readAcademyBuild,
-  startAcademyBuild,
-} from './academy-build-timer';
+import { readAcademyBuild, startAcademyBuild } from './academy-build-timer';
 import {
   ACADEMY_BUILD_STAGES,
   BUILD_HIGHLIGHT_KEYS as HIGHLIGHT_KEYS,
   buildProgressAt,
 } from './academy-build-progress';
+import { useBidiIsolation } from '@hooks';
 
 const TICK_MS = 250;
 const HIGHLIGHT_MS = 7_000;
@@ -51,6 +49,7 @@ export function AcademyBuildExperience({
   children,
 }: AcademyBuildExperienceProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const timer = useMemo(
     () => readAcademyBuild(requestId) ?? startAcademyBuild(requestId),
     [requestId]
@@ -88,7 +87,7 @@ export function AcademyBuildExperience({
 
   const activeStage = ACADEMY_BUILD_STAGES[stageIndex];
   const statusLine = done
-    ? t('onboarding:build.doneLine', { name: academyName })
+    ? t('onboarding:build.doneLine', { name: isolate(academyName) })
     : windowOver
       ? t('onboarding:build.finalChecks')
       : t(`onboarding:build.stages.${activeStage.key}.active`);
@@ -169,8 +168,8 @@ export function AcademyBuildExperience({
           className="mt-5 font-display text-xl font-semibold text-foreground sm:text-2xl"
         >
           {done
-            ? t('onboarding:build.doneTitle', { name: academyName })
-            : t('onboarding:build.title', { name: academyName })}
+            ? t('onboarding:build.doneTitle', { name: isolate(academyName) })
+            : t('onboarding:build.title', { name: isolate(academyName) })}
         </h2>
         <p
           className="mt-2 min-h-[1.5rem] text-sm text-muted-foreground"

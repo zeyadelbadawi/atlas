@@ -300,7 +300,8 @@ describe('B0-CPY-13 — who the banner says stores the data', () => {
     cleanup();
     renderLayer('ar');
     const ar = banners()[0]!.textContent ?? '';
-    expect(ar).toContain('تخزّن Alpha Academy');
+    // RTL sweep: the academy name is bidi-isolated inside the sentence.
+    expect(ar).toContain('تخزّن \u2068Alpha Academy\u2069');
     expect(ar).not.toContain('أطلس');
   });
 

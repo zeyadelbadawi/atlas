@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useDebounce } from '@hooks';
+import { useDebounce, useBidiIsolation } from '@hooks';
 import { usePlanCatalog } from '@features/tenant';
 import { usePlatformOrganizations } from '@features/platform';
 import { cn } from '@/lib/utils';
@@ -38,6 +38,7 @@ export function PlatformAudiencePicker({
   onChange,
 }: PlatformAudiencePickerProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const groupId = useId();
   const searchId = useId();
   const [search, setSearch] = useState('');
@@ -171,7 +172,7 @@ export function PlatformAudiencePicker({
           {value.organizationId ? (
             <p className="text-sm" aria-live="polite">
               {t('messaging:audience.platform.selectedOrganization', {
-                name: value.organizationName ?? '',
+                name: isolate(value.organizationName ?? ''),
               })}
             </p>
           ) : null}

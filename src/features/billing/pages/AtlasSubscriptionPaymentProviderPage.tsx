@@ -26,7 +26,7 @@
  */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDateFormatter, useErrorText } from '@hooks';
+import { useBidiIsolation, useDateFormatter, useErrorText } from '@hooks';
 import { errorMessageKey, normalizeUnknownError } from '@services';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -131,6 +131,7 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
     const translationKey = `payments:atlasPaymentProvider.providers.${key ?? ''}`;
     return key && i18n.exists(translationKey) ? t(translationKey) : fallback;
   };
+  const { isolate } = useBidiIsolation();
 
   const {
     data: config,
@@ -296,9 +297,11 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
                   ? 'payments:atlasPaymentProvider.effectiveManualDescription'
                   : 'payments:atlasPaymentProvider.effectiveDescription',
                 {
-                  provider: providerName(
-                    config.effectiveProviderKey,
-                    config.effectiveProviderDisplayName
+                  provider: isolate(
+                    providerName(
+                      config.effectiveProviderKey,
+                      config.effectiveProviderDisplayName
+                    )
                   ),
                 }
               )}

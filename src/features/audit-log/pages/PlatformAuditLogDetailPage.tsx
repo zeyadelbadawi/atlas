@@ -99,15 +99,15 @@ export default function PlatformAuditLogDetailPage(): JSX.Element {
       <div className="space-y-6">
         <SectionCard>
           <div className="space-y-4">
-            <p className="text-lg font-semibold text-foreground" dir="auto">
+            {/* A translated sentence: the page's direction, never `dir="auto"`
+                (its values are isolated by `formatAuditEntry`). */}
+            <p className="text-lg font-semibold text-foreground">
               {formatted.sentence}
             </p>
             {formatted.details.length > 0 ? (
               <ul className="space-y-1 text-sm text-muted-foreground">
                 {formatted.details.map((line) => (
-                  <li key={line} dir="auto">
-                    {line}
-                  </li>
+                  <li key={line}>{line}</li>
                 ))}
               </ul>
             ) : null}
@@ -116,8 +116,8 @@ export default function PlatformAuditLogDetailPage(): JSX.Element {
                 <dt className="text-xs text-muted-foreground">
                   {t('auditLog:details.who')}
                 </dt>
-                <dd className="text-sm text-foreground" dir="auto">
-                  {formatted.actorLabel}
+                <dd className="text-sm text-foreground">
+                  <bdi>{formatted.actorLabel}</bdi>
                   {roleLabel ? ` · ${roleLabel}` : ''}
                 </dd>
                 {entry.actor.email ? (

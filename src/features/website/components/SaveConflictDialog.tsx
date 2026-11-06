@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import type { SaveConflict } from '../utils/save-conflict.utils';
+import { useBidiIsolation } from '@hooks';
 
 export interface SaveConflictDialogProps {
   readonly conflict: SaveConflict | null;
@@ -51,6 +52,7 @@ export function SaveConflictDialog({
   canKeepMine = true,
 }: SaveConflictDialogProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
 
   return (
     <Dialog open={conflict !== null} onOpenChange={onOpenChange}>
@@ -60,7 +62,7 @@ export function SaveConflictDialog({
           <DialogDescription>
             {conflict?.lastEditedByName
               ? t('website:conflict.descriptionNamed', {
-                  name: conflict.lastEditedByName,
+                  name: isolate(conflict.lastEditedByName),
                 })
               : t('website:conflict.description')}
           </DialogDescription>

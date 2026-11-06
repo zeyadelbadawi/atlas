@@ -35,7 +35,7 @@ import { getPaymentStatusTone } from '../utils/payment-status.utils';
 import { formatMoney } from '../utils/money.utils';
 import { TERMINAL_PAYMENT_STATUSES } from '@types';
 import type { LanguageCode, Payment, Plan } from '@types';
-import { cn, MIRROR_IN_RTL } from '@utils';
+import { cn, MIRROR_IN_RTL, directionOf, isolateTextIn } from '@utils';
 
 /** B5 (UX audit) — what the owner has to do about an open payment. */
 export function paymentNextStepKey(
@@ -95,7 +95,7 @@ function AttentionPaymentRow({
         target?.type === 'add_on'
           ? 'payments:overview.forAddOn'
           : 'payments:overview.forPlan',
-        { name }
+        { name: isolateTextIn(directionOf(i18n), name) }
       )
     : t('payments:overview.forUnknown');
 
@@ -107,7 +107,8 @@ function AttentionPaymentRow({
       data-testid={`attention-payment-${payment.id}`}
     >
       <span className="min-w-0 space-y-0.5">
-        <span className="block font-medium text-foreground" dir="auto">
+        {/* A translated phrase: the page's direction; the name is isolated. */}
+        <span className="block font-medium text-foreground">
           {what}
           {cycle ? (
             <span className="font-normal text-muted-foreground">

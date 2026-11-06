@@ -15,7 +15,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@app/providers';
-import { useDateFormatter, useLanguage, useUnsavedChanges } from '@hooks';
+import {
+  useDateFormatter,
+  useLanguage,
+  useUnsavedChanges,
+  useBidiIsolation,
+} from '@hooks';
 import { formatNumber, toErrorsNamespaceKey } from '@utils';
 import type { ApiError } from '@api';
 import {
@@ -77,6 +82,7 @@ function SettingsForm({
   readonly onReload: () => Promise<unknown>;
 }): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { language } = useLanguage();
   const fmt = useDateFormatter();
   const { notifySuccess, notifyError } = useToast();
@@ -293,7 +299,7 @@ function SettingsForm({
           {saved.updatedByName
             ? t(`${K}settings.lastSavedBy`, {
                 date: fmt.dateTime(saved.updatedAt),
-                name: saved.updatedByName,
+                name: isolate(saved.updatedByName),
               })
             : t(`${K}settings.lastSaved`, {
                 date: fmt.dateTime(saved.updatedAt),

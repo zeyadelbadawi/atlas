@@ -50,7 +50,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { useDateFormatter } from '@hooks';
+import { useBidiIsolation, useDateFormatter } from '@hooks';
 import { useToast } from '@app/providers';
 import { useDirtyGuard } from '@features/unsaved-changes';
 import {
@@ -302,6 +302,7 @@ export function PlanEditorDialog({
 }: PlanEditorDialogProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const language = i18n.language as LanguageCode;
+  const { isolate } = useBidiIsolation();
   const fmt = useDateFormatter();
   const { notifySuccess } = useToast();
   const updatePlan = useUpdatePlan();
@@ -550,8 +551,10 @@ export function PlanEditorDialog({
     >
       <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle dir="auto">
-            {t('platform:planAdmin.editor.title', { plan: plan?.name ?? '' })}
+          <DialogTitle>
+            {t('platform:planAdmin.editor.title', {
+              plan: isolate(plan?.name ?? ''),
+            })}
           </DialogTitle>
           <DialogDescription>
             {t('platform:planAdmin.editor.description')}

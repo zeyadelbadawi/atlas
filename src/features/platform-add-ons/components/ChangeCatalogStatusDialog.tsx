@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import type { AddOnCatalogStatus, PlatformAddOnRow } from '../types';
+import { useBidiIsolation } from '@hooks';
 
 const IMPACT_ICON: Record<AddOnCatalogStatus, LucideIcon> = {
   draft: EyeOff,
@@ -52,6 +53,7 @@ export function ChangeCatalogStatusDialog({
   onConfirm,
 }: ChangeCatalogStatusDialogProps): JSX.Element | null {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   if (!addOn || !targetStatus) return null;
 
   const Icon = IMPACT_ICON[targetStatus];
@@ -61,7 +63,7 @@ export function ChangeCatalogStatusDialog({
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>
-            {t('platformAddOns:dialog.title', { name: addOn.name })}
+            {t('platformAddOns:dialog.title', { name: isolate(addOn.name) })}
           </DialogTitle>
           <DialogDescription>
             {t('platformAddOns:dialog.subtitle', {
@@ -72,7 +74,11 @@ export function ChangeCatalogStatusDialog({
         </DialogHeader>
 
         <div className="flex items-start gap-3 rounded-md border border-border bg-muted/40 p-3 text-sm">
-          <Icon className="mt-0.5 size-4 shrink-0 text-primary" strokeWidth={1.75} aria-hidden />
+          <Icon
+            className="mt-0.5 size-4 shrink-0 text-primary"
+            strokeWidth={1.75}
+            aria-hidden
+          />
           <span className="text-muted-foreground">
             {t(`platformAddOns:impact.${targetStatus}`)}
           </span>

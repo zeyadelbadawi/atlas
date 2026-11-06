@@ -27,9 +27,11 @@ import {
   useAcademySwitchPhase,
 } from '@features/academy';
 import type { AcademyScopeLocationState } from '@features/academy';
+import { useBidiIsolation } from '@hooks';
 
 function AccessLostNotice(): JSX.Element | null {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const location = useLocation();
   const lost = (location.state as AcademyScopeLocationState | null)
     ?.academyAccessLost;
@@ -54,7 +56,7 @@ function AccessLostNotice(): JSX.Element | null {
         <AlertDescription>
           {lost.academyName
             ? t('academy:switcher.accessLost.namedDescription', {
-                name: lost.academyName,
+                name: isolate(lost.academyName),
               })
             : t('academy:switcher.accessLost.description')}
         </AlertDescription>

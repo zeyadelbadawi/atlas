@@ -280,15 +280,16 @@ function CatalogCardBody({ course, t }: CatalogCardBodyProps): JSX.Element {
           row of cards with different description lengths still aligns. */}
       <div className="mt-auto flex items-center justify-between gap-3 border-t border-border/60 pt-4 text-sm">
         {instructor ? (
-          <span
-            className="inline-flex min-w-0 items-center gap-1.5 text-muted-foreground"
-            dir="auto"
-          >
+          <span className="inline-flex min-w-0 items-center gap-1.5 text-muted-foreground">
             <UserRound className="size-4 shrink-0" aria-hidden />
             <span className="sr-only">
               {t('website:renderer.courseCatalog.instructorLabel')}:{' '}
             </span>
-            <span className="truncate">{instructor}</span>
+            {/* Direction on the name alone (not decided by the hidden
+                label); the row itself follows the page. */}
+            <span className="truncate" dir="auto">
+              {instructor}
+            </span>
           </span>
         ) : (
           <span />

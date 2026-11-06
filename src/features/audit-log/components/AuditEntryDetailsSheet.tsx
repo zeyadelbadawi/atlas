@@ -72,7 +72,9 @@ export function AuditEntryDetailsSheet({
 
         {row && formatted ? (
           <div className="space-y-6 p-6" data-testid="audit-details">
-            <p className="text-base font-semibold text-foreground" dir="auto">
+            {/* A translated sentence: the page's direction, never `dir="auto"`
+                (its values are isolated by `formatAuditEntry`). */}
+            <p className="text-base font-semibold text-foreground">
               {formatted.sentence}
             </p>
 
@@ -80,8 +82,8 @@ export function AuditEntryDetailsSheet({
               <dt className="text-muted-foreground">
                 {t('auditLog:details.who')}
               </dt>
-              <dd className="text-foreground" dir="auto">
-                {formatted.actorLabel}
+              <dd className="text-foreground">
+                <bdi>{formatted.actorLabel}</bdi>
                 {roleLabel ? ` · ${roleLabel}` : ''}
               </dd>
               <dt className="text-muted-foreground">
@@ -131,9 +133,7 @@ export function AuditEntryDetailsSheet({
             {formatted.details.length > 0 ? (
               <ul className="space-y-1 text-sm text-muted-foreground">
                 {formatted.details.map((line) => (
-                  <li key={line} dir="auto">
-                    {line}
-                  </li>
+                  <li key={line}>{line}</li>
                 ))}
               </ul>
             ) : null}

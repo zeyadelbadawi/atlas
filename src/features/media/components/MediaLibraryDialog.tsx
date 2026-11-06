@@ -36,7 +36,12 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { ErrorState, EmptyState } from '@components/feedback';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useFilePicker, usePermissions, useSearch } from '@hooks';
+import {
+  useFilePicker,
+  usePermissions,
+  useSearch,
+  useBidiIsolation,
+} from '@hooks';
 import { cn, formatBytes, isolateNumericExpression } from '@utils';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -147,6 +152,7 @@ export function MediaLibraryDialog({
   selectedUrl,
 }: MediaLibraryDialogProps): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { hasPermission } = usePermissions();
   // Gates the controls only; the backend authorises the caller's academy
   // role. Uploading and deleting are for the managing roles; an instructor
@@ -288,7 +294,7 @@ export function MediaLibraryDialog({
                 className="rounded-md border border-border bg-muted/40 p-3 text-sm text-foreground"
               >
                 {t('media:delete.pickerCurrentDeleted', {
-                  fileName: deletedCurrent,
+                  fileName: isolate(deletedCurrent),
                 })}
               </p>
             ) : null}

@@ -569,7 +569,11 @@ describe('smart academy signup — existing account', () => {
     await user.click(screen.getByRole('button', { name: 'إنشاء حساب' }));
 
     expect(await screen.findByText('لديك حساب على أطلس بالفعل')).toBeTruthy();
-    expect(screen.getByText(/تعمل Nile Academy على منصة أطلس/)).toBeTruthy();
+    // RTL sweep: the academy name inside the Arabic sentence is
+    // bidi-isolated (U+2068 … U+2069).
+    expect(
+      screen.getByText(/تعمل \u2068Nile Academy\u2069 على منصة أطلس/)
+    ).toBeTruthy();
     const email = screen.getByLabelText(
       'البريد الإلكتروني'
     ) as HTMLInputElement;

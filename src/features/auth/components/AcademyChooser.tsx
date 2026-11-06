@@ -27,7 +27,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { LogOut, LayoutDashboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useAuth, useSignOut } from '@hooks';
+import { useAuth, useSignOut, useBidiIsolation } from '@hooks';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import type { LearnerAcademy } from '@types';
 import { AcademyLinkList } from './AcademyLinkList';
@@ -75,6 +75,7 @@ export function AcademyChooser({
   className,
 }: AcademyChooserProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { user } = useAuth();
   const { signOut, isLoading: isSigningOut } = useSignOut();
 
@@ -125,7 +126,9 @@ export function AcademyChooser({
         />
         {autoNavigateSingle && singleUrl ? (
           <p className="text-center text-xs text-muted-foreground">
-            {t('auth:academyChooser.redirecting', { academy: single?.name ?? '' })}
+            {t('auth:academyChooser.redirecting', {
+              academy: isolate(single?.name ?? ''),
+            })}
           </p>
         ) : null}
       </div>

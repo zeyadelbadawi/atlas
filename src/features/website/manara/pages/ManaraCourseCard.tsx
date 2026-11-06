@@ -10,6 +10,7 @@ import { formatCoursePricing } from '@features/course';
 import type { Course } from '@types';
 import type { WebsiteLinkRenderer } from '@/features/website/renderer/website-link-renderer.types';
 import { ManaraArrow, ManaraMedia, ManaraPill } from '../manara-parts';
+import { useBidiIsolation } from '@hooks';
 import '../manara-pages.css';
 
 const COURSE_FALLBACK = 'theme-asset:manara/course-fallback';
@@ -20,6 +21,7 @@ const CARD_SIZES =
 
 function CardBody({ course }: { readonly course: Course }): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const instructor = course.instructors[0]?.name;
   return (
     <>
@@ -46,8 +48,10 @@ function CardBody({ course }: { readonly course: Course }): JSX.Element {
           {course.title}
         </h3>
         {instructor ? (
-          <p className="mn-muted text-sm" dir="auto">
-            {t('website:manara.pages.catalog.by', { name: instructor })}
+          <p className="mn-muted text-sm">
+            {t('website:manara.pages.catalog.by', {
+              name: isolate(instructor),
+            })}
           </p>
         ) : null}
         <div className="mnp-card-foot">

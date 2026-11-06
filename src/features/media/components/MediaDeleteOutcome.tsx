@@ -13,6 +13,7 @@ import {
   describeMediaUsages,
   includesSubmission,
 } from '../utils/media-delete-copy';
+import { useBidiIsolation } from '@hooks';
 
 export interface MediaDeleteOutcomeProps {
   readonly outcome: MediaDeletionOutcome | null;
@@ -26,6 +27,7 @@ export function MediaDeleteOutcome({
   className,
 }: MediaDeleteOutcomeProps): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
 
   const hasProblem =
     outcome?.kind === 'error' ||
@@ -72,7 +74,7 @@ export function MediaDeleteOutcome({
                       <li key={item.id} className="break-words">
                         {item.reason === 'inUse'
                           ? t('media:delete.summary.refusedInUse', {
-                              fileName: item.fileName,
+                              fileName: isolate(item.fileName),
                               usages: describeMediaUsages(
                                 t,
                                 i18n.language,
@@ -80,7 +82,7 @@ export function MediaDeleteOutcome({
                               ),
                             })
                           : t('media:delete.summary.refusedNotFound', {
-                              fileName: item.fileName,
+                              fileName: isolate(item.fileName),
                             })}
                         {item.reason === 'inUse' &&
                         includesSubmission(item.usages)

@@ -68,7 +68,11 @@ export default function InstructorStudentsPage(): JSX.Element {
           <p dir="auto" className="font-medium text-foreground">
             {row.original.name}
           </p>
-          <p dir="ltr" className="text-start text-xs text-muted-foreground">
+          <p
+            dir="ltr"
+            data-ltr-content
+            className="text-xs text-muted-foreground"
+          >
             {row.original.email}
           </p>
         </div>

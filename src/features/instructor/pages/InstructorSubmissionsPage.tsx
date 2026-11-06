@@ -12,7 +12,7 @@ import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { StatusBadge } from '@components/data-display';
 import { DataTable } from '@components/table';
-import { useDateFormatter, usePagination } from '@hooks';
+import { useDateFormatter, usePagination, useBidiIsolation } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { getSubmissionStatusTone, useAssignments } from '@features/learning';
 import {
@@ -24,6 +24,7 @@ import type { AssignmentSubmissionReview } from '@types';
 export default function InstructorSubmissionsPage(): JSX.Element {
   const fmt = useDateFormatter();
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const navigate = useNavigate();
   const { courseId, assignmentId } = useParams<{
     courseId: string;
@@ -120,7 +121,7 @@ export default function InstructorSubmissionsPage(): JSX.Element {
         title={
           assignment?.title
             ? t('instructor:submissions.titleAssignment', {
-                assignment: assignment.title,
+                assignment: isolate(assignment.title),
               })
             : undefined
         }

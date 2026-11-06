@@ -30,7 +30,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useAuth, useErrorText } from '@hooks';
+import { useAuth, useErrorText, useBidiIsolation } from '@hooks';
 import {
   AcademySetupForm,
   isBrandingFailure,
@@ -210,6 +210,7 @@ export function AcademyStep({
   refresh,
 }: OnboardingStepProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { organization } = useAuth();
   const step = findStep(status, 'academy');
   // The request created on this screen, before the status re-read knows it.
@@ -246,7 +247,7 @@ export function AcademyStep({
           icon={CheckCircle2}
           tone="success"
           title={t('onboarding:academy.readyTitle', {
-            name: status.academy.name,
+            name: isolate(status.academy.name),
           })}
           description={t('onboarding:academy.readyDescription')}
           testId="academy-ready"

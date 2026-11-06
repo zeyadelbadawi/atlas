@@ -33,6 +33,7 @@ import type { ApiError } from '@api';
 import { authenticationService } from '@services/identity';
 import type { AcademyJoinResult } from '@types';
 import { AUTH_ERROR_KEYS } from '../utils/academy-surface.utils';
+import { useBidiIsolation } from '@hooks';
 
 const joinSchema = z.object({
   email: z
@@ -119,6 +120,7 @@ export function AcademyJoinForm({
   renderLink,
 }: AcademyJoinFormProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
@@ -184,7 +186,9 @@ export function AcademyJoinForm({
           </p>
           {reason === 'existing_email' ? (
             <p className="text-muted-foreground">
-              {t('auth:academyJoin.existingWhy', { academyName })}
+              {t('auth:academyJoin.existingWhy', {
+                academyName: isolate(academyName),
+              })}
             </p>
           ) : null}
           <p className="text-muted-foreground">

@@ -11,17 +11,24 @@ import { formatCatalogDuration } from '@/features/website/sections/CourseCatalog
 import type { Course } from '@types';
 import type { WebsiteLinkRenderer } from '@/features/website/renderer/website-link-renderer.types';
 import { RIWAQ_COURSE_FALLBACK, RiwaqArrow, RiwaqWindow } from '../riwaq-parts';
+import { useBidiIsolation } from '@hooks';
 import '../riwaq-pages.css';
 
-const SHEET_SIZES = '(min-width: 1024px) 22vw, (min-width: 640px) 34vw, calc(100vw - 2rem)';
+const SHEET_SIZES =
+  '(min-width: 1024px) 22vw, (min-width: 640px) 34vw, calc(100vw - 2rem)';
 
 function SheetBody({ course }: { readonly course: Course }): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const instructor = course.instructors[0]?.name;
   const lessons = course.stats?.totalLessons ?? 0;
   const specs = [
-    course.level ? t(`website:renderer.courseDetails.level.${course.level}`) : null,
-    lessons > 0 ? t('website:renderer.courseDetails.lessonCount', { count: lessons }) : null,
+    course.level
+      ? t(`website:renderer.courseDetails.level.${course.level}`)
+      : null,
+    lessons > 0
+      ? t('website:renderer.courseDetails.lessonCount', { count: lessons })
+      : null,
     formatCatalogDuration(course.stats?.durationSeconds, t),
   ].filter(Boolean);
   return (
@@ -42,16 +49,22 @@ function SheetBody({ course }: { readonly course: Course }): JSX.Element {
           {course.title}
         </h3>
         {instructor ? (
-          <span className="rw-body rwp-sheet-by" dir="auto">
-            {t('website:riwaq.pages.catalog.by', { name: instructor })}
+          <span className="rw-body rwp-sheet-by">
+            {t('website:riwaq.pages.catalog.by', {
+              name: isolate(instructor),
+            })}
           </span>
         ) : null}
         {specs.length > 0 ? (
-          <span className="rw-label rw-num rwp-sheet-specs">{specs.join(' · ')}</span>
+          <span className="rw-label rw-num rwp-sheet-specs">
+            {specs.join(' · ')}
+          </span>
         ) : null}
       </span>
       <span className="rwp-sheet-end">
-        <span className="rwp-sheet-price rw-num">{formatCoursePricing(course.pricing, t)}</span>
+        <span className="rwp-sheet-price rw-num">
+          {formatCoursePricing(course.pricing, t)}
+        </span>
         <RiwaqArrow className="size-5" />
       </span>
     </>

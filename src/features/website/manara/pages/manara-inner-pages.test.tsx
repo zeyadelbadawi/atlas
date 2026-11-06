@@ -865,8 +865,9 @@ describe('Manara system pages', () => {
 
   it('Coming Soon in Arabic', () => {
     wrap(<ManaraComingSoon academyName="أكاديمية الأفق" />, 'ar');
+    // RTL sweep: the academy name is bidi-isolated inside the sentence.
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(
-      'أكاديمية الأفق تفتح أبوابها قريبًا'
+      '\u2068أكاديمية الأفق\u2069 تفتح أبوابها قريبًا'
     );
   });
 });

@@ -26,7 +26,7 @@ import { Award, GraduationCap, Loader2, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState, ErrorState } from '@components/feedback';
-import { useDateFormatter } from '@hooks';
+import { useDateFormatter, useBidiIsolation } from '@hooks';
 import { buildPath, LEARNER_ROUTES } from '@app/routes/route-paths';
 import { useCourseCompletion } from '@features/learning';
 import type { CourseCompletion } from '@types';
@@ -56,6 +56,7 @@ export function certificateView(completion: CourseCompletion): CertificateView {
 
 export default function LearnerCourseCompletePage(): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const fmt = useDateFormatter();
   const { buildHref } = useLearnerSurface();
   const { courseId = '' } = useParams<{ courseId: string }>();
@@ -168,10 +169,9 @@ export default function LearnerCourseCompletePage(): JSX.Element {
           <h2
             id="course-complete-title"
             className="font-display text-xl font-semibold text-foreground"
-            dir="auto"
           >
             {t('learning:completePage.title', {
-              course: completion.courseTitle,
+              course: isolate(completion.courseTitle),
             })}
           </h2>
           {completion.completedAt ? (

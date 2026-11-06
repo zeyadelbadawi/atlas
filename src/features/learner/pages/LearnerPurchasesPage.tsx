@@ -216,7 +216,7 @@ export default function LearnerPurchasesPage(): JSX.Element {
               <div className="min-w-0 flex-1">
                 <p
                   dir="auto"
-                  className="truncate text-start text-sm font-medium text-foreground"
+                  className="truncate text-sm font-medium text-foreground"
                 >
                   {order.snapshot.course.title}
                 </p>

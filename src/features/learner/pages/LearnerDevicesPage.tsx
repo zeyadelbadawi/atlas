@@ -162,7 +162,7 @@ export default function LearnerDevicesPage(): JSX.Element {
                     <div className="min-w-0 flex-1">
                       <p
                         dir="auto"
-                        className="text-start truncate text-sm font-medium text-foreground"
+                        className="truncate text-sm font-medium text-foreground"
                       >
                         {device.label}
                       </p>
@@ -237,7 +237,7 @@ export default function LearnerDevicesPage(): JSX.Element {
                       <div className="min-w-0 flex-1">
                         <p
                           dir="auto"
-                          className="text-start truncate text-sm font-medium text-foreground"
+                          className="truncate text-sm font-medium text-foreground"
                         >
                           {session.deviceLabel ??
                             t('learning:player.takeover.unknownDevice')}

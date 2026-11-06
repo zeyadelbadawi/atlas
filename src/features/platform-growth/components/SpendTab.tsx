@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@app/providers';
-import { useLanguage } from '@hooks';
+import { useLanguage, useBidiIsolation } from '@hooks';
 import { toErrorsNamespaceKey } from '@utils';
 import type { ApiError } from '@api';
 import {
@@ -58,6 +58,7 @@ export function groupByMonth(
 
 export function SpendTab(): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { language } = useLanguage();
   const channelLabel = useChannelLabel();
   const { notifySuccess, notifyError } = useToast();
@@ -272,7 +273,7 @@ export function SpendTab(): JSX.Element {
         }}
         title={t(`${K}spend.confirmDelete.title`)}
         description={t(`${K}spend.confirmDelete.body`, {
-          name: toDelete ? entryName(toDelete) : '',
+          name: isolate(toDelete ? entryName(toDelete) : ''),
           amount: toDelete ? money(toDelete.amountMinorUnits) : '',
         })}
         confirmLabel={t(`${K}common.delete`)}

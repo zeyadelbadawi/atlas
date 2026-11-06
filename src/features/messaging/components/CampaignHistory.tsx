@@ -15,7 +15,7 @@ import { StatusBadge } from '@components/data-display';
 import type { StatusTone } from '@components/data-display';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { useDateFormatter } from '@hooks';
+import { useDateFormatter, useBidiIsolation } from '@hooks';
 import { formatNumber } from '@utils';
 import type { ApiError } from '@api';
 import type { LanguageCode } from '@types';
@@ -55,6 +55,7 @@ function CampaignCard({
   readonly item: CampaignSummary;
 }): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { dateTime } = useDateFormatter();
   const language = i18n.language as LanguageCode;
   const n = (value: number) => formatNumber(value, language);
@@ -79,7 +80,9 @@ function CampaignCard({
           <p className="text-xs text-muted-foreground">
             {t('messaging:history.meta', {
               date: dateTime(item.createdAt),
-              author: item.authorName ?? t('messaging:history.unknownAuthor'),
+              author: isolate(
+                item.authorName ?? t('messaging:history.unknownAuthor')
+              ),
             })}
           </p>
           <p className="text-xs text-muted-foreground">

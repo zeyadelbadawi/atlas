@@ -57,7 +57,12 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@app/providers';
-import { useDateFormatter, useLanguage, useUnsavedChanges } from '@hooks';
+import {
+  useDateFormatter,
+  useLanguage,
+  useUnsavedChanges,
+  useBidiIsolation,
+} from '@hooks';
 import { cn, toErrorsNamespaceKey } from '@utils';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { appMarketingHref } from '@app/routes/marketing-href';
@@ -225,6 +230,7 @@ export default function PlatformBlogEditorPage(): JSX.Element {
   const { postId } = useParams<{ postId?: string }>();
   const isNew = !postId;
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { language, direction } = useLanguage();
   const fmt = useDateFormatter();
   const navigate = useNavigate();
@@ -1066,7 +1072,7 @@ export default function PlatformBlogEditorPage(): JSX.Element {
                     {post.updatedByName
                       ? t(`${K}common.updatedBy`, {
                           date: fmt.dateTime(post.updatedAt),
-                          name: post.updatedByName,
+                          name: isolate(post.updatedByName),
                         })
                       : t(`${K}common.updatedAt`, {
                           date: fmt.dateTime(post.updatedAt),

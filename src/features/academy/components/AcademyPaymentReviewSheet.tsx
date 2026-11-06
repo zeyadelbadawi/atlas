@@ -49,7 +49,7 @@ import { useDirtyGuard } from '@features/unsaved-changes';
 import type { ApiError } from '@api';
 import { InlineFailureAlert } from './InlineFailureAlert';
 import { TextLengthCounter } from './TextLengthCounter';
-import { useDateFormatter } from '@hooks';
+import { useDateFormatter, useBidiIsolation } from '@hooks';
 import { hasMessageKey } from '@utils';
 import {
   MAX_PAYMENT_REVIEW_NOTES_LENGTH,
@@ -99,6 +99,7 @@ export function AcademyPaymentReviewSheet({
   onOpenChange,
 }: AcademyPaymentReviewSheetProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const fmt = useDateFormatter();
   const { confirm } = useConfirmDialog();
   const { notifySuccess, notifyError } = useToast();
@@ -294,8 +295,8 @@ export function AcademyPaymentReviewSheet({
           <SheetDescription>
             {payment
               ? t(`${K}.sheetDescription`, {
-                  learner: payment.learner.name,
-                  course: payment.course.title,
+                  learner: isolate(payment.learner.name),
+                  course: isolate(payment.course.title),
                 })
               : t(`${K}.loading`)}
           </SheetDescription>
@@ -471,7 +472,9 @@ export function AcademyPaymentReviewSheet({
                     data-testid="academy-payment-proof-open"
                   >
                     <FileText className="size-4" aria-hidden />
-                    {t(`${K}.openPdf`, { file: payment.proof.fileName })}
+                    {t(`${K}.openPdf`, {
+                      file: isolate(payment.proof.fileName),
+                    })}
                     <ExternalLink className="size-4" aria-hidden />
                   </a>
                 </Button>
@@ -510,7 +513,9 @@ export function AcademyPaymentReviewSheet({
                     >
                       <p className="text-foreground">
                         {t(`${K}.historyEntry.${review.status}`, {
-                          reviewer: review.reviewerName ?? t(`${K}.someone`),
+                          reviewer: isolate(
+                            review.reviewerName ?? t(`${K}.someone`)
+                          ),
                           when: fmt.dateTime(review.reviewedAt),
                         })}
                       </p>

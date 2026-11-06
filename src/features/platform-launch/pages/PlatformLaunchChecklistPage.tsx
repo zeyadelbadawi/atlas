@@ -29,7 +29,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@app/providers';
-import { useDateFormatter, useLanguage } from '@hooks';
+import { useDateFormatter, useLanguage, useBidiIsolation } from '@hooks';
 import { cn, formatNumber, toErrorsNamespaceKey } from '@utils';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import type { BreadcrumbItem } from '@types';
@@ -117,6 +117,7 @@ function ItemLink({
 
 export default function PlatformLaunchChecklistPage(): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { language } = useLanguage();
   const fmt = useDateFormatter();
   const { notifySuccess, notifyError } = useToast();
@@ -258,7 +259,7 @@ export default function PlatformLaunchChecklistPage(): JSX.Element {
               {item.doneByName
                 ? t(`${K}checklist.item.doneBy`, {
                     date: fmt.dateTime(item.doneAt),
-                    name: item.doneByName,
+                    name: isolate(item.doneByName),
                   })
                 : t(`${K}checklist.item.doneAt`, {
                     date: fmt.dateTime(item.doneAt),
@@ -266,12 +267,10 @@ export default function PlatformLaunchChecklistPage(): JSX.Element {
             </p>
           ) : null}
           {item.notes ? (
-            <p
-              className="whitespace-pre-line rounded-md bg-muted/50 px-3 py-2 text-sm text-foreground"
-              dir="auto"
-            >
+            <p className="whitespace-pre-line rounded-md bg-muted/50 px-3 py-2 text-sm text-foreground">
+              {/* Direction on the notes alone, not on the hidden label. */}
               <span className="sr-only">{t(`${K}checklist.item.notes`)}: </span>
-              {item.notes}
+              <bdi>{item.notes}</bdi>
             </p>
           ) : null}
           {item.linkUrl ? (
@@ -472,7 +471,7 @@ export default function PlatformLaunchChecklistPage(): JSX.Element {
         }}
         title={t(`${K}checklist.confirmDelete.title`)}
         description={t(`${K}checklist.confirmDelete.body`, {
-          title: toDelete?.title ?? '',
+          title: isolate(toDelete?.title ?? ''),
         })}
         confirmLabel={t(`${K}common.delete`)}
         destructive

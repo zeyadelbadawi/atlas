@@ -24,6 +24,7 @@ import type {
   ThemeNotFoundProps,
 } from '../theme-packs/theme-pack.types';
 import { BrandShapePage, T1Heading, T1Link } from './t1-parts';
+import { useBidiIsolation } from '@hooks';
 
 export function T1NotFound({
   pages,
@@ -102,6 +103,7 @@ export function T1ComingSoon({
   academyLogo,
 }: ThemeComingSoonProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const headingId = useId();
   return (
     <main
@@ -137,13 +139,15 @@ export function T1ComingSoon({
           size="display"
           className="mx-auto mt-4 max-w-xl"
         >
-          {t('website:theme1.comingSoon.title', { name: academyName })}
+          {t('website:theme1.comingSoon.title', { name: isolate(academyName) })}
         </T1Heading>
         <p className="t1-lead mx-auto mt-5">
           {t('website:theme1.comingSoon.description')}
         </p>
         <p className="mt-12 text-xs text-[var(--website-foreground-muted)]">
-          <AtlasSiteLink>{t('publicWebsite:comingSoon.attribution')}</AtlasSiteLink>
+          <AtlasSiteLink>
+            {t('publicWebsite:comingSoon.attribution')}
+          </AtlasSiteLink>
         </p>
       </div>
     </main>

@@ -40,7 +40,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { isFeatureEnabled } from '@config';
-import { useAuth, useSignOut, useTheme, useToast } from '@hooks';
+import {
+  useAuth,
+  useSignOut,
+  useTheme,
+  useToast,
+  useBidiIsolation,
+} from '@hooks';
 import { THEME_PREFERENCES } from '@types';
 import type { ThemePreference } from '@types';
 import { cn } from '@utils';
@@ -77,6 +83,7 @@ export function AccountMenu({
   className,
 }: AccountMenuProps): JSX.Element | null {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const { user } = useAuth();
   const { signOut, isLoading } = useSignOut();
   const { preference, setPreference } = useTheme();
@@ -119,12 +126,16 @@ export function AccountMenu({
               (`dir="auto"` on the span that shows, never on a parent that
               also holds the hidden one): in the Arabic header a Latin name
               was cut from the wrong end ("…h" for Sarah); it keeps its
-              start now, and the Arabic greeting keeps its order. */}
+              start now, and the Arabic greeting keeps its order.
+              RTL sweep — the greeting is a TRANSLATION, so it takes the
+              page's direction (not `dir="auto"`, which a template starting
+              with the name would turn left-to-right); the name inside it is
+              bidi-isolated instead. */}
           <span className="block min-w-[2.5rem] truncate sm:hidden" dir="auto">
             {firstName}
           </span>
-          <span className="hidden min-w-0 truncate sm:block" dir="auto">
-            {t('common:account.welcome', { name: fullName })}
+          <span className="hidden min-w-0 truncate sm:block">
+            {t('common:account.welcome', { name: isolate(fullName) })}
           </span>
           <span className="sr-only"> {t('common:account.menuSuffix')}</span>
           <ChevronDown

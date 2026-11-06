@@ -21,7 +21,7 @@ import { AlertTriangle, Clock, CreditCard, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@components/feedback';
-import { useErrorText, useToast } from '@hooks';
+import { useErrorText, useToast, useBidiIsolation } from '@hooks';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { formatCurrency, toErrorsNamespaceKey } from '@utils';
 import {
@@ -138,6 +138,7 @@ export function PlanStep({
   refresh,
 }: OnboardingStepProps): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const language = i18n.language as LanguageCode;
   const { toast } = useToast();
   const planStep = findStep(status, 'plan');
@@ -294,7 +295,7 @@ export function PlanStep({
                       data-testid={`plan-checkout-${plan.key}`}
                     >
                       <CreditCard className="size-4" aria-hidden />
-                      {t('onboarding:plan.choosePlan', { plan: name })}
+                      {t('onboarding:plan.choosePlan', { plan: isolate(name) })}
                     </Link>
                   </Button>
                 </li>

@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { isDateRangeReversed, ReversedDateRangeAlert } from '@forms';
+import { useBidiIsolation } from '@hooks';
 import type { AuditCategory } from '@types';
 import {
   EMPTY_AUDIT_FILTERS,
@@ -40,20 +41,25 @@ export function AuditLogFilters({
   idPrefix = 'audit-filters',
 }: AuditLogFiltersProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const datesReversed = isDateRangeReversed(value.from, value.to);
   const datesErrorId = `${idPrefix}-dates-error`;
   const chips: { key: string; label: string; clear: () => void }[] = [];
   if (value.actor) {
     chips.push({
       key: 'actor',
-      label: t('auditLog:filters.actorChip', { name: value.actor.name }),
+      label: t('auditLog:filters.actorChip', {
+        name: isolate(value.actor.name),
+      }),
       clear: () => onChange({ ...value, actor: undefined }),
     });
   }
   if (value.academy) {
     chips.push({
       key: 'academy',
-      label: t('auditLog:filters.academyChip', { name: value.academy.name }),
+      label: t('auditLog:filters.academyChip', {
+        name: isolate(value.academy.name),
+      }),
       clear: () => onChange({ ...value, academy: undefined }),
     });
   }
@@ -155,7 +161,9 @@ export function AuditLogFilters({
               key={chip.key}
               className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-2.5 py-1 text-xs text-foreground"
             >
-              <span dir="auto">{chip.label}</span>
+              {/* A translated chip ("Person: {{name}}"): page direction,
+                  the name isolated above. */}
+              <span>{chip.label}</span>
               <button
                 type="button"
                 onClick={chip.clear}

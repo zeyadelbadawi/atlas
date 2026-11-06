@@ -56,7 +56,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ErrorState } from '@components/feedback';
-import { useDateFormatter } from '@hooks';
+import { useDateFormatter, useBidiIsolation } from '@hooks';
 import { cn, formatRelativeTime } from '@utils';
 import type { ApiError } from '@api';
 import type {
@@ -146,6 +146,7 @@ export function PageHistoryDialog({
   onPageChanged,
 }: PageHistoryDialogProps): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const language = i18n.language as LanguageCode;
   const { dateTime } = useDateFormatter();
   const versionsQuery = useWebsitePageVersions(academyId, page.id, open);
@@ -298,7 +299,9 @@ export function PageHistoryDialog({
                       {kindLabel(version.kind)}
                     </span>
                     <span className="block truncate text-xs text-muted-foreground">
-                      {t('website:history.by', { name: authorOf(version) })}
+                      {t('website:history.by', {
+                        name: isolate(authorOf(version)),
+                      })}
                     </span>
                     {whenOf(version)}
                   </span>
@@ -551,6 +554,7 @@ function RestoreFailureNotice({
   readonly onRetry: () => void;
 }): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   if (failure.type === 'other') {
     return <ErrorState onRetry={onRetry} />;
   }
@@ -558,7 +562,7 @@ function RestoreFailureNotice({
   if (failure.type === 'stale') {
     body = failure.conflict.lastEditedByName
       ? t('website:history.staleBy', {
-          name: failure.conflict.lastEditedByName,
+          name: isolate(failure.conflict.lastEditedByName),
         })
       : t('website:history.stale');
   } else if (failure.type === 'invalid') {

@@ -39,7 +39,7 @@ import {
   GoogleSignInOption,
 } from '@features/auth';
 import type { AcademyJoinCredentials } from '@features/auth';
-import { useAuth, useSignIn, useSignOut } from '@hooks';
+import { useAuth, useSignIn, useSignOut, useBidiIsolation } from '@hooks';
 import { isEmailOtpChallenge } from '@types';
 import type { SignInChallenge } from '@types';
 import { authenticationService } from '@services/identity';
@@ -100,6 +100,7 @@ export function PublicWebsiteSignUpPage({
   locale,
 }: PublicWebsiteSignUpPageProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   usePublicWebsiteDocumentDirection(locale);
   const data = usePublicWebsiteData(lookupKey);
   const [searchParams] = useSearchParams();
@@ -276,14 +277,16 @@ export function PublicWebsiteSignUpPage({
       configuration.header.authPages?.signUp?.title,
       locale
     ) ||
-    t('publicWebsite:auth.signUp.title', { academyName: academy.academyName });
+    t('publicWebsite:auth.signUp.title', {
+      academyName: isolate(academy.academyName),
+    });
   const subtitle =
     resolveLocalizedText(
       configuration.header.authPages?.signUp?.subtitle,
       locale
     ) ||
     t('publicWebsite:auth.signUp.subtitle', {
-      academyName: academy.academyName,
+      academyName: isolate(academy.academyName),
     });
 
   return (
@@ -328,7 +331,7 @@ export function PublicWebsiteSignUpPage({
               />
               <p className="font-medium text-foreground">
                 {t('publicWebsite:auth.signUp.welcomeTitle', {
-                  academyName: academy.academyName,
+                  academyName: isolate(academy.academyName),
                 })}
               </p>
               <p className="text-sm text-muted-foreground">
@@ -336,7 +339,7 @@ export function PublicWebsiteSignUpPage({
                   academies: step.otherAcademies.join(
                     t('publicWebsite:auth.signUp.listSeparator')
                   ),
-                  academyName: academy.academyName,
+                  academyName: isolate(academy.academyName),
                 })}
               </p>
               <p className="text-sm text-muted-foreground">
@@ -362,7 +365,7 @@ export function PublicWebsiteSignUpPage({
               {step.name ? (
                 <p className="font-medium text-foreground">
                   {t('publicWebsite:auth.signUp.welcomeBack', {
-                    name: step.name,
+                    name: isolate(step.name),
                   })}
                 </p>
               ) : null}
@@ -397,13 +400,13 @@ export function PublicWebsiteSignUpPage({
               {step.name ? (
                 <p className="font-medium text-foreground">
                   {t('publicWebsite:auth.signUp.welcomeBack', {
-                    name: step.name,
+                    name: isolate(step.name),
                   })}
                 </p>
               ) : null}
               <p className="text-sm text-muted-foreground">
                 {t('publicWebsite:auth.signUp.continuing', {
-                  academyName: academy.academyName,
+                  academyName: isolate(academy.academyName),
                 })}
               </p>
             </div>
@@ -415,11 +418,11 @@ export function PublicWebsiteSignUpPage({
               >
                 {step.name
                   ? `${t('publicWebsite:auth.signUp.welcomeBack', {
-                      name: step.name,
+                      name: isolate(step.name),
                     })} `
                   : ''}
                 {t('publicWebsite:auth.signUp.joinedVerify', {
-                  academyName: academy.academyName,
+                  academyName: isolate(academy.academyName),
                 })}
               </p>
               <WebsiteBrandBridge>

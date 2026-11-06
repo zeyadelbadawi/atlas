@@ -66,6 +66,7 @@ import {
   type ApprovePaymentFormData,
   type RejectPaymentFormData,
 } from '../schemas/billing.schemas';
+import { directionOf } from '@utils';
 
 export default function PlatformPaymentReviewDetailPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -128,7 +129,11 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
   // One decision at a time: while either request is in flight BOTH actions
   // are disabled, so an approve and a reject can never race each other.
   const isDeciding = approvePayment.isPending || rejectPayment.isPending;
-  const planSummary = formatCheckoutSummary(t, payment.checkoutSummary);
+  const planSummary = formatCheckoutSummary(
+    t,
+    payment.checkoutSummary,
+    directionOf(i18n)
+  );
 
   const organizationName =
     payment.organization?.name ??
@@ -249,9 +254,7 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
                 <span className="text-muted-foreground">
                   {t('payments:platformReview.plan')}
                 </span>
-                <span className="text-end" dir="auto">
-                  {planSummary}
-                </span>
+                <span className="text-end">{planSummary}</span>
               </div>
             ) : null}
             <div className="flex justify-between">

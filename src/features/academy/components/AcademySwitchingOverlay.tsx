@@ -5,6 +5,7 @@
  */
 import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useBidiIsolation } from '@hooks';
 
 export interface AcademySwitchingOverlayProps {
   readonly visible: boolean;
@@ -17,6 +18,7 @@ export function AcademySwitchingOverlay({
   academyName,
 }: AcademySwitchingOverlayProps): JSX.Element | null {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   if (!visible) return null;
 
   return (
@@ -35,7 +37,7 @@ export function AcademySwitchingOverlay({
         />
         <span className="min-w-0 truncate">
           {academyName
-            ? t('academy:switcher.switchingTo', { name: academyName })
+            ? t('academy:switcher.switchingTo', { name: isolate(academyName) })
             : t('academy:switcher.switching')}
         </span>
       </div>

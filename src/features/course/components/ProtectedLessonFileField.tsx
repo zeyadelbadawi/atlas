@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { apiErrorMessage } from '@utils';
 import type { ProtectedLessonFile } from '@types';
+import { useBidiIsolation } from '@hooks';
 
 /** What the server's byte check accepts for a protected file. */
 export const PROTECTED_LESSON_FILE_ACCEPT =
@@ -56,6 +57,7 @@ export function ProtectedLessonFileField({
   onUploadingChange,
 }: ProtectedLessonFileFieldProps): JSX.Element {
   const { t, i18n } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -104,7 +106,7 @@ export function ProtectedLessonFileField({
           />
           <span>
             {t('course:builder.lessonDialog.protectedFile.uploaded', {
-              fileName: value.fileName,
+              fileName: isolate(value.fileName),
             })}
           </span>
         </p>

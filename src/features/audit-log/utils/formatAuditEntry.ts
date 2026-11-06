@@ -20,6 +20,14 @@
  * `sectionTitle`, and plain `course_lesson.created` otherwise. Placeholders
  * are read from the raw resource string, so adding a variant needs no code.
  *
+ * BIDI (RTL sweep). The sentence is a translation, so it takes the PAGE's
+ * direction — callers must not put `dir="auto"` on it: a Latin actor name
+ * at its start made "Ziad Elbadawi صحّح محاولة اختبار…" a left-to-right
+ * line with its Arabic phrases in reverse. Instead every value
+ * interpolated from the row (actor, target, titles, names, notes) is
+ * bidi-isolated here, in a right-to-left language only (`isolateValues`).
+ * `actorLabel` and `changes` stay plain: they are shown on their own.
+ *
  * Pure: takes the i18next instance (and optional formatters) rather than
  * calling hooks, so it is shared by lists, drawers and tests alike.
  */
@@ -31,6 +39,7 @@ import type {
   DashboardActivityItem,
   TenantAuditLogEntry,
 } from '@types';
+import { directionOf, isolateTextIn, isolateValues } from '@utils';
 import { auditCategoryOf } from './audit-event-catalog';
 
 const NS = 'auditLog';
@@ -124,6 +133,8 @@ export function formatAuditEntry(
     i18n.getResource(i18n.languages?.[1] ?? language, NS, key);
 
   const context: AuditContext = entry.context ?? {};
+  const direction = directionOf(i18n);
+  const isolate = (text: string): string => isolateTextIn(direction, text);
   const separator = listSeparator(language);
 
   const actorLabel = entry.actorIsPlatformStaff
@@ -178,12 +189,15 @@ export function formatAuditEntry(
     return true;
   };
 
+  // What the sentence interpolates: the same values, each isolated.
+  const sentenceVars = isolateValues(vars, direction);
+
   let sentence: string | undefined;
   const base = `events.${entry.action}`;
   for (const suffix of VARIANT_SUFFIXES) {
     const template = rawResource(`${base}${suffix}`);
     if (typeof template === 'string' && satisfies(template)) {
-      sentence = t(`${base}${suffix}`, vars);
+      sentence = t(`${base}${suffix}`, sentenceVars);
       break;
     }
   }
@@ -194,7 +208,7 @@ export function formatAuditEntry(
       target: t('untitled'),
       provider: '',
       addOn: '',
-      ...vars,
+      ...sentenceVars,
     });
   }
 
@@ -202,18 +216,18 @@ export function formatAuditEntry(
     // Unknown action: say WHAT was changed, never just "made a change".
     if (entry.targetType && vars.target) {
       sentence = t('fallback.withTarget', {
-        actor: actorLabel,
+        actor: isolate(actorLabel),
         targetType: targetTypeLabel(entry.targetType),
-        target: vars.target,
+        target: isolate(vars.target),
       });
     } else if (entry.targetType && has(`targetTypes.${entry.targetType}`)) {
       sentence = t('fallback.noTarget', {
-        actor: actorLabel,
+        actor: isolate(actorLabel),
         targetType: targetTypeLabel(entry.targetType),
       });
     } else {
       sentence = t('fallback.category', {
-        actor: actorLabel,
+        actor: isolate(actorLabel),
         category: categoryLabel,
       });
     }
@@ -324,7 +338,9 @@ export function formatAuditEntry(
 
   if (nonEmpty(context.notes)) {
     details.push(
-      t('summary.notes', { notes: truncate(String(context.notes)) })
+      t('summary.notes', {
+        notes: isolate(truncate(String(context.notes))),
+      })
     );
   }
 

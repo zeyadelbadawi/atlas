@@ -171,15 +171,16 @@ function CardBody({
           <div className="mt-auto pt-5">
             <div className="flex items-center justify-between gap-3 border-t border-[var(--website-border)] pt-4 text-sm">
               {instructor ? (
-                <span
-                  className="inline-flex min-w-0 items-center gap-1.5 text-[var(--website-foreground-muted)]"
-                  dir="auto"
-                >
+                <span className="inline-flex min-w-0 items-center gap-1.5 text-[var(--website-foreground-muted)]">
                   <UserRound className="size-4 shrink-0" aria-hidden />
                   <span className="sr-only">
                     {t('website:renderer.courseCatalog.instructorLabel')}:{' '}
                   </span>
-                  <span className="truncate">{instructor}</span>
+                  {/* Direction on the name alone (not decided by the
+                      hidden label); the row itself follows the page. */}
+                  <span className="truncate" dir="auto">
+                    {instructor}
+                  </span>
                 </span>
               ) : (
                 <span />

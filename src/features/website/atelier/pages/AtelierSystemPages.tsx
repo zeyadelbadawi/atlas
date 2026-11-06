@@ -26,6 +26,7 @@ import {
   AtelierLink,
   formatAtelierNumber,
 } from '../atelier-parts';
+import { useBidiIsolation } from '@hooks';
 import '../atelier-pages.css';
 
 export function AtelierNotFound({
@@ -102,6 +103,7 @@ export function AtelierComingSoon({
   academyLogo,
 }: ThemeComingSoonProps): JSX.Element {
   const { t } = useTranslation();
+  const { isolate } = useBidiIsolation();
   const headingId = useId();
   return (
     <main
@@ -130,7 +132,9 @@ export function AtelierComingSoon({
         </div>
         <div className="max-w-5xl space-y-8">
           <AtelierHeading as="h1" id={headingId} size="display">
-            {t('website:atelier.pages.comingSoon.title', { name: academyName })}
+            {t('website:atelier.pages.comingSoon.title', {
+              name: isolate(academyName),
+            })}
           </AtelierHeading>
           <hr className="atp-poster-rule" />
           <p className="at-lead">
@@ -138,7 +142,9 @@ export function AtelierComingSoon({
           </p>
         </div>
         <p className="text-xs text-[var(--atelier-text-muted)]">
-          <AtlasSiteLink>{t('publicWebsite:comingSoon.attribution')}</AtlasSiteLink>
+          <AtlasSiteLink>
+            {t('publicWebsite:comingSoon.attribution')}
+          </AtlasSiteLink>
         </p>
       </div>
     </main>

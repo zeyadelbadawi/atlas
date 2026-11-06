@@ -252,7 +252,7 @@ export function PlayerShell({
               </p>
               <h1
                 dir="auto"
-                className="mt-1 text-start font-display text-xl font-semibold text-foreground"
+                className="mt-1 font-display text-xl font-semibold text-foreground"
               >
                 {title}
               </h1>
