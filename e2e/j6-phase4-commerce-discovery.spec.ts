@@ -69,8 +69,7 @@ test.describe.configure({ mode: 'serial' });
 const CATALOG_TITLE = 'Browse our courses';
 const OUTCOME = 'Build a small web page from scratch';
 const REQUIREMENT = 'A laptop with a modern browser';
-const REVIEW_BODY =
-  'Clear, short and practical. I built my first page in an hour.';
+const REVIEW_BODY = 'Clear, short and practical. I built my first page in an hour.';
 
 // `@critical`: in the required CI set (.github/workflows/journeys.yml).
 test.describe('J6 — catalog, details, reviews and paid checkout @critical', () => {
@@ -96,12 +95,7 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
     let organizationId: string;
     ({ academyId, organizationId, owner } = await ensureAcademy(request));
     platformOwner = await signInPlatformOwner(request);
-    method = await ensurePaymentCollection(
-      request,
-      owner,
-      platformOwner,
-      organizationId
-    );
+    method = await ensurePaymentCollection(request, owner, platformOwner, organizationId);
 
     /* ---------- the owner authors two public courses ---------- */
     const stamp = `${Date.now()}`;
@@ -149,11 +143,7 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
     await publishCourse(request, owner, academyId, paidCourseId);
 
     /* ---------- the owner adds the Course Catalog section and publishes ---------- */
-    const pages = await apiGet(
-      request,
-      owner,
-      `/academies/${academyId}/website/pages`
-    );
+    const pages = await apiGet(request, owner, `/academies/${academyId}/website/pages`);
     expect(pages.ok(), await pages.text()).toBeTruthy();
     const pagesBody = await pages.json();
     const coursesPage = (
@@ -211,20 +201,10 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
             ],
       }
     );
-    expect(
-      updated.ok(),
-      `page update refused: ${updated.status()} ${await updated.text()}`
-    ).toBeTruthy();
+    expect(updated.ok(), `page update refused: ${updated.status()} ${await updated.text()}`).toBeTruthy();
     // Publishing bumps the configuration version the public cache is keyed by.
-    const published = await apiPost(
-      request,
-      owner,
-      `/academies/${academyId}/website/publish`
-    );
-    expect(
-      published.ok(),
-      `website publish refused: ${published.status()} ${await published.text()}`
-    ).toBeTruthy();
+    const published = await apiPost(request, owner, `/academies/${academyId}/website/publish`);
+    expect(published.ok(), `website publish refused: ${published.status()} ${await published.text()}`).toBeTruthy();
 
     context = await browser.newContext();
     page = await context.newPage();
@@ -237,44 +217,28 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
   test('an anonymous visitor filters the catalog by level and searches it', async () => {
     test.setTimeout(120_000);
     await page.goto(academyPath('/courses'));
-    await expect(
-      page.getByRole('heading', { name: CATALOG_TITLE })
-    ).toBeVisible({
+    await expect(page.getByRole('heading', { name: CATALOG_TITLE })).toBeVisible({
       timeout: 60_000,
     });
-    await expect(page.getByText(freeCourseTitle)).toBeVisible({
-      timeout: 30_000,
-    });
-    // The title is in the breadcrumb (Courses › course › Checkout) and the
-    // order summary.
-    await expect(
-      page.getByTestId('checkout-order-summary').getByText(paidCourseTitle)
-    ).toBeVisible();
+    await expect(page.getByText(freeCourseTitle)).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText(paidCourseTitle)).toBeVisible();
     await expect(page.getByRole('status')).toContainText(/\d+ courses?/);
 
     // Level: Beginner keeps the free course and drops the advanced one.
     await chooseLevel(page, 'Beginner');
-    await expect(page.getByText(paidCourseTitle)).toHaveCount(0, {
-      timeout: 30_000,
-    });
+    await expect(page.getByText(paidCourseTitle)).toHaveCount(0, { timeout: 30_000 });
     await expect(page.getByText(freeCourseTitle)).toBeVisible();
 
     await chooseLevel(page, 'Any level');
-    await expect(page.getByText(paidCourseTitle)).toBeVisible({
-      timeout: 30_000,
-    });
+    await expect(page.getByText(paidCourseTitle)).toBeVisible({ timeout: 30_000 });
 
     // Search narrows to the paid course.
     // The catalog's own search (Theme 1's page header has one too).
     const search = page.getByLabel('Search courses').last();
     await search.fill(paidCourseTitle);
-    await expect(page.getByText(freeCourseTitle)).toHaveCount(0, {
-      timeout: 30_000,
-    });
+    await expect(page.getByText(freeCourseTitle)).toHaveCount(0, { timeout: 30_000 });
     // The card's title (Theme 1 also echoes the term in a filter chip).
-    await expect(
-      page.getByRole('heading', { name: paidCourseTitle })
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: paidCourseTitle })).toBeVisible();
 
     // A search nothing matches says so.
     await search.fill('zzz-no-such-course-zzz');
@@ -282,9 +246,7 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
       timeout: 30_000,
     });
     await search.fill('');
-    await expect(page.getByText(freeCourseTitle)).toBeVisible({
-      timeout: 30_000,
-    });
+    await expect(page.getByText(freeCourseTitle)).toBeVisible({ timeout: 30_000 });
   });
 
   test('the details page shows level, outcomes and requirements, and no rating block without reviews', async () => {
@@ -296,55 +258,37 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
       { timeout: 60_000 }
     );
     await page.getByRole('link', { name: freeCourseTitle }).first().click();
-    await expect(page).toHaveURL(new RegExp(`/courses/${freeCourseId}`), {
-      timeout: 30_000,
-    });
-    await expect(
-      page.getByRole('heading', { name: freeCourseTitle })
-    ).toBeVisible({
+    await expect(page).toHaveURL(new RegExp(`/courses/${freeCourseId}`), { timeout: 30_000 });
+    await expect(page.getByRole('heading', { name: freeCourseTitle })).toBeVisible({
       timeout: 30_000,
     });
 
     // The course's own level comes first; Theme 1's related-course cards repeat levels below.
-    await expect(
-      page.getByText('Beginner', { exact: true }).first()
-    ).toBeVisible();
-    await expect(
-      page.getByRole('heading', { name: "What you'll learn" })
-    ).toBeVisible();
+    await expect(page.getByText('Beginner', { exact: true }).first()).toBeVisible();
+    await expect(page.getByRole('heading', { name: "What you'll learn" })).toBeVisible();
     await expect(page.getByText(OUTCOME)).toBeVisible();
-    await expect(
-      page.getByRole('heading', { name: 'Requirements' })
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Requirements' })).toBeVisible();
     await expect(page.getByText(REQUIREMENT)).toBeVisible();
 
     // Not signed in: the page offers sign-in, not enrolment.
-    await expect(
-      page.getByRole('button', { name: 'Sign in to enroll' })
-    ).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Sign in to enroll' })).toBeVisible();
 
     // No approved reviews yet: the rating block is absent, not empty.
     await ratingLoaded;
-    await expect(
-      page.getByRole('heading', { name: 'Learner reviews' })
-    ).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Learner reviews' })).toHaveCount(0);
   });
 
   test('an anonymous visitor plays the free preview lesson without enrolling', async () => {
     test.setTimeout(120_000);
     await page.goto(academyPath(`/courses/${paidCourseId}`));
-    await expect(
-      page.getByRole('heading', { name: paidCourseTitle })
-    ).toBeVisible({
+    await expect(page.getByRole('heading', { name: paidCourseTitle })).toBeVisible({
       timeout: 30_000,
     });
 
     // The sample is offered inside its curriculum section. The base theme
     // starts that section collapsed; Theme 1 opens the first section by
     // default, so open it only when it is closed.
-    const sectionTrigger = page
-      .getByRole('button', { name: /Free sample/ })
-      .first();
+    const sectionTrigger = page.getByRole('button', { name: /Free sample/ }).first();
     await expect(sectionTrigger).toBeVisible({ timeout: 30_000 });
     if ((await sectionTrigger.getAttribute('aria-expanded')) !== 'true') {
       await sectionTrigger.click();
@@ -378,17 +322,9 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
   }) => {
     test.setTimeout(120_000);
     learnerEmail = uniqueLearnerEmail('j6');
-    await registerLearnerThroughWebsite(
-      page,
-      learnerEmail,
-      uniqueLearnerName('J6 Learner')
-    );
+    await registerLearnerThroughWebsite(page, learnerEmail, uniqueLearnerName('J6 Learner'));
     await expect(
-      page
-        .getByText(
-          /check your (email|inbox)|account created|your account is ready|verify/i
-        )
-        .first()
+      page.getByText(/check your (email|inbox)|account created|your account is ready|verify/i).first()
     ).toBeVisible({ timeout: 20_000 });
     learner = await apiSignIn(request, {
       email: learnerEmail,
@@ -399,23 +335,17 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
 
     await signInOnWebsite(page, learnerEmail);
     await page.goto(academyPath(`/courses/${freeCourseId}`));
-    await page
-      .getByRole('button', { name: 'Enroll for free' })
-      .click({ timeout: 30_000 });
+    await page.getByRole('button', { name: 'Enroll for free' }).click({ timeout: 30_000 });
     // Enrolling deliberately takes the learner INTO the course
     // (`CourseDetailsTemplate.handleEnroll` navigates to the learner
     // course route), so the public page is left behind here.
     await expect(page).toHaveURL(/\/my\/courses\//, { timeout: 30_000 });
-    expect(
-      (await enrollmentForCourse(request, learner, freeCourseId))?.status
-    ).toBe('enrolled');
+    expect((await enrollmentForCourse(request, learner, freeCourseId))?.status).toBe('enrolled');
 
     // Back on the public page, now enrolled: the review form is offered.
     // `MyCourseReviewForm` is gated on `isAuthenticated && isEnrolled`.
     await page.goto(academyPath(`/courses/${freeCourseId}`));
-    await expect(
-      page.getByRole('heading', { name: 'Write a review' })
-    ).toBeVisible({
+    await expect(page.getByRole('heading', { name: 'Write a review' })).toBeVisible({
       timeout: 30_000,
     });
     await page
@@ -425,16 +355,12 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
     await page.getByLabel('Your review (optional)').fill(REVIEW_BODY);
     await page.getByRole('button', { name: 'Submit review' }).click();
     await expect(
-      page.getByText(
-        'Thanks! Your review is awaiting moderation before it appears publicly.'
-      )
+      page.getByText('Thanks! Your review is awaiting moderation before it appears publicly.')
     ).toBeVisible({ timeout: 30_000 });
     await expect(page.getByText('Awaiting review')).toBeVisible();
 
     // Still nothing public: the rating block stays absent while the review is pending.
-    await expect(
-      page.getByRole('heading', { name: 'Learner reviews' })
-    ).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Learner reviews' })).toHaveCount(0);
   });
 
   test('the owner approves the review and the public page shows it with its rating', async ({
@@ -449,16 +375,9 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
     );
     expect(moderation.ok(), await moderation.text()).toBeTruthy();
     const pending = (
-      (await moderation.json()).items as {
-        id: string;
-        studentId: string;
-        status: string;
-      }[]
+      (await moderation.json()).items as { id: string; studentId: string; status: string }[]
     ).find((r) => r.studentId === learner.userId);
-    expect(
-      pending,
-      "the learner's review is in the moderation queue"
-    ).toBeTruthy();
+    expect(pending, "the learner's review is in the moderation queue").toBeTruthy();
 
     const approved = await apiPost(
       request,
@@ -480,9 +399,7 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
     await cdp.send('Network.clearBrowserCache');
     await cdp.detach();
     await page.reload();
-    await expect(
-      page.getByRole('heading', { name: 'Learner reviews' })
-    ).toBeVisible({
+    await expect(page.getByRole('heading', { name: 'Learner reviews' })).toBeVisible({
       timeout: 30_000,
     });
     // Scoped to the reviews region: Theme 1's course hero repeats the
@@ -494,9 +411,7 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
     // appears twice — the learner's own card in `MyCourseReviewForm`
     // still shows it too — so an unscoped match is ambiguous.
     await expect(
-      page
-        .getByRole('region', { name: 'Learner reviews' })
-        .getByText(REVIEW_BODY)
+      page.getByRole('region', { name: 'Learner reviews' }).getByText(REVIEW_BODY)
     ).toBeVisible();
     await expect(page.getByText('Published', { exact: true })).toBeVisible();
   });
@@ -504,29 +419,21 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
   test('the learner buys the paid course: method, proof, "submitted for review"', async () => {
     test.setTimeout(120_000);
     await page.goto(academyPath(`/courses/${paidCourseId}`));
-    await expect(
-      page.getByRole('heading', { name: paidCourseTitle })
-    ).toBeVisible({
+    await expect(page.getByRole('heading', { name: paidCourseTitle })).toBeVisible({
       timeout: 30_000,
     });
     // The course's own level comes first; Theme 1's related-course cards repeat levels below.
-    await expect(
-      page.getByText('Advanced', { exact: true }).first()
-    ).toBeVisible();
+    await expect(page.getByText('Advanced', { exact: true }).first()).toBeVisible();
     await page.getByRole('button', { name: 'Buy this course' }).click();
-    await expect(page).toHaveURL(
-      new RegExp(`/my/courses/${paidCourseId}/checkout`),
-      {
-        timeout: 30_000,
-      }
-    );
+    await expect(page).toHaveURL(new RegExp(`/my/courses/${paidCourseId}/checkout`), {
+      timeout: 30_000,
+    });
 
-    await expect(page.getByText('Payment method', { exact: true })).toBeVisible(
-      {
-        timeout: 30_000,
-      }
-    );
-    await expect(page.getByText(paidCourseTitle)).toBeVisible();
+    await expect(page.getByText('Payment method', { exact: true })).toBeVisible({
+      timeout: 30_000,
+    });
+    // The title is in the breadcrumb (Courses › course › Checkout) too.
+    await expect(page.getByTestId('checkout-order-summary').getByText(paidCourseTitle)).toBeVisible();
     // Selected by KEY, not display name: `seedPaymentMethod` sets
     // `displayName` to its label, so two catalog rows seeded by
     // different runs share a name and a name-based locator matches
@@ -534,9 +441,7 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
     await page.locator(`#method-${method.key}`).click();
     await page.getByRole('button', { name: 'Continue' }).click();
 
-    await expect(page.getByText('Upload payment proof')).toBeVisible({
-      timeout: 30_000,
-    });
+    await expect(page.getByText('Upload payment proof')).toBeVisible({ timeout: 30_000 });
     await page.getByTestId('checkout-proof-file').setInputFiles({
       name: 'proof.png',
       mimeType: 'image/png',
@@ -545,13 +450,9 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
     await page.getByTestId('checkout-proof-note').fill('Transfer reference J6');
     await page.getByRole('button', { name: 'Submit for review' }).click();
 
-    await expect(page.getByText('Payment submitted')).toBeVisible({
-      timeout: 30_000,
-    });
+    await expect(page.getByText('Payment submitted')).toBeVisible({ timeout: 30_000 });
     await expect(
-      page.getByText(
-        "Thanks! Your payment is under review. You'll be enrolled once it's approved."
-      )
+      page.getByText("Thanks! Your payment is under review. You'll be enrolled once it's approved.")
     ).toBeVisible();
   });
 
@@ -560,53 +461,31 @@ test.describe('J6 — catalog, details, reviews and paid checkout @critical', ()
   }) => {
     test.setTimeout(120_000);
     // Not enrolled while the payment waits for review.
-    expect(
-      await enrollmentForCourse(request, learner, paidCourseId)
-    ).toBeNull();
+    expect(await enrollmentForCourse(request, learner, paidCourseId)).toBeNull();
 
-    const orders = await apiGet(request, learner, '/course-orders', {
-      pageSize: '50',
-    });
+    const orders = await apiGet(request, learner, '/course-orders', { pageSize: '50' });
     expect(orders.ok(), await orders.text()).toBeTruthy();
-    const order = (
-      (await orders.json()).items as {
-        id: string;
-        courseId: string;
-        status: string;
-      }[]
-    ).find((o) => o.courseId === paidCourseId);
+    const order = ((await orders.json()).items as { id: string; courseId: string; status: string }[]).find(
+      (o) => o.courseId === paidCourseId
+    );
     expect(order, 'the checkout opened an order').toBeTruthy();
     expect(order!.status).toBe('pending_payment');
 
-    const paymentId = await findPendingPaymentForOrder(
-      request,
-      platformOwner,
-      order!.id
-    );
+    const paymentId = await findPendingPaymentForOrder(request, platformOwner, order!.id);
     await approveCourseOrderPayment(request, platformOwner, paymentId);
 
-    expect(
-      (
-        await apiGet(request, learner, `/course-orders/${order!.id}`).then(
-          (r) => r.json()
-        )
-      ).status
-    ).toBe('paid');
-    expect(
-      (await enrollmentForCourse(request, learner, paidCourseId))?.status
-    ).toBe('enrolled');
+    expect((await apiGet(request, learner, `/course-orders/${order!.id}`).then((r) => r.json())).status).toBe(
+      'paid'
+    );
+    expect((await enrollmentForCourse(request, learner, paidCourseId))?.status).toBe('enrolled');
 
     // What the learner sees: the paid course is now theirs — to START, as
     // nothing in it has been opened yet ("Continue" means real progress).
     await page.goto(academyPath(`/courses/${paidCourseId}`));
-    await expect(
-      page.getByRole('button', { name: 'Start course' })
-    ).toBeVisible({
+    await expect(page.getByRole('button', { name: 'Start course' })).toBeVisible({
       timeout: 30_000,
     });
     await page.goto(academyPath('/my/courses'));
-    await expect(page.getByText(paidCourseTitle)).toBeVisible({
-      timeout: 30_000,
-    });
+    await expect(page.getByText(paidCourseTitle)).toBeVisible({ timeout: 30_000 });
   });
 });
