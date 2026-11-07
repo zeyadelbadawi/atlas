@@ -860,7 +860,7 @@ test.describe('J20 — E-wallet and InstaPay: configure, checkout, review @criti
       .click();
     await expect(
       page.getByText(
-        /^This payment was approved on .+\. It can no longer be approved or rejected\.$/
+        /^Approved by .+ on .+\. It can no longer be approved or rejected\.$/
       )
     ).toBeVisible({ timeout: 30_000 });
     await context.close();
@@ -983,7 +983,7 @@ test.describe('J20 — E-wallet and InstaPay: configure, checkout, review @criti
     await adminPage.getByRole('button', { name: 'Reject payment' }).click();
     await expect(
       adminPage.getByText(
-        /^This payment was rejected on .+\. It can no longer be approved or rejected\.$/
+        /^Rejected by .+ on .+\. It can no longer be approved or rejected\.$/
       )
     ).toBeVisible({ timeout: 30_000 });
     await adminPage.screenshot({
