@@ -48,7 +48,8 @@ export interface HostnamePresentation {
 /** Phase 6 — `StatisticsSection`'s real, live, Academy-scoped counts (`GET public/websites/:academyId/statistics`). Never revenue or any other private figure. */
 export interface PublicWebsiteStatistics {
   readonly courses: number;
-  readonly students: number;
+  /** `null` unless a published Statistics section shows the learner count (the server keeps it private otherwise). */
+  readonly students: number | null;
   readonly instructors: number;
 }
 

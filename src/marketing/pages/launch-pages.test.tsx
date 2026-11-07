@@ -13,6 +13,7 @@ import { MARKETING_PAGES } from '../registry';
 import { buildMarketingSite } from '../prerender/site';
 import { marketingLlmsCopy } from '../prerender/entry';
 import type { MarketingRenderContext } from '../types';
+import { DEMO_ACADEMY_LIVE } from '../data/demo';
 
 const plans = snapshot as unknown as Plan[];
 const ctx: MarketingRenderContext = {
@@ -93,10 +94,16 @@ describe('B3 marketing pages', () => {
     ).toBe(true);
   });
 
-  it('links the demo academy and the help center from /resources, never /founding', () => {
+  it('links the help center from /resources, never /founding; the demo academy only once it is live', () => {
     for (const lang of ['en', 'ar'] as const) {
       const page = html('resources', lang).html;
-      expect(page).toContain('href="https://al-nour.atlass.dpdns.org"');
+      if (DEMO_ACADEMY_LIVE) {
+        expect(page).toContain('href="https://al-nour.atlass.dpdns.org"');
+      } else {
+        // B0-OC-29: the demo host is not a published academy yet.
+        expect(page).not.toContain('al-nour.atlass.dpdns.org');
+        expect(page).not.toContain('id="demo"');
+      }
       expect(page).toMatch(
         /href="https:\/\/docs\.atlass\.dpdns\.org(\/ar)?\/getting-started"/
       );

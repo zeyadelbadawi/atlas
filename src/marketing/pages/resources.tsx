@@ -25,7 +25,7 @@ import {
   dirOf,
 } from '../components/ui';
 import { HeroArt } from '../components/hero-art';
-import { DEMO_ACADEMY_HOST } from '../data/demo';
+import { DEMO_ACADEMY_HOST, DEMO_ACADEMY_LIVE } from '../data/demo';
 import type { MarketingBlogTopic } from '../content/content.types';
 import { fill, link } from '../lib/copy';
 import { docsHref, localePath } from '../lib/site';
@@ -176,44 +176,46 @@ function ResourcesPage({ env }: { env: PageEnv }) {
         </a>
       </Section>
 
-      <Section
-        id="demo"
-        labelledBy="resources-demo-title"
-        className="border-t border-border"
-      >
-        <div className="mk-card grid gap-6 p-6 sm:p-10 lg:grid-cols-[1.4fr_1fr] lg:items-center">
-          <div>
-            <SectionHeading
-              id="resources-demo-title"
-              title={fill(r.demo.title, tokens)}
-              lead={r.demo.lead ? fill(r.demo.lead, tokens) : undefined}
-            />
-            <p className="mt-4 text-sm text-muted-foreground">
-              {fill(r.demo.note, tokens)}
-            </p>
-          </div>
-          <div className="lg:text-end">
-            <a
-              href={DEMO_ACADEMY_URL}
-              rel="noopener"
-              className="mk-btn mk-btn-primary"
-            >
-              {r.demo.cta}
-              <ExternalLink
-                className="size-4 rtl:-scale-x-100"
-                aria-hidden
-                strokeWidth={1.75}
+      {DEMO_ACADEMY_LIVE ? (
+        <Section
+          id="demo"
+          labelledBy="resources-demo-title"
+          className="border-t border-border"
+        >
+          <div className="mk-card grid gap-6 p-6 sm:p-10 lg:grid-cols-[1.4fr_1fr] lg:items-center">
+            <div>
+              <SectionHeading
+                id="resources-demo-title"
+                title={fill(r.demo.title, tokens)}
+                lead={r.demo.lead ? fill(r.demo.lead, tokens) : undefined}
               />
-            </a>
-            <p
-              className="mt-3 font-mono text-xs text-muted-foreground"
-              dir="ltr"
-            >
-              {DEMO_ACADEMY_HOST}
-            </p>
+              <p className="mt-4 text-sm text-muted-foreground">
+                {fill(r.demo.note, tokens)}
+              </p>
+            </div>
+            <div className="lg:text-end">
+              <a
+                href={DEMO_ACADEMY_URL}
+                rel="noopener"
+                className="mk-btn mk-btn-primary"
+              >
+                {r.demo.cta}
+                <ExternalLink
+                  className="size-4 rtl:-scale-x-100"
+                  aria-hidden
+                  strokeWidth={1.75}
+                />
+              </a>
+              <p
+                className="mt-3 font-mono text-xs text-muted-foreground"
+                dir="ltr"
+              >
+                {DEMO_ACADEMY_HOST}
+              </p>
+            </div>
           </div>
-        </div>
-      </Section>
+        </Section>
+      ) : null}
 
       <Section
         id="guides"

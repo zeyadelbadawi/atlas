@@ -52,8 +52,10 @@ export function StatisticsSection({
     item: StatisticsSectionConfig['items'][number]
   ): string => {
     if (!item.metric) return resolveLocalizedText(item.value, locale);
+    // `null`: the learner count is private until a published Statistics
+    // section shows it (e.g. the editor preview before publishing).
     const liveValue = statistics?.[item.metric];
-    return liveValue === undefined
+    return liveValue == null
       ? resolveLocalizedText(item.value, locale)
       : liveValue.toLocaleString(intlLocale(locale));
   };

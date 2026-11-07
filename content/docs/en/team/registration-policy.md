@@ -43,6 +43,16 @@ The registration policy decides who can create an account on your academy websit
 
 The message **Registration policy updated** confirms the change. New sign-ups follow it from that moment.
 
+## Learners who were waiting
+
+Changing the policy doesn't admit, remove or reject anyone on its own.
+
+- Learners who were waiting under **Approval required** keep waiting after you switch to **Open** or **Invite only**. They stay on the **Students** tab as **Pending approval**.
+- Signing in again doesn't let them in. Under **Open**, only people who aren't in your academy yet are added when they sign in. Someone already waiting stays waiting.
+- You can still approve or reject them after the change. See [Approve pending learners](doc:DOC-ORG-007).
+
+So after you switch away from **Approval required**, open **Members**, then the **Students** tab, filter by **Pending approval**, and approve or reject each learner who is still waiting.
+
 ## How invite links behave under each policy
 
 - **Open**: no link is needed. Anyone can sign up.
