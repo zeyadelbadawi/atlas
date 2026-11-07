@@ -455,20 +455,21 @@ export function PlanEditorDialog({
     // B8 (UX audit) V08 — a price or limit change can reach paying
     // organizations on the plan (the server emails their owners); anything
     // else changes only the catalog.
+    // Field by field, so the answer never depends on key order.
+    const savedYearly =
+      offersYearlyPrice && plan.pricing?.yearlyAmount !== undefined
+        ? plan.pricing.yearlyAmount
+        : undefined;
+    const priceChanged =
+      !pricing || !plan.pricing
+        ? Boolean(pricing) !== Boolean(plan.pricing)
+        : pricing.amount !== plan.pricing.amount ||
+          pricing.currency !== plan.pricing.currency ||
+          pricing.billingCycle !==
+            (plan.pricing.billingCycle ?? billingCycle) ||
+          pricing.yearlyAmount !== savedYearly;
     const reachesSubscribers =
-      JSON.stringify(pricing ?? null) !==
-        JSON.stringify(
-          plan.pricing
-            ? {
-                amount: plan.pricing.amount,
-                currency: plan.pricing.currency,
-                billingCycle: plan.pricing.billingCycle ?? billingCycle,
-                ...(offersYearlyPrice && plan.pricing.yearlyAmount !== undefined
-                  ? { yearlyAmount: plan.pricing.yearlyAmount }
-                  : {}),
-              }
-            : null
-        ) ||
+      priceChanged ||
       PLAN_LIMIT_KEYS.some((key) => limits[key] !== plan.limits[key]) ||
       limits.monthlyEmails !== plan.limits.monthlyEmails;
     // Before saving such a change, ask the server how many organizations it

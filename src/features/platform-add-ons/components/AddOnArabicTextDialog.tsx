@@ -180,7 +180,13 @@ export function AddOnArabicTextDialog({
               autoComplete="off"
               value={nameAr}
               aria-invalid={nameError ? true : undefined}
-              aria-describedby="addon-name-ar-english addon-name-ar-error"
+              aria-describedby={[
+                'addon-name-ar-english',
+                'addon-name-ar-count',
+                nameError ? 'addon-name-ar-error' : undefined,
+              ]
+                .filter(Boolean)
+                .join(' ')}
               onChange={(event) => {
                 setNameAr(event.target.value);
                 if (update.error) update.reset();
@@ -218,7 +224,12 @@ export function AddOnArabicTextDialog({
               rows={3}
               value={descriptionAr}
               aria-invalid={descriptionError ? true : undefined}
-              aria-describedby="addon-description-ar-error"
+              aria-describedby={[
+                'addon-description-ar-count',
+                descriptionError ? 'addon-description-ar-error' : undefined,
+              ]
+                .filter(Boolean)
+                .join(' ')}
               onChange={(event) => {
                 setDescriptionAr(event.target.value);
                 if (update.error) update.reset();

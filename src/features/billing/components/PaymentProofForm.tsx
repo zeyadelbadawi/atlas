@@ -255,7 +255,13 @@ export function PaymentProofForm({
           data-ltr-content
           autoComplete="off"
           aria-invalid={referenceError || referenceTooLong ? true : undefined}
-          aria-describedby={`${referenceHelpId} ${referenceCountId} ${referenceErrorId}`}
+          aria-describedby={[
+            referenceHelpId,
+            referenceCountId,
+            referenceError ? referenceErrorId : undefined,
+          ]
+            .filter(Boolean)
+            .join(' ')}
           data-testid="payment-proof-reference"
         />
         <p id={referenceHelpId} className="text-xs text-muted-foreground">

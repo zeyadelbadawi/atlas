@@ -378,13 +378,18 @@ export default function PlatformCoursePaymentDetailPage(): JSX.Element {
         {!isPendingReview ? (
           <Card>
             <CardContent className="space-y-2 p-6 text-sm text-muted-foreground">
-              {/* B8 (UX audit) V01 — who decided, and when. */}
-              {payment.review?.reviewerName ? (
+              {/* B8 (UX audit) V01 — who decided, and when. A reviewer whose
+                  account is gone has no name, but the date still stands. */}
+              {payment.review ? (
                 <p data-testid="course-payment-reviewed-by">
-                  {t('platformCommerce:coursePayments.reviewedBy', {
-                    name: isolateText(payment.review.reviewerName),
-                    date: fmt.dateTime(payment.review.reviewedAt),
-                  })}
+                  {payment.review.reviewerName
+                    ? t('platformCommerce:coursePayments.reviewedBy', {
+                        name: isolateText(payment.review.reviewerName),
+                        date: fmt.dateTime(payment.review.reviewedAt),
+                      })
+                    : t('platformCommerce:coursePayments.reviewedOn', {
+                        date: fmt.dateTime(payment.review.reviewedAt),
+                      })}
                 </p>
               ) : null}
               <p>{t('platformCommerce:coursePayments.alreadyReviewed')}</p>
