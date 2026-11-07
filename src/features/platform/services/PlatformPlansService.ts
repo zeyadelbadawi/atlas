@@ -11,7 +11,7 @@
  * ONE HYPHENATED RESOURCE SEGMENT — `resourcePath()` encodes each segment,
  * so a slashed resource would 404. See `AdminSubscriptionsService`.
  */
-import { BaseService } from '@services';
+import { BaseService, toQueryParams } from '@services';
 import type { ReadOptions, WriteOptions } from '@services';
 import { toCollectionParams } from '@api';
 import type {
@@ -24,11 +24,32 @@ import type {
   PlanLimits,
   PlanNoticePreview,
   PlanNoticePreviewPayload,
+  PlatformPlanQuery,
+  PlatformPlanRow,
+  RestorePlanPayload,
   UpdatePlanPayload,
 } from '@types';
 
 export class PlatformPlansService extends BaseService {
   protected readonly resource = 'platform-plans';
+
+  /**
+   * Every plan — listed, hidden and archived — with its subscriber counts.
+   * Search, visibility and page go to the server, which orders listed
+   * plans by position, then hidden, then archived.
+   */
+  async list(
+    query: PlatformPlanQuery,
+    options?: ReadOptions
+  ): Promise<PaginatedResult<PlatformPlanRow>> {
+    return this.client.get<PaginatedResult<PlatformPlanRow>>(this.path(), {
+      ...options,
+      params: {
+        ...(options?.params ?? {}),
+        ...toQueryParams(query, { dropEmptyStrings: true }),
+      },
+    });
+  }
 
   async createPlan(
     payload: CreatePlanPayload,
@@ -67,6 +88,22 @@ export class PlatformPlansService extends BaseService {
     return this.client.post<Plan, { expectedVersion: number }>(
       this.path(key, 'archive'),
       { expectedVersion },
+      options
+    );
+  }
+
+  /**
+   * Brings an archived plan back: `displayOrder` 0 restores it hidden, a
+   * positive one lists it at that position. Version-guarded like an edit.
+   */
+  async restorePlan(
+    key: string,
+    payload: RestorePlanPayload,
+    options?: WriteOptions
+  ): Promise<Plan> {
+    return this.client.post<Plan, RestorePlanPayload>(
+      this.path(key, 'restore'),
+      payload,
       options
     );
   }

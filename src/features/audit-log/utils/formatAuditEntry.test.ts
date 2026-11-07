@@ -168,6 +168,43 @@ describe('formatAuditEntry — sentences', () => {
     ).toBe('Owner turned on the payment gateway Zoom');
   });
 
+  it('plan management: names the restored plan and the re-priced add-on', () => {
+    expect(
+      formatAuditEntry(
+        {
+          action: 'plan.restored',
+          actorName: 'Sara',
+          targetType: 'plan',
+          targetLabel: 'Growth',
+          context: { key: 'growth', displayOrder: 3 },
+        },
+        enI18n
+      ).sentence
+    ).toBe('Sara restored the plan “Growth”');
+    expect(
+      formatAuditEntry(
+        {
+          action: 'plan.restored',
+          actorName: 'سارة',
+          targetType: 'plan',
+          targetLabel: 'النمو',
+        },
+        arI18n
+      ).sentence
+    ).toBe(`${iso('سارة')} استعاد الخطة «${iso('النمو')}»`);
+    expect(
+      formatAuditEntry(
+        {
+          action: 'add_on.pricing_changed',
+          actorName: 'Sara',
+          targetType: 'add_on',
+          context: { addOnKey: 'extra-academy' },
+        },
+        enI18n
+      ).sentence
+    ).toBe('Sara changed the price of the add-on extra-academy');
+  });
+
   it('is target-aware for an action this build does not know', () => {
     expect(
       formatAuditEntry(

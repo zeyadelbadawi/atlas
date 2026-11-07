@@ -289,6 +289,8 @@
     "errors.plan.alreadyArchived",
     "errors.plan.giftedDaysRange",
     "errors.plan.keyTaken",
+    "errors.plan.lastListedPlan",
+    "errors.plan.notArchived",
     "errors.platform.subscriptionAdjustment.daysRange",
     "errors.platform.subscriptionAdjustment.noPaidPeriod",
     "errors.platform.subscriptionAdjustment.notExtendable",

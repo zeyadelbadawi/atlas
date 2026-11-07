@@ -18,6 +18,7 @@ import type {
   PlatformAddOnQuery,
   UpdateAddOnArabicTextInput,
   UpdateAddOnCatalogStatusInput,
+  UpdateAddOnPricingInput,
 } from '../types';
 
 export class PlatformAddOnsService extends BaseService {
@@ -53,6 +54,19 @@ export class PlatformAddOnsService extends BaseService {
   ): Promise<PlatformAddOnRow> {
     return this.client.patch<PlatformAddOnRow, UpdateAddOnArabicTextInput>(
       this.path(key, 'arabic-text'),
+      input,
+      options
+    );
+  }
+
+  /** The add-on's price for NEW purchases (EGP only); existing holders are not charged again. */
+  async updatePricing(
+    key: string,
+    input: UpdateAddOnPricingInput,
+    options?: WriteOptions
+  ): Promise<PlatformAddOnRow> {
+    return this.client.patch<PlatformAddOnRow, UpdateAddOnPricingInput>(
+      this.path(key, 'pricing'),
       input,
       options
     );

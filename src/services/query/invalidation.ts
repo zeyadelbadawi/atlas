@@ -215,6 +215,9 @@ export function planPrefixes(
 ): readonly (readonly unknown[])[] {
   return [
     planKeys.list(),
+    // The Platform Owner's list: visibility and subscriber counts move with
+    // every create, edit, archive and restore.
+    platformPlanKeys.lists(),
     ...(planKey
       ? [planKeys.detail(planKey), platformPlanKeys.historyAll(planKey)]
       : []),
@@ -222,7 +225,7 @@ export function planPrefixes(
   ];
 }
 
-/** A plan was created, edited or archived. */
+/** A plan was created, edited, archived or restored. */
 export async function invalidatePlans(
   queryClient: QueryClient,
   planKey?: string

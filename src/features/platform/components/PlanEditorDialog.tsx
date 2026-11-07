@@ -29,14 +29,20 @@
  * (`useServerValidation`, its paths mapped onto the form's); a limit is a
  * number or the Unlimited switch; Escape, the X and Cancel ask before
  * discarding edits; a save says what happened.
+ *
+ * PLAN MANAGEMENT (atlas-backend#112) — a Visibility section: "Show to
+ * customers" plus the plan's position in the customer list
+ * (`displayOrder`; hidden = 0, still buyable by key). It is sent only when
+ * it changed. The server refuses to hide the last listed plan (409
+ * `errors.plan.lastListedPlan`), shown as the one save-failed alert. An
+ * archived plan says so at the top; it is brought back with Restore.
  */
 import { useEffect, useMemo, useState } from 'react';
-import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import type { Path } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertTriangle, Loader2 } from 'lucide-react';
+import { AlertTriangle, Archive, Loader2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -59,7 +65,7 @@ import {
   fieldErrorText,
   useServerValidation,
 } from '@forms';
-import { cn, formatCurrency, formatNumber } from '@utils';
+import { formatCurrency, formatNumber } from '@utils';
 import {
   PLAN_FEATURE_KEYS,
   PLAN_LIMIT_KEYS,
@@ -86,7 +92,10 @@ import {
   giftedDaysInputToPayload,
   giftedDaysToInput,
 } from '../utils/gifted-days.utils';
+import { PLAN_ERROR_KEYS } from '../utils/plan-management.utils';
+import { PlanField } from './PlanField';
 import {
+  PLAN_POSITION_MAX,
   numberText,
   planEditorSchema,
   wholeNumber,
@@ -146,6 +155,9 @@ function toFormValues(plan: Plan | null): PlanEditorValues {
       string,
       boolean
     >,
+    listed: (plan?.displayOrder ?? 0) > 0,
+    position:
+      (plan?.displayOrder ?? 0) > 0 ? String(plan?.displayOrder ?? '') : '',
   };
 }
 
@@ -169,6 +181,7 @@ const SERVER_FIELD_ALIASES: Readonly<Record<string, Path<PlanEditorValues>>> = {
   giftedDaysMonthly: 'giftedMonthly',
   giftedDaysYearly: 'giftedYearly',
   'limits.monthlyEmails': 'monthlyEmails',
+  displayOrder: 'position',
 };
 
 /** Label keys by the API's field path, so a server message names the field. */
@@ -180,6 +193,7 @@ const SERVER_FIELD_LABELS: Readonly<Record<string, string>> = {
   giftedDaysMonthly: 'platform:planAdmin.editor.giftMonthly',
   giftedDaysYearly: 'platform:planAdmin.editor.giftYearly',
   'limits.monthlyEmails': 'platform:planAdmin.editor.monthlyEmails',
+  displayOrder: 'platform:planAdmin.editor.position',
   ...Object.fromEntries(
     PLAN_LIMIT_KEYS.map((key) => [
       `limits.${key}`,
@@ -197,6 +211,7 @@ const FORM_FIELD_LABELS: Readonly<Record<string, string>> = {
   giftedMonthly: 'platform:planAdmin.editor.giftMonthly',
   giftedYearly: 'platform:planAdmin.editor.giftYearly',
   monthlyEmails: 'platform:planAdmin.editor.monthlyEmails',
+  position: 'platform:planAdmin.editor.position',
   ...Object.fromEntries(
     PLAN_LIMIT_KEYS.map((key) => [
       `limits.${key}`,
@@ -240,65 +255,20 @@ function useLocalizedViolations(
   }, [error, language]);
 }
 
-interface PlanFieldProps {
-  readonly id: string;
-  readonly label: string;
-  readonly help?: ReactNode;
-  readonly error?: string;
-  readonly children: (aria: {
-    readonly 'aria-invalid': boolean | undefined;
-    readonly 'aria-describedby': string | undefined;
-  }) => ReactNode;
-  readonly className?: string;
-}
-
-/** Label, control, help and the field's own message, wired together. */
-function PlanField({
-  id,
-  label,
-  help,
-  error,
-  children,
-  className,
-}: PlanFieldProps): JSX.Element {
-  const describedBy =
-    [help ? `${id}-help` : null, error ? `${id}-error` : null]
-      .filter(Boolean)
-      .join(' ') || undefined;
-  return (
-    <div className={cn('space-y-1.5', className)}>
-      <Label htmlFor={id}>{label}</Label>
-      {children({
-        'aria-invalid': error ? true : undefined,
-        'aria-describedby': describedBy,
-      })}
-      {help ? (
-        <p id={`${id}-help`} className="text-xs text-muted-foreground">
-          {help}
-        </p>
-      ) : null}
-      {error ? (
-        <p
-          id={`${id}-error`}
-          role="alert"
-          className="text-sm font-medium text-destructive"
-          data-testid={`${id}-error`}
-        >
-          {error}
-        </p>
-      ) : null}
-    </div>
-  );
-}
-
 export interface PlanEditorDialogProps {
   readonly plan: Plan | null;
   readonly onOpenChange: (open: boolean) => void;
+  /**
+   * The position offered when a hidden plan is switched to "Show to
+   * customers" (the page passes the last listed position + 1).
+   */
+  readonly nextListedPosition?: number;
 }
 
 export function PlanEditorDialog({
   plan,
   onOpenChange,
+  nextListedPosition,
 }: PlanEditorDialogProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const language = i18n.language as LanguageCode;
@@ -502,11 +472,22 @@ export function PlanEditorDialog({
         if (!confirmed) return;
       }
     }
+    // Visibility — sent only when it changed, so an unrelated edit can
+    // never be refused for hiding the last listed plan.
+    const savedOrder = plan.displayOrder ?? 0;
+    const displayOrder = submitted.listed
+      ? (wholeNumber(submitted.position) ?? savedOrder)
+      : 0;
+    const visibilityChange =
+      plan.status !== 'archived' && displayOrder !== savedOrder
+        ? { displayOrder }
+        : {};
     try {
       await updatePlan.mutateAsync({
         key: plan.key,
         payload: {
           expectedVersion: plan.version,
+          ...visibilityChange,
           limits,
           features: pickPlanFeatures(submitted.features),
           pricing,
@@ -546,7 +527,12 @@ export function PlanEditorDialog({
     onOpenChange(false);
   };
 
-  const isStale = updatePlan.error?.kind === 'conflict';
+  // 409 also says "this is the last plan customers can see": that one is
+  // not a stale version — it is explained in the save-failed alert.
+  const isLastListed =
+    updatePlan.error?.messageKey === PLAN_ERROR_KEYS.lastListedPlan;
+  const isStale = updatePlan.error?.kind === 'conflict' && !isLastListed;
+  const isArchived = plan?.status === 'archived';
   // A refusal no field shows (5xx, lost connection, a feature violation…).
   const showSaveFailure =
     updatePlan.error &&
@@ -620,6 +606,18 @@ export function PlanEditorDialog({
         >
           <FormErrorSummary form={form} fieldLabels={FORM_FIELD_LABELS} />
 
+          {isArchived ? (
+            <Alert data-testid="plan-archived-banner">
+              <Archive className="size-4" aria-hidden />
+              <AlertTitle>
+                {t('platform:planAdmin.editor.archivedTitle')}
+              </AlertTitle>
+              <AlertDescription>
+                {t('platform:planAdmin.editor.archivedDescription')}
+              </AlertDescription>
+            </Alert>
+          ) : null}
+
           {isStale ? (
             <Alert variant="destructive">
               <AlertTitle>
@@ -629,6 +627,76 @@ export function PlanEditorDialog({
                 {t('platform:planAdmin.editor.staleDescription')}
               </AlertDescription>
             </Alert>
+          ) : null}
+
+          {/* ---------- visibility (plan management) ---------- */}
+          {!isArchived ? (
+            <section
+              className="space-y-3"
+              aria-labelledby="plan-visibility-title"
+            >
+              <h3 id="plan-visibility-title" className="text-sm font-semibold">
+                {t('platform:planAdmin.editor.visibilityTitle')}
+              </h3>
+              <div className="flex items-center justify-between gap-3">
+                <Label htmlFor="plan-listed">
+                  {t('platform:planAdmin.editor.showToCustomers')}
+                </Label>
+                <Switch
+                  id="plan-listed"
+                  data-testid="plan-listed"
+                  checked={values.listed}
+                  onCheckedChange={(checked) => {
+                    setValue('listed', checked, {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    });
+                    if (checked && numberText(values.position) === '') {
+                      setValue(
+                        'position',
+                        String(
+                          Math.min(
+                            Math.max(nextListedPosition ?? 1, 1),
+                            PLAN_POSITION_MAX
+                          )
+                        ),
+                        { shouldDirty: true, shouldValidate: true }
+                      );
+                    }
+                  }}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {values.listed
+                  ? t('platform:planAdmin.editor.listedHelp')
+                  : t('platform:planAdmin.editor.hiddenHelp')}
+              </p>
+              {values.listed ? (
+                <PlanField
+                  id="plan-position"
+                  className="sm:max-w-xs"
+                  label={t('platform:planAdmin.editor.position')}
+                  help={t('platform:planAdmin.editor.positionHelp')}
+                  error={errorOf(
+                    'position',
+                    'platform:planAdmin.editor.position'
+                  )}
+                >
+                  {(aria) => (
+                    <Input
+                      id="plan-position"
+                      data-testid="plan-position"
+                      inputMode="numeric"
+                      dir="ltr"
+                      data-ltr-content
+                      autoComplete="off"
+                      {...aria}
+                      {...register('position')}
+                    />
+                  )}
+                </PlanField>
+              ) : null}
+            </section>
           ) : null}
 
           {/* ---------- pricing ---------- */}

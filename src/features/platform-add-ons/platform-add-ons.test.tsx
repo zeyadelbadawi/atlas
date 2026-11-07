@@ -13,6 +13,12 @@
  * B5 (UX audit) V21 — each row shows the add-on's Arabic name (or "Not
  * set"), and "Arabic name" edits it: trimmed texts with the row's version,
  * a blank one clears it, a stale version says so and the dialog stays.
+ *
+ * Plan management — each row shows its price (or "No price"), and "Price"
+ * edits it: a whole EGP amount (Arabic digits count) with the row's
+ * version, the currency and billing cycle read-only, the "new purchases
+ * only" copy with the install count, a stale version and a currency
+ * refusal shown in the dialog.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -39,6 +45,10 @@ const arabic = vi.hoisted(() => ({
   mutateAsync: vi.fn(),
   error: null as ApiError | null,
 }));
+const price = vi.hoisted(() => ({
+  mutateAsync: vi.fn(),
+  error: null as ApiError | null,
+}));
 
 vi.mock('./hooks/usePlatformAddOns', () => ({
   usePlatformAddOns: () => usePlatformAddOns() as unknown,
@@ -47,6 +57,12 @@ vi.mock('./hooks/usePlatformAddOns', () => ({
     mutateAsync: arabic.mutateAsync,
     isPending: false,
     error: arabic.error,
+    reset: vi.fn(),
+  }),
+  useUpdateAddOnPricing: () => ({
+    mutateAsync: price.mutateAsync,
+    isPending: false,
+    error: price.error,
     reset: vi.fn(),
   }),
 }));
@@ -100,6 +116,7 @@ afterEach(() => {
   cleanup();
   vi.clearAllMocks();
   arabic.error = null;
+  price.error = null;
 });
 
 describe('PlatformAddOnsPage', () => {
@@ -233,5 +250,137 @@ describe('PlatformAddOnsPage — Arabic names (B5 V21)', () => {
       'Someone else changed this add-on'
     );
     expect(screen.queryByTestId('save-failed')).toBeNull();
+  });
+});
+
+describe('PlatformAddOnsPage — prices (plan management)', () => {
+  const priced = (over: Partial<PlatformAddOnRow> = {}) =>
+    row({
+      key: 'extra-academy',
+      name: 'Extra Academy',
+      catalogStatus: 'published',
+      installCount: 3,
+      pricing: { amount: 150, currency: 'EGP', billingCycle: 'monthly' },
+      ...over,
+    });
+
+  it('shows each add-on’s price, or that it has none', () => {
+    withRows([priced(), row({ id: 'a3', key: 'unpriced', pricing: null })]);
+    renderPage();
+    const cell = screen.getByTestId('addon-price-extra-academy').textContent;
+    expect(cell).toMatch(/150/);
+    expect(cell).toMatch(/month/);
+    expect(screen.getByTestId('addon-price-unpriced').textContent).toBe(
+      'No price'
+    );
+  });
+
+  it('an add-on priced for the first time says it is billed monthly', async () => {
+    withRows([row({ id: 'a3', key: 'unpriced', pricing: null })]);
+    renderPage();
+    fireEvent.click(screen.getByTestId('addon-price-edit-unpriced'));
+    const dialog = await screen.findByTestId('addon-price-dialog');
+    expect(screen.getByTestId('addon-price-cycle').textContent).toBe('Monthly');
+    expect(dialog.textContent).toContain(
+      'An add-on priced for the first time is billed monthly.'
+    );
+  });
+
+  it('saves a whole EGP amount with the row version, then closes', async () => {
+    price.mutateAsync.mockResolvedValue(priced());
+    withRows([priced()]);
+    renderPage();
+    fireEvent.click(screen.getByTestId('addon-price-edit-extra-academy'));
+    const dialog = await screen.findByTestId('addon-price-dialog');
+    expect(
+      (screen.getByTestId('addon-price-amount') as HTMLInputElement).value
+    ).toBe('150');
+    expect(screen.getByTestId('addon-price-currency').textContent).toBe(
+      'Egyptian pound (EGP)'
+    );
+    expect(screen.getByTestId('addon-price-cycle').textContent).toBe('Monthly');
+    expect(dialog.textContent).toContain(
+      '3 organizations already have this add-on and aren’t charged again.'
+    );
+    fireEvent.change(screen.getByTestId('addon-price-amount'), {
+      target: { value: '٢٠٠' },
+    });
+    fireEvent.click(screen.getByTestId('addon-price-save'));
+    await waitFor(() =>
+      expect(price.mutateAsync).toHaveBeenCalledWith({
+        key: 'extra-academy',
+        input: { amount: 200, currency: 'EGP', expectedVersion: 2 },
+      })
+    );
+    await waitFor(() =>
+      expect(screen.queryByTestId('addon-price-dialog')).toBeNull()
+    );
+  });
+
+  it('never sends a price that is not a whole number from 1 to 1,000,000', async () => {
+    withRows([priced()]);
+    renderPage();
+    fireEvent.click(screen.getByTestId('addon-price-edit-extra-academy'));
+    await screen.findByTestId('addon-price-dialog');
+    for (const value of ['0', '12.5', '1000001', '']) {
+      fireEvent.change(screen.getByTestId('addon-price-amount'), {
+        target: { value },
+      });
+      fireEvent.click(screen.getByTestId('addon-price-save'));
+      expect(screen.getByTestId('addon-price-amount-error')).toBeTruthy();
+    }
+    expect(price.mutateAsync).not.toHaveBeenCalled();
+  });
+
+  it('says nobody has it yet when no organization installed it', async () => {
+    withRows([priced({ installCount: 0 })]);
+    renderPage();
+    fireEvent.click(screen.getByTestId('addon-price-edit-extra-academy'));
+    expect(
+      (await screen.findByTestId('addon-price-new-purchases')).textContent
+    ).toBe(
+      'The new price applies to new purchases only. No organization has this add-on yet.'
+    );
+  });
+
+  it('a stale version says someone else changed it, and keeps the dialog open', async () => {
+    price.error = createApiError('conflict', {
+      status: 409,
+      messageKey: 'errors.concurrency.staleVersion',
+    });
+    withRows([priced()]);
+    renderPage();
+    fireEvent.click(screen.getByTestId('addon-price-edit-extra-academy'));
+    expect(
+      (await screen.findByTestId('addon-price-stale')).textContent
+    ).toContain('Someone else changed this add-on');
+    expect(screen.queryByTestId('save-failed')).toBeNull();
+  });
+
+  it('shows an unsupported currency on the currency line, not as a generic failure', async () => {
+    price.error = createApiError('validation', {
+      status: 400,
+      violations: [
+        { field: 'currency', messageKey: 'validation:unsupportedCurrency' },
+      ],
+    });
+    withRows([priced()]);
+    renderPage();
+    fireEvent.click(screen.getByTestId('addon-price-edit-extra-academy'));
+    expect(
+      (await screen.findByTestId('addon-price-currency-error')).textContent
+    ).toBe('Choose a supported currency (EGP).');
+    expect(screen.queryByTestId('save-failed')).toBeNull();
+    expect(screen.queryByTestId('addon-price-amount-error')).toBeNull();
+  });
+
+  it('renders the price dialog in Arabic with no missing keys', async () => {
+    withRows([priced()]);
+    renderPage('ar');
+    fireEvent.click(screen.getByTestId('addon-price-edit-extra-academy'));
+    const dialog = await screen.findByTestId('addon-price-dialog');
+    expect(dialog.textContent).not.toMatch(/platformAddOns:/);
+    expect(dialog.textContent).toContain('3');
+    expect(dialog.textContent).not.toMatch(/[٠-٩]/);
   });
 });

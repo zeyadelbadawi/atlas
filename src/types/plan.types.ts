@@ -184,6 +184,51 @@ export interface CreatePlanPayload {
   /** W8 — `null` clears the gift; otherwise 5..15. */
   readonly giftedDaysMonthly?: number | null;
   readonly giftedDaysYearly?: number | null;
+  /** P64 Phase 2 (D10) — the video-security class and tier of the new plan. */
+  readonly family?: PlanFamily;
+  readonly tier?: PlanTier;
+}
+
+/**
+ * Plan management — who a plan reaches, as `GET platform-plans` counts it.
+ * `scheduledIn` = organizations with a plan change scheduled INTO this plan;
+ * `foundingLocks` = Founding Academies whose price is locked to it.
+ */
+export interface PlanSubscriberCounts {
+  readonly paying: number;
+  readonly trialing: number;
+  readonly scheduledIn: number;
+  readonly foundingLocks: number;
+}
+
+/**
+ * Where a plan stands for customers:
+ * - `listed`: active and `displayOrder > 0` — customers see it;
+ * - `hidden`: active and `displayOrder` 0 — not offered, buyable by key only;
+ * - `archived`: status archived.
+ */
+export type PlanVisibility = 'listed' | 'hidden' | 'archived';
+
+/** One row of the Platform Owner's plan list: every plan, hidden and archived ones too. */
+export interface PlatformPlanRow extends Plan {
+  readonly subscribers: PlanSubscriberCounts;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}
+
+/** `GET platform-plans` — `visibility` omitted lists every plan. */
+export interface PlatformPlanQuery {
+  readonly page?: number;
+  readonly pageSize?: number;
+  /** Matches the key or the name; at most 100 characters. */
+  readonly search?: string;
+  readonly visibility?: PlanVisibility;
+}
+
+/** `POST platform-plans/:key/restore` — `displayOrder` 0 restores it hidden. */
+export interface RestorePlanPayload {
+  readonly expectedVersion: number;
+  readonly displayOrder: number;
 }
 
 export interface UpdatePlanPayload {

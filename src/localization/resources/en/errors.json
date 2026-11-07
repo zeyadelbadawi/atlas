@@ -529,7 +529,9 @@
     "giftedDaysRange": "Gifted days must be 0, or a whole number from 5 to 15.",
     "keyTaken": "Another plan already uses this key. Choose a different one.",
     "yearlyBelowMonthly": "The yearly price can't be lower than one month's price ({{min}}).",
-    "limitValue": "Enter a whole number of {{min}} or more, or choose Unlimited."
+    "limitValue": "Enter a whole number of {{min}} or more, or choose Unlimited.",
+    "notArchived": "This plan isn’t archived, so there is nothing to restore. Reload the page to see where it stands.",
+    "lastListedPlan": "This is the last plan customers can see. Show another plan to customers first, then hide or archive this one."
   },
   "platformSettings": {
     "invalidSessionTimeout": "Choose one of the session timeout options offered."

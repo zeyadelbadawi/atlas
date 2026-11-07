@@ -20,6 +20,19 @@ export interface PlatformAddOnRow {
   readonly enabledCount: number;
   readonly version: number;
   readonly updatedAt: string;
+  /**
+   * The add-on's catalog price (major units). `null` (or absent, from a
+   * response predating it) = no price recorded. The billing cycle is the
+   * stored one; a price edit never changes it.
+   */
+  readonly pricing?: AddOnPricing | null;
+}
+
+export interface AddOnPricing {
+  readonly amount?: number;
+  readonly currency?: string;
+  readonly billingCycle?: 'monthly' | 'yearly';
+  readonly yearlyAmount?: number;
 }
 
 export interface PlatformAddOnQuery {
@@ -40,5 +53,15 @@ export interface UpdateAddOnCatalogStatusInput {
 export interface UpdateAddOnArabicTextInput {
   readonly nameAr: string;
   readonly descriptionAr: string;
+  readonly expectedVersion: number;
+}
+
+/**
+ * `PATCH platform-add-ons/:key/pricing` — a whole amount from 1 to
+ * 1,000,000; the currency must be EGP. Applies to new purchases only.
+ */
+export interface UpdateAddOnPricingInput {
+  readonly amount: number;
+  readonly currency: 'EGP';
   readonly expectedVersion: number;
 }
