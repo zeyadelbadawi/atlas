@@ -363,7 +363,9 @@ export function PageHistoryDialog({
                 its own direction in an Arabic sentence. */}
             <bdi>{selected.title}</bdi>
             <span aria-hidden> · </span>
-            <bdi dir="ltr">/{selected.slug}</bdi>
+            <bdi dir="ltr" data-ltr-content>
+              /{selected.slug}
+            </bdi>
             {!selected.visible ? ` · ${t('website:history.hidden')}` : ''}
           </p>
         </div>

@@ -379,6 +379,7 @@ function CreatePageDialog({
                         {...field}
                         disabled={isBusy}
                         dir="ltr"
+                        data-ltr-content
                         aria-required
                       />
                     </FormControl>
@@ -571,7 +572,9 @@ export default function WebsitePagesPage(): JSX.Element {
                     {displayTitle(page)}
                   </span>
                   <span className="truncate text-sm text-muted-foreground">
-                    <bdi dir="ltr">/{page.slug}</bdi>
+                    <bdi dir="ltr" data-ltr-content>
+                      /{page.slug}
+                    </bdi>
                   </span>
                 </Link>
 
@@ -714,7 +717,7 @@ export default function WebsitePagesPage(): JSX.Element {
                   )}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  <bdi dir="ltr">
+                  <bdi dir="ltr" data-ltr-content>
                     /{page === 'signIn' ? 'sign-in' : 'sign-up'}
                   </bdi>
                 </p>

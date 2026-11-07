@@ -210,6 +210,7 @@ function SettingsForm({
           max={limits.max}
           step={limits.step}
           dir="ltr"
+          data-ltr-content
           className="h-11"
           value={draft[field]}
           onChange={(event) =>

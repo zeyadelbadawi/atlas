@@ -13,7 +13,8 @@
  *   4. The owner sees the new status and the reply — never the internal
  *      note (not in the page, not in the API answer).
  *   5. The academy's Manager is offered no request card and no Requests
- *      sidebar entry; made an academy Administrator (same organization
+ *      sidebar entry ("Ask Atlas for help" since the grouped sidebar, B2
+ *      #79); made an academy Administrator (same organization
  *      permissions), she gets both — the entry follows the verified
  *      academy role, like the API.
  *   6. Phone width (360 px), Arabic: Requests list and detail have no
@@ -38,6 +39,8 @@ const TITLE = `${TAG} bulk certificate export`;
 const INTERNAL_NOTE = `${TAG} internal: check with billing first`;
 const REPLY = `${TAG} reply: we are scoping this now`;
 const STATUS_NOTE = `${TAG} status: starting work`;
+/** The sidebar's Requests entry (`navigation:items.academyRequests`). */
+const REQUESTS_ENTRY = 'Ask Atlas for help';
 
 async function signIn(page: Page, email: string) {
   await clearAuthRateLimits();
@@ -210,7 +213,9 @@ test.describe('J46 — customer requests', () => {
       page.getByRole('button', { name: 'Request a custom feature' })
     ).toHaveCount(0);
     await expect(
-      page.getByRole('navigation').getByRole('link', { name: 'Requests' })
+      page
+        .getByRole('navigation')
+        .getByRole('link', { name: REQUESTS_ENTRY, exact: true })
     ).toHaveCount(0);
     await page.goto(`/dashboard/academy/${academyId}/requests`);
     await expect(page.locator('main')).toBeVisible();
@@ -236,7 +241,7 @@ test.describe('J46 — customer requests', () => {
       await page.goto(`/dashboard/academy/${academyId}`);
       const entry = page
         .getByRole('navigation')
-        .getByRole('link', { name: 'Requests' });
+        .getByRole('link', { name: REQUESTS_ENTRY, exact: true });
       await expect(entry).toBeVisible({ timeout: 30_000 });
       await expect(
         page.getByRole('button', { name: 'Request a custom feature' }).first()

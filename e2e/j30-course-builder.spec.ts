@@ -221,9 +221,13 @@ test.describe('J30 — course builder', () => {
     await page.reload();
     await expect(unit).toBeVisible({ timeout: 90_000 });
     expect(await rowIds(unit)).toEqual([two, one, three]);
-    await expect(unit.locator(':scope > li').first()).toContainText(
-      '1. Lesson Two'
-    );
+    // The position is its own chip (B3 V26: no "1." whose dot lands after
+    // the title in Arabic), then the title.
+    const firstRow = unit.locator(':scope > li').first();
+    await expect(firstRow.locator('[data-position]')).toHaveText('1');
+    await expect(
+      firstRow.getByTestId('unit-item-title').locator('bdi')
+    ).toHaveText('Lesson Two');
     await page.screenshot({
       path: testInfo.outputPath('keyboard-after-reload.png'),
     });
@@ -271,9 +275,10 @@ test.describe('J30 — course builder', () => {
     await expect(sections.getByText('Saving order…')).toBeHidden({
       timeout: 15_000,
     });
-    await expect(sections.locator(':scope > li').first()).toContainText(
-      `1. ${unitB}`
-    );
+    // The section's number is its own chip, then its title (B3 V26).
+    const firstSection = sections.locator(':scope > li').first();
+    await expect(firstSection.locator('h3 > span').first()).toHaveText('1');
+    await expect(firstSection.locator('h3 > bdi')).toHaveText(unitB);
     expect(await apiSectionOrder(request)).toEqual([sectionB, sectionA]);
 
     await page.reload();
@@ -306,9 +311,11 @@ test.describe('J30 — course builder', () => {
     await expect(dialog).toBeHidden();
     // In the unit at once, numbered last.
     await expect(unit.locator(':scope > li')).toHaveCount(4);
-    await expect(unit.locator(':scope > li').last()).toContainText(
-      `4. ${addedLesson}`
-    );
+    const lastRow = unit.locator(':scope > li').last();
+    await expect(lastRow.locator('[data-position]')).toHaveText('4');
+    await expect(
+      lastRow.getByTestId('unit-item-title').locator('bdi')
+    ).toHaveText(addedLesson);
     await page.screenshot({
       path: testInfo.outputPath('lesson-added.png'),
       fullPage: true,
@@ -390,11 +397,14 @@ test.describe('J30 — course builder', () => {
     const unit = page.getByRole('list', { name: unitA, exact: true });
     await expect(unit).toBeVisible();
     const before = await rowIds(unit);
-    const firstTitle = (await unit.locator(':scope > li').first().innerText())
-      .split('\n')
-      .find((line) => /^1\. /.test(line.trim()))!
-      .trim()
-      .replace(/^1\. /, '');
+    // The first row: its position chip reads 1, its title is isolated
+    // (B3 V26: no "1." whose dot lands after the title in Arabic).
+    const firstRow = unit.locator(':scope > li').first();
+    await expect(firstRow.locator('[data-position]')).toHaveText('1');
+    const firstTitle = (
+      await firstRow.getByTestId('unit-item-title').locator('bdi').innerText()
+    ).trim();
+    expect(firstTitle).not.toBe('');
     await page
       .getByRole('button', { name: `نقل «${firstTitle}» لأسفل` })
       .click();

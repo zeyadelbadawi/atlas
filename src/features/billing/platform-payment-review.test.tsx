@@ -289,6 +289,15 @@ describe('PlatformPaymentReviewListPage', () => {
     expect(container.textContent).toMatch(/سنوي/);
     expect(container.textContent).not.toMatch(/payments:/);
   });
+
+  it('marks the checkout reference as an LTR value in Arabic (J47)', () => {
+    usePlatformPayments.mockReturnValue(page([payment()]));
+    const { container } = renderList('ar');
+    const reference = container.querySelector('[title="checkout-1"]');
+    expect(reference?.textContent).toBe('checkout');
+    expect(reference?.getAttribute('dir')).toBe('ltr');
+    expect(reference?.hasAttribute('data-ltr-content')).toBe(true);
+  });
 });
 
 describe('PlatformPaymentReviewDetailPage', () => {

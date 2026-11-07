@@ -195,4 +195,21 @@ describe('Settings tab', () => {
     await screen.findByLabelText('ساعاتك في الأسبوع');
     expect(document.body.textContent ?? '').not.toMatch(RAW_KEY);
   });
+
+  it('keeps every number field LTR, marked as an LTR value (J47)', async () => {
+    openSettings('ar');
+    await screen.findByLabelText('ساعاتك في الأسبوع');
+    const numbers = Array.from(
+      document.querySelectorAll<HTMLInputElement>('input[type="number"]')
+    );
+    expect(numbers.length).toBeGreaterThan(0);
+    for (const input of numbers) {
+      expect(input.getAttribute('dir'), input.id).toBe('ltr');
+      expect(input.hasAttribute('data-ltr-content'), input.id).toBe(true);
+    }
+    // Nothing else on the tab is forced LTR without saying it is a value.
+    expect(
+      document.querySelectorAll('[dir="ltr"]:not([data-ltr-content])')
+    ).toHaveLength(0);
+  });
 });

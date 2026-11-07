@@ -93,6 +93,22 @@ describe('AppScrollManager', () => {
     expect(scrollTo).not.toHaveBeenCalled();
   });
 
+  it('Back to a tab the user switched to without scrolling restores the offset it was left at', async () => {
+    // J26 Task 5: the tab switch keeps the scroll, so no scroll event marks
+    // the new entry; leaving it and coming Back must still land there, not
+    // at the top.
+    const router = renderAt('/members');
+    userScrollsTo(166);
+    await act(() =>
+      router.navigate('/members?tab=students', { replace: true })
+    );
+    await act(() => router.navigate('/courses'));
+    expect(lastTop()).toBe(0);
+    await act(() => router.navigate(-1));
+    expect(router.state.location.search).toBe('?tab=students');
+    expect(lastTop()).toBe(166);
+  });
+
   it('Back restores the previous page offset — not the reset to top', async () => {
     const router = renderAt('/courses');
     userScrollsTo(1200);

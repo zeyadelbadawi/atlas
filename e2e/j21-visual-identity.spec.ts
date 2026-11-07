@@ -72,9 +72,18 @@ function isReddish(hsl: string): boolean {
   return hue < 40 || hue > 320;
 }
 
-/** The public site's call-to-action colour, as the theme scope sets it. */
+/**
+ * The public site's call-to-action colour, as the page's theme scope sets
+ * it. Not the cookie overlay's scope: since B9 (#100) that one comes first
+ * in the document (tab order) and, with the decision seeded, is an empty
+ * `display: contents` box.
+ */
 async function ctaColour(page: Page): Promise<string> {
-  const scope = page.locator('.website-theme-scope').first();
+  const scope = page
+    .locator(
+      '.website-theme-scope[data-theme-pack]:not([data-website-overlay-scope])'
+    )
+    .first();
   await expect(scope).toBeVisible({ timeout: 30_000 });
   return scope.evaluate((el) =>
     getComputedStyle(el).getPropertyValue('--website-cta').trim()

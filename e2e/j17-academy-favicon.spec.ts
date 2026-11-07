@@ -7,8 +7,10 @@
  * the Owner uploads a PNG through the real page; the public site (English
  * and Arabic, RTL) links the Academy's favicon — one icon, no platform
  * icon beside it — and that URL serves exactly the uploaded bytes; a
- * second upload changes the URL on the very next visit; another Academy
- * keeps the default. The seed Academy's favicon is restored afterwards.
+ * second upload changes the URL on the very next visit; another Academy,
+ * with no favicon of its own, gets its generated letter icon — never the
+ * platform's icon (SEO pass, atlas#104 + backend#110, 7 Nov 2026). The
+ * seed Academy's favicon is restored afterwards.
  */
 import {
   test,
@@ -46,6 +48,21 @@ async function iconHrefs(page: Page): Promise<string[]> {
   return page
     .locator('head link[rel~="icon"]')
     .evaluateAll((links) => links.map((l) => l.getAttribute('href') ?? ''));
+}
+
+/**
+ * `brandImageVersion(name, colour)`: FNV-1a (32-bit) of `name + "\0" +
+ * colour`, as 8 hex digits — the `v` of the generated letter icon, as
+ * `academy-brand-images.utils.ts` and the backend compute it.
+ */
+function brandImageVersion(name: string, color: string | undefined): string {
+  const input = `${name}\u0000${color ?? ''}`;
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < input.length; index += 1) {
+    hash ^= input.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return hash.toString(16).padStart(8, '0');
 }
 
 /** The icon the page links, fetched as the browser would (same origin). */
@@ -177,13 +194,14 @@ test.describe('J17 — the Academy favicon', () => {
     await after.close();
   });
 
-  test('an Academy without a favicon keeps the platform default', async ({
+  test('an Academy without a favicon gets its letter icon, not the platform default', async ({
     page,
     request,
   }) => {
     // The other seeded Academy has no favicon of its own: it resolves
-    // without a version, its favicon read is a plain 404, and its site
-    // keeps the platform icon.
+    // without a version and its favicon read is a plain 404. Its site
+    // links exactly one icon — the 96 px letter icon generated from its
+    // name and brand colour — and the platform's icon is gone.
     const slug = 'language-learning-hub';
     const resolved = await (
       await request.get(`${API_BASE}/public/websites/resolve?hostname=${slug}`)
@@ -199,6 +217,25 @@ test.describe('J17 — the Academy favicon', () => {
     await seedCookieDecision(page);
     await page.goto(`/?${ACADEMY_PREVIEW_PARAM}=${slug}`);
     await expect(page.locator('main')).toBeVisible({ timeout: 30_000 });
-    expect(await iconHrefs(page)).toEqual(['/favicon.svg']);
+    const version = brandImageVersion(
+      resolved.academyName,
+      resolved.presentation?.brand?.primaryColor
+    );
+    await expect
+      .poll(() => iconHrefs(page))
+      .toEqual([
+        `/api/v1/public/websites/${resolved.academyId}/icon.png?size=96&v=${version}`,
+      ]);
+    // …and that URL serves a real 96×96 PNG.
+    const [href] = await iconHrefs(page);
+    const icon = await servedIcon(page, href);
+    expect(icon.status).toBe(200);
+    expect(icon.type).toBe('image/png');
+    expect(icon.body.subarray(0, 8)).toEqual(
+      Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
+    );
+    expect([icon.body.readUInt32BE(16), icon.body.readUInt32BE(20)]).toEqual([
+      96, 96,
+    ]);
   });
 });

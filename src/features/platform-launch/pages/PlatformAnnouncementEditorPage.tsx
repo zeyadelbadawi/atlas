@@ -1104,6 +1104,7 @@ export default function PlatformAnnouncementEditorPage(): JSX.Element {
                       value={state.popupDelaySeconds}
                       onChange={(e) => set('popupDelaySeconds', e.target.value)}
                       dir="ltr"
+                      data-ltr-content
                     />
                   </Field>
                   {select(
@@ -1130,6 +1131,7 @@ export default function PlatformAnnouncementEditorPage(): JSX.Element {
                   value={state.priority}
                   onChange={(e) => set('priority', e.target.value)}
                   dir="ltr"
+                  data-ltr-content
                   className="max-w-32"
                 />
               </Field>

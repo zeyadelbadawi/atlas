@@ -124,6 +124,7 @@ export default function PlatformPaymentReviewListPage(): JSX.Element {
             <span
               className="whitespace-nowrap font-mono text-xs text-muted-foreground"
               dir="ltr"
+              data-ltr-content
               title={row.original.checkoutId}
             >
               {row.original.checkoutId.slice(0, 8)}

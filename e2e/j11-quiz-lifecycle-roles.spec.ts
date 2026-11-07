@@ -322,7 +322,7 @@ test.describe('J11 — quiz lifecycle across roles (EN dashboard, AR student)', 
       page.getByText(/يُفتح هذا الاختبار في وضع ملء الشاشة/)
     ).toBeVisible({ timeout: 30_000 });
     await expect(
-      page.getByText(/لا يستخدم أطلس الكاميرا أو الميكروفون/)
+      page.getByText(/لا يستخدم هذا الاختبار الكاميرا أو الميكروفون/)
     ).toBeVisible();
     await page.locator('#quiz-integrity-ack').click();
     await page.screenshot({
