@@ -9,15 +9,23 @@ export interface CampaignChannels {
   readonly inApp: boolean;
 }
 
+/**
+ * Every role the API accepts in a staff audience (the database enum). The
+ * legacy `administrator` and the retired `staff` role stay accepted, so an
+ * older campaign's audience still parses.
+ */
 export type AcademyStaffRole =
   'owner' | 'administrator' | 'manager' | 'instructor' | 'staff';
 
+/**
+ * The roles the composer OFFERS (B0-ORG-01): neither `administrator` (D9,
+ * never granted any more) nor `staff` (never granted; no production row)
+ * is a role an academy can have today, so neither is a choice.
+ */
 export const ACADEMY_STAFF_ROLES: readonly AcademyStaffRole[] = [
   'owner',
-  'administrator',
   'manager',
   'instructor',
-  'staff',
 ];
 
 export type AcademyAudience =

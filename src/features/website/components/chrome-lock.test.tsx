@@ -173,7 +173,7 @@ describe('header/footer lock', () => {
       })
     );
     expect(toast.mock.calls[0][0].title).toBe(
-      'Only the academy owner or an administrator can lock or unlock the header, menu and footer.'
+      'Only the academy owner can lock or unlock the header, menu and footer.'
     );
   });
 });

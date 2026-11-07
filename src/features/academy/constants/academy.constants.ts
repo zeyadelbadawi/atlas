@@ -34,12 +34,16 @@ export const ACADEMY_STATUS_OPTIONS: readonly AcademyStatus[] = [
  * refuses. Existing rows are labelled through
  * `getAcademyMemberRoleLabelKey`, which shows them as Manager: the tier
  * they actually hold.
+ *
+ * `staff` is absent too (B0-ORG-01): no endpoint creates a staff member and
+ * production holds no such row. The value stays in `AcademyMemberRole`
+ * because the database enum keeps it; a row that still carried it would
+ * read as "Team member" (`getShownAcademyMemberRole`).
  */
 export const ACADEMY_MEMBER_ROLES: readonly AcademyMemberRole[] = [
   'owner',
   'manager',
   'instructor',
-  'staff',
 ] as const;
 
 /** Maximum academy name length. */

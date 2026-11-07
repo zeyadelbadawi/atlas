@@ -182,10 +182,9 @@
     },
     "roles": {
       "owner": "المالك",
-      "administrator": "المسؤول",
       "manager": "المدير",
       "instructor": "المدرب",
-      "staff": "الموظف"
+      "member": "عضو في الفريق"
     },
     "status": {
       "active": "نشط",
@@ -556,10 +555,9 @@
     "switchingTo": "جارٍ فتح {{name}}…",
     "roles": {
       "owner": "المالك",
-      "administrator": "المسؤول",
       "manager": "المدير",
       "instructor": "المدرّب",
-      "staff": "فريق العمل"
+      "member": "عضو في الفريق"
     },
     "accessLost": {
       "title": "لم تعد لديك صلاحية الوصول إلى تلك الأكاديمية",

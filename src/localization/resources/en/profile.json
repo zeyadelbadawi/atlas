@@ -295,10 +295,8 @@
   "roles": {
     "platform_owner": "Platform owner",
     "owner": "Owner",
-    "administrator": "Administrator",
     "manager": "Manager",
     "member": "Member",
-    "instructor": "Instructor",
-    "staff": "Staff"
+    "instructor": "Instructor"
   }
 }

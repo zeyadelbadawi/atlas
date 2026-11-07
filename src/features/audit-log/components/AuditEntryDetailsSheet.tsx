@@ -21,7 +21,7 @@ import { ErrorState } from '@components/feedback';
 import { useDateFormatter } from '@hooks';
 import { apiErrorKind, type ApiError } from '@api';
 import type { AuditChanges } from '@types';
-import { formatAuditEntry } from '../utils/formatAuditEntry';
+import { auditRoleLabelKey, formatAuditEntry } from '../utils/formatAuditEntry';
 import { AuditChangesTable } from './AuditChangesTable';
 import type { AuditRowModel } from './AuditEntryRow';
 
@@ -52,10 +52,8 @@ export function AuditEntryDetailsSheet({
         formatDateTime: fmt.dateTime,
       })
     : null;
-  const roleLabel =
-    row?.role && i18n.exists(`auditLog:roles.${row.role}`)
-      ? t(`auditLog:roles.${row.role}`)
-      : undefined;
+  const roleKey = auditRoleLabelKey(row?.role);
+  const roleLabel = roleKey && i18n.exists(roleKey) ? t(roleKey) : undefined;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>

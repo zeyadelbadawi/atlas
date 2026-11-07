@@ -19,6 +19,7 @@ import { useDateFormatter } from '@hooks';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import { useAuditLogEntry } from '../hooks';
 import {
+  auditRoleLabelKey,
   formatAuditEntry,
   fromPlatformEntry,
   humanizeKey,
@@ -72,10 +73,8 @@ export default function PlatformAuditLogDetailPage(): JSX.Element {
   const formatted = formatAuditEntry(fromPlatformEntry(entry), i18n, {
     formatDateTime: fmt.dateTime,
   });
-  const roleLabel =
-    entry.role && i18n.exists(`auditLog:roles.${entry.role}`)
-      ? t(`auditLog:roles.${entry.role}`)
-      : entry.role;
+  const roleKey = auditRoleLabelKey(entry.role);
+  const roleLabel = roleKey && i18n.exists(roleKey) ? t(roleKey) : entry.role;
   const contextEntries = Object.entries(entry.context ?? {});
 
   const field = (

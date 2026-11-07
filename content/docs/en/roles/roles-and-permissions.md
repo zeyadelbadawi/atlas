@@ -14,7 +14,7 @@ order: 5
 priority: P0
 related: [DOC-ROLE-001, DOC-ROLE-002, DOC-ROLE-003, DOC-ORG-002, DOC-ORG-003]
 keywords: [roles, permissions, manager vs instructor, who can do what, الأدوار, الصلاحيات, الفرق بين المدير والمدرب, مين يقدر يعمل إيه]
-updated: 2026-10-20
+updated: 2026-11-07
 ---
 
 ## The roles at a glance
@@ -93,11 +93,6 @@ Each instructor counts toward your plan's instructor limit; managers don't.
 
 There is no "change role" button. Remove the person
 ([Remove a staff member](doc:DOC-ORG-003)) and add them again with the new role.
-
-## Older role names you might see
-
-Some older accounts may show **Administrator** or **Staff** on the Members page. These
-roles can't be given to anyone any more. Use Manager or Instructor instead.
 
 ## Learners
 

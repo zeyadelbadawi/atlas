@@ -115,6 +115,18 @@ export function humanizeKey(key: string): string {
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
+/**
+ * The `auditLog:roles.*` key for the role an entry records. B0-ORG-01 — the
+ * legacy `administrator` academy tier reads as Manager (D9); the retired
+ * `staff` role has no label, so callers show no role for it.
+ */
+export function auditRoleLabelKey(
+  role: string | null | undefined
+): string | undefined {
+  if (!role) return undefined;
+  return `auditLog:roles.${role === 'administrator' ? 'manager' : role}`;
+}
+
 function listSeparator(language: string): string {
   return language.startsWith('ar') ? '، ' : ', ';
 }

@@ -34,6 +34,8 @@ describe('pricing.md', () => {
     expect(md).toContain('| Courses | 20 | Unlimited |');
     expect(md).toContain('| Video storage | 30 GB | 75 GB |');
     expect(md).not.toContain('Emails per academy');
+    // B0-ORG-01 — the staff role cannot be granted, so no staff limit.
+    expect(md).not.toMatch(/staff/i);
   });
 
   it('escapes table separators in catalog text and dates the catalog', () => {

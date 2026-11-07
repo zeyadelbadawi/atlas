@@ -61,8 +61,37 @@ export function getAcademyStatusTone(status: AcademyStatus): StatusTone {
  * through here so the hidden role cannot resurface one table at a time.
  */
 export function getAcademyMemberRoleLabelKey(role: AcademyMemberRole): string {
-  const shown: AcademyMemberRole = role === 'administrator' ? 'manager' : role;
-  return `academy:members.roles.${shown}`;
+  return `academy:members.roles.${getShownAcademyMemberRole(role)}`;
+}
+
+/** The role names the product shows for an academy member. */
+export type ShownAcademyMemberRole =
+  'owner' | 'manager' | 'instructor' | 'member';
+
+/**
+ * The role an academy member is SHOWN as, wherever a role is named (the
+ * Members table and filter, the academy switcher's badge).
+ *
+ * B0-ORG-01 — the legacy `administrator` (D9) reads as Manager, the tier it
+ * holds. The retired `staff` role (never granted; no production row) and
+ * any value this build does not know read as a plain "Team member" rather
+ * than naming a role the product no longer has. Both stay valid values of
+ * `AcademyMemberRole`, since the database enum keeps them.
+ */
+export function getShownAcademyMemberRole(
+  role: AcademyMemberRole | string
+): ShownAcademyMemberRole {
+  switch (role) {
+    case 'owner':
+      return 'owner';
+    case 'administrator':
+    case 'manager':
+      return 'manager';
+    case 'instructor':
+      return 'instructor';
+    default:
+      return 'member';
+  }
 }
 
 /** Maps an academy member's role to a status tone. */

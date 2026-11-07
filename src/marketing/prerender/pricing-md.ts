@@ -6,6 +6,7 @@
  */
 import type { LimitValue, Plan, PlanResourceLimits } from '@/types/plan.types';
 
+/** B0-ORG-01 — no `staff` row: no academy role it would count can be granted. */
 const LIMIT_ROWS: readonly {
   readonly key: keyof PlanResourceLimits;
   readonly label: string;
@@ -14,7 +15,6 @@ const LIMIT_ROWS: readonly {
   { key: 'academies', label: 'Academies' },
   { key: 'students', label: 'Students' },
   { key: 'instructors', label: 'Instructors' },
-  { key: 'staff', label: 'Staff members' },
   { key: 'courses', label: 'Courses' },
   { key: 'videoStorage', label: 'Video storage', unit: 'GB' },
   { key: 'generalStorage', label: 'Files and images storage', unit: 'GB' },

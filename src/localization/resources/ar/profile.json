@@ -295,10 +295,8 @@
   "roles": {
     "platform_owner": "مالك المنصة",
     "owner": "المالك",
-    "administrator": "المسؤول",
     "manager": "المدير",
     "member": "عضو",
-    "instructor": "المدرّب",
-    "staff": "فريق العمل"
+    "instructor": "المدرّب"
   }
 }

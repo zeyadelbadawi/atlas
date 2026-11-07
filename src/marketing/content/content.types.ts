@@ -465,7 +465,6 @@ export interface MkPricing {
    * should assert none of these appears in the rendered pricing HTML.
    */
   readonly withheldLimitLabels: {
-    readonly staff: string;
     readonly videoStorage: string;
     readonly videoMinutes: string;
     readonly recordedSessions: string;
