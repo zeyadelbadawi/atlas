@@ -107,6 +107,13 @@ describe('marketing pages', () => {
     },
   );
 
+  it('writes every digit as 0-9 on Arabic pages (owner decision, as in the app)', () => {
+    for (const r of rendered.filter((x) => x.page.lang === 'ar')) {
+      const head = JSON.stringify(r.head);
+      expect(`${r.page.id}: ${r.html}${head}`).not.toMatch(/[\u0660-\u0669\u06F0-\u06F9]/);
+    }
+  });
+
   it('keeps prices and currencies out of metadata', () => {
     for (const r of rendered) {
       expect(`${r.head.title} ${r.head.description}`).not.toMatch(/EGP|ج\.م|\d{1,3}(,\d{3})+/);

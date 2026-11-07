@@ -92,7 +92,7 @@ terms). Use `app:` for app routes (`/auth/…`, `/dashboard…`) and `site:`
 for those marketing pages — `/terms` and `/privacy-policy` are `site:`.
 
 **Catalog tokens**: `{trialDays}` (number of trial days) and
-`{trialDuration}` ("14 days" / «١٤ يومًا») come from the live plan catalog
+`{trialDuration}` ("14 days" / «14 يومًا») come from the live plan catalog
 at build time. Never type a trial length, a price or a limit by hand.
 
 ## Writing rules

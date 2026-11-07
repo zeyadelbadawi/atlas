@@ -218,7 +218,7 @@ async function initSearchPage(): Promise<void> {
   list.replaceChildren(...hits.map((hit, i) => hitElement(hit, `page-hit-${i}`)));
   list.querySelectorAll('a').forEach((a) => a.removeAttribute('tabindex'));
   list.querySelectorAll('[role="option"]').forEach((o) => o.removeAttribute('role'));
-  const n = new Intl.NumberFormat(lang === 'ar' ? 'ar-EG' : 'en-US').format(hits.length);
+  const n = new Intl.NumberFormat(lang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US').format(hits.length);
   if (status) {
     status.textContent =
       hits.length === 0

@@ -5,6 +5,8 @@
  * card slots (no layout shift). On any failure, or with no posts, the
  * static cards stay. Text is set with `textContent` only.
  */
+import { LOCALE } from '../lib/site';
+
 export interface LatestPost {
   readonly slug: string;
   readonly title: string;
@@ -46,7 +48,7 @@ export function renderLatestPosts(
   const lang = list.dataset.locale === 'ar' ? 'ar' : 'en';
   // `%s` is the number (the page writes it so no `{token}` is left in the HTML).
   const readingTemplate = list.dataset.readingTime ?? '%s';
-  const number = new Intl.NumberFormat(lang === 'ar' ? 'ar-EG' : 'en-US');
+  const number = new Intl.NumberFormat(LOCALE[lang]);
   const items = posts.map((post) => {
     const li = doc.createElement('li');
     li.className = 'flex';

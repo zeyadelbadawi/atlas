@@ -21,7 +21,7 @@ import { startBeacon } from './beacon';
 import { initAppHandoff } from './app-handoff';
 import { initAnnouncements } from './announcements';
 import { initLatestPosts } from './resources';
-import { APP_ORIGIN } from '../lib/site';
+import { APP_ORIGIN, LOCALE } from '../lib/site';
 import { CONTACT_LIMITS, validateContact, type ContactField } from './contact-validation';
 import { initSignupHandoff, readPageAttribution } from './attribution';
 import { heardFromFields, initHeardFrom } from './heard-from';
@@ -108,7 +108,7 @@ interface CatalogPlan {
 function initPricing(): void {
   const prices = document.querySelectorAll<HTMLElement>('[data-plan] [data-price]');
   if (prices.length === 0) return;
-  const locale = document.documentElement.lang === 'ar' ? 'ar-EG' : 'en-US';
+  const locale = LOCALE[document.documentElement.lang === 'ar' ? 'ar' : 'en'];
   fetch('/api/v1/public/plans', { headers: { Accept: 'application/json' }, credentials: 'omit' })
     .then((response) => (response.ok ? (response.json() as Promise<unknown>) : Promise.reject()))
     .then((data) => {

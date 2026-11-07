@@ -47,7 +47,7 @@ describe('latest posts', () => {
     const link = list.querySelector('a') as HTMLAnchorElement;
     expect(link.getAttribute('href')).toBe('/ar/blog/exam-season');
     expect(link.querySelector('b')).toBeNull();
-    expect(link.textContent).toContain('قراءة ٥ دقيقة');
+    expect(link.textContent).toContain('قراءة 5 دقيقة');
     expect(
       (document.querySelector('[data-blog-latest-fallback]') as HTMLElement)
         .hidden

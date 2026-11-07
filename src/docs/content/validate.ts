@@ -186,6 +186,9 @@ export function validateDocs(input: {
       if (hit) errors.push(`${where}: "${hit[0]}" — ${why}`);
     }
     if (article.lang === 'ar') {
+      // Western digits (0-9) everywhere, as in the app (owner decision).
+      const indic = /[\u0660-\u0669\u06F0-\u06F9]/.exec(report.text);
+      if (indic) errors.push(`${where}: "${indic[0]}" — write digits as 0-9, not Arabic-Indic digits`);
       const arabic = (report.text.match(/[\u0600-\u06FF]/g) ?? []).length;
       const latin = (report.text.match(/[A-Za-z]/g) ?? []).length;
       if (arabic < 0.7 * (arabic + latin)) errors.push(`${where}: the Arabic version must be written in Arabic`);
