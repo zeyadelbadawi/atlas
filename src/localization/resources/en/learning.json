@@ -318,7 +318,7 @@
       "refused": "Your browser didn’t allow full screen.",
       "continueWithout": "Continue without full screen",
       "unsupportedTitle": "Full screen isn’t available in this browser",
-      "unsupportedBody": "You can take the quiz as it is. Your instructor will see that full screen wasn’t available."
+      "unsupportedBody": "The quiz is shown in focus mode instead. Leaving this page or switching apps is still recorded, and your instructor will see that full screen wasn’t available."
     }
   },
   "assignment": {

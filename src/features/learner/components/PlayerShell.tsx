@@ -24,6 +24,12 @@
  * surface's own direction. A drawer that always flew in from the left
  * would cross the whole screen in Arabic to reach a trigger on the right.
  *
+ * QUIZ FOCUS MODE (B0-LRN-11). While a quiz that requires full screen runs
+ * in a browser without it, the progress bar and the curriculum step aside
+ * and the shell fills the screen inside the safe area; the back link stays
+ * as the way out. Driven by `<body>`'s mark (`quiz-focus.utils.ts`), so
+ * nothing here changes otherwise.
+ *
  * NO `<main>` HERE. `WebsiteChrome` already owns the document's one
  * `<main>`; a second would be invalid and would leave "skip to main
  * content" landing on whichever the browser picked.
@@ -41,6 +47,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import {
+  HIDDEN_IN_QUIZ_FOCUS,
   MIRROR_IN_RTL,
   cn,
   formatNumber,
@@ -155,7 +162,13 @@ export function PlayerShell({
   );
 
   return (
-    <div className="mx-auto w-full max-w-content px-4 py-4 sm:px-6 lg:px-8">
+    <div
+      className={cn(
+        'mx-auto w-full max-w-content px-4 py-4 sm:px-6 lg:px-8',
+        // Quiz focus mode: the whole screen, inside the safe area.
+        '[body[data-quiz-focus]_&]:min-h-[100dvh] [body[data-quiz-focus]_&]:pb-[max(1rem,env(safe-area-inset-bottom))] [body[data-quiz-focus]_&]:pl-[max(1rem,env(safe-area-inset-left))] [body[data-quiz-focus]_&]:pr-[max(1rem,env(safe-area-inset-right))] [body[data-quiz-focus]_&]:pt-[max(1rem,env(safe-area-inset-top))]'
+      )}
+    >
       {/* Where am I, and how do I get out. */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Button variant="ghost" size="sm" asChild className="-ms-2 h-11 sm:h-9">
@@ -173,7 +186,7 @@ export function PlayerShell({
             <Button
               variant="outline"
               size="sm"
-              className="h-11 sm:h-9 lg:hidden"
+              className={cn('h-11 sm:h-9 lg:hidden', HIDDEN_IN_QUIZ_FOCUS)}
             >
               <ListTree className="size-4" aria-hidden />
               {t('learning:player.curriculum.open')}
@@ -195,7 +208,7 @@ export function PlayerShell({
           it counts every activity type — not just lessons, which is the
           number the retired bar showed while three assignments were still
           outstanding. */}
-      <div className="mt-3 space-y-1.5">
+      <div className={cn('mt-3 space-y-1.5', HIDDEN_IN_QUIZ_FOCUS)}>
         <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
           <span>
             {/* B7 — i18next plural on the total (Arabic "نشاط" agrees
@@ -216,7 +229,7 @@ export function PlayerShell({
         />
       </div>
 
-      <div className="mt-5 lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-8">
+      <div className="mt-5 lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-8 [body[data-quiz-focus]_&]:!block">
         <div className="min-w-0 space-y-5">
           {/* What is this. */}
           <header className="flex flex-wrap items-start justify-between gap-3">
@@ -266,7 +279,9 @@ export function PlayerShell({
           {actionBar}
         </div>
 
-        <aside className="mt-8 hidden lg:mt-0 lg:block">
+        <aside
+          className={cn('mt-8 hidden lg:mt-0 lg:block', HIDDEN_IN_QUIZ_FOCUS)}
+        >
           <div className="sticky top-6 max-h-[calc(100vh-6rem)] overflow-y-auto">
             {curriculum}
           </div>

@@ -13,7 +13,7 @@ order: 3
 priority: P1
 related: [DOC-LRN-014, DOC-LRN-015, DOC-LRN-016, DOC-LRN-017, DOC-LRN-025]
 keywords: [online exam, quiz, timed quiz, full screen, grade, امتحان أونلاين, اختبار, امتحان بوقت, ملء الشاشة, تصحيح]
-updated: 2026-10-20
+updated: 2026-11-07
 ---
 
 The owner, managers and the course's instructors can do every stage. Instructors work
@@ -76,8 +76,8 @@ only on the courses they are assigned to.
 > Integrity signals are for your review. They record events such as leaving full
 > screen; they don't prove that a learner cheated, and they can't stop screen recording
 > or someone helping the learner. Full screen isn't available on some phone browsers,
-> for example every browser on iPhone: learners there take the quiz as usual, and you
-> see that full screen was unavailable.
+> for example every browser on iPhone: learners there take the quiz in focus mode, and
+> you see that full screen was unavailable.
 
 Problems with timers or full screen? See
 [Quiz timer, autosave and full-screen problems](doc:DOC-TRB-011).

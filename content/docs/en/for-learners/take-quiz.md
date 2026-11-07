@@ -14,7 +14,7 @@ order: 4
 priority: P1
 related: [DOC-LRN-031, DOC-LRN-016, DOC-TRB-011, DOC-FAQ-006]
 keywords: [quiz, exam, test, timer, full screen, attempts, امتحان, اختبار, الامتحان قفل لوحده, النت فصل أثناء الامتحان, الوقت خلص]
-updated: 2026-10-20
+updated: 2026-11-07
 ---
 
 Read the quiz page before you start: it tells you exactly how this quiz
@@ -52,9 +52,11 @@ next.
 
 Some quizzes open in full screen. If you leave full screen, the questions
 are hidden until you choose **Enter full screen**; your answers and the timer
-are kept. If your browser can't use full screen (common on phones), you see
-**Full screen isn’t available in this browser** and you can still take the
-quiz. Your instructor sees that full screen wasn't available.
+are kept. If your browser can't use full screen (for example on iPhone), you
+see **Full screen isn’t available in this browser** and the quiz is shown in
+focus mode, without the academy's menus around it. Leaving the page or
+switching apps is still recorded, and your instructor sees that full screen
+wasn't available.
 
 ## What is recorded, and what never is
 

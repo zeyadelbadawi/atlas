@@ -14,7 +14,7 @@ order: 10
 priority: P1
 related: [DOC-LRN-033, DOC-LRN-016, DOC-LRN-018, DOC-REF-006, DOC-FAQ-006]
 keywords: [quiz timer, time ran out, submitted automatically, autosave, full screen, exam, iphone, الامتحان قفل لوحده, الوقت خلص, ملء الشاشة, الاختبار اتسلم لوحده, الإجابات اتحفظت, امتحان]
-updated: 2026-10-20
+updated: 2026-11-07
 ---
 
 ## Symptom
@@ -40,7 +40,7 @@ Each quiz follows the settings its instructor chose: whether it has a time limit
 - **The timer keeps running:** return to the quiz as soon as you can and choose **Resume Quiz**. You can't pause the time limit.
 - **"Offline — will retry":** stay on the page. Atlas saves again when your connection returns. Don't close the quiz until it shows "Saved just now".
 - **"Return to full screen to continue":** choose **Enter full screen**. Your answers are saved and the timer keeps running. If your browser refuses ("Your browser didn’t allow full screen."), choose **Continue without full screen**.
-- **"Full screen isn’t available in this browser"** (common on iPhone): you can take the quiz as it is. "Your instructor will see that full screen wasn’t available."
+- **"Full screen isn’t available in this browser"** (common on iPhone): "The quiz is shown in focus mode instead." Take it as it is; leaving the page or switching apps is still recorded, and your instructor will see that full screen wasn’t available.
 - **Submitted automatically:** the answers you had saved were graded. If you think something went wrong, contact your instructor or academy; only they can give you another attempt.
 
 ### For instructors: give one learner extra time

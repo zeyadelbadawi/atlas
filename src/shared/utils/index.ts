@@ -19,6 +19,7 @@ export * from './file.utils';
 export * from './string.utils';
 export * from './responsive.utils';
 export * from './cookie-consent.utils';
+export * from './quiz-focus.utils';
 export * from './storage.utils';
 export * from './url.utils';
 export * from './youtube.utils';

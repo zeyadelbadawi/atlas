@@ -14,7 +14,7 @@ order: 6
 priority: P1
 related: [DOC-LRN-016, DOC-LRN-018, DOC-LRN-017, DOC-TRB-011, DOC-LRN-033]
 keywords: [quiz, exam, camera, microphone, cheating, tab switch, full screen, iphone, timer, time ran out, extra time, extra attempt, essay, grading, integrity]
-updated: 2026-10-20
+updated: 2026-11-07
 ---
 
 ## Does Atlas use my camera or microphone during a quiz?
@@ -35,7 +35,7 @@ The clock starts when you press Start and keeps running even if you close the pa
 
 ## Full screen doesn't work on my iPhone.
 
-Browsers on iPhone can't show the quiz in full screen. You can take the quiz as it is, and your instructor sees that full screen wasn't available. See [Quiz timer, autosave and full-screen problems](doc:DOC-TRB-011).
+Browsers on iPhone can't show the quiz in full screen. The quiz opens in focus mode instead, without the academy's menus around it. Leaving the page or switching apps is still recorded, and your instructor sees that full screen wasn't available. See [Quiz timer, autosave and full-screen problems](doc:DOC-TRB-011).
 
 ## Can a learner get extra time or another attempt?
 

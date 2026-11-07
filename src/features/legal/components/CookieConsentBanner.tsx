@@ -43,7 +43,9 @@ export function CookieConsentBanner({
       role="region"
       aria-label={t('legal:consent.bannerTitle')}
       data-testid="cookie-consent-banner"
-      className="fixed inset-x-0 bottom-0 z-50 border-t bg-background/95 p-4 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/80"
+      // B0-LRN-11 — in quiz focus mode (`quiz-focus.utils.ts`) it sits in
+      // the page's flow, above the quiz, instead of over the answers.
+      className="fixed inset-x-0 bottom-0 z-50 border-t bg-background/95 p-4 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/80 [body[data-quiz-focus]_&]:static"
     >
       <div className="mx-auto flex max-w-5xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="space-y-1">
