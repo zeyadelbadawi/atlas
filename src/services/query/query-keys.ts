@@ -754,9 +754,17 @@ export const publicPlanKeys = {
   list: () => [...publicPlanKeys.all, 'list'] as const,
 } as const;
 
-/** The Platform Owner plan editor's version history (`usePlanHistory`). */
+/**
+ * The Platform Owner's plan surfaces: the full plan list (listed, hidden
+ * and archived, with subscriber counts — `usePlatformPlanList`) and each
+ * plan's version history (`usePlanHistory`).
+ */
 export const platformPlanKeys = {
   all: QUERY_KEY_ROOTS.platformPlans,
+  /** Every page and filter of the plan list — the prefix to invalidate. */
+  lists: () => [...platformPlanKeys.all, 'list'] as const,
+  list: (query?: unknown) =>
+    [...platformPlanKeys.lists(), query ?? {}] as const,
   history: (key: string, query?: CollectionQuery) =>
     [...platformPlanKeys.all, 'history', key, query ?? {}] as const,
   /** Every history page of one plan — the prefix to invalidate. */

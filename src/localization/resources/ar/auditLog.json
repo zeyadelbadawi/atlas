@@ -644,7 +644,8 @@
       "disable": "{{actor}} أوقف الإضافة {{addOn}}",
       "uninstall": "{{actor}} أزال الإضافة {{addOn}}",
       "catalog_status_changed": "{{actor}} غيّر إتاحة الإضافة {{addOn}}",
-      "arabic_text_changed": "{{actor}} غيّر الاسم العربي للإضافة {{addOn}}"
+      "arabic_text_changed": "{{actor}} غيّر الاسم العربي للإضافة {{addOn}}",
+      "pricing_changed": "{{actor}} غيّر سعر الإضافة {{addOn}}"
     },
     "support_case": {
       "created": "{{actor}} فتح تذكرة الدعم «{{target}}»",
@@ -715,7 +716,8 @@
       "pricing_changed": "{{actor}} غيّر تسعير الباقة «{{target}}»",
       "trial_config_changed": "{{actor}} غيّر إعدادات التجربة للباقة «{{target}}»",
       "subscribers_notified": "{{actor}} أبلغ مشتركي الباقة «{{target}}» بتغيير فيها",
-      "archived": "{{actor}} أرشف الباقة «{{target}}»"
+      "archived": "{{actor}} أرشف الباقة «{{target}}»",
+      "restored": "{{actor}} استعاد الخطة «{{target}}»"
     },
     "platform_settings": {
       "updated": "{{actor}} حدّث إعدادات المنصة"

@@ -20,7 +20,8 @@
     "installCount": "Installs",
     "enabledCount": "Enabled",
     "updatedAt": "Updated",
-    "actions": "Actions"
+    "actions": "Actions",
+    "price": "Price"
   },
   "impact": {
     "draft": "Customers will not see this add-on in the store at all, and it cannot be installed. Academies that already have it keep it.",
@@ -54,6 +55,37 @@
     "saving": "Saving…",
     "saved": "Arabic name saved.",
     "failed": "The Arabic name wasn't saved",
+    "stale": "Someone else changed this add-on. Close and open it again to see the latest version."
+  },
+  "price": {
+    "action": "Price",
+    "actionFor": "Edit the price of {{name}}",
+    "none": "No price",
+    "perCycle": "{{price}} / {{cycle}}",
+    "cycleUnit": {
+      "monthly": "month",
+      "yearly": "year"
+    },
+    "title": "Price of {{name}}",
+    "description": "The price customers pay when they add this add-on. Prices are in Egyptian pounds.",
+    "amount": "Price",
+    "amountHelp": "A whole number from 1 to 1,000,000.",
+    "currency": "Currency",
+    "currencyValue": "Egyptian pound (EGP)",
+    "billingCycle": "Billing",
+    "cycle": {
+      "monthly": "Monthly",
+      "yearly": "Yearly"
+    },
+    "billingCycleHelp": "The billing cycle stays as it is.",
+    "billingCycleHelpFirstPrice": "An add-on priced for the first time is billed monthly.",
+    "newPurchasesOnly_one": "The new price applies to new purchases only. {{countText}} organization already has this add-on and isn’t charged again.",
+    "newPurchasesOnly_other": "The new price applies to new purchases only. {{countText}} organizations already have this add-on and aren’t charged again.",
+    "newPurchasesNone": "The new price applies to new purchases only. No organization has this add-on yet.",
+    "save": "Save price",
+    "saving": "Saving…",
+    "saved": "Add-on price saved.",
+    "failed": "The price wasn’t saved",
     "stale": "Someone else changed this add-on. Close and open it again to see the latest version."
   }
 }

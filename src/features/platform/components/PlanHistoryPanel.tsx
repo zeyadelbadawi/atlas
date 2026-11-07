@@ -22,8 +22,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState, ErrorState } from '@components/feedback';
 import { Pagination } from '@components/data-display';
 import { useDateFormatter, usePagination, useBidiIsolation } from '@hooks';
+import { formatNumber } from '@utils';
 import { usePlanHistory } from '../hooks/usePlatformPlans';
-import type { PlanHistoryEntry } from '@types';
+import type { LanguageCode, PlanHistoryEntry } from '@types';
 
 const PAGE_SIZE = 5;
 
@@ -79,9 +80,41 @@ function ChangeRow({
 export function PlanHistoryPanel({
   planKey,
 }: PlanHistoryPanelProps): JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { isolate } = useBidiIsolation();
   const fmt = useDateFormatter();
+  const language = i18n.language as LanguageCode;
+  const count = (value: unknown): string =>
+    formatNumber(typeof value === 'number' ? value : 0, language);
+
+  /**
+   * Plan management — a restore says where the plan went, an archive how
+   * many organizations were on it. `null` when the entry has no such facts.
+   */
+  const contextLine = (entry: PlanHistoryEntry): string | null => {
+    const context = entry.context ?? {};
+    if (
+      entry.action === 'plan.restored' &&
+      typeof context.displayOrder === 'number'
+    ) {
+      return context.displayOrder > 0
+        ? t('platform:planAdmin.history.restoredListed', {
+            position: count(context.displayOrder),
+          })
+        : t('platform:planAdmin.history.restoredHidden');
+    }
+    if (
+      entry.action === 'plan.archived' &&
+      typeof context.payingAtArchive === 'number'
+    ) {
+      return t('platform:planAdmin.history.archivedCounts', {
+        paying: count(context.payingAtArchive),
+        trialing: count(context.trialingAtArchive),
+        founding: count(context.foundingLocksAtArchive),
+      });
+    }
+    return null;
+  };
 
   // `totalItems` comes back from the server, so the control is driven by the
   // real count rather than a guess — the same order every other Atlas list
@@ -148,6 +181,15 @@ export function PlanHistoryPanel({
                 })}
               </p>
 
+              {contextLine(entry) ? (
+                <p
+                  className="mt-2 text-xs text-muted-foreground"
+                  data-testid={`plan-history-context-${entry.id}`}
+                >
+                  {contextLine(entry)}
+                </p>
+              ) : null}
+
               {entry.action === 'plan.subscribers_notified' ? (
                 // B0-BIL-07 — a notice run has counts, not a field diff.
                 <p className="mt-2 text-xs text-muted-foreground">
@@ -167,7 +209,7 @@ export function PlanHistoryPanel({
                     />
                   ))}
                 </ul>
-              ) : (
+              ) : contextLine(entry) ? null : (
                 // An entry written before P58 genuinely has no recorded
                 // diff. Saying so is more useful than an empty area that
                 // looks like a rendering failure.

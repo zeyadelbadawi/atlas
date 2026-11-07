@@ -7,14 +7,20 @@
  * conflict (`stale_resource_version`) surfaces as an ordinary error the
  * page reacts to, and the shared error toast explains it.
  */
+import { useQueryClient } from '@tanstack/react-query';
 import { useApiQuery, useApiMutation } from '@/shared/hooks';
-import { INLINE_ERRORS_META, platformAddOnKeys } from '@services/query';
+import {
+  INLINE_ERRORS_META,
+  planKeys,
+  platformAddOnKeys,
+} from '@services/query';
 import { platformAddOnsService } from '../services/PlatformAddOnsService';
 import type {
   PlatformAddOnRow,
   PlatformAddOnQuery,
   UpdateAddOnArabicTextInput,
   UpdateAddOnCatalogStatusInput,
+  UpdateAddOnPricingInput,
 } from '../types';
 import type { PaginatedResult } from '@types';
 import type { ApiError } from '@api';
@@ -55,5 +61,32 @@ export function useUpdateAddOnArabicText() {
     showErrorToast: false,
     meta: { [INLINE_ERRORS_META]: true },
     invalidateKeys: [platformAddOnKeys.all],
+  });
+}
+
+/**
+ * An add-on's price for new purchases. Refreshes this console's list and
+ * the customer add-on catalog, which shows the price in the store. The
+ * dialog shows a refusal itself (on its field, as "reload", or one alert).
+ */
+export function useUpdateAddOnPricing() {
+  const queryClient = useQueryClient();
+  return useApiMutation<
+    PlatformAddOnRow,
+    { key: string; input: UpdateAddOnPricingInput },
+    ApiError
+  >({
+    mutationFn: ({ key, input }) =>
+      platformAddOnsService.updatePricing(key, input),
+    successMessageKey: 'platformAddOns:price.saved',
+    showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
+    invalidateKeys: [platformAddOnKeys.all, planKeys.addOnList()],
+    // A stale version means the row the dialog opened from is out of date:
+    // refresh the list so reopening carries the current version.
+    onError: (error) => {
+      if (error.kind === 'conflict')
+        void queryClient.invalidateQueries({ queryKey: platformAddOnKeys.all });
+    },
   });
 }

@@ -18,10 +18,14 @@
  * B5 (UX audit) V21 — each add-on's Arabic name is shown under its English
  * one ("Not set" when there is none), and "Arabic name" edits it: the
  * Arabic store and checkout show it instead of the English name.
+ *
+ * Plan management (atlas-backend#112) — a Price column, and "Price" edits
+ * it (EGP only, for new purchases; organizations that already have the
+ * add-on are not charged again).
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Languages, PackageCheck, Search } from 'lucide-react';
+import { Banknote, Languages, PackageCheck, Search } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { SectionLoader } from '@components/loading';
 import { EmptyState } from '@components/feedback';
@@ -43,7 +47,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { formatDate } from '@utils';
+import { formatCurrency, formatDate } from '@utils';
 import type { LanguageCode } from '@types';
 import {
   usePlatformAddOns,
@@ -52,6 +56,7 @@ import {
 import { CatalogStatusBadge } from '../components/CatalogStatusBadge';
 import { ChangeCatalogStatusDialog } from '../components/ChangeCatalogStatusDialog';
 import { AddOnArabicTextDialog } from '../components/AddOnArabicTextDialog';
+import { AddOnPriceDialog } from '../components/AddOnPriceDialog';
 import type { AddOnCatalogStatus, PlatformAddOnRow } from '../types';
 
 const STATUSES: readonly AddOnCatalogStatus[] = [
@@ -70,6 +75,24 @@ export default function PlatformAddOnsPage(): JSX.Element {
   const [editingArabic, setEditingArabic] = useState<PlatformAddOnRow | null>(
     null
   );
+  const [editingPrice, setEditingPrice] = useState<PlatformAddOnRow | null>(
+    null
+  );
+
+  /** "EGP 150 / month", or "No price" when none is recorded. */
+  const priceText = (row: PlatformAddOnRow): string => {
+    const pricing = row.pricing;
+    if (pricing?.amount === undefined || !pricing.currency) {
+      return t('platformAddOns:price.none');
+    }
+    const price = formatCurrency(pricing.amount, language, pricing.currency);
+    return pricing.billingCycle
+      ? t('platformAddOns:price.perCycle', {
+          price,
+          cycle: t(`platformAddOns:price.cycleUnit.${pricing.billingCycle}`),
+        })
+      : price;
+  };
 
   // The add-on and the state it would move to, held while the operator
   // confirms. Null when no change is pending.
@@ -174,6 +197,7 @@ export default function PlatformAddOnsPage(): JSX.Element {
                   <TableHead>
                     {t('platformAddOns:columns.catalogStatus')}
                   </TableHead>
+                  <TableHead>{t('platformAddOns:columns.price')}</TableHead>
                   <TableHead className="text-end">
                     {t('platformAddOns:columns.installCount')}
                   </TableHead>
@@ -202,6 +226,13 @@ export default function PlatformAddOnsPage(): JSX.Element {
                     </TableCell>
                     <TableCell>
                       <CatalogStatusBadge status={row.catalogStatus} />
+                    </TableCell>
+                    <TableCell
+                      className="whitespace-nowrap text-sm tabular-nums"
+                      data-testid={`addon-price-${row.key}`}
+                      data-atlas-numeric="true"
+                    >
+                      {priceText(row)}
                     </TableCell>
                     <TableCell className="text-end tabular-nums">
                       {row.installCount}
@@ -252,6 +283,19 @@ export default function PlatformAddOnsPage(): JSX.Element {
                           <Languages className="size-4" aria-hidden />
                           {t('platformAddOns:arabicText.action')}
                         </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          data-testid={`addon-price-edit-${row.key}`}
+                          aria-label={t('platformAddOns:price.actionFor', {
+                            name: row.name,
+                          })}
+                          onClick={() => setEditingPrice(row)}
+                        >
+                          <Banknote className="size-4" aria-hidden />
+                          {t('platformAddOns:price.action')}
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -295,6 +339,11 @@ export default function PlatformAddOnsPage(): JSX.Element {
       <AddOnArabicTextDialog
         addOn={editingArabic}
         onClose={() => setEditingArabic(null)}
+      />
+
+      <AddOnPriceDialog
+        addOn={editingPrice}
+        onClose={() => setEditingPrice(null)}
       />
 
       <ChangeCatalogStatusDialog

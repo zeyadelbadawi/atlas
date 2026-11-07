@@ -290,7 +290,52 @@
       "monthly": "month",
       "yearly": "year"
     },
-    "hiddenPlansNote": "These are the plans customers can see. Hidden plans (such as founding price locks) aren't listed and subscriber counts aren't available here; an organization's own page shows its plan."
+    "newPlan": "New plan",
+    "marketingNoteTitle": "The public pricing page updates on the next site deploy",
+    "marketingNote": "The marketing pricing page is built ahead of time. A plan you create, list or archive here appears there (or disappears) only after the next site deploy. The console, the customer Plans page and checkout change right away.",
+    "filtersLabel": "Show plans",
+    "filters": {
+      "listed": "Listed",
+      "hidden": "Hidden",
+      "archived": "Archived",
+      "all": "All"
+    },
+    "searchLabel": "Search plans by key or name",
+    "searchPlaceholder": "Search plans",
+    "empty": {
+      "listed": "No plan is shown to customers.",
+      "hidden": "No hidden plans.",
+      "archived": "No archived plans.",
+      "all": "No plans yet.",
+      "search": "No plan matches this search."
+    },
+    "visibility": {
+      "listed": "Listed #{{position}}",
+      "hidden": "Hidden",
+      "archived": "Archived"
+    },
+    "price": {
+      "monthly": "{{price}} / month",
+      "yearly": "{{price}} / year",
+      "none": "No price set"
+    },
+    "subscribers": "Paying {{paying}} · Trialing {{trialing}} · Switching in {{scheduledIn}} · Founding {{foundingLocks}}",
+    "actions": {
+      "archive": "Archive",
+      "restore": "Restore",
+      "editFor": "Edit {{plan}}",
+      "historyFor": "Change history of {{plan}}",
+      "archiveFor": "Archive {{plan}}",
+      "restoreFor": "Restore {{plan}}"
+    },
+    "pagination": {
+      "summary": "Page {{page}} of {{totalPages}} · {{totalItems}} plans",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "addOnsNote": "Add-on prices, availability and Arabic names are edited on the Add-ons page.",
+    "addOnsLink": "Manage add-ons",
+    "addOnNoPrice": "No price"
   },
   "adminSubscriptions": {
     "title": "Subscriptions & Trials",
@@ -371,8 +416,12 @@
         "plan.pricing_changed": "Pricing changed",
         "plan.trial_config_changed": "Free trial settings changed",
         "plan.subscribers_notified": "Subscribers notified",
-        "plan.archived": "Plan archived"
-      }
+        "plan.archived": "Plan archived",
+        "plan.restored": "Plan restored"
+      },
+      "restoredListed": "Restored and shown to customers at position {{position}}.",
+      "restoredHidden": "Restored as a hidden plan.",
+      "archivedCounts": "When archived: paying {{paying}} · trialing {{trialing}} · founding {{founding}}."
     },
     "editor": {
       "title": "Edit {{plan}}",
@@ -436,7 +485,90 @@
       "savedNotifiedCount_one": "{{countText}} paying organization is being emailed about the change.",
       "savedNotifiedCount_other": "{{countText}} paying organizations are being emailed about the change.",
       "savedNobodyEmailed": "No paying organization renews into a different price or limits, so nobody was emailed.",
-      "noticeCheckFailed": "We couldn't check who would be emailed, so nothing was saved"
+      "noticeCheckFailed": "We couldn't check who would be emailed, so nothing was saved",
+      "archivedTitle": "This plan is archived",
+      "archivedDescription": "Customers can’t choose it, and organizations on it can’t renew on it. Your edits are kept for if you restore it from the plan list.",
+      "visibilityTitle": "Visibility",
+      "showToCustomers": "Show to customers",
+      "listedHelp": "Customers see this plan on the Plans page, at the position below (1 comes first).",
+      "hiddenHelp": "Hidden: customers don’t see this plan, but it can still be bought by its key (for example a founding price lock).",
+      "position": "Position in the plan list",
+      "positionHelp": "A whole number from 1 to 1,000. Plans are shown in this order."
+    },
+    "create": {
+      "title": "New plan",
+      "description": "The plan starts hidden. Customers don’t see it until you switch on “Show to customers” in its editor.",
+      "key": "Key",
+      "keyHelp": "Lowercase letters and numbers, words joined by hyphens (like growth-2027). Up to 60 characters. It can’t be changed later.",
+      "keyInvalid": "Use lowercase letters and numbers, with single hyphens between words (like growth-2027).",
+      "nameEn": "Name (English)",
+      "nameAr": "Name (Arabic, optional)",
+      "nameArHelp": "Shown on Arabic pages. Leave it empty to show the English name.",
+      "descriptionEn": "Description (English)",
+      "descriptionAr": "Description (Arabic, optional)",
+      "descriptionArHelp": "With an Arabic description, each description can be up to 200 characters.",
+      "family": "Family",
+      "familyOptions": {
+        "normal": "Normal",
+        "premium": "Premium"
+      },
+      "tier": "Tier",
+      "tierOptions": {
+        "none": "No tier",
+        "basic": "Basic",
+        "growth": "Growth",
+        "enterprise": "Enterprise"
+      },
+      "source": "Start from",
+      "sourceHelp": "The new plan copies this plan’s limits, features, free trial and gifted days. You can change them in the editor right after.",
+      "sourcePlaceholder": "Choose a plan",
+      "sourceRequired": "Choose the plan to start from.",
+      "amount": "Monthly price",
+      "amountHelp": "A whole number from 1 to 1,000,000.",
+      "yearlyAmount": "Yearly price (optional)",
+      "yearlyAmountHelp": "Leave empty to offer monthly billing only. It can’t be lower than one month’s price.",
+      "currency": "Currency",
+      "currencyValue": "Egyptian pound (EGP)",
+      "restrictedAddOnsNote": "Add-ons limited to certain plans aren’t offered on this plan until you add it to their compatible plans.",
+      "submit": "Create plan",
+      "creating": "Creating…",
+      "failed": "The plan wasn’t created",
+      "createdTitle": "{{plan}} created",
+      "createdDescription": "It’s hidden for now. Check its limits, then switch on “Show to customers” when it’s ready."
+    },
+    "archive": {
+      "title": "Archive {{plan}}?",
+      "description": "Customers can no longer choose this plan.",
+      "countsTitle": "Organizations on this plan now",
+      "paying": "Paying",
+      "trialing": "On a free trial",
+      "scheduledIn": "Switching in at renewal",
+      "founding": "Founding Academies locked to it",
+      "consequence": "Organizations on this plan keep it until their current period ends. After that they can’t renew on it and must choose another plan.",
+      "foundingConsequence": "Founding Academies locked to this plan lose their lock at renewal for the same reason.",
+      "confirm": "Archive plan",
+      "archiving": "Archiving…",
+      "stale": "Someone else changed this plan. Close this and open it again to see the latest version.",
+      "failed": "The plan wasn’t archived",
+      "archivedTitle": "{{plan}} archived",
+      "archivedDescription": "Customers can’t choose it any more. Organizations on it keep it until their current period ends."
+    },
+    "restore": {
+      "title": "Restore {{plan}}",
+      "description": "Organizations can choose and renew on this plan again. Choose where it goes.",
+      "hiddenOption": "Keep it hidden",
+      "hiddenOptionHelp": "Not shown to customers; can be bought by its key only.",
+      "listedOption": "Show it to customers",
+      "listedOptionHelp": "Listed on the Plans page at the position below.",
+      "position": "Position in the plan list",
+      "positionHelp": "The next free position is {{position}}.",
+      "confirm": "Restore plan",
+      "restoring": "Restoring…",
+      "stale": "Someone else changed this plan. Close this and open it again to see the latest version.",
+      "failed": "The plan wasn’t restored",
+      "restoredTitle": "{{plan}} restored",
+      "restoredListed": "Customers see it at position {{position}}.",
+      "restoredHidden": "It’s hidden: customers don’t see it."
     }
   },
   "courses": {

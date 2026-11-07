@@ -228,11 +228,13 @@ describe('invalidateRoster', () => {
 });
 
 describe('invalidatePlans', () => {
-  it('refreshes the catalog, the plan, its history and the public plan list', async () => {
+  it('refreshes the catalog, the plan, its history, the owner plan list and the public plan list', async () => {
     const affected = [
       planKeys.list(),
       planKeys.detail('pro'),
       platformPlanKeys.history('pro', PAGE_ONE),
+      platformPlanKeys.list({ page: 1, pageSize: 20, visibility: 'listed' }),
+      platformPlanKeys.list({ page: 2, pageSize: 20, visibility: 'archived' }),
       publicPlanKeys.list(),
     ];
     const untouched = [
@@ -257,6 +259,29 @@ describe('invalidatePlans', () => {
       'pro',
       {},
     ]);
+    expect(platformPlanKeys.list({ page: 1 })).toEqual([
+      'platform-plans',
+      'list',
+      { page: 1 },
+    ]);
+  });
+
+  it('refreshes every page of the owner plan list even without a plan key', async () => {
+    const affected = [
+      planKeys.list(),
+      platformPlanKeys.list({ page: 3, search: 'gro' }),
+      publicPlanKeys.list(),
+    ];
+    const untouched = [
+      planKeys.detail('pro'),
+      platformPlanKeys.history('pro', PAGE_ONE),
+    ];
+    const client = seed([...affected, ...untouched]);
+    await invalidatePlans(client);
+    for (const key of affected)
+      expect(isStale(client, key), JSON.stringify(key)).toBe(true);
+    for (const key of untouched)
+      expect(isStale(client, key), JSON.stringify(key)).toBe(false);
   });
 });
 

@@ -644,7 +644,8 @@
       "disable": "{{actor}} turned off the add-on {{addOn}}",
       "uninstall": "{{actor}} removed the add-on {{addOn}}",
       "catalog_status_changed": "{{actor}} changed the availability of the add-on {{addOn}}",
-      "arabic_text_changed": "{{actor}} changed the Arabic name of the add-on {{addOn}}"
+      "arabic_text_changed": "{{actor}} changed the Arabic name of the add-on {{addOn}}",
+      "pricing_changed": "{{actor}} changed the price of the add-on {{addOn}}"
     },
     "support_case": {
       "created": "{{actor}} opened the support ticket “{{target}}”",
@@ -715,7 +716,8 @@
       "pricing_changed": "{{actor}} changed the pricing of the plan “{{target}}”",
       "trial_config_changed": "{{actor}} changed the trial settings of the plan “{{target}}”",
       "subscribers_notified": "{{actor}} notified the subscribers of the plan “{{target}}” about a change",
-      "archived": "{{actor}} archived the plan “{{target}}”"
+      "archived": "{{actor}} archived the plan “{{target}}”",
+      "restored": "{{actor}} restored the plan “{{target}}”"
     },
     "platform_settings": {
       "updated": "{{actor}} updated the platform settings"

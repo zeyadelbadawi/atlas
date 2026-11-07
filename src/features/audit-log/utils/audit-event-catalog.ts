@@ -248,6 +248,8 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     'plan.trial_config_changed': 'platform',
     'plan.subscribers_notified': 'platform',
     'plan.archived': 'platform',
+    // Plan management — an archived plan brought back (hidden or listed).
+    'plan.restored': 'platform',
     'platform_settings.updated': 'platform',
     'payment_method.created': 'platform',
     'payment_method.updated': 'platform',
@@ -260,6 +262,8 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     'add_on.catalog_status_changed': 'platform',
     // B5 (UX audit) V21 — a Platform Owner set an add-on's Arabic name.
     'add_on.arabic_text_changed': 'platform',
+    // Plan management — a Platform Owner changed an add-on's price (EGP).
+    'add_on.pricing_changed': 'platform',
     'observability.synthetic_alert.armed': 'platform',
     'observability.synthetic_alert.resolved': 'platform',
     'platform.contact_submission.status_changed': 'platform',

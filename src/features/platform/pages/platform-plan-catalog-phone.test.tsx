@@ -20,22 +20,43 @@ const plan = {
   limits: {},
   features: {},
   pricing: { amount: 79, currency: 'USD', billingCycle: 'monthly' },
+  displayOrder: 1,
   giftedDaysMonthly: 7,
   giftedDaysYearly: null,
+  subscribers: { paying: 4, trialing: 1, scheduledIn: 0, foundingLocks: 0 },
 };
 
 vi.mock('@features/tenant', () => ({
   resolvePlanName: (p: { name: string }) => p.name,
   resolvePlanDescription: (p: { description?: string }) => p.description ?? '',
   localizedAddOnText: (...args: unknown[]) => args[4],
-  usePlanCatalog: () => ({ data: [plan], isLoading: false, error: null }),
   useAddOnCatalog: () => ({ data: [], isLoading: false, error: null }),
+}));
+// Plan management — the page reads the owner plan list now.
+vi.mock('../hooks/usePlatformPlans', () => ({
+  usePlatformPlanList: () => ({
+    data: {
+      items: [plan],
+      pagination: { page: 1, pageSize: 20, totalItems: 1, totalPages: 1 },
+    },
+    isLoading: false,
+    error: null,
+  }),
 }));
 vi.mock('../components/PlanEditorDialog', () => ({
   PlanEditorDialog: () => null,
 }));
 vi.mock('../components/PlanHistoryPanel', () => ({
   PlanHistoryPanel: () => null,
+}));
+vi.mock('../components/CreatePlanDialog', () => ({
+  CreatePlanDialog: () => null,
+}));
+vi.mock('../components/ArchivePlanDialog', () => ({
+  ArchivePlanDialog: () => null,
+}));
+vi.mock('../components/RestorePlanDialog', () => ({
+  RestorePlanDialog: () => null,
 }));
 
 const { default: PlatformPlanCatalogPage } =

@@ -88,6 +88,16 @@ const hooks: Record<string, () => Promise<Hook>> = {
     (await import('./hooks/usePlatformPlans')).useUpdatePlan as Hook,
   usePreviewLimitImpact: async () =>
     (await import('./hooks/usePlatformPlans')).usePreviewLimitImpact as Hook,
+  // Plan management — create, archive, restore and add-on price dialogs.
+  useCreatePlan: async () =>
+    (await import('./hooks/usePlatformPlans')).useCreatePlan as Hook,
+  useArchivePlan: async () =>
+    (await import('./hooks/usePlatformPlans')).useArchivePlan as Hook,
+  useRestorePlan: async () =>
+    (await import('./hooks/usePlatformPlans')).useRestorePlan as Hook,
+  useUpdateAddOnPricing: async () =>
+    (await import('@features/platform-add-ons/hooks/usePlatformAddOns'))
+      .useUpdateAddOnPricing as Hook,
   useUpdateGlobalCommission: async () =>
     (await import('@features/platform-commerce/hooks/useCommission'))
       .useUpdateGlobalCommission as Hook,

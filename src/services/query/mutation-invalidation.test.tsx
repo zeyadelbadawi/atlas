@@ -9,7 +9,7 @@
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { ReactNode } from 'react';
-import { act, cleanup, renderHook } from '@testing-library/react';
+import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   academyKeys,
@@ -18,6 +18,7 @@ import {
   instructorKeys,
   paymentKeys,
   planKeys,
+  platformAddOnKeys,
   platformPlanKeys,
   provisioningKeys,
   publicPlanKeys,
@@ -56,6 +57,12 @@ vi.mock('@features/website/services/WebsiteContentService', () => ({
 vi.mock('@features/platform/services/PlatformPlansService', () => ({
   platformPlansService: {
     updatePlan: vi.fn(async () => ({ key: 'pro' })),
+    restorePlan: vi.fn(async () => ({ key: 'pro' })),
+  },
+}));
+vi.mock('@features/platform-add-ons/services/PlatformAddOnsService', () => ({
+  platformAddOnsService: {
+    updatePricing: vi.fn(async () => ({ key: 'extra-academy' })),
   },
 }));
 vi.mock('@features/provisioning/services/ProvisioningService', () => ({
@@ -72,8 +79,10 @@ const { usePublishCourse } =
   await import('@features/course/hooks/usePublishCourse');
 const { useCreateWebsiteFaqEntry } =
   await import('@features/website/hooks/useCreateWebsiteFaqEntry');
-const { useUpdatePlan } =
+const { useRestorePlan, useUpdatePlan } =
   await import('@features/platform/hooks/usePlatformPlans');
+const { useUpdateAddOnPricing } =
+  await import('@features/platform-add-ons/hooks/usePlatformAddOns');
 const { useCreatePayment } =
   await import('@features/billing/hooks/useCreatePayment');
 const { useCreateProvisioningRequest } =
@@ -220,5 +229,95 @@ describe('mutation hooks refresh every affected view', () => {
     expect(stale(platformPlanKeys.history('pro', PAGE_ONE))).toBe(true);
     expect(stale(publicPlanKeys.list())).toBe(true);
     expect(stale(planKeys.detail('basic'))).toBe(false);
+  });
+
+  it('useRestorePlan refreshes every page of the owner plan list and the catalogs', async () => {
+    const { wrapper, stale } = setup([
+      platformPlanKeys.list({ page: 1, pageSize: 20, visibility: 'archived' }),
+      platformPlanKeys.list({ page: 1, pageSize: 100, visibility: 'listed' }),
+      planKeys.list(),
+      publicPlanKeys.list(),
+      planKeys.addOnList(),
+    ]);
+    const { result } = renderHook(() => useRestorePlan(), { wrapper });
+    await act(() =>
+      result.current.mutateAsync({
+        key: 'pro',
+        expectedVersion: 2,
+        displayOrder: 0,
+      })
+    );
+    expect(
+      stale(
+        platformPlanKeys.list({ page: 1, pageSize: 20, visibility: 'archived' })
+      )
+    ).toBe(true);
+    expect(
+      stale(
+        platformPlanKeys.list({ page: 1, pageSize: 100, visibility: 'listed' })
+      )
+    ).toBe(true);
+    expect(stale(planKeys.list())).toBe(true);
+    expect(stale(publicPlanKeys.list())).toBe(true);
+    expect(stale(planKeys.addOnList())).toBe(false);
+  });
+
+  it('useUpdateAddOnPricing refreshes the console add-on list and the customer add-on catalog', async () => {
+    const { wrapper, stale } = setup([
+      platformAddOnKeys.list({ page: 1, pageSize: 20 }),
+      planKeys.addOnList(),
+      planKeys.list(),
+    ]);
+    const { result } = renderHook(() => useUpdateAddOnPricing(), { wrapper });
+    await act(() =>
+      result.current.mutateAsync({
+        key: 'extra-academy',
+        input: { amount: 200, currency: 'EGP', expectedVersion: 2 },
+      })
+    );
+    expect(stale(platformAddOnKeys.list({ page: 1, pageSize: 20 }))).toBe(true);
+    expect(stale(planKeys.addOnList())).toBe(true);
+    expect(stale(planKeys.list())).toBe(false);
+  });
+  it('a stale-version refusal on restore or on an add-on price refreshes the rows the dialog opened from', async () => {
+    const { platformPlansService } =
+      await import('@features/platform/services/PlatformPlansService');
+    const { platformAddOnsService } =
+      await import('@features/platform-add-ons/services/PlatformAddOnsService');
+    const conflict = {
+      kind: 'conflict',
+      status: 409,
+      messageKey: 'errors.conflict',
+    };
+    vi.mocked(platformPlansService.restorePlan).mockRejectedValueOnce(conflict);
+    vi.mocked(platformAddOnsService.updatePricing).mockRejectedValueOnce(
+      conflict
+    );
+    const archivedList = platformPlanKeys.list({
+      page: 1,
+      pageSize: 20,
+      visibility: 'archived',
+    });
+    const addOnList = platformAddOnKeys.list({ page: 1, pageSize: 20 });
+    const { wrapper, stale } = setup([archivedList, addOnList]);
+
+    const restore = renderHook(() => useRestorePlan(), { wrapper });
+    await act(() =>
+      restore.result.current
+        .mutateAsync({ key: 'pro', expectedVersion: 2, displayOrder: 0 })
+        .catch(() => undefined)
+    );
+    await waitFor(() => expect(stale(archivedList)).toBe(true));
+
+    const price = renderHook(() => useUpdateAddOnPricing(), { wrapper });
+    await act(() =>
+      price.result.current
+        .mutateAsync({
+          key: 'extra-academy',
+          input: { amount: 200, currency: 'EGP', expectedVersion: 2 },
+        })
+        .catch(() => undefined)
+    );
+    await waitFor(() => expect(stale(addOnList)).toBe(true));
   });
 });

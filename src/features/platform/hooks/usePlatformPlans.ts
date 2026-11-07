@@ -24,12 +24,30 @@ import type {
   PlanLimits,
   PlanNoticePreview,
   PlanNoticePreviewPayload,
+  PlatformPlanQuery,
+  PlatformPlanRow,
   UpdatePlanPayload,
 } from '@types';
 import type { ApiError } from '@api';
 
 /** Query keys for the platform-side plan surfaces — now declared in the shared factory (same shape). */
 export { platformPlanKeys };
+
+/**
+ * Plan management — every plan (listed, hidden, archived) with who is on
+ * it. The whole query is the cache key, so each filter and page is its own
+ * entry; plan mutations refresh them all (`invalidatePlans`).
+ */
+export function usePlatformPlanList(
+  query: PlatformPlanQuery,
+  options: { readonly enabled?: boolean } = {}
+) {
+  return useApiQuery<PaginatedResult<PlatformPlanRow>, ApiError>({
+    queryKey: platformPlanKeys.list(query),
+    queryFn: () => platformPlansService.list(query),
+    enabled: options.enabled ?? true,
+  });
+}
 
 export function usePlanHistory(key: string, query?: CollectionQuery) {
   return useApiQuery<PaginatedResult<PlanHistoryEntry>, ApiError>({
@@ -61,10 +79,16 @@ export function useUpdatePlan() {
   });
 }
 
+/**
+ * A new plan. The create dialog shows a refusal itself — a violation on its
+ * field, a taken key on the key field, anything else inline — so no toast.
+ */
 export function useCreatePlan() {
   const queryClient = useQueryClient();
   return useApiMutation<Plan, CreatePlanPayload, ApiError>({
     mutationFn: (payload) => platformPlansService.createPlan(payload),
+    showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: (plan) => invalidatePlans(queryClient, plan.key),
   });
 }
@@ -74,13 +98,48 @@ export interface ArchivePlanVariables {
   readonly expectedVersion: number;
 }
 
+/** The archive confirmation shows a refusal itself (stale, already archived, last listed plan). */
 export function useArchivePlan() {
   const queryClient = useQueryClient();
   return useApiMutation<Plan, ArchivePlanVariables, ApiError>({
     mutationFn: ({ key, expectedVersion }) =>
       platformPlansService.archivePlan(key, expectedVersion),
+    showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     onSuccess: (_plan, variables) =>
       invalidatePlans(queryClient, variables.key),
+    // A refusal (stale version, already archived, last listed plan) means the
+    // row this dialog opened from is out of date: refresh it, so reopening
+    // does not send the same version again.
+    onError: (error, variables) => {
+      if (error.kind === 'conflict')
+        void invalidatePlans(queryClient, variables.key);
+    },
+  });
+}
+
+export interface RestorePlanVariables {
+  readonly key: string;
+  readonly expectedVersion: number;
+  /** 0 restores the plan hidden; a positive number lists it at that position. */
+  readonly displayOrder: number;
+}
+
+/** An archived plan brought back. The restore dialog shows a refusal itself. */
+export function useRestorePlan() {
+  const queryClient = useQueryClient();
+  return useApiMutation<Plan, RestorePlanVariables, ApiError>({
+    mutationFn: ({ key, expectedVersion, displayOrder }) =>
+      platformPlansService.restorePlan(key, { expectedVersion, displayOrder }),
+    showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
+    onSuccess: (_plan, variables) =>
+      invalidatePlans(queryClient, variables.key),
+    // Same as archive: a stale or "not archived" refusal refreshes the row.
+    onError: (error, variables) => {
+      if (error.kind === 'conflict')
+        void invalidatePlans(queryClient, variables.key);
+    },
   });
 }
 
