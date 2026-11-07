@@ -23,3 +23,8 @@ export { Chip } from './Chip';
 export type { ChipProps } from './Chip';
 export { EmptyPanel } from './EmptyPanel';
 export type { EmptyPanelProps } from './EmptyPanel';
+export { FaqDisclosureList } from './FaqDisclosureList';
+export type {
+  FaqDisclosureItem,
+  FaqDisclosureListProps,
+} from './FaqDisclosureList';

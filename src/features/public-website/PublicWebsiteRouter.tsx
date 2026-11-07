@@ -46,10 +46,8 @@ import { usePublicWebsiteData } from './hooks/usePublicWebsiteData';
 import { useResolveHostname } from './hooks/useResolveHostname';
 import { usePublishedWebsite } from './hooks/usePublishedWebsite';
 import { resolveLocalePrefixRedirect } from './utils/locale-redirect.utils';
-import {
-  academyFaviconHref,
-  useAcademyFavicon,
-} from './hooks/useAcademyFavicon';
+import { useAcademyFavicon } from './hooks/useAcademyFavicon';
+import { academyIconHref } from './utils/academy-brand-images.utils';
 import {
   AcademyTitleBaselineContext,
   useAcademyHeadDefaults,
@@ -467,7 +465,11 @@ export function PublicWebsiteRouter({
   // wears its own favicon. The resolution is the cached query every route
   // already reads.
   const resolution = useResolveHostname(lookupKey);
-  useAcademyFavicon(academyFaviconHref(resolution.data ?? undefined));
+  // Its uploaded favicon, else its generated monogram: never the
+  // platform's icon on an Academy's site.
+  useAcademyFavicon(
+    resolution.data ? academyIconHref(resolution.data) : undefined
+  );
   // …and its own name as the browser title, never "Atlas".
   const academyName = resolution.data?.academyName;
   useAcademyHeadDefaults(academyName);

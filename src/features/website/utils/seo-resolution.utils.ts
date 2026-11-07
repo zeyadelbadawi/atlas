@@ -37,19 +37,47 @@ import {
   type PublicWebsiteLocale,
 } from '../constants/locale.constants';
 import { resolveLocalizedText } from './localized-text.utils';
+import { resolvePagePath } from './link-resolution.utils';
 
 export interface SeoFallback {
   readonly title: string;
   readonly description: string;
 }
 
-/** B0-WEB-02 — the site's default locale is unprefixed, every other under `/<locale>`. */
-function withLocalePrefix(
+/**
+ * B0-WEB-02 — the site's default locale is unprefixed, every other under
+ * `/<locale>`. A prefixed locale's home is the bare prefix (`/ar`, never
+ * `/ar/`): the same URL the sitemap lists (backend `localizedSitePath`), so
+ * the canonical, the hreflang alternates and the sitemap name one URL.
+ */
+export function localizedPublicPath(
   path: string,
   locale: PublicWebsiteLocale,
-  defaultLocale: PublicWebsiteLocale
+  defaultLocale: PublicWebsiteLocale = DEFAULT_PUBLIC_WEBSITE_LOCALE
 ): string {
-  return `${publicWebsiteLocalePrefix(locale, defaultLocale)}${path}`;
+  const prefix = publicWebsiteLocalePrefix(locale, defaultLocale);
+  if (!prefix) return path;
+  return path === '/' ? prefix : `${prefix}${path}`;
+}
+
+const withLocalePrefix = localizedPublicPath;
+
+/**
+ * The page's own canonical path when its owner set none: the path it is
+ * served at (`/` for Home, `/<coreType>` for a core page, `/<slug>` for a
+ * custom one) — never `/<slug>` for a core page, which named Home `/home`
+ * (a duplicate URL of `/`) in every hreflang alternate.
+ */
+function defaultCanonicalPath(page: WebsitePage): string {
+  return resolvePagePath(page) ?? `/${page.slug}`;
+}
+
+/** The URL search engines should show a visitor whose language matches none of the alternates: the site's default language (Google's `x-default`). */
+export function buildXDefaultPath(
+  canonicalPath: string,
+  defaultLocale: PublicWebsiteLocale = DEFAULT_PUBLIC_WEBSITE_LOCALE
+): string {
+  return localizedPublicPath(canonicalPath, defaultLocale, defaultLocale);
 }
 
 /** One alternate per supported locale, always in the same order — every locale's page lists the same set, so the alternates are reciprocal. */
@@ -99,7 +127,7 @@ export function resolvePageSeo(
       ? 'global'
       : 'fallback';
 
-  const canonicalPath = page.seo.canonicalPath || `/${page.slug}`;
+  const canonicalPath = page.seo.canonicalPath || defaultCanonicalPath(page);
 
   return {
     title,
@@ -117,6 +145,7 @@ export function resolvePageSeo(
     descriptionSource,
     locale,
     hreflangAlternates: buildHreflangAlternates(canonicalPath, defaultLocale),
+    xDefaultPath: buildXDefaultPath(canonicalPath, defaultLocale),
   };
 }
 
@@ -159,6 +188,7 @@ export function resolveCourseSeo(
       course.shortDescription || course.description ? 'override' : 'fallback',
     locale,
     hreflangAlternates: buildHreflangAlternates(canonicalPath, defaultLocale),
+    xDefaultPath: buildXDefaultPath(canonicalPath, defaultLocale),
   };
 }
 
@@ -205,5 +235,6 @@ export function resolveBlogPostSeo(
     descriptionSource: post.excerpt ? 'override' : 'fallback',
     locale,
     hreflangAlternates: buildHreflangAlternates(canonicalPath),
+    xDefaultPath: buildXDefaultPath(canonicalPath),
   };
 }

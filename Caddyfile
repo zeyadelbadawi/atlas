@@ -202,10 +202,22 @@
 # course and dates: never indexed, on any host. Deferred so a server-
 # rendered response cannot drop it; robots.txt deliberately does NOT
 # disallow /verify/, or crawlers could not read this header.
+#
+# SEO/AEO/GEO pass (Nov 2026) — an Academy site's sign-in, sign-up,
+# password, email-verification and learner pages (with or without the
+# `/ar`/`/en` prefix) are app screens, not content: never indexed, on any
+# host. The single-page app serves them with the platform's generic title,
+# so without this an Academy's `/sign-in` could appear in results as
+# "Atlas". Not disallowed in robots.txt, for the same reason as /verify.
 (page_policy_headers) {
 	header /sw.js Cache-Control "no-cache"
 	@verify_page path /verify /verify/*
 	header @verify_page {
+		X-Robots-Tag "noindex, nofollow"
+		defer
+	}
+	@private_page path_regexp private_page ^/(?:(?:ar|en)/)?(?:sign-in|sign-up|forgot-password|reset-password|verify-email|verify|auth|my|my-learning|my-account)(?:/.*)?$
+	header @private_page {
 		X-Robots-Tag "noindex, nofollow"
 		defer
 	}
@@ -490,9 +502,12 @@ atlass.dpdns.org, *.atlass.dpdns.org {
 	# settings (indexing, sitemap) and pages. Without this the platform's
 	# static robots.txt/sitemap.xml in /srv won every academy host. The
 	# platform host itself keeps the static files.
+	# SEO/AEO/GEO pass (Nov 2026) — and its own /llms.txt and
+	# /llms-full.txt (a summary of the site for AI assistants) and
+	# /indexnow-key.txt (the IndexNow ownership key), from the same place.
 	@academy_seo_files {
 		not host atlass.dpdns.org www.atlass.dpdns.org
-		path /robots.txt /sitemap.xml
+		path /robots.txt /sitemap.xml /llms.txt /llms-full.txt /indexnow-key.txt
 	}
 	handle @academy_seo_files {
 		rewrite * /api/v1/public/websites/host{path}
@@ -932,9 +947,10 @@ docs.atlass.dpdns.org, doc.atlass.dpdns.org, help.atlass.dpdns.org {
 	}
 
 	# B0-WEB-01 — every host here is an academy's connected domain: its own
-	# robots.txt and sitemap.xml, never the platform's static files.
+	# robots.txt and sitemap.xml, never the platform's static files — and
+	# (SEO/AEO/GEO pass) its own llms.txt, llms-full.txt and IndexNow key.
 	@academy_seo_files {
-		path /robots.txt /sitemap.xml
+		path /robots.txt /sitemap.xml /llms.txt /llms-full.txt /indexnow-key.txt
 	}
 	handle @academy_seo_files {
 		rewrite * /api/v1/public/websites/host{path}

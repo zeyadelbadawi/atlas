@@ -483,6 +483,9 @@
       "title": "Page not found",
       "description": "This page doesn't exist or is no longer available.",
       "homeAction": "Go to homepage"
+    },
+    "seo": {
+      "defaultDescription": "{{academyName}} — online courses. Browse the courses and start learning at your own pace."
     }
   },
   "settings": {
@@ -602,10 +605,16 @@
     "sitemapEnabled": "Include this website in the sitemap",
     "indexable": "Allow search engines to index this page",
     "structuredDataPreview": "Structured data preview",
-    "structuredDataPreviewHelp": "The structured data (JSON-LD) your published website adds to every page for search engines and social platforms: your academy's name and logo, as shown below. Each page also gets a breadcrumb, and course pages describe the course.",
+    "structuredDataPreviewHelp": "The structured data (JSON-LD) your published home page gives search engines and AI assistants about your academy: its name, logo, description and contact details, as shown below. Every other page gets a breadcrumb; course pages describe the course (price, level, instructors, rating), the Courses page lists your courses and the FAQs page its questions and answers.",
     "resolvedFallbackHint": "If you leave the fields below blank, this page currently falls back to: \"{{title}}\" / \"{{description}}\".",
     "saved": "SEO settings saved",
-    "saveError": "Failed to save SEO settings"
+    "saveError": "Failed to save SEO settings",
+    "googleSiteVerification": "Google Search Console verification",
+    "bingSiteVerification": "Bing Webmaster Tools verification",
+    "siteVerificationHelp": "Paste the verification meta tag (or just its content value). It is added to your home page so you can prove you own the website.",
+    "searchEngines": "Search engines and AI assistants",
+    "searchEnginesHelp": "Once published, your website is ready for Google, Bing and AI assistants such as ChatGPT, Perplexity, Gemini and Claude: every page is rendered for crawlers with its own title, description, share image and structured data; robots.txt allows search and AI crawlers; sitemap.xml lists every page and course in both languages; llms.txt summarises your site for AI assistants; and Bing and other IndexNow engines are told when you publish changes.",
+    "searchEnginesSteps": "To see how your website performs: 1) In Google Search Console, add a URL-prefix property for your website address, choose the HTML tag method and paste the tag above, save and publish your website, then press Verify; submit your sitemap (your website address followed by /sitemap.xml). 2) In Bing Webmaster Tools, import your site from Google Search Console, or paste Bing’s meta tag above, save and publish, and verify. If you connect your own domain, verify that domain too (Search Console’s Domain property uses a DNS record at your domain provider)."
   },
   "navigation": {
     "primaryNavTitle": "Primary navigation",

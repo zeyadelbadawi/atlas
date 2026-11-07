@@ -370,7 +370,9 @@ export async function createSsrHandler({
         ms: Date.now() - started,
       });
       return {
-        status: 200,
+        // A page that does not exist is a real 404 (Google: no soft 404s),
+        // still the Academy's own branded page.
+        status: result.status === 404 ? 404 : 200,
         headers: {
           'Content-Type': 'text/html; charset=utf-8',
           // A page that is the same for every visitor of its URL may be kept

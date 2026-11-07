@@ -7,6 +7,8 @@ import { describe, expect, it } from 'vitest';
 import type { WebsiteConfiguration, WebsitePage } from '@types';
 import {
   buildHreflangAlternates,
+  buildXDefaultPath,
+  localizedPublicPath,
   resolvePageSeo,
 } from './seo-resolution.utils';
 
@@ -64,5 +66,46 @@ describe('hreflang alternates', () => {
         '/about'
       );
     }
+  });
+});
+
+describe('Home and x-default (SEO/AEO/GEO pass)', () => {
+  const home = {
+    ...about,
+    id: 'p-home',
+    coreType: 'home',
+    slug: 'home',
+  } as unknown as WebsitePage;
+
+  it('Home is `/` and its other language the bare prefix — never `/home`, a duplicate of `/`', () => {
+    const seo = resolvePageSeo(home, configuration, fallback, 'en');
+    expect(seo.canonicalPath).toBe('/');
+    expect(seo.hreflangAlternates).toEqual([
+      { locale: 'en', path: '/' },
+      { locale: 'ar', path: '/ar' },
+    ]);
+    expect(seo.xDefaultPath).toBe('/');
+    expect(
+      resolvePageSeo(home, configuration, fallback, 'en', 'ar')
+        .hreflangAlternates
+    ).toEqual([
+      { locale: 'en', path: '/en' },
+      { locale: 'ar', path: '/' },
+    ]);
+  });
+
+  it('x-default is the default language’s URL of the page', () => {
+    expect(buildXDefaultPath('/about')).toBe('/about');
+    expect(buildXDefaultPath('/about', 'ar')).toBe('/about');
+    expect(
+      resolvePageSeo(about, configuration, fallback, 'ar').xDefaultPath
+    ).toBe('/about');
+  });
+
+  it('a prefixed locale’s home has no trailing slash (the sitemap’s URL)', () => {
+    expect(localizedPublicPath('/', 'ar')).toBe('/ar');
+    expect(localizedPublicPath('/', 'en')).toBe('/');
+    expect(localizedPublicPath('/courses', 'ar')).toBe('/ar/courses');
+    expect(localizedPublicPath('/', 'en', 'ar')).toBe('/en');
   });
 });
