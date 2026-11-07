@@ -42,6 +42,7 @@ import type { AcademyStaffRole } from '@types';
 import { useAcademies } from '../hooks/useAcademies';
 import { useSwitchAcademy } from '../hooks/useSwitchAcademy';
 import { useAcademyScope } from '../scope/academy-scope.context';
+import { getShownAcademyMemberRole } from '../utils/academy-status.utils';
 
 export interface AcademySwitcherProps {
   readonly className?: string;
@@ -77,7 +78,8 @@ function RoleBadge({
         className
       )}
     >
-      {t(`academy:switcher.roles.${role}`)}
+      {/* B0-ORG-01 — a legacy administrator reads as Manager (D9). */}
+      {t(`academy:switcher.roles.${getShownAcademyMemberRole(role)}`)}
     </span>
   );
 }

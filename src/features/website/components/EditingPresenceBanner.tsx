@@ -44,9 +44,11 @@ export function EditingPresenceBanner({
         {others === 0
           ? t('website:presence.oneEditing', {
               name: isolate(first.name),
-              role: t(`website:presence.roles.${first.role}`, {
-                defaultValue: first.role,
-              }),
+              // B0-ORG-01 — a legacy administrator reads as Manager (D9).
+              role: t(
+                `website:presence.roles.${first.role === 'administrator' ? 'manager' : first.role}`,
+                { defaultValue: first.role }
+              ),
             })
           : t('website:presence.manyEditing', {
               name: isolate(first.name),

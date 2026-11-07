@@ -63,10 +63,10 @@
       "org_ownersHelp": "The owner of every active organization.",
       "academy_owners": "Academy owners by plan or status",
       "academy_ownersHelp": "Owners of academies on the plans and subscription statuses you choose.",
-      "academy_owners_admins": "All academy owners and administrators",
-      "academy_owners_adminsHelp": "Every active academy owner and administrator.",
+      "academy_owners_admins": "All academy owners",
+      "academy_owners_adminsHelp": "Every active academy owner.",
       "organization": "A specific organization",
-      "organizationHelp": "That organization’s members and its academies’ owners and administrators.",
+      "organizationHelp": "That organization’s members and its academies’ owners.",
       "plans": "Plans",
       "statuses": "Subscription status",
       "anyIfNone": "Leave all unticked to include every one.",
@@ -84,16 +84,14 @@
       "staff_other": "Staff in {{count}} roles",
       "org_owners": "All organization owners",
       "academy_owners": "Academy owners (filtered)",
-      "academy_owners_admins": "Academy owners and administrators",
+      "academy_owners_admins": "Academy owners",
       "organization": "One organization"
     }
   },
   "roles": {
     "owner": "Owner",
-    "administrator": "Administrator",
     "manager": "Manager",
-    "instructor": "Instructor",
-    "staff": "Staff"
+    "instructor": "Instructor"
   },
   "subscriptionStatus": {
     "trialing": "Trial",

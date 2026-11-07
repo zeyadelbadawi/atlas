@@ -182,10 +182,9 @@
     },
     "roles": {
       "owner": "Owner",
-      "administrator": "Administrator",
       "manager": "Manager",
       "instructor": "Instructor",
-      "staff": "Staff"
+      "member": "Team member"
     },
     "status": {
       "active": "Active",
@@ -556,10 +555,9 @@
     "switchingTo": "Opening {{name}}…",
     "roles": {
       "owner": "Owner",
-      "administrator": "Administrator",
       "manager": "Manager",
       "instructor": "Instructor",
-      "staff": "Staff"
+      "member": "Team member"
     },
     "accessLost": {
       "title": "You no longer have access to that academy",

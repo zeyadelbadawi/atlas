@@ -14,6 +14,7 @@ import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useBidiIsolation, useDateFormatter } from '@hooks';
 import {
+  auditRoleLabelKey,
   formatAuditEntry,
   type AuditEntryInput,
 } from '../utils/formatAuditEntry';
@@ -55,10 +56,8 @@ export function AuditEntryRow({
     formatDateTime: fmt.dateTime,
   });
   const Chevron = i18n.dir() === 'rtl' ? ChevronLeft : ChevronRight;
-  const roleLabel =
-    row.role && i18n.exists(`auditLog:roles.${row.role}`)
-      ? t(`auditLog:roles.${row.role}`)
-      : undefined;
+  const roleKey = auditRoleLabelKey(row.role);
+  const roleLabel = roleKey && i18n.exists(roleKey) ? t(roleKey) : undefined;
 
   // A translated sentence takes the page's direction — never `dir="auto"`,
   // which let a Latin actor name turn an Arabic sentence left-to-right.

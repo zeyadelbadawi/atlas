@@ -124,6 +124,17 @@ function pickPlanFeatures(raw: unknown): PlanFeatures {
   ) as unknown as PlanFeatures;
 }
 
+/**
+ * B0-ORG-01 — the limits the editor SHOWS. `staff` is left out: no academy
+ * role it would count can be granted, so it is not a limit to set. Its
+ * saved value still rides along in the form (seeded from the plan, never
+ * edited), so a save sends it back unchanged and the API, which requires
+ * it, keeps accepting the plan.
+ */
+const SHOWN_LIMIT_KEYS: readonly PlanLimitKey[] = PLAN_LIMIT_KEYS.filter(
+  (key) => key !== 'staff'
+);
+
 /** The form's starting values: the saved plan's own. */
 function toFormValues(plan: Plan | null): PlanEditorValues {
   const limits: Record<string, string> = {};
@@ -896,7 +907,7 @@ export function PlanEditorDialog({
               {t('platform:planAdmin.editor.limitsHelp')}
             </p>
             <div className="grid gap-4 sm:grid-cols-2">
-              {PLAN_LIMIT_KEYS.map((key) => {
+              {SHOWN_LIMIT_KEYS.map((key) => {
                 const id = `plan-limit-${key}`;
                 const isUnlimited = Boolean(values.unlimited[key]);
                 const unit = unitFor(key);

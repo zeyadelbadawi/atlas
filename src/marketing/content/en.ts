@@ -877,7 +877,6 @@ export const en: MarketingContent = {
       notSet: '–',
     },
     withheldLimitLabels: {
-      staff: 'Staff accounts',
       videoStorage: 'Video storage',
       videoMinutes: 'Video minutes',
       recordedSessions: 'Recorded sessions',

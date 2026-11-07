@@ -63,10 +63,10 @@
       "org_ownersHelp": "مالك كل مؤسسة نشطة.",
       "academy_owners": "مالكو الأكاديميات حسب الخطة أو الحالة",
       "academy_ownersHelp": "مالكو الأكاديميات المشتركة في الخطط وحالات الاشتراك التي تختارها.",
-      "academy_owners_admins": "جميع مالكي الأكاديميات ومسؤوليها",
-      "academy_owners_adminsHelp": "كل مالك ومسؤول نشط لأكاديمية.",
+      "academy_owners_admins": "جميع مالكي الأكاديميات",
+      "academy_owners_adminsHelp": "كل مالك نشط لأكاديمية.",
       "organization": "مؤسسة محددة",
-      "organizationHelp": "أعضاء تلك المؤسسة ومالكو أكاديمياتها ومسؤولوها.",
+      "organizationHelp": "أعضاء تلك المؤسسة ومالكو أكاديمياتها.",
       "plans": "الخطط",
       "statuses": "حالة الاشتراك",
       "anyIfNone": "اترك الكل دون تحديد لتضمين الجميع.",
@@ -96,16 +96,14 @@
       "staff_other": "الفريق في {{count}} دور",
       "org_owners": "جميع مالكي المؤسسات",
       "academy_owners": "مالكو الأكاديميات (مع تصفية)",
-      "academy_owners_admins": "مالكو الأكاديميات ومسؤولوها",
+      "academy_owners_admins": "مالكو الأكاديميات",
       "organization": "مؤسسة واحدة"
     }
   },
   "roles": {
     "owner": "المالك",
-    "administrator": "المسؤول",
     "manager": "المدير",
-    "instructor": "المدرّس",
-    "staff": "الموظف"
+    "instructor": "المدرّس"
   },
   "subscriptionStatus": {
     "trialing": "تجريبي",

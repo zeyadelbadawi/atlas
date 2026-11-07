@@ -1497,7 +1497,6 @@
     "manyEditing": "{{name}} and {{count}} others are currently editing this page.",
     "roles": {
       "owner": "Owner",
-      "administrator": "Administrator",
       "manager": "Manager"
     }
   },
@@ -3005,12 +3004,12 @@
   },
   "chromeLock": {
     "switchLabel": "Lock the header, menu and footer",
-    "description": "Keeps them exactly as they are: nobody can change them until an owner or administrator unlocks them. Pages, theme, brand and search settings still save as usual.",
+    "description": "Keeps them exactly as they are: nobody can change them until the academy owner unlocks them. Pages, theme, brand and search settings still save as usual.",
     "lockedTitle": "The header, menu and footer are locked",
-    "lockedReadOnly": "An academy owner or administrator locked them, so they can't be changed here. Ask one of them to unlock them if something needs updating.",
+    "lockedReadOnly": "The academy owner locked them, so they can't be changed here. Ask the owner to unlock them if something needs updating.",
     "lockedCanUnlock": "Locked: the fields below are read-only for everyone. Turn the lock off to edit them.",
-    "lockedError": "The header, menu and footer are locked, so this change wasn't saved. An owner or administrator has to unlock them first.",
-    "forbiddenError": "Only the academy owner or an administrator can lock or unlock the header, menu and footer.",
+    "lockedError": "The header, menu and footer are locked, so this change wasn't saved. The academy owner has to unlock them first.",
+    "forbiddenError": "Only the academy owner can lock or unlock the header, menu and footer.",
     "saveError": "The lock couldn't be changed. Please try again.",
     "lockedToast": "Header, menu and footer locked",
     "unlockedToast": "Header, menu and footer unlocked"

@@ -918,7 +918,6 @@ export const ar: MarketingContent = {
       notSet: '–',
     },
     withheldLimitLabels: {
-      staff: 'حسابات الموظفين',
       videoStorage: 'مساحة الفيديو',
       videoMinutes: 'دقائق الفيديو',
       recordedSessions: 'الجلسات المسجّلة',

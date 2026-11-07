@@ -101,10 +101,8 @@
   },
   "roles": {
     "owner": "المالك",
-    "administrator": "مسؤول",
     "manager": "مدير",
     "instructor": "مدرّس",
-    "staff": "موظف",
     "student": "طالب",
     "platform_owner": "فريق أطلس"
   },

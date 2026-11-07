@@ -14,7 +14,7 @@ order: 14
 priority: P2
 related: [DOC-WEB-009, DOC-WEB-011, DOC-ROLE-005]
 keywords: [lock header, lock footer, lock menu, protect navigation, قفل الهيدر, قفل الفوتر, قفل القائمة]
-updated: 2026-10-23
+updated: 2026-11-07
 ---
 
 Use the lock when your menu, header and footer are final and you don't want them changed by mistake, for example while a manager works on your pages.
@@ -29,7 +29,7 @@ The lock takes effect at once; there is nothing to publish.
 
 ## Who can lock and unlock
 
-- Only the academy owner (or an academy administrator) can turn the lock on or off. They see the switch in Website settings and in the visual editor's **Site** panel.
+- Only the academy owner can turn the lock on or off. They see the switch in Website settings and in the visual editor's **Site** panel.
 - Managers don't see the switch. While the lock is on, they see **The header, menu and footer are locked** with the fields read-only, and they ask the owner to unlock it if something needs updating.
 
 ## What the lock covers

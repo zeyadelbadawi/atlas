@@ -101,10 +101,8 @@
   },
   "roles": {
     "owner": "Owner",
-    "administrator": "Administrator",
     "manager": "Manager",
     "instructor": "Instructor",
-    "staff": "Staff",
     "student": "Student",
     "platform_owner": "Atlas team"
   },
