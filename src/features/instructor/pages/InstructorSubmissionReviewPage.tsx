@@ -47,7 +47,6 @@ import {
   hasViolationOn,
   RequiredMark,
   SaveFailedAlert,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import {
@@ -127,12 +126,8 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
   });
   const feedbackLength = form.watch('feedback')?.length ?? 0;
 
-  const labelledError = useLabelledViolations(
-    mutationError ?? null,
-    GRADE_FIELDS
-  );
-  useServerValidation(form, labelledError);
-  const fieldFailure = hasViolationOn(labelledError, GRADE_FIELDS);
+  useServerValidation(form, mutationError ?? null, { labels: GRADE_FIELDS });
+  const fieldFailure = hasViolationOn(mutationError ?? null, GRADE_FIELDS);
   const { markSaved } = useUnsavedChanges({
     isDirty: form.formState.isDirty,
   });
@@ -452,9 +447,9 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
                     )}
                   />
 
-                  {labelledError && !fieldFailure ? (
+                  {mutationError && !fieldFailure ? (
                     <SaveFailedAlert
-                      error={labelledError}
+                      error={mutationError}
                       titleKey="instructor:grading.error"
                     />
                   ) : null}

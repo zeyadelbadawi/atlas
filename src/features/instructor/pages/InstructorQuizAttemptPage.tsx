@@ -58,12 +58,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
 import { useConfirmDialog } from '@app/providers';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import {
-  hasViolationOn,
-  SaveFailedAlert,
-  useLabelledViolations,
-  useServerValidation,
-} from '@forms';
+import { hasViolationOn, SaveFailedAlert, useServerValidation } from '@forms';
 import {
   useDateFormatter,
   useLanguage,
@@ -397,16 +392,11 @@ function ManualGradingCard({
       ),
     [aliases]
   );
-  const labelledError = useLabelledViolations(
-    mutationError ?? null,
-    fieldLabels
-  );
-  useServerValidation(
-    form,
-    labelledError,
-    aliases as Record<string, `grades.${string}`>
-  );
-  const fieldFailure = hasViolationOn(labelledError, aliases);
+  useServerValidation(form, mutationError ?? null, {
+    aliases: aliases as Record<string, `grades.${string}`>,
+    labels: fieldLabels,
+  });
+  const fieldFailure = hasViolationOn(mutationError ?? null, aliases);
 
   const { markSaved } = useUnsavedChanges({
     isDirty: form.formState.isDirty,
@@ -546,9 +536,9 @@ function ManualGradingCard({
                   )}
                 />
               ))}
-              {labelledError && !fieldFailure ? (
+              {mutationError && !fieldFailure ? (
                 <SaveFailedAlert
-                  error={labelledError}
+                  error={mutationError}
                   titleKey="instructor:attemptReview.grading.error"
                 />
               ) : null}
@@ -606,12 +596,8 @@ function VoidAttemptDialog({
     if (!next) resetVoid();
     onOpenChange(next);
   };
-  const labelledError = useLabelledViolations(
-    mutationError ?? null,
-    VOID_FIELDS
-  );
-  useServerValidation(form, labelledError);
-  const fieldFailure = hasViolationOn(labelledError, VOID_FIELDS);
+  useServerValidation(form, mutationError ?? null, { labels: VOID_FIELDS });
+  const fieldFailure = hasViolationOn(mutationError ?? null, VOID_FIELDS);
 
   const onSubmit = async (data: VoidAttemptFormData) => {
     const confirmed = await confirm({
@@ -674,9 +660,9 @@ function VoidAttemptDialog({
                 </FormItem>
               )}
             />
-            {labelledError && !fieldFailure ? (
+            {mutationError && !fieldFailure ? (
               <SaveFailedAlert
-                error={labelledError}
+                error={mutationError}
                 titleKey="instructor:attemptReview.void.error"
               />
             ) : null}

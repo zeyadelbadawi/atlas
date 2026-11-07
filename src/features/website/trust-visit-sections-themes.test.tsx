@@ -206,12 +206,12 @@ function renderSection<TType extends SectionType>(
 afterEach(cleanup);
 
 describe('schedule times', () => {
-  it('are shown in the visitor’s locale, with Arabic digits in Arabic', () => {
+  it('are shown in the visitor’s locale, with Western digits in Arabic', () => {
     expect(formatScheduleTime('16:00', 'en')).toMatch(/^4:00\sPM$/);
     expect(formatScheduleTime('09:05', 'en')).toMatch(/^9:05\sAM$/);
     const arabic = formatScheduleTime('16:00', 'ar');
-    expect(arabic).toContain('٤:٠٠');
-    expect(arabic).not.toMatch(/[0-9]/);
+    expect(arabic).toContain('4:00');
+    expect(arabic).not.toMatch(/[\u0660-\u0669]/);
   });
 });
 
@@ -294,7 +294,7 @@ describe.each(THEMES)('%s — CMS phase 3d sections', (themeKey, renderers) => {
     expect(container.textContent).not.toContain('Sample class');
   });
 
-  it('schedule: Arabic labels and Arabic digits in Arabic', () => {
+  it('schedule: Arabic labels and Western digits in Arabic', () => {
     renderSection(themeKey, renderers, 'schedule', SCHEDULE, {
       locale: 'ar',
     });
@@ -302,7 +302,7 @@ describe.each(THEMES)('%s — CMS phase 3d sections', (themeKey, renderers) => {
     expect(within(table).getAllByRole('rowheader')[0].textContent).toBe(
       'السبت'
     );
-    expect(table.textContent).toContain('٩:٠٠');
+    expect(table.textContent).toContain('9:00');
     expect(table.textContent).toContain('رياضيات');
   });
 

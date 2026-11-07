@@ -31,6 +31,7 @@ import { resolveLocalizedText } from '../utils/localized-text.utils';
 import { useCourseSpotlight } from './useCourseSpotlight';
 import type { CourseSpotlightSectionConfig, WebsitePage } from '@types';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
+import { intlLocale } from '@utils';
 
 export interface CourseSpotlightSectionProps {
   readonly config: CourseSpotlightSectionConfig;
@@ -194,9 +195,7 @@ export function CourseSpotlightSection({
                 >
                   <span className="min-w-0 break-words text-foreground">
                     <span aria-hidden className="me-2 text-muted-foreground">
-                      {(index + 1).toLocaleString(
-                        locale === 'ar' ? 'ar-EG' : 'en-US'
-                      )}
+                      {(index + 1).toLocaleString(intlLocale(locale))}
                     </span>
                     <span dir="auto">{item.title}</span>
                   </span>

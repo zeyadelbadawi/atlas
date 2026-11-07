@@ -204,7 +204,8 @@ describe('failures (V09)', () => {
     await waitFor(() => expect(state.notifyError).toHaveBeenCalledTimes(1));
     expect(state.notifyError).toHaveBeenCalledWith(
       'announcements:manage.publishFailedTitle',
-      'errors:server.description'
+      'errors:server.description',
+      undefined
     );
   });
 });

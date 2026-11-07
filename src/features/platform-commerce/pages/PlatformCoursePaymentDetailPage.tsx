@@ -43,7 +43,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useConfirmDialog, useToast } from '@app/providers';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import { apiErrorMessage, toErrorsNamespaceKey } from '@utils';
+import { apiErrorMessage, intlLocale, toErrorsNamespaceKey } from '@utils';
 import {
   formatMoney,
   getCourseOrderStatusTone,
@@ -301,7 +301,9 @@ export default function PlatformCoursePaymentDetailPage(): JSX.Element {
               <DetailRow
                 label={t('platformCommerce:coursePayments.submittedAt')}
               >
-                {new Date(payment.createdAt).toLocaleString(i18n.language)}
+                {new Date(payment.createdAt).toLocaleString(
+                  intlLocale(i18n.language)
+                )}
               </DetailRow>
             </dl>
           </CardContent>

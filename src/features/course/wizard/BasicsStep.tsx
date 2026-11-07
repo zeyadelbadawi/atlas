@@ -32,7 +32,6 @@ import {
   RequiredMark,
   SaveFailedAlert,
   useFocusFirstViolation,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import { isApiError } from '@api';
@@ -133,9 +132,8 @@ function CreateBasics({
   // language (V12); a taken address on the slug field (V13); a plan limit
   // in its own toast; anything else one inline alert (V05).
   const createError = create.error ?? null;
-  const labelled = useLabelledViolations(createError, COURSE_FIELD_LABELS);
-  useServerValidation(form, labelled);
-  useFocusFirstViolation(form, labelled, BASICS_VIOLATION_FIELDS);
+  useServerValidation(form, createError, { labels: COURSE_FIELD_LABELS });
+  useFocusFirstViolation(form, createError, BASICS_VIOLATION_FIELDS);
   const slugTaken = useSlugTakenError(form, createError);
   const isLimit =
     isApiError(createError) && createError.code === 'ENTITLEMENT_LIMIT_REACHED';

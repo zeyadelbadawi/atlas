@@ -14,6 +14,7 @@ import {
 import { EmptyState } from '@components/feedback';
 import type { AnalyticsTimeSeriesPoint } from '@types';
 import type { LanguageCode } from '@types';
+import { intlLocale } from '@utils';
 
 export interface AnalyticsLineChartProps {
   readonly points: readonly AnalyticsTimeSeriesPoint[];
@@ -37,7 +38,7 @@ export function AnalyticsLineChart({
   };
 
   const data = points.map((point) => ({
-    date: new Date(point.date).toLocaleDateString(language, {
+    date: new Date(point.date).toLocaleDateString(intlLocale(language), {
       month: 'short',
       day: 'numeric',
     }),

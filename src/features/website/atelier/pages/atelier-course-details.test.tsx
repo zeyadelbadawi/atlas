@@ -386,7 +386,7 @@ describe('AtelierCourseDetails', () => {
     expect(screen.queryByRole('heading')).toBeNull();
   });
 
-  it('Arabic: right to left, Arabic labels, Arabic-Indic chapter numbers', () => {
+  it('Arabic: right to left, Arabic labels, Western-digit chapter numbers', () => {
     const { container } = wrap(page('ar'), 'ar');
     expect(
       container.querySelector('[dir="rtl"] [data-atelier-course-details]')
@@ -398,6 +398,6 @@ describe('AtelierCourseDetails', () => {
       screen
         .getByRole('list', { name: 'المحتويات' })
         .querySelector('.at-numeral')?.textContent
-    ).toBe('٠١');
+    ).toBe('01');
   });
 });

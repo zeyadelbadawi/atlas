@@ -2,6 +2,16 @@ import * as React from 'react';
 import * as RechartsPrimitive from 'recharts';
 
 import { cn } from '../../lib/utils';
+import { intlLocale } from '@utils';
+
+/** The page's language (set on <html> by the localization provider): Arabic
+ *  values print in Western digits like every other number in Atlas. */
+function documentLocale(): string {
+    return intlLocale(
+        (typeof document !== 'undefined' && document.documentElement.lang) ||
+            'en'
+    );
+}
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: '', dark: '.dark' } as const;
@@ -238,7 +248,7 @@ const ChartTooltipContent = React.forwardRef<
                                             </div>
                                             {item.value && (
                                                 <span className="font-mono font-medium tabular-nums text-foreground">
-                                                    {item.value.toLocaleString()}
+                                                    {item.value.toLocaleString(documentLocale())}
                                                 </span>
                                             )}
                                         </div>

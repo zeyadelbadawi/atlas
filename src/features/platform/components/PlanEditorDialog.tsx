@@ -57,7 +57,6 @@ import {
   FormErrorSummary,
   SaveFailedAlert,
   fieldErrorText,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import { cn, formatCurrency, formatNumber } from '@utils';
@@ -359,18 +358,17 @@ export function PlanEditorDialog({
 
   // The server's refusal of a field lands on that field, its message
   // naming the field's label in the page's language (V07).
-  const labelled = useLabelledViolations(
-    updatePlan.error ?? null,
-    SERVER_FIELD_LABELS
-  );
-  const saveError = useLocalizedViolations(labelled, language);
-  useServerValidation(form, saveError, SERVER_FIELD_ALIASES);
-  const previewLabelled = useLabelledViolations(
+  const serverFields = {
+    aliases: SERVER_FIELD_ALIASES,
+    labels: SERVER_FIELD_LABELS,
+  };
+  const saveError = useLocalizedViolations(updatePlan.error ?? null, language);
+  useServerValidation(form, saveError, serverFields);
+  const previewError = useLocalizedViolations(
     previewImpact.error ?? null,
-    SERVER_FIELD_LABELS
+    language
   );
-  const previewError = useLocalizedViolations(previewLabelled, language);
-  useServerValidation(form, previewError, SERVER_FIELD_ALIASES);
+  useServerValidation(form, previewError, serverFields);
 
   const guard = useDirtyGuard(formState.isDirty);
   const requestClose = () => {

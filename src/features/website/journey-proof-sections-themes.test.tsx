@@ -10,7 +10,7 @@
  *   file downloads in place (`download`), anything else opens in a new tab
  *   with `rel="noopener noreferrer"`; an unsafe link is never drawn;
  * - certificates: lazy images in a reserved frame, the full size as a plain
- *   new-tab link, issuer and year (Arabic digits in Arabic);
+ *   new-tab link, issuer and year (Western digits in Arabic too);
  * - previews draw everything inert, label samples, and explain an empty
  *   section that visitors never see.
  */
@@ -290,7 +290,7 @@ describe.each(THEMES)(
       expect(list.querySelectorAll('[data-timeline-line]')).toHaveLength(2);
     });
 
-    it('timeline: Arabic copy and Arabic digits in Arabic', () => {
+    it('timeline: Arabic copy and Western digits in Arabic', () => {
       const { container } = renderSection(
         themeKey,
         renderers,
@@ -301,8 +301,8 @@ describe.each(THEMES)(
       expect(screen.getByText('الترم الأول')).toBeTruthy();
       expect(screen.getByText('سبتمبر – ديسمبر')).toBeTruthy();
       const markers = container.querySelectorAll('[data-timeline-marker]');
-      expect(markers[1].textContent).toMatch(/٢/);
-      expect(markers[1].textContent).not.toMatch(/[0-9]/);
+      expect(markers[1].textContent).toMatch(/2/);
+      expect(markers[1].textContent).not.toMatch(/[\u0660-\u0669]/);
     });
 
     it('video reviews: posters only until play; one video plays at a time', () => {
@@ -428,7 +428,7 @@ describe.each(THEMES)(
       expect(container.querySelector('button')).toBeNull();
     });
 
-    it('certificates: the year in Arabic digits in Arabic', () => {
+    it('certificates: the year in Western digits in Arabic', () => {
       const { container } = renderSection(
         themeKey,
         renderers,
@@ -437,7 +437,7 @@ describe.each(THEMES)(
         { locale: 'ar' }
       );
       expect(screen.getByText('الشهادات والاعتمادات')).toBeTruthy();
-      expect(container.querySelector('time')?.textContent).toBe('٢٠٢٥');
+      expect(container.querySelector('time')?.textContent).toBe('2025');
     });
 
     it('previews are inert, label sample reviews and explain an empty section visitors never see', () => {

@@ -411,7 +411,7 @@ describe('ManaraCourseDetails', () => {
     expect(screen.queryByRole('heading')).toBeNull();
   });
 
-  it('Arabic: right to left, Arabic labels, Arabic-Indic part numbers', () => {
+  it('Arabic: right to left, Arabic labels, Western-digit part numbers', () => {
     const { container } = wrap(page('ar'), 'ar');
     expect(
       container.querySelector('[dir="rtl"] [data-manara-course-details]')
@@ -423,7 +423,7 @@ describe('ManaraCourseDetails', () => {
       screen
         .getByRole('list', { name: 'المنهج' })
         .querySelector('.mnp-track-no')?.textContent
-    ).toBe('٠١');
+    ).toBe('01');
     expect(
       screen.getByRole('complementary', { name: 'التسجيل في هذه الدورة' })
     ).toBeTruthy();

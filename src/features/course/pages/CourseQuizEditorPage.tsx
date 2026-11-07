@@ -31,7 +31,7 @@ import {
   UnitPlacementNote,
 } from '../components/UnitPickerField';
 import { useCourseEditorLeadCrumbs } from '../hooks/useCourseEditorTabs';
-import { useActionFailureToast } from '../forms/course-form-feedback';
+import { useActionFailureToast } from '@hooks';
 
 export default function CourseQuizEditorPage(): JSX.Element {
   const { t } = useTranslation();
@@ -92,7 +92,7 @@ export default function CourseQuizEditorPage(): JSX.Element {
       toast({ title: t('course:quizAuthoring.deleted') });
       goToList();
     } catch (deleteError) {
-      failureToast('course:quizAuthoring.deleteError', deleteError);
+      failureToast(deleteError, 'course:quizAuthoring.deleteError');
     }
   };
 

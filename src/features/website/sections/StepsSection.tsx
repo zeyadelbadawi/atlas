@@ -12,6 +12,7 @@ import {
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { StepsSectionConfig } from '@types';
+import { intlLocale } from '@utils';
 
 export interface StepsSectionProps {
   readonly config: StepsSectionConfig;
@@ -52,9 +53,7 @@ export function StepsSection({ config }: StepsSectionProps): JSX.Element {
                 aria-hidden
                 className="inline-flex size-9 items-center justify-center rounded-full bg-[var(--website-primary-solid)] text-sm font-semibold text-white"
               >
-                {(index + 1).toLocaleString(
-                  locale === 'ar' ? 'ar-EG' : 'en-US'
-                )}
+                {(index + 1).toLocaleString(intlLocale(locale))}
               </span>
               <h3 className="mt-3 break-words font-medium text-foreground">
                 {resolveLocalizedText(item.title, locale)}

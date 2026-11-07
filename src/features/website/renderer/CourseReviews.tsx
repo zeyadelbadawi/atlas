@@ -12,6 +12,7 @@ import { StarRating } from '@components/data-display';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePublicCourseRating, usePublicCourseReviews } from '@hooks';
 import type { PublicWebsiteLocale } from '@types';
+import { intlLocale } from '@utils';
 
 export interface CourseReviewsProps {
   readonly academyId: string;
@@ -47,7 +48,7 @@ export function CourseReviews({
 
   // UTC, so the date is the same wherever the page is rendered (the
   // server or the visitor's browser) — reviews carry a UTC timestamp.
-  const dateFmt = new Intl.DateTimeFormat(locale === 'ar' ? 'ar' : 'en', {
+  const dateFmt = new Intl.DateTimeFormat(intlLocale(locale), {
     year: 'numeric',
     month: 'short',
     day: 'numeric',

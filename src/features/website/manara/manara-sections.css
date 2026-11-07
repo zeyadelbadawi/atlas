@@ -364,9 +364,10 @@
   background-color: var(--mn-day-soft);
 }
 
-/* Outlined numerals (filled where text stroke isn't supported). B10 (UX
-   audit) V30 — Latin only: an outlined Arabic-Indic digit is a thin ring
-   around a small shape and reads as a stray mark, so Arabic is filled. */
+/* Outlined numerals (filled where text stroke isn't supported). Latin
+   only: Arabic shows the same Western digits (one digit system), but in
+   the Arabic face, whose digits have overlapping contours a stroke draws
+   as stray lines inside the numeral, so Arabic is filled (B10 V30). */
 @supports (-webkit-text-stroke-width: 1px) {
   [data-theme-pack='manara'] .mnh-step-no:not(:lang(ar)) {
     color: transparent;

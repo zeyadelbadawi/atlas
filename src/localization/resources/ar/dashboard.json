@@ -67,7 +67,7 @@
       "description": "سيظهر استهلاك خطتك هنا بمجرد تفعيل اشتراكك واحتساب أول البيانات."
     },
     "limitWarning": "اقتربت من حد خطتك أو وصلت إليه: {{limits}}. تُرفض الإضافات الجديدة عند الوصول إلى الحد.",
-    "limitWarningItem": "{{name}} ({{percent}}٪)",
+    "limitWarningItem": "{{name}} ({{percent}}%)",
     "limitWarningSeparator": "، ",
     "comparePlans": "مقارنة الخطط"
   },

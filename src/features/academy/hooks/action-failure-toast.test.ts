@@ -10,7 +10,7 @@ import { createApiError } from '@api';
 import { INLINE_ERRORS_META } from '@services/query';
 import { createI18nInstance } from '@/localization/i18n';
 import { isTranslatedString } from '@utils';
-import { actionFailureDescription } from './useActionFailureToast';
+import { actionFailureDescription } from '@/shared/hooks/useActionFailureToast';
 import { memberAddSpecificKey } from '../utils/member-add.utils';
 
 const captured = vi.hoisted(

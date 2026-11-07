@@ -9,9 +9,8 @@ import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
 import {
   MUTATION_MAX_RETRIES,
   QUERY_GC_TIME_MS,
+  QUERY_RETRY,
   QUERY_STALE_TIME_MS,
-  queryRetryDelay,
-  shouldRetryQuery,
 } from '@config';
 import { normalizeUnknownError } from '@api';
 import type { ApiError } from '@api';
@@ -59,10 +58,9 @@ export function createQueryClient(
       queries: {
         staleTime: QUERY_STALE_TIME_MS,
         gcTime: QUERY_GC_TIME_MS,
-        // Retry only transient failures; see shouldRetryQuery.
-        retry: (failureCount, error) =>
-          shouldRetryQuery(failureCount, normalizeUnknownError(error)),
-        retryDelay: queryRetryDelay,
+        // One retry layer only: the HTTP client retries a failed read once
+        // (see QUERY_RETRY), so the error shows in about 1–2 s.
+        retry: QUERY_RETRY,
         // Refetching on focus is disruptive in a long-running admin console.
         refetchOnWindowFocus: false,
         // Reconnecting should recover data the user was already looking at.

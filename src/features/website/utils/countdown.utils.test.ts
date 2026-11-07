@@ -89,6 +89,6 @@ describe('naming the deadline', () => {
     });
     const ar = deadlineText(instant, 'Africa/Cairo', 'ar');
     expect(ar.date).toContain('يناير');
-    expect(ar.time).toBe('١١:٥٩ م');
+    expect(ar.time).toBe('11:59 م');
   });
 });

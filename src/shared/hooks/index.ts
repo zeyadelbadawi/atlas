@@ -36,6 +36,15 @@ export { useApiQuery } from './useApiQuery';
 export { useApiMutation } from './useApiMutation';
 export { useErrorText, resolveErrorTextKey } from './useErrorText';
 export type { ErrorTextResolver } from './useErrorText';
+export {
+  actionFailureDescription,
+  useActionFailureToast,
+} from './useActionFailureToast';
+export type {
+  ActionFailureDescription,
+  ActionFailureToast,
+  ActionFailureToastOptions,
+} from './useActionFailureToast';
 export type { UseApiMutationOptions } from './useApiMutation';
 export { useAcademyBoundMutation } from './useAcademyBoundMutation';
 export type { AcademyScopedVariables } from './useAcademyBoundMutation';

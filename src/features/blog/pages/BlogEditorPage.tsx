@@ -49,6 +49,21 @@ function toDateTimeLocalValue(iso?: string): string {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
+/** The labels a server refusal names its field by (`{{field}}`). */
+const BLOG_FIELD_LABELS = {
+  title: 'blog:editor.titleLabel',
+  slug: 'blog:editor.slugLabel',
+  excerpt: 'blog:editor.excerptLabel',
+  content: 'blog:editor.contentLabel',
+  featuredImage: 'blog:editor.featuredImageLabel',
+  category: 'blog:editor.categoryLabel',
+  tags: 'blog:editor.tagsLabel',
+  scheduledAt: 'blog:editor.scheduledAtLabel',
+  metaTitle: 'blog:editor.metaTitleLabel',
+  metaDescription: 'blog:editor.metaDescriptionLabel',
+  ogImage: 'blog:editor.ogImageLabel',
+} as const;
+
 export default function BlogEditorPage(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -94,7 +109,9 @@ export default function BlogEditorPage(): JSX.Element {
     },
   });
 
-  useServerValidation(form, isEditMode ? updateError : createError);
+  useServerValidation(form, isEditMode ? updateError : createError, {
+    labels: BLOG_FIELD_LABELS,
+  });
   // `persist` saves without navigating, so "Save and leave" reuses it and
   // then continues to wherever the user was going.
   const { markSaved } = useUnsavedChanges({

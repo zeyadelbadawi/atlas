@@ -41,6 +41,8 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 const FORGOT_FIELDS: readonly string[] = ['email'];
+/** The label a server refusal names its field by (`{{field}}`). */
+const FORGOT_LABELS = { email: 'auth:forgotPassword.email' } as const;
 
 export function ForgotPasswordForm(): JSX.Element {
   const { t } = useTranslation();
@@ -63,7 +65,7 @@ export function ForgotPasswordForm(): JSX.Element {
   } = form;
 
   const failure = requestPasswordReset.error;
-  useServerValidation(form, failure);
+  useServerValidation(form, failure, { labels: FORGOT_LABELS });
   const onField = violationsAllOn(failure, FORGOT_FIELDS);
   useEffect(() => {
     if (onField) setFocus('email');

@@ -26,7 +26,7 @@ import { MetricCard, StatusBadge } from '@components/data-display';
 import { SectionLoader } from '@components/loading';
 import { useStudentAnalytics } from '../hooks/useStudentAnalytics';
 import { useDashboardScope } from '../hooks/useDashboardScope';
-import { progressCounts } from '@utils';
+import { intlLocale, progressCounts } from '@utils';
 
 /** Share of `value` within `total`, guarding the empty-cohort case so an empty academy reads 0% rather than NaN. */
 function share(value: number, total: number): number {
@@ -39,7 +39,7 @@ export default function StudentAnalyticsPage(): JSX.Element {
   const { data, isLoading, isError, refetch } = useStudentAnalytics();
 
   const formatNumber = (value: number): string =>
-    new Intl.NumberFormat(i18n.language).format(value);
+    new Intl.NumberFormat(intlLocale(i18n.language)).format(value);
 
   if (scope.kind === 'none') {
     return (

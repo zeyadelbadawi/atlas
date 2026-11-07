@@ -26,12 +26,8 @@ export function useAcademyMembership(academyId: string | undefined) {
     queryFn: () => academyService.getMyMembership(academyId!),
     enabled: !!academyId,
     staleTime: 0,
-    // A refusal is an answer, not a transient failure: retrying a 403/404
-    // would only delay the redirect the user needs.
-    retry: (failureCount, error) =>
-      error.kind !== 'forbidden' &&
-      error.kind !== 'notFound' &&
-      failureCount < 2,
+    // No query-level retry (the app default): a refusal (403/404) is an
+    // answer, and the HTTP client already retried a server failure once.
     // Handled by the academy scope (message + redirect), not the generic
     // "you do not have access" toast.
     meta: { inlineErrors: true },

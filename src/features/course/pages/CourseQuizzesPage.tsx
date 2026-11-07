@@ -37,7 +37,7 @@ import {
   useCourseEditorTabs,
 } from '../hooks/useCourseEditorTabs';
 import type { Quiz } from '@types';
-import { useActionFailureToast } from '../forms/course-form-feedback';
+import { useActionFailureToast } from '@hooks';
 
 export default function CourseQuizzesPage(): JSX.Element {
   const { t } = useTranslation();
@@ -131,7 +131,7 @@ export default function CourseQuizzesPage(): JSX.Element {
       await deleteQuiz.mutateAsync(quiz.id);
       toast({ title: t('course:quizAuthoring.deleted') });
     } catch (deleteError) {
-      failureToast('course:quizAuthoring.deleteError', deleteError);
+      failureToast(deleteError, 'course:quizAuthoring.deleteError');
     }
   };
 

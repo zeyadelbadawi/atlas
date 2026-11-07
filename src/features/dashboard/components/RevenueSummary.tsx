@@ -27,6 +27,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import type { DashboardManualSales, DashboardRevenue } from '@types';
+import { intlLocale } from '@utils';
 
 export interface RevenueSummaryProps {
   readonly revenue: DashboardRevenue;
@@ -37,7 +38,7 @@ function formatAmount(
   currency: string,
   locale: string
 ): string {
-  return new Intl.NumberFormat(locale, {
+  return new Intl.NumberFormat(intlLocale(locale), {
     style: 'currency',
     currency,
   }).format(amountMinorUnits / 100);

@@ -107,25 +107,64 @@ const DEFAULT_TIMEOUT_MS = 30_000;
 /**
  * Maximum number of transport-level retries.
  *
- * B2 (UX audit) — the HTTP client retries ONCE, and only a failure a second
- * attempt can plausibly clear: no response, 502, 503 or 504 (a gateway or a
- * restart). A plain 500 is left to the caller — the query layer retries reads
- * (`shouldRetryQuery`), a mutation shows its error. This client used to
- * retry every 5xx three times underneath the query layer's own retries, so
- * one failing list took 18 requests and ~40 s of skeleton before its error,
- * and a failed save sat silent for ~12 s. Direct reads outside the query
- * layer (the session refresh after onboarding) keep their one retry.
+ * Owner decision (UX audit, "faster error on failed reads") — retries live
+ * in ONE layer, this client; the query layer does not retry
+ * (`QUERY_RETRY` in `@config`). A read that fails with a 500 used to be
+ * replayed by both layers and showed its error after ~12 s; now:
+ *
+ * - a read (GET/HEAD/OPTIONS) is retried ONCE after any 5xx or a lost
+ *   response, so its error shows in about 1–2 s;
+ * - a replay-safe write (PUT/DELETE, or a body carrying an idempotency key)
+ *   is retried once, and only when a second attempt can plausibly clear the
+ *   failure: no response, 502, 503 or 504 (a gateway or a restart). A plain
+ *   500 on a write is the caller's to show;
+ * - a 4xx is never retried, except a 429 whose `Retry-After` is a few
+ *   seconds (`MAX_RATE_LIMIT_WAIT_MS`);
+ * - nothing is retried while the browser is offline (it would fail the same
+ *   way — the query layer pauses and refetches on reconnect, and the offline
+ *   outbox has its own backoff), after a client timeout (the request already
+ *   waited `DEFAULT_TIMEOUT_MS`), or after a cancellation.
+ *
+ * Direct reads outside the query layer (the session refresh after
+ * onboarding) get the same single retry.
  */
 const MAX_RETRIES = 1;
 
 /** Failures that a second attempt a moment later can plausibly clear. */
 const TRANSIENT_STATUSES = new Set([502, 503, 504]);
 
-function isTransportRetryable(error: Pick<AxiosError, 'response'>): boolean {
-  return !error.response || TRANSIENT_STATUSES.has(error.response.status);
+/** Methods that only read: any server error is worth one more attempt. */
+const READ_METHODS = new Set(['get', 'head', 'options']);
+
+/** Whether the browser says it has no connection (never true on the server). */
+function isOffline(): boolean {
+  return typeof navigator !== 'undefined' && navigator.onLine === false;
 }
 
-/** Delay between retries, in milliseconds. */
+/**
+ * Whether one more attempt of this request can plausibly succeed (429 is
+ * decided separately, from its `Retry-After`).
+ */
+export function isTransportRetryable(
+  config: { method?: string },
+  error: Pick<AxiosError, 'response' | 'code'>
+): boolean {
+  if (!error.response) {
+    // A cancellation is deliberate, a timeout already waited the full
+    // budget, and offline fails the same way twice.
+    if (error.code === 'ERR_CANCELED' || error.code === 'ECONNABORTED') {
+      return false;
+    }
+    return !isOffline();
+  }
+  const { status } = error.response;
+  if (READ_METHODS.has((config.method ?? 'get').toLowerCase())) {
+    return status >= 500;
+  }
+  return TRANSIENT_STATUSES.has(status);
+}
+
+/** Delay before the one retry, in milliseconds. */
 const RETRY_DELAY_MS = 1_000;
 
 /**
@@ -397,10 +436,13 @@ export class HttpClient {
               await this.delay(waitMs);
               return this.instance.request(originalRequest);
             }
-          } else if (retryCount < MAX_RETRIES && isTransportRetryable(error)) {
+          } else if (
+            retryCount < MAX_RETRIES &&
+            isTransportRetryable(originalRequest, error)
+          ) {
             originalRequest.headers['X-Retry-Count'] = retryCount + 1;
 
-            await this.delay(RETRY_DELAY_MS * (retryCount + 1));
+            await this.delay(RETRY_DELAY_MS);
             return this.instance.request(originalRequest);
           }
         }

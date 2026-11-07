@@ -21,7 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useConfirmDialog } from '@app/providers';
 import { usePermissions } from '@hooks';
-import { toErrorsNamespaceKey } from '@utils';
+import { intlLocale, toErrorsNamespaceKey } from '@utils';
 import {
   usePlatformCancelProvisioning,
   usePlatformProvisioningRequest,
@@ -176,7 +176,9 @@ export default function PlatformProvisioningDetailPage(): JSX.Element {
                 {t('provisioning:platformConsole.table.startedAt')}
               </span>
               <span>
-                {new Date(request.createdAt).toLocaleString(i18n.language)}
+                {new Date(request.createdAt).toLocaleString(
+                  intlLocale(i18n.language)
+                )}
               </span>
             </div>
           </CardContent>

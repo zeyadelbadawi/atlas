@@ -34,6 +34,7 @@ const state = vi.hoisted(() => ({
   mutate: vi.fn(),
   setLanguage: vi.fn(),
   setPreference: vi.fn(),
+  notifySuccess: vi.fn(),
 }));
 
 vi.mock('./hooks', () => ({
@@ -47,6 +48,10 @@ vi.mock('@hooks', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
   useLanguage: () => ({ language: 'en', setLanguage: state.setLanguage }),
   useTheme: () => ({ preference: 'light', setPreference: state.setPreference }),
+}));
+vi.mock('@app/providers', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  useToast: () => ({ notifySuccess: state.notifySuccess }),
 }));
 vi.mock('@features/notifications', () => ({
   CommunicationPreferencesPanel: () => null,
@@ -122,5 +127,13 @@ describe('ProfilePreferencesSection — language', () => {
     await chooseArabicAndSave();
     await waitFor(() => expect(state.setLanguage).toHaveBeenCalledWith('ar'));
     expect(state.setPreference).not.toHaveBeenCalled();
+    // Confirmed by the app toast, in the language the page now shows.
+    await waitFor(() =>
+      expect(state.notifySuccess).toHaveBeenCalledWith(
+        'profile:success.preferencesUpdated',
+        'profile:success.changesApplied',
+        { lng: 'ar' }
+      )
+    );
   });
 });

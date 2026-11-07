@@ -180,7 +180,9 @@ export function WebsiteDomainTab({
   useUnsavedChanges({
     isDirty: formMode !== 'closed' && form.formState.isDirty,
   });
-  useServerValidation(form, addDomain.error);
+  useServerValidation(form, addDomain.error, {
+    labels: { hostname: 'website:domain.custom.hostnameLabel' },
+  });
 
   if (domainQuery.isLoading) return <Skeleton className="h-64 w-full" />;
   if (domainQuery.error || !domainQuery.data) {

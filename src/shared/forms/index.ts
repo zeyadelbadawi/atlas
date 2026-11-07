@@ -16,6 +16,7 @@ export {
   PHONE_TAKEN_ERROR_KEY,
   useServerValidation,
 } from './useServerValidation';
+export type { ServerValidationOptions } from './useServerValidation';
 export {
   useNameConflictError,
   nameConflictFromError,
@@ -30,7 +31,6 @@ export {
   hasViolationOn,
   useFailureReason,
   useFocusFirstViolation,
-  useLabelledViolations,
 } from './form-feedback';
 export { RequiredMark, SaveFailedAlert } from './SaveFailedAlert';
 export type { SaveFailedAlertProps } from './SaveFailedAlert';

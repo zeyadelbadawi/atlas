@@ -39,7 +39,8 @@ vi.mock('@services/identity', () => ({
   sessionService: { refresh: vi.fn() },
 }));
 
-const { HttpClient, isReplaySafe } = await import('./http-client');
+const { HttpClient, isReplaySafe, isTransportRetryable } =
+  await import('./http-client');
 
 function failure(
   method: string,
@@ -105,14 +106,88 @@ describe('HttpClient transient retry', () => {
     }
   );
 
-  // B2 (UX audit) — a plain 500 is not retried underneath the caller: the
-  // query layer retries reads, a mutation shows its error at once.
+  // Owner decision (faster error on failed reads) — one retry layer: a
+  // read is retried once here after ANY server error, the query layer not
+  // at all, so a GET that fails with a 500 shows its error in ~1–2 s.
   it.each([
     ['get', 500],
+    ['get', 501],
+    ['head', 500],
+    ['options', 503],
+  ])(
+    'replays a read once after a server error (%s %s)',
+    async (method, status) => {
+      expect(await run(failure(method, status))).toBe('retried');
+      expect(requestSpy).toHaveBeenCalledTimes(1);
+    }
+  );
+
+  it('waits about a second before that one retry', async () => {
+    const outcome = capturedOnRejected!(failure('get', 500));
+    await vi.advanceTimersByTimeAsync(999);
+    expect(requestSpy).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1);
+    expect(requestSpy).toHaveBeenCalledTimes(1);
+    await outcome;
+  });
+
+  it('a read that fails twice surfaces its error in under 3 s', async () => {
+    requestSpy.mockImplementation(() => {
+      const retried = failure('get', 500);
+      (retried.config!.headers as Record<string, unknown>)['X-Retry-Count'] = 1;
+      return capturedOnRejected!(retried);
+    });
+    const started = Date.now();
+    const outcome = capturedOnRejected!(failure('get', 500)).then(
+      () => 'retried',
+      () => 'rejected'
+    );
+    await vi.runAllTimersAsync();
+    expect(await outcome).toBe('rejected');
+    expect(requestSpy).toHaveBeenCalledTimes(1);
+    expect(Date.now() - started).toBeLessThan(3_000);
+  });
+
+  // A plain 500 on a write is not replayed: it will not fix itself in a
+  // second, and the person sees the failed save at once.
+  it.each([
     ['put', 500],
     ['delete', 500],
   ])('leaves %s (%s) to the caller', async (method, status) => {
     expect(await run(failure(method, status))).toBe('rejected');
+    expect(requestSpy).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['get', 400],
+    ['get', 401],
+    ['get', 403],
+    ['get', 404],
+    ['get', 409],
+    ['get', 422],
+    ['put', 404],
+  ])('never retries a 4xx (%s %s)', async (method, status) => {
+    expect(await run(failure(method, status))).toBe('rejected');
+    expect(requestSpy).not.toHaveBeenCalled();
+  });
+
+  it('does not retry a lost response while the browser is offline', async () => {
+    const onLine = vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
+    try {
+      expect(await run(failure('get', null))).toBe('rejected');
+      expect(requestSpy).not.toHaveBeenCalled();
+    } finally {
+      onLine.mockRestore();
+    }
+  });
+
+  it.each([
+    ['a timeout', 'ECONNABORTED'],
+    ['a cancellation', 'ERR_CANCELED'],
+  ])('does not retry after %s', async (_label, code) => {
+    const error = failure('get', null);
+    (error as { code?: string }).code = code;
+    expect(await run(error)).toBe('rejected');
     expect(requestSpy).not.toHaveBeenCalled();
   });
 
@@ -150,6 +225,17 @@ describe('HttpClient transient retry', () => {
       planKey: 'pro',
     });
     expect(await run(failure('post', 502, body))).toBe('retried');
+  });
+});
+
+describe('isTransportRetryable', () => {
+  const response = (status: number) =>
+    ({ response: { status } }) as unknown as Pick<AxiosError, 'response'>;
+  it('retries reads after any 5xx, writes only after 502–504', () => {
+    expect(isTransportRetryable({ method: 'get' }, response(500))).toBe(true);
+    expect(isTransportRetryable({ method: 'put' }, response(500))).toBe(false);
+    expect(isTransportRetryable({ method: 'put' }, response(502))).toBe(true);
+    expect(isTransportRetryable({ method: 'get' }, response(429))).toBe(false);
   });
 });
 

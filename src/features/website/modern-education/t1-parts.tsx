@@ -9,7 +9,7 @@
  */
 import type { ReactNode } from 'react';
 import { ArrowRight, ImageIcon } from 'lucide-react';
-import { cn } from '@utils';
+import { cn, intlLocale } from '@utils';
 import {
   ThemeImage,
   findThemeAsset,
@@ -450,9 +450,9 @@ export function InitialsAvatar({
   );
 }
 
-/** The locale's digits (Arabic-Indic in Arabic). */
+/** A number in the locale's format — Western digits in both languages. */
 export function formatT1Number(value: number, locale: 'en' | 'ar'): string {
-  return value.toLocaleString(locale === 'ar' ? 'ar-EG' : 'en-US');
+  return value.toLocaleString(intlLocale(locale));
 }
 
 /** Whether the visitor asked for reduced motion. */

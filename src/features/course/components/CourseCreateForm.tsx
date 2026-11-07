@@ -42,7 +42,6 @@ import {
   RequiredMark,
   SaveFailedAlert,
   useFocusFirstViolation,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import { isApiError } from '@api';
@@ -139,17 +138,20 @@ export function CourseCreateForm({
   // B3 — violations on their fields in the page's language (V12), the
   // price violation on the price field (V07), a taken address on the slug
   // (V13); anything else ONE inline alert (V05). No toast on top.
-  const labelled = useLabelledViolations(mutationError, COURSE_FIELD_LABELS);
-  useServerValidation(
-    form,
-    labelled,
-    COURSE_FIELD_ALIASES as unknown as Record<
+  useServerValidation(form, mutationError, {
+    aliases: COURSE_FIELD_ALIASES as unknown as Record<
       string,
       keyof CreateCourseFormData
-    >
-  );
+    >,
+    labels: COURSE_FIELD_LABELS,
+  });
   const knownFields = violationFields(CREATE_FORM_FIELDS);
-  useFocusFirstViolation(form, labelled, knownFields, COURSE_FIELD_ALIASES);
+  useFocusFirstViolation(
+    form,
+    mutationError,
+    knownFields,
+    COURSE_FIELD_ALIASES
+  );
   const slugTaken = useSlugTakenError(form, mutationError);
   const isLimit =
     isApiError(mutationError) &&

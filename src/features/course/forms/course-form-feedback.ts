@@ -14,7 +14,6 @@ import {
   hasViolationOn,
   useFailureReason,
   useFocusFirstViolation,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import { useErrorText } from '@hooks';
@@ -141,9 +140,8 @@ export function useDialogServerFeedback<TValues extends FieldValues>(
 ): ApiError | null {
   const fields: Record<string, string> = {};
   for (const key of Object.keys(labels)) fields[key] = key;
-  const labelled = useLabelledViolations(error ?? null, labels);
-  useServerValidation(form, labelled);
-  useFocusFirstViolation(form, labelled, fields);
+  useServerValidation(form, error ?? null, { labels });
+  useFocusFirstViolation(form, error ?? null, fields);
   if (!error || form.formState.submitCount === 0) return null;
   return hasViolationOn(error, fields) ? null : error;
 }

@@ -63,7 +63,7 @@ export interface PlanEditorSchemaOptions {
   /** Whether the plan offers a yearly price beside its monthly one. */
   readonly offersYearly: boolean;
   readonly limitKeys: readonly PlanLimitKey[];
-  /** Formats a number in the page's language ("1,000,000" / "١٬٠٠٠٬٠٠٠"). */
+  /** Formats a number in the page's language ("1,000,000" in both languages). */
   readonly formatNumber: (value: number) => string;
   /** Formats an amount in the plan's currency, for the yearly floor. */
   readonly formatPrice: (value: number) => string;

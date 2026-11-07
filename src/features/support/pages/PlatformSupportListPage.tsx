@@ -26,6 +26,7 @@ import {
   getSupportCaseStatusTone,
 } from '../utils/support-status.utils';
 import type { SupportCaseStatus, SupportCaseSummary } from '@types';
+import { intlLocale } from '@utils';
 
 const STATUS_FILTER_VALUES: readonly SupportCaseStatus[] = [
   'open',
@@ -118,7 +119,9 @@ export default function PlatformSupportListPage(): JSX.Element {
         header: t('support:table.updatedAt'),
         cell: ({ row }) => (
           <span className="text-muted-foreground">
-            {new Date(row.original.updatedAt).toLocaleDateString(i18n.language)}
+            {new Date(row.original.updatedAt).toLocaleDateString(
+              intlLocale(i18n.language)
+            )}
           </span>
         ),
       },

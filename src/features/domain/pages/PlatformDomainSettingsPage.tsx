@@ -274,7 +274,9 @@ export default function PlatformDomainSettingsPage(): JSX.Element {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadedBaseDomain]);
-  useServerValidation(form, updateConfig.error);
+  useServerValidation(form, updateConfig.error, {
+    labels: { baseDomain: 'website:platformDomain.baseDomainLabel' },
+  });
   // Resolves false after a failure it already reported, so the Save button
   // and the unsaved-changes dialog's "Save and leave" share it.
   async function onSubmit(data: PlatformDomainFormData): Promise<boolean> {

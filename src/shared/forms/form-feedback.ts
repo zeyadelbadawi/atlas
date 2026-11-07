@@ -6,7 +6,7 @@
  *   - anything else is one inline alert with the real reason, and the
  *     mutation is marked `inlineErrors` so no toast repeats it.
  */
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import type { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -32,38 +32,6 @@ export function fieldErrorText(
   if (!message) return undefined;
   if (!TRANSLATION_KEY.test(message)) return message;
   return resolveValidationMessage(message, t, { field: label });
-}
-
-/**
- * `useServerValidation` fills `{{field}}` with the API's field name
- * ("Name", in English, on the Arabic page too). The form knows the label,
- * so it rides on the violation's own `values`, which win.
- */
-export function useLabelledViolations(
-  error: ApiError | null,
-  labelKeys: Readonly<Record<string, string>>
-): ApiError | null {
-  const { t } = useTranslation();
-  const keys = JSON.stringify(labelKeys);
-  return useMemo(() => {
-    if (!error?.violations?.length) return error;
-    const labels = JSON.parse(keys) as Record<string, string>;
-    const violations = error.violations.map((violation) => {
-      const labelKey = labels[violation.field];
-      return labelKey
-        ? {
-            ...violation,
-            values: { ...violation.values, field: t(labelKey) },
-          }
-        : violation;
-    });
-    // Same error (prototype, kind, key), only the violations relabelled.
-    return Object.assign(
-      Object.create(Object.getPrototypeOf(error) as object) as ApiError,
-      error,
-      { violations }
-    );
-  }, [error, keys, t]);
 }
 
 /** Whether a violation of this failure lands on one of the form's fields. */

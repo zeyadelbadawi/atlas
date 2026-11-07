@@ -27,6 +27,7 @@ import { DeleteUserDialog } from '../components/DeleteUserDialog';
 import { SuspendUserDialog } from '../components/SuspendUserDialog';
 import { getPlatformUserStatusTone } from '../utils/platform-status.utils';
 import { PhoneNumberDisplay } from '@components/phone';
+import { intlLocale } from '@utils';
 
 export default function PlatformUserDetailPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -147,7 +148,7 @@ export default function PlatformUserDetailPage(): JSX.Element {
               <p className="text-sm text-foreground">
                 {user.lastSignInAt
                   ? new Date(user.lastSignInAt).toLocaleDateString(
-                      i18n.language
+                      intlLocale(i18n.language)
                     )
                   : '—'}
               </p>
@@ -157,7 +158,9 @@ export default function PlatformUserDetailPage(): JSX.Element {
                 {t('platform:users.table.createdAt')}
               </p>
               <p className="text-sm text-foreground">
-                {new Date(user.createdAt).toLocaleDateString(i18n.language)}
+                {new Date(user.createdAt).toLocaleDateString(
+                  intlLocale(i18n.language)
+                )}
               </p>
             </div>
           </CardContent>
@@ -209,7 +212,7 @@ export default function PlatformUserDetailPage(): JSX.Element {
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {new Date(membership.joinedAt).toLocaleDateString(
-                          i18n.language
+                          intlLocale(i18n.language)
                         )}
                       </p>
                     </div>

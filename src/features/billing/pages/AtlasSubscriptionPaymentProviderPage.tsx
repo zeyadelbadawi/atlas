@@ -158,7 +158,11 @@ export default function AtlasSubscriptionPaymentProviderPage(): JSX.Element {
     values: { providerKey: config?.providerKey ?? '', configJson: '' },
   });
 
-  useServerValidation(form, saveError);
+  useServerValidation(form, saveError, {
+    labels: {
+      configJson: 'payments:atlasPaymentProvider.configurationLabel',
+    },
+  });
 
   useEffect(() => {
     if (config?.providerKey) setSelectedProviderKey(config.providerKey);

@@ -15,9 +15,9 @@ import { toast } from '@/hooks/use-toast';
 import { useConfirmDialog } from '@app/providers';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { usePublishCourse } from '../hooks';
-import { useActionFailureToast } from '../forms/course-form-feedback';
 import { WizardStepFooter } from './WizardStepFooter';
 import type { WizardStepProps } from './wizard-step.types';
+import { useActionFailureToast } from '@hooks';
 
 export function PublishStep({
   academyId,
@@ -48,7 +48,7 @@ export function PublishStep({
       toast({ title: t('course:wizard.publish.success') });
     } catch (error) {
       // B3 (V05) — one toast, with the real reason (e.g. what is missing).
-      failureToast('course:wizard.publish.error', error);
+      failureToast(error, 'course:wizard.publish.error');
     }
   };
 

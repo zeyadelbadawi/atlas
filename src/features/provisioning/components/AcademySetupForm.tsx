@@ -75,6 +75,14 @@ import {
   type SetupPaymentMethodsHandle,
 } from './SetupPaymentMethods';
 
+/** The labels a server refusal names its field by (`{{field}}`). */
+const SETUP_FIELD_LABELS = {
+  academyName: 'provisioning:start.academyNameLabel',
+  requestedSubdomain: 'provisioning:start.subdomainLabel',
+  selectedThemeKey: 'provisioning:start.themeLabel',
+  websiteSetupMode: 'provisioning:start.setupModeLabel',
+} as const;
+
 export interface AcademySetupFormProps {
   readonly organizationId: string;
   /** Called with the created request once the backend accepted it. */
@@ -132,7 +140,9 @@ export function AcademySetupForm({
   const selectedThemeKey = form.watch('selectedThemeKey');
   const websiteSetupMode = form.watch('websiteSetupMode');
 
-  useServerValidation(form, createRequest.error);
+  useServerValidation(form, createRequest.error, {
+    labels: SETUP_FIELD_LABELS,
+  });
   // W4 — academy names are unique platform-wide; a taken name is shown on
   // the academy-name field (the request is refused when it is made).
   const nameConflict = useNameConflictError(form, createRequest.error);

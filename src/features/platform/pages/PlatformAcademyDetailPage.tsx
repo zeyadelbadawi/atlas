@@ -19,6 +19,7 @@ import {
   getPlatformWebsitePublishStatusTone,
 } from '../utils/platform-status.utils';
 import { getDomainStatusTone } from '@features/domain';
+import { intlLocale } from '@utils';
 
 export default function PlatformAcademyDetailPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -93,7 +94,9 @@ export default function PlatformAcademyDetailPage(): JSX.Element {
                 {t('platform:academies.table.createdAt')}
               </p>
               <p className="text-sm text-foreground">
-                {new Date(academy.createdAt).toLocaleDateString(i18n.language)}
+                {new Date(academy.createdAt).toLocaleDateString(
+                  intlLocale(i18n.language)
+                )}
               </p>
             </div>
             {academy.description ? (

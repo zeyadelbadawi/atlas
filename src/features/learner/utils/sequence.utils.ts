@@ -9,9 +9,9 @@
  * re-sorted `items` here would quietly reintroduce exactly that class of
  * disagreement, so these functions index into the array as given.
  *
- * NUMBERING IS "2.3" WITH LOCALE DIGITS. Arabic renders `٢٫٣` through
- * `Intl` with `ar-EG`, which is the same numeral system the rest of the
- * product's numbers use (`number.utils.ts`). The composed label is
+ * NUMBERING IS "2.3" IN THE LOCALE'S FORMAT. Arabic renders `2.3` in
+ * Western digits through `Intl` (`number.utils.ts`, `ar-EG-u-nu-latn`),
+ * the one digit system every Atlas number uses. The composed label is
  * wrapped in a left-to-right isolate because `2.3` is a two-run
  * expression with a neutral separator between the runs — precisely the
  * shape that renders as `3.2` inside an Arabic paragraph if it is left

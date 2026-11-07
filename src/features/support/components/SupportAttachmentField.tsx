@@ -151,7 +151,7 @@ export function SupportAttachmentField({
             </p>
             {/* `formatBytes` is the codebase's own size formatter: a
                 locale-formatted number plus a TRANSLATED unit key, so
-                Arabic gets Arabic-Indic digits and an Arabic unit rather
+                Arabic gets Western digits and an Arabic unit rather
                 than a hardcoded "MB". */}
             <p className="text-xs text-muted-foreground">
               {formattedSize.value} {t(formattedSize.unitKey)}

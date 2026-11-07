@@ -338,12 +338,9 @@
 [data-theme-pack='atelier'] .at-chapter[data-numbered] {
   counter-increment: at-chapter;
 }
+/* Western digits (01, 02) in Arabic too: one digit system. */
 [data-theme-pack='atelier'] .at-chapter-no::before {
   content: counter(at-chapter, decimal-leading-zero);
-}
-[data-theme-pack='atelier'] [dir='rtl'] .at-chapter-no::before,
-[dir='rtl'] [data-theme-pack='atelier'] .at-chapter-no::before {
-  content: counter(at-chapter, arabic-indic);
 }
 
 /* ------------------------------------------------------------------ */

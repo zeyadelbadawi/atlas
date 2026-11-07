@@ -66,7 +66,6 @@ import {
   SaveFailedAlert,
   hasViolationOn,
   useFocusFirstViolation,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import { useErrorText } from '@hooks';
@@ -187,11 +186,8 @@ function CreatePageDialog({
   // address on the address field; a refused title/address on its field,
   // with its label and limit; anything else as one alert with the real
   // reason. (The hook is `inlineErrors`: no toast under the overlay.)
-  const violations = useLabelledViolations(
-    useViolationLimits(createPage.error, PAGE_FIELD_LIMITS),
-    PAGE_FIELD_LABELS
-  );
-  useServerValidation(form, violations);
+  const violations = useViolationLimits(createPage.error, PAGE_FIELD_LIMITS);
+  useServerValidation(form, violations, { labels: PAGE_FIELD_LABELS });
   useFocusFirstViolation(form, violations, PAGE_FIELD_LABELS);
   const slugConflict =
     createPage.error !== null &&

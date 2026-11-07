@@ -32,6 +32,7 @@ import {
 import { useConfirmDialog } from '@app/providers';
 import { toast } from '@/hooks/use-toast';
 import {
+  useActionFailureToast,
   useDateFormatter,
   useDebounce,
   usePagination,
@@ -52,7 +53,6 @@ import type {
   CourseStatus,
   CourseVisibility,
 } from '@types';
-import { useActionFailureToast } from '../forms/course-form-feedback';
 
 export default function CourseListPage(): JSX.Element {
   const fmt = useDateFormatter();
@@ -136,7 +136,7 @@ export default function CourseListPage(): JSX.Element {
         description: t('course:settings.deleteCourseSuccessDescription'),
       });
     } catch (error) {
-      failureToast('course:settings.deleteCourseError', error);
+      failureToast(error, 'course:settings.deleteCourseError');
     }
   };
 

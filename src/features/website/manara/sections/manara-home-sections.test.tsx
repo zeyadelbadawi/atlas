@@ -536,7 +536,7 @@ describe('ManaraFeatures', () => {
 });
 
 describe('ManaraSteps', () => {
-  it('B10 V30: Arabic numbers its steps in Arabic-Indic digits without a leading zero', () => {
+  it('Arabic numbers its steps 01, 02, 03 in Western digits, like English (one digit system)', () => {
     const { container } = wrap(
       <ManaraSteps
         config={{
@@ -555,11 +555,11 @@ describe('ManaraSteps', () => {
       [...container.querySelectorAll('.mnh-step-no')].map(
         (node) => node.textContent
       )
-    ).toEqual(['١', '٢', '٣']);
+    ).toEqual(['01', '02', '03']);
     // The spoken label carries the same number.
     expect(
       container.querySelector('.mnh-step .mn-sr-only')?.textContent
-    ).toContain('١');
+    ).toContain('01');
   });
 
   it('is a soft track of outlined numerals with a beam, and nothing when empty', () => {
@@ -763,7 +763,7 @@ describe('ManaraCourseCategories', () => {
     ).toBe('/courses');
   });
 
-  it('in Arabic uses Arabic-Indic digits and plural forms; in a preview the names are plain text', () => {
+  it('in Arabic uses Western digits and Arabic plural forms; in a preview the names are plain text', () => {
     categories = [
       { id: 'c1', name: 'فيزياء', slug: 'physics', courseCount: 5 },
       { id: 'c2', name: 'كيمياء', slug: 'chemistry', courseCount: 2 },
@@ -773,7 +773,7 @@ describe('ManaraCourseCategories', () => {
       'ar'
     );
     expect(screen.queryByRole('link')).toBeNull();
-    expect(screen.getByText('٥ دورات')).toBeTruthy();
+    expect(screen.getByText('5 دورات')).toBeTruthy();
     expect(screen.getByText('دورتان')).toBeTruthy();
   });
 });
@@ -1033,7 +1033,7 @@ describe('ManaraStatistics', () => {
     }
   });
 
-  it("shows numbers in the locale's digits in Arabic", () => {
+  it('shows numbers in Western digits in Arabic', () => {
     statistics = { courses: 6, students: 1240, instructors: 3 };
     const { container } = wrap(
       <ManaraStatistics
@@ -1047,7 +1047,7 @@ describe('ManaraStatistics', () => {
     const shown = [...container.querySelectorAll('.mn-numeral')].map(
       (node) => node.textContent
     );
-    expect(shown).toEqual(['٦', '١٬٢٤٠', '٣']);
+    expect(shown).toEqual(['6', '1,240', '3']);
   });
 });
 
@@ -1147,7 +1147,7 @@ describe('ManaraTestimonials', () => {
     const group = screen.getByRole('group', { name: 'آراء الطلاب' });
     fireEvent.keyDown(group, { key: 'ArrowLeft' });
     expect(container.querySelector('.mnh-quote-count')?.textContent).toBe(
-      '٠٢/٠٣'
+      '02/03'
     );
     expect(screen.getByText('رأي James')).toBeTruthy();
   });

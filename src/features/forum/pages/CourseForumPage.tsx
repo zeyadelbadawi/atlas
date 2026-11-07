@@ -44,7 +44,6 @@ import {
   hasViolationOn,
   RequiredMark,
   SaveFailedAlert,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import { usePagination, usePermissions } from '@hooks';
@@ -107,12 +106,8 @@ export default function CourseForumPage(): JSX.Element {
 
   // B6 (UX audit) V07/V08 — a refusal about a field shows on it; anything
   // else is one alert in the dialog with the real reason. No toast.
-  const labelledCreateError = useLabelledViolations(
-    createError ?? null,
-    THREAD_FIELDS
-  );
-  useServerValidation(form, labelledCreateError);
-  const createFieldFailure = hasViolationOn(labelledCreateError, THREAD_FIELDS);
+  useServerValidation(form, createError ?? null, { labels: THREAD_FIELDS });
+  const createFieldFailure = hasViolationOn(createError ?? null, THREAD_FIELDS);
   const titleLength = form.watch('title')?.length ?? 0;
   const bodyLength = form.watch('body')?.length ?? 0;
 
@@ -320,9 +315,9 @@ export default function CourseForumPage(): JSX.Element {
                 )}
               />
 
-              {labelledCreateError && !createFieldFailure ? (
+              {createError && !createFieldFailure ? (
                 <SaveFailedAlert
-                  error={labelledCreateError}
+                  error={createError}
                   titleKey="forum:list.createError"
                 />
               ) : null}

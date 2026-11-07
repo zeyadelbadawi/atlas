@@ -116,6 +116,7 @@ and failures that hide the real reason behind a generic message and a second toa
 ### Not changed, with reason
 - **V17 filters** — paging is server-side, so client filters would only filter one page; the
   backend has no filter parameters.
-- **V23** mixed digit styles in Arabic — the app-wide decision noted in B4.
+- **V23** mixed digit styles in Arabic — decided and fixed: Western digits (0–9) everywhere in Arabic.
 - **V06 grader name** — the API returns only the grader's id.
-- The page header's thread title is a plain string (no `dir`); the body and replies have it.
+- The page header's thread title — fixed: `PageHeader` gives a data title `dir="auto"` (B8 V32), so a
+  Latin title on the Arabic page keeps its own direction (covered by a forum test).

@@ -30,6 +30,7 @@ import {
 } from '../utils/payout-status.utils';
 import { CreatePayoutDialog } from '../components/CreatePayoutDialog';
 import { MarkPayoutPaidDialog } from '../components/MarkPayoutPaidDialog';
+import { intlLocale } from '@utils';
 
 export default function PlatformPayoutsPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -49,7 +50,9 @@ export default function PlatformPayoutsPage(): JSX.Element {
 
   const columns = useMemo<ColumnDef<AcademyPayout, unknown>[]>(() => {
     const formatDate = (iso: string) =>
-      new Date(iso).toLocaleDateString(i18n.language, { timeZone: 'UTC' });
+      new Date(iso).toLocaleDateString(intlLocale(i18n.language), {
+        timeZone: 'UTC',
+      });
     return [
       {
         accessorKey: 'academyId',
@@ -106,7 +109,7 @@ export default function PlatformPayoutsPage(): JSX.Element {
             <div className="space-y-0.5">
               <p>
                 {new Date(row.original.paidAt).toLocaleDateString(
-                  i18n.language
+                  intlLocale(i18n.language)
                 )}
               </p>
               {row.original.providerReference ? (

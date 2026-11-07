@@ -18,6 +18,7 @@ import {
   type ScheduleDay,
   type ScheduleSectionConfig,
 } from '@types';
+import { intlLocale } from '@utils';
 
 export interface ResolvedLogo {
   readonly id: string;
@@ -97,7 +98,7 @@ export interface ScheduleDayGroup {
 
 const timeFormatters = new Map<PublicWebsiteLocale, Intl.DateTimeFormat>();
 
-/** `HH:MM` in the visitor's locale and digits ("4:00 PM", "٤:٠٠ م"). */
+/** `HH:MM` in the visitor's locale and digits ("4:00 PM", "4:00 م"). */
 export function formatScheduleTime(
   value: string,
   locale: PublicWebsiteLocale
@@ -106,7 +107,7 @@ export function formatScheduleTime(
   if (!match) return value;
   let formatter = timeFormatters.get(locale);
   if (!formatter) {
-    formatter = new Intl.DateTimeFormat(locale === 'ar' ? 'ar-EG' : 'en-US', {
+    formatter = new Intl.DateTimeFormat(intlLocale(locale), {
       hour: 'numeric',
       minute: '2-digit',
       timeZone: 'UTC',

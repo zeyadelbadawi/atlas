@@ -35,12 +35,13 @@ const service = vi.hoisted(() => ({
 }));
 const toastSpy = vi.hoisted(() => vi.fn());
 const confirmSpy = vi.hoisted(() => vi.fn(async () => true));
+const notifyErrorSpy = vi.hoisted(() => vi.fn());
 
 vi.mock('../services/CourseService', () => ({ courseService: service }));
 vi.mock('@/hooks/use-toast', () => ({ toast: toastSpy, useToast: () => ({}) }));
 vi.mock('@app/providers', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
-  useToast: () => ({ notifySuccess: vi.fn(), notifyError: vi.fn() }),
+  useToast: () => ({ notifySuccess: vi.fn(), notifyError: notifyErrorSpy }),
   useConfirmDialog: () => ({ confirm: confirmSpy }),
 }));
 
@@ -333,10 +334,13 @@ describe('UnitCurriculum', () => {
     await waitFor(() =>
       expect(rowTitles()).toEqual(['Intro', 'Quiz', 'Homework'])
     );
-    expect(toastSpy).toHaveBeenCalledWith(
+    // One app error toast: what did not happen, the reason, then what
+    // happened next.
+    expect(notifyErrorSpy).toHaveBeenCalledWith(
+      'course:builder.reorderError',
+      'common:feedback.reasonThen',
       expect.objectContaining({
-        title: 'Failed to save the new order',
-        variant: 'destructive',
+        then: expect.stringMatching(/previous order has been restored/),
       })
     );
     expect(liveRegion()).toMatch(/previous order has been restored/);

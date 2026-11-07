@@ -88,7 +88,10 @@ export function OrganizationCommissionCard({
   });
   // B8 (UX audit) V29 — the server's range refusal lands on the field.
   useServerValidation(form, update.error ?? null, {
-    customPercentageBasisPoints: 'percent',
+    aliases: { customPercentageBasisPoints: 'percent' },
+    labels: {
+      customPercentageBasisPoints: 'platformCommerce:commission.percentLabel',
+    },
   });
   const mode = useWatch({ control: form.control, name: 'commissionMode' });
 

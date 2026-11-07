@@ -84,7 +84,7 @@ describe('Privacy Policy content', () => {
 
   it('carries the 5 November 2026 revision date', () => {
     expect(PRIVACY_POLICY_EN.lastUpdated).toBe('5 November 2026');
-    expect(PRIVACY_POLICY_AR.lastUpdated).toBe('٥ نوفمبر ٢٠٢٦');
+    expect(PRIVACY_POLICY_AR.lastUpdated).toBe('5 نوفمبر 2026');
   });
 
   it('discloses the mobile app: push tokens, consents, Apple, analytics (EN + AR)', () => {
@@ -114,7 +114,7 @@ describe('Privacy Policy content', () => {
     const ar = sectionText(PRIVACY_POLICY_AR, 'what-we-collect');
     for (const fact of [
       'رمز الإشعارات',
-      '١٣ عامًا أو أكثر',
+      '13 عامًا أو أكثر',
       'إلغائه لدى Apple',
       'يُقرأ على جهازك ولا يُرسل إلينا مطلقًا',
       'Google Analytics for Firebase',
@@ -182,10 +182,10 @@ describe('Privacy Policy content', () => {
     expect(ar).toContain('ولا تمنع تسجيل الشاشة');
     expect(ar).toContain('لا يمكن البحث عن رمز إلا لمسؤولي منصة أطلس');
     expect(ar).toContain('مشفّرةً');
-    expect(ar).toContain('٧٣٠ يومًا');
+    expect(ar).toContain('730 يومًا');
     expect(ar).toContain('لا تُحذف سجلات العلامة المائية عند حذف حسابك');
-    expect(sectionText(PRIVACY_POLICY_AR, 'retention')).toContain('٧٣٠ يومًا');
-    expect(sectionText(PRIVACY_POLICY_AR, 'deletion')).toContain('٧٣٠ يومًا');
+    expect(sectionText(PRIVACY_POLICY_AR, 'retention')).toContain('730 يومًا');
+    expect(sectionText(PRIVACY_POLICY_AR, 'deletion')).toContain('730 يومًا');
   });
 
   it('distinguishes the older unkeyed trial records from the keyed ones (EN + AR)', () => {
@@ -287,11 +287,11 @@ describe('Privacy Policy content', () => {
     expect(en).toContain('15 days');
     const ar = sectionText(PRIVACY_POLICY_AR, 'retention');
     for (const figure of [
-      '٢٤ ساعة',
-      '١٨٠ يومًا',
-      '٩٠ يومًا',
-      '٣٦٥ يومًا',
-      '١٥ يومًا',
+      '24 ساعة',
+      '180 يومًا',
+      '90 يومًا',
+      '365 يومًا',
+      '15 يومًا',
     ]) {
       expect(ar).toContain(figure);
     }
@@ -344,7 +344,7 @@ describe('PrivacyPolicyPage', () => {
     expect(
       screen.getByRole('heading', {
         level: 2,
-        name: '٦. الفترات التجريبية المجانية وأيام الاشتراك المُهداة',
+        name: '6. الفترات التجريبية المجانية وأيام الاشتراك المُهداة',
       })
     ).toBeTruthy();
   });

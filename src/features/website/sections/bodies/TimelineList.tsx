@@ -15,7 +15,7 @@
  *   No motion.
  */
 import type { ReactNode } from 'react';
-import { cn } from '@utils';
+import { cn, intlLocale } from '@utils';
 import { resolveFeatureIcon } from '@/features/website/utils/feature-icons';
 import type { PublicWebsiteLocale } from '@types';
 import type { ResolvedMilestone } from './journey-proof.logic';
@@ -39,7 +39,7 @@ const numberFormatters = new Map<PublicWebsiteLocale, Intl.NumberFormat>();
 function formatNumber(value: number, locale: PublicWebsiteLocale): string {
   let formatter = numberFormatters.get(locale);
   if (!formatter) {
-    formatter = new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'en-US');
+    formatter = new Intl.NumberFormat(intlLocale(locale));
     numberFormatters.set(locale, formatter);
   }
   return formatter.format(value);

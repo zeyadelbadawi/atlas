@@ -50,7 +50,6 @@ import {
   RequiredMark,
   SaveFailedAlert,
   useFocusFirstViolation,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import {
@@ -212,19 +211,18 @@ export function QuizAuthoringForm({
   // (V12) with focus on the first; anything else ONE inline alert with the
   // real reason (V05 — it used to be a toast, a second toast and a generic
   // line under the buttons).
-  const labelled = useLabelledViolations(
-    mutationError ?? null,
-    QUIZ_FIELD_LABELS
-  );
-  useServerValidation(form, labelled, QUIZ_SERVER_FIELD_ALIASES);
+  useServerValidation(form, mutationError ?? null, {
+    aliases: QUIZ_SERVER_FIELD_ALIASES,
+    labels: QUIZ_FIELD_LABELS,
+  });
   const violationFields = Object.fromEntries(
-    (labelled?.violations ?? [])
+    (mutationError?.violations ?? [])
       .filter((violation) => isFormField(violation.field))
       .map((violation) => [violation.field, violation.field])
   );
   useFocusFirstViolation(
     form,
-    labelled,
+    mutationError ?? null,
     violationFields,
     QUIZ_SERVER_FIELD_ALIASES
   );

@@ -111,7 +111,8 @@
     "successTitle": "Done",
     "errorTitle": "Something went wrong",
     "warningTitle": "Check this first",
-    "infoTitle": "For your information"
+    "infoTitle": "For your information",
+    "reasonThen": "{{reason}} {{then}}"
   },
   "units": {
     "bytes": "B",

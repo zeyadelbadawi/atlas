@@ -44,6 +44,7 @@ vi.mock('@hooks', async (importOriginal) => ({
 vi.mock('@app/providers', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
   useConfirmDialog: () => ({ confirm: vi.fn() }),
+  useToast: () => ({ notifySuccess: vi.fn(), notifyError: vi.fn() }),
 }));
 
 const { default: CourseSettingsPage } =

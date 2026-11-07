@@ -70,7 +70,7 @@
       "succeeded": "تم رفع الملف بنجاح",
       "failed": "فشل الرفع"
     },
-    "percent": "{{percent}}٪",
+    "percent": "{{percent}}%",
     "retry": "إعادة المحاولة",
     "dismiss": "إغلاق"
   },

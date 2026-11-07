@@ -19,6 +19,7 @@ import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { FeatureSplitSectionConfig, WebsitePage } from '@types';
 import type { WebsiteLinkRenderer } from '../renderer/website-link-renderer.types';
+import { intlLocale } from '@utils';
 
 export interface FeatureSplitSectionProps {
   readonly config: FeatureSplitSectionConfig;
@@ -83,9 +84,7 @@ export function FeatureSplitSection({
                       aria-hidden
                       className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-[var(--website-primary-solid)] text-xs font-semibold text-white"
                     >
-                      {(index + 1).toLocaleString(
-                        locale === 'ar' ? 'ar-EG' : 'en-US'
-                      )}
+                      {(index + 1).toLocaleString(intlLocale(locale))}
                     </span>
                     <div className="min-w-0">
                       <h3 className="break-words font-medium text-foreground">

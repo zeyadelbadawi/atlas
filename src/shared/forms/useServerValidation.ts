@@ -32,11 +32,56 @@ export function isFieldViolationError(error: ApiError | null): boolean {
 }
 
 /**
- * `fieldAliases` maps an API field name onto the form field that edits it,
- * for a form that holds the value in another shape (a quiz's time limit is
- * `timeLimitSeconds` on the wire and `timeLimitMinutes` in the form). An
- * unmapped name is used as-is.
+ * How a form places and names the server's field violations.
  */
+export interface ServerValidationOptions<TValues extends FieldValues> {
+  /**
+   * API field → the form field that edits it, for a form that holds the
+   * value in another shape (a quiz's time limit is `timeLimitSeconds` on
+   * the wire and `timeLimitMinutes` in the form). An unmapped name is used
+   * as-is.
+   */
+  readonly aliases?: Readonly<Record<string, Path<TValues>>>;
+  /**
+   * API field → translation key of the label the form shows for it. Fills
+   * `{{field}}` in the message ("First name is required", «الاسم الأول
+   * مطلوب»), instead of the API's English field name. An unlabelled field
+   * reads as `serverFieldLabel` says.
+   */
+  readonly labels?: Readonly<Record<string, string>>;
+}
+
+/**
+ * The failure with each labelled violation's `{{field}}` set to the form's
+ * translated label (it wins over a `field` the server sent in `values`).
+ * The one place a form's labels are applied — `useServerValidation`'s
+ * `labels` option.
+ */
+export function labelViolations(
+  error: ApiError | null,
+  labelKeys: Readonly<Record<string, string>> | undefined,
+  t: (key: string) => string
+): ApiError | null {
+  if (!error?.violations?.length || !labelKeys) return error;
+  let changed = false;
+  const violations = error.violations.map((violation) => {
+    const labelKey = labelKeys[violation.field];
+    if (!labelKey) return violation;
+    changed = true;
+    return {
+      ...violation,
+      values: { ...violation.values, field: t(labelKey) },
+    };
+  });
+  if (!changed) return error;
+  // Same error (prototype, kind, key), only the violations relabelled.
+  return Object.assign(
+    Object.create(Object.getPrototypeOf(error) as object) as ApiError,
+    error,
+    { violations }
+  );
+}
+
 /** `{{count}}` left in a resolved message: a value it needs was not provided. */
 export function hasUnfilledPlaceholder(text: string): boolean {
   return /\{\{\s*[\w.]+\s*\}\}/.test(text);
@@ -65,27 +110,29 @@ export function serverFieldLabel(
 export function useServerValidation<TValues extends FieldValues>(
   form: UseFormReturn<TValues>,
   error: ApiError | null,
-  fieldAliases?: Readonly<Record<string, Path<TValues>>>
+  options: ServerValidationOptions<TValues> = {}
 ): void {
   const { t, i18n } = useTranslation();
   // Read through a ref: callers may pass an inline object, and a changed
   // object must not re-apply the same server errors on every render.
-  const aliases = useRef(fieldAliases);
-  aliases.current = fieldAliases;
+  const optionsRef = useRef(options);
+  optionsRef.current = options;
 
   useEffect(() => {
     if (!error || !error.violations || !isFieldViolationError(error)) {
       return;
     }
+    const { aliases, labels } = optionsRef.current;
+    const labelled = labelViolations(error, labels, t) ?? error;
 
     // Resolved to its final, interpolated text here (not left as a bare
     // key) because a violation's `values` (e.g. `{ count: 2 }`) has
     // nowhere else to travel to — React Hook Form's error object only
     // carries a plain `message` string, and the backend has no way to
-    // know the frontend's translated field label, so a humanized version
-    // of the raw field name fills the `{{field}}` placeholder every
-    // `validation:*` message uses.
-    error.violations.forEach((violation: FieldViolation) => {
+    // know the frontend's translated field label: the form's `labels`
+    // fill the `{{field}}` placeholder every `validation:*` message uses,
+    // and an unlabelled field reads as `serverFieldLabel` says.
+    (labelled.violations ?? []).forEach((violation: FieldViolation) => {
       // B1 (V44) — a key this build doesn't translate falls back to a
       // generic field message instead of reaching the screen raw.
       // B3 (UX audit) — dotted backend keys (`errors.course.slugTaken`)
@@ -106,8 +153,7 @@ export function useServerValidation<TValues extends FieldValues>(
         ? t('errors:validation.field')
         : resolved;
       const field =
-        aliases.current?.[violation.field] ??
-        (violation.field as Path<TValues>);
+        aliases?.[violation.field] ?? (violation.field as Path<TValues>);
       form.setError(field, {
         type: 'server',
         message,

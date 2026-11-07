@@ -22,6 +22,7 @@ import {
 } from '../utils/payment-status.utils';
 import { formatMoney } from '../utils/money.utils';
 import type { Payment } from '@types';
+import { intlLocale } from '@utils';
 
 export default function PaymentHistoryPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -95,7 +96,9 @@ export default function PaymentHistoryPage(): JSX.Element {
         header: t('payments:paymentHistory.table.createdAt'),
         cell: ({ row }) => (
           <span className="text-muted-foreground">
-            {new Date(row.original.createdAt).toLocaleDateString(i18n.language)}
+            {new Date(row.original.createdAt).toLocaleDateString(
+              intlLocale(i18n.language)
+            )}
           </span>
         ),
       },

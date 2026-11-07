@@ -52,7 +52,7 @@ import { useServerValidation } from '@forms';
 import { useToast } from '@app/providers';
 import type { ApiError } from '@api';
 import { useRemovePhone, useUpdatePhone, useUserPhone } from '../hooks';
-import { hasViolationOn, useLabelledViolations } from '@forms';
+import { hasViolationOn } from '@forms';
 import { SaveFailedAlert } from '@forms';
 
 const phoneSchema = z
@@ -102,10 +102,7 @@ export function ProfilePhoneCard(): JSX.Element {
   // B1 (V11) — "this number is already used" (409 `errors.auth.phoneTaken`)
   // carries a `phoneNumber` violation: it is shown on the field, never as
   // "This item was changed elsewhere — reload the page".
-  useServerValidation(
-    form,
-    useLabelledViolations(updatePhone.error, FIELD_LABELS)
-  );
+  useServerValidation(form, updatePhone.error, { labels: FIELD_LABELS });
 
   const startEditing = () => {
     updatePhone.reset();

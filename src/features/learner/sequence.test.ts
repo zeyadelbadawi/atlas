@@ -119,12 +119,13 @@ describe('sequence numbering', () => {
     expect(label).toContain('2.3');
   });
 
-  it('numbers it in Arabic-Indic digits for Arabic', () => {
+  it('numbers it in Western digits for Arabic', () => {
     const label = formatSequenceOrdinal({ unitNumber: 2, itemNumber: 3 }, 'ar');
 
-    expect(label).toContain('٢');
-    expect(label).toContain('٣');
-    expect(label).not.toContain('2');
+    // One digit system (owner decision): Western digits, never ٢٫٣.
+    expect(label).toContain('2');
+    expect(label).toContain('3');
+    expect(label).not.toMatch(/[\u0660-\u0669]/);
   });
 
   it('isolates the expression so Arabic cannot reverse it', () => {

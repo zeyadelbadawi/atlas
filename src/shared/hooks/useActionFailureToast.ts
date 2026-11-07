@@ -1,22 +1,23 @@
 /**
- * B4 (UX audit) — the ONE toast a failed row action shows (approve,
- * remove, revoke…): the action's own title ("We couldn't remove this team
- * member") over the REAL reason ("The organization owner can't be removed",
- * "Atlas could not reach the server…"). Before, the action's generic copy
- * ("Please try again") was toasted and the app-wide reporter added a
- * second toast with the reason — two messages, sometimes contradicting
- * each other on a 409.
+ * B4 (UX audit) — the ONE toast a failed action shows (approve, remove,
+ * publish, reorder…): the action's own title ("We couldn't remove this
+ * team member") over the REAL reason ("The organization owner can't be
+ * removed", "Atlas could not reach the server…"). Before, the action's
+ * generic copy ("Please try again") was toasted and the app-wide reporter
+ * added a second toast with the reason — two messages, sometimes
+ * contradicting each other on a 409.
  *
  * The hooks behind these actions mark their errors inline
- * (`INLINE_ERRORS_META`) so this is the only message.
+ * (`INLINE_ERRORS_META`), so this is the only message. One helper for the
+ * whole app (it used to be three copies: course, academy, announcements).
  */
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@app/providers';
-import { resolveErrorTextKey } from '@hooks';
-import { errorMessageKey } from '@services';
+import { errorMessageKey, normalizeUnknownError } from '@services';
 import { isTranslatedString, toErrorsNamespaceKey } from '@utils';
 import type { ApiError } from '@api';
+import { resolveErrorTextKey } from './useErrorText';
 
 export interface ActionFailureDescription {
   readonly descriptionKey: string;
@@ -69,30 +70,45 @@ export function actionFailureDescription(
   };
 }
 
+export interface ActionFailureToastOptions {
+  /** A feature's own reason for this failure, when it says more. */
+  readonly specificKey?: string | null;
+  /** A sentence that follows the reason, e.g. "The previous order has been restored." */
+  readonly afterKey?: string;
+}
+
 export type ActionFailureToast = (
-  error: ApiError,
+  error: unknown,
   titleKey: string,
-  specificKey?: string | null
+  options?: ActionFailureToastOptions
 ) => void;
 
 export function useActionFailureToast(): ActionFailureToast {
   const { notifyError } = useToast();
   const { t, i18n } = useTranslation();
   return useCallback<ActionFailureToast>(
-    (error, titleKey, specificKey) => {
+    (error, titleKey, options = {}) => {
+      const apiError = normalizeUnknownError(error);
       // A superseded request is not a failure the person needs to read.
-      if (error.kind === 'cancelled') return;
+      if (apiError.kind === 'cancelled') return;
       const { descriptionKey, values } = actionFailureDescription(
-        error,
+        apiError,
         (key) => isTranslatedString(i18n, key),
         {
-          specificKey,
+          specificKey: options.specificKey,
           online:
             typeof navigator === 'undefined' || navigator.onLine !== false,
           thisField: t('validation:thisField'),
         }
       );
-      notifyError(titleKey, descriptionKey, values);
+      if (!options.afterKey) {
+        notifyError(titleKey, descriptionKey, values);
+        return;
+      }
+      notifyError(titleKey, 'common:feedback.reasonThen', {
+        reason: t(descriptionKey, values ?? {}),
+        then: t(options.afterKey),
+      });
     },
     [notifyError, i18n, t]
   );

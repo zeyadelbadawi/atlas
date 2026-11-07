@@ -115,7 +115,8 @@
     "successTitle": "تم بنجاح",
     "errorTitle": "حدث خطأ",
     "warningTitle": "يلزم الانتباه",
-    "infoTitle": "للعلم"
+    "infoTitle": "للعلم",
+    "reasonThen": "{{reason}} {{then}}"
   },
   "units": {
     "bytes": "بايت",

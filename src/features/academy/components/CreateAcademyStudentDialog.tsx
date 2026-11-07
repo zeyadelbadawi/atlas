@@ -38,7 +38,11 @@ import {
 } from '@forms';
 import { useCreateAcademyStudent } from '../hooks';
 import { useAcademyMemberLookup } from '../hooks/useAcademyMemberLookup';
-import { MemberAccountFields, isBlockedByLookup } from './MemberAccountFields';
+import {
+  MemberAccountFields,
+  memberAccountFieldLabels,
+  isBlockedByLookup,
+} from './MemberAccountFields';
 import {
   memberAddPayload,
   memberAddSpecificKey,
@@ -88,7 +92,9 @@ export function CreateAcademyStudentDialog({
     open && !created
   );
 
-  useServerValidation(form, createStudent.error);
+  useServerValidation(form, createStudent.error, {
+    labels: memberAccountFieldLabels('academy:members.createStudent'),
+  });
   // W4 — a learner name already used in this academy: on the name field for
   // a new account, on the email field for an existing account (whose name
   // staff cannot edit).

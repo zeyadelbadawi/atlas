@@ -60,12 +60,7 @@ import { toast } from '@/hooks/use-toast';
 import { isApiError } from '@api';
 import { useConfirmDialog } from '@app/providers';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import {
-  hasViolationOn,
-  SaveFailedAlert,
-  useLabelledViolations,
-  useServerValidation,
-} from '@forms';
+import { hasViolationOn, SaveFailedAlert, useServerValidation } from '@forms';
 import {
   useDateFormatter,
   useLanguage,
@@ -187,12 +182,8 @@ function OverridesSheet({
   });
   // B6 (UX audit) V07 — a refusal about a field shows on it; anything else
   // is one alert above the Save button, never a toast on top of the sheet.
-  const labelledSaveError = useLabelledViolations(
-    saveError ?? null,
-    OVERRIDE_FIELDS
-  );
-  useServerValidation(form, labelledSaveError);
-  const saveFieldFailure = hasViolationOn(labelledSaveError, OVERRIDE_FIELDS);
+  useServerValidation(form, saveError ?? null, { labels: OVERRIDE_FIELDS });
+  const saveFieldFailure = hasViolationOn(saveError ?? null, OVERRIDE_FIELDS);
 
   const studentOptions = students?.items ?? [];
 
@@ -528,9 +519,9 @@ function OverridesSheet({
                     )}
                   />
 
-                  {labelledSaveError && !saveFieldFailure ? (
+                  {saveError && !saveFieldFailure ? (
                     <SaveFailedAlert
-                      error={labelledSaveError}
+                      error={saveError}
                       titleKey="instructor:quizResults.overrides.saveError"
                     />
                   ) : null}

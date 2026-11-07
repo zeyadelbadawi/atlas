@@ -50,7 +50,7 @@ describe('Terms of Service content', () => {
 
   it('carries the 5 November 2026 revision date', () => {
     expect(TERMS_EN.lastUpdated).toBe('5 November 2026');
-    expect(TERMS_AR.lastUpdated).toBe('٥ نوفمبر ٢٠٢٦');
+    expect(TERMS_AR.lastUpdated).toBe('5 نوفمبر 2026');
   });
 
   it('warns that redistributed recordings may be traced through the watermark (EN + AR)', () => {

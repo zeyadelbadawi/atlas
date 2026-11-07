@@ -109,10 +109,10 @@ One message per failure with the real reason: "Invalid email or password" only f
 - **Shared** the form-feedback helpers these forms use (`SaveFailedAlert`, `RequiredMark`, `useFailureReason`, `fieldErrorText`, `useLabelledViolations`, `useFocusFirstViolation`, `hasViolationOn`) live in `@shared/forms` for later batches.
 - **Arabic numbers** length messages use the right noun form for the number (حرفان، ٣–١٠ أحرف، ١١–٩٩ حرفًا، ١٠٠ حرف).
 
-### Open, for a later batch
-- A GET that fails with a 500 takes ~12 s to show its error (HTTP-client retries on top of the query's). Changing the app-wide retry policy affects every page, so it gets its own change.
-- `useServerValidation` fills `{{field}}` with the API's English field name; profile and settings pass translated labels through `useLabelledViolations`. A `labels` option on the shared hook would let every form do the same.
-- The password and preferences success toasts still use the legacy toast hook (bottom corner); the password form has no leave warning.
+### Open, for a later batch — since done
+- ~~A GET that fails with a 500 takes ~12 s to show its error~~ — one retry layer: the HTTP client retries a read once (any 5xx or a lost response; never a 4xx; a 429 only with a short `Retry-After`; not offline, after a timeout or a cancel), the query layer not at all. The error shows in about 1–2 s.
+- ~~`useServerValidation` fills `{{field}}` with the API's English field name~~ — the hook takes `labels` (API field → label key); `useLabelledViolations` is folded into it and every form with translated labels passes them.
+- ~~The password and preferences success toasts still use the legacy toast hook~~ — both use the app toast (`notifySuccess`); the password form has the unsaved-changes leave warning.
 
 ### Not changed, with reason
 - **V35** header controls are 40 px (WCAG 2.2 AA asks 24 px); 44 px would overflow the 375 px header with six controls.

@@ -24,6 +24,7 @@ import type {
   TimelineSectionConfig,
   VideoTestimonialsSectionConfig,
 } from '@types';
+import { intlLocale } from '@utils';
 
 /* ------------------------------------------------------------------ */
 /* Timeline                                                             */
@@ -193,7 +194,7 @@ export interface ResolvedCertificate {
   readonly fullSizeHref?: string;
   readonly title: string;
   readonly issuer: string;
-  /** The year in the visitor's digits ("2025", "٢٠٢٥"). */
+  /** The year in the visitor's locale (Western digits in both: "2025"). */
   readonly year: string;
   /** The year as typed, for `<time dateTime>`. */
   readonly yearValue: string;
@@ -204,7 +205,7 @@ const yearFormatters = new Map<PublicWebsiteLocale, Intl.NumberFormat>();
 function formatYear(value: string, locale: PublicWebsiteLocale): string {
   let formatter = yearFormatters.get(locale);
   if (!formatter) {
-    formatter = new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'en-US', {
+    formatter = new Intl.NumberFormat(intlLocale(locale), {
       useGrouping: false,
     });
     yearFormatters.set(locale, formatter);

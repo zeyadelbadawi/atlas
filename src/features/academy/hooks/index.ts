@@ -97,11 +97,3 @@ export {
 } from './useAcademyPayments';
 export { useRemoveAcademyMember } from './useRemoveAcademyMember';
 export type { RemoveAcademyMemberVariables } from './useRemoveAcademyMember';
-export {
-  actionFailureDescription,
-  useActionFailureToast,
-} from './useActionFailureToast';
-export type {
-  ActionFailureDescription,
-  ActionFailureToast,
-} from './useActionFailureToast';

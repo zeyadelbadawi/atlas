@@ -35,6 +35,11 @@ const signInSchema = z.object({
 type SignInFormData = z.infer<typeof signInSchema>;
 
 const SIGN_IN_FIELDS: readonly string[] = ['email', 'password'];
+/** The labels a server refusal names its field by (`{{field}}`). */
+const SIGN_IN_LABELS = {
+  email: 'auth:signIn.email',
+  password: 'auth:signIn.password',
+} as const;
 
 export interface SignInFormProps {
   /**
@@ -90,7 +95,7 @@ export function SignInForm({
   } = form;
 
   // B1 (V21) — a 400 that names a field marks that field.
-  useServerValidation(form, error);
+  useServerValidation(form, error, { labels: SIGN_IN_LABELS });
   const onFields = violationsAllOn(error, SIGN_IN_FIELDS);
   const { setFocus } = form;
   useEffect(() => {

@@ -9,12 +9,16 @@
  * exponent than 2, this is the single seam to extend, not a per-page fix.
  */
 import type { Money } from '@types';
+import { intlLocale } from '@utils';
 
 const MINOR_UNIT_DIVISOR = 100;
 
-/** Formats a `Money` value for display using the given locale. */
+/**
+ * Formats a `Money` value for display using the given locale (a language
+ * code or tag; Arabic with Western digits, see `intlLocale`).
+ */
 export function formatMoney(money: Money, locale: string): string {
-  return new Intl.NumberFormat(locale, {
+  return new Intl.NumberFormat(intlLocale(locale), {
     style: 'currency',
     currency: money.currency,
   }).format(money.amountMinorUnits / MINOR_UNIT_DIVISOR);

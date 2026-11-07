@@ -73,7 +73,10 @@ function GlobalCommissionCard(): JSX.Element {
   });
   // B8 (UX audit) V29 — the server's range refusal lands on the field.
   useServerValidation(form, update.error ?? null, {
-    defaultCommissionBasisPoints: 'percent',
+    aliases: { defaultCommissionBasisPoints: 'percent' },
+    labels: {
+      defaultCommissionBasisPoints: 'platformCommerce:commission.percentLabel',
+    },
   });
 
   const { reset } = form;

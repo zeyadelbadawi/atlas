@@ -68,7 +68,9 @@ export default function OrganizationCreatePage(): JSX.Element {
     isDirty: form.formState.isDirty,
   });
 
-  useServerValidation(form, error);
+  useServerValidation(form, error, {
+    labels: { name: 'organization:create.nameLabel' },
+  });
   // W4 — a taken name is shown on the name field (generic wording: it never
   // says who holds it), not as a toast.
   useNameConflictError(form, error);

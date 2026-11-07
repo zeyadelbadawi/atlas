@@ -53,7 +53,6 @@ import {
   hasViolationOn,
   SaveFailedAlert,
   useFocusFirstViolation,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import { useCompletionRule, useUpdateCompletionRule } from '@features/learning';
@@ -206,12 +205,14 @@ export function CourseCompletionSettingsCard({
   // inline alert with the real reason (V06 — it used to print the raw key
   // "errors.conflict" and a toast on top).
   const updateError = update.error ?? null;
-  const labelled = useLabelledViolations(updateError, COMPLETION_FIELD_LABELS);
   // Otherwise on the Lessons choice itself, never on a hidden field.
   const aliases =
     form.watch('lessons') === 'min' ? MIN_LESSONS_ALIAS : NO_ALIASES;
-  useServerValidation(form, labelled, aliases);
-  useFocusFirstViolation(form, labelled, COMPLETION_FIELDS, aliases);
+  useServerValidation(form, updateError, {
+    aliases,
+    labels: COMPLETION_FIELD_LABELS,
+  });
+  useFocusFirstViolation(form, updateError, COMPLETION_FIELDS, aliases);
 
   const lessonsMode = form.watch('lessons');
   const requiredQuizzes = form.watch('requiredQuizzes');

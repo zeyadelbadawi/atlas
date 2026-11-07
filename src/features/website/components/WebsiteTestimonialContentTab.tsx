@@ -90,7 +90,9 @@ function TestimonialEntryDialog({
   // closes, and its form used to keep reporting dirty — so the next
   // navigation asked about edits that were already dismissed.
   useUnsavedChanges({ isDirty: open && form.formState.isDirty });
-  useServerValidation(form, createEntry.error ?? updateEntry.error);
+  useServerValidation(form, createEntry.error ?? updateEntry.error, {
+    labels: TESTIMONIAL_FIELD_LABELS,
+  });
 
   const onSubmit = (data: TestimonialEntryFormData) => {
     const payload = { ...data, avatar };
@@ -223,6 +225,15 @@ function TestimonialEntryDialog({
     </Dialog>
   );
 }
+
+/** The labels a server refusal names its field by (`{{field}}`). */
+const TESTIMONIAL_FIELD_LABELS = {
+  'quote.en': 'website:content.quoteEn',
+  'quote.ar': 'website:content.quoteAr',
+  authorName: 'website:fields.authorName',
+  'authorRole.en': 'website:content.authorRoleEn',
+  'authorRole.ar': 'website:content.authorRoleAr',
+} as const;
 
 export function WebsiteTestimonialContentTab({
   academyId,

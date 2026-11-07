@@ -262,7 +262,7 @@ export const MAX_STEP_TITLE_LENGTH = 60;
 export const MAX_STEP_DESCRIPTION_LENGTH = 240;
 export const MAX_STATISTICS_TITLE_LENGTH = 80;
 export const MAX_STATISTIC_LABEL_LENGTH = 40;
-/** A statistic's authored value ("500+", "٥٠٠+"). */
+/** A statistic's authored value ("500+", "500+"). */
 export const MAX_STATISTIC_VALUE_LENGTH = 20;
 
 /**

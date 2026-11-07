@@ -21,6 +21,7 @@ import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { usePlatformProvisioningRequests } from '../hooks';
 import { getProvisioningStatusTone } from '../utils/provisioning-status.utils';
 import type { ProvisioningRequest } from '@types';
+import { intlLocale } from '@utils';
 
 export default function PlatformProvisioningListPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -97,7 +98,9 @@ export default function PlatformProvisioningListPage(): JSX.Element {
         header: t('provisioning:platformConsole.table.startedAt'),
         cell: ({ row }) => (
           <span className="text-muted-foreground">
-            {new Date(row.original.createdAt).toLocaleString(i18n.language)}
+            {new Date(row.original.createdAt).toLocaleString(
+              intlLocale(i18n.language)
+            )}
           </span>
         ),
       },

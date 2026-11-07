@@ -17,6 +17,7 @@ import { usePagination } from '@hooks';
 import { useInvoices } from '../hooks';
 import { formatMoney } from '../utils/money.utils';
 import type { InvoiceStatus, TenantInvoice } from '@types';
+import { intlLocale } from '@utils';
 
 const INVOICE_STATUS_TONE: Record<InvoiceStatus, StatusTone> = {
   draft: 'neutral',
@@ -83,7 +84,7 @@ export default function InvoicesPage(): JSX.Element {
           row.original.issuedAt ? (
             <span className="text-muted-foreground">
               {new Date(row.original.issuedAt).toLocaleDateString(
-                i18n.language
+                intlLocale(i18n.language)
               )}
             </span>
           ) : (
@@ -96,7 +97,9 @@ export default function InvoicesPage(): JSX.Element {
         cell: ({ row }) =>
           row.original.paidAt ? (
             <span className="text-muted-foreground">
-              {new Date(row.original.paidAt).toLocaleDateString(i18n.language)}
+              {new Date(row.original.paidAt).toLocaleDateString(
+                intlLocale(i18n.language)
+              )}
             </span>
           ) : (
             <span className="text-muted-foreground">—</span>

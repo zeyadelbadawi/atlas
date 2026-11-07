@@ -4,6 +4,7 @@
  * explain a problem before the round trip.
  */
 import type { GrowthSettingsFields } from '../types';
+import { intlLocale } from '@utils';
 
 /** The translation namespace root. */
 export const K = 'platformGrowth:';
@@ -130,7 +131,7 @@ export function formatMoney(
   language: string,
   options: { readonly compact?: boolean } = {}
 ): string {
-  const locale = language === 'ar' ? 'ar-EG' : 'en-US';
+  const locale = intlLocale(language);
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: 'EGP',
@@ -149,7 +150,7 @@ export function formatMonth(
 ): string {
   const [year, value] = month.split('-').map(Number);
   if (!year || !value) return month;
-  return new Intl.DateTimeFormat(language === 'ar' ? 'ar-EG' : 'en-US', {
+  return new Intl.DateTimeFormat(intlLocale(language), {
     month: style,
     year: 'numeric',
     timeZone: 'UTC',
@@ -164,12 +165,15 @@ export function formatDay(
 ): string {
   const [year, month, date] = day.split('-').map(Number);
   if (!year || !month || !date) return day;
-  return new Intl.DateTimeFormat(language === 'ar' ? 'ar-EG' : 'en-GB', {
-    day: 'numeric',
-    month: 'short',
-    ...(style === 'medium' ? { year: 'numeric' } : {}),
-    timeZone: 'UTC',
-  }).format(new Date(Date.UTC(year, month - 1, date)));
+  return new Intl.DateTimeFormat(
+    language === 'ar' ? intlLocale(language) : 'en-GB',
+    {
+      day: 'numeric',
+      month: 'short',
+      ...(style === 'medium' ? { year: 'numeric' } : {}),
+      timeZone: 'UTC',
+    }
+  ).format(new Date(Date.UTC(year, month - 1, date)));
 }
 
 // \u2500\u2500\u2500 Settings \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
