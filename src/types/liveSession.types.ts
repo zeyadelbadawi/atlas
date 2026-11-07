@@ -167,6 +167,9 @@ export interface AddOnCatalogEntry {
   readonly key: string;
   readonly name: string;
   readonly description?: string;
+  /** B5 (UX audit) V21 — the Arabic name and description a Platform Owner entered; the English ones are the fallback. */
+  readonly nameAr?: string;
+  readonly descriptionAr?: string;
   readonly effect: {
     readonly type: 'limit' | 'feature';
     readonly featureKey?: string;

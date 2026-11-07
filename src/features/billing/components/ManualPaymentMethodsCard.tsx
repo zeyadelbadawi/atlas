@@ -430,7 +430,8 @@ export function ManualPaymentMethodsCard(): JSX.Element {
                         i18n,
                         method.key,
                         'name',
-                        method.displayName
+                        method.displayName,
+                        method.displayNameAr
                       )}
                     </p>
                     {details ? (

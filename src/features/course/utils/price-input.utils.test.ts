@@ -90,3 +90,20 @@ describe('conversions', () => {
     expect(priceInputFromAmount(undefined)).toBe('');
   });
 });
+
+describe('the server’s price maximum (B3)', () => {
+  it('is the same 1,000,000, and its violation reads as the form’s own message', async () => {
+    // atlas-backend `CoursePricingInputDto`: `@Max(1_000_000)` answered as
+    // `course:validation.priceTooHigh` with `{ max: '1,000,000' }` on
+    // `pricing.amount` — the key and value the form itself uses.
+    expect(MAX_COURSE_PRICE).toBe(1_000_000);
+    const { createI18nInstance } = await import('@/localization/i18n');
+    const values = { max: '1,000,000' };
+    expect(
+      createI18nInstance('en').t('course:validation.priceTooHigh', values)
+    ).toBe('The highest price you can set is 1,000,000. Enter a lower amount.');
+    expect(
+      createI18nInstance('ar').t('course:validation.priceTooHigh', values)
+    ).toBe('أعلى سعر يمكنك تحديده هو 1,000,000. أدخل مبلغًا أقل.');
+  });
+});

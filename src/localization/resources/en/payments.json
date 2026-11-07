@@ -186,6 +186,8 @@
     "checkoutIdLabel": "Checkout ID",
     "checkoutIdHint": "Write this ID as the reference or note of your transfer, so the payment can be matched to your order.",
     "proofNoteLabel": "Note for the reviewer",
+    "payerReferenceLabel": "Transfer reference",
+    "payerReferenceHelp": "The transaction or reference number your bank or wallet shows for this transfer. It helps us find your payment.",
     "proofRules": "Upload a screenshot or receipt of your transfer: PNG, JPG or PDF, up to {{max}}.",
     "proofRequired": "Choose the receipt file first (PNG, JPG or PDF, up to {{max}}).",
     "proofNotSubmitted": "Your proof wasn't submitted",
@@ -264,6 +266,8 @@
     "reviewed": {
       "approved": "This payment was approved on {{date}}. It can no longer be approved or rejected.",
       "rejected": "This payment was rejected on {{date}}. It can no longer be approved or rejected.",
+      "approvedBy": "Approved by {{name}} on {{date}}. It can no longer be approved or rejected.",
+      "rejectedBy": "Rejected by {{name}} on {{date}}. It can no longer be approved or rejected.",
       "notRequired": "This payment doesn't need a manual review.",
       "notes": "Reviewer's notes:"
     },
@@ -515,7 +519,9 @@
       "instructionsAr": "Transfer instructions (Arabic)",
       "referenceInstructionsAr": "Payment reference instructions (Arabic)",
       "arabicHelp": "Optional. Shown instead of the English text to customers using Atlas in Arabic.",
-      "arabicHelpLearner": "Optional. Shown instead of the English text to learners viewing your academy in Arabic."
+      "arabicHelpLearner": "Optional. Shown instead of the English text to learners viewing your academy in Arabic.",
+      "displayNameAr": "Name shown at checkout (Arabic)",
+      "descriptionAr": "Short description (Arabic, optional)"
     },
     "disableLastTitle": "Disable {{name}}?",
     "disableLastDescription": "It is the only enabled {{kind}} method, so checkout will stop offering {{kind}} until you enable one again. Payments already made are not affected."

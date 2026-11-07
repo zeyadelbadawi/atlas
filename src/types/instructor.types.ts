@@ -122,6 +122,8 @@ export interface Grade {
   readonly feedback?: string;
   readonly gradedAt?: string;
   readonly gradedBy?: string;
+  /** B6 (UX audit) V06 — the grader's display name; absent if the account no longer exists. */
+  readonly gradedByName?: string;
 }
 
 /** A quiz attempt as seen by an authorized instructor — `QuizAttempt` plus the student's identity for roster display. */

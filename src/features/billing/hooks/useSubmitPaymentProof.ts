@@ -19,6 +19,8 @@ export interface SubmitPaymentProofVariables {
   readonly paymentId: string;
   readonly file: File;
   readonly note?: string;
+  /** B8 (UX audit) — the transfer reference the payer's bank or wallet shows. */
+  readonly payerReference?: string;
   readonly provider: ManualReviewPaymentProviderAdapter;
 }
 
@@ -26,8 +28,21 @@ export function useSubmitPaymentProof() {
   const queryClient = useQueryClient();
 
   return useApiMutation<Payment, SubmitPaymentProofVariables, ApiError>({
-    mutationFn: ({ organizationId, paymentId, file, note, provider }) =>
-      provider.submitProof(organizationId, paymentId, file, note),
+    mutationFn: ({
+      organizationId,
+      paymentId,
+      file,
+      note,
+      payerReference,
+      provider,
+    }) =>
+      provider.submitProof(
+        organizationId,
+        paymentId,
+        file,
+        note,
+        payerReference
+      ),
     showSuccessToast: false,
     showErrorToast: false,
     // B5 (UX audit) — the page shows this failure itself; no toast repeats it.

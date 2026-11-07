@@ -103,7 +103,14 @@ export default function AddOnsCatalogPage(): JSX.Element {
     action: 'disable' | 'uninstall'
   ): Promise<void> => {
     const name =
-      localizedAddOnText(t, i18n, addOn.key, 'name', addOn.name) ?? addOn.name;
+      localizedAddOnText(
+        t,
+        i18n,
+        addOn.key,
+        'name',
+        addOn.name,
+        addOn.nameAr
+      ) ?? addOn.name;
     const confirmed = await confirm({
       titleKey: `liveSessions:catalog.confirm.${action}Title`,
       descriptionKey: `liveSessions:catalog.confirm.${action}Description`,
@@ -185,7 +192,8 @@ export default function AddOnsCatalogPage(): JSX.Element {
                           i18n,
                           addOn.key,
                           'name',
-                          addOn.name
+                          addOn.name,
+                          addOn.nameAr
                         )}
                       </h2>
                       <Badge
@@ -215,7 +223,8 @@ export default function AddOnsCatalogPage(): JSX.Element {
                           i18n,
                           addOn.key,
                           'description',
-                          addOn.description
+                          addOn.description,
+                          addOn.descriptionAr
                         )}
                       </p>
                     ) : null}

@@ -16,6 +16,7 @@ import type { PaginatedResult } from '@types';
 import type {
   PlatformAddOnRow,
   PlatformAddOnQuery,
+  UpdateAddOnArabicTextInput,
   UpdateAddOnCatalogStatusInput,
 } from '../types';
 
@@ -39,6 +40,19 @@ export class PlatformAddOnsService extends BaseService {
   ): Promise<PlatformAddOnRow> {
     return this.client.patch<PlatformAddOnRow, UpdateAddOnCatalogStatusInput>(
       this.path(key, 'status'),
+      input,
+      options
+    );
+  }
+
+  /** B5 (UX audit) V21 — the add-on's Arabic name and description; a blank text clears it. */
+  async updateArabicText(
+    key: string,
+    input: UpdateAddOnArabicTextInput,
+    options?: WriteOptions
+  ): Promise<PlatformAddOnRow> {
+    return this.client.patch<PlatformAddOnRow, UpdateAddOnArabicTextInput>(
+      this.path(key, 'arabic-text'),
       input,
       options
     );

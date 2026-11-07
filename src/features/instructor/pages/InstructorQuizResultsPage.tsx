@@ -11,6 +11,13 @@
  * reason and grading state — and links each row to the attempt detail.
  * The header offers the integrity CSV export and the per-student
  * overrides sheet (extra time, extra attempts, a different window).
+ *
+ * B6 (UX audit) V17 — filters: student name, attempt status, grading
+ * (e.g. "Awaiting a grade"), integrity flag and late. They are applied by
+ * the server with the paging (`status`, `gradingStatus`, `flagged`, `late`,
+ * `search`), so a filter covers every attempt, not only the page shown;
+ * changing one returns to page 1, and an empty filtered list says so and
+ * offers to clear the filters.
  */
 import { useEffect, useMemo, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +29,7 @@ import {
   Download,
   Flag,
   Loader2,
+  Search,
   SlidersHorizontal,
   Trash2,
 } from 'lucide-react';
@@ -40,6 +48,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -63,6 +72,7 @@ import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { hasViolationOn, SaveFailedAlert, useServerValidation } from '@forms';
 import {
   useDateFormatter,
+  useDebounce,
   useLanguage,
   usePagination,
   usePermissions,
@@ -117,6 +127,50 @@ const EMPTY_OVERRIDE_FORM: QuizOverrideFormData = {
   availableUntil: '',
   reason: '',
 };
+
+/** B6 (UX audit) V17 — what the server can filter attempts by (`QuizAttemptListQueryDto`). */
+export const ATTEMPT_STATUS_FILTERS = [
+  'in_progress',
+  'submitted',
+  'passed',
+  'failed',
+  'expired',
+  'invalidated',
+] as const;
+export const ATTEMPT_GRADING_FILTERS = [
+  'pending',
+  'graded',
+  'not_required',
+] as const;
+const ANY = 'any';
+
+export interface AttemptFilters {
+  readonly status: (typeof ATTEMPT_STATUS_FILTERS)[number] | typeof ANY;
+  readonly gradingStatus: (typeof ATTEMPT_GRADING_FILTERS)[number] | typeof ANY;
+  readonly flagged: 'yes' | 'no' | typeof ANY;
+  readonly late: 'yes' | 'no' | typeof ANY;
+}
+
+export const NO_ATTEMPT_FILTERS: AttemptFilters = {
+  status: ANY,
+  gradingStatus: ANY,
+  flagged: ANY,
+  late: ANY,
+};
+
+/** The filters as query parameters: only the ones chosen. */
+export function attemptFilterParams(
+  filters: AttemptFilters
+): Record<string, string | boolean> {
+  return {
+    ...(filters.status !== ANY ? { status: filters.status } : {}),
+    ...(filters.gradingStatus !== ANY
+      ? { gradingStatus: filters.gradingStatus }
+      : {}),
+    ...(filters.flagged !== ANY ? { flagged: filters.flagged === 'yes' } : {}),
+    ...(filters.late !== ANY ? { late: filters.late === 'yes' } : {}),
+  };
+}
 
 function downloadTextFile(name: string, text: string, type: string): void {
   const blob = new Blob([text], { type });
@@ -560,7 +614,13 @@ export default function InstructorQuizResultsPage(): JSX.Element {
 
   const [totalItems, setTotalItems] = useState(0);
   const [overridesOpen, setOverridesOpen] = useState(false);
+  const [filters, setFilters] = useState<AttemptFilters>(NO_ATTEMPT_FILTERS);
+  const [searchInput, setSearchInput] = useState('');
+  const debouncedSearch = useDebounce(searchInput);
   const pagination = usePagination({ totalItems });
+  const isFiltering =
+    debouncedSearch.trim().length > 0 ||
+    Object.values(filters).some((value) => value !== ANY);
 
   const { data, isLoading, error, refetch } = useInstructorQuizAttempts(
     courseId ?? '',
@@ -568,9 +628,58 @@ export default function InstructorQuizResultsPage(): JSX.Element {
     {
       query: {
         pagination: { page: pagination.page, pageSize: pagination.pageSize },
+        search: debouncedSearch.trim() || undefined,
+        filters: attemptFilterParams(filters),
       },
       enabled: !!courseId && !!quizId,
     }
+  );
+
+  const setFilter = <K extends keyof AttemptFilters>(
+    key: K,
+    value: AttemptFilters[K]
+  ) => {
+    setFilters((current) => ({ ...current, [key]: value }));
+    pagination.goToFirstPage();
+  };
+  const clearFilters = () => {
+    setFilters(NO_ATTEMPT_FILTERS);
+    setSearchInput('');
+    pagination.goToFirstPage();
+  };
+
+  const filterSelect = <K extends keyof AttemptFilters>(
+    key: K,
+    labelKey: string,
+    options: readonly { value: AttemptFilters[K]; labelKey: string }[]
+  ) => (
+    <div className="space-y-1">
+      <Label htmlFor={`attempt-filter-${key}`} className="text-xs">
+        {t(labelKey)}
+      </Label>
+      <Select
+        value={filters[key]}
+        onValueChange={(value) => setFilter(key, value as AttemptFilters[K])}
+      >
+        <SelectTrigger
+          id={`attempt-filter-${key}`}
+          data-testid={`attempt-filter-${key}`}
+          className="w-36"
+        >
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value={ANY}>
+            {t('instructor:quizResults.filters.any')}
+          </SelectItem>
+          {options.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {t(option.labelKey)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 
   const { mutateAsync: exportCsv, isPending: isExporting } = useIntegrityCsv(
@@ -796,6 +905,76 @@ export default function InstructorQuizResultsPage(): JSX.Element {
         actions={headerActions}
       />
 
+      <div
+        className="mb-4 flex flex-wrap items-end gap-3"
+        role="group"
+        aria-label={t('instructor:quizResults.filters.label')}
+      >
+        <div className="space-y-1">
+          <Label htmlFor="attempt-filter-search" className="text-xs">
+            {t('instructor:quizResults.filters.student')}
+          </Label>
+          <div className="relative w-48">
+            <Search
+              className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden
+            />
+            <Input
+              id="attempt-filter-search"
+              data-testid="attempt-filter-search"
+              type="search"
+              dir="auto"
+              placeholder={t(
+                'instructor:quizResults.filters.studentPlaceholder'
+              )}
+              value={searchInput}
+              onChange={(event) => {
+                setSearchInput(event.target.value);
+                pagination.goToFirstPage();
+              }}
+              className="ps-9"
+            />
+          </div>
+        </div>
+        {filterSelect(
+          'status',
+          'instructor:quizResults.filters.status',
+          ATTEMPT_STATUS_FILTERS.map((value) => ({
+            value,
+            labelKey: `instructor:studentProgress.quizStatus.${value}`,
+          }))
+        )}
+        {filterSelect(
+          'gradingStatus',
+          'instructor:quizResults.filters.grading',
+          ATTEMPT_GRADING_FILTERS.map((value) => ({
+            value,
+            labelKey: `instructor:quizResults.filters.gradingOption.${value}`,
+          }))
+        )}
+        {filterSelect('flagged', 'instructor:quizResults.filters.flagged', [
+          {
+            value: 'yes',
+            labelKey: 'instructor:quizResults.filters.flaggedYes',
+          },
+          { value: 'no', labelKey: 'instructor:quizResults.filters.flaggedNo' },
+        ])}
+        {filterSelect('late', 'instructor:quizResults.filters.late', [
+          { value: 'yes', labelKey: 'instructor:quizResults.filters.lateYes' },
+          { value: 'no', labelKey: 'instructor:quizResults.filters.lateNo' },
+        ])}
+        {isFiltering ? (
+          <Button
+            type="button"
+            variant="ghost"
+            data-testid="attempt-filter-clear"
+            onClick={clearFilters}
+          >
+            {t('instructor:quizResults.filters.clear')}
+          </Button>
+        ) : null}
+      </div>
+
       <DataTable
         columns={columns}
         data={attempts}
@@ -813,8 +992,16 @@ export default function InstructorQuizResultsPage(): JSX.Element {
             })
           )
         }
-        emptyTitleKey="instructor:quizResults.empty"
-        emptyDescriptionKey="instructor:quizResults.emptyDescription"
+        emptyTitleKey={
+          isFiltering
+            ? 'instructor:quizResults.filters.noMatch'
+            : 'instructor:quizResults.empty'
+        }
+        emptyDescriptionKey={
+          isFiltering
+            ? 'instructor:quizResults.filters.noMatchDescription'
+            : 'instructor:quizResults.emptyDescription'
+        }
       />
 
       {courseId && quizId ? (

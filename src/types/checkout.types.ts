@@ -50,6 +50,8 @@ export interface CheckoutSnapshot {
   readonly target: CheckoutTarget;
   readonly billingCycle?: SubscriptionBillingCycle;
   readonly displayName: string;
+  /** B5 (UX audit) V21 — an add-on's Arabic name as frozen on the checkout, when it has one. */
+  readonly displayNameAr?: string;
   readonly price: Money;
   readonly capturedAt: string;
   /** B2 — set when `price` is the organization's Founding Academy locked annual price (server-decided). */

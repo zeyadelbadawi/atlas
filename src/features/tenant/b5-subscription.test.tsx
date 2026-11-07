@@ -21,7 +21,11 @@ import { createApiError } from '@api';
 import { SubscriptionBillingDetails } from './components/SubscriptionBillingDetails';
 import { CancelSubscriptionDialog } from './components/CancelSubscriptionDialog';
 import { PlanComparisonDialog } from './components/PlanComparisonDialog';
-import { pickCatalogText } from './utils/catalog-text.utils';
+import {
+  localizedAddOnText,
+  localizedPaymentMethodText,
+  pickCatalogText,
+} from './utils/catalog-text.utils';
 import { planCyclePrice } from './utils/plan-text.utils';
 import en from '@/localization/resources/en/tenant.json';
 import ar from '@/localization/resources/ar/tenant.json';
@@ -299,6 +303,55 @@ describe('V21 — seeded catalog names', () => {
     expect(pickCatalogText('Bank Transfer', undefined, undefined)).toBe(
       'Bank Transfer'
     );
+  });
+
+  it('shows a Platform Owner’s Arabic name on Arabic pages, before any key translation', () => {
+    const arabic = createI18nInstance('ar');
+    // A Platform-Owner-created row with its own Arabic name.
+    expect(
+      localizedPaymentMethodText(
+        arabic.t,
+        arabic,
+        'instapay_dd78ccb6',
+        'name',
+        'InstaPay — Atlas Egypt',
+        'إنستاباي — أطلس مصر'
+      )
+    ).toBe('إنستاباي — أطلس مصر');
+    // Its own Arabic text wins over the seeded translation too.
+    expect(
+      localizedAddOnText(
+        arabic.t,
+        arabic,
+        'extra-academy',
+        'name',
+        'Extra Academy',
+        'أكاديمية إضافية للمدرسة'
+      )
+    ).toBe('أكاديمية إضافية للمدرسة');
+    // Without one (or blank): the seeded translation, else the English.
+    expect(
+      localizedPaymentMethodText(
+        arabic.t,
+        arabic,
+        'instapay_dd78ccb6',
+        'description',
+        'Instant transfer',
+        '  '
+      )
+    ).toBe('Instant transfer');
+    // English pages always show the English text.
+    const english = createI18nInstance('en');
+    expect(
+      localizedAddOnText(
+        english.t,
+        english,
+        'extra-academy',
+        'name',
+        'Extra Academy',
+        'أكاديمية إضافية للمدرسة'
+      )
+    ).toBe('Extra Academy');
   });
 
   it('has the active add-on count in plural forms (V34)', () => {

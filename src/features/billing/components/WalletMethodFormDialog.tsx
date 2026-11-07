@@ -70,6 +70,9 @@ import {
   ManualMethodSaveFailure,
   useGuardedDialogClose,
   useManualMethodServerValidation,
+  MethodNameFields,
+  toNameFormValues,
+  toNamePayload,
 } from './ManualMethodFormFields';
 
 export interface WalletMethodFormDialogProps {
@@ -96,8 +99,7 @@ function toFormValues(
       ? 'other'
       : '';
   return {
-    displayName: method?.displayName ?? '',
-    description: method?.description ?? '',
+    ...toNameFormValues(method),
     instructions: {
       walletProvider,
       walletProviderName:
@@ -174,17 +176,16 @@ export function WalletMethodFormDialog({
         await updateMethod.mutateAsync({
           methodId: method.id,
           payload: {
-            displayName: values.displayName,
-            // Sent even when empty: clearing the description is an edit.
-            description: values.description,
+            // Sent even when empty: clearing a description or an Arabic
+            // text is an edit.
+            ...toNamePayload(values, true),
             walletInstructions: details,
           },
         });
         toast({ title: t('payments:walletMethods.updateSuccess') });
       } else {
         await createMethod.mutateAsync({
-          displayName: values.displayName,
-          ...(values.description ? { description: values.description } : {}),
+          ...toNamePayload(values, false),
           instructions: details,
         });
         toast({ title: t('payments:walletMethods.createSuccess') });
@@ -228,19 +229,10 @@ export function WalletMethodFormDialog({
             noValidate
             data-testid="wallet-method-form"
           >
-            <MethodTextField
+            <MethodNameFields
               control={form.control}
-              name="displayName"
-              labelKey="payments:walletMethods.fields.displayName"
-              helpKey="payments:bankTransferMethods.fields.displayNameHelp"
-              testId="wallet-method-display-name"
-            />
-            <MethodLongTextField
-              control={form.control}
-              name="description"
-              labelKey="payments:bankTransferMethods.fields.description"
-              rows={2}
-              testId="wallet-method-description"
+              section="walletMethods"
+              testIdPrefix="wallet-method"
             />
 
             <FormField

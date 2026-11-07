@@ -103,5 +103,6 @@ learning authoring hooks now mark their errors inline, and each caller shows ONE
 
 ### Not changed here, with reason
 - **V17** fixed by the B2 retry change.
-- Backend price maximum (1,000,000 on the client) — the backend accepts any positive amount;
-  mirroring the limit there is a backend change for later.
+- Backend price maximum — **fixed** (atlas-backend `CoursePricingInputDto`): the server refuses a
+  paid price above 1,000,000 with the form's own `course:validation.priceTooHigh` (`{ max:
+  '1,000,000' }`) on `pricing.amount`, so the field shows the same message for a direct API call.

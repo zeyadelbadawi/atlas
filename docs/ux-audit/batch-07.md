@@ -127,6 +127,8 @@ what the learner got wrong.
 ### Not changed, with reason
 - **V04 retry rate** — the offline outbox's full-jitter backoff is a deliberate design with its
   own tests; changing it is separate work.
-- **V12 in a new tab** — no endpoint lists an order's payments, so a new tab restarts at the
-  method step (the backend reuses the same order and payment).
+- **V12 in a new tab** — **fixed**: `GET /course-orders/:id/payments` (the buyer's own order
+  only; anyone else gets 404). A checkout with nothing remembered in the tab asks for the order's
+  payments: a proof the academy is reviewing shows "under review", a payment still waiting for its
+  proof opens on the proof step, otherwise the method step.
 - The quiz strip offset uses each theme's header-height variable; Riwaq has none and gets 0.

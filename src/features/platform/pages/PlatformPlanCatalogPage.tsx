@@ -218,7 +218,8 @@ export default function PlatformPlanCatalogPage(): JSX.Element {
                           i18n,
                           addOn.key,
                           'name',
-                          addOn.name
+                          addOn.name,
+                          addOn.nameAr
                         )}
                       </p>
                       {addOn.description ? (
@@ -228,7 +229,8 @@ export default function PlatformPlanCatalogPage(): JSX.Element {
                             i18n,
                             addOn.key,
                             'description',
-                            addOn.description
+                            addOn.description,
+                            addOn.descriptionAr
                           )}
                         </p>
                       ) : null}

@@ -26,8 +26,12 @@
  * "choose a method" with the open proof-less payment for that method. The
  * page remembers, for this tab, which order, payment and method it reached
  * (`sessionStorage`), so a reload or "Continue payment" lands back on the
- * proof step of the SAME payment instead of starting again. The order and
- * payment references are shown so the learner can quote them.
+ * proof step of the SAME payment instead of starting again. A tab with
+ * nothing remembered (a new tab, another device) asks the server for the
+ * order's payments (`GET course-orders/:id/payments`, B7 (UX audit) V12):
+ * a proof already with the academy shows "under review", a payment still
+ * waiting for its proof opens on the proof step. The order and payment
+ * references are shown so the learner can quote them.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -56,6 +60,7 @@ import { useDateFormatter } from '@hooks';
 import { apiErrorMessage, hasMessageKey } from '@utils';
 import { normalizeUnknownError, type ApiError } from '@api';
 import { LEARNER_ROUTES, buildPath } from '@app/routes/route-paths';
+import { localizedPaymentMethodText } from '@features/tenant';
 import { LearnerPageHeader } from '../components/LearnerPageHeader';
 import { CheckoutProofForm } from '../components/CheckoutProofForm';
 import type { CheckoutProofValues } from '../components/CheckoutProofForm';
@@ -162,6 +167,21 @@ function awaitsProof(payment: CourseOrderPayment): boolean {
   );
 }
 
+/**
+ * B7 (UX audit) V12 — of an order's payments (newest first), the one a new
+ * tab resumes at: a proof the academy is reviewing first, else the newest
+ * payment still waiting for its proof; none means the method step.
+ */
+export function resumablePayment(
+  payments: readonly CourseOrderPayment[]
+): CourseOrderPayment | null {
+  return (
+    payments.find((payment) => payment.reviewStatus === 'pending') ??
+    payments.find(awaitsProof) ??
+    null
+  );
+}
+
 function ReferenceLine({
   labelKey,
   id,
@@ -239,7 +259,9 @@ export default function CourseCheckoutPage(): JSX.Element {
   /*
    * Back on the proof step after a reload or "Continue payment": the server
    * returned the same open order; the payment this tab created for it is
-   * read again and, while it still waits for a proof, shown as it was.
+   * read again and, while it still waits for a proof, shown as it was. With
+   * nothing remembered in this tab, the order's own payments say where it
+   * stands (B7 V12).
    */
   const resumedOrderRef = useRef<string | null>(null);
   const orderId = order?.id;
@@ -247,21 +269,29 @@ export default function CourseCheckoutPage(): JSX.Element {
     if (!orderId || resumedOrderRef.current === orderId) return;
     resumedOrderRef.current = orderId;
     const saved = readSaved(courseId);
-    if (!saved || saved.orderId !== orderId) return;
+    const savedHere = saved && saved.orderId === orderId ? saved : null;
     let cancelled = false;
     setResuming(true);
-    courseOrderService
-      .getPayment(orderId, saved.paymentId)
+    const lookup: Promise<CourseOrderPayment | null> = savedHere
+      ? courseOrderService.getPayment(orderId, savedHere.paymentId)
+      : courseOrderService.listPayments(orderId).then(resumablePayment);
+    lookup
       .then((found) => {
-        if (cancelled) return;
+        if (cancelled || !found) return;
         if (found.reviewStatus === 'pending') {
           setUnderReview(true);
           return;
         }
         if (awaitsProof(found)) {
-          setSelectedMethod(saved.methodKey);
+          const methodKey = savedHere?.methodKey ?? found.methodKey;
+          setSelectedMethod(methodKey);
           setPayment(found);
           setStep('proof');
+          writeSaved(courseId, {
+            orderId,
+            paymentId: found.id,
+            methodKey,
+          });
           return;
         }
         writeSaved(courseId, null);
@@ -649,14 +679,28 @@ export default function CourseCheckoutPage(): JSX.Element {
                       <span className="block font-medium text-foreground">
                         {isAcademyMethod
                           ? t(`payments:common.methodType.${method.type}`)
-                          : method.displayName}
+                          : localizedPaymentMethodText(
+                              t,
+                              i18n,
+                              method.key,
+                              'name',
+                              method.displayName,
+                              method.displayNameAr
+                            )}
                       </span>
                       {method.description ? (
                         <span
                           dir="auto"
                           className="block text-sm text-muted-foreground"
                         >
-                          {method.description}
+                          {localizedPaymentMethodText(
+                            t,
+                            i18n,
+                            method.key,
+                            'description',
+                            method.description,
+                            method.descriptionAr
+                          )}
                         </span>
                       ) : null}
                       <ManualPaymentBrandChip

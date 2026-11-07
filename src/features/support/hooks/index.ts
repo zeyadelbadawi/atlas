@@ -11,6 +11,7 @@ export {
   useMySupportCase,
   useCreateSupportCase,
   useReplyToMySupportCase,
+  useCloseMySupportCase,
 } from './useMySupportCases';
 export type {
   CreateSupportCaseVariables,

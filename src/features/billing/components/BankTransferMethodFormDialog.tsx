@@ -61,6 +61,9 @@ import {
   ManualMethodSaveFailure,
   useGuardedDialogClose,
   useManualMethodServerValidation,
+  MethodNameFields,
+  toNameFormValues,
+  toNamePayload,
 } from './ManualMethodFormFields';
 
 export interface BankTransferMethodFormDialogProps {
@@ -71,8 +74,7 @@ export interface BankTransferMethodFormDialogProps {
 }
 
 const EMPTY_VALUES: BankTransferMethodFormData = {
-  displayName: '',
-  description: '',
+  ...toNameFormValues(undefined),
   instructions: {
     bankName: '',
     accountNumber: '',
@@ -92,8 +94,7 @@ function toFormValues(
       : undefined;
   if (!method) return EMPTY_VALUES;
   return {
-    displayName: method.displayName,
-    description: method.description ?? '',
+    ...toNameFormValues(method),
     instructions: {
       bankName: saved?.bankName ?? '',
       // A placeholder's account number is not a real one: start it blank.
@@ -119,13 +120,10 @@ function toInstructionsPayload(
 }
 
 type TextFieldName =
-  | 'displayName'
   | 'instructions.bankName'
   | 'instructions.accountNumber'
   | 'instructions.iban'
   | 'instructions.swiftCode';
-
-type LongTextFieldName = 'description';
 
 export function BankTransferMethodFormDialog({
   open,
@@ -172,17 +170,16 @@ export function BankTransferMethodFormDialog({
         await updateMethod.mutateAsync({
           methodId: method.id,
           payload: {
-            displayName: values.displayName,
-            // Sent even when empty: clearing the description is an edit.
-            description: values.description,
+            // Sent even when empty: clearing a description or an Arabic
+            // text is an edit.
+            ...toNamePayload(values, true),
             instructions,
           },
         });
         toast({ title: t('payments:bankTransferMethods.updateSuccess') });
       } else {
         await createMethod.mutateAsync({
-          displayName: values.displayName,
-          ...(values.description ? { description: values.description } : {}),
+          ...toNamePayload(values, false),
           instructions,
         });
         toast({ title: t('payments:bankTransferMethods.createSuccess') });
@@ -211,34 +208,6 @@ export function BankTransferMethodFormDialog({
               {...field}
               dir={options?.ltr ? 'ltr' : 'auto'}
               autoComplete="off"
-              data-testid={options?.testId}
-            />
-          </FormControl>
-          {options?.helpKey ? (
-            <FormDescription>{t(options.helpKey)}</FormDescription>
-          ) : null}
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-  );
-
-  const renderLongTextField = (
-    name: LongTextFieldName,
-    labelKey: string,
-    options?: { helpKey?: string; testId?: string; rows?: number }
-  ) => (
-    <FormField
-      control={form.control}
-      name={name}
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>{t(labelKey)}</FormLabel>
-          <FormControl>
-            <Textarea
-              {...field}
-              dir="auto"
-              rows={options?.rows ?? 3}
               data-testid={options?.testId}
             />
           </FormControl>
@@ -282,19 +251,11 @@ export function BankTransferMethodFormDialog({
             noValidate
             data-testid="bank-method-form"
           >
-            {renderTextField(
-              'displayName',
-              'payments:bankTransferMethods.fields.displayName',
-              {
-                helpKey: 'payments:bankTransferMethods.fields.displayNameHelp',
-                testId: 'bank-method-display-name',
-              }
-            )}
-            {renderLongTextField(
-              'description',
-              'payments:bankTransferMethods.fields.description',
-              { rows: 2, testId: 'bank-method-description' }
-            )}
+            <MethodNameFields
+              control={form.control}
+              section="bankTransferMethods"
+              testIdPrefix="bank-method"
+            />
             <div className="grid gap-4 sm:grid-cols-2">
               {renderTextField(
                 'instructions.bankName',

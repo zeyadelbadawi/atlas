@@ -66,7 +66,7 @@ import {
   type ApprovePaymentFormData,
   type RejectPaymentFormData,
 } from '../schemas/billing.schemas';
-import { directionOf } from '@utils';
+import { directionOf, isolateText } from '@utils';
 
 export default function PlatformPaymentReviewDetailPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -564,11 +564,20 @@ function ReviewedNotice({
             {t('payments:platformReview.decidedElsewhere')}
           </p>
         ) : null}
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground" data-testid="payment-reviewed-by">
+          {/* B8 (UX audit) V01 — who decided and when, from the review
+              record itself; without one, the payment's last update. */}
           {decision
-            ? t(`payments:platformReview.reviewed.${decision}`, {
-                date: fmt.dateTime(payment.updatedAt),
-              })
+            ? payment.review?.reviewerName
+              ? t(`payments:platformReview.reviewed.${decision}By`, {
+                  name: isolateText(payment.review.reviewerName),
+                  date: fmt.dateTime(payment.review.reviewedAt),
+                })
+              : t(`payments:platformReview.reviewed.${decision}`, {
+                  date: fmt.dateTime(
+                    payment.review?.reviewedAt ?? payment.updatedAt
+                  ),
+                })
             : t('payments:platformReview.reviewed.notRequired')}
         </p>
         {payment.reviewNotes ? (

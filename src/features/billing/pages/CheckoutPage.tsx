@@ -280,7 +280,14 @@ export default function CheckoutPage(): JSX.Element {
         ? resolvePlanName(targetPlan, language)
         : undefined
       : targetAddOn
-        ? localizedAddOnText(t, i18n, targetAddOn.key, 'name', targetAddOn.name)
+        ? localizedAddOnText(
+            t,
+            i18n,
+            targetAddOn.key,
+            'name',
+            targetAddOn.name,
+            targetAddOn.nameAr
+          )
         : undefined;
 
   const checkoutReady = !!createCheckout.data;
@@ -397,7 +404,8 @@ export default function CheckoutPage(): JSX.Element {
                         i18n,
                         targetAddOn.key,
                         'description',
-                        targetAddOn.description
+                        targetAddOn.description,
+                        targetAddOn.descriptionAr
                       )}
                     </p>
                   ) : null}
@@ -722,7 +730,8 @@ export default function CheckoutPage(): JSX.Element {
                                   i18n,
                                   method.key,
                                   'name',
-                                  method.displayName
+                                  method.displayName,
+                                  method.displayNameAr
                                 )}
                               </span>
                               <span
@@ -749,7 +758,8 @@ export default function CheckoutPage(): JSX.Element {
                                   i18n,
                                   method.key,
                                   'description',
-                                  method.description
+                                  method.description,
+                                  method.descriptionAr
                                 )}
                               </span>
                             ) : null}

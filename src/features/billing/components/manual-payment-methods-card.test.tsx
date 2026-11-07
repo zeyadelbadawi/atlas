@@ -333,6 +333,8 @@ describe('ManualPaymentMethodsCard — E-wallets', () => {
     expect(call.payload).toEqual({
       displayName: 'Test Vodafone Cash',
       description: '',
+      displayNameAr: '',
+      descriptionAr: '',
       walletInstructions: {
         walletProvider: 'vodafone_cash',
         walletNumber: '01112345678',
@@ -405,6 +407,8 @@ describe('ManualPaymentMethodsCard — InstaPay', () => {
       payload: {
         displayName: 'Test InstaPay',
         description: '',
+        displayNameAr: '',
+        descriptionAr: '',
         instapayInstructions: {
           instapayAddress: 'new.holder@instapay',
           accountName: 'Test Holder',
@@ -556,6 +560,86 @@ describe('ManualPaymentMethodsCard — Bank transfer Arabic texts', () => {
         instructionsAr: 'حوّل المبلغ بالضبط.',
         referenceInstructions: 'Use the payment reference.',
       },
+    });
+  });
+});
+
+describe('ManualPaymentMethodsCard — Arabic name and description (B5/B8)', () => {
+  it('sends the Arabic name and description beside the English ones, only when entered', async () => {
+    usePlatformPaymentMethods.mockReturnValue(listOf([]));
+    renderCard();
+    openTab('instapay-method');
+    fireEvent.click(screen.getByTestId('instapay-method-add'));
+    await screen.findByRole('dialog');
+
+    type('instapay-method-display-name', 'InstaPay');
+    type('instapay-method-display-name-ar', 'إنستاباي');
+    type('instapay-method-description-ar', 'تحويل فوري');
+    expect(
+      screen.getByTestId('instapay-method-display-name-ar').getAttribute('dir')
+    ).toBe('rtl');
+    expect(
+      screen.getByTestId('instapay-method-display-name-ar').getAttribute('lang')
+    ).toBe('ar');
+    type('instapay-method-address', 'test.holder@instapay');
+    type('instapay-method-account-name', 'Test Holder');
+    type('instapay-method-instructions', 'Send the exact amount.');
+    type('instapay-method-reference-instructions', 'Write the reference.');
+    fireEvent.click(screen.getByTestId('instapay-method-save'));
+
+    await waitFor(() =>
+      expect(createInstapayMutateAsync).toHaveBeenCalledTimes(1)
+    );
+    expect(createInstapayMutateAsync.mock.calls[0][0]).toMatchObject({
+      displayName: 'InstaPay',
+      displayNameAr: 'إنستاباي',
+      descriptionAr: 'تحويل فوري',
+    });
+    expect(createInstapayMutateAsync.mock.calls[0][0]).not.toHaveProperty(
+      'description'
+    );
+  });
+
+  it('refuses an Arabic name over 80 characters, on its field', async () => {
+    usePlatformPaymentMethods.mockReturnValue(listOf([]));
+    renderCard();
+    openTab('instapay-method');
+    fireEvent.click(screen.getByTestId('instapay-method-add'));
+    await screen.findByRole('dialog');
+    type('instapay-method-display-name', 'InstaPay');
+    type('instapay-method-display-name-ar', 'ا'.repeat(81));
+    fireEvent.click(screen.getByTestId('instapay-method-save'));
+    expect(await screen.findByText(/80 characters or fewer/)).toBeTruthy();
+    expect(createInstapayMutateAsync).not.toHaveBeenCalled();
+  });
+
+  it('an edit starts from the saved Arabic texts and sends a cleared one as empty', async () => {
+    usePlatformPaymentMethods.mockReturnValue(
+      listOf([
+        {
+          ...INSTAPAY,
+          displayNameAr: 'إنستاباي',
+          descriptionAr: 'تحويل فوري',
+        },
+      ])
+    );
+    renderCard();
+    openTab('instapay-method');
+    fireEvent.click(screen.getByTestId('instapay-method-edit-pm-i'));
+    await screen.findByRole('dialog');
+    expect(
+      (
+        screen.getByTestId(
+          'instapay-method-display-name-ar'
+        ) as HTMLInputElement
+      ).value
+    ).toBe('إنستاباي');
+    type('instapay-method-description-ar', '');
+    fireEvent.click(screen.getByTestId('instapay-method-save'));
+    await waitFor(() => expect(updateMutateAsync).toHaveBeenCalledTimes(1));
+    expect(updateMutateAsync.mock.calls[0][0].payload).toMatchObject({
+      displayNameAr: 'إنستاباي',
+      descriptionAr: '',
     });
   });
 });

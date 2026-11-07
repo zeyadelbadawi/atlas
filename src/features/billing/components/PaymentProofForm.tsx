@@ -6,6 +6,9 @@
  *   the limit.
  * - The note has the server's own limit (`MAX_PAYMENT_PROOF_NOTE_LENGTH`,
  *   500) with a counter; nothing is cut silently.
+ * - B8 (UX audit) — the transfer reference the bank or wallet shows
+ *   ("payer reference", optional, 120 with a counter), like a course-order
+ *   proof has: the Platform reviewer sees it and can search by it.
  * - "Submit for review" is never greyed without a reason: pressed without
  *   a file, it says to choose one.
  * - A failed submit shows ONE message: a server refusal of the note or
@@ -17,6 +20,7 @@ import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { SaveFailedAlert } from '@forms';
@@ -26,6 +30,7 @@ import type { ApiError } from '@api';
 import type { LanguageCode } from '@types';
 import {
   ALLOWED_PAYMENT_PROOF_TYPES,
+  MAX_PAYER_REFERENCE_LENGTH,
   MAX_PAYMENT_PROOF_FILE_SIZE,
   MAX_PAYMENT_PROOF_NOTE_LENGTH,
 } from '../constants/billing.constants';
@@ -34,7 +39,11 @@ export interface PaymentProofFormProps {
   readonly isPending: boolean;
   /** The last failed submit, shown here only. */
   readonly error: ApiError | null;
-  readonly onSubmit: (file: File, note: string | undefined) => void;
+  readonly onSubmit: (
+    file: File,
+    note: string | undefined,
+    payerReference: string | undefined
+  ) => void;
 }
 
 /** File-level refusals the server names without a field. */
@@ -46,12 +55,17 @@ const FILE_ERROR_KEYS = new Set([
 ]);
 const FILE_FIELDS = new Set(['fileData', 'fileName']);
 
-/** Where a failed submit's message belongs: the note, the file, or the alert. */
+/** Where a failed submit's message belongs: the note, the reference, the file, or the alert. */
 export function proofFailureTarget(
   error: Pick<ApiError, 'messageKey' | 'violations'>
-): 'note' | 'file' | 'alert' {
+): 'note' | 'reference' | 'file' | 'alert' {
   if (error.violations?.some((violation) => violation.field === 'note')) {
     return 'note';
+  }
+  if (
+    error.violations?.some((violation) => violation.field === 'payerReference')
+  ) {
+    return 'reference';
   }
   if (
     error.violations?.some((violation) => FILE_FIELDS.has(violation.field)) ||
@@ -75,10 +89,16 @@ export function PaymentProofForm({
   const noteId = `${ids}-note`;
   const noteCountId = `${ids}-note-count`;
   const noteErrorId = `${ids}-note-error`;
+  const referenceId = `${ids}-reference`;
+  const referenceHelpId = `${ids}-reference-help`;
+  const referenceCountId = `${ids}-reference-count`;
+  const referenceErrorId = `${ids}-reference-error`;
 
   const [note, setNote] = useState('');
+  const [reference, setReference] = useState('');
   const [fileError, setFileError] = useState<string>();
   const [noteError, setNoteError] = useState<string>();
+  const [referenceError, setReferenceError] = useState<string>();
   const filePicker = useFilePicker({
     accept: ALLOWED_PAYMENT_PROOF_TYPES.join(','),
   });
@@ -90,6 +110,7 @@ export function PaymentProofForm({
   );
   const maxSize = `${size.value} ${t(size.unitKey)}`;
   const noteLabel = t('payments:payment.proofNoteLabel');
+  const referenceLabel = t('payments:payment.payerReferenceLabel');
 
   useEffect(() => {
     const file = filePicker.files?.[0];
@@ -112,6 +133,19 @@ export function PaymentProofForm({
   const target = error ? proofFailureTarget(error) : null;
   useEffect(() => {
     if (!error || !target || target === 'alert') return;
+    if (target === 'reference') {
+      const violation = error.violations?.find(
+        (v) => v.field === 'payerReference'
+      );
+      setReferenceError(
+        errorText(violation?.messageKey, 'validation:maxLength', {
+          field: referenceLabel,
+          count: MAX_PAYER_REFERENCE_LENGTH,
+          ...(violation?.values ?? {}),
+        })
+      );
+      return;
+    }
     if (target === 'note') {
       const violation = error.violations?.find((v) => v.field === 'note');
       setNoteError(
@@ -134,13 +168,24 @@ export function PaymentProofForm({
   }, [error]);
 
   const noteTooLong = note.trim().length > MAX_PAYMENT_PROOF_NOTE_LENGTH;
+  const referenceTooLong = reference.trim().length > MAX_PAYER_REFERENCE_LENGTH;
 
   const handleSubmit = () => {
     // A new attempt starts clean: the last refusal's field messages go,
     // and the checks below (or the next answer) say what is wrong now.
     setNoteError(undefined);
+    setReferenceError(undefined);
     setFileError(undefined);
     let blocked = false;
+    if (referenceTooLong) {
+      setReferenceError(
+        t('validation:maxLength', {
+          field: referenceLabel,
+          count: MAX_PAYER_REFERENCE_LENGTH,
+        })
+      );
+      blocked = true;
+    }
     if (!proofFile) {
       setFileError(t('payments:payment.proofRequired', { max: maxSize }));
       blocked = true;
@@ -155,7 +200,11 @@ export function PaymentProofForm({
       blocked = true;
     }
     if (blocked || !proofFile) return;
-    onSubmit(proofFile, note.trim() || undefined);
+    onSubmit(
+      proofFile,
+      note.trim() || undefined,
+      reference.trim() || undefined
+    );
   };
 
   return (
@@ -187,6 +236,62 @@ export function PaymentProofForm({
           {fileError}
         </p>
       ) : null}
+
+      <div className="space-y-1.5">
+        <Label htmlFor={referenceId}>
+          {referenceLabel}{' '}
+          <span className="font-normal text-muted-foreground">
+            ({t('common:form.optional')})
+          </span>
+        </Label>
+        <Input
+          id={referenceId}
+          value={reference}
+          onChange={(event) => {
+            setReference(event.target.value);
+            if (referenceError) setReferenceError(undefined);
+          }}
+          dir="ltr"
+          data-ltr-content
+          autoComplete="off"
+          aria-invalid={referenceError || referenceTooLong ? true : undefined}
+          aria-describedby={[
+            referenceHelpId,
+            referenceCountId,
+            referenceError ? referenceErrorId : undefined,
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          data-testid="payment-proof-reference"
+        />
+        <p id={referenceHelpId} className="text-xs text-muted-foreground">
+          {t('payments:payment.payerReferenceHelp')}
+        </p>
+        <p
+          id={referenceCountId}
+          className={
+            referenceTooLong
+              ? 'text-xs font-medium tabular-nums text-destructive'
+              : 'text-xs tabular-nums text-muted-foreground'
+          }
+          data-testid="payment-proof-reference-count"
+        >
+          {t('common:form.characterCount', {
+            count: reference.trim().length,
+            max: MAX_PAYER_REFERENCE_LENGTH,
+          })}
+        </p>
+        {referenceError ? (
+          <p
+            id={referenceErrorId}
+            role="alert"
+            className="text-sm text-destructive"
+            data-testid="payment-proof-reference-error"
+          >
+            {referenceError}
+          </p>
+        ) : null}
+      </div>
 
       <div className="space-y-1.5">
         <Label htmlFor={noteId}>

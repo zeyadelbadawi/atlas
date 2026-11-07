@@ -22,6 +22,8 @@ import type {
   PlanHistoryEntry,
   PlanLimitImpact,
   PlanLimits,
+  PlanNoticePreview,
+  PlanNoticePreviewPayload,
   UpdatePlanPayload,
 } from '@types';
 import type { ApiError } from '@api';
@@ -97,6 +99,26 @@ export function usePreviewLimitImpact() {
     mutationFn: ({ key, limits }) =>
       platformPlansService.previewLimitImpact(key, limits),
     // A preview failing is not a save failing; the caller surfaces it inline.
+    showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
+  });
+}
+
+export interface PreviewNoticeVariables {
+  readonly key: string;
+  readonly payload: PlanNoticePreviewPayload;
+}
+
+/**
+ * B8 (UX audit) V08 — before a price or limit edit is saved, how many
+ * organizations it will email. Fired from the editor's Save; a mutation
+ * for the same reason as `usePreviewLimitImpact`. The editor shows a
+ * failure itself.
+ */
+export function usePreviewPlanNotice() {
+  return useApiMutation<PlanNoticePreview, PreviewNoticeVariables, ApiError>({
+    mutationFn: ({ key, payload }) =>
+      platformPlansService.previewNotice(key, payload),
     showErrorToast: false,
     meta: { [INLINE_ERRORS_META]: true },
   });

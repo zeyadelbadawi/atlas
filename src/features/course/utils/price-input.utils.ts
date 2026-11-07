@@ -16,13 +16,15 @@
  *   - no exponent, sign, thousands separator or other characters;
  *   - at most {@link MAX_COURSE_PRICE}.
  *
- * The backend pricing DTO (`CoursePricingInputDto`) has `@IsPositive()`
- * and no upper bound, so the maximum is the dashboard's own:
- * 1,000,000 in the course's currency.
+ * The maximum is 1,000,000 in the course's currency. The backend pricing
+ * DTO (`CoursePricingInputDto`) enforces the same maximum and answers a
+ * higher amount with this form's own `course:validation.priceTooHigh`
+ * violation on `pricing.amount` (with `{ max: '1,000,000' }`), so a direct
+ * API call can't store a price the form would refuse.
  */
 import { validationMessage } from '@/shared/forms/validation-message';
 
-/** The highest price a course can be given here (no backend limit exists). */
+/** The highest price a course can be given (the backend enforces it too). */
 export const MAX_COURSE_PRICE = 1_000_000;
 
 /** Decimal places a price may carry (currencies Atlas sells in use 2). */

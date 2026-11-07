@@ -6,13 +6,15 @@
  *   free course alike. Each now says its own thing, and a failure offers Try
  *   again with the same idempotency key (no second order).
  * - V12: the order and payment references are shown; a reload lands back on
- *   the proof step of the SAME payment; nothing creates a second order.
+ *   the proof step of the SAME payment; nothing creates a second order. A
+ *   NEW tab (nothing remembered) asks the server for the order's payments
+ *   and resumes there: under review, or the proof step.
  * - V19: Continue is never greyed: pressed without a method, it says so.
  * - V23: the checkout sits under My courses (Courses › course › Checkout).
  *
  * Native DOM assertions only — this repo does not ship jest-dom.
  */
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   cleanup,
   fireEvent,
@@ -69,8 +71,11 @@ vi.mock('./hooks/useCourseCheckout', () => ({
     useCourseOrderPaymentMethods(orderId) as unknown,
 }));
 
-const { default: CourseCheckoutPage, classifyOrderFailure } =
-  await import('./pages/CourseCheckoutPage');
+const {
+  default: CourseCheckoutPage,
+  classifyOrderFailure,
+  resumablePayment,
+} = await import('./pages/CourseCheckoutPage');
 const { courseOrderService } = await import('./services/CourseOrderService');
 
 const ORDER: CourseOrder = {
@@ -130,6 +135,11 @@ function renderPage() {
     </I18nextProvider>
   );
 }
+
+beforeEach(() => {
+  // No payment yet unless a test says otherwise (B7 V12's new-tab lookup).
+  vi.spyOn(courseOrderService, 'listPayments').mockResolvedValue([]);
+});
 
 afterEach(() => {
   cleanup();
@@ -323,6 +333,72 @@ describe('V12/V19/V23 — references, resume, Continue', () => {
     });
     renderPage();
     expect(await screen.findByTestId('checkout-under-review')).toBeTruthy();
+  });
+
+  it('a new tab with nothing remembered resumes at the proof step of the waiting payment', async () => {
+    withMethods();
+    createOrder.mockResolvedValue(ORDER);
+    const list = vi
+      .spyOn(courseOrderService, 'listPayments')
+      .mockResolvedValue([PAYMENT]);
+    renderPage();
+    await screen.findByTestId('checkout-proof-form');
+    expect(list).toHaveBeenCalledWith(ORDER.id);
+    expect(createPayment).not.toHaveBeenCalled();
+    expect(screen.getByTestId('checkout-payment-reference').textContent).toBe(
+      '9d8e7f6a'
+    );
+  });
+
+  it('a new tab says a proof is already under review instead of restarting', async () => {
+    withMethods();
+    createOrder.mockResolvedValue(ORDER);
+    vi.spyOn(courseOrderService, 'listPayments').mockResolvedValue([
+      {
+        ...PAYMENT,
+        reviewStatus: 'pending',
+        proof: { id: 'proof-1', fileName: 'r.png' },
+      } as unknown as CourseOrderPayment,
+    ]);
+    renderPage();
+    expect(await screen.findByTestId('checkout-under-review')).toBeTruthy();
+    expect(createPayment).not.toHaveBeenCalled();
+  });
+
+  it('a new tab with no payment yet starts at the method step', async () => {
+    withMethods();
+    createOrder.mockResolvedValue(ORDER);
+    renderPage();
+    expect(await screen.findByTestId('checkout-continue')).toBeTruthy();
+    expect(screen.queryByTestId('checkout-proof-form')).toBeNull();
+  });
+
+  it('a new tab whose lookup fails still offers the method step', async () => {
+    withMethods();
+    createOrder.mockResolvedValue(ORDER);
+    vi.spyOn(courseOrderService, 'listPayments').mockRejectedValue(
+      createApiError('server', { status: 500 })
+    );
+    renderPage();
+    expect(await screen.findByTestId('checkout-continue')).toBeTruthy();
+  });
+
+  it('picks the payment to resume: under review first, then one awaiting its proof', () => {
+    const waiting = PAYMENT;
+    const reviewing = {
+      ...PAYMENT,
+      id: 'p-review',
+      reviewStatus: 'pending',
+    } as CourseOrderPayment;
+    const failed = {
+      ...PAYMENT,
+      id: 'p-failed',
+      status: 'failed',
+    } as CourseOrderPayment;
+    expect(resumablePayment([waiting, reviewing])?.id).toBe('p-review');
+    expect(resumablePayment([failed, waiting])?.id).toBe(PAYMENT.id);
+    expect(resumablePayment([failed])).toBeNull();
+    expect(resumablePayment([])).toBeNull();
   });
 
   it('a failed payment start is one alert with the real reason', async () => {

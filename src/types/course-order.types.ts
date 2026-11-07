@@ -23,6 +23,7 @@ import type {
   PaymentMethodType,
   PaymentNextAction,
   PaymentProof,
+  PaymentReviewSummary,
 } from './payment.types';
 
 export const COURSE_ORDER_STATUSES = [
@@ -118,4 +119,6 @@ export interface CourseOrderPayment {
   readonly courseOrderStatus?: CourseOrderStatus;
   /** Platform review only — present once a refund was ever requested for the order. */
   readonly refundStatus?: 'pending' | 'succeeded' | 'failed';
+  /** Platform review detail only — B8 (UX audit) V01: who decided the review, and when. */
+  readonly review?: PaymentReviewSummary;
 }

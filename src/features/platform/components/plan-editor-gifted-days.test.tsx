@@ -44,6 +44,15 @@ vi.mock('../hooks/usePlatformPlans', () => ({
     error: null,
     reset: vi.fn(),
   }),
+  // B8 V08 — nobody to email here, so a save goes straight through.
+  usePreviewPlanNotice: () => ({
+    mutateAsync: vi.fn(() =>
+      Promise.resolve({ subscribers: 0, recipients: 0 })
+    ),
+    isPending: false,
+    error: null,
+    reset: vi.fn(),
+  }),
 }));
 
 vi.mock('@app/providers', async (importOriginal) => ({

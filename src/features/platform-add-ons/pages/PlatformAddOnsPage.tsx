@@ -14,10 +14,14 @@
  * shown. Search, filter and paging all go to the server. A status change is
  * version-guarded server-side, so a stale row is refused with a conflict
  * the shared error toast surfaces rather than silently overwriting.
+ *
+ * B5 (UX audit) V21 — each add-on's Arabic name is shown under its English
+ * one ("Not set" when there is none), and "Arabic name" edits it: the
+ * Arabic store and checkout show it instead of the English name.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PackageCheck, Search } from 'lucide-react';
+import { Languages, PackageCheck, Search } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { SectionLoader } from '@components/loading';
 import { EmptyState } from '@components/feedback';
@@ -47,9 +51,14 @@ import {
 } from '../hooks/usePlatformAddOns';
 import { CatalogStatusBadge } from '../components/CatalogStatusBadge';
 import { ChangeCatalogStatusDialog } from '../components/ChangeCatalogStatusDialog';
+import { AddOnArabicTextDialog } from '../components/AddOnArabicTextDialog';
 import type { AddOnCatalogStatus, PlatformAddOnRow } from '../types';
 
-const STATUSES: readonly AddOnCatalogStatus[] = ['draft', 'coming_soon', 'published'];
+const STATUSES: readonly AddOnCatalogStatus[] = [
+  'draft',
+  'coming_soon',
+  'published',
+];
 
 export default function PlatformAddOnsPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -58,6 +67,9 @@ export default function PlatformAddOnsPage(): JSX.Element {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<AddOnCatalogStatus | undefined>();
   const [page, setPage] = useState(1);
+  const [editingArabic, setEditingArabic] = useState<PlatformAddOnRow | null>(
+    null
+  );
 
   // The add-on and the state it would move to, held while the operator
   // confirms. Null when no change is pending.
@@ -92,7 +104,7 @@ export default function PlatformAddOnsPage(): JSX.Element {
           expectedVersion: pending.addOn.version,
         },
       },
-      { onSuccess: () => setPending(null) },
+      { onSuccess: () => setPending(null) }
     );
   };
 
@@ -156,8 +168,12 @@ export default function PlatformAddOnsPage(): JSX.Element {
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('platformAddOns:columns.addOn')}</TableHead>
-                  <TableHead>{t('platformAddOns:columns.description')}</TableHead>
-                  <TableHead>{t('platformAddOns:columns.catalogStatus')}</TableHead>
+                  <TableHead>
+                    {t('platformAddOns:columns.description')}
+                  </TableHead>
+                  <TableHead>
+                    {t('platformAddOns:columns.catalogStatus')}
+                  </TableHead>
                   <TableHead className="text-end">
                     {t('platformAddOns:columns.installCount')}
                   </TableHead>
@@ -171,7 +187,16 @@ export default function PlatformAddOnsPage(): JSX.Element {
               <TableBody>
                 {items.map((row) => (
                   <TableRow key={row.id}>
-                    <TableCell className="font-medium">{row.name}</TableCell>
+                    <TableCell>
+                      <p className="font-medium">{row.name}</p>
+                      <p
+                        className="text-xs text-muted-foreground"
+                        data-testid={`addon-name-ar-${row.key}`}
+                        {...(row.nameAr ? { dir: 'rtl', lang: 'ar' } : {})}
+                      >
+                        {row.nameAr ?? t('platformAddOns:arabicText.notSet')}
+                      </p>
+                    </TableCell>
                     <TableCell className="max-w-[280px] text-sm text-muted-foreground">
                       {row.description ?? '—'}
                     </TableCell>
@@ -188,31 +213,46 @@ export default function PlatformAddOnsPage(): JSX.Element {
                       {formatDate(row.updatedAt, language, 'short')}
                     </TableCell>
                     <TableCell>
-                      <Select
-                        value={row.catalogStatus}
-                        onValueChange={(next) => {
-                          const target = next as AddOnCatalogStatus;
-                          if (target !== row.catalogStatus) {
-                            setPending({ addOn: row, target });
-                          }
-                        }}
-                      >
-                        <SelectTrigger
-                          className="w-[160px]"
-                          aria-label={t('platformAddOns:changeStatusFor', {
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Select
+                          value={row.catalogStatus}
+                          onValueChange={(next) => {
+                            const target = next as AddOnCatalogStatus;
+                            if (target !== row.catalogStatus) {
+                              setPending({ addOn: row, target });
+                            }
+                          }}
+                        >
+                          <SelectTrigger
+                            className="w-[160px]"
+                            aria-label={t('platformAddOns:changeStatusFor', {
+                              name: row.name,
+                            })}
+                          >
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {STATUSES.map((value) => (
+                              <SelectItem key={value} value={value}>
+                                {t(`platformAddOns:status.${value}`)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          data-testid={`addon-arabic-${row.key}`}
+                          aria-label={t('platformAddOns:arabicText.actionFor', {
                             name: row.name,
                           })}
+                          onClick={() => setEditingArabic(row)}
                         >
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {STATUSES.map((value) => (
-                            <SelectItem key={value} value={value}>
-                              {t(`platformAddOns:status.${value}`)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                          <Languages className="size-4" aria-hidden />
+                          {t('platformAddOns:arabicText.action')}
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -251,6 +291,11 @@ export default function PlatformAddOnsPage(): JSX.Element {
           </div>
         </div>
       ) : null}
+
+      <AddOnArabicTextDialog
+        addOn={editingArabic}
+        onClose={() => setEditingArabic(null)}
+      />
 
       <ChangeCatalogStatusDialog
         open={pending !== null}

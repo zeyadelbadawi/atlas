@@ -37,6 +37,8 @@
     "proofLoadError": "The proof file couldn't be opened. Try again.",
     "reviewNotesTitle": "Review notes",
     "alreadyReviewed": "This payment has already been reviewed and can no longer be approved or rejected.",
+    "reviewedBy": "Reviewed by {{name}} on {{date}}.",
+    "reviewedOn": "Reviewed on {{date}}.",
     "approveTitle": "Approve",
     "rejectTitle": "Reject",
     "notesOptional": "Notes (optional)",

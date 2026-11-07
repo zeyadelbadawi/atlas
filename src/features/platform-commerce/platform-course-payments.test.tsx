@@ -379,6 +379,46 @@ describe('PlatformCoursePaymentDetailPage', () => {
     expect(screen.queryByRole('button', { name: 'Reject payment' })).toBeNull();
   });
 
+  it('says who reviewed it and when (B8 V01)', () => {
+    useCourseOrderPayment.mockReturnValue({
+      data: payment({
+        reviewStatus: 'rejected',
+        status: 'failed',
+        review: {
+          status: 'rejected',
+          reviewedAt: '2026-09-22T09:15:00Z',
+          reviewerName: 'Rania Platform',
+        },
+      }),
+      isLoading: false,
+      error: null,
+      refetch,
+    });
+    renderDetail();
+    expect(
+      screen.getByTestId('course-payment-reviewed-by').textContent
+    ).toMatch(/^Reviewed by \u2068?Rania Platform\u2069? on .+\.$/);
+  });
+
+  it('still says when it was reviewed when the reviewer has no name', () => {
+    // A reviewer whose account is gone: the backend omits the name but
+    // keeps the date.
+    useCourseOrderPayment.mockReturnValue({
+      data: payment({
+        reviewStatus: 'approved',
+        status: 'succeeded',
+        review: { status: 'approved', reviewedAt: '2026-09-22T09:15:00Z' },
+      }),
+      isLoading: false,
+      error: null,
+      refetch,
+    });
+    renderDetail();
+    expect(
+      screen.getByTestId('course-payment-reviewed-by').textContent
+    ).toMatch(/^Reviewed on .+\.$/);
+  });
+
   it('names the academy and course and shows the order status', () => {
     useCourseOrderPayment.mockReturnValue({
       data: payment(),

@@ -643,7 +643,8 @@
       "enable": "{{actor}} turned on the add-on {{addOn}}",
       "disable": "{{actor}} turned off the add-on {{addOn}}",
       "uninstall": "{{actor}} removed the add-on {{addOn}}",
-      "catalog_status_changed": "{{actor}} changed the availability of the add-on {{addOn}}"
+      "catalog_status_changed": "{{actor}} changed the availability of the add-on {{addOn}}",
+      "arabic_text_changed": "{{actor}} changed the Arabic name of the add-on {{addOn}}"
     },
     "support_case": {
       "created": "{{actor}} opened the support ticket “{{target}}”",

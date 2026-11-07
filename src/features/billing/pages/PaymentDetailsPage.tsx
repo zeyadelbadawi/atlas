@@ -186,13 +186,18 @@ export default function PaymentDetailsPage(): JSX.Element {
   const isTerminal = TERMINAL_PAYMENT_STATUSES.includes(payment.status);
   const startAgainPath = newCheckoutPath(checkoutQuery.data);
 
-  const handleSubmitProof = (file: File, note: string | undefined) => {
+  const handleSubmitProof = (
+    file: File,
+    note: string | undefined,
+    payerReference?: string
+  ) => {
     if (!provider || !isManualReviewProvider(provider)) return;
     submitProof.mutate({
       organizationId: organization.id,
       paymentId: payment.id,
       file,
       note,
+      payerReference,
       provider,
     });
   };

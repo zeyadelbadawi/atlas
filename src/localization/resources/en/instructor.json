@@ -207,7 +207,29 @@
       "summary_one": "{{multiplier}}× time · {{attempts}} extra attempt",
       "summary_other": "{{multiplier}}× time · {{attempts}} extra attempts"
     },
-    "pointsOf": "{{earned}} / {{total}} points"
+    "pointsOf": "{{earned}} / {{total}} points",
+    "filters": {
+      "label": "Filter attempts",
+      "student": "Student",
+      "studentPlaceholder": "Search by name",
+      "status": "Status",
+      "grading": "Grading",
+      "flagged": "Integrity",
+      "late": "Late",
+      "any": "Any",
+      "gradingOption": {
+        "pending": "Awaiting a grade",
+        "graded": "Graded",
+        "not_required": "Automatic"
+      },
+      "flaggedYes": "Flagged",
+      "flaggedNo": "Not flagged",
+      "lateYes": "Late",
+      "lateNo": "On time",
+      "clear": "Clear filters",
+      "noMatch": "No attempts match these filters",
+      "noMatchDescription": "Change or clear the filters to see more attempts."
+    }
   },
   "submissions": {
     "title": "Submissions",
@@ -260,6 +282,7 @@
     "gradedBadge": "Graded · {{score}} / {{max}}",
     "gradedAt": "Graded on {{date}}",
     "gradedAtByYou": "Graded by you on {{date}}",
+    "gradedAtBy": "Graded by {{name}} on {{date}}",
     "regradeConfirm": {
       "title": "Replace the grade?",
       "description": "Replace the grade of {{previous}} with {{next}}? {{student}} will see the new grade instead of the old one.",

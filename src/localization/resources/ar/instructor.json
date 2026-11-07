@@ -223,7 +223,29 @@
       "summary_many": "{{multiplier}}× من الوقت · {{attempts}} محاولة إضافية",
       "summary_other": "{{multiplier}}× من الوقت · {{attempts}} محاولة إضافية"
     },
-    "pointsOf": "{{earned}} / {{total}} نقطة"
+    "pointsOf": "{{earned}} / {{total}} نقطة",
+    "filters": {
+      "label": "تصفية المحاولات",
+      "student": "الطالب",
+      "studentPlaceholder": "ابحث بالاسم",
+      "status": "الحالة",
+      "grading": "التصحيح",
+      "flagged": "النزاهة",
+      "late": "التأخير",
+      "any": "الكل",
+      "gradingOption": {
+        "pending": "بانتظار التصحيح",
+        "graded": "مُصحّحة",
+        "not_required": "تلقائي"
+      },
+      "flaggedYes": "مُعلَّمة",
+      "flaggedNo": "غير مُعلَّمة",
+      "lateYes": "متأخرة",
+      "lateNo": "في الموعد",
+      "clear": "مسح عوامل التصفية",
+      "noMatch": "لا توجد محاولات تطابق عوامل التصفية",
+      "noMatchDescription": "غيّر عوامل التصفية أو امسحها لترى محاولات أكثر."
+    }
   },
   "submissions": {
     "title": "التسليمات",
@@ -276,6 +298,7 @@
     "gradedBadge": "تم التصحيح · {{score}} / {{max}}",
     "gradedAt": "صُحّح في {{date}}",
     "gradedAtByYou": "صحّحته أنت في {{date}}",
+    "gradedAtBy": "صحّحه {{name}} في {{date}}",
     "regradeConfirm": {
       "title": "استبدال الدرجة؟",
       "description": "استبدال الدرجة {{previous}} بالدرجة {{next}}؟ سيرى {{student}} الدرجة الجديدة بدلًا من القديمة.",

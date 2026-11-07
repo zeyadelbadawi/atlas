@@ -643,7 +643,8 @@
       "enable": "{{actor}} فعّل الإضافة {{addOn}}",
       "disable": "{{actor}} أوقف الإضافة {{addOn}}",
       "uninstall": "{{actor}} أزال الإضافة {{addOn}}",
-      "catalog_status_changed": "{{actor}} غيّر إتاحة الإضافة {{addOn}}"
+      "catalog_status_changed": "{{actor}} غيّر إتاحة الإضافة {{addOn}}",
+      "arabic_text_changed": "{{actor}} غيّر الاسم العربي للإضافة {{addOn}}"
     },
     "support_case": {
       "created": "{{actor}} فتح تذكرة الدعم «{{target}}»",

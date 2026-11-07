@@ -51,7 +51,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useBidiIsolation, useDateFormatter } from '@hooks';
-import { useToast } from '@app/providers';
+import { useConfirmDialog, useToast } from '@app/providers';
 import { useDirtyGuard } from '@features/unsaved-changes';
 import {
   FormErrorSummary,
@@ -68,6 +68,7 @@ import {
 import type { ApiError } from '@api';
 import {
   usePreviewLimitImpact,
+  usePreviewPlanNotice,
   useUpdatePlan,
 } from '../hooks/usePlatformPlans';
 import {
@@ -306,6 +307,8 @@ export function PlanEditorDialog({
   const { notifySuccess } = useToast();
   const updatePlan = useUpdatePlan();
   const previewImpact = usePreviewLimitImpact();
+  const previewNotice = usePreviewPlanNotice();
+  const { confirm } = useConfirmDialog();
 
   // A yearly price is offered only beside a MONTHLY price — a plan priced
   // per year has no second price to add.
@@ -346,6 +349,7 @@ export function PlanEditorDialog({
   // one plan's limits into another's editor.
   const resetUpdate = updatePlan.reset;
   const resetPreview = previewImpact.reset;
+  const resetNotice = previewNotice.reset;
   useEffect(() => {
     if (!plan) return;
     reset(toFormValues(plan));
@@ -353,6 +357,7 @@ export function PlanEditorDialog({
     setConfirmed(false);
     resetUpdate();
     resetPreview();
+    resetNotice();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [plan, reset]);
 
@@ -369,6 +374,13 @@ export function PlanEditorDialog({
     language
   );
   useServerValidation(form, previewError, serverFields);
+  // B8 (UX audit) V08 — the notice preview validates like the save, so its
+  // refusals land on the same fields.
+  const noticeError = useLocalizedViolations(
+    previewNotice.error ?? null,
+    language
+  );
+  useServerValidation(form, noticeError, serverFields);
 
   const guard = useDirtyGuard(formState.isDirty);
   const requestClose = () => {
@@ -440,6 +452,56 @@ export function PlanEditorDialog({
               : {}),
           }
         : undefined;
+    // B8 (UX audit) V08 — a price or limit change can reach paying
+    // organizations on the plan (the server emails their owners); anything
+    // else changes only the catalog.
+    // Field by field, so the answer never depends on key order.
+    const savedYearly =
+      offersYearlyPrice && plan.pricing?.yearlyAmount !== undefined
+        ? plan.pricing.yearlyAmount
+        : undefined;
+    const priceChanged =
+      !pricing || !plan.pricing
+        ? Boolean(pricing) !== Boolean(plan.pricing)
+        : pricing.amount !== plan.pricing.amount ||
+          pricing.currency !== plan.pricing.currency ||
+          pricing.billingCycle !==
+            (plan.pricing.billingCycle ?? billingCycle) ||
+          pricing.yearlyAmount !== savedYearly;
+    const reachesSubscribers =
+      priceChanged ||
+      PLAN_LIMIT_KEYS.some((key) => limits[key] !== plan.limits[key]) ||
+      limits.monthlyEmails !== plan.limits.monthlyEmails;
+    // Before saving such a change, ask the server how many organizations it
+    // will email (the very decision the save runs) and say so in a
+    // confirmation; with nobody to email, it simply saves.
+    let recipients = 0;
+    if (reachesSubscribers) {
+      try {
+        const preview = await previewNotice.mutateAsync({
+          key: plan.key,
+          payload: { limits, ...(pricing ? { pricing } : {}) },
+        });
+        recipients = preview.recipients;
+      } catch {
+        // Shown in the dialog, once (on a field, or one alert); not saved.
+        return;
+      }
+      if (recipients > 0) {
+        const confirmed = await confirm({
+          titleKey: 'platform:planAdmin.editor.noticeConfirm.title',
+          descriptionKey: 'platform:planAdmin.editor.noticeConfirm.description',
+          confirmLabelKey: 'platform:planAdmin.editor.noticeConfirm.confirm',
+          cancelLabelKey: 'platform:planAdmin.editor.noticeConfirm.cancel',
+          values: {
+            count: recipients,
+            countText: formatNumber(recipients, language),
+            plan: isolate(plan.name),
+          },
+        });
+        if (!confirmed) return;
+      }
+    }
     try {
       await updatePlan.mutateAsync({
         key: plan.key,
@@ -467,31 +529,18 @@ export function PlanEditorDialog({
       // Shown in the dialog, once: on its field, as "reload", or inline.
       return;
     }
-    // B8 (UX audit) V08 — say what the save did. A price or limit change
-    // reaches every paying organization on the plan (the server emails
-    // their owners); anything else changes only the catalog.
-    const reachesSubscribers =
-      JSON.stringify(pricing ?? null) !==
-        JSON.stringify(
-          plan.pricing
-            ? {
-                amount: plan.pricing.amount,
-                currency: plan.pricing.currency,
-                billingCycle: plan.pricing.billingCycle ?? billingCycle,
-                ...(offersYearlyPrice && plan.pricing.yearlyAmount !== undefined
-                  ? { yearlyAmount: plan.pricing.yearlyAmount }
-                  : {}),
-              }
-            : null
-        ) ||
-      PLAN_LIMIT_KEYS.some((key) => limits[key] !== plan.limits[key]) ||
-      limits.monthlyEmails !== plan.limits.monthlyEmails;
     notifySuccess(
       'platform:planAdmin.editor.savedTitle',
-      reachesSubscribers
-        ? 'platform:planAdmin.editor.savedNotified'
-        : 'platform:planAdmin.editor.savedCatalogOnly',
-      { plan: plan.name }
+      recipients > 0
+        ? 'platform:planAdmin.editor.savedNotifiedCount'
+        : reachesSubscribers
+          ? 'platform:planAdmin.editor.savedNobodyEmailed'
+          : 'platform:planAdmin.editor.savedCatalogOnly',
+      {
+        plan: plan.name,
+        count: recipients,
+        countText: formatNumber(recipients, language),
+      }
     );
     reset(submitted);
     onOpenChange(false);
@@ -504,6 +553,10 @@ export function PlanEditorDialog({
     !isStale &&
     updatePlan.error.kind !== 'cancelled' &&
     !(updatePlan.error.violations ?? []).some((v) => isOnField(v.field));
+  const showNoticeFailure =
+    previewNotice.error &&
+    previewNotice.error.kind !== 'cancelled' &&
+    !(previewNotice.error.violations ?? []).some((v) => isOnField(v.field));
   const showPreviewFailure =
     previewImpact.error &&
     previewImpact.error.kind !== 'cancelled' &&
@@ -1055,6 +1108,13 @@ export function PlanEditorDialog({
             </Alert>
           ) : null}
 
+          {showNoticeFailure && previewNotice.error ? (
+            <SaveFailedAlert
+              error={previewNotice.error}
+              titleKey="platform:planAdmin.editor.noticeCheckFailed"
+            />
+          ) : null}
+
           {showSaveFailure && updatePlan.error ? (
             <SaveFailedAlert
               error={updatePlan.error}
@@ -1079,9 +1139,13 @@ export function PlanEditorDialog({
             type="submit"
             form="plan-editor-form"
             data-testid="plan-save"
-            disabled={updatePlan.isPending || needsConfirmation}
+            disabled={
+              updatePlan.isPending ||
+              previewNotice.isPending ||
+              needsConfirmation
+            }
           >
-            {updatePlan.isPending ? (
+            {updatePlan.isPending || previewNotice.isPending ? (
               <Loader2 className="size-4 animate-spin" aria-hidden />
             ) : null}
             {t('common:actions.save')}

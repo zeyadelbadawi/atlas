@@ -291,6 +291,96 @@ describe('V18 / V05 — the proof form', () => {
   });
 });
 
+describe('B8 — the transfer reference on a subscription proof', () => {
+  it('is an optional field with the server limit, sent trimmed with the proof', async () => {
+    mockPayment();
+    const submit = vi
+      .spyOn(paymentService, 'submitProof')
+      .mockResolvedValue({ ...PAYMENT, reviewStatus: 'pending' });
+    renderPayment();
+    const reference = await screen.findByTestId('payment-proof-reference');
+    expect(
+      screen.getByTestId('payment-proof-reference-count').textContent
+    ).toBe('0 / 120 characters');
+    fireEvent.change(reference, { target: { value: '  CIB-778812  ' } });
+    chooseFile(new File(['png'], 'receipt.png', { type: 'image/png' }));
+    fireEvent.click(screen.getByTestId('payment-proof-submit'));
+    await waitFor(() => expect(submit).toHaveBeenCalled());
+    expect(submit.mock.calls[0][2]).toMatchObject({
+      fileName: 'receipt.png',
+      payerReference: 'CIB-778812',
+    });
+  });
+
+  it('leaves it out when empty', async () => {
+    mockPayment();
+    const submit = vi
+      .spyOn(paymentService, 'submitProof')
+      .mockResolvedValue({ ...PAYMENT, reviewStatus: 'pending' });
+    renderPayment();
+    await screen.findByTestId('payment-proof-submit');
+    chooseFile(new File(['png'], 'receipt.png', { type: 'image/png' }));
+    fireEvent.click(screen.getByTestId('payment-proof-submit'));
+    await waitFor(() => expect(submit).toHaveBeenCalled());
+    expect(submit.mock.calls[0][2]).not.toHaveProperty('payerReference');
+  });
+
+  it('refuses more than 120 characters before sending, without cutting it', async () => {
+    mockPayment();
+    const submit = vi.spyOn(paymentService, 'submitProof');
+    renderPayment();
+    const reference = await screen.findByTestId('payment-proof-reference');
+    expect(reference.hasAttribute('maxlength')).toBe(false);
+    fireEvent.change(reference, { target: { value: 'r'.repeat(121) } });
+    chooseFile(new File(['png'], 'receipt.png', { type: 'image/png' }));
+    fireEvent.click(screen.getByTestId('payment-proof-submit'));
+    expect(
+      (await screen.findByTestId('payment-proof-reference-error')).textContent
+    ).toBe('Transfer reference must be 120 characters or fewer');
+    expect(submit).not.toHaveBeenCalled();
+  });
+
+  it('puts a server refusal of the reference on the reference', async () => {
+    mockPayment();
+    vi.spyOn(paymentService, 'submitProof').mockRejectedValue(
+      createApiError('validation', {
+        status: 400,
+        messageKey: 'errors.validation.failed',
+        violations: [
+          {
+            field: 'payerReference',
+            messageKey: 'validation:maxLength',
+            values: { count: 120 },
+          },
+        ],
+      })
+    );
+    renderPayment();
+    await screen.findByTestId('payment-proof-submit');
+    chooseFile(new File(['png'], 'receipt.png', { type: 'image/png' }));
+    fireEvent.click(screen.getByTestId('payment-proof-submit'));
+    expect(
+      (await screen.findByTestId('payment-proof-reference-error')).textContent
+    ).toContain('120');
+    expect(screen.queryByTestId('save-failed')).toBeNull();
+    expect(
+      proofFailureTarget({
+        messageKey: 'errors.validation.failed',
+        violations: [{ field: 'payerReference', messageKey: 'x' }],
+      })
+    ).toBe('reference');
+  });
+
+  it('is labelled in Arabic', async () => {
+    mockPayment();
+    renderPayment('ar');
+    await screen.findByTestId('payment-proof-reference');
+    expect(screen.getByLabelText(/مرجع التحويل/)).toBe(
+      screen.getByTestId('payment-proof-reference')
+    );
+  });
+});
+
 describe('V01 — cancelling a payment', () => {
   it('asks first, says what to do with money already sent, and cancels only on confirm', async () => {
     mockPayment();

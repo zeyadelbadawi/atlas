@@ -52,6 +52,16 @@
       "title": "Close this case?",
       "description": "The requester can no longer reply to a closed case; if they still need help they will have to open a new one.",
       "confirm": "Close case"
+    },
+    "closeTicket": {
+      "action": "Close ticket",
+      "title": "Close this ticket?",
+      "description": "Close it when your question is answered. You can't reply to a closed ticket or reopen it; if you need help again, open a new ticket.",
+      "descriptionWithDraft": "Your unsent reply will be discarded. You can't reply to a closed ticket or reopen it; if you need help again, open a new ticket.",
+      "confirm": "Close ticket",
+      "cancel": "Keep it open",
+      "closed": "Ticket closed.",
+      "failed": "The ticket wasn't closed"
     }
   },
   "center": {
