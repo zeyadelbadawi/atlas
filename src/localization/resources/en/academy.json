@@ -669,7 +669,7 @@
     },
     "announcementEmail": {
       "label": "Announcements by email",
-      "description": "Allow announcements to be emailed to learners, in addition to appearing in the app."
+      "description": "Announcements reach learners in the app. Sending them by email isn’t available."
     },
     "digestDefault": {
       "label": "Default digest for new learners",

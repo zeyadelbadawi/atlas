@@ -2,6 +2,7 @@ import { Suspense, useEffect } from 'react';
 // Stale-tab recovery: route chunks retry, then reload once for a new build.
 import { lazyWithRetry as lazy } from '@utils/lazy-with-retry.utils';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { CommunitySurfacesLaunchGate } from './CommunitySurfacesLaunchGate';
 import { LiveSessionsLaunchGate } from './LiveSessionsLaunchGate';
 
 import { ErrorBoundary } from '@app/providers/error/ErrorBoundary';
@@ -1681,26 +1682,30 @@ export default function AtlasAppRoutes(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.instructorDiscussions}
               element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['forum.view']}
-                  requiresEntitlement
-                >
-                  <CourseForumPage />
-                </RouteGuard>
+                <CommunitySurfacesLaunchGate>
+                  <RouteGuard
+                    requireAuthentication
+                    requiredPermissions={['forum.view']}
+                    requiresEntitlement
+                  >
+                    <CourseForumPage />
+                  </RouteGuard>
+                </CommunitySurfacesLaunchGate>
               }
             />
 
             <Route
               path={DASHBOARD_ROUTES.instructorThread}
               element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['forum.view']}
-                  requiresEntitlement
-                >
-                  <ForumThreadPage />
-                </RouteGuard>
+                <CommunitySurfacesLaunchGate>
+                  <RouteGuard
+                    requireAuthentication
+                    requiredPermissions={['forum.view']}
+                    requiresEntitlement
+                  >
+                    <ForumThreadPage />
+                  </RouteGuard>
+                </CommunitySurfacesLaunchGate>
               }
             />
 
@@ -1733,52 +1738,60 @@ export default function AtlasAppRoutes(): JSX.Element {
             <Route
               path={DASHBOARD_ROUTES.blog}
               element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['blog.view']}
-                  requiresEntitlement
-                >
-                  <BlogListPage />
-                </RouteGuard>
+                <CommunitySurfacesLaunchGate>
+                  <RouteGuard
+                    requireAuthentication
+                    requiredPermissions={['blog.view']}
+                    requiresEntitlement
+                  >
+                    <BlogListPage />
+                  </RouteGuard>
+                </CommunitySurfacesLaunchGate>
               }
             />
 
             <Route
               path={DASHBOARD_ROUTES.blogCreate}
               element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['blog.create']}
-                  requiresEntitlement
-                >
-                  <BlogEditorPage />
-                </RouteGuard>
+                <CommunitySurfacesLaunchGate>
+                  <RouteGuard
+                    requireAuthentication
+                    requiredPermissions={['blog.create']}
+                    requiresEntitlement
+                  >
+                    <BlogEditorPage />
+                  </RouteGuard>
+                </CommunitySurfacesLaunchGate>
               }
             />
 
             <Route
               path={DASHBOARD_ROUTES.blogPost}
               element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['blog.view']}
-                  requiresEntitlement
-                >
-                  <BlogPostDetailPage />
-                </RouteGuard>
+                <CommunitySurfacesLaunchGate>
+                  <RouteGuard
+                    requireAuthentication
+                    requiredPermissions={['blog.view']}
+                    requiresEntitlement
+                  >
+                    <BlogPostDetailPage />
+                  </RouteGuard>
+                </CommunitySurfacesLaunchGate>
               }
             />
 
             <Route
               path={DASHBOARD_ROUTES.blogEdit}
               element={
-                <RouteGuard
-                  requireAuthentication
-                  requiredPermissions={['blog.create']}
-                  requiresEntitlement
-                >
-                  <BlogEditorPage />
-                </RouteGuard>
+                <CommunitySurfacesLaunchGate>
+                  <RouteGuard
+                    requireAuthentication
+                    requiredPermissions={['blog.create']}
+                    requiresEntitlement
+                  >
+                    <BlogEditorPage />
+                  </RouteGuard>
+                </CommunitySurfacesLaunchGate>
               }
             />
 
