@@ -47,6 +47,20 @@ export function truncateForSnippet(
   return `${(lastSpace > max * 0.6 ? cut.slice(0, lastSpace) : cut).replace(/[\s,;:.-]+$/, '')}…`;
 }
 
+/** Site chrome, not page copy: never the page's description. */
+const CHROME_SECTION_TYPES: ReadonlySet<string> = new Set([
+  'announcementBar',
+  'whatsappBar',
+]);
+
+/** Whether the public site draws this section (`SectionRenderer`: enabled and not hidden). */
+function isShown(section: SectionInstance): boolean {
+  return (
+    section.enabled === true &&
+    (section as { visible?: boolean }).visible !== false
+  );
+}
+
 function sectionText(
   section: SectionInstance,
   locale: PublicWebsiteLocale
@@ -77,7 +91,7 @@ export function derivePageDescription(
   locale: PublicWebsiteLocale
 ): string {
   for (const section of page.sections ?? []) {
-    if ((section as { visible?: boolean }).visible === false) continue;
+    if (!isShown(section) || CHROME_SECTION_TYPES.has(section.type)) continue;
     const text = sectionText(section, locale);
     if (text) return text;
   }
@@ -135,7 +149,7 @@ export function collectPageFaqItems(
   const items: PageFaqItem[] = [];
   for (const section of page.sections ?? []) {
     if (section.type !== 'faq') continue;
-    if ((section as { visible?: boolean }).visible === false) continue;
+    if (!isShown(section)) continue;
     const config = section.config as unknown as FaqSectionConfig;
     const all = [
       ...(config.libraryEntries ?? []),

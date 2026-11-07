@@ -53,6 +53,10 @@ describe('page policy headers (Caddyfile)', () => {
       '/my/courses/abc',
       '/ar/my-learning',
       '/my-account/settings',
+      // Certificate verification in either language (the unprefixed
+      // /verify is also covered by @verify_page).
+      '/ar/verify/ABC123',
+      '/en/verify/ABC123',
     ]) {
       expect(path).toMatch(pattern);
     }
@@ -64,6 +68,7 @@ describe('page policy headers (Caddyfile)', () => {
       '/my-story',
       '/ar/faqs',
       '/signing',
+      '/verifying',
     ]) {
       expect(path).not.toMatch(pattern);
     }

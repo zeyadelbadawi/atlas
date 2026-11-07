@@ -216,7 +216,7 @@
 		X-Robots-Tag "noindex, nofollow"
 		defer
 	}
-	@private_page path_regexp private_page ^/(?:(?:ar|en)/)?(?:sign-in|sign-up|forgot-password|reset-password|verify-email|auth|my|my-learning|my-account)(?:/.*)?$
+	@private_page path_regexp private_page ^/(?:(?:ar|en)/)?(?:sign-in|sign-up|forgot-password|reset-password|verify-email|verify|auth|my|my-learning|my-account)(?:/.*)?$
 	header @private_page {
 		X-Robots-Tag "noindex, nofollow"
 		defer

@@ -223,7 +223,12 @@ export function PublicWebsitePage({
   );
   const localizedUrl = (path: string): string =>
     `${canonicalOrigin}${localizedPublicPath(path, locale, defaultLocale)}`;
-  const canonicalUrl = localizedUrl(pagePath);
+  // A core or custom page's canonical is its resolved `canonicalPath` (the
+  // owner's override, else the page's own path), the same path its hreflang
+  // alternates and x-default use; a course page keeps its slug path.
+  const canonicalUrl = localizedUrl(
+    isCourseDetailsPage ? pagePath : (baseSeo.canonicalPath ?? pagePath)
+  );
 
   // Every page has a picture to share: the owner's, the course's, else the
   // Academy's generated card (absolute, on the canonical host).

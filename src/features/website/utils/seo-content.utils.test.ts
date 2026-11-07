@@ -21,7 +21,12 @@ const page = (sections: unknown[]): WebsitePage =>
     slug: 'faqs',
     visible: true,
     seo: {},
-    sections,
+    // Sections are drawn only when enabled (`SectionRenderer`); a fixture
+    // section is enabled unless it says otherwise.
+    sections: sections.map((section) => ({
+      enabled: true,
+      ...(section as object),
+    })),
   }) as unknown as WebsitePage;
 
 describe('derivePageDescription', () => {
@@ -44,6 +49,28 @@ describe('derivePageDescription', () => {
     ]);
     expect(derivePageDescription(p, 'en')).toBe('Short answers.');
     expect(derivePageDescription(p, 'ar')).toBe('إجابات قصيرة.');
+  });
+
+  it('skips disabled sections and site chrome (announcement and WhatsApp bars)', () => {
+    const p = page([
+      {
+        id: 'bar',
+        type: 'announcementBar',
+        config: { text: lt('Sale ends Friday!', 'العرض ينتهي الجمعة!') },
+      },
+      {
+        id: 'off',
+        type: 'hero',
+        enabled: false,
+        config: { description: lt('Disabled', 'معطّل') },
+      },
+      {
+        id: 'about',
+        type: 'about',
+        config: { body: lt('We teach design.', 'نعلّم التصميم.') },
+      },
+    ]);
+    expect(derivePageDescription(p, 'en')).toBe('We teach design.');
   });
 
   it('skips unfilled placeholders and pages with no copy', () => {
@@ -103,6 +130,22 @@ describe('composeSeoDescription', () => {
 });
 
 describe('collectPageFaqItems', () => {
+  it('never lists the answers of a disabled FAQ section', () => {
+    const p = page([
+      {
+        id: 'off',
+        type: 'faq',
+        enabled: false,
+        config: {
+          items: [
+            { id: 'i', question: lt('Q?', 'س؟'), answer: lt('A.', 'ج.') },
+          ],
+        },
+      },
+    ]);
+    expect(collectPageFaqItems(p, 'en')).toEqual([]);
+  });
+
   it('library entries first, then inline items, cut to maxItems, each question once', () => {
     const p = page([
       {
