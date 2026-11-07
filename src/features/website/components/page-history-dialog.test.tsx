@@ -178,6 +178,20 @@ describe('page history', () => {
     expect(items[2].textContent).toContain('منشورة');
   });
 
+  it('marks the version’s address as an LTR value in Arabic (J47)', () => {
+    renderDialog({}, 'ar');
+    const items = within(screen.getByTestId('page-history-list')).getAllByRole(
+      'button'
+    );
+    fireEvent.click(items[2]);
+    const address = Array.from(document.querySelectorAll('bdi')).find(
+      (element) => element.textContent === '/offers'
+    );
+    expect(address).toBeTruthy();
+    expect(address!.getAttribute('dir')).toBe('ltr');
+    expect(address!.hasAttribute('data-ltr-content')).toBe(true);
+  });
+
   it('previews a version read-only in the page frame', () => {
     renderDialog();
     fireEvent.click(screen.getByRole('button', { name: /Published/ }));

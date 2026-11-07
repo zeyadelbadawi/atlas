@@ -204,6 +204,7 @@ export function SpendEntryDialog({
               inputMode="decimal"
               autoComplete="off"
               dir="ltr"
+              data-ltr-content
               className="h-11"
               value={draft.amount}
               onChange={(event) => set('amount', event.target.value)}

@@ -74,9 +74,12 @@ export default function PlatformUserListPage(): JSX.Element {
             >
               {row.original.name}
             </p>
+            {/* An email is an LTR value: `data-ltr-content` lines it up
+                with its column in Arabic (index.css), not flush left. */}
             <p
               className="truncate text-xs text-muted-foreground"
               dir="ltr"
+              data-ltr-content
               title={row.original.email}
             >
               {row.original.email}

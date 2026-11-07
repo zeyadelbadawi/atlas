@@ -227,9 +227,14 @@ export function AppScrollManager(): null {
       }, HASH_WAIT_MS);
     } else if (changedPage) {
       resetToTop();
+    } else {
+      // A first load (stays at the top) or the same page with a new query
+      // or state: stay put. Staying put fires no scroll event, so the new
+      // entry is marked with the offset it starts at here — otherwise
+      // leaving it unscrolled and coming Back would land at the top
+      // instead of where the user was (J26 Task 5).
+      positions.current[key] = window.scrollY;
     }
-    // Otherwise a first load (stays at the top) or the same page with a new
-    // query or state: stay put.
 
     return () => {
       stop();

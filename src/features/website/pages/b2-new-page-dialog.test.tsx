@@ -269,3 +269,28 @@ describe('B2 V34 — core pages keep their Arabic names', () => {
     expect(document.body.textContent).toContain('من نحن');
   });
 });
+
+describe('J47 — page addresses are LTR values on the Arabic dashboard', () => {
+  it('each address in the list, and the sign-in/sign-up targets, carry the LTR-value marker', () => {
+    renderPage('ar');
+    for (const address of ['/home', '/about', '/sign-in', '/sign-up']) {
+      const value = Array.from(document.querySelectorAll('bdi')).find(
+        (element) => element.textContent === address
+      );
+      expect(value, address).toBeTruthy();
+      expect(value!.getAttribute('dir')).toBe('ltr');
+      expect(value!.hasAttribute('data-ltr-content')).toBe(true);
+    }
+    // No element is forced LTR without saying it holds an LTR value.
+    expect(
+      document.querySelectorAll('[dir="ltr"]:not([data-ltr-content])')
+    ).toHaveLength(0);
+  });
+
+  it('the new page dialog’s address field is marked too', () => {
+    const dialog = openDialog('ar');
+    const slug = field(dialog, 'الرابط المختصر');
+    expect(slug.getAttribute('dir')).toBe('ltr');
+    expect(slug.hasAttribute('data-ltr-content')).toBe(true);
+  });
+});
