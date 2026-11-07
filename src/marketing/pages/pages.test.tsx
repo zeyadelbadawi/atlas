@@ -52,7 +52,7 @@ const BANNED: readonly RegExp[] = [
   /most popular|الأكثر اختيار/i,
   /in minutes|في دقائق/i,
   /arabic-first|عربي بالكامل/i,
-  /\b100 ?%/,
+  /\b100 ?[%٪]/,
   /السناتر/,
   /sign in with google/i,
   /operating system for education|منصة تعليمية متكاملة/i,
@@ -411,7 +411,7 @@ describe('M1b product pages', () => {
       expect(visible, r.page.path).not.toMatch(/integrity|anti-cheat|proctor|نزاهة|غش/i);
       expect(visible, r.page.path).not.toMatch(/on every plan|كل الباقات/i);
       expect(visible, r.page.path).not.toMatch(/automatic payment|instant enrol|coupon|bulk import|staff role|upload your videos/i);
-      expect(visible, r.page.path).not.toMatch(/\bfree\b|in minutes|\b100 ?%/i);
+      expect(visible, r.page.path).not.toMatch(/\bfree\b|in minutes|\b100 ?[%٪]/i);
     }
   });
 

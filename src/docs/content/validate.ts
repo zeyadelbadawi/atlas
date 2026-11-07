@@ -42,7 +42,8 @@ export const DOC_BANNED: readonly { readonly pattern: RegExp; readonly why: stri
   { pattern: /\bDRM\b/, why: 'Atlas has no DRM' },
   { pattern: /in minutes|في دقائق/i, why: 'no speed promises' },
   { pattern: /arabic-first|عربي بالكامل/i, why: 'banned positioning' },
-  { pattern: /\b100 ?%|١٠٠ ?٪/, why: 'no absolute claims' },
+  // Any digits with either percent sign: Arabic copy now writes 0-9.
+  { pattern: /\b100 ?[%٪]|١٠٠ ?[%٪]/, why: 'no absolute claims' },
   { pattern: /sign in with google|الدخول بجوجل|التسجيل بجوجل/i, why: 'Google sign-in is not released (claim gate)' },
   { pattern: /operating system for education|منصة تعليمية متكاملة/i, why: 'retired tagline' },
   { pattern: /\bRLS\b|row[- ]level security|tenant isolation/i, why: 'say "each academy’s data is kept separate", not the mechanism' },

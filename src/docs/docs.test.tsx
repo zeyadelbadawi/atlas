@@ -179,6 +179,22 @@ describe('validateDocs', () => {
       ]),
     );
   });
+
+  it('flags an absolute claim and Arabic-Indic digits in an Arabic article (Western digits only)', () => {
+    const ar = article('ar', 'بيانات أكاديميتك محمية 100٪ ومحفوظة لمدة ١٤ يومًا في كل الأحوال والظروف.');
+    const r = renderArticleBody(ar, ctxWith([ar]), {});
+    const result = validateDocs({
+      articles: [ar],
+      reports: [{ article: ar, problems: r.problems, shotKeys: r.shotKeys, stepsWithoutShot: r.stepsWithoutShot, text: r.text }],
+      specFiles: {},
+    });
+    expect(result.errors).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining('"100٪" — no absolute claims'),
+        expect.stringContaining('write digits as 0-9'),
+      ]),
+    );
+  });
 });
 
 describe('the help center build (real content)', () => {
