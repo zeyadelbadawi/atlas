@@ -7,6 +7,7 @@
  * conflict (`stale_resource_version`) surfaces as an ordinary error the
  * page reacts to, and the shared error toast explains it.
  */
+import { useQueryClient } from '@tanstack/react-query';
 import { useApiQuery, useApiMutation } from '@/shared/hooks';
 import {
   INLINE_ERRORS_META,
@@ -69,6 +70,7 @@ export function useUpdateAddOnArabicText() {
  * dialog shows a refusal itself (on its field, as "reload", or one alert).
  */
 export function useUpdateAddOnPricing() {
+  const queryClient = useQueryClient();
   return useApiMutation<
     PlatformAddOnRow,
     { key: string; input: UpdateAddOnPricingInput },
@@ -80,5 +82,11 @@ export function useUpdateAddOnPricing() {
     showErrorToast: false,
     meta: { [INLINE_ERRORS_META]: true },
     invalidateKeys: [platformAddOnKeys.all, planKeys.addOnList()],
+    // A stale version means the row the dialog opened from is out of date:
+    // refresh the list so reopening carries the current version.
+    onError: (error) => {
+      if (error.kind === 'conflict')
+        void queryClient.invalidateQueries({ queryKey: platformAddOnKeys.all });
+    },
   });
 }

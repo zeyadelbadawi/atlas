@@ -108,6 +108,13 @@ export function useArchivePlan() {
     meta: { [INLINE_ERRORS_META]: true },
     onSuccess: (_plan, variables) =>
       invalidatePlans(queryClient, variables.key),
+    // A refusal (stale version, already archived, last listed plan) means the
+    // row this dialog opened from is out of date: refresh it, so reopening
+    // does not send the same version again.
+    onError: (error, variables) => {
+      if (error.kind === 'conflict')
+        void invalidatePlans(queryClient, variables.key);
+    },
   });
 }
 
@@ -128,6 +135,11 @@ export function useRestorePlan() {
     meta: { [INLINE_ERRORS_META]: true },
     onSuccess: (_plan, variables) =>
       invalidatePlans(queryClient, variables.key),
+    // Same as archive: a stale or "not archived" refusal refreshes the row.
+    onError: (error, variables) => {
+      if (error.kind === 'conflict')
+        void invalidatePlans(queryClient, variables.key);
+    },
   });
 }
 

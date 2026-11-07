@@ -9,7 +9,7 @@
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { ReactNode } from 'react';
-import { act, cleanup, renderHook } from '@testing-library/react';
+import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   academyKeys,
@@ -278,5 +278,46 @@ describe('mutation hooks refresh every affected view', () => {
     expect(stale(platformAddOnKeys.list({ page: 1, pageSize: 20 }))).toBe(true);
     expect(stale(planKeys.addOnList())).toBe(true);
     expect(stale(planKeys.list())).toBe(false);
+  });
+  it('a stale-version refusal on restore or on an add-on price refreshes the rows the dialog opened from', async () => {
+    const { platformPlansService } =
+      await import('@features/platform/services/PlatformPlansService');
+    const { platformAddOnsService } =
+      await import('@features/platform-add-ons/services/PlatformAddOnsService');
+    const conflict = {
+      kind: 'conflict',
+      status: 409,
+      messageKey: 'errors.conflict',
+    };
+    vi.mocked(platformPlansService.restorePlan).mockRejectedValueOnce(conflict);
+    vi.mocked(platformAddOnsService.updatePricing).mockRejectedValueOnce(
+      conflict
+    );
+    const archivedList = platformPlanKeys.list({
+      page: 1,
+      pageSize: 20,
+      visibility: 'archived',
+    });
+    const addOnList = platformAddOnKeys.list({ page: 1, pageSize: 20 });
+    const { wrapper, stale } = setup([archivedList, addOnList]);
+
+    const restore = renderHook(() => useRestorePlan(), { wrapper });
+    await act(() =>
+      restore.result.current
+        .mutateAsync({ key: 'pro', expectedVersion: 2, displayOrder: 0 })
+        .catch(() => undefined)
+    );
+    await waitFor(() => expect(stale(archivedList)).toBe(true));
+
+    const price = renderHook(() => useUpdateAddOnPricing(), { wrapper });
+    await act(() =>
+      price.result.current
+        .mutateAsync({
+          key: 'extra-academy',
+          input: { amount: 200, currency: 'EGP', expectedVersion: 2 },
+        })
+        .catch(() => undefined)
+    );
+    await waitFor(() => expect(stale(addOnList)).toBe(true));
   });
 });
