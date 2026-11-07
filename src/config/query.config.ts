@@ -4,7 +4,6 @@
  * Caching, retry and refetch behaviour is declared once so every module shares
  * the same data-freshness contract.
  */
-import type { NormalizedApiError } from '@types';
 
 /** How long fetched data is considered fresh, in milliseconds. */
 export const QUERY_STALE_TIME_MS = 60_000;
@@ -33,36 +32,16 @@ export const LIVE_LIST_QUERY_OPTIONS = {
   refetchOnWindowFocus: true,
 } as const;
 
-/** Maximum automatic retries for a failed query. */
-export const QUERY_MAX_RETRIES = 2;
+/**
+ * Queries are not retried by TanStack Query. Owner decision (UX audit,
+ * "faster error on failed reads"): the HTTP client is the ONE retry layer —
+ * a failed read is retried once there (any 5xx or a lost response, never a
+ * 4xx; a 429 only when its `Retry-After` is a few seconds), so a GET that
+ * fails with a 500 shows its error in about 1–2 s. Retrying here too is
+ * what stacked up to ~12 s before. A query that goes offline is paused by
+ * TanStack and refetched on reconnect (`refetchOnReconnect`), not retried.
+ */
+export const QUERY_RETRY = false;
 
 /** Mutations are not retried automatically: they may not be idempotent. */
 export const MUTATION_MAX_RETRIES = 0;
-
-/** Upper bound of the exponential retry backoff, in milliseconds. */
-const RETRY_MAX_DELAY_MS = 8_000;
-
-/** Base of the exponential retry backoff, in milliseconds. */
-const RETRY_BASE_DELAY_MS = 500;
-
-/**
- * Exponential backoff with a ceiling, so a struggling backend is not flooded.
- */
-export function queryRetryDelay(attemptIndex: number): number {
-  return Math.min(RETRY_BASE_DELAY_MS * 2 ** attemptIndex, RETRY_MAX_DELAY_MS);
-}
-
-/**
- * Decides whether a failed query should be retried.
- *
- * Only transient failures are retried. Authorization, validation and
- * not-found failures will not change on their own, so retrying them wastes
- * requests and delays the error state the user needs to see.
- */
-export function shouldRetryQuery(
-  failureCount: number,
-  error: NormalizedApiError
-): boolean {
-  if (failureCount >= QUERY_MAX_RETRIES) return false;
-  return error.retryable;
-}

@@ -21,7 +21,6 @@ import { saveViaForm } from '@utils';
 import {
   hasViolationOn,
   useFocusFirstViolation,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import type { ApiError } from '@api';
@@ -62,9 +61,8 @@ export function useStepSave<TValues extends FieldValues>({
     Record<string, Path<TValues>>
   >;
 
-  const labelled = useLabelledViolations(error, COURSE_FIELD_LABELS);
-  useServerValidation(form, labelled, aliases);
-  useFocusFirstViolation(form, labelled, knownFields, COURSE_FIELD_ALIASES);
+  useServerValidation(form, error, { aliases, labels: COURSE_FIELD_LABELS });
+  useFocusFirstViolation(form, error, knownFields, COURSE_FIELD_ALIASES);
   const hasSlugField = (fields as readonly string[]).includes('slug');
   const slugOnField = useSlugTakenError(form, hasSlugField ? error : null);
 

@@ -40,7 +40,6 @@ import {
   RequiredMark,
   SaveFailedAlert,
   hasViolationOn,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import { useTrialPolicy, useUpdateTrialPolicy } from '../hooks';
@@ -70,11 +69,7 @@ export default function PlatformTrialPolicyPage(): JSX.Element {
       : undefined,
   });
 
-  const labelledError = useLabelledViolations(
-    mutationError ?? null,
-    FIELD_LABELS
-  );
-  useServerValidation(form, labelledError);
+  useServerValidation(form, mutationError ?? null, { labels: FIELD_LABELS });
   const enabled = form.watch('enabled');
 
   // Resolves false after a failure it already reported, so the Save button

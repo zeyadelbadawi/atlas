@@ -15,7 +15,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '@hooks';
+import { useActionFailureToast, useAuth } from '@hooks';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -55,7 +55,6 @@ import {
 } from '../utils/course-status.utils';
 import { useCourseEditorTabs } from '../hooks/useCourseEditorTabs';
 import { CourseCompletionSettingsCard } from '../components/CourseCompletionSettingsCard';
-import { useActionFailureToast } from '../forms/course-form-feedback';
 import type { BreadcrumbItem, CourseReadinessStep } from '@types';
 
 /** Where a publish blocker is fixed outside the wizard. */
@@ -163,7 +162,7 @@ export default function CourseSettingsPage(): JSX.Element {
       toast({ title: t('course:settings.publishSuccess') });
       setJustPublished(true);
     } catch (error) {
-      failureToast('course:settings.publishError', error);
+      failureToast(error, 'course:settings.publishError');
     }
   };
 
@@ -183,7 +182,7 @@ export default function CourseSettingsPage(): JSX.Element {
       toast({ title: t('course:settings.unpublishSuccess') });
       setJustPublished(false);
     } catch (error) {
-      failureToast('course:settings.unpublishError', error);
+      failureToast(error, 'course:settings.unpublishError');
     }
   };
 
@@ -207,7 +206,7 @@ export default function CourseSettingsPage(): JSX.Element {
       });
       navigate(buildPath(DASHBOARD_ROUTES.academyCourses, { academyId }));
     } catch (error) {
-      failureToast('course:settings.deleteCourseError', error);
+      failureToast(error, 'course:settings.deleteCourseError');
     }
   };
 

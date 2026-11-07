@@ -59,6 +59,19 @@ const SEO_FIELDS = {
   bingSiteVerification: '',
 } as const;
 
+/** The labels a server refusal names its field by (`{{field}}`). */
+const SEO_FIELD_LABELS: Readonly<Record<string, string>> = {
+  ...Object.fromEntries(
+    (['siteTitle', 'metaTitle', 'metaDescription'] as const).flatMap((name) =>
+      ['', '.en', '.ar'].map((suffix) => [
+        `${name}${suffix}`,
+        `website:seo.${name}`,
+      ])
+    )
+  ),
+  canonicalBaseUrl: 'website:seo.canonicalBaseUrl',
+};
+
 export interface WebsiteSeoTabProps {
   readonly academyId: string;
   readonly configuration: WebsiteConfiguration;
@@ -87,7 +100,7 @@ export function WebsiteSeoTab({
     },
   });
 
-  useServerValidation(form, updateConfig.error);
+  useServerValidation(form, updateConfig.error, { labels: SEO_FIELD_LABELS });
   const { errors } = form.formState;
   const siteTitleErrors = useLocalizedFormErrors(
     errors,

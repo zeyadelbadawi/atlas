@@ -256,7 +256,7 @@ export function CreateCustomerRequestDialog({
     return known;
   }, [type]);
   const requestError = createRequest.error ?? null;
-  useServerValidation(form, requestError);
+  useServerValidation(form, requestError, { labels: knownFields });
   useFocusFirstViolation(form, requestError, knownFields);
   const fieldFailure =
     requestError?.kind === 'validation' &&

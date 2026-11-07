@@ -15,6 +15,7 @@ import { SkeletonList } from '@components/loading';
 import type { StatusTone } from '@components/data-display';
 import { useMySupportCases } from '../hooks/useTenantSupportCases';
 import type { SupportCaseStatus } from '@types';
+import { intlLocale } from '@utils';
 
 /** Maps the real lifecycle to the design system's semantic tones — no invented statuses. */
 const STATUS_TONE: Record<SupportCaseStatus, StatusTone> = {
@@ -69,7 +70,7 @@ export function MyTicketsList(): JSX.Element {
             <span className="text-sm text-muted-foreground">
               {t('dashboard:support.list.submittedOn', {
                 date: new Date(ticket.createdAt).toLocaleDateString(
-                  i18n.language
+                  intlLocale(i18n.language)
                 ),
               })}
             </span>

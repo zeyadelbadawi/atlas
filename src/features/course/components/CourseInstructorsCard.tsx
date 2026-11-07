@@ -31,7 +31,7 @@ import { toast } from '@/hooks/use-toast';
 import { useAcademyMembers } from '@/features/academy/hooks';
 import { useAssignCourseInstructor, useRemoveCourseInstructor } from '../hooks';
 import type { Course } from '@types';
-import { useActionFailureToast } from '../forms/course-form-feedback';
+import { useActionFailureToast } from '@hooks';
 
 export interface CourseInstructorsCardProps {
   readonly academyId: string;
@@ -77,10 +77,10 @@ export function CourseInstructorsCard({
       // ("already assigned", "not an active instructor"…) instead of a
       // guessed title over "Something went wrong".
       failureToast(
+        error,
         checked
           ? 'course:instructors.errors.assignFailed'
-          : 'course:instructors.errors.removeFailed',
-        error
+          : 'course:instructors.errors.removeFailed'
       );
     } finally {
       setPendingUserId(null);

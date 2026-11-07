@@ -242,7 +242,7 @@ const SAMPLE_SCHEDULE_ROWS: SectionConfigMap['schedule']['items'] = [
       ar: 'الرياضيات — الصف الثالث الإعدادي',
     },
     teacher: { en: 'Mr. Ahmed', ar: 'أ. أحمد' },
-    location: { en: 'Hall 1', ar: 'القاعة ١' },
+    location: { en: 'Hall 1', ar: 'القاعة 1' },
   },
   {
     id: 'sample-row-2',
@@ -268,7 +268,7 @@ const SAMPLE_SCHEDULE_ROWS: SectionConfigMap['schedule']['items'] = [
       ar: 'اللغة العربية — الصف السادس الابتدائي',
     },
     teacher: { en: 'Mr. Ahmed', ar: 'أ. أحمد' },
-    location: { en: 'Hall 2', ar: 'القاعة ٢' },
+    location: { en: 'Hall 2', ar: 'القاعة 2' },
   },
 ];
 
@@ -278,7 +278,7 @@ const SAMPLE_RESULTS: SectionConfigMap['results']['items'] = [
     sample: true,
     top: true,
     studentName: 'Mariam A.',
-    result: { en: '99.2%', ar: '٩٩٫٢٪' },
+    result: { en: '99.2%', ar: '99.2%' },
     detail: {
       en: 'Secondary school certificate, science',
       ar: 'الثانوية العامة، شعبة علمي علوم',
@@ -295,7 +295,7 @@ const SAMPLE_RESULTS: SectionConfigMap['results']['items'] = [
     id: 'sample-result-3',
     sample: true,
     studentName: 'Youssef H.',
-    result: { en: '98%', ar: '٩٨٪' },
+    result: { en: '98%', ar: '98%' },
     detail: { en: 'Grade 6 final exams', ar: 'امتحانات الصف السادس الابتدائي' },
   },
 ];

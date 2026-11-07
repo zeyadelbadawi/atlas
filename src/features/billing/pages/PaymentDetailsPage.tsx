@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import {
   cn,
+  intlLocale,
   isOnboardingReturnPath,
   MIRROR_IN_RTL,
   toErrorsNamespaceKey,
@@ -287,7 +288,9 @@ export default function PaymentDetailsPage(): JSX.Element {
                 {t('payments:payment.createdAt')}
               </span>
               <span>
-                {new Date(payment.createdAt).toLocaleString(i18n.language)}
+                {new Date(payment.createdAt).toLocaleString(
+                  intlLocale(i18n.language)
+                )}
               </span>
             </div>
             {payment.failureReason ? (

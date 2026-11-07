@@ -128,6 +128,17 @@ const PALETTE_PRESETS: {
   },
 ];
 
+/** The labels a server refusal names its field by (`{{field}}`). */
+const TEMPLATE_FIELD_LABELS = {
+  name: 'certificates:template.fields.name',
+  signatoryName: 'certificates:template.fields.signatoryName',
+  signatoryTitle: 'certificates:template.fields.signatoryTitle',
+  'wording.en.title': 'certificates:template.fields.wordingTitle',
+  'wording.ar.title': 'certificates:template.fields.wordingTitle',
+  'wording.en.body': 'certificates:template.fields.wordingBody',
+  'wording.ar.body': 'certificates:template.fields.wordingBody',
+} as const;
+
 export default function AcademyCertificateTemplatePage(): JSX.Element {
   const { t, i18n } = useTranslation();
   const { academyId = '' } = useParams<{ academyId: string }>();
@@ -151,7 +162,7 @@ export default function AcademyCertificateTemplatePage(): JSX.Element {
     values: template ? toFormValues(template) : undefined,
   });
 
-  useServerValidation(form, update.error);
+  useServerValidation(form, update.error, { labels: TEMPLATE_FIELD_LABELS });
   // `onSubmit` resolves false after a failure, so "Save and leave" in the
   // unsaved-changes dialog stays on the page instead of dropping the edit.
   useUnsavedChanges({

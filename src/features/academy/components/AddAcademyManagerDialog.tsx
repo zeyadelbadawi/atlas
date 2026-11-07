@@ -31,7 +31,11 @@ import { useToast } from '@app/providers/toast/useToast';
 import { useServerValidation } from '@forms';
 import { useAddAcademyManager } from '../hooks';
 import { useAcademyMemberLookup } from '../hooks/useAcademyMemberLookup';
-import { MemberAccountFields, isBlockedByLookup } from './MemberAccountFields';
+import {
+  MemberAccountFields,
+  memberAccountFieldLabels,
+  isBlockedByLookup,
+} from './MemberAccountFields';
 import type { AcademyMember } from '@types';
 import {
   existingTeamRole,
@@ -86,7 +90,9 @@ export function AddAcademyManagerDialog({
   // this form — e.g. the backend's `@MinLength(2)` on `name` versus this
   // schema's client-side check having no minimum at all, previously
   // surfaced only as a generic "Couldn't create this manager" toast.
-  useServerValidation(form, addManager.error);
+  useServerValidation(form, addManager.error, {
+    labels: memberAccountFieldLabels('academy:members.addManager'),
+  });
 
   // Unsaved-changes protection for a MODAL. Closing a dialog is not a
   // navigation, so the route blocker never sees the X button, an outside

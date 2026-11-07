@@ -477,7 +477,7 @@ describe('manual grading (V03, V11, V13, V23, V27)', () => {
   it('writes both ends of the points hint in the same digits (AR)', () => {
     renderAttempt('ar');
     const hints = screen.getAllByText(/نقاط، أعداد صحيحة/);
-    expect(hints[0].textContent).toContain('٠–١٠');
+    expect(hints[0].textContent).toContain('0–10');
   });
 });
 

@@ -35,12 +35,7 @@ import {
 } from '@forms';
 import { validationMessage } from '@/shared/forms/validation-message';
 import { useUpdateProfile } from '../hooks';
-import {
-  fieldErrorText,
-  hasViolationOn,
-  useFocusFirstViolation,
-  useLabelledViolations,
-} from '@forms';
+import { fieldErrorText, hasViolationOn, useFocusFirstViolation } from '@forms';
 import { RequiredMark, SaveFailedAlert } from '@forms';
 import type { CurrentUser } from '@types';
 import type { ApiError } from '@api';
@@ -178,15 +173,17 @@ export function ProfilePersonalSection({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [updateProfile.error]
   );
-  const violations = useLabelledViolations(
-    nameConflictFromError(updateProfile.error) ? null : relabelled,
-    {
+  const violations = nameConflictFromError(updateProfile.error)
+    ? null
+    : relabelled;
+  useServerValidation(form, violations, {
+    aliases: SERVER_FIELDS,
+    labels: {
       name: 'profile:fields.fullName',
       firstName: 'profile:fields.firstName',
       lastName: 'profile:fields.lastName',
-    }
-  );
-  useServerValidation(form, violations, SERVER_FIELDS);
+    },
+  });
   useFocusFirstViolation(form, violations, FIELD_VIOLATIONS, SERVER_FIELDS);
   // Anything no field can show: one inline message, nothing else (the
   // mutation is `inlineErrors`, so no toast repeats it).

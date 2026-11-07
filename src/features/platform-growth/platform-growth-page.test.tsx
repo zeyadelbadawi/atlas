@@ -265,7 +265,7 @@ describe('capacity tab', () => {
       .map((item) => item.querySelector('p')!.textContent);
     expect(ar[0]).toContain('عملية تجهيز واحدة هذا الأسبوع');
     expect(ar[1]).toContain('استفسار تواصل واحد غير مقروء');
-    expect(ar[2]).toContain('١٠ مؤسسات مدفوعة');
+    expect(ar[2]).toContain('10 مؤسسات مدفوعة');
     expect(ar[3]).toContain('(اليوم الأخير)');
   });
 

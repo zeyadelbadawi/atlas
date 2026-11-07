@@ -310,12 +310,12 @@ test.describe('J41 — gifted setup days on the first paid subscription @quarant
           variant.language === 'ar' ? 'rtl' : 'ltr'
         );
         await expect(article).toContainText(
-          variant.language === 'ar' ? '٤ أكتوبر ٢٠٢٦' : '4 October 2026'
+          variant.language === 'ar' ? '4 أكتوبر 2026' : '4 October 2026'
         );
         const heading = page.locator('#eligibility-records h2');
         await expect(heading).toHaveText(
           variant.language === 'ar'
-            ? '٦. الفترات التجريبية المجانية وأيام الاشتراك المُهداة'
+            ? '6. الفترات التجريبية المجانية وأيام الاشتراك المُهداة'
             : '6. Free trials and gifted subscription days'
         );
         await expectNoSidewaysScroll(page);

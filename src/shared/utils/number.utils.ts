@@ -2,9 +2,11 @@
  * Number, currency and byte formatting.
  *
  * All formatting goes through `Intl`, using the locale of the active language,
- * so Arabic and English both render correct digits, separators and symbols.
+ * so Arabic and English both render correct separators and symbols. Arabic
+ * uses Western digits (0–9), like every other number in Atlas (owner
+ * decision: one digit system); see `intlLocale`.
  */
-import { LANGUAGES } from '@localization';
+import { isSupportedLanguage, LANGUAGES } from '@localization';
 import type { LanguageCode } from '@types';
 
 /** Number of bytes per unit step. */
@@ -21,6 +23,19 @@ const BYTE_UNIT_KEYS = [
 
 function localeFor(language: LanguageCode): string {
   return LANGUAGES[language].locale;
+}
+
+/**
+ * The `Intl` locale for a language code or tag (`en`, `ar`, `ar-EG`…).
+ * Arabic always formats with Western digits (`ar-EG-u-nu-latn`, never
+ * `١٢٣`); a bare supported code takes its registry locale; any other tag
+ * (`en-GB`) is returned unchanged. Pass this — never a raw `i18n.language`
+ * or `'ar-EG'` — to `Intl.*` and `toLocale*String`.
+ */
+export function intlLocale(language: string): string {
+  if (isSupportedLanguage(language)) return LANGUAGES[language].locale;
+  if (/^ar(?:-|$)/i.test(language)) return LANGUAGES.ar.locale;
+  return language;
 }
 
 /** Formats an integer or decimal number for display. */

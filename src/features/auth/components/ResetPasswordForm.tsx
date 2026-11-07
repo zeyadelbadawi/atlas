@@ -46,6 +46,12 @@ export function isInvalidResetTokenError(
 
 /** The wire name of the new password is `newPassword`; the form calls it `password`. */
 const FIELD_ALIASES = { newPassword: 'password' } as const;
+/** The labels a server refusal names its field by (`{{field}}`). */
+const FIELD_LABELS = {
+  newPassword: 'auth:resetPassword.newPassword',
+  password: 'auth:resetPassword.newPassword',
+  confirmPassword: 'auth:resetPassword.confirmPassword',
+} as const;
 const RESET_FIELDS: readonly string[] = [
   'newPassword',
   'password',
@@ -129,7 +135,10 @@ export function ResetPasswordForm({
   // Its `newPassword` violation belongs on this form's `password` field,
   // not in a generic "something went wrong" card.
   const resetError = confirmPasswordReset.error;
-  useServerValidation(form, resetError, FIELD_ALIASES);
+  useServerValidation(form, resetError, {
+    aliases: FIELD_ALIASES,
+    labels: FIELD_LABELS,
+  });
   const onFields = violationsAllOn(resetError, RESET_FIELDS);
   useEffect(() => {
     if (onFields) setFocus('password');

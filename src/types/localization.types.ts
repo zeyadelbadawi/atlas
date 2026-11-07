@@ -21,7 +21,7 @@ export interface LanguageDefinition {
   /** Translation key for the language name in the active language. */
   readonly labelKey: string;
   readonly direction: TextDirection;
-  /** BCP-47 tag used for `Intl` formatting. */
+  /** BCP-47 tag used for `Intl` formatting (Arabic pins Western digits). */
   readonly locale: string;
   /** First day of the week: 0 = Sunday, 6 = Saturday. */
   readonly weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6;

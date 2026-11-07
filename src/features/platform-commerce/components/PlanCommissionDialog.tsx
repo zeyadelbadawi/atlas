@@ -71,7 +71,10 @@ export function PlanCommissionDialog({
   });
   // B8 (UX audit) V29 — the server's range refusal lands on the field.
   useServerValidation(form, updatePlan.error ?? null, {
-    commissionBasisPoints: 'percent',
+    aliases: { commissionBasisPoints: 'percent' },
+    labels: {
+      commissionBasisPoints: 'platformCommerce:commission.percentLabel',
+    },
   });
 
   const { reset: resetForm } = form;

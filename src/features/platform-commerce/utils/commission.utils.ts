@@ -6,6 +6,8 @@
  * types in percent. This is the ONE seam between the two, so no page
  * multiplies or divides by 100 itself.
  */
+import { intlLocale } from '@utils';
+
 export const MAX_BASIS_POINTS = 10_000;
 const BASIS_POINTS_PER_PERCENT = 100;
 
@@ -25,7 +27,7 @@ export function percentToBasisPoints(percent: number): number {
 
 /** Locale-aware display, e.g. `12.5%` / `‎12.5‎%` — at most two decimals, matching bp precision. */
 export function formatBasisPoints(basisPoints: number, locale: string): string {
-  return new Intl.NumberFormat(locale, {
+  return new Intl.NumberFormat(intlLocale(locale), {
     style: 'percent',
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,

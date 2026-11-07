@@ -670,7 +670,7 @@ describe('AtelierCourseCategories', () => {
     ).toBe('/courses');
   });
 
-  it('in Arabic uses Arabic-Indic digits and plural forms; in a preview the names are plain text', () => {
+  it('in Arabic uses Western digits and Arabic plural forms; in a preview the names are plain text', () => {
     categories = [
       { id: 'c1', name: 'تصميم', slug: 'design', courseCount: 5 },
       { id: 'c2', name: 'خط', slug: 'type', courseCount: 2 },
@@ -680,7 +680,7 @@ describe('AtelierCourseCategories', () => {
       'ar'
     );
     expect(screen.queryByRole('link')).toBeNull();
-    expect(screen.getByText('٥ دورات')).toBeTruthy();
+    expect(screen.getByText('5 دورات')).toBeTruthy();
     expect(screen.getByText('دورتان')).toBeTruthy();
   });
 });
@@ -908,7 +908,7 @@ describe('AtelierStatistics', () => {
     }
   });
 
-  it("shows numbers in the locale's digits in Arabic", () => {
+  it('shows numbers in Western digits in Arabic', () => {
     statistics = { courses: 6, students: 1240, instructors: 3 };
     const { container } = wrap(
       <AtelierStatistics
@@ -922,7 +922,7 @@ describe('AtelierStatistics', () => {
     const shown = [...container.querySelectorAll('dd')].map(
       (node) => node.textContent
     );
-    expect(shown).toEqual(['٦', '١٬٢٤٠', '٣']);
+    expect(shown).toEqual(['6', '1,240', '3']);
   });
 });
 
@@ -1011,7 +1011,7 @@ describe('AtelierTestimonials', () => {
     const group = screen.getByRole('group', { name: 'آراء المتعلّمين' });
     fireEvent.keyDown(group, { key: 'ArrowLeft' });
     expect(container.querySelector('.ath-quote-count')?.textContent).toBe(
-      '٠٢/٠٣'
+      '02/03'
     );
     expect(screen.getByText('“رأي James”')).toBeTruthy();
   });

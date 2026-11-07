@@ -12,20 +12,35 @@
  * three fields are marked required.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import { createI18nInstance } from '@/localization/i18n';
 import { ApiError } from '@api';
 import { ProfileSecuritySection } from './ProfileSecuritySection';
 
-const state = vi.hoisted(() => ({ error: null as unknown }));
+const state = vi.hoisted(() => ({
+  error: null as unknown,
+  mutate: vi.fn(),
+  notifySuccess: vi.fn(),
+}));
 
 vi.mock('../hooks', () => ({
   useChangePassword: () => ({
-    mutate: vi.fn(),
+    mutate: state.mutate,
+    mutateAsync: vi.fn(),
     isPending: false,
     error: state.error,
   }),
+}));
+vi.mock('@app/providers', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  useToast: () => ({ notifySuccess: state.notifySuccess }),
 }));
 vi.mock('./ProfileSessionsCard', () => ({
   ProfileSessionsCard: () => null,
@@ -66,9 +81,55 @@ const WRONG_CURRENT = () =>
 afterEach(() => {
   cleanup();
   state.error = null;
+  vi.clearAllMocks();
 });
 
 describe('ProfileSecuritySection change password', () => {
+  it('confirms a changed password with the app toast and clears the form', async () => {
+    state.mutate.mockImplementation(
+      (_payload: unknown, handlers?: { onSuccess?: () => void }) =>
+        handlers?.onSuccess?.()
+    );
+    renderSection();
+    fireEvent.change(document.getElementById('currentPassword')!, {
+      target: { value: 'OldPassword1!' },
+    });
+    fireEvent.change(document.getElementById('newPassword')!, {
+      target: { value: 'NewPassword1!' },
+    });
+    fireEvent.change(document.getElementById('confirmPassword')!, {
+      target: { value: 'NewPassword1!' },
+    });
+    fireEvent.submit(
+      (document.getElementById('currentPassword') as HTMLInputElement).form!
+    );
+    await waitFor(() =>
+      expect(state.notifySuccess).toHaveBeenCalledWith(
+        'profile:success.passwordChanged',
+        'profile:success.passwordUpdated'
+      )
+    );
+    await waitFor(() =>
+      expect(
+        (document.getElementById('newPassword') as HTMLInputElement).value
+      ).toBe('')
+    );
+  });
+
+  it('asks before leaving with a typed password', async () => {
+    renderSection();
+    const probe = () => {
+      const event = new Event('beforeunload', { cancelable: true });
+      window.dispatchEvent(event);
+      return event.defaultPrevented;
+    };
+    expect(probe()).toBe(false);
+    fireEvent.change(document.getElementById('newPassword')!, {
+      target: { value: 'Typed1!' },
+    });
+    await waitFor(() => expect(probe()).toBe(true));
+  });
+
   it('marks the three password fields as required', () => {
     renderSection();
     for (const id of ['currentPassword', 'newPassword', 'confirmPassword']) {

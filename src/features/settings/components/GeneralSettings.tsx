@@ -42,12 +42,7 @@ import {
   generalSettingsSchema,
   type GeneralSettingsFormData,
 } from '../schemas/settings.schemas';
-import {
-  fieldErrorText,
-  hasViolationOn,
-  useFocusFirstViolation,
-  useLabelledViolations,
-} from '@forms';
+import { fieldErrorText, hasViolationOn, useFocusFirstViolation } from '@forms';
 import { RequiredMark, SaveFailedAlert } from '@forms';
 
 /** API fields this form shows a violation beside, with their labels. */
@@ -106,10 +101,7 @@ export function GeneralSettings(): JSX.Element {
     }
   }, [settings, reset]);
 
-  useServerValidation(
-    form,
-    useLabelledViolations(updateSettings.error, FIELD_LABELS)
-  );
+  useServerValidation(form, updateSettings.error, { labels: FIELD_LABELS });
   useFocusFirstViolation(form, updateSettings.error, FIELD_LABELS);
   const saveFailure =
     updateSettings.error && !hasViolationOn(updateSettings.error, FIELD_LABELS)

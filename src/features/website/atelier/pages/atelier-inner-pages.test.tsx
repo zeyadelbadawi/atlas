@@ -600,7 +600,7 @@ describe('AtelierCourseCatalog', () => {
     expect(busy.querySelectorAll('.atp-row').length).toBeGreaterThan(0);
   });
 
-  it('Arabic: right to left, Arabic-Indic numbering and labels', () => {
+  it('Arabic: right to left, Western-digit numbering and labels', () => {
     courses = [course('c1')];
     const { container } = wrap(
       <AtelierCourseCatalog
@@ -613,7 +613,7 @@ describe('AtelierCourseCatalog', () => {
     );
     expect(
       container.querySelector('[dir="rtl"] .atp-row-no')?.textContent
-    ).toBe('٠١');
+    ).toBe('01');
     expect(screen.getByRole('group', { name: 'تنقيح الفهرس' })).toBeTruthy();
   });
 });
@@ -786,7 +786,7 @@ describe('Atelier system pages', () => {
     expect(screen.queryByText('Browse the courses')).toBeNull();
   });
 
-  it('404 in Arabic: right to left, Arabic-Indic figure', () => {
+  it('404 in Arabic: right to left, Western-digit figure', () => {
     const { container } = wrap(
       <AtelierNotFound pages={PAGES} linkRenderer={linkRenderer} />,
       'ar'
@@ -796,7 +796,7 @@ describe('Atelier system pages', () => {
     );
     expect(
       container.querySelector('[dir="rtl"] .atp-poster-figure')?.textContent
-    ).toBe('٤٠٤');
+    ).toBe('404');
   });
 
   it('Coming Soon: the poster names the Academy in its h1, with logo or wordmark', () => {

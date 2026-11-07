@@ -846,9 +846,9 @@ describe('Website Messages — Arabic', () => {
     expect(screen.getByRole('combobox', { name: 'الترتيب' })).toBeTruthy();
 
     // 57 is in Arabic's "many" category: singular counted noun.
-    expect(await screen.findByText('عرض ٢١–٤٠ من أصل ٥٧ رسالة')).toBeTruthy();
+    expect(await screen.findByText('عرض 21–40 من أصل 57 رسالة')).toBeTruthy();
     // 3 is in the "few" category: plural counted noun.
-    expect(await screen.findByText('٣ رسائل جديدة')).toBeTruthy();
+    expect(await screen.findByText('3 رسائل جديدة')).toBeTruthy();
     // No untranslated key leaked through.
     expect(container.textContent).not.toMatch(/website:messages/);
   });
@@ -856,6 +856,6 @@ describe('Website Messages — Arabic', () => {
   it('uses the dual form for two messages', async () => {
     dataset = [submission('d1'), submission('d2')];
     renderPage({ language: 'ar' });
-    expect(await screen.findByText('عرض ١–٢ من أصل رسالتين')).toBeTruthy();
+    expect(await screen.findByText('عرض 1–2 من أصل رسالتين')).toBeTruthy();
   });
 });

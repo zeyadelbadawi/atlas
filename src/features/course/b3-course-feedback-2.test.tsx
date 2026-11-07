@@ -261,7 +261,7 @@ describe('Completion settings', () => {
     expect(score.closest('form')?.noValidate).toBe(true);
     await user.click(screen.getByRole('button', { name: /حفظ/ }));
     expect(
-      await screen.findByText('يرجى إدخال نسبة مئوية بين ٠ و١٠٠.')
+      await screen.findByText('يرجى إدخال نسبة مئوية بين 0 و100.')
     ).toBeTruthy();
     expect(update).not.toHaveBeenCalled();
   });

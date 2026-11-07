@@ -78,7 +78,8 @@ that wrap at 1024 px, words split mid-word, and shared components (auth pages, l
 
 Measured in Chromium on the local stack with the audit's own harness (theme forced per page, theme
 default seeds, starter pages); after-shots under the before shots' names. Every High and Medium item is
-fixed or was already fixed; 8 Low items are left, each with its reason.
+fixed or was already fixed; the 8 Low items first left open were settled by owner decisions and are
+fixed too (marked "owner decision").
 
 - **V01** fixed — every upright `Atelier Display` face declares `font-weight: 100 900` (Markazi was
   300–900, so Chromium treated it as a rival face and Latin fell back to Liberation Serif). Hero h1 now
@@ -122,8 +123,10 @@ fixed or was already fixed; 8 Low items are left, each with its reason.
   with the last cell, no shaded empty cell.
 - **V20** fixed — explorer rows mark with a line chevron (down/up on phones, toward the sheet from
   1024 px, mirrored in RTL) instead of ☐ / ■.
-- **V21** left — shared formatters (price, lessons, duration) give Western digits; theme ornaments give
-  Arabic-Indic. Choosing one digit system for Arabic is a product-wide decision, not in the Riwaq plan.
+- **V21** fixed (owner decision, one digit system) — Arabic uses Western digits (0–9) everywhere: the
+  shared formatters and every theme ornament format through `intlLocale` (`ar-EG-u-nu-latn`), and
+  Atelier's CSS counters no longer switch to `arabic-indic` in RTL. Arabic month names, separators and
+  RTL are unchanged; Arabic-Indic digits a person types are still accepted (`normalizeDigits`).
 - **V22** fixed — the strip under the footer above the phone bar takes `--website-footer-surface` (the
   footer's own ground: Atelier deep, Manara night, Riwaq deep; Theme 1 unchanged). The "empty strip"
   above the course-page footer did not reproduce in a live viewport (full-page capture artefact).
@@ -168,7 +171,9 @@ fixed or was already fixed; 8 Low items are left, each with its reason.
   IBMPlexSansArabic-Bold, h2/h3 → IBMPlexSansArabic-Medium, body → Regular; the Latin file downloads once.
   Riwaq stylesheet 55,928 B (was 55,984; repeated rules merged to fit the 56,000 B budget); fonts 4 files,
   each ≤ 50 kB.
-- **V30** fixed — Arabic steps are numbered ١ ٢ ٣ (no leading zero) and filled, not outlined.
+- **V30** fixed — revised by the one-digit-system decision: Arabic steps are numbered 01 02 03 in
+  Western digits, as in English (no more ١ ٢ ٣). They stay filled in Arabic: the Arabic face's digits
+  have overlapping contours that the outline stroke draws as stray lines.
 - **V31** fixed (owner decision) — the feature split's benefits are a list with a check mark each, not
   numbered (`ul`, no `t1-number`); the steps after it are Home's only numbered list.
 - **V32** fixed — the catalog search field keeps 15rem; on phones the button moves under it: field

@@ -13,7 +13,7 @@
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDateFormatter } from '@hooks';
+import { useActionFailureToast, useDateFormatter } from '@hooks';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { FileCheck2, MoreHorizontal, Plus } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
@@ -44,7 +44,6 @@ import {
   UnitPickerField,
   UnitPlacementNote,
 } from '../components/UnitPickerField';
-import { useActionFailureToast } from '../forms/course-form-feedback';
 import {
   getLessonStatusLabelKey,
   getLessonStatusTone,
@@ -166,7 +165,7 @@ export default function CourseAssignmentsPage(): JSX.Element {
       await deleteAssignment.mutateAsync(assignment.id);
       toast({ title: t('course:assignmentAuthoring.deleted') });
     } catch (deleteError) {
-      failureToast('course:assignmentAuthoring.deleteError', deleteError);
+      failureToast(deleteError, 'course:assignmentAuthoring.deleteError');
     }
   };
 

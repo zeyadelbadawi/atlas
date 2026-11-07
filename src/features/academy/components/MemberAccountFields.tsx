@@ -57,6 +57,19 @@ export function isBlockedByLookup(lookup: MemberLookupState): boolean {
   return lookup.state === 'already_member';
 }
 
+/**
+ * The labels a server refusal names these fields by (`{{field}}`), for the
+ * dialog's `useServerValidation`.
+ */
+export function memberAccountFieldLabels(
+  copyPrefix: string
+): Readonly<Record<string, string>> {
+  return {
+    email: `${copyPrefix}.emailLabel`,
+    name: 'academy:members.newAccount.nameLabel',
+  };
+}
+
 export function MemberAccountFields<TValues extends MemberAccountFormValues>({
   control,
   lookup,

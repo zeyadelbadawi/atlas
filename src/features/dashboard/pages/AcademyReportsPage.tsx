@@ -76,6 +76,7 @@ import {
 import { REPORT_WINDOW_DEFAULT_DAYS } from '../services/AcademyReportsService';
 import type { ApiError } from '@api';
 import type { ResourceLimitStatus } from '@types';
+import { intlLocale } from '@utils';
 
 /** The windows offered. Every value is inside the backend's 1–90 range. */
 const WINDOW_OPTIONS = [7, 30, 90] as const;
@@ -252,7 +253,7 @@ export default function AcademyReportsPage(): JSX.Element {
   const usage = useTenantUsage();
 
   const formatNumber = (value: number): string =>
-    new Intl.NumberFormat(i18n.language).format(value);
+    new Intl.NumberFormat(intlLocale(i18n.language)).format(value);
 
   const headline = ({ labelKey, value, icon }: HeadlineProps): JSX.Element => (
     <MetricCard labelKey={labelKey} value={value} icon={icon} />

@@ -43,7 +43,6 @@ import {
   SaveFailedAlert,
   hasViolationOn,
   useFocusFirstViolation,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import { useDirtyGuard } from '@features/unsaved-changes';
@@ -131,11 +130,8 @@ function FaqEntryDialog({
   // B2 (V09/V10) — a refused field lands on that field, with its label and
   // its limit; any other failure is one alert with the real reason.
   const saveError = createEntry.error ?? updateEntry.error;
-  const violations = useLabelledViolations(
-    useViolationLimits(saveError, FAQ_FIELD_LIMITS),
-    FAQ_FIELD_LABELS
-  );
-  useServerValidation(form, violations);
+  const violations = useViolationLimits(saveError, FAQ_FIELD_LIMITS);
+  useServerValidation(form, violations, { labels: FAQ_FIELD_LABELS });
   useFocusFirstViolation(form, violations, FAQ_FIELD_LABELS);
   const saveFailure =
     saveError && !hasViolationOn(saveError, FAQ_FIELD_LABELS)

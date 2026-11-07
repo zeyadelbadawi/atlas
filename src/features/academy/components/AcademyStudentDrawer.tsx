@@ -39,7 +39,7 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from '@components/data-display';
 import { EmptyState, ErrorState } from '@components/feedback';
-import { useDateFormatter } from '@hooks';
+import { useActionFailureToast, useDateFormatter } from '@hooks';
 import { useToast, useConfirmDialog } from '@app/providers';
 import {
   getQuizAttemptStatusTone,
@@ -61,7 +61,6 @@ import {
   useUpdateRosterEnrollmentExpiry,
 } from '../hooks';
 // Its own module, not the barrel: tests that stub the barrel keep it real.
-import { useActionFailureToast } from '../hooks/useActionFailureToast';
 import {
   getRosterEnrollmentLabelKey,
   getRosterEnrollmentTone,
@@ -142,7 +141,7 @@ export function AcademyStudentDrawer({
   // toast: what didn't happen and the real reason. Dialog actions show
   // their failure inside the dialog instead (`error` below).
   const failed = (titleKey: string) => (err: ApiError) =>
-    actionFailed(err, titleKey, getRosterSpecificKey(err));
+    actionFailed(err, titleKey, { specificKey: getRosterSpecificKey(err) });
 
   const student = data?.student;
   const canManage = data?.viewerScope === 'academy';

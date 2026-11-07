@@ -67,6 +67,13 @@ function readFileAsDataUrl(file: File): Promise<string> {
   });
 }
 
+/** The labels a server refusal names its field by (`{{field}}`). */
+const BRANDING_FIELD_LABELS = {
+  name: 'academy:create.nameLabel',
+  logo: 'academy:branding.logo',
+  favicon: 'academy:branding.favicon',
+} as const;
+
 export interface AcademyBrandingFormProps {
   readonly academy: Academy;
   /** The secondary action beside Save. Absent, only Save is shown (the onboarding shell has its own Skip/Back). */
@@ -106,7 +113,7 @@ export function AcademyBrandingForm({
     },
   });
 
-  useServerValidation(form, mutationError);
+  useServerValidation(form, mutationError, { labels: BRANDING_FIELD_LABELS });
   // W4 — academy names are unique platform-wide: a taken name is shown on
   // the name field instead of a generic toast.
   useNameConflictError(form, mutationError);

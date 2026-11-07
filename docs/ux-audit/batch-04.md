@@ -133,8 +133,8 @@ the past where the past does damage.
 - **V32** Resolved by V09: dialog failures are inline in the dialog, so no toast covers its title.
 
 ### Not changed here, with reason
-- **Mixed digit styles in Arabic** — dates print Western digits, `formatNumber` prints
-  Arabic-Indic; choosing one app-wide is a separate decision.
-- **Three copies of the failure-toast helper** (course, academy, announcements) — moving them
-  into `@hooks` is a follow-up cleanup.
+- **Mixed digit styles in Arabic** — decided and fixed: the owner chose Western digits (0–9)
+  everywhere in Arabic; `formatNumber` and every `Intl` call now use `ar-EG-u-nu-latn`.
+- **Three copies of the failure-toast helper** (course, academy, announcements) — done: one
+  `useActionFailureToast` in `@hooks`, every caller uses it.
 - **Deleting a draft announcement** needs a backend endpoint; archive covers it.

@@ -41,7 +41,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ErrorState } from '@components/feedback';
 import { useToast } from '@app/providers';
 import { useServerValidation } from '@forms';
-import { hasViolationOn, useLabelledViolations } from '@forms';
+import { hasViolationOn } from '@forms';
 import { SaveFailedAlert } from '@forms';
 import {
   usePlatformCommunicationSettings,
@@ -224,10 +224,7 @@ export function CommunicationsSettings(): JSX.Element {
     if (settings) reset(toFormValues(settings));
   }, [settings, reset]);
 
-  useServerValidation(
-    form,
-    useLabelledViolations(update.error ?? null, FIELD_NAMES)
-  );
+  useServerValidation(form, update.error ?? null, { labels: FIELD_NAMES });
 
   const thresholds = watch('quotaAlertThresholds');
   const isSaving = update.isPending;

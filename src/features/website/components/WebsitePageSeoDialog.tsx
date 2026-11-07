@@ -72,6 +72,14 @@ const SEO_ALIASES: Record<string, keyof PageSeoFormData> = Object.fromEntries(
   ])
 ) as Record<string, keyof PageSeoFormData>;
 
+/** Each server path's label (`{{field}}`), from the form field it lands on. */
+const SEO_LABELS: Record<string, string> = Object.fromEntries(
+  Object.entries(SEO_ALIASES).map(([path, field]) => [
+    path,
+    `website:seo.${String(field).split('.')[0]}`,
+  ])
+);
+
 const SEO_FIELDS: Record<string, string> = Object.fromEntries(
   [
     ...Object.keys(SEO_ALIASES),
@@ -118,11 +126,10 @@ export function WebsitePageSeoDialog({
   // this: closing a dialog is not a navigation, so the X button, an
   // outside click and Escape all need to be intercepted here instead.
   const dirtyGuard = useDirtyGuard(form.formState.isDirty);
-  useServerValidation(
-    form,
-    updatePage.error,
-    SEO_ALIASES as Record<string, Path<PageSeoFormData>>
-  );
+  useServerValidation(form, updatePage.error, {
+    aliases: SEO_ALIASES as Record<string, Path<PageSeoFormData>>,
+    labels: SEO_LABELS,
+  });
   const { errors } = form.formState;
   const localizedErrors = {
     metaTitle: useLocalizedFormErrors(

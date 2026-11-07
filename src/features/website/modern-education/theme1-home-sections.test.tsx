@@ -735,7 +735,7 @@ describe('T1Statistics', () => {
     }
   });
 
-  it("shows the final numbers at once under reduced motion, in the locale's digits", () => {
+  it('shows the final numbers at once under reduced motion, in Western digits (Arabic too)', () => {
     setMatchMedia(true);
     statistics = { courses: 6, students: 1240, instructors: 3 };
     const { container } = wrap(
@@ -750,7 +750,7 @@ describe('T1Statistics', () => {
     const shown = [...container.querySelectorAll('[data-count-up]')].map(
       (node) => node.textContent
     );
-    expect(shown).toEqual(['٦', '١٬٢٤٠', '٣']);
+    expect(shown).toEqual(['6', '1,240', '3']);
   });
 });
 

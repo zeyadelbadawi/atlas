@@ -10,8 +10,8 @@
  * other from assistive technology too).
  *
  * Times are stored as 24-hour `HH:MM` and shown in the visitor's locale:
- * "4:00 PM" in English, "٤:٠٠ م" in Arabic — the digits the themes already
- * use for numbers (`formatT1Number`'s `ar-EG`).
+ * "4:00 PM" in English, "4:00 م" in Arabic — Western digits, as every
+ * number in the themes (`intlLocale`).
  *
  * Sample (starter) rows never reach the public site; previews label them.
  */

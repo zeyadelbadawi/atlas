@@ -9,7 +9,7 @@
  */
 import type { CSSProperties, ReactNode } from 'react';
 import { ArrowRight, ImageIcon } from 'lucide-react';
-import { cn } from '@utils';
+import { cn, intlLocale } from '@utils';
 import {
   ThemeImage,
   findThemeAsset,
@@ -488,17 +488,17 @@ export function AtelierMonogram({
   );
 }
 
-/** The locale's digits (Arabic-Indic in Arabic). */
+/** A number in the locale's format — Western digits in both languages. */
 export function formatAtelierNumber(
   value: number,
   locale: 'en' | 'ar'
 ): string {
-  return value.toLocaleString(locale === 'ar' ? 'ar-EG' : 'en-US');
+  return value.toLocaleString(intlLocale(locale));
 }
 
-/** Two-digit index for lists (01, 02 / ٠١, ٠٢). */
+/** Two-digit index for lists (01, 02 — Western digits in both languages). */
 export function formatAtelierIndex(index: number, locale: 'en' | 'ar'): string {
-  return (index + 1).toLocaleString(locale === 'ar' ? 'ar-EG' : 'en-US', {
+  return (index + 1).toLocaleString(intlLocale(locale), {
     minimumIntegerDigits: 2,
     useGrouping: false,
   });

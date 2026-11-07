@@ -61,8 +61,8 @@ import {
 /**
  * `1:05:20` / `12:30` — never "3720 seconds".
  *
- * Digits come from `formatNumber`, so Arabic gets the same Arabic-Indic
- * numerals the rest of the product uses rather than a second, locally
+ * Digits come from `formatNumber`, so Arabic gets the same Western
+ * digits the rest of the product uses rather than a second, locally
  * chosen locale. The result is isolated because `12:30` is two
  * left-to-right runs around a bidi-NEUTRAL colon — the exact shape that
  * renders as `30:12` inside an Arabic paragraph (`bidi.utils.ts`

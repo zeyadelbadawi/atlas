@@ -10,7 +10,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { usePagination } from '@hooks';
+import { useActionFailureToast, usePagination } from '@hooks';
 import { Check, Loader2, Trash2, X } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { SectionTabs } from '@components/navigation';
@@ -42,7 +42,6 @@ import {
   useCourseEditorTabs,
 } from '../hooks/useCourseEditorTabs';
 import type { BreadcrumbItem, CourseReviewStatus } from '@types';
-import { useActionFailureToast } from '../forms/course-form-feedback';
 
 type StatusFilter = 'all' | CourseReviewStatus;
 
@@ -113,7 +112,7 @@ export default function CourseReviewsModerationPage(): JSX.Element {
         title: t(`course:reviews.${action}dToast`),
       });
     } catch (error) {
-      failureToast(`course:reviews.${action}Failed`, error);
+      failureToast(error, `course:reviews.${action}Failed`);
     }
   };
 
@@ -129,7 +128,7 @@ export default function CourseReviewsModerationPage(): JSX.Element {
       await remove.mutateAsync({ reviewId });
       toast({ title: t('course:reviews.removedToast') });
     } catch (error) {
-      failureToast('course:reviews.removeFailed', error);
+      failureToast(error, 'course:reviews.removeFailed');
     }
   };
 

@@ -43,7 +43,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useAuth, useDateFormatter, usePagination } from '@hooks';
+import {
+  useActionFailureToast,
+  useAuth,
+  useDateFormatter,
+  usePagination,
+} from '@hooks';
 import { useConfirmDialog, useToast } from '@app/providers';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
 import {
@@ -52,7 +57,6 @@ import {
   useRemoveAcademyMember,
 } from '../hooks';
 // Its own module, not the barrel: tests that stub the barrel keep it real.
-import { useActionFailureToast } from '../hooks/useActionFailureToast';
 import { AddAcademyManagerDialog } from '../components/AddAcademyManagerDialog';
 import { AddAcademyInstructorDialog } from '../components/AddAcademyInstructorDialog';
 import { CreateAcademyStudentDialog } from '../components/CreateAcademyStudentDialog';

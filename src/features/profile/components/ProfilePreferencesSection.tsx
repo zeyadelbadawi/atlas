@@ -41,7 +41,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { useToast, useLanguage, useTheme } from '@hooks';
+import { useToast } from '@app/providers';
+import { useLanguage, useTheme } from '@hooks';
 import { ensureLanguageLoaded } from '@localization';
 import { CommunicationPreferencesPanel } from '@features/notifications';
 import { useUpdatePreferences } from '../hooks';
@@ -56,7 +57,7 @@ type PreferencesFormData = z.infer<typeof preferencesSchema>;
 
 export function ProfilePreferencesSection(): JSX.Element {
   const { t, i18n } = useTranslation();
-  const { toast } = useToast();
+  const { notifySuccess } = useToast();
   const { language, setLanguage } = useLanguage();
   const { preference, setPreference } = useTheme();
   const updatePreferences = useUpdatePreferences();
@@ -86,11 +87,11 @@ export function ProfilePreferencesSection(): JSX.Element {
             setLanguage(data.language);
           }
           // Confirmed in the language the page now shows.
-          const tt = i18n.getFixedT(data.language);
-          toast({
-            title: tt('profile:success.preferencesUpdated'),
-            description: tt('profile:success.changesApplied'),
-          });
+          notifySuccess(
+            'profile:success.preferencesUpdated',
+            'profile:success.changesApplied',
+            { lng: data.language }
+          );
         },
       }
     );

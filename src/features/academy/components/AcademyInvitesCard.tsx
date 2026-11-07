@@ -47,7 +47,11 @@ import { Label } from '@/components/ui/label';
 import { StatusBadge } from '@components/data-display';
 import { ErrorState } from '@components/feedback';
 import { DataTable } from '@components/table';
-import { useCopyToClipboard, useDateFormatter } from '@hooks';
+import {
+  useActionFailureToast,
+  useCopyToClipboard,
+  useDateFormatter,
+} from '@hooks';
 import { useConfirmDialog, useToast } from '@app/providers';
 import { useDirtyGuard } from '@features/unsaved-changes';
 import {
@@ -56,7 +60,6 @@ import {
   hasViolationOn,
   isFieldViolationError,
   useFocusFirstViolation,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import {
@@ -65,7 +68,6 @@ import {
   useRevokeAcademyInvite,
 } from '../hooks';
 // Its own module, not the barrel: tests that stub the barrel keep it real.
-import { useActionFailureToast } from '../hooks/useActionFailureToast';
 import {
   buildInviteLink,
   getInviteState,
@@ -322,9 +324,8 @@ function CreateInviteDialog({
 
   // Server violations (email, maxUses, expiresInDays) land on their fields,
   // under the dialog's own labels; anything else is one alert in the dialog.
-  const labelled = useLabelledViolations(create.error, INVITE_FIELD_LABELS);
-  useServerValidation(form, labelled);
-  useFocusFirstViolation(form, labelled, INVITE_FIELD_LABELS);
+  useServerValidation(form, create.error, { labels: INVITE_FIELD_LABELS });
+  useFocusFirstViolation(form, create.error, INVITE_FIELD_LABELS);
   const failure =
     create.error &&
     !(

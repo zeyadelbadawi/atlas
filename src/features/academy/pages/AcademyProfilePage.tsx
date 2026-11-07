@@ -46,7 +46,6 @@ import {
   SaveFailedAlert,
   nameConflictFromError,
   useFocusFirstViolation,
-  useLabelledViolations,
   useNameConflictError,
   useServerValidation,
 } from '@forms';
@@ -126,14 +125,13 @@ export default function AcademyProfilePage(): JSX.Element {
   // B4 (UX audit) V10 — server violations land on their fields, under the
   // form's labels (`address.postalCode` → Postal code), with focus there;
   // any other failure is one inline alert with the real reason.
-  const labelledError = useLabelledViolations(
-    mutationError,
-    ACADEMY_PROFILE_FIELD_LABELS
-  );
-  useServerValidation(form, labelledError, ACADEMY_PROFILE_FIELD_ALIASES);
+  useServerValidation(form, mutationError, {
+    aliases: ACADEMY_PROFILE_FIELD_ALIASES,
+    labels: ACADEMY_PROFILE_FIELD_LABELS,
+  });
   useFocusFirstViolation(
     form,
-    labelledError,
+    mutationError,
     ACADEMY_PROFILE_FIELD_LABELS,
     ACADEMY_PROFILE_FIELD_ALIASES
   );

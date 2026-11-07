@@ -320,13 +320,13 @@ describe.each(THEMES)('%s', (_name, themeKey, renderers) => {
     expect(screen.getByText('Registration has closed.')).toBeTruthy();
   });
 
-  it('the countdown counts in Arabic digits on the Arabic site', () => {
+  it('the countdown counts in Western digits on the Arabic site', () => {
     renderSection(themeKey, renderers, 'countdown', CONFIGS.countdown, {
       locale: 'ar',
     });
     const timer = screen.getByRole('timer');
     expect(timer.querySelector('[data-unit="hours"] span')!.textContent).toBe(
-      '٠٢'
+      '02'
     );
     expect(timer.getAttribute('aria-label')).toMatch(/^الوقت المتبقي: يومان/);
   });

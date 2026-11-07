@@ -119,6 +119,6 @@ The visual design of the themes is in B10.
   serves the page from the server.
 - **V23** The API answers a suspended academy and a wrong address the same way on purpose (billing is
   never disclosed), so they can't be told apart.
-- **V25** Mixed digit styles — the app-wide decision noted in B4.
+- **V25** Mixed digit styles — decided and fixed: Western digits (0–9) everywhere in Arabic, themes included.
 - The visual design of the themes is B10.
 

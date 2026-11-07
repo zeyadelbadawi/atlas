@@ -54,7 +54,6 @@ import {
   RequiredMark,
   SaveFailedAlert,
   hasViolationOn,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import {
@@ -206,8 +205,8 @@ function AdjustmentDialog({
 
   // The server's refusal of a field lands on that field, named by its
   // label in the page's language (a 400 through `useServerValidation`).
-  const error = useLabelledViolations(adjust.error ?? null, FIELD_LABELS);
-  useServerValidation(form, error);
+  const error = adjust.error ?? null;
+  useServerValidation(form, error, { labels: FIELD_LABELS });
   // The archived-plan refusal is a 409 carrying a `planKey` violation;
   // `useServerValidation` applies 400s only, so it is placed here.
   const { setError } = form;

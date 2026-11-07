@@ -25,7 +25,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
-import { useDateFormatter, useUnsavedChanges } from '@hooks';
+import {
+  useActionFailureToast,
+  useDateFormatter,
+  useUnsavedChanges,
+} from '@hooks';
 import { useDirtyGuard } from '@features/unsaved-changes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Plus } from 'lucide-react';
@@ -57,12 +61,10 @@ import {
   hasViolationOn,
   isFieldViolationError,
   useFocusFirstViolation,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import { useConfirmDialog, useToast } from '@app/providers';
 import { normalizeUnknownError } from '@api';
-import { useActionFailureToast } from '../hooks/useActionFailureToast';
 import {
   announcementSchemaFor,
   type AnnouncementFormData,
@@ -206,12 +208,8 @@ export function AnnouncementManagerPanel({
 
   // V05 — `scheduledAt` refused by the server (in the past) lands on the
   // schedule field under its own label, as title/body violations do.
-  const labelledError = useLabelledViolations(
-    saveError,
-    ANNOUNCEMENT_FIELD_LABELS
-  );
-  useServerValidation(form, labelledError);
-  useFocusFirstViolation(form, labelledError, ANNOUNCEMENT_FIELD_LABELS);
+  useServerValidation(form, saveError, { labels: ANNOUNCEMENT_FIELD_LABELS });
+  useFocusFirstViolation(form, saveError, ANNOUNCEMENT_FIELD_LABELS);
 
   useEffect(() => {
     if (dialogOpen) {
@@ -287,10 +285,7 @@ export function AnnouncementManagerPanel({
       await onPublish(announcement.id);
       notifySuccess('announcements:manage.publishSuccess');
     } catch (error) {
-      actionFailed(
-        normalizeUnknownError(error),
-        'announcements:manage.publishFailedTitle'
-      );
+      actionFailed(error, 'announcements:manage.publishFailedTitle');
     }
   };
 
@@ -315,10 +310,7 @@ export function AnnouncementManagerPanel({
       await onArchive(announcement.id);
       notifySuccess('announcements:manage.archiveSuccess');
     } catch (error) {
-      actionFailed(
-        normalizeUnknownError(error),
-        'announcements:manage.archiveFailedTitle'
-      );
+      actionFailed(error, 'announcements:manage.archiveFailedTitle');
     }
   };
 

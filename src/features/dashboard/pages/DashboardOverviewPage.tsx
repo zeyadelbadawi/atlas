@@ -35,6 +35,7 @@ import { GettingStartedChecklist } from '@features/tenant';
 import { SetupChecklistCard } from '@features/onboarding';
 import { PhoneNumberPrompt } from '@features/profile';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
+import { intlLocale } from '@utils';
 
 export default function DashboardOverviewPage(): JSX.Element {
   const { i18n } = useTranslation();
@@ -44,7 +45,7 @@ export default function DashboardOverviewPage(): JSX.Element {
   usePrefetchMySupportCases();
 
   const formatCount = (value: number): string =>
-    new Intl.NumberFormat(i18n.language).format(value);
+    new Intl.NumberFormat(intlLocale(i18n.language)).format(value);
 
   // No organization or academy context resolved — an honest empty state,
   // never a dashboard of zeros implying real, empty data.

@@ -16,13 +16,10 @@
  * sites by hand is how call sites get missed. This binds it once.
  *
  * ON NUMERALS. date-fns renders Arabic months with Latin digits
- * (`12 سبتمبر 2026`), while `number.utils.ts` formats numbers through
- * `Intl` with `ar-EG`, which produces Arabic-Indic digits (`١٢٣`). That
- * divergence is a real one and it is NOT decided here: which numeral
- * system an Arabic product uses is a regional and brand choice (Egypt and
- * the Gulf differ), it affects every screen, and a QA pass is the wrong
- * place to settle it unilaterally. What this fixes is the unambiguous
- * part — that the date followed the browser rather than the user.
+ * (`12 سبتمبر 2026`), and `number.utils.ts` formats numbers through
+ * `Intl` with `ar-EG-u-nu-latn`, which also prints Western digits. The
+ * owner decided one digit system for Arabic — Western (0–9) everywhere —
+ * so dates and numbers agree (`intlLocale` in `number.utils.ts`).
  */
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';

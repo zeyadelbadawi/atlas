@@ -8,6 +8,7 @@
  * from a whole formatted string, so the server and the browser produce the
  * same characters even when their ICU versions space a time differently.
  */
+import { intlLocale } from '@utils';
 import { isCountdownDeadline } from './section-media-values.utils';
 
 export type CountdownLocale = 'en' | 'ar';
@@ -179,16 +180,17 @@ export function utcOffsetLabel(instant: number, timeZone: string): string {
   return `UTC${sign}${Math.floor(abs / 60)}${minutes ? `:${pad(minutes)}` : ''}`;
 }
 
-const intlLocale = (locale: CountdownLocale) =>
-  locale === 'ar' ? 'ar-EG' : 'en-GB';
+/** Dates and times: Arabic (Western digits) or British English. */
+const dateLocale = (locale: CountdownLocale) =>
+  locale === 'ar' ? intlLocale(locale) : 'en-GB';
 
-/** A whole number in the locale's digits; `width` pads it (`07`, `٠٧`). */
+/** A whole number (Western digits in both languages); `width` pads it (`07`). */
 export function formatCountdownNumber(
   value: number,
   locale: CountdownLocale,
   width = 1
 ): string {
-  return value.toLocaleString(locale === 'ar' ? 'ar-EG' : 'en-US', {
+  return value.toLocaleString(intlLocale(locale), {
     minimumIntegerDigits: width,
     useGrouping: false,
   });
@@ -196,9 +198,9 @@ export function formatCountdownNumber(
 
 /** The deadline's date and time in the zone, as separate words for a sentence. */
 export interface DeadlineText {
-  /** "Thursday 5 November 2026" / "الخميس ٥ نوفمبر ٢٠٢٦". */
+  /** "Thursday 5 November 2026" / "الخميس 5 نوفمبر 2026". */
   readonly date: string;
-  /** "23:59" / "١١:٥٩ م". */
+  /** "23:59" / "11:59 م". */
   readonly time: string;
   /** "UTC+2". */
   readonly zone: string;
@@ -211,7 +213,7 @@ export function deadlineText(
   locale: CountdownLocale
 ): DeadlineText {
   const parts: Partial<Record<Intl.DateTimeFormatPartTypes, string>> = {};
-  const formatter = new Intl.DateTimeFormat(intlLocale(locale), {
+  const formatter = new Intl.DateTimeFormat(dateLocale(locale), {
     timeZone,
     weekday: 'long',
     day: 'numeric',

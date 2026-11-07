@@ -11,6 +11,7 @@ import { I18nextProvider } from 'react-i18next';
 import { createI18nInstance } from '@/localization/i18n';
 import { ApiError } from '@api';
 import en from '@/localization/resources/en/errors.json';
+import enValidation from '@/localization/resources/en/validation.json';
 import ar from '@/localization/resources/ar/errors.json';
 import { useServerValidation } from './useServerValidation';
 
@@ -34,7 +35,9 @@ function Probe() {
   const form = useForm<QuizLikeForm>({
     defaultValues: { timeLimitMinutes: 10, shuffleQuestions: true },
   });
-  useServerValidation(form, refusal, { timeLimitSeconds: 'timeLimitMinutes' });
+  useServerValidation(form, refusal, {
+    aliases: { timeLimitSeconds: 'timeLimitMinutes' },
+  });
   const { errors } = form.formState;
   return (
     <>
@@ -66,5 +69,74 @@ describe('useServerValidation — field aliases', () => {
   it('has the refusal message in both languages', () => {
     expect(en.quiz.settingUnavailable).toMatch(/isn't available/);
     expect(ar.quiz.settingUnavailable).toMatch(/غير متاح/);
+  });
+});
+
+interface NameForm {
+  firstName: string;
+  lastName: string;
+}
+
+const nameRefusal = new ApiError({
+  kind: 'validation',
+  messageKey: 'errors.validation.failed',
+  status: 400,
+  violations: [
+    { field: 'firstName', messageKey: 'validation:required' },
+    { field: 'lastName', messageKey: 'validation:required' },
+  ],
+  retryable: false,
+});
+
+function NameProbe({ labelled }: { readonly labelled: boolean }) {
+  const form = useForm<NameForm>({
+    defaultValues: { firstName: '', lastName: '' },
+  });
+  useServerValidation(
+    form,
+    nameRefusal,
+    labelled ? { labels: { firstName: 'profile:fields.firstName' } } : {}
+  );
+  const { errors } = form.formState;
+  return (
+    <>
+      <p data-testid="first">{errors.firstName?.message ?? ''}</p>
+      <p data-testid="last">{errors.lastName?.message ?? ''}</p>
+    </>
+  );
+}
+
+describe('useServerValidation — labels', () => {
+  async function messages(language: 'en' | 'ar', labelled = true) {
+    const i18n = createI18nInstance(language);
+    i18n.addResourceBundle(language, 'profile', {
+      fields: { firstName: language === 'ar' ? 'الاسم الأول' : 'First name' },
+    });
+    render(
+      <I18nextProvider i18n={i18n}>
+        <NameProbe labelled={labelled} />
+      </I18nextProvider>
+    );
+    await waitFor(() =>
+      expect(screen.getByTestId('first').textContent).not.toBe('')
+    );
+    return {
+      first: screen.getByTestId('first').textContent ?? '',
+      last: screen.getByTestId('last').textContent ?? '',
+    };
+  }
+
+  it('fills {{field}} with the form’s translated label', async () => {
+    const { first } = await messages('ar');
+    expect(first).toContain('الاسم الأول');
+    cleanup();
+    const english = await messages('en');
+    expect(english.first).toContain('First name');
+  });
+
+  it('leaves an unlabelled field as the server named it', async () => {
+    const { last } = await messages('en');
+    expect(last).toContain('Last name');
+    expect(enValidation.required).toContain('{{field}}');
   });
 });

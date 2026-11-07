@@ -406,3 +406,19 @@ describe('delete (V05)', () => {
     expect(screen.queryByText('forum list')).toBeNull();
   });
 });
+
+describe('thread title in the page header', () => {
+  // B6 "not changed" note, closed: the title is the author's own text, so
+  // a Latin title on the Arabic page keeps its own direction (the shared
+  // PageHeader gives a data title `dir="auto"`, B8 V32) and its trailing
+  // punctuation stays at its end.
+  it('keeps a Latin title in its own direction on the Arabic page', async () => {
+    state.thread = { ...THREAD, title: 'Week 1: questions?' };
+    renderThread('ar');
+    const heading = await screen.findByRole('heading', {
+      level: 1,
+      name: 'Week 1: questions?',
+    });
+    expect(heading.getAttribute('dir')).toBe('auto');
+  });
+});

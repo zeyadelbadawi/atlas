@@ -6,7 +6,7 @@
  * "En must be {{count}} characters or fewer". The form knows its own
  * limits: the number is filled in from them, and a field whose limit the
  * form doesn't know gets a message that needs no number. The field's
- * translated label comes from `useLabelledViolations`, applied after this.
+ * translated label comes from `useServerValidation`'s `labels`, applied after this.
  */
 import { useMemo } from 'react';
 import type { ApiError } from '@api';

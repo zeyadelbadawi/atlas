@@ -42,12 +42,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { useConfirmDialog } from '@app/providers';
-import {
-  hasViolationOn,
-  SaveFailedAlert,
-  useLabelledViolations,
-  useServerValidation,
-} from '@forms';
+import { hasViolationOn, SaveFailedAlert, useServerValidation } from '@forms';
 import { useDateFormatter, usePermissions, useUnsavedChanges } from '@hooks';
 import { apiErrorMessage, isolateText } from '@utils';
 import type { ForumReply, ForumThread } from '@types';
@@ -124,12 +119,8 @@ export default function ForumThreadPage(): JSX.Element {
   });
   const replyLength = form.watch('body')?.length ?? 0;
 
-  const labelledReplyError = useLabelledViolations(
-    replyError ?? null,
-    REPLY_FIELDS
-  );
-  useServerValidation(form, labelledReplyError);
-  const replyFieldFailure = hasViolationOn(labelledReplyError, REPLY_FIELDS);
+  useServerValidation(form, replyError ?? null, { labels: REPLY_FIELDS });
+  const replyFieldFailure = hasViolationOn(replyError ?? null, REPLY_FIELDS);
 
   const { markSaved } = useUnsavedChanges({
     isDirty: form.formState.isDirty,
@@ -455,9 +446,9 @@ export default function ForumThreadPage(): JSX.Element {
                   </FormItem>
                 )}
               />
-              {labelledReplyError && !replyFieldFailure ? (
+              {replyError && !replyFieldFailure ? (
                 <SaveFailedAlert
-                  error={labelledReplyError}
+                  error={replyError}
                   titleKey="forum:thread.replyError"
                 />
               ) : null}

@@ -21,7 +21,12 @@ import { PlatformActivity } from '../components/PlatformActivity';
 // a separate endpoint from the seven-KPI overview snapshot above).
 import { PlatformVideoMetrics } from '../components/PlatformVideoMetrics';
 import { PlatformGrowthPanel } from '../components/PlatformGrowthPanel';
-import { formatCurrency, formatNumber, formatPercentage } from '@utils';
+import {
+  formatCurrency,
+  formatNumber,
+  formatPercentage,
+  intlLocale,
+} from '@utils';
 import type { LanguageCode } from '@types';
 import type { TrendDirection } from '@components/data-display';
 
@@ -171,7 +176,9 @@ export default function PlatformDashboardPage(): JSX.Element {
 
         <p className="text-xs text-muted-foreground">
           {t('platform:metrics.lastUpdated', {
-            time: new Date(metrics.generatedAt).toLocaleString(language),
+            time: new Date(metrics.generatedAt).toLocaleString(
+              intlLocale(language)
+            ),
           })}
         </p>
       </div>

@@ -20,6 +20,7 @@ import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { usePlatformAcademies } from '../hooks';
 import { getPlatformAcademyStatusTone } from '../utils/platform-status.utils';
 import type { PlatformAcademySummary } from '@types';
+import { intlLocale } from '@utils';
 
 export default function PlatformAcademyListPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -100,7 +101,9 @@ export default function PlatformAcademyListPage(): JSX.Element {
         header: t('platform:academies.table.createdAt'),
         cell: ({ row }) => (
           <span className="text-muted-foreground">
-            {new Date(row.original.createdAt).toLocaleDateString(i18n.language)}
+            {new Date(row.original.createdAt).toLocaleDateString(
+              intlLocale(i18n.language)
+            )}
           </span>
         ),
       },

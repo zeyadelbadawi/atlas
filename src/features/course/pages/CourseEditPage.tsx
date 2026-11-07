@@ -55,7 +55,6 @@ import {
   RequiredMark,
   SaveFailedAlert,
   useFocusFirstViolation,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import { CharacterCount } from '../components/CharacterCount';
@@ -166,17 +165,20 @@ export default function CourseEditPage(): JSX.Element {
   // (V12; `pricing.amount` on the price field, V07), a taken address on
   // the slug (V13), everything else ONE inline alert (V05) — never a
   // generic toast as well.
-  const labelled = useLabelledViolations(mutationError, COURSE_FIELD_LABELS);
-  useServerValidation(
-    form,
-    labelled,
-    COURSE_FIELD_ALIASES as unknown as Record<
+  useServerValidation(form, mutationError, {
+    aliases: COURSE_FIELD_ALIASES as unknown as Record<
       string,
       keyof UpdateCourseFormData
-    >
-  );
+    >,
+    labels: COURSE_FIELD_LABELS,
+  });
   const knownFields = violationFields(EDIT_FORM_FIELDS);
-  useFocusFirstViolation(form, labelled, knownFields, COURSE_FIELD_ALIASES);
+  useFocusFirstViolation(
+    form,
+    mutationError,
+    knownFields,
+    COURSE_FIELD_ALIASES
+  );
   const slugTaken = useSlugTakenError(form, mutationError);
   const saveFailure =
     mutationError && !slugTaken && !hasViolationOn(mutationError, knownFields)

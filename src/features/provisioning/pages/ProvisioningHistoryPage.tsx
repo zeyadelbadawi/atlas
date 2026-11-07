@@ -19,6 +19,7 @@ import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
 import { useProvisioningRequests } from '../hooks';
 import { getProvisioningStatusTone } from '../utils/provisioning-status.utils';
 import type { ProvisioningRequest } from '@types';
+import { intlLocale } from '@utils';
 
 export default function ProvisioningHistoryPage(): JSX.Element {
   const { t, i18n } = useTranslation();
@@ -77,7 +78,9 @@ export default function ProvisioningHistoryPage(): JSX.Element {
         header: t('provisioning:history.table.createdAt'),
         cell: ({ row }) => (
           <span className="text-muted-foreground">
-            {new Date(row.original.createdAt).toLocaleDateString(i18n.language)}
+            {new Date(row.original.createdAt).toLocaleDateString(
+              intlLocale(i18n.language)
+            )}
           </span>
         ),
       },

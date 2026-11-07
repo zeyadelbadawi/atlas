@@ -64,13 +64,13 @@ import {
 import { AttachContentDialog } from './AttachContentDialog';
 import { CurriculumSortableList, DragHandle } from './UnitCurriculumSortable';
 import { useReorderFocus } from '../hooks/useReorderFocus';
-import { useActionFailureToast } from '../forms/course-form-feedback';
 import type {
   CourseLesson,
   CourseSection,
   CurriculumItem,
   CurriculumItemType,
 } from '@types';
+import { useActionFailureToast } from '@hooks';
 
 const TYPE_ICON: Record<CurriculumItemType, LucideIcon> = {
   lesson: FileText,
@@ -181,11 +181,9 @@ export function UnitCurriculum({
         focus.requestFocus(focusCandidates, null);
       } else {
         setAnnouncement(t('course:builder.order.failed'));
-        failureToast(
-          'course:builder.reorderError',
-          error,
-          'course:builder.order.failed'
-        );
+        failureToast(error, 'course:builder.reorderError', {
+          afterKey: 'course:builder.order.failed',
+        });
         focus.requestFocus(focusCandidates, previousIds);
       }
     } finally {
@@ -220,7 +218,7 @@ export function UnitCurriculum({
       });
       setAttachType(null);
     } catch (error) {
-      failureToast('course:builder.attach.error', error);
+      failureToast(error, 'course:builder.attach.error');
     }
   };
 
@@ -242,7 +240,7 @@ export function UnitCurriculum({
       });
       toast({ title: t('course:builder.itemDetached') });
     } catch (error) {
-      failureToast('course:builder.detachError', error);
+      failureToast(error, 'course:builder.detachError');
     }
   };
 

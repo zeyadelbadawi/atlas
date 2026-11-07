@@ -22,7 +22,7 @@ import { SectionLoader } from '@components/loading';
 import type { StatusTone } from '@components/data-display';
 import { useStudentResults } from '../hooks/useStudentResults';
 import type { StudentAssignmentResult, StudentQuizResult } from '@types';
-import { progressCounts } from '@utils';
+import { intlLocale, progressCounts } from '@utils';
 
 function quizTone(result: StudentQuizResult): StatusTone {
   if (result.passed === true) return 'success';
@@ -39,7 +39,7 @@ export default function StudentMyResultsPage(): JSX.Element {
   const { data, isLoading, isError, refetch } = useStudentResults();
 
   const formatDate = (value: string | null): string =>
-    value ? new Date(value).toLocaleDateString(i18n.language) : '';
+    value ? new Date(value).toLocaleDateString(intlLocale(i18n.language)) : '';
 
   if (isLoading) {
     return (
@@ -85,14 +85,14 @@ export default function StudentMyResultsPage(): JSX.Element {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           labelKey="learning:results.metrics.coursesEnrolled"
-          value={new Intl.NumberFormat(i18n.language).format(
+          value={new Intl.NumberFormat(intlLocale(i18n.language)).format(
             summary.coursesEnrolled
           )}
           icon={GraduationCap}
         />
         <MetricCard
           labelKey="learning:results.metrics.coursesCompleted"
-          value={new Intl.NumberFormat(i18n.language).format(
+          value={new Intl.NumberFormat(intlLocale(i18n.language)).format(
             summary.coursesCompleted
           )}
           icon={Award}

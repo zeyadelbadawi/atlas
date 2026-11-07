@@ -8,6 +8,15 @@
 import { SUPPORTED_LANGUAGE_CODES } from '@types';
 import type { LanguageCode, LanguageDefinition, TextDirection } from '@types';
 
+/**
+ * The `Intl` locale for Arabic. Owner decision (UX audit, one digit system):
+ * Arabic shows Western digits (0–9) everywhere — dashboard and the public
+ * website themes — with Arabic month names, separators and RTL. `ar-EG`
+ * alone would print Arabic-Indic digits (`١٢٣`), and bare `ar` does too in
+ * older engines, so the numbering system is pinned (`-u-nu-latn`).
+ */
+export const ARABIC_INTL_LOCALE = 'ar-EG-u-nu-latn';
+
 export const LANGUAGES: Readonly<Record<LanguageCode, LanguageDefinition>> =
   Object.freeze({
     en: {
@@ -23,7 +32,7 @@ export const LANGUAGES: Readonly<Record<LanguageCode, LanguageDefinition>> =
       nativeName: 'العربية',
       labelKey: 'common:languages.ar',
       direction: 'rtl',
-      locale: 'ar-EG',
+      locale: ARABIC_INTL_LOCALE,
       weekStartsOn: 6,
     },
   });

@@ -63,7 +63,6 @@ import {
   SaveFailedAlert,
   nameConflictFromError,
   useFocusFirstViolation,
-  useLabelledViolations,
   useNameConflictError,
   useServerValidation,
 } from '@forms';
@@ -177,12 +176,10 @@ export default function AcademySettingsPage(): JSX.Element {
   // B4 (UX audit) V10 — a field the server refuses is marked under its own
   // label, with focus there, and nothing else; any other failure is one
   // inline alert with the real reason (`saveFailure`).
-  const labelledError = useLabelledViolations(
-    mutationError,
-    ACADEMY_DETAILS_FIELD_LABELS
-  );
-  useServerValidation(form, labelledError);
-  useFocusFirstViolation(form, labelledError, ACADEMY_DETAILS_FIELD_LABELS);
+  useServerValidation(form, mutationError, {
+    labels: ACADEMY_DETAILS_FIELD_LABELS,
+  });
+  useFocusFirstViolation(form, mutationError, ACADEMY_DETAILS_FIELD_LABELS);
   const [saveFailure, setSaveFailure] = useState<ApiError | null>(null);
   // W4 — academy names are unique platform-wide: a taken name is shown on
   // the name field instead of a generic toast.

@@ -34,7 +34,11 @@ import { useToast } from '@app/providers/toast/useToast';
 import { useServerValidation } from '@forms';
 import { useAddAcademyInstructor } from '../hooks';
 import { useAcademyMemberLookup } from '../hooks/useAcademyMemberLookup';
-import { MemberAccountFields, isBlockedByLookup } from './MemberAccountFields';
+import {
+  MemberAccountFields,
+  memberAccountFieldLabels,
+  isBlockedByLookup,
+} from './MemberAccountFields';
 import type { AcademyMember } from '@types';
 import {
   existingTeamRole,
@@ -85,7 +89,9 @@ export function AddAcademyInstructorDialog({
     open
   );
 
-  useServerValidation(form, addInstructor.error);
+  useServerValidation(form, addInstructor.error, {
+    labels: memberAccountFieldLabels('academy:members.addInstructor'),
+  });
 
   // Unsaved-changes protection for a MODAL. Closing a dialog is not a
   // navigation, so the route blocker never sees the X button, an outside

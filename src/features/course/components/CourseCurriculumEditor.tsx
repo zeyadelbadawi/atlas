@@ -44,7 +44,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { toast } from '@/hooks/use-toast';
-import { usePermissions } from '@hooks';
+import { useActionFailureToast, usePermissions } from '@hooks';
 import { useConfirmDialog } from '@app/providers';
 import {
   useCourseSections,
@@ -66,7 +66,6 @@ import { LessonFormDialog } from './LessonFormDialog';
 import { UnitCurriculum } from './UnitCurriculum';
 import { CurriculumSortableList, DragHandle } from './UnitCurriculumSortable';
 import { useReorderFocus } from '../hooks/useReorderFocus';
-import { useActionFailureToast } from '../forms/course-form-feedback';
 import { LiveSessionCurriculumBlock } from '@features/live-sessions';
 import { isStaleOrderError, moveItem } from '../utils/reorder.utils';
 import type {
@@ -225,7 +224,7 @@ export function CourseCurriculumEditor({
       await deleteSection.mutateAsync(section.id);
       toast({ title: t('course:builder.sectionDeleted') });
     } catch (error) {
-      failureToast('course:builder.sectionDeleteError', error);
+      failureToast(error, 'course:builder.sectionDeleteError');
     }
   };
 
@@ -262,11 +261,9 @@ export function CourseCurriculumEditor({
         sectionFocus.requestFocus(focusCandidates, null);
       } else {
         setSectionAnnouncement(t('course:builder.order.failed'));
-        failureToast(
-          'course:builder.reorderError',
-          error,
-          'course:builder.order.failed'
-        );
+        failureToast(error, 'course:builder.reorderError', {
+          afterKey: 'course:builder.order.failed',
+        });
         sectionFocus.requestFocus(focusCandidates, previousIds);
       }
     } finally {
@@ -433,7 +430,7 @@ export function CourseCurriculumEditor({
             lesson: saved,
             pendingBodyHtml: data.bodyHtml ?? '',
           });
-          failureToast('course:builder.lessonBodyError', bodyError);
+          failureToast(bodyError, 'course:builder.lessonBodyError');
           return;
         }
         void lessonBody.refetch();
@@ -473,7 +470,7 @@ export function CourseCurriculumEditor({
             lesson: saved,
             pendingProtectedFile: data.protectedFile,
           });
-          failureToast('course:builder.lessonFileError', fileError);
+          failureToast(fileError, 'course:builder.lessonFileError');
           return;
         }
         void lessonFileContent.refetch();
@@ -511,7 +508,7 @@ export function CourseCurriculumEditor({
       await deleteLesson.mutateAsync({ sectionId, lessonId: lesson.id });
       toast({ title: t('course:builder.lessonDeleted') });
     } catch (error) {
-      failureToast('course:builder.lessonDeleteError', error);
+      failureToast(error, 'course:builder.lessonDeleteError');
     }
   };
 

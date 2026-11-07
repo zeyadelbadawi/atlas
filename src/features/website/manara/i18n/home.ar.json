@@ -55,7 +55,7 @@
       "position": "الرأي {{position}} من {{total}}",
       "previous": "الرأي السابق",
       "next": "الرأي التالي",
-      "rating": "التقييم {{rating}} من ٥"
+      "rating": "التقييم {{rating}} من 5"
     },
     "faq": {
       "listTitle": "جميع الأسئلة",

@@ -8,8 +8,8 @@
  * `metric` keeps rendering its own `value` unchanged, so already-persisted
  * pages authored before this phase need no migration. One aggregation
  * request serves every metric-backed item in the section. A live number is
- * formatted via `toLocaleString` for the CURRENT locale (Arabic-Indic
- * digits for `ar`) — the one number this section can format correctly
+ * formatted via `toLocaleString` for the CURRENT locale (Western digits
+ * in both languages) — the one number this section can format correctly
  * without needing an authored `LocalizedText`, unlike `value` itself
  * (still `LocalizedText`, since an Owner may want distinct static copy per
  * language, not just a digit-shape conversion).
@@ -27,16 +27,12 @@ import {
 import { usePublicWebsiteLocale } from '../renderer/PublicWebsiteLocaleContext';
 import { resolveLocalizedText } from '../utils/localized-text.utils';
 import type { StatisticsSectionConfig } from '@types';
+import { intlLocale } from '@utils';
 
 export interface StatisticsSectionProps {
   readonly config: StatisticsSectionConfig;
   readonly academyId: string;
 }
-
-const NUMBER_FORMAT_LOCALE: Record<'en' | 'ar', string> = {
-  en: 'en-US',
-  ar: 'ar-EG',
-};
 
 export function StatisticsSection({
   config,
@@ -59,7 +55,7 @@ export function StatisticsSection({
     const liveValue = statistics?.[item.metric];
     return liveValue === undefined
       ? resolveLocalizedText(item.value, locale)
-      : liveValue.toLocaleString(NUMBER_FORMAT_LOCALE[locale]);
+      : liveValue.toLocaleString(intlLocale(locale));
   };
 
   return (

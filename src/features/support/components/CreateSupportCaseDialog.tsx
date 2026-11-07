@@ -32,7 +32,6 @@ import {
   hasViolationOn,
   RequiredMark,
   SaveFailedAlert,
-  useLabelledViolations,
   useServerValidation,
 } from '@forms';
 import type { ApiError } from '@api';
@@ -135,9 +134,8 @@ export function CreateSupportCaseDialog({
     () => withKnownLimits(createCase.error ?? null),
     [createCase.error]
   );
-  const labelledError = useLabelledViolations(limitedError, FIELD_LABELS);
-  useServerValidation(form, labelledError);
-  const fieldFailure = hasViolationOn(labelledError, FIELD_LABELS);
+  useServerValidation(form, limitedError, { labels: FIELD_LABELS });
+  const fieldFailure = hasViolationOn(limitedError, FIELD_LABELS);
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (nextOpen) return onOpenChange(true);
@@ -297,10 +295,10 @@ export function CreateSupportCaseDialog({
           {/* B5 (UX audit) — a refusal about a field shows there; anything
               else (409, 500, a lost connection) is one alert with the real
               reason — never "check the details" for a server failure. */}
-          {labelledError && !fieldFailure ? (
+          {limitedError && !fieldFailure ? (
             <div data-testid="support-create-error">
               <SaveFailedAlert
-                error={labelledError}
+                error={limitedError}
                 titleKey="support:create.notSubmitted"
               />
             </div>

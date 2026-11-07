@@ -64,7 +64,6 @@ vi.mock('@forms', () => ({
   useServerValidation: () => undefined,
   useNameConflictError: () => null,
   nameConflictFromError: () => null,
-  useLabelledViolations: (error: unknown) => error,
   useFocusFirstViolation: () => undefined,
   SaveFailedAlert: () => null,
   isFieldViolationError: () => false,

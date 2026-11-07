@@ -12,12 +12,12 @@ import { companyIdentity, companyName } from './company-identity';
 export const TERMS_AR: LegalDocument = {
   title: 'شروط الخدمة',
   summary: 'الشروط التي يمكنك بموجبها استخدام منصة أطلس.',
-  effectiveDate: '١١ سبتمبر ٢٠٢٦',
-  lastUpdated: '٥ نوفمبر ٢٠٢٦',
+  effectiveDate: '11 سبتمبر 2026',
+  lastUpdated: '5 نوفمبر 2026',
   sections: [
     {
       id: 'acceptance',
-      heading: '١. قبول هذه الشروط',
+      heading: '1. قبول هذه الشروط',
       blocks: [
         {
           kind: 'paragraph',
@@ -35,7 +35,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'the-service',
-      heading: '٢. ما يقدّمه أطلس',
+      heading: '2. ما يقدّمه أطلس',
       blocks: [
         {
           kind: 'paragraph',
@@ -45,7 +45,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'accounts',
-      heading: '٣. حسابك',
+      heading: '3. حسابك',
       blocks: [
         {
           kind: 'list',
@@ -61,7 +61,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'organizations-academies',
-      heading: '٤. المؤسسات والأكاديميات والأدوار',
+      heading: '4. المؤسسات والأكاديميات والأدوار',
       blocks: [
         {
           kind: 'paragraph',
@@ -98,7 +98,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'acceptable-use',
-      heading: '٥. الاستخدام المقبول',
+      heading: '5. الاستخدام المقبول',
       blocks: [
         { kind: 'paragraph', text: 'أنت توافق على عدم:' },
         {
@@ -121,7 +121,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'your-content',
-      heading: '٦. المحتوى الخاص بك',
+      heading: '6. المحتوى الخاص بك',
       blocks: [
         {
           kind: 'paragraph',
@@ -135,7 +135,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'our-ip',
-      heading: '٧. الملكية الفكرية لأطلس',
+      heading: '7. الملكية الفكرية لأطلس',
       blocks: [
         {
           kind: 'paragraph',
@@ -145,7 +145,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'trials',
-      heading: '٨. الفترات التجريبية المجانية',
+      heading: '8. الفترات التجريبية المجانية',
       blocks: [
         {
           kind: 'list',
@@ -163,7 +163,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'subscriptions',
-      heading: '٩. الاشتراكات والدفع',
+      heading: '9. الاشتراكات والدفع',
       blocks: [
         {
           kind: 'list',
@@ -184,7 +184,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'cancellation',
-      heading: '١٠. الإلغاء والحذف',
+      heading: '10. الإلغاء والحذف',
       blocks: [
         {
           kind: 'definitions',
@@ -219,7 +219,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'availability',
-      heading: '١١. التوافر والتغييرات على الخدمة',
+      heading: '11. التوافر والتغييرات على الخدمة',
       blocks: [
         {
           kind: 'paragraph',
@@ -233,7 +233,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'third-parties',
-      heading: '١٢. خدمات الطرف الثالث',
+      heading: '12. خدمات الطرف الثالث',
       blocks: [
         {
           kind: 'paragraph',
@@ -243,7 +243,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'privacy',
-      heading: '١٣. الخصوصية',
+      heading: '13. الخصوصية',
       blocks: [
         {
           kind: 'paragraph',
@@ -253,7 +253,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'disclaimers',
-      heading: '١٤. إخلاء المسؤولية',
+      heading: '14. إخلاء المسؤولية',
       blocks: [
         {
           kind: 'paragraph',
@@ -263,7 +263,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'liability',
-      heading: '١٥. حدود المسؤولية',
+      heading: '15. حدود المسؤولية',
       blocks: [
         {
           kind: 'paragraph',
@@ -277,7 +277,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'governing-law',
-      heading: '١٦. القانون الحاكم',
+      heading: '16. القانون الحاكم',
       blocks: [
         {
           kind: 'paragraph',
@@ -287,7 +287,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'changes',
-      heading: '١٧. التغييرات على هذه الشروط',
+      heading: '17. التغييرات على هذه الشروط',
       blocks: [
         {
           kind: 'paragraph',
@@ -297,7 +297,7 @@ export const TERMS_AR: LegalDocument = {
     },
     {
       id: 'contact',
-      heading: '١٨. التواصل',
+      heading: '18. التواصل',
       blocks: [
         {
           kind: 'paragraph',

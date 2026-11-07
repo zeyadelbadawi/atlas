@@ -458,7 +458,7 @@ export function RegistrationForm({
   // Maps a validation (400) failure's per-field violations onto this
   // form — e.g. a stricter server-side password rule than this schema's
   // client-side one — instead of only the generic `ErrorState` below.
-  useServerValidation(form, registerAccount.error);
+  useServerValidation(form, registerAccount.error, { labels: FIELD_LABELS });
   // W4 — a taken organization name (management signup) is shown on its own
   // input, like `emailNotAcceptable`. A learner name is answered here only
   // for an EXISTING account that proved its password (academy join); a new

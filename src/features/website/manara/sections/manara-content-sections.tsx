@@ -22,7 +22,6 @@ import {
   ManaraPill,
   ManaraSectionHeader,
   formatManaraIndex,
-  formatManaraNumber,
 } from '../manara-parts';
 import { stagger, toParagraphs } from './manara-section-helpers';
 import '../manara-sections.css';
@@ -356,12 +355,9 @@ export function ManaraSteps({
       >
         <span aria-hidden className="mn-rule mnh-steps-beam" />
         {items.map((item, index) => {
-          // B10 (UX audit) V30 — Arabic-Indic digits without the leading
-          // zero (٠ is a dot: "٠١" read as a stray shape); Latin keeps 01.
-          const number =
-            locale === 'ar'
-              ? formatManaraNumber(index + 1, locale)
-              : formatManaraIndex(index, locale);
+          // One digit system (owner decision): Arabic numbers its steps
+          // 01, 02, 03 in Western digits, like English (B10 V30 superseded).
+          const number = formatManaraIndex(index, locale);
           return (
             <li key={item.id} className="mnh-step">
               <Reveal delayMs={stagger(index)} className="mnh-step-body">

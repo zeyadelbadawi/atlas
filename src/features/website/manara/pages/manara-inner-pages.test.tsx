@@ -619,7 +619,7 @@ describe('ManaraCourseCatalog', () => {
     );
   });
 
-  it('Arabic: right to left, Arabic-Indic counts and labels', () => {
+  it('Arabic: right to left, Western-digit counts and labels', () => {
     courses = [course('c1')];
     const { container } = wrap(
       <ManaraCourseCatalog
@@ -634,7 +634,7 @@ describe('ManaraCourseCatalog', () => {
       container.querySelector('[dir="rtl"] [data-manara-catalog-grid]')
     ).toBeTruthy();
     expect(container.querySelector('[dir="rtl"] .mnp-count')?.textContent).toBe(
-      '٢'
+      '2'
     );
     expect(screen.getByRole('group', { name: 'تصفية الدورات' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'كل المسارات' })).toBeTruthy();
@@ -821,7 +821,7 @@ describe('Manara system pages', () => {
     expect(screen.queryByText('See the courses')).toBeNull();
   });
 
-  it('404 in Arabic: right to left, Arabic-Indic figure', () => {
+  it('404 in Arabic: right to left, Western-digit figure', () => {
     const { container } = wrap(
       <ManaraNotFound pages={PAGES} linkRenderer={linkRenderer} />,
       'ar'
@@ -831,7 +831,7 @@ describe('Manara system pages', () => {
     );
     expect(
       container.querySelector('[dir="rtl"] .mnp-poster-figure')?.textContent
-    ).toBe('٤٠٤');
+    ).toBe('404');
   });
 
   it('Coming Soon: a night poster that names the Academy giant and in its h1, with logo or wordmark', () => {

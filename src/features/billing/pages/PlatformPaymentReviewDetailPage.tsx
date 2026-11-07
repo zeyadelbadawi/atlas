@@ -99,8 +99,12 @@ export default function PlatformPaymentReviewDetailPage(): JSX.Element {
     defaultValues: { notes: '' },
   });
   // A 400 on `notes` marks that field; nothing else is said about it.
-  useServerValidation(approveForm, approvePayment.error ?? null);
-  useServerValidation(rejectForm, rejectPayment.error ?? null);
+  useServerValidation(approveForm, approvePayment.error ?? null, {
+    labels: { notes: 'payments:platformReview.notesOptionalLabel' },
+  });
+  useServerValidation(rejectForm, rejectPayment.error ?? null, {
+    labels: { notes: 'payments:platformReview.notesRequiredLabel' },
+  });
 
   if (isLoading) {
     return (

@@ -31,15 +31,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { useToast } from '@hooks';
+import { useToast } from '@app/providers';
+import { useUnsavedChanges } from '@hooks';
+import { saveViaForm } from '@utils';
 import { useServerValidation } from '@forms';
 import { useChangePassword } from '../hooks';
-import {
-  fieldErrorText,
-  hasViolationOn,
-  useFocusFirstViolation,
-  useLabelledViolations,
-} from '@forms';
+import { fieldErrorText, hasViolationOn, useFocusFirstViolation } from '@forms';
 import { RequiredMark, SaveFailedAlert } from '@forms';
 import { ProfileSessionsCard } from './ProfileSessionsCard';
 import { TrustedDevicesCard } from './TrustedDevicesCard';
@@ -81,7 +78,7 @@ export function ProfileSecuritySection({
   signInScope,
 }: ProfileSecuritySectionProps = {}): JSX.Element {
   const { t } = useTranslation();
-  const { toast } = useToast();
+  const { notifySuccess } = useToast();
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -98,14 +95,14 @@ export function ProfileSecuritySection({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
     reset,
   } = form;
 
   // B0-SEC-11 — a refused new password (e.g. too common) is shown on the
   // field, not as a generic "something went wrong" card.
   const passwordError = changePassword.error;
-  useServerValidation(form, useLabelledViolations(passwordError, FIELD_LABELS));
+  useServerValidation(form, passwordError, { labels: FIELD_LABELS });
   useFocusFirstViolation(form, passwordError, FIELD_LABELS);
 
   // B1 (V09) — a wrong current password is a 401 with no violation. It
@@ -133,20 +130,39 @@ export function ProfileSecuritySection({
 
   const isLoading = changePassword.isPending;
 
+  const onPasswordChanged = () => {
+    notifySuccess(
+      'profile:success.passwordChanged',
+      'profile:success.passwordUpdated'
+    );
+    reset();
+  };
+
   const handleFormSubmit = (data: PasswordFormData) => {
     changePassword.mutate(
       { currentPassword: data.currentPassword, newPassword: data.newPassword },
-      {
-        onSuccess: () => {
-          toast({
-            title: t('profile:success.passwordChanged'),
-            description: t('profile:success.passwordUpdated'),
-          });
-          reset();
-        },
-      }
+      { onSuccess: onPasswordChanged }
     );
   };
+
+  // A typed password is not dropped silently: leaving asks first, as the
+  // other forms do, and "Save and leave" runs the same change.
+  useUnsavedChanges({
+    isDirty,
+    onSave: () =>
+      saveViaForm({ handleSubmit }, async (data: PasswordFormData) => {
+        try {
+          await changePassword.mutateAsync({
+            currentPassword: data.currentPassword,
+            newPassword: data.newPassword,
+          });
+          onPasswordChanged();
+          return true;
+        } catch {
+          return false;
+        }
+      }),
+  });
 
   return (
     <div className="space-y-6">

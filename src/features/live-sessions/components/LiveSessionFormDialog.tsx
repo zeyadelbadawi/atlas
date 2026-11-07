@@ -177,7 +177,7 @@ export function LiveSessionFormDialog({
     () => withLiveSessionWording(error ?? null),
     [error]
   );
-  useServerValidation(form, serverError);
+  useServerValidation(form, serverError, { labels: FORM_FIELDS });
   const fieldFailure =
     serverError?.kind === 'validation' &&
     hasViolationOn(serverError, FORM_FIELDS);
