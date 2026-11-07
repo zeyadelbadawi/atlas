@@ -233,7 +233,8 @@ export default function TenantAddOnsPage(): JSX.Element {
                           i18n,
                           tenantAddOn.addOn.key,
                           'name',
-                          tenantAddOn.addOn.name
+                          tenantAddOn.addOn.name,
+                          tenantAddOn.addOn.nameAr
                         )}
                       </h3>
                       <StatusBadge
@@ -256,7 +257,8 @@ export default function TenantAddOnsPage(): JSX.Element {
                           i18n,
                           tenantAddOn.addOn.key,
                           'description',
-                          tenantAddOn.addOn.description
+                          tenantAddOn.addOn.description,
+                          tenantAddOn.addOn.descriptionAr
                         )}
                       </p>
                     ) : null}
@@ -303,7 +305,8 @@ export default function TenantAddOnsPage(): JSX.Element {
                             i18n,
                             addOn.key,
                             'name',
-                            addOn.name
+                            addOn.name,
+                            addOn.nameAr
                           )}
                         </h3>
                         <StatusBadge
@@ -330,7 +333,8 @@ export default function TenantAddOnsPage(): JSX.Element {
                             i18n,
                             addOn.key,
                             'description',
-                            addOn.description
+                            addOn.description,
+                            addOn.descriptionAr
                           )}
                         </p>
                       ) : null}

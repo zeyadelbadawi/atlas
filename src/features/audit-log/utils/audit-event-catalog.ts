@@ -258,6 +258,8 @@ export const AUDIT_ACTION_CATEGORIES: Readonly<Record<string, AuditCategory>> =
     'payout.created': 'platform',
     'payout.marked_paid': 'platform',
     'add_on.catalog_status_changed': 'platform',
+    // B5 (UX audit) V21 — a Platform Owner set an add-on's Arabic name.
+    'add_on.arabic_text_changed': 'platform',
     'observability.synthetic_alert.armed': 'platform',
     'observability.synthetic_alert.resolved': 'platform',
     'platform.contact_submission.status_changed': 'platform',

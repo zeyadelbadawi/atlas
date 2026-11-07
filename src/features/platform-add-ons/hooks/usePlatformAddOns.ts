@@ -8,11 +8,12 @@
  * page reacts to, and the shared error toast explains it.
  */
 import { useApiQuery, useApiMutation } from '@/shared/hooks';
-import { platformAddOnKeys } from '@services/query';
+import { INLINE_ERRORS_META, platformAddOnKeys } from '@services/query';
 import { platformAddOnsService } from '../services/PlatformAddOnsService';
 import type {
   PlatformAddOnRow,
   PlatformAddOnQuery,
+  UpdateAddOnArabicTextInput,
   UpdateAddOnCatalogStatusInput,
 } from '../types';
 import type { PaginatedResult } from '@types';
@@ -34,6 +35,25 @@ export function useUpdateAddOnCatalogStatus() {
     mutationFn: ({ key, input }) =>
       platformAddOnsService.updateCatalogStatus(key, input),
     successMessageKey: 'platformAddOns:toast.statusChanged',
+    invalidateKeys: [platformAddOnKeys.all],
+  });
+}
+
+/**
+ * B5 (UX audit) V21 — the add-on's Arabic name and description. The dialog
+ * shows a refusal itself (on its field, or one alert) and stays open.
+ */
+export function useUpdateAddOnArabicText() {
+  return useApiMutation<
+    PlatformAddOnRow,
+    { key: string; input: UpdateAddOnArabicTextInput },
+    ApiError
+  >({
+    mutationFn: ({ key, input }) =>
+      platformAddOnsService.updateArabicText(key, input),
+    successMessageKey: 'platformAddOns:arabicText.saved',
+    showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
     invalidateKeys: [platformAddOnKeys.all],
   });
 }

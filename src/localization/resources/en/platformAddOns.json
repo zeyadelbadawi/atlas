@@ -20,7 +20,8 @@
     "installCount": "Installs",
     "enabledCount": "Enabled",
     "updatedAt": "Updated",
-    "actions": "Actions"
+    "actions": "Actions",
+    "arabicName": "Arabic name"
   },
   "impact": {
     "draft": "Customers will not see this add-on in the store at all, and it cannot be installed. Academies that already have it keep it.",
@@ -40,5 +41,20 @@
     "summary": "Page {{page}} of {{totalPages}} · {{totalItems}} add-ons",
     "previous": "Previous",
     "next": "Next"
+  },
+  "arabicText": {
+    "action": "Arabic name",
+    "actionFor": "Edit the Arabic name of {{name}}",
+    "notSet": "Not set — the English name is shown",
+    "title": "Arabic name for {{name}}",
+    "description": "Customers using Atlas in Arabic see these in the store and at checkout instead of the English name and description. Leave a field empty to show the English text.",
+    "englishName": "English name: {{name}}",
+    "nameLabel": "Arabic name (optional)",
+    "descriptionLabel": "Arabic description (optional)",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Arabic name saved.",
+    "failed": "The Arabic name wasn't saved",
+    "stale": "Someone else changed this add-on. Close and open it again to see the latest version."
   }
 }

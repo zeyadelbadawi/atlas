@@ -4,7 +4,8 @@
  *   V03/V13 manual points are whole numbers; a server refusal on
  *       `grades.<index>.points` lands on THAT question's field, naming the
  *       question's own maximum;
- *   V06 a graded submission says so, and replacing its grade asks first;
+ *   V06 a graded submission says so (and who graded it, by name), and
+ *       replacing its grade asks first;
  *   V07/V08 a failed grade is ONE inline message with the real reason;
  *   V09/V10 the score accepts 92.5, refuses 100.5 and an empty value with
  *       the app's own translated message (the forms are `noValidate`);
@@ -593,6 +594,42 @@ describe('plurals (V21)', () => {
     expect(ar.t('instructor:overview.sectionCount', { count: 1 })).toBe(
       'قسم واحد'
     );
+  });
+});
+
+describe('submission review — who graded it (V06)', () => {
+  it('names another grader, in English and Arabic', () => {
+    state.submission = {
+      ...GRADED,
+      grade: { ...GRADED.grade, gradedBy: 'u-2', gradedByName: 'Hana Saleh' },
+    };
+    renderReview();
+    expect(screen.getByTestId('graded-at').textContent).toMatch(
+      /^Graded by \u2068?Hana Saleh\u2069? on /
+    );
+    cleanup();
+    renderReview('ar');
+    expect(screen.getByTestId('graded-at').textContent).toMatch(
+      /^صحّحه \u2068?Hana Saleh\u2069? في /
+    );
+  });
+
+  it('says "by you" for your own grade, and only the date when the grader is unknown', () => {
+    state.submission = {
+      ...GRADED,
+      grade: { ...GRADED.grade, gradedByName: 'Me Myself' },
+    };
+    renderReview();
+    expect(screen.getByTestId('graded-at').textContent).toMatch(
+      /^Graded by you on /
+    );
+    cleanup();
+    state.submission = {
+      ...GRADED,
+      grade: { ...GRADED.grade, gradedBy: 'u-gone', gradedByName: undefined },
+    };
+    renderReview();
+    expect(screen.getByTestId('graded-at').textContent).toMatch(/^Graded on /);
   });
 });
 

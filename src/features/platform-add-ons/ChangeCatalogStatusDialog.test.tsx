@@ -19,6 +19,8 @@ const addOn: PlatformAddOnRow = {
   key: 'live-sessions',
   name: 'Live Sessions',
   description: 'Run live classes.',
+  nameAr: null,
+  descriptionAr: null,
   catalogStatus: 'coming_soon',
   installCount: 0,
   enabledCount: 0,
@@ -30,7 +32,7 @@ function renderDialog(
   target: AddOnCatalogStatus,
   onConfirm = vi.fn(),
   onOpenChange = vi.fn(),
-  language = 'en',
+  language = 'en'
 ) {
   const i18n = createI18nInstance(language as 'en' | 'ar');
   render(
@@ -43,7 +45,7 @@ function renderDialog(
         isSubmitting={false}
         onConfirm={onConfirm}
       />
-    </I18nextProvider>,
+    </I18nextProvider>
   );
   return { onConfirm, onOpenChange };
 }
@@ -57,19 +59,25 @@ describe('ChangeCatalogStatusDialog', () => {
   it('states the PUBLISHED impact, and that it does not install for anyone', () => {
     renderDialog('published');
     expect(
-      screen.getByText(/can install it under the usual entitlement rules/i),
+      screen.getByText(/can install it under the usual entitlement rules/i)
     ).toBeTruthy();
-    expect(screen.getByText(/does not install or enable it for anyone/i)).toBeTruthy();
+    expect(
+      screen.getByText(/does not install or enable it for anyone/i)
+    ).toBeTruthy();
   });
 
   it('states the COMING SOON impact (visible, not installable)', () => {
     renderDialog('coming_soon');
-    expect(screen.getByText(/"Coming Soon" label, but cannot install it yet/i)).toBeTruthy();
+    expect(
+      screen.getByText(/"Coming Soon" label, but cannot install it yet/i)
+    ).toBeTruthy();
   });
 
   it('states the DRAFT impact (hidden entirely, existing installs kept)', () => {
     renderDialog('draft');
-    expect(screen.getByText(/will not see this add-on in the store at all/i)).toBeTruthy();
+    expect(
+      screen.getByText(/will not see this add-on in the store at all/i)
+    ).toBeTruthy();
   });
 
   it('calls onConfirm when the operator applies the change', async () => {

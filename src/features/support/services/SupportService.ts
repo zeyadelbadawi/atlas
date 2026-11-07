@@ -154,6 +154,22 @@ export class MySupportService extends BaseService {
     );
   }
 
+  /**
+   * B5 (UX audit) V35 — closes the caller's own ticket. Idempotent: an
+   * already-closed ticket comes back unchanged. Someone else's ticket is a
+   * 404 (RLS), like reading it.
+   */
+  async closeMyCase(
+    caseId: string,
+    options?: WriteOptions
+  ): Promise<SupportCaseDetail> {
+    return this.client.post<SupportCaseDetail, Record<string, never>>(
+      `/support-cases/mine/${caseId}/close`,
+      {},
+      options
+    );
+  }
+
   /** P53 — see `SupportService.getAttachmentBlob`; the same route serves both sides. */
   async getAttachmentBlob(
     attachmentUrl: string,

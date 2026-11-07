@@ -119,9 +119,19 @@ const manualMethodTextsShape = {
   referenceInstructionsAr: optionalText(1000),
 };
 
-export const bankTransferMethodSchema = z.object({
+/*
+ * B5/B8 (UX audit) — the name and short description customers see at
+ * checkout, English beside an optional Arabic version (server: 80 / 300).
+ */
+const methodNameShape = {
   displayName: requiredText(80),
   description: z.string().trim().max(300, tooLong(300)),
+  displayNameAr: optionalText(80),
+  descriptionAr: optionalText(300),
+};
+
+export const bankTransferMethodSchema = z.object({
+  ...methodNameShape,
   instructions: z.object({
     bankName: requiredText(120),
     accountNumber: requiredText(64).refine(
@@ -150,8 +160,7 @@ export const INSTAPAY_ADDRESS_PATTERN = /^[A-Za-z0-9._-]{2,64}@instapay$/i;
 
 export const walletMethodSchema = z
   .object({
-    displayName: requiredText(80),
-    description: z.string().trim().max(300, tooLong(300)),
+    ...methodNameShape,
     instructions: z.object({
       // Blank until the Platform Owner picks one — never a guessed provider.
       walletProvider: z
@@ -185,8 +194,7 @@ export const walletMethodSchema = z
 export type WalletMethodFormData = z.infer<typeof walletMethodSchema>;
 
 export const instapayMethodSchema = z.object({
-  displayName: requiredText(80),
-  description: z.string().trim().max(300, tooLong(300)),
+  ...methodNameShape,
   instructions: z.object({
     instapayAddress: z
       .string()

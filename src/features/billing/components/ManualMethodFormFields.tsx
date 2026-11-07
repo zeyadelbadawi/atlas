@@ -31,7 +31,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { SaveFailedAlert, useServerValidation } from '@forms';
 import { useDirtyGuard } from '@features/unsaved-changes';
 import { ApiError, isApiError } from '@api';
-import type { ManualInstructionTexts } from '@types';
+import type { ManualInstructionTexts, PlatformPaymentMethod } from '@types';
 
 type Direction = 'ltr' | 'rtl' | 'auto';
 
@@ -283,6 +283,122 @@ export function ManualMethodTextsFields<T extends FieldValues>({
       </div>
     </>
   );
+}
+
+/**
+ * B5/B8 (UX audit) — the method's name and short description as customers
+ * see them at checkout: English (required name, optional description)
+ * beside an optional Arabic version of each (`displayNameAr`,
+ * `descriptionAr`), shown instead of the English text on Arabic pages.
+ */
+export function MethodNameFields<T extends FieldValues>({
+  control,
+  section,
+  testIdPrefix,
+}: {
+  readonly control: Control<T>;
+  readonly section: ManualMethodSection;
+  readonly testIdPrefix: string;
+}): JSX.Element {
+  const field = (name: string) => name as FieldPath<T>;
+  return (
+    <>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <MethodTextField
+          control={control}
+          name={field('displayName')}
+          labelKey={`payments:${section}.fields.displayName`}
+          helpKey="payments:bankTransferMethods.fields.displayNameHelp"
+          testId={`${testIdPrefix}-display-name`}
+        />
+        <MethodTextField
+          control={control}
+          name={field('displayNameAr')}
+          labelKey="payments:manualMethods.fields.displayNameAr"
+          helpKey="payments:manualMethods.fields.arabicHelp"
+          dir="rtl"
+          lang="ar"
+          testId={`${testIdPrefix}-display-name-ar`}
+        />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <MethodLongTextField
+          control={control}
+          name={field('description')}
+          labelKey="payments:bankTransferMethods.fields.description"
+          rows={2}
+          testId={`${testIdPrefix}-description`}
+        />
+        <MethodLongTextField
+          control={control}
+          name={field('descriptionAr')}
+          labelKey="payments:manualMethods.fields.descriptionAr"
+          helpKey="payments:manualMethods.fields.arabicHelp"
+          dir="rtl"
+          lang="ar"
+          rows={2}
+          testId={`${testIdPrefix}-description-ar`}
+        />
+      </div>
+    </>
+  );
+}
+
+/** A saved method's name and description (both languages) as form values. */
+export function toNameFormValues(
+  method:
+    | Pick<
+        PlatformPaymentMethod,
+        'displayName' | 'description' | 'displayNameAr' | 'descriptionAr'
+      >
+    | undefined
+): {
+  displayName: string;
+  description: string;
+  displayNameAr: string;
+  descriptionAr: string;
+} {
+  return {
+    displayName: method?.displayName ?? '',
+    description: method?.description ?? '',
+    displayNameAr: method?.displayNameAr ?? '',
+    descriptionAr: method?.descriptionAr ?? '',
+  };
+}
+
+/**
+ * The name and description as sent. A new method sends only what was
+ * entered; an edit sends every field, because an empty one clears it (the
+ * English text then shows in Arabic too).
+ */
+export function toNamePayload(
+  values: {
+    readonly displayName: string;
+    readonly description: string;
+    readonly displayNameAr: string;
+    readonly descriptionAr: string;
+  },
+  isEdit: boolean
+): {
+  displayName: string;
+  description?: string;
+  displayNameAr?: string;
+  descriptionAr?: string;
+} {
+  if (isEdit) {
+    return {
+      displayName: values.displayName,
+      description: values.description,
+      displayNameAr: values.displayNameAr,
+      descriptionAr: values.descriptionAr,
+    };
+  }
+  return {
+    displayName: values.displayName,
+    ...(values.description ? { description: values.description } : {}),
+    ...(values.displayNameAr ? { displayNameAr: values.displayNameAr } : {}),
+    ...(values.descriptionAr ? { descriptionAr: values.descriptionAr } : {}),
+  };
 }
 
 /** The form's text values, as every manual-method form holds them. */

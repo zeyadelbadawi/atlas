@@ -43,7 +43,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useConfirmDialog, useToast } from '@app/providers';
 import { DASHBOARD_ROUTES, buildPath } from '@app/routes/route-paths';
-import { apiErrorMessage, intlLocale, toErrorsNamespaceKey } from '@utils';
+import {
+  apiErrorMessage,
+  intlLocale,
+  isolateText,
+  toErrorsNamespaceKey,
+} from '@utils';
+import { useDateFormatter } from '@hooks';
 import {
   formatMoney,
   getCourseOrderStatusTone,
@@ -84,6 +90,7 @@ function DetailRow({
 
 export default function PlatformCoursePaymentDetailPage(): JSX.Element {
   const { t, i18n } = useTranslation();
+  const fmt = useDateFormatter();
   const { paymentId } = useParams<{ paymentId: string }>();
   const { notifyError, notifySuccess } = useToast();
   const { confirm } = useConfirmDialog();
@@ -370,8 +377,17 @@ export default function PlatformCoursePaymentDetailPage(): JSX.Element {
 
         {!isPendingReview ? (
           <Card>
-            <CardContent className="p-6 text-sm text-muted-foreground">
-              {t('platformCommerce:coursePayments.alreadyReviewed')}
+            <CardContent className="space-y-2 p-6 text-sm text-muted-foreground">
+              {/* B8 (UX audit) V01 — who decided, and when. */}
+              {payment.review?.reviewerName ? (
+                <p data-testid="course-payment-reviewed-by">
+                  {t('platformCommerce:coursePayments.reviewedBy', {
+                    name: isolateText(payment.review.reviewerName),
+                    date: fmt.dateTime(payment.review.reviewedAt),
+                  })}
+                </p>
+              ) : null}
+              <p>{t('platformCommerce:coursePayments.alreadyReviewed')}</p>
             </CardContent>
           </Card>
         ) : (

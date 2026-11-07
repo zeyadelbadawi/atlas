@@ -241,6 +241,8 @@ describe('ManualPaymentMethodsCard — Bank transfer', () => {
       payload: {
         displayName: 'Test Bank transfer',
         description: 'Pay by transfer',
+        displayNameAr: '',
+        descriptionAr: '',
         instructions: {
           bankName: 'Test Bank Renamed',
           accountName: 'Test Account Holder',

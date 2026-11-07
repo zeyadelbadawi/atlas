@@ -206,6 +206,24 @@ export interface UpdatePlanPayload {
 
 export type PlanLimits = PlanResourceLimits;
 
+/**
+ * B8 (UX audit) V08 — `POST platform-plans/:key/notice-preview`: how many
+ * organizations a price or limit edit WOULD email, before it is saved. The
+ * server runs the same per-subscriber decision the save runs, so the count
+ * is the one the save emails. Writes nothing.
+ */
+export interface PlanNoticePreviewPayload {
+  readonly pricing?: PlanPricingMetadata;
+  readonly limits?: PlanResourceLimits;
+}
+
+export interface PlanNoticePreview {
+  /** Paying subscriptions renewing into the plan (active or in grace). */
+  readonly subscribers: number;
+  /** Organizations whose owner the save would email. */
+  readonly recipients: number;
+}
+
 /** One organization already over a proposed limit. */
 export interface PlanLimitImpactRow {
   readonly organizationId: string;
@@ -286,6 +304,9 @@ export interface AddOn {
   readonly key: string;
   readonly name: string;
   readonly description?: string;
+  /** B5 (UX audit) V21 — the Arabic name and description a Platform Owner entered; the English ones are the fallback. */
+  readonly nameAr?: string;
+  readonly descriptionAr?: string;
   readonly effect: AddOnEffect;
   /** Plan keys this Add-on may be attached to. An empty list means "not currently offered". */
   readonly compatiblePlanKeys: readonly string[];

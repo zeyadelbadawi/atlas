@@ -30,3 +30,6 @@ export const PAYMENT_STATUS_POLL_INTERVAL_MS = 5000;
 export const MIN_PAYMENT_REJECTION_NOTES_LENGTH = 10;
 export const MAX_PAYMENT_REVIEW_NOTES_LENGTH = 1000;
 export const MAX_PAYMENT_PROOF_NOTE_LENGTH = 500;
+
+/** Mirrors the server's `MAX_PAYER_REFERENCE_LENGTH` (course-order and subscription proofs alike). */
+export const MAX_PAYER_REFERENCE_LENGTH = 120;

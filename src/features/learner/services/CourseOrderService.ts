@@ -132,6 +132,21 @@ export class CourseOrderService extends BaseService {
     >(this.path(orderId, 'payments'), payload, options);
   }
 
+  /**
+   * B7 (UX audit) V12 — the caller's payments for their own order, newest
+   * first, so a checkout opened in a new tab resumes where it was.
+   * Someone else's order is a 404.
+   */
+  async listPayments(
+    orderId: string,
+    options?: ReadOptions
+  ): Promise<CourseOrderPayment[]> {
+    return this.client.get<CourseOrderPayment[]>(
+      this.path(orderId, 'payments'),
+      options
+    );
+  }
+
   /** One payment of an order. */
   async getPayment(
     orderId: string,

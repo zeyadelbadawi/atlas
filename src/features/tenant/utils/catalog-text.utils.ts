@@ -1,14 +1,17 @@
 /**
- * B5 (UX audit) — catalog names the backend sends in English only.
+ * B5 (UX audit) — catalog names in the page's language.
  *
  * Add-ons (`add_ons.name/description`) and Atlas's own payment methods
- * (`payment_methods.display_name/description`) have no Arabic columns, so
- * an Arabic page showed "Extra Academy" and "Bank Transfer". Plans have
- * `nameLocalized`; these don't. Until the backend stores Arabic text, the
- * client translates the SEEDED rows by their stable key — and only while
- * the backend's English text is still the seeded one. A Platform Owner who
- * renamed a row sees their own words on every page, in every language:
- * our translation never overrides a text it wasn't written for.
+ * (`payment_methods.display_name/description`) are written in English. In
+ * Arabic, in this order:
+ *   1. the Arabic text a Platform Owner entered (`nameAr`/`displayNameAr`,
+ *      `descriptionAr` — the backend's optional Arabic columns), when there
+ *      is one: their own words always win;
+ *   2. for the SEEDED rows, the client's translation by their stable key —
+ *      only while the backend's English text is still the seeded one, so a
+ *      renamed row never gets a translation written for another text;
+ *   3. the English text.
+ * English pages always show the English text.
  */
 import type { i18n as I18nInstance, TFunction } from 'i18next';
 
@@ -61,14 +64,23 @@ export function pickCatalogText(
   return english.trim() === backendText.trim() ? localized : backendText;
 }
 
+/** The page is Arabic (`ar`, `ar-EG`, …). */
+function isArabic(i18n: I18nInstance): boolean {
+  return (i18n.language ?? '').split('-')[0] === 'ar';
+}
+
 function catalogText(
   t: TFunction,
   i18n: I18nInstance,
   base: string,
   key: string,
   field: CatalogField,
-  backendText: string | undefined
+  backendText: string | undefined,
+  arabicText: string | null | undefined
 ): string | undefined {
+  // A Platform Owner's own Arabic text first (step 1 above).
+  const arabic = arabicText?.trim();
+  if (arabic && isArabic(i18n)) return arabic;
   if (backendText === undefined || backendText === '') return backendText;
   const rowKey = `${base}.${key}`;
   const english = SEEDED_TEXT[rowKey]?.[field];
@@ -77,13 +89,17 @@ function catalogText(
   return pickCatalogText(backendText, english, t(catalogKey));
 }
 
-/** An add-on's name or description in the page's language (see header). */
+/**
+ * An add-on's name or description in the page's language (see header).
+ * `arabicText` is the add-on's own `nameAr`/`descriptionAr`.
+ */
 export function localizedAddOnText(
   t: TFunction,
   i18n: I18nInstance,
   addOnKey: string,
   field: CatalogField,
-  backendText: string | undefined
+  backendText: string | undefined,
+  arabicText?: string | null
 ): string | undefined {
   return catalogText(
     t,
@@ -91,17 +107,22 @@ export function localizedAddOnText(
     'tenant:catalogText.addOns',
     addOnKey,
     field,
-    backendText
+    backendText,
+    arabicText
   );
 }
 
-/** An Atlas payment method's name or description in the page's language. */
+/**
+ * An Atlas payment method's name or description in the page's language.
+ * `arabicText` is the method's own `displayNameAr`/`descriptionAr`.
+ */
 export function localizedPaymentMethodText(
   t: TFunction,
   i18n: I18nInstance,
   methodKey: string,
   field: CatalogField,
-  backendText: string | undefined
+  backendText: string | undefined,
+  arabicText?: string | null
 ): string | undefined {
   return catalogText(
     t,
@@ -109,6 +130,7 @@ export function localizedPaymentMethodText(
     'payments:catalogText.methods',
     methodKey,
     field,
-    backendText
+    backendText,
+    arabicText
   );
 }

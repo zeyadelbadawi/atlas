@@ -123,10 +123,17 @@ key.
   components that couldn't be checked.
 
 ### Not changed, with reason
-- **V01 reviewer name** — the API doesn't return who reviewed; the date is the payment's last update.
-- **V08 count** — the API doesn't return how many organizations are emailed (History has it).
+- **V01 reviewer name** — **fixed**: the Platform payment details (`GET /payments/:id`,
+  `GET /platform-course-order-payments/:id`) carry `review { status, reviewedAt, reviewerName }`;
+  the page reads "Approved/Rejected by <name> on <date>" from the review record (course payments:
+  "Reviewed by <name> on <date>").
+- **V08 count** — **fixed**: `POST /platform-plans/:key/notice-preview` runs the save's own
+  per-subscriber decision without writing; saving a price or limit change first asks "Email N
+  organizations about this change?" (no question when nobody would be emailed) and the success
+  message says how many are being emailed.
 - **V25** — the API has no list of all plans and no subscriber counts; plan create/archive and
   add-on price editing don't exist in the backend.
 - **V32 (partly)** — native date inputs show the browser's format.
-- **Subscription proofs** have no payer reference input (only course-order proofs do) — a separate
-  feature.
+- **Subscription proofs** payer reference — **fixed**: the subscription proof form has "Transfer
+  reference" (optional, 120 with a counter, refusals on the field); it is stored on the same
+  `payment_proofs.payer_reference` column, shown in the Platform review and matched by its search.

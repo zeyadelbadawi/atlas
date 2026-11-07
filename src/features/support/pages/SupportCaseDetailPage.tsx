@@ -14,14 +14,18 @@
  * (`MAX_SUPPORT_REPLY_BODY_LENGTH`, 5,000) with a counter and is never cut
  * silently; leaving with a typed reply asks first; a failed send is ONE
  * inline message with the real reason (the hook marks its errors inline).
- * The customer can't close a ticket: the API has no endpoint for it.
+ *
+ * B5 (UX audit) V35 — the customer closes their own ticket ("Close
+ * ticket", asked first: a closed ticket takes no more replies and can't be
+ * reopened from here). It then reads as closed, the reply box gives way to
+ * the closed notice, and a failure is one inline message.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDateFormatter, useUnsavedChanges } from '@hooks';
 import { SaveFailedAlert, hasViolationOn, useFailureReason } from '@forms';
 import { useParams } from 'react-router-dom';
-import { Loader2, Send } from 'lucide-react';
+import { CheckCircle2, Loader2, Send } from 'lucide-react';
 import { PageContainer, PageHeader } from '@components/layout';
 import { ErrorState } from '@components/feedback';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -32,7 +36,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { MIRROR_IN_RTL, cn } from '@utils';
 import { DASHBOARD_ROUTES } from '@app/routes/route-paths';
-import { useMySupportCase, useReplyToMySupportCase } from '../hooks';
+import { useConfirmDialog } from '@app/providers';
+import { useToast } from '@app/providers/toast/useToast';
+import {
+  useCloseMySupportCase,
+  useMySupportCase,
+  useReplyToMySupportCase,
+} from '../hooks';
 import { getSupportCaseStatusTone } from '../utils/support-status.utils';
 import { SupportAttachmentField } from '../components/SupportAttachmentField';
 import { SupportAttachmentImage } from '../components/SupportAttachmentImage';
@@ -54,6 +64,9 @@ export default function SupportCaseDetailPage(): JSX.Element {
 
   const { data, isLoading, error, refetch } = useMySupportCase(caseId ?? '');
   const postReply = useReplyToMySupportCase();
+  const closeCase = useCloseMySupportCase();
+  const { confirm } = useConfirmDialog();
+  const { notifySuccess } = useToast();
   const failureReason = useFailureReason();
   const { markSaved } = useUnsavedChanges({
     isDirty: reply.trim() !== '' || attachment !== undefined,
@@ -116,6 +129,30 @@ export default function SupportCaseDetailPage(): JSX.Element {
     setAttachment(undefined);
   };
 
+  const handleClose = async () => {
+    if (closeCase.isPending) return;
+    const confirmed = await confirm({
+      titleKey: 'support:detail.closeTicket.title',
+      descriptionKey: reply.trim()
+        ? 'support:detail.closeTicket.descriptionWithDraft'
+        : 'support:detail.closeTicket.description',
+      confirmLabelKey: 'support:detail.closeTicket.confirm',
+      cancelLabelKey: 'support:detail.closeTicket.cancel',
+    });
+    if (!confirmed) return;
+    try {
+      await closeCase.mutateAsync(data.id);
+    } catch {
+      // Shown above the thread, once.
+      return;
+    }
+    // Nothing left to send on a closed ticket.
+    markSaved();
+    setReply('');
+    setAttachment(undefined);
+    notifySuccess('support:detail.closeTicket.closed');
+  };
+
   const replyLength = reply.trim().length;
   const serverBodyError =
     postReply.error && hasViolationOn(postReply.error, { body: 'body' })
@@ -138,12 +175,40 @@ export default function SupportCaseDetailPage(): JSX.Element {
         title={data.subject}
         breadcrumbs={breadcrumbs}
         actions={
-          <StatusBadge
-            labelKey={`support:status.${data.status}`}
-            tone={getSupportCaseStatusTone(data.status)}
-          />
+          <div className="flex flex-wrap items-center gap-3">
+            <StatusBadge
+              labelKey={`support:status.${data.status}`}
+              tone={getSupportCaseStatusTone(data.status)}
+            />
+            {isClosed ? null : (
+              <Button
+                type="button"
+                variant="outline"
+                data-testid="close-ticket"
+                disabled={closeCase.isPending}
+                onClick={() => void handleClose()}
+              >
+                {closeCase.isPending ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden />
+                ) : (
+                  <CheckCircle2 className="size-4" aria-hidden />
+                )}
+                {t('support:detail.closeTicket.action')}
+              </Button>
+            )}
+          </div>
         }
       />
+
+      {closeCase.error ? (
+        <div className="mb-4">
+          <SaveFailedAlert
+            error={closeCase.error}
+            titleKey="support:detail.closeTicket.failed"
+            onRetry={() => void handleClose()}
+          />
+        </div>
+      ) : null}
 
       <div className="space-y-4">
         {data.messages.map((message) => {

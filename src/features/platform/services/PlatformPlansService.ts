@@ -22,14 +22,23 @@ import type {
   PlanHistoryEntry,
   PlanLimitImpact,
   PlanLimits,
+  PlanNoticePreview,
+  PlanNoticePreviewPayload,
   UpdatePlanPayload,
 } from '@types';
 
 export class PlatformPlansService extends BaseService {
   protected readonly resource = 'platform-plans';
 
-  async createPlan(payload: CreatePlanPayload, options?: WriteOptions): Promise<Plan> {
-    return this.client.post<Plan, CreatePlanPayload>(this.path(), payload, options);
+  async createPlan(
+    payload: CreatePlanPayload,
+    options?: WriteOptions
+  ): Promise<Plan> {
+    return this.client.post<Plan, CreatePlanPayload>(
+      this.path(),
+      payload,
+      options
+    );
   }
 
   /**
@@ -75,6 +84,19 @@ export class PlatformPlansService extends BaseService {
     );
   }
 
+  /** B8 (UX audit) V08 — dry run: how many organizations this edit would email. Writes nothing. */
+  async previewNotice(
+    key: string,
+    payload: PlanNoticePreviewPayload,
+    options?: WriteOptions
+  ): Promise<PlanNoticePreview> {
+    return this.client.post<PlanNoticePreview, PlanNoticePreviewPayload>(
+      this.path(key, 'notice-preview'),
+      payload,
+      options
+    );
+  }
+
   /** Administrative change history, read from the audit log. Paginated. */
   async getHistory(
     key: string,
@@ -83,7 +105,10 @@ export class PlatformPlansService extends BaseService {
   ): Promise<PaginatedResult<PlanHistoryEntry>> {
     return this.client.get<PaginatedResult<PlanHistoryEntry>>(
       this.path(key, 'history'),
-      { ...options, params: { ...options?.params, ...toCollectionParams(query) } }
+      {
+        ...options,
+        params: { ...options?.params, ...toCollectionParams(query) },
+      }
     );
   }
 }

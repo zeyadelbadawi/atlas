@@ -120,13 +120,24 @@ that repeat or hide the real reason.
   copy no longer blames the details.
 - **V20** The domain must look like a domain (client) and be one (server), with an example.
 - **V21** Plan names through `resolvePlanName`; seeded add-ons and payment methods translated by
-  key. **Partly:** names a Platform Owner typed stay as typed — the backend has no Arabic columns.
+  key; names a Platform Owner typed show their Arabic version (see "Not changed" below, now fixed).
 - **V22 / V30 / V31 / V33 / V34** Pending items say what they are with an "Open payment" link;
   status tabs wrap; closing the plan comparison goes back; one title per add-on page and the
   currency named; i18next plurals for add-ons.
 
 ### Not changed, with reason
-- **V35** A customer can't close a support ticket: the API has no endpoint for it.
+- **V35** — **fixed**: `POST /support-cases/mine/:caseId/close` (requester only — anyone else gets
+  404; idempotent; recorded as `support_case.status_changed` with `closedBy: requester`, through a
+  SECURITY DEFINER function that can change only the status of the caller's own ticket). The
+  ticket page has "Close ticket", which asks first (no replies or reopening afterwards; an unsent
+  reply is discarded), then reads as closed with the reply box replaced by the closed notice; a
+  failure is one inline message.
 - **Platform payment review (B8)** shows only the payment ID; reviewers need the Checkout ID the
   instructions name — noted for B8.
-- Arabic names for Platform-Owner-created add-ons and payment methods need backend columns.
+- Arabic names for Platform-Owner-managed add-ons and payment methods — **fixed**: optional
+  `name_ar`/`description_ar` (add-ons) and `display_name_ar`/`description_ar` (payment methods)
+  columns; the payment-method forms have Arabic name and description fields beside the English
+  ones, and the Add-ons Management page shows each Arabic name and edits it ("Arabic name",
+  `PATCH platform-add-ons/:key/arabic-text`, version-guarded). The store, checkout, billing,
+  learner checkout and console show the Arabic text on Arabic pages (then the seeded key
+  translation, then the English).

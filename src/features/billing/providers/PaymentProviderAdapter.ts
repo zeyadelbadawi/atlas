@@ -95,7 +95,8 @@ export interface ManualReviewPaymentProviderAdapter extends PaymentProviderAdapt
     organizationId: string,
     paymentId: string,
     file: File,
-    note?: string
+    note?: string,
+    payerReference?: string
   ): Promise<Payment>;
 }
 

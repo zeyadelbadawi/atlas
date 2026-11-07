@@ -37,6 +37,7 @@
     "proofLoadError": "تعذّر فتح ملف الإثبات. حاول مرة أخرى.",
     "reviewNotesTitle": "ملاحظات المراجعة",
     "alreadyReviewed": "تمت مراجعة هذه الدفعة بالفعل ولم يعد من الممكن اعتمادها أو رفضها.",
+    "reviewedBy": "راجعها {{name}} في {{date}}.",
     "approveTitle": "اعتماد",
     "rejectTitle": "رفض",
     "notesOptional": "ملاحظات (اختياري)",

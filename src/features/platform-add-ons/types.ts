@@ -12,6 +12,9 @@ export interface PlatformAddOnRow {
   readonly key: string;
   readonly name: string;
   readonly description: string | null;
+  /** B5 (UX audit) V21 — shown in the Arabic store and checkout; `null` = the English text is shown. */
+  readonly nameAr: string | null;
+  readonly descriptionAr: string | null;
   readonly catalogStatus: AddOnCatalogStatus;
   readonly installCount: number;
   readonly enabledCount: number;
@@ -30,5 +33,12 @@ export interface PlatformAddOnQuery {
 
 export interface UpdateAddOnCatalogStatusInput {
   readonly catalogStatus: AddOnCatalogStatus;
+  readonly expectedVersion: number;
+}
+
+/** `PATCH platform-add-ons/:key/arabic-text` — a blank text clears it. */
+export interface UpdateAddOnArabicTextInput {
+  readonly nameAr: string;
+  readonly descriptionAr: string;
   readonly expectedVersion: number;
 }

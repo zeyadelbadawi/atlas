@@ -61,7 +61,8 @@ export class ManualTransferProvider implements ManualReviewPaymentProviderAdapte
     organizationId: string,
     paymentId: string,
     file: File,
-    note?: string
+    note?: string,
+    payerReference?: string
   ): Promise<Payment> {
     const fileData = await readFileAsDataUrl(file);
     return paymentService.submitProof(organizationId, paymentId, {
@@ -69,6 +70,7 @@ export class ManualTransferProvider implements ManualReviewPaymentProviderAdapte
       fileName: file.name,
       mimeType: file.type,
       note,
+      ...(payerReference ? { payerReference } : {}),
     });
   }
 }

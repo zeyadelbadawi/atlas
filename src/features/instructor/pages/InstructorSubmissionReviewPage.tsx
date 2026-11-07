@@ -57,7 +57,7 @@ import {
   useUnsavedChanges,
   useBidiIsolation,
 } from '@hooks';
-import { formatBytes, formatNumber } from '@utils';
+import { formatBytes, formatNumber, isolateText } from '@utils';
 import { getSubmissionStatusTone, useAssignments } from '@features/learning';
 import {
   useInstructorCourseOverview,
@@ -246,11 +246,19 @@ export default function InstructorSubmissionReviewPage(): JSX.Element {
                   className="text-xs text-muted-foreground"
                   data-testid="graded-at"
                 >
+                  {/* B6 (UX audit) V06 — who graded it: "you", or the
+                      grader's name (the API returns it), else the date
+                      alone. */}
                   {t(
                     grade.gradedBy && grade.gradedBy === user?.id
                       ? 'instructor:grading.gradedAtByYou'
-                      : 'instructor:grading.gradedAt',
-                    { date: fmt.dateTime(grade.gradedAt) }
+                      : grade.gradedByName
+                        ? 'instructor:grading.gradedAtBy'
+                        : 'instructor:grading.gradedAt',
+                    {
+                      date: fmt.dateTime(grade.gradedAt),
+                      name: isolateText(grade.gradedByName ?? ''),
+                    }
                   )}
                 </p>
               ) : null}

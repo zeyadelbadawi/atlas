@@ -187,6 +187,57 @@ describe('V01 — approving asks first and confirms the result', () => {
   });
 });
 
+describe('V01 — who reviewed it', () => {
+  it('says "Rejected by <name> on <date>" from the review record', () => {
+    state.payment = payment({
+      reviewStatus: 'rejected',
+      status: 'failed',
+      updatedAt: '2026-09-25T08:00:00Z',
+      review: {
+        status: 'rejected',
+        reviewedAt: '2026-09-22T09:15:00Z',
+        reviewerName: 'Rania Platform',
+      },
+    });
+    renderDetail();
+    const line = screen.getByTestId('payment-reviewed-by').textContent ?? '';
+    expect(line).toMatch(
+      /^Rejected by \u2068?Rania Platform\u2069? on .+\. It can no longer be approved or rejected\.$/
+    );
+    // The review's own date, not the payment's last update.
+    expect(line).toContain('22');
+    expect(line).not.toContain('25');
+  });
+
+  it('says it in Arabic', () => {
+    state.payment = payment({
+      reviewStatus: 'approved',
+      status: 'succeeded',
+      review: {
+        status: 'approved',
+        reviewedAt: '2026-09-22T09:15:00Z',
+        reviewerName: 'Rania Platform',
+      },
+    });
+    renderDetail('ar');
+    expect(screen.getByTestId('payment-reviewed-by').textContent).toMatch(
+      /^وافق \u2068?Rania Platform\u2069? على هذه الدفعة في /
+    );
+  });
+
+  it('without a reviewer name, keeps the date alone', () => {
+    state.payment = payment({
+      reviewStatus: 'approved',
+      status: 'succeeded',
+      review: { status: 'approved', reviewedAt: '2026-09-22T09:15:00Z' },
+    });
+    renderDetail();
+    expect(screen.getByTestId('payment-reviewed-by').textContent).toMatch(
+      /^This payment was approved on /
+    );
+  });
+});
+
 describe('V02 — the reviewer can match the transfer', () => {
   it('shows the Checkout ID, the payer reference and the upload time', () => {
     state.payment = payment();

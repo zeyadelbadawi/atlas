@@ -86,7 +86,8 @@ function AttentionPaymentRow({
             i18n,
             target.addOnKey,
             'name',
-            checkout.snapshot.displayName
+            checkout.snapshot.displayName,
+            checkout.snapshot.displayNameAr
           )
         : checkout.snapshot.displayName;
   const cycle = checkout?.snapshot.billingCycle ?? checkout?.billingCycle;

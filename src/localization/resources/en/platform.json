@@ -424,8 +424,19 @@
       "impactFailed": "The impact couldn't be checked",
       "saveFailed": "The plan wasn't saved",
       "savedTitle": "{{plan}} saved",
-      "savedNotified": "The price or limits changed, so the owner of every paying organization on this plan is being emailed. History shows how many were notified.",
-      "savedCatalogOnly": "Only the catalog changed; no organization was emailed."
+      "savedCatalogOnly": "Only the catalog changed; no organization was emailed.",
+      "noticeConfirm": {
+        "title_one": "Email {{countText}} organization about this change?",
+        "title_other": "Email {{countText}} organizations about this change?",
+        "description_one": "Saving changes the price or limits {{countText}} paying organization on {{plan}} renews into. Its owner gets an email and an in-app notice now, before the change reaches them.",
+        "description_other": "Saving changes the price or limits {{countText}} paying organizations on {{plan}} renew into. Each owner gets an email and an in-app notice now, before the change reaches them.",
+        "confirm": "Save and email",
+        "cancel": "Keep editing"
+      },
+      "savedNotifiedCount_one": "{{countText}} paying organization is being emailed about the change.",
+      "savedNotifiedCount_other": "{{countText}} paying organizations are being emailed about the change.",
+      "savedNobodyEmailed": "No paying organization renews into a different price or limits, so nobody was emailed.",
+      "noticeCheckFailed": "We couldn't check who would be emailed, so nothing was saved"
     }
   },
   "courses": {

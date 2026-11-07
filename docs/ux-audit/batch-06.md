@@ -114,9 +114,13 @@ and failures that hide the real reason behind a generic message and a second toa
 - **V23 (partly)** The points hint uses one digit style.
 
 ### Not changed, with reason
-- **V17 filters** — paging is server-side, so client filters would only filter one page; the
-  backend has no filter parameters.
+- **V17 filters** — **fixed**: the quiz attempts list takes `status`, `gradingStatus`, `flagged`,
+  `late` and `search` (student name), validated and applied in the query with the paging (the
+  assignment submissions list takes `gradingStatus`, `late`, `search`). Quiz results has Student,
+  Status, Grading ("Awaiting a grade"), Integrity and Late filters sent to the server; a change goes
+  back to page 1, an empty filtered list says so, "Clear filters" resets them.
 - **V23** mixed digit styles in Arabic — decided and fixed: Western digits (0–9) everywhere in Arabic.
-- **V06 grader name** — the API returns only the grader's id.
+- **V06 grader name** — **fixed**: submissions carry `grade.gradedByName` (the name, never the
+  email); the header reads "Graded by <name> on <date>" ("by you" for your own grade).
 - The page header's thread title — fixed: `PageHeader` gives a data title `dir="auto"` (B8 V32), so a
   Latin title on the Arabic page keeps its own direction (covered by a forum test).

@@ -1,6 +1,6 @@
 /**
  * useMySupportCases / useMySupportCase / useReplyToMySupportCase /
- * useCreateSupportCase — the TENANT side of support.
+ * useCloseMySupportCase / useCreateSupportCase — the TENANT side of support.
  *
  * Separate from the Platform-Owner hooks in this folder, and pointed at
  * the requester-scoped routes. Reusing the operator hooks for a tenant
@@ -94,6 +94,27 @@ export function useReplyToMySupportCase() {
     meta: { [INLINE_ERRORS_META]: true },
     onSuccess: async (_data, { caseId }) => {
       // Both the thread and the list's "last activity" column change.
+      await invalidate(supportKeys.mineDetail(caseId));
+      await invalidateSupportCases(queryClient);
+    },
+  });
+}
+
+/**
+ * B5 (UX audit) V35 — the customer closes their own ticket. The page asks
+ * first and shows the outcome itself (one message, inline on failure).
+ */
+export function useCloseMySupportCase() {
+  const { invalidate } = useInvalidate();
+  const queryClient = useQueryClient();
+
+  return useApiMutation<SupportCaseDetail, string, ApiError>({
+    mutationFn: (caseId) => mySupportService.closeMyCase(caseId),
+    showSuccessToast: false,
+    showErrorToast: false,
+    meta: { [INLINE_ERRORS_META]: true },
+    onSuccess: async (_data, caseId) => {
+      // The thread's status and the list's badge both change.
       await invalidate(supportKeys.mineDetail(caseId));
       await invalidateSupportCases(queryClient);
     },

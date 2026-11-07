@@ -9,7 +9,9 @@
  *     Unlimited switch (no English word to type, in Arabic too);
  *   - V07 the server's violations (atlas-backend#108 paths) land on their
  *     fields, named by their label in the page's language;
- *   - V08 a save says what it did;
+ *   - V08 a save says what it did; before a price or limit save, the
+ *     editor asks the server how many organizations it will email and
+ *     confirms with that number (none: it just saves);
  *   - V05 change plan needs a plan, and a 409 "archived" lands on it;
  *   - V06 `errors:conflict` (a group) never prints "returned an object";
  *   (V23 trial policy and V29 commission: their own features' b8 tests.)
@@ -35,6 +37,8 @@ globalThis.ResizeObserver ??= class {
 } as unknown as typeof ResizeObserver;
 
 const updateMutateAsync = vi.fn();
+const noticeMutateAsync = vi.fn();
+const confirm = vi.fn(() => Promise.resolve(true));
 const adjustMutate = vi.fn();
 const notifySuccess = vi.fn();
 const errors: { update: ApiError | null; adjust: ApiError | null } = {
@@ -55,6 +59,12 @@ vi.mock('./hooks/usePlatformPlans', () => ({
     error: null,
     reset: vi.fn(),
   }),
+  usePreviewPlanNotice: () => ({
+    mutateAsync: noticeMutateAsync,
+    isPending: false,
+    error: null,
+    reset: vi.fn(),
+  }),
 }));
 vi.mock('./hooks', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
@@ -71,7 +81,7 @@ vi.mock('@features/tenant', async (importOriginal) => ({
 vi.mock('@app/providers', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
   useToast: () => ({ notifySuccess, notifyError: vi.fn() }),
-  useConfirmDialog: () => ({ confirm: vi.fn(() => Promise.resolve(true)) }),
+  useConfirmDialog: () => ({ confirm }),
 }));
 
 const { PlanEditorDialog } = await import('./components/PlanEditorDialog');
@@ -117,6 +127,8 @@ const save = () => fireEvent.click(screen.getByTestId('plan-save'));
 
 beforeEach(() => {
   updateMutateAsync.mockResolvedValue(undefined);
+  noticeMutateAsync.mockResolvedValue({ subscribers: 3, recipients: 2 });
+  confirm.mockImplementation(() => Promise.resolve(true));
 });
 
 afterEach(() => {
@@ -301,27 +313,103 @@ describe('V07 — server violations land on their fields, by their label', () =>
   });
 });
 
-describe('V08 — a save says what it did', () => {
-  it('a price change says paying organizations are being emailed', async () => {
+describe('V08 — a save says who it emails, before and after', () => {
+  it('a price change asks the server, confirms with the count, then says how many are emailed', async () => {
     renderEditor();
     type('plan-amount', '150');
     save();
     await waitFor(() => expect(notifySuccess).toHaveBeenCalled());
+    // The preview carries the proposed price and limits…
+    expect(noticeMutateAsync).toHaveBeenCalledWith({
+      key: 'growth',
+      payload: expect.objectContaining({
+        pricing: expect.objectContaining({ amount: 150, currency: 'EGP' }),
+        limits: expect.objectContaining({ students: 20 }),
+      }),
+    });
+    // …the confirmation names the number, before anything is saved…
+    expect(confirm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        titleKey: 'platform:planAdmin.editor.noticeConfirm.title',
+        values: expect.objectContaining({ count: 2, countText: '2' }),
+      })
+    );
+    expect(confirm.mock.invocationCallOrder[0]).toBeLessThan(
+      updateMutateAsync.mock.invocationCallOrder[0]
+    );
+    // …and the success says how many are being emailed.
     expect(notifySuccess).toHaveBeenCalledWith(
       'platform:planAdmin.editor.savedTitle',
-      'platform:planAdmin.editor.savedNotified',
-      { plan: 'Growth' }
+      'platform:planAdmin.editor.savedNotifiedCount',
+      expect.objectContaining({ plan: 'Growth', count: 2 })
     );
   });
 
-  it('a trial-only change says nobody was emailed', async () => {
+  it('keeps editing, saving nothing, when the Platform Owner declines', async () => {
+    confirm.mockImplementation(() => Promise.resolve(false));
+    renderEditor();
+    type('plan-amount', '150');
+    save();
+    await waitFor(() => expect(confirm).toHaveBeenCalled());
+    expect(updateMutateAsync).not.toHaveBeenCalled();
+    expect(notifySuccess).not.toHaveBeenCalled();
+  });
+
+  it('with nobody to email it saves without asking, and says so', async () => {
+    noticeMutateAsync.mockResolvedValue({ subscribers: 1, recipients: 0 });
+    renderEditor();
+    type('plan-amount', '150');
+    save();
+    await waitFor(() => expect(notifySuccess).toHaveBeenCalled());
+    expect(confirm).not.toHaveBeenCalled();
+    expect(notifySuccess.mock.calls[0][1]).toBe(
+      'platform:planAdmin.editor.savedNobodyEmailed'
+    );
+  });
+
+  it('does not save when the count could not be checked', async () => {
+    noticeMutateAsync.mockRejectedValue(createApiError('server'));
+    renderEditor();
+    type('plan-amount', '150');
+    save();
+    await waitFor(() => expect(noticeMutateAsync).toHaveBeenCalled());
+    expect(updateMutateAsync).not.toHaveBeenCalled();
+    expect(confirm).not.toHaveBeenCalled();
+  });
+
+  it('a trial-only change asks nothing and says nobody was emailed', async () => {
     renderEditor();
     type('plan-trial-days', '30');
     save();
     await waitFor(() => expect(notifySuccess).toHaveBeenCalled());
+    expect(noticeMutateAsync).not.toHaveBeenCalled();
+    expect(confirm).not.toHaveBeenCalled();
     expect(notifySuccess.mock.calls[0][1]).toBe(
       'platform:planAdmin.editor.savedCatalogOnly'
     );
+  });
+
+  it('words the confirmation with the number, in English and Arabic plurals', () => {
+    const en = createI18nInstance('en');
+    expect(
+      en.t('platform:planAdmin.editor.noticeConfirm.title', {
+        count: 2,
+        countText: '2',
+      })
+    ).toBe('Email 2 organizations about this change?');
+    const ar = createI18nInstance('ar');
+    expect(
+      ar.t('platform:planAdmin.editor.noticeConfirm.title', {
+        count: 2,
+        countText: '2',
+      })
+    ).toBe('إرسال بريد إلى مؤسستين بشأن هذا التغيير؟');
+    expect(
+      ar.t('platform:planAdmin.editor.savedNotifiedCount', {
+        count: 5,
+        countText: '5',
+      })
+    ).toBe('يجري إرسال بريد إلى 5 مؤسسات مدفوعة بشأن التغيير.');
   });
 });
 

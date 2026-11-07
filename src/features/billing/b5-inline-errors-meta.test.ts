@@ -58,6 +58,9 @@ const hooks: Record<string, () => Promise<(...args: never[]) => unknown>> = {
   useCreateSupportCase: async () =>
     (await import('@features/support/hooks/useMySupportCases'))
       .useCreateSupportCase,
+  useCloseMySupportCase: async () =>
+    (await import('@features/support/hooks/useMySupportCases'))
+      .useCloseMySupportCase,
   useCreateLiveSession: async () =>
     (await import('@features/live-sessions/hooks/useLiveSessions'))
       .useCreateLiveSession,

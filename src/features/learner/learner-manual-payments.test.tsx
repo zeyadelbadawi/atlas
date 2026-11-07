@@ -15,7 +15,7 @@
  *
  * Native DOM assertions only — this repo does not ship jest-dom.
  */
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   cleanup,
   fireEvent,
@@ -101,6 +101,12 @@ function renderWith(node: JSX.Element, language: 'en' | 'ar' = 'en') {
     </I18nextProvider>
   );
 }
+
+beforeEach(() => {
+  // B7 V12 — a checkout with nothing remembered asks for the order's
+  // payments; none unless a test says otherwise.
+  vi.spyOn(courseOrderService, 'listPayments').mockResolvedValue([]);
+});
 
 afterEach(() => {
   cleanup();

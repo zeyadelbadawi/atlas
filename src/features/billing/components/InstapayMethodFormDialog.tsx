@@ -50,6 +50,9 @@ import {
   ManualMethodSaveFailure,
   useGuardedDialogClose,
   useManualMethodServerValidation,
+  MethodNameFields,
+  toNameFormValues,
+  toNamePayload,
 } from './ManualMethodFormFields';
 
 export interface InstapayMethodFormDialogProps {
@@ -67,8 +70,7 @@ function toFormValues(
       ? method.manualInstructions
       : undefined;
   return {
-    displayName: method?.displayName ?? '',
-    description: method?.description ?? '',
+    ...toNameFormValues(method),
     instructions: {
       instapayAddress: saved?.placeholder ? '' : (saved?.instapayAddress ?? ''),
       ...toTextsFormValues(saved),
@@ -132,17 +134,16 @@ export function InstapayMethodFormDialog({
         await updateMethod.mutateAsync({
           methodId: method.id,
           payload: {
-            displayName: values.displayName,
-            // Sent even when empty: clearing the description is an edit.
-            description: values.description,
+            // Sent even when empty: clearing a description or an Arabic
+            // text is an edit.
+            ...toNamePayload(values, true),
             instapayInstructions: details,
           },
         });
         toast({ title: t('payments:instapayMethods.updateSuccess') });
       } else {
         await createMethod.mutateAsync({
-          displayName: values.displayName,
-          ...(values.description ? { description: values.description } : {}),
+          ...toNamePayload(values, false),
           instructions: details,
         });
         toast({ title: t('payments:instapayMethods.createSuccess') });
@@ -186,19 +187,10 @@ export function InstapayMethodFormDialog({
             noValidate
             data-testid="instapay-method-form"
           >
-            <MethodTextField
+            <MethodNameFields
               control={form.control}
-              name="displayName"
-              labelKey="payments:instapayMethods.fields.displayName"
-              helpKey="payments:bankTransferMethods.fields.displayNameHelp"
-              testId="instapay-method-display-name"
-            />
-            <MethodLongTextField
-              control={form.control}
-              name="description"
-              labelKey="payments:bankTransferMethods.fields.description"
-              rows={2}
-              testId="instapay-method-description"
+              section="instapayMethods"
+              testIdPrefix="instapay-method"
             />
             <MethodTextField
               control={form.control}

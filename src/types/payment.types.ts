@@ -123,6 +123,9 @@ export interface CheckoutPaymentMethod {
   readonly type: PaymentMethodType;
   readonly displayName: string;
   readonly description?: string;
+  /** B5/B8 (UX audit) — the Arabic name and description a Platform Owner entered; the English ones are the fallback. */
+  readonly displayNameAr?: string;
+  readonly descriptionAr?: string;
   readonly enabled: boolean;
   /** Provider key this method is handled by — see `PaymentProviderAdapter.providerKey`. */
   readonly provider: string;
@@ -168,6 +171,9 @@ export type InstapayInstructionsPayload = Omit<
 interface CreateManualMethodPayloadBase {
   readonly displayName: string;
   readonly description?: string;
+  /** B5/B8 (UX audit) — optional Arabic name and description (blank: the English one shows). */
+  readonly displayNameAr?: string;
+  readonly descriptionAr?: string;
   readonly enabled?: boolean;
   readonly displayOrder?: number;
 }
@@ -197,6 +203,9 @@ export interface CreateInstapayMethodPayload extends CreateManualMethodPayloadBa
 export interface UpdatePlatformPaymentMethodPayload {
   readonly displayName?: string;
   readonly description?: string;
+  /** An empty text clears it. */
+  readonly displayNameAr?: string;
+  readonly descriptionAr?: string;
   readonly instructions?: BankTransferInstructionsPayload;
   readonly walletInstructions?: WalletInstructionsPayload;
   readonly instapayInstructions?: InstapayInstructionsPayload;
@@ -325,6 +334,21 @@ export interface Payment {
    * its display name as frozen on the checkout, and the billing cycle.
    */
   readonly checkoutSummary?: PlatformPaymentCheckoutSummary;
+  /**
+   * Platform review detail only (`GET /payments/:id`,
+   * `GET /platform-course-order-payments/:id`) — B8 (UX audit) V01: the
+   * latest review decision, when it was made and the reviewer's name.
+   * Absent until someone reviews the payment.
+   */
+  readonly review?: PaymentReviewSummary;
+}
+
+/** `Payment.review` — who decided a manual review, and when. */
+export interface PaymentReviewSummary {
+  readonly status: ManualReviewStatus;
+  readonly reviewedAt: string;
+  /** Absent when the reviewer's account no longer exists. */
+  readonly reviewerName?: string;
 }
 
 /** `Payment.checkoutSummary` (Platform review lists/detail). */
@@ -396,6 +420,8 @@ export interface SubmitPaymentProofPayload {
   readonly fileName: string;
   readonly mimeType: string;
   readonly note?: string;
+  /** The transfer's reference / transaction number as the bank or wallet shows it (optional, up to 120). */
+  readonly payerReference?: string;
 }
 
 export interface ApprovePaymentPayload {
