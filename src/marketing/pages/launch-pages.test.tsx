@@ -85,7 +85,7 @@ describe('B3 marketing pages', () => {
     expect(en).toMatch(/5 academies/);
     expect(en).toMatch(/1 academy/);
     const ar = html('multi-academy', 'ar').html;
-    expect(ar).toContain('٥');
+    expect(ar).toMatch(/5 أكاديميات/);
     expect(
       html('multi-academy', 'en').head.jsonLd?.some(
         (block) => (block as { '@type'?: string })['@type'] === 'FAQPage'

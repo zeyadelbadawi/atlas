@@ -52,7 +52,7 @@ const BANNED: readonly RegExp[] = [
   /most popular|الأكثر اختيار/i,
   /in minutes|في دقائق/i,
   /arabic-first|عربي بالكامل/i,
-  /\b100 ?%/,
+  /\b100 ?[%٪]/,
   /السناتر/,
   /sign in with google/i,
   /operating system for education|منصة تعليمية متكاملة/i,
@@ -106,6 +106,13 @@ describe('marketing pages', () => {
       for (const pattern of BANNED) expect(visible).not.toMatch(pattern);
     },
   );
+
+  it('writes every digit as 0-9 on Arabic pages (owner decision, as in the app)', () => {
+    for (const r of rendered.filter((x) => x.page.lang === 'ar')) {
+      const head = JSON.stringify(r.head);
+      expect(`${r.page.id}: ${r.html}${head}`).not.toMatch(/[\u0660-\u0669\u06F0-\u06F9]/);
+    }
+  });
 
   it('keeps prices and currencies out of metadata', () => {
     for (const r of rendered) {
@@ -404,7 +411,7 @@ describe('M1b product pages', () => {
       expect(visible, r.page.path).not.toMatch(/integrity|anti-cheat|proctor|نزاهة|غش/i);
       expect(visible, r.page.path).not.toMatch(/on every plan|كل الباقات/i);
       expect(visible, r.page.path).not.toMatch(/automatic payment|instant enrol|coupon|bulk import|staff role|upload your videos/i);
-      expect(visible, r.page.path).not.toMatch(/\bfree\b|in minutes|\b100 ?%/i);
+      expect(visible, r.page.path).not.toMatch(/\bfree\b|in minutes|\b100 ?[%٪]/i);
     }
   });
 

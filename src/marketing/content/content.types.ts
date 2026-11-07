@@ -12,11 +12,11 @@
  *                        Copy is rename-ready: the name never appears literally.
  *   {trialDays}          catalog `trialDurationDays`, formatted number only.
  *   {trialDuration}      `plurals.days` filled with `trialDurationDays`
- *                        (EN "14 days", AR «١٤ يومًا»). Arabic copy uses this,
+ *                        (EN "14 days", AR «14 يومًا»). Arabic copy uses this,
  *                        never "{trialDays} أيام", so number agreement holds.
  *   {planName}           `nameLocalized[lang]` of the plan in context.
  *   {topPlanName}        name of the self-serve plan with the highest limits.
- *   {price}              monthly price, formatted `en-US` / `ar-EG` with EGP.
+ *   {price}              monthly price, formatted with the page's `numberLocale`, with EGP.
  *   {yearlyPrice}        yearly price, same formatting.
  *   {monthlyEquivalent}  yearlyPrice / 12, same formatting.
  *   {saving}             12 × monthly − yearly, same formatting.
@@ -25,7 +25,7 @@
  *                        `yearlySaving` string).
  *   {students} {academies} {instructors} {courses}
  *                        the plural phrase for that limit (e.g. "400 students",
- *                        «٤٠٠ طالب»), or the matching `unlimited` phrase.
+ *                        «400 طالب»), or the matching `unlimited` phrase.
  *   {maxStudents} {maxAcademies}
  *                        plural phrase for the highest self-serve limit.
  *   {giftedDuration}     `plurals.days` filled with `giftedDaysYearly` (or
@@ -35,9 +35,10 @@
  *                        contact-form validation limits.
  *   {date} {year}        formatted in the page locale.
  *
- * DIGITS. Arabic pages format every number with `ar-EG` (Arabic-Indic
- * digits) and never mix digit systems on a page. Counts inside Arabic prose
- * are written as words.
+ * DIGITS. Every page uses Western digits (0-9), Arabic pages included (owner
+ * decision, as in the app): numbers are formatted with `numberLocale`
+ * (`ar-EG-u-nu-latn` on Arabic pages) and digits written in copy are 0-9.
+ * Never mix digit systems on a page.
  *
  * HREFS. `href` values are language-neutral paths (`/pricing`,
  * `/contact?topic=sales`, `#payments`). The renderer adds the `/ar` prefix on
@@ -769,7 +770,7 @@ export interface MarketingContent {
   readonly lang: 'en' | 'ar';
   readonly dir: 'ltr' | 'rtl';
   /** BCP 47 tag for number and date formatting. */
-  readonly numberLocale: 'en-US' | 'ar-EG';
+  readonly numberLocale: 'en-US' | 'ar-EG-u-nu-latn';
   readonly brand: {
     readonly name: string;
     /** The brand in the other language (JSON-LD `alternateName`). */

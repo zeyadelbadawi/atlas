@@ -192,7 +192,8 @@ export const DOCS_COPY: Readonly<Record<DocLang, DocsCopy>> = {
   },
   ar: {
     lang: 'ar',
-    locale: 'ar-EG',
+    // Western digits (0-9), like the app and the marketing site.
+    locale: 'ar-EG-u-nu-latn',
     brand: 'مركز مساعدة أطلس',
     brandShort: 'المساعدة',
     homeTitle: 'مركز مساعدة أطلس',
@@ -296,7 +297,7 @@ export function fmt(text: string, values: Readonly<Record<string, string | numbe
 
 export function formatCount(lang: DocLang, forms: { one: string; other: string }, count: number): string {
   const n = new Intl.NumberFormat(DOCS_COPY[lang].locale).format(count);
-  // Arabic 3–10 takes the plural noun ("٥ خطوات"); 11+ the singular ("١٢ خطوة").
+  // Arabic 3–10 takes the plural noun ("5 خطوات"); 11+ the singular ("12 خطوة").
   if (lang === 'ar') {
     if (count === 1) return forms.one;
     if (forms === DOCS_COPY.ar.article.steps && count >= 11) return `${n} خطوة`;

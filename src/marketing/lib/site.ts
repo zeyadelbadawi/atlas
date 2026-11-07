@@ -40,7 +40,11 @@ export function docsHref(lang: MarketingLang, path: string): string {
   return `${DOCS_ORIGIN}${localePath(lang, path)}`;
 }
 
-export const LOCALE: Record<MarketingLang, string> = { en: 'en-US', ar: 'ar-EG' };
+/**
+ * Number and date locales. Arabic pages use Western digits (0-9), like the
+ * app (owner decision): `ar-EG` with the Latin numbering system.
+ */
+export const LOCALE: Record<MarketingLang, string> = { en: 'en-US', ar: 'ar-EG-u-nu-latn' };
 
 /** Path of a page in a language: `/pricing` ↔ `/ar/pricing`, `/` ↔ `/ar`. */
 export function localePath(lang: MarketingLang, path: string): string {
@@ -85,7 +89,7 @@ export function formatNumber(lang: MarketingLang, value: number): string {
   return new Intl.NumberFormat(LOCALE[lang]).format(value);
 }
 
-/** "EGP 1,190" / "١٬١٩٠ ج.م." — currency from the catalog, never assumed. */
+/** "EGP 1,190" / "1,190 ج.م." — currency from the catalog, never assumed. */
 export function formatPrice(lang: MarketingLang, amount: number, currency: string): string {
   return new Intl.NumberFormat(LOCALE[lang], {
     style: 'currency',

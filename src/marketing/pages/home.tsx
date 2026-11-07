@@ -13,7 +13,7 @@ import { PricingCards } from '../components/pricing';
 import { Screenshot } from '../components/screenshot';
 import { AtlasMark, productPagePath } from '../components/chrome';
 import { canFill, fill, link } from '../lib/copy';
-import { formatNumber } from '../lib/site';
+import { LOCALE, formatNumber } from '../lib/site';
 import type { MarketingLang, MarketingPageDef } from '../types';
 import { DEMO_ACADEMY_HOST } from '../data/demo';
 import { Icon, Shell, entityGraph, faqPage, pageEnv, seoHead, webPage, type PageEnv } from './shared';
@@ -159,7 +159,7 @@ function HomePage({ env }: { env: PageEnv }) {
           {h.routine.items.map((item, index) => (
             <li key={item.title} className="mk-card relative p-6">
               <span className="font-display text-sm font-semibold text-brand-gold-text" aria-hidden>
-                {new Intl.NumberFormat(lang === 'ar' ? 'ar-EG' : 'en-US', { minimumIntegerDigits: 2 }).format(index + 1)}
+                {new Intl.NumberFormat(LOCALE[lang], { minimumIntegerDigits: 2 }).format(index + 1)}
               </span>
               <h3 className="mt-3 text-lg font-semibold text-foreground">{fill(item.title, tokens)}</h3>
               <p className="mt-2 leading-relaxed text-muted-foreground">{fill(item.body, tokens)}</p>

@@ -138,13 +138,13 @@ export const COURSES = [
       questions: [
         {
           type: 'single_choice',
-          prompt: p('What is the limit of (x² − 4)/(x − 2) as x approaches 2?', 'ما نهاية (س² − ٤)/(س − ٢) عندما تقترب س من ٢؟'),
-          options: [[p('4', '٤'), true], [p('2', '٢'), false], [p('0', '٠'), false], [p('Undefined', 'غير معرّفة'), false]],
+          prompt: p('What is the limit of (x² − 4)/(x − 2) as x approaches 2?', 'ما نهاية (س² − 4)/(س − 2) عندما تقترب س من 2؟'),
+          options: [[p('4', '4'), true], [p('2', '2'), false], [p('0', '0'), false], [p('Undefined', 'غير معرّفة'), false]],
         },
         {
           type: 'multiple_choice',
           prompt: p('Which of these functions are continuous everywhere?', 'أي من الدوال دي متصلة على كل الأعداد الحقيقية؟'),
-          options: [[p('x² + 1', 'س² + ١'), true], [p('1/x', '١/س'), false], [p('sin x', 'جا س'), true], [p('√x', '√س'), false]],
+          options: [[p('x² + 1', 'س² + 1'), true], [p('1/x', '1/س'), false], [p('sin x', 'جا س'), true], [p('√x', '√س'), false]],
         },
         {
           type: 'true_false',
@@ -153,13 +153,13 @@ export const COURSES = [
         },
         {
           type: 'short_answer',
-          prompt: p('What is the limit of 3x + 1 as x approaches 2?', 'ما نهاية ٣س + ١ عندما تقترب س من ٢؟'),
-          acceptedAnswers: ['7', '٧'],
+          prompt: p('What is the limit of 3x + 1 as x approaches 2?', 'ما نهاية 3س + 1 عندما تقترب س من 2؟'),
+          acceptedAnswers: ['7', '7'],
         },
         {
           type: 'essay',
           points: 4,
-          prompt: p('Explain in your own words why direct substitution fails for (x² − 4)/(x − 2) at x = 2, and how to find the limit.', 'اشرح بأسلوبك ليه التعويض المباشر مش بينفع في (س² − ٤)/(س − ٢) عند س = ٢، وإزاي نوجد النهاية.'),
+          prompt: p('Explain in your own words why direct substitution fails for (x² − 4)/(x − 2) at x = 2, and how to find the limit.', 'اشرح بأسلوبك ليه التعويض المباشر مش بينفع في (س² − 4)/(س − 2) عند س = 2، وإزاي نوجد النهاية.'),
         },
       ],
     },
@@ -169,7 +169,7 @@ export const COURSES = [
       description: p('Solve the five problems and upload your answers.', 'حل المسائل الخمسة وارفع إجاباتك.'),
       instructions: p(
         'Solve problems 1–5 from the practice sheet. Show every step, then paste your answers or a link to a photo of your notebook.',
-        'حل المسائل من ١ لـ ٥ من ورقة التدريب. اكتب كل الخطوات، وبعدين الصق إجاباتك أو لينك صورة الكشكول.'
+        'حل المسائل من 1 لـ 5 من ورقة التدريب. اكتب كل الخطوات، وبعدين الصق إجاباتك أو لينك صورة الكشكول.'
       ),
     },
   },

@@ -42,7 +42,8 @@ export const DOC_BANNED: readonly { readonly pattern: RegExp; readonly why: stri
   { pattern: /\bDRM\b/, why: 'Atlas has no DRM' },
   { pattern: /in minutes|في دقائق/i, why: 'no speed promises' },
   { pattern: /arabic-first|عربي بالكامل/i, why: 'banned positioning' },
-  { pattern: /\b100 ?%|١٠٠ ?٪/, why: 'no absolute claims' },
+  // Any digits with either percent sign: Arabic copy now writes 0-9.
+  { pattern: /\b100 ?[%٪]|١٠٠ ?[%٪]/, why: 'no absolute claims' },
   { pattern: /sign in with google|الدخول بجوجل|التسجيل بجوجل/i, why: 'Google sign-in is not released (claim gate)' },
   { pattern: /operating system for education|منصة تعليمية متكاملة/i, why: 'retired tagline' },
   { pattern: /\bRLS\b|row[- ]level security|tenant isolation/i, why: 'say "each academy’s data is kept separate", not the mechanism' },
@@ -186,6 +187,9 @@ export function validateDocs(input: {
       if (hit) errors.push(`${where}: "${hit[0]}" — ${why}`);
     }
     if (article.lang === 'ar') {
+      // Western digits (0-9) everywhere, as in the app (owner decision).
+      const indic = /[\u0660-\u0669\u06F0-\u06F9]/.exec(report.text);
+      if (indic) errors.push(`${where}: "${indic[0]}" — write digits as 0-9, not Arabic-Indic digits`);
       const arabic = (report.text.match(/[\u0600-\u06FF]/g) ?? []).length;
       const latin = (report.text.match(/[A-Za-z]/g) ?? []).length;
       if (arabic < 0.7 * (arabic + latin)) errors.push(`${where}: the Arabic version must be written in Arabic`);

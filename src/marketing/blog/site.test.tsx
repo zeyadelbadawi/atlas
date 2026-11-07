@@ -205,13 +205,13 @@ describe('blog index', () => {
     });
     expect(html).toContain('<html lang="ar" dir="rtl">');
     expect(html).toContain(
-      '<title>المدفوعات: مقالات لأصحاب الأكاديميات (صفحة ٢) | أطلس</title>'
+      '<title>المدفوعات: مقالات لأصحاب الأكاديميات (صفحة 2) | أطلس</title>'
     );
     expect(html).toContain(
       '<link rel="canonical" href="https://atlass.dpdns.org/ar/blog/topics/payments/page/2">'
     );
     expect(html).toContain('rel="prev"');
-    expect(html).toContain('صفحة ٢ من ٢');
+    expect(html).toContain('صفحة 2 من 2');
   });
 
   it('404s past the last page', () => {
