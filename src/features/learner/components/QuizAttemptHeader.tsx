@@ -32,6 +32,8 @@ export interface QuizAttemptHeaderProps {
   readonly lastSavedAt: string | null;
   /** The threshold just crossed, in seconds; announced once. */
   readonly announcement: number | null;
+  /** Quiz focus mode: no academy header above, so it sticks to the top of the screen. */
+  readonly focusMode?: boolean;
 }
 
 /**
@@ -59,6 +61,7 @@ export function QuizAttemptHeader({
   saveState,
   lastSavedAt,
   announcement,
+  focusMode = false,
 }: QuizAttemptHeaderProps): JSX.Element {
   const { t, i18n } = useTranslation();
   const language = i18n.language as LanguageCode;
@@ -120,7 +123,13 @@ export function QuizAttemptHeader({
     <div
       // B7 (UX audit) — sticks BELOW the academy's own sticky header (each
       // theme publishes its height), not underneath it.
-      style={{ top: ACADEMY_HEADER_OFFSET }}
+      // In focus mode that header is hidden: the top of the screen, below
+      // any notch.
+      style={{
+        top: focusMode
+          ? 'env(safe-area-inset-top, 0px)'
+          : ACADEMY_HEADER_OFFSET,
+      }}
       className="sticky z-10 -mx-1 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-md border border-border bg-card/95 px-3 py-2 text-sm backdrop-blur supports-[backdrop-filter]:bg-card/80"
       data-testid="quiz-attempt-header"
     >

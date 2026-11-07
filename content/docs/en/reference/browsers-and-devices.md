@@ -14,7 +14,7 @@ order: 7
 priority: P1
 related: [DOC-TRB-003, DOC-MED-003, DOC-MED-010, DOC-LRN-033, DOC-TRB-011]
 keywords: [browser, chrome, safari, iphone, android, mobile app, device limit, private window, incognito, offline, full screen]
-updated: 2026-10-20
+updated: 2026-11-07
 ---
 
 ## What you need
@@ -39,7 +39,7 @@ Reaching the device limit never stops a learner from signing in. It only stops l
 
 ## Quizzes in full screen
 
-Some quizzes open in full screen. Browsers on iPhone can't do that. The learner sees "Full screen isn’t available in this browser", can still take the quiz, and the instructor sees that full screen wasn't available. See [Take a quiz or exam](doc:DOC-LRN-033).
+Some quizzes open in full screen. Browsers on iPhone can't do that. The learner sees "Full screen isn’t available in this browser" and takes the quiz in focus mode, without the academy's menus around it. Leaving the page or switching apps is still recorded, and the instructor sees that full screen wasn't available. See [Take a quiz or exam](doc:DOC-LRN-033).
 
 ## Watching lessons
 

@@ -22,7 +22,10 @@
  * Here: the exit policy (`fullscreenView`) — out of full screen, the
  * questions wait behind a gate until the learner returns; answers, autosave
  * and the timer carry on. Unsupported or refused is recorded for the
- * reviewer and never traps the learner.
+ * reviewer and never traps the learner. Where full screen is required but
+ * the browser has none (iPhone), the attempt runs in focus mode
+ * (`useQuizFocusMode`): the layout around the quiz steps aside until the
+ * runner unmounts (submitted, ended, or the learner left the page).
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -47,6 +50,7 @@ import {
   fullscreenView,
   type QuizFullscreenControl,
 } from '../hooks/useQuizFullscreen';
+import { quizFocusMode, useQuizFocusMode } from '../hooks/useQuizFocusMode';
 import { QuizFullscreenGate } from './QuizFullscreenGate';
 import {
   answeredCount,
@@ -299,6 +303,9 @@ export function QuizAttemptRunner({
     });
   };
   const gated = view === 'gate' || view === 'gate-refused';
+  // Required but impossible here: the quiz takes the whole screen instead.
+  const focusMode = quizFocusMode(view);
+  useQuizFocusMode(focusMode);
 
   /* ---------- submit ---------- */
 
@@ -378,6 +385,7 @@ export function QuizAttemptRunner({
         saveState={autosave.state}
         lastSavedAt={autosave.lastSavedAt ?? session.lastSavedAt}
         announcement={announcement}
+        focusMode={focusMode}
       />
 
       {warning && bannerShown ? (

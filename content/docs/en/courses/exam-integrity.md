@@ -14,7 +14,7 @@ order: 13
 priority: P1
 related: [DOC-LRN-015, DOC-LRN-017, DOC-LRN-025, DOC-LRN-033, DOC-SEC-004]
 keywords: [exam integrity, cheating, full screen exam, tab switching, الغش في الامتحان, امتحان ملء الشاشة, مراقبة الامتحان, تبديل التبويبات, proctoring]
-updated: 2026-10-20
+updated: 2026-11-07
 ---
 
 Integrity settings help you review an exam attempt with more context. They record what happened in the learner's browser and show it to reviewers with plain explanations. They don't prevent cheating, and they don't decide whether anyone cheated: that judgement stays with you.
@@ -58,7 +58,7 @@ Turn on **Require full screen** under **Integrity**. It needs an integrity mode 
 - **Start Quiz** opens the quiz in full screen.
 - If the learner leaves full screen, the questions are hidden behind **Return to full screen to continue**. Their answers are kept and the timer keeps running. Leaving is recorded.
 - If the browser refuses full screen, the learner can choose **Continue without full screen**.
-- Some browsers can't use full screen at all, for example every browser on iPhone. Learners there take the quiz as usual, and the reviewer sees that full screen was unavailable.
+- Some browsers can't use full screen at all, for example every browser on iPhone. Learners there take the quiz in focus mode instead: the academy's header, menus and footer are hidden while the attempt runs. Leaving the page or switching apps is still recorded, and the reviewer sees that full screen was unavailable.
 
 ## Reviewing the signals
 

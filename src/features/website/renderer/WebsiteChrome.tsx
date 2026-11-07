@@ -158,7 +158,12 @@ function LoadedWebsiteChrome({
             Details on phones and tablets, `data-purchase-bar`) ends with room
             for it at the bottom of the footer, in the footer's own colour, so
             the bar never covers the footer's last line. */}
-          <div className="flex min-h-[100dvh] flex-col bg-[var(--website-background)] text-[var(--website-foreground)] max-lg:[&:has([data-purchase-bar])>footer]:![padding-block-end:calc(6.5rem+env(safe-area-inset-bottom))]">
+          {/* B0-LRN-11 — quiz focus mode (`quiz-focus.utils.ts`): while a
+            quiz that requires full screen runs where full screen is
+            impossible (iPhone), everything here but `<main>` — the theme's
+            header, its footer, the bottom bar — steps aside, whichever theme
+            drew it. */}
+          <div className="flex min-h-[100dvh] flex-col bg-[var(--website-background)] text-[var(--website-foreground)] max-lg:[&:has([data-purchase-bar])>footer]:![padding-block-end:calc(6.5rem+env(safe-area-inset-bottom))] [body[data-quiz-focus]_&>:not(main)]:!hidden">
             <Header
               logo={academyLogo}
               academyName={academyName}
